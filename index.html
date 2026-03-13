@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barolo Capital · Acesso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+
+:root{
+  --bg:       #f2ece0;
+  --surface:  #faf6ef;
+  --surface2: #ece5d5;
+  --border:   #d5c9a5;
+  --border2:  #c4b58a;
+  --accent:   #8a6820;
+  --gold:     #c9a050;
+  --text:     #16110c;
+  --muted:    #7a6a50;
+  --faint:    #b8a882;
+  --green:    #4a7c3f;
+  --red:      #9c2a2a;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Cormorant Garamond','Palatino Linotype',serif;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+}
+
+/* ── BACKGROUND GRID ── */
+.bg-grid{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(138,104,32,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(138,104,32,.055) 1px,transparent 1px);
+  background-size:52px 52px;
+  animation:drift 50s linear infinite;
+}
+@keyframes drift{to{background-position:52px 52px;}}
+
+/* ── ATMOSPHERIC GLOW ── */
+.bg-glow{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 75% 50% at 50% -5%,rgba(201,160,80,.14) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 35% at 8%  85%,rgba(138,104,32,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 35% 30% at 92% 80%,rgba(201,160,80,.07) 0%,transparent 55%);
+}
+
+/* ── CORNER BRACKETS ── */
+.corner{
+  position:fixed;width:32px;height:32px;
+  opacity:0;animation:fadein .6s ease forwards;
+}
+.corner--tl{top:20px;left:20px;border-top:1.5px solid var(--gold);border-left:1.5px solid var(--gold);animation-delay:.05s;}
+.corner--tr{top:20px;right:20px;border-top:1.5px solid var(--gold);border-right:1.5px solid var(--gold);animation-delay:.1s;}
+.corner--bl{bottom:34px;left:20px;border-bottom:1.5px solid var(--gold);border-left:1.5px solid var(--gold);animation-delay:.15s;}
+.corner--br{bottom:34px;right:20px;border-bottom:1.5px solid var(--gold);border-right:1.5px solid var(--gold);animation-delay:.2s;}
+
+/* small corner dots */
+.corner::before,.corner::after{
+  content:'';position:absolute;width:3px;height:3px;
+  border-radius:50%;background:var(--gold);
+}
+.corner--tl::before{top:-2px;left:-2px;}
+.corner--tl::after{display:none;}
+.corner--tr::before{top:-2px;right:-2px;}
+.corner--tr::after{display:none;}
+.corner--bl::before{bottom:-2px;left:-2px;}
+.corner--bl::after{display:none;}
+.corner--br::before{bottom:-2px;right:-2px;}
+.corner--br::after{display:none;}
+
+/* ── SCAN LINE ── */
+.scanline{
+  position:fixed;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,rgba(201,160,80,.3) 30%,rgba(201,160,80,.5) 50%,rgba(201,160,80,.3) 70%,transparent 100%);
+  animation:scan 7s ease-in-out infinite;
+  pointer-events:none;z-index:1;
+}
+@keyframes scan{
+  0%{top:0;opacity:0;}4%{opacity:1;}96%{opacity:1;}100%{top:100vh;opacity:0;}
+}
+
+/* ── TICKER BAR ── */
+.ticker{
+  position:fixed;bottom:0;left:0;right:0;height:26px;
+  background:rgba(242,236,224,.96);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(10px);
+  display:flex;align-items:center;
+  overflow:hidden;z-index:20;
+  opacity:0;animation:fadein .5s ease 2s forwards;
+}
+.ticker-inner{
+  display:flex;
+  animation:scroll-left 30s linear infinite;
+  white-space:nowrap;
+}
+.tick-item{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8.5px;letter-spacing:.07em;
+  color:var(--muted);
+  padding:0 28px;
+  border-right:1px solid var(--border);
+  flex-shrink:0;
+}
+.tick-item b{font-weight:500;}
+.tick-item .up{color:var(--green);}
+.tick-item .dn{color:var(--red);}
+@keyframes scroll-left{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── MAIN WRAPPER ── */
+.wrap{
+  position:relative;z-index:10;
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;max-width:480px;
+  padding:0 28px 52px;
+}
+
+/* ── LOGO ── */
+.logo-wrap{
+  width:100%;margin-bottom:32px;
+  opacity:0;
+  animation:slide-down .8s cubic-bezier(.16,1,.3,1) .25s forwards;
+}
+@keyframes slide-down{
+  from{opacity:0;transform:translateY(-14px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ── LOGIN CARD ── */
+.card{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:2px;
+  overflow:hidden;
+  box-shadow:0 4px 32px rgba(22,17,12,.10), 0 1px 4px rgba(22,17,12,.06);
+  opacity:0;
+  animation:slide-up .75s cubic-bezier(.16,1,.3,1) .8s forwards;
+}
+@keyframes slide-up{
+  from{opacity:0;transform:translateY(14px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* Card top bar */
+.card-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.card-bar-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;letter-spacing:.2em;
+  color:var(--faint);text-transform:uppercase;
+}
+.card-bar-live{
+  display:flex;align-items:center;gap:5px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:7.5px;letter-spacing:.14em;color:var(--faint);
+}
+.dot-live{
+  width:5px;height:5px;border-radius:50%;background:var(--green);
+  animation:pulse-g 2.2s ease infinite;
+}
+@keyframes pulse-g{
+  0%,100%{box-shadow:0 0 0 0 rgba(74,124,63,.55);}
+  50%{box-shadow:0 0 0 4px rgba(74,124,63,0);}
+}
+
+/* Card body */
+.card-body{padding:30px 30px 24px;}
+
+.auth-label{
+  font-size:10.5px;font-weight:400;
+  letter-spacing:.28em;text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.auth-label::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,var(--border),transparent);
+}
+
+/* Field */
+.field{margin-bottom:14px;}
+.field-lbl{
+  display:block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--faint);
+  margin-bottom:6px;
+}
+.field-row{position:relative;}
+.field-row svg{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  pointer-events:none;transition:stroke .2s;
+  stroke:var(--faint);
+}
+.field-row:focus-within svg{stroke:var(--accent);}
+.field-row input{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:2px;
+  padding:11px 14px 11px 36px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
+}
+.field-row input::placeholder{color:var(--faint);font-size:11px;letter-spacing:.04em;}
+.field-row input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(201,160,80,.12);
+}
+.field-row input.err-field{border-color:var(--red);box-shadow:0 0 0 3px rgba(156,42,42,.07);}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%,60%{transform:translateX(-5px);}
+  40%,80%{transform:translateX(5px);}
+}
+.do-shake{animation:shake .36s ease;}
+
+/* CTA */
+.btn-go{
+  width:100%;margin-top:6px;
+  padding:13px;
+  background:linear-gradient(135deg,#7a5c18 0%,#b8900e 55%,#c9a050 100%);
+  border:none;border-radius:2px;
+  font-family:'Cormorant Garamond',serif;
+  font-weight:700;font-size:13px;
+  letter-spacing:.26em;text-transform:uppercase;
+  color:#f7eed6;
+  cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:filter .2s,transform .1s;
+}
+.btn-go::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.12) 50%,transparent 100%);
+  transform:translateX(-100%);
+  transition:transform .4s ease;
+}
+.btn-go:hover{filter:brightness(1.06);}
+.btn-go:hover::after{transform:translateX(100%);}
+.btn-go:active{transform:scale(.99);}
+.btn-go:disabled{
+  background:var(--surface2);color:var(--faint);
+  cursor:not-allowed;filter:none;transform:none;
+}
+.btn-go:disabled::after{display:none;}
+
+/* Error text */
+.err-txt{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.1em;
+  color:var(--red);text-align:center;
+  margin-top:10px;min-height:13px;
+}
+
+/* Card footer */
+.card-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 18px;
+  background:var(--surface2);
+  border-top:1px solid var(--border);
+}
+.card-foot span{
+  font-family:'JetBrains Mono',monospace;
+  font-size:7.5px;letter-spacing:.12em;color:var(--faint);
+}
+
+/* ── CAPTION ── */
+.caption{
+  margin-top:18px;
+  font-style:italic;font-size:11.5px;
+  color:var(--faint);letter-spacing:.03em;text-align:center;
+  opacity:0;animation:fadein .5s ease 1.55s forwards;
+}
+
+@keyframes fadein{from{opacity:0;}to{opacity:1;}}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="scanline"></div>
+
+<div class="corner corner--tl"></div>
+<div class="corner corner--tr"></div>
+<div class="corner corner--bl"></div>
+<div class="corner corner--br"></div>
+
+<!-- Ticker -->
+<div class="ticker"><div class="ticker-inner" id="tickerInner"></div></div>
+
+<!-- Page -->
+<div class="wrap">
+
+  <!-- ══ LOGO ══ -->
+  <div class="logo-wrap">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 116" width="100%" style="display:block;">
+      <defs>
+        <linearGradient id="gr-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#f2ece0" stop-opacity="0"/>
+          <stop offset="10%"  stop-color="#c9a050"/>
+          <stop offset="50%"  stop-color="#9a7228"/>
+          <stop offset="90%"  stop-color="#c9a050"/>
+          <stop offset="100%" stop-color="#f2ece0" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="gr-pale" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#f2ece0" stop-opacity="0"/>
+          <stop offset="22%"  stop-color="#d5c9a5"/>
+          <stop offset="78%"  stop-color="#d5c9a5"/>
+          <stop offset="100%" stop-color="#f2ece0" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- outer thin rule -->
+      <line x1="0" y1="7"   x2="480" y2="7"   stroke="url(#gr-pale)" stroke-width=".6"/>
+      <!-- main gold rule top -->
+      <line x1="0" y1="20"  x2="480" y2="20"  stroke="url(#gr-gold)" stroke-width="1.1"/>
+
+      <!-- Brand name — textLength forces exact fit within viewBox -->
+      <text x="240" y="68"
+        font-family="Cormorant Garamond, Palatino Linotype, Georgia, serif"
+        font-weight="600" font-size="46"
+        fill="#16110c" text-anchor="middle"
+        textLength="420" lengthAdjust="spacing">BAROLO CAPITAL</text>
+
+      <!-- Tagline -->
+      <text x="240" y="90"
+        font-family="Cormorant Garamond, Palatino Linotype, Georgia, serif"
+        font-style="italic" font-size="13.5" letter-spacing="1"
+        fill="#7a6a50" text-anchor="middle">O capital tradicional encontra o futuro financeiro.</text>
+
+      <!-- main gold rule bottom -->
+      <line x1="0" y1="103" x2="480" y2="103" stroke="url(#gr-gold)" stroke-width="1.1"/>
+      <!-- outer thin rule -->
+      <line x1="0" y1="113" x2="480" y2="113" stroke="url(#gr-pale)" stroke-width=".6"/>
+    </svg>
+  </div>
+
+  <!-- ══ CARD ══ -->
+  <div class="card" id="loginCard">
+
+    <div class="card-bar">
+      <span class="card-bar-tag">TERMINAL · ACESSO RESTRITO</span>
+      <div class="card-bar-live">
+        <div class="dot-live"></div>
+        <span>SISTEMA OPERACIONAL</span>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="auth-label">Autenticação</div>
+
+      <!-- Usuário -->
+      <div class="field">
+        <label class="field-lbl" for="u">Identificador</label>
+        <div class="field-row">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          <input type="text" id="u" autocomplete="username"
+            autocapitalize="none" spellcheck="false" placeholder="usuário">
+        </div>
+      </div>
+
+      <!-- Senha -->
+      <div class="field">
+        <label class="field-lbl" for="p">Autenticador</label>
+        <div class="field-row">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="11" width="14" height="10" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+          </svg>
+          <input type="password" id="p" autocomplete="current-password" placeholder="••••••••">
+        </div>
+      </div>
+
+      <button class="btn-go" id="btn" onclick="login()">Acessar Sistema</button>
+      <div class="err-txt" id="err"></div>
+    </div>
+
+    <div class="card-foot">
+      <span>BAROLO CAPITAL · PLATAFORMA INTERNA</span>
+      <span id="clk">--:--:--</span>
+    </div>
+  </div>
+
+  <div class="caption">© 2021 Barolo Capital · Asset Management</div>
+</div>
+
+<script>
+// Clock
+function tick(){
+  const n=new Date(), pad=v=>String(v).padStart(2,'0');
+  const el=document.getElementById('clk');
+  if(el) el.textContent=pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds())+' BRT';
+}
+tick(); setInterval(tick,1000);
+
+// Ticker
+const data=[
+  {t:'ETH/USD', v:'$1,842.30', d:'+2.14%', up:true},
+  {t:'SOL/USD', v:'$132.50',   d:'+3.82%', up:true},
+  {t:'BTC/USD', v:'$67,240',   d:'+0.91%', up:true},
+  {t:'ADA/USD', v:'$0.3812',   d:'−1.24%', up:false},
+  {t:'USD/BRL', v:'R$ 5.72',   d:'+0.18%', up:true},
+  {t:'AAVE',    v:'$92.40',    d:'+1.55%', up:true},
+  {t:'RDNT',    v:'$0.0412',   d:'−0.88%', up:false},
+  {t:'PYUSD',   v:'$1.0001',   d:'+0.01%', up:true},
+];
+const inner=document.getElementById('tickerInner');
+[...data,...data].forEach(a=>{
+  const el=document.createElement('div');
+  el.className='tick-item';
+  el.innerHTML=`<b>${a.t}</b>&ensp;<span class="${a.up?'up':'dn'}">${a.v} ${a.d}</span>`;
+  inner.appendChild(el);
+});
+
+// Login
+['u','p'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')login();}));
+
+function login(){
+  const u=document.getElementById('u').value.trim().toUpperCase();
+  const p=document.getElementById('p').value.trim();
+  const err=document.getElementById('err');
+  err.textContent='';
+  if(u==='ADM'&&p==='102030'){
+    const btn=document.getElementById('btn');
+    btn.textContent='Autenticando…'; btn.disabled=true;
+    setTimeout(()=>{window.location.href='portfolio_analytics.html';},480);
+    return;
+  }
+  const uEl=document.getElementById('u'), pEl=document.getElementById('p');
+  [uEl,pEl].forEach(el=>{
+    el.classList.add('err-field','do-shake');
+    setTimeout(()=>el.classList.remove('err-field','do-shake'),600);
+  });
+  err.textContent='CREDENCIAIS INVÁLIDAS · ACESSO NEGADO';
+  pEl.value='';
+}
+
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('u').focus(),900));
+</script>
+</body>
+</html>

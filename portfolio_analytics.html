@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<script>
+window.addEventListener('error',function(e){if(!e.message||e.message.includes('Script error')){e.stopImmediatePropagation();e.preventDefault();return false;}},true);
+</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barolo Capital — Portfolio</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>if(typeof Chart==='undefined'){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';document.head.appendChild(s);}</script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#17171f;--surface:#1e1e28;--surface2:#232330;--border:#2e2a3a;
+  --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--orange:#db6d28;
+  --text:#e6edf3;--muted:#8b7d6b;--stable:#3fb950;--card-shadow:none;
+}
+[data-theme="light"]{
+  --bg:#f2ece0;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;
+  --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--orange:#9c4a1a;
+  --text:#16110c;--muted:#7a6a50;--stable:#3a6030;
+  --card-shadow:0 1px 4px rgba(22,17,12,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;min-height:100vh;}
+.container{max-width:1440px;margin:0 auto;padding:80px 20px 72px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:48px;background:rgba(244,239,230,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);transition:background .3s;display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+[data-theme="light"] nav{background:rgba(244,239,230,0.97);}
+[data-theme="dark"] nav{background:rgba(23,23,31,0.97);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;}
+.nav-title{font-size:15px;font-weight:600;color:var(--text);letter-spacing:.1em;font-family:"Cormorant Garamond",serif;}
+.nav-links{display:flex;gap:2px;}
+.nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a.active{color:var(--accent);background:rgba(184,150,58,0.1);border:1px solid rgba(184,150,58,0.3);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:all .2s;}
+.btn-sm:hover{color:var(--accent);border-color:var(--accent);}
+.btn-sm.primary{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .btn-sm.primary{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
+
+/* LOADING */
+#loadingScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+.loader-ring{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* SECTION LABEL */
+.section-label{font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin:20px 0 10px;border-left:2px solid var(--accent);padding-left:8px;font-family:"Cormorant Garamond",serif;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--card-shadow);}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}.charts-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.chart-title{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
+
+/* NET WORTH HERO */
+.hero-card{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid rgba(184,150,58,0.3);border-radius:12px;padding:24px 30px;margin-bottom:16px;}
+.hero-label{font-size:9px;color:var(--accent);letter-spacing:3px;margin-bottom:6px;font-family:"Cormorant Garamond",serif;font-size:11px;}
+.hero-value{font-size:38px;font-weight:700;line-height:1;font-family:"Cormorant Garamond",serif;}
+.hero-sub{font-size:10px;color:var(--muted);margin-top:5px;}
+.hero-meta{display:flex;gap:24px;flex-wrap:wrap;}
+.hero-meta-item{text-align:center;}
+.hero-meta-label{font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:3px;}
+.hero-meta-val{font-size:16px;font-weight:700;}
+
+/* STATS ROW */
+.stats-row{display:grid;gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;box-shadow:var(--card-shadow);}
+.stat-label{font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:6px;}
+.stat-value{font-size:20px;font-weight:700;}
+.stat-sub{font-size:9px;color:var(--muted);margin-top:3px;}
+.pos{color:var(--green);}
+.neg{color:var(--red);}
+.acc{color:var(--accent);}
+.stc{color:var(--stable);}
+.warn{color:var(--yellow);}
+.neu{color:var(--muted);}
+
+/* DEFI GRID */
+.defi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.defi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.defi-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.defi-body{padding:14px 16px;}
+.defi-protocol{font-size:12px;font-weight:700;}
+.defi-tag{font-size:8px;border:1px solid var(--border);border-radius:3px;padding:2px 6px;color:var(--muted);}
+.defi-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
+.defi-row:last-child{border-bottom:none;}
+.defi-asset{display:flex;align-items:center;gap:6px;font-size:11px;}
+.defi-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.defi-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+.defi-metric{text-align:center;background:var(--bg);border-radius:5px;padding:6px;}
+.defi-metric-label{font-size:7px;color:var(--muted);margin-bottom:2px;letter-spacing:1px;}
+.defi-metric-val{font-size:13px;font-weight:700;}
+.health-bar-track{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin:4px 0;}
+.health-bar-fill{height:100%;border-radius:3px;transition:width .4s;}
+
+/* LP CARD */
+.lp-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.lp-header{background:var(--surface2);padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.lp-metrics{display:grid;grid-template-columns:repeat(5,1fr);}
+.lp-metric{padding:12px 14px;border-right:1px solid var(--border);}
+.lp-metric:last-child{border-right:none;}
+.lp-metric-label{font-size:7px;color:var(--muted);letter-spacing:2px;margin-bottom:4px;}
+.lp-metric-val{font-size:16px;font-weight:700;}
+.lp-metric-sub{font-size:8px;color:var(--muted);margin-top:2px;}
+.lp-body{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);}
+.lp-body-col{padding:14px 16px;border-right:1px solid var(--border);}
+.lp-body-col:last-child{border-right:none;}
+.ref-toggle{display:flex;gap:4px;}
+.ref-btn{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
+.ref-btn.active{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .ref-btn.active{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
+.badge{font-size:8px;border-radius:10px;padding:2px 8px;border:1px solid;}
+.badge-green{background:rgba(74,124,63,0.12);color:var(--green);border-color:rgba(74,124,63,0.3);}
+[data-theme="dark"] .badge-green{background:rgba(63,185,80,0.12);color:#3fb950;border-color:rgba(63,185,80,0.3);}
+.badge-gold{background:rgba(138,104,32,0.12);color:var(--accent);border-color:rgba(138,104,32,0.3);}
+[data-theme="dark"] .badge-gold{background:rgba(201,160,80,0.12);color:#c9a050;border-color:rgba(201,160,80,0.3);}
+.badge-gray{background:var(--surface2);color:var(--muted);border-color:var(--border);}
+
+/* ALLOCATION CHART - CoinGecko style */
+.alloc-wrap{display:flex;align-items:center;gap:20px;}
+.alloc-legend{flex:1;min-width:0;}
+.alloc-legend-item{display:flex;align-items:center;justify-content:space-between;padding:3px 0;gap:6px;}
+.alloc-legend-left{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text);min-width:0;}
+.alloc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.alloc-pct{font-size:10px;font-weight:700;color:var(--text);white-space:nowrap;}
+
+/* PERF CHART CONTROLS */
+.perf-controls{display:flex;align-items:center;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.period-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
+.period-btn.active{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .period-btn.active{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
+.period-sep{color:var(--border);padding:0 4px;}
+
+/* ASSET TABLE */
+.asset-table{width:100%;border-collapse:collapse;font-size:11px;}
+.asset-table th{padding:8px 10px;text-align:left;font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+.asset-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.asset-table tr:hover td{background:rgba(138,104,32,0.04);}
+.asset-table tr:last-child td{border-bottom:none;}
+.coin-cell{display:flex;align-items:center;gap:8px;}
+.coin-logo{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--surface2);object-fit:cover;}
+.coin-logo-fallback{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;font-family:'Inter',sans-serif;}
+.coin-name{font-weight:500;font-size:12px;}
+.coin-ticker{font-size:9px;color:var(--muted);margin-top:1px;}
+.mini-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:3px;overflow:hidden;}
+.mini-bar-fill{height:100%;border-radius:2px;}
+.sparkline-cell{line-height:0;}
+
+/* ANNUAL RETURN TOGGLE */
+.chart-type-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
+.chart-type-btn.active{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .chart-type-btn.active{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
+
+/* METRICS */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}.stats-row-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.metric-icon{font-size:18px;margin-bottom:6px;}
+.metric-name{font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;}
+.metric-val{font-size:18px;font-weight:700;margin-bottom:2px;}
+.metric-desc{font-size:8px;color:var(--muted);}
+
+/* SENSITIVE */
+.sensitive{transition:filter .2s;}
+body.hide-values .sensitive{filter:blur(5px);user-select:none;}
+
+/* RANGE BAR */
+.range-bar-wrap{background:var(--border);border-radius:4px;height:6px;position:relative;overflow:hidden;margin:6px 0;}
+.range-bar-range{position:absolute;height:100%;background:linear-gradient(90deg,rgba(0,212,255,0.2),rgba(0,230,118,0.2));}
+.range-bar-cursor{position:absolute;width:3px;height:100%;background:var(--green);border-radius:2px;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .charts-row,.defi-grid,.metrics-grid{grid-template-columns:1fr;}
+  .asset-table th:nth-child(n+5),.asset-table td:nth-child(n+5){display:none;}
+  .asset-table th:nth-child(2),.asset-table td:nth-child(2){display:none;}
+  .lp-metrics{grid-template-columns:repeat(2,1fr);}
+  .lp-body{grid-template-columns:1fr;}
+  .lp-body-col{border-right:none;border-bottom:1px solid var(--border);}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .chart-pair-row{grid-template-columns:1fr !important;}
+}
+
+
+/* TOKEN LOGOS */
+.tok-logo{width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+.tok-logo-sm{width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+.tok-cell{display:flex;align-items:center;gap:8px;}
+.tok-name{display:flex;flex-direction:column;}
+.alloc-logo{width:18px;height:18px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.ticker-logo{width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+
+/* PRINT */
+@media print{nav,#loadingScreen,.btn-sm,.perf-controls,.ref-toggle,.chart-type-btn{display:none!important;}.container{padding:10px;}}
+
+/* LIGHT MODE — wine label aesthetic */
+[data-theme="light"] .hero-card{
+  background:linear-gradient(135deg,#faf6ee,rgba(138,106,32,0.06));
+  border-color:rgba(138,106,32,0.3);
+}
+[data-theme="light"] .card{
+  background:#faf6ee;
+  box-shadow:0 1px 4px rgba(26,20,16,0.08);
+}
+[data-theme="light"] .section-label{
+  border-left-color:#8a6820;
+  color:#8a6820;
+}
+[data-theme="light"] .stat-card{
+  background:#faf6ee;
+  box-shadow:0 1px 3px rgba(26,20,16,0.06);
+}
+[data-theme="light"] .asset-table th{
+  background:#efe8d8;
+}
+[data-theme="light"] .lp-card,
+[data-theme="light"] .defi-card,
+[data-theme="light"] .pool-card{
+  background:#faf6ee;
+  box-shadow:0 1px 3px rgba(26,20,16,0.06);
+}
+[data-theme="light"] .defi-header,
+[data-theme="light"] .lp-header,
+[data-theme="light"] .pool-card-header{
+  background:#efe8d8;
+}
+[data-theme="light"] body{
+  background-image:
+    linear-gradient(rgba(138,106,32,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(138,106,32,0.025) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+/* ══ CORMORANT GARAMOND HEADINGS ══ */
+.nav-title, .brand-name, .brand-text .title,
+h1, h2, .section-label, .hero-value,
+.pool-pair-name, .defi-protocol, .login-title {
+  font-family: 'Cormorant Garamond', serif;
+}
+.nav-title { font-size:15px; font-weight:600; letter-spacing:0.08em; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loader-ring"></div>
+  <div style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px;">CARREGANDO...</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="portfolio_analytics.html">
+    <div class="nav-logo"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABmJLR0QA/wD/AP+gvaeTAAAgAElEQVR4nO2dd3wb5f3HPze0h6e8dzzixIkznQEhCRBSCg0NswFK05ZQNoUWShnFZTdsKCmBQCm/toxAIWWkBEgMZC8yPJLYcRzvvWVtPb8/JNmybEt3siRL8n1emOjuOT3Pc6fnfc/3+0xAkCBBggQJEiRIkCBBggQJEiRIkCBBggQJEiRIkCBBggQJEjQkaqIzEK66445sSYyenSsWk3kSCTtDKaFzpBIqViaiI2RSWqmQ0lKxiGLlUpqhKEDEUJCKKAoAdEYrMZmtAAG0OqvFYLKaB/QWXb/OqtWbrN1Gg7W9T2+t1BkspVarZT96FIeLN5cZJ/qew1ECID5Q8Y15M2VSarVKJV4Uq2KmxkWL45NixVKWAQhxXEUAp88EcA4c/Oz2/GAcxClKArOFoLHdpG/tMjV39loq+nWWPQN95JPH/lV93A+3O6kkAOKF/vybaZdFqpir46PFC9PiRakJMRKRLcQFggDA4fTFoe/ZKiI0d5hN9a3G2uZuy95+reX9R96s+tTbe56sEgDhoOKbZ8ZJWdPaRI302vwM2XRNpJgFABDiVCyDCw4KlP3Xpez/UejqM1srG4w1DW2mLT066qUn3qw4y/dZTDYJgIyh+9dOzUiIFT+UlSRdlZ8p17AMNaIAhxIcw8IpCiYzQXmNvq2mxbCltdPw2F/eqa7l8lwmmwRAnHTrVdOVWUn0o9lp0munZSrixSztVBjDBw77icFwo9mK8pqB5tN1pn8dr+x45P+2tWjdPKZJJQEQAH/+TcGK1ETxo7NzlEVRapYG4FIYwxeOoRJg+9zda7YeqR4oP9Osf/jx1099MvJpTS5NZkCo9XdN/8PUTOXvZ0xRxtgexGiFcfLA4RwHIcDx6oH2E9XaZ+7fULEek1STDpCf/zxeMTc+/oXZuaqfpydJpQDcFMbJCcew71AUahr1uiOV/e9UVHbe8/qnjQOYRJo0gBQvW8aqZ3etX1Souj0pVioatdAJcAz/jksarV0m877ynvc6WvrWFb9do8ckUNgDUrxsGaue2/nSwhnqG5NjpWJgjELnBzgMJisa2oxoaDWiqcOIxnYTOntN6NFa0N1vRnefGf0DVgCA0WyF3miLRCqm4GggUMkZRChZRCoZRChoRClZJMaKkBQjRrJGhGSNCBIR43c4nK+vb9Ub9x7v3bi34fjdmzfDwvnHCEGFNSDP3DVj3bxpEc9npUiVQxz4B45erQXHqrSoODuAynodqur1aGg1wmJ1is8PYmgKSRoRclKkyEmWYmq6HDOyZYhQsPYrfAuHc3hlg06752jX7x7eUL7Rrzc5gQpLQB69bdqC6Zmq9+ZOVWdQFIE/4OjpN2NvaS8OVPTjaJUWNU36YV+fSFEUkJkoxcxsOebnK7FwmhoRKsYR6hM4HOcIAXYf72koPa2/8olNx/YG6BYDprACZONNc0VsIv597qyIK6ViBs4F2xdwVNUPYPvBHuw+3oPyMzq/1w6+EkNTmJYpw+IZapw/LxLZyTKfwOF8Tm8k2La37bP206YrwmngZNgA8titM69cXKh+OztFprCd8Q0cNY16bNvXhW37u3CmMTz80qxkKVYURWFlUTQykmwNeeOBw9nXOVWnHSg50PXLx94o/SAgN+NnhTwgd1+VIps+Le5/y+dGn8cyjtsZHxwGkxXb9nXi45J2HK0M707l2blKXL5MgwsXREFqd/a9hcMRbrYQbD/QUVJb03ZxqLd2hTQgT94xe+nCGYpPp6TIVM4+grdwNHYY8O8v2/Dp9+3oGwjrxpkRUskZXLZUg2svikeiRuI1HM6m26mz2v7vDnddVvzase0BuxEfK2QBefG+wrd+tCh2rUxCU+OFo7y6H+9sbcE3B7thsYSGX+EvsQyFFUXRuOGSRORnKm0nvYDDEa41WMn/drduuvOpQzcF7i58p5AD5A9XZUUUzo3dd+7MyDzi0rrEF46qeh1e/6QR3xzoCpoWqGDSgoII3LUmFdMzVbYTPOEYrH0A7D3eXX3wdHvRU6+e6AhM7n2jkALkyd/OWHTOtIivM1Pk8vHAcaZRjw0fNmD7IQEMT6Io4IKiGNxxVRoykmVeweE4V1U7MPDV/o6LHnvtyK7A3cH4xHi+JDj0l7sK7r30nLh3E2IlYm/h6Ok34ZUPGvDnTTU43aALYO5DW9UNOny4vQV9/RbMyFFBImZ4wwGKQnSkWJSXplybnqTs/2pP857A3oV3CglAXr5/9purl8bfJ5cylDdwWAnB5q9bce/Lp3Gwog8h0n0RVLJagWNVffh4RyuUChbTMpWgaApc4QBsQEmlNJWfpV6ZlqTM+HJX05ZA3oM3CmoTq7gYdDLmbF9ZFLsUsEPAE47aZgMef/MMDp7oC2TWw16z8tQo/k0upqTIOcPh2oS842Db0ZPanXOKi2ENbO65K2hrkOK1GdJpSbknls2Ong3wh8NssWLTliY88Ldq1LUaApn1SaHmDgP+s70ZNEWhME8NmqEHw7j2zGcmKxP0nXHXTVMrN5aUtwVlu3pQAnLrVdOVi+bGnCqaHpEO8Iejod2Au1+oxGc7O0JmOEgoymIl2FfajZ1HO1FUEIUIpYj3sJX0JEU0o2TWRUcyb+w/3hl0b7KgA6R47azI8xYqT83JUycC/OH45Ls2/Pa5U6gXao2AqbXTiC07mhEfI0VehpIzHA6YEjVypUou/XVKquLNnQdbg6rnPagAKf719OiiuarTM6eoYgF+cBgNVvx50xm8/kkjzJO8s28iZDQTfLO/HS2dRpwzKxosQ3OCwxGepJEpFFJ2XVa0+vWSI81BA0nQAPLzn8crLiyMr5yZwx+Olg4Dbnv2FHYe7QlongWNVEV1H7471IFzZsdArRTx6oWPj5HKxApmXaSKfi1YzK2gAOTlO7IlC/OTT82Zyt+sOnyiDzc9eQJ1LUHxPAUBaO824rPvmjEnPxJJGpntJMdZjgkamVwmkdwQY6Vf3V/VOeGO+4QDUlwMOjM2+2TRNP4O+dZdHbj3lSpo9RP+HAW5SG+w4rPvW5CRKENOum2oCtcpwCkJcjWjkFyTv6D61ZISTKi9THu+xL9KIXO/XVgQmQXwg2PTJ4148LXTMJqCtgl90stotOB3zx3Hpo9qeM+PP3dubM4U+dJvJiTjTprQGuSlP8x669JzNJcB3OEgBHj+33V487+Ngc6uIC+152gHdAYLFhdqQNGe4QBstU12qiojKy0q5fOS2glbdHvCAPnLXQX3rl4afx9NU5zhsBKCp94+i/e2tQQ+w4LGpR8qutHVZ8R5czT2ISqApwGPFE0hJ101JylB1bNtZ/2EzHefEEAevX36OauWxP+bz9gqKyH48+tn8HFJW+AzLMgnOl7Zg+Z2HZYXxYGyVSUeBzyyDI20JMVKTYz66x176+sCneeAA1K8NiNyydz4I0ka7qNyCQGefvusAEcYqKK6D83tepy/MB405R4OBzwyCUtFq0VrUlLYv5XsbQvoMOyAO+l5eXH7s1P5zed4+b06bP6mNcA5FeQvffRVPZ5+o4ITHA4zLCddLZuTm3og0HkNaA3y0n2z3rpoYcwFfFur3tgiOOThpiMnuyERs5g7PZrz+K20JEVUZmpk0mc7zn4WqHwGDJDimwuW/XSp5gWWpTjPId+2pwNPvXM2UFkUFGDtOdqOjCQF8jLVHMZv2f6XlaqaEx+t3v31nrrqQOQxIIAUr82QnjtPczg+Rizh00P+u5erJv0iCuGukoNtWFgYi6Q4mUc4QAFilqFUCubylCjFiyWHmkz+zl9AfJCU9Ogvc9LknJfmaWwz4ncvVgqdgJNARqMFtz66H81teo9wOM7lZkUqsvMiA2Jm+b0GeezWmVeuOi/2XnqwJ9XzqNzbnjkpTHKaRNIZLNh/rB2Xr0gDy9Ju4XCYYlPS1JmxMcoTX+2sK/Nn3vwKSPFV08VLzoncExshEtvOeJ7P8dhbZ4RRuZNQbV0GNLbpsfKcJNsJD0PlaZqCUi66OIXQz/pzNqJfTay4XNFHU5K5r5X7yXdt2PJduz+zJCiI9cnXtfjP17Wc55HkZUUo0uclvuvPPPmtBim+JX/hqiVx61mGBhc4alv0uPuFSmGy0yTXnh/acMmyVESoxZzmkWSkKKcmaFSfbdtZ2+SP/PitBinIVH3AdQsCs8WKh147DZ1BcMonu/oHzLjziQMwm+3lw8M8EplUROXnRPltJXm/1CBP3V5w88pFsddy3bxm05YmfLErpFakFORHtXboIBWzmD9TA8DdPBJ7B2KiKio6St701c7aQ77Oi88BKV62jF18vnh7TAQr5gLH2SY9HnytWujvEDRMh8o6cPGSFMRE2fcvcTPyl6KACKXkgqSpmvUlJTU+NUN8bmJFzOl6MTtVquACh5UQFL9xBkajYFoJGi6D0YIHXzxsXzvZ/bB4UBRyMiPkCRT9rK/z4dMa5OU7siVFs2M+VMtZBnAPBwBs/roVH+0QRugKGl0NLQNI0MhRkBflcVg8AKiUojlsl/4ZX85l92kNQqSKDVy3Wu7tN+O1/wiDEAW511/eOIaeXpNHOEAI0pOV4hnnpL3oy/R9VoPcdFOSfNW8xHeVcpbhsgXBSx/U42CFsF6uIPfSGywwWQiWFiUCGBsOYv83MkJcKDGont1bXm/2Rfo+q0HyVbEvJcRIRFz35/jwG8G0EsRN73xcieraPo9wAEByvFyUWyB9zldp+wyQObmq67ju7LThwwahQ1AQZ5nMVjz31nHbgRs4HPOMigpjf1lc7Juy7ZNI1t9R8EB6stS2QpgHOCpqtNh+qMsXyQqaRPri21qUne4eOjEGHADBlFSVNMp0zj2+SNcngORnK2yZ8QAHALz2n0Zh2zNBvEUI8KKjFnEDh+NjQW7Mfb5Id9yAPPGbghUFWcoYLnCUV/fj+yPCSF1B3umrXfUoPdXpEQ4QgtnTYjRP3LPogvGmOW5AEhNFT9isQvdwgBC8s1VYz0qQ9yIEeOP9Ex7hAABQBJmpisfGm+a4ALn1qunKObmquVzgaOww4JuD3SMjESSIhz7bXovGVq1bOBxh86fHLii+aa58POmx4/lyVhL9aKSKpTGYz9HhIAD+/WVbcI+3YiJxzR8W4dJY2p7/wbuxHRPi9KPAHk6G7pVg8HtDX7MfD/5wTtcQp7hhT8/lnCM9q5XAarXCYLTAoDejX2tCZ7cBbZ06NLboUNukRX23BZNhCW+zxYq3PqzEg7cUwh0cAEF0pISOipc9DOCP3qY3LkCy06TX2XPlFg6DyYpPvw/yiVCUGFNmpuK8FGqo4Dse+rCC7ijIQ9cML/hOIA1e7/xsuF1DnEEirjCS4XkkBLpuLSqqenCorBO7j3TicIMJfl/RYIK0eWs1fv/r6ZCImDHhcPxGeWnqX2AcgHjdk/7gr/PTVxRFPcg41tZ1yqjjs+No654ObNsX5E27tAJLVk/FXDXgFQyOY3cF3XE8WkF3vA1da53R4ByWvk2sVITERCXmFGpw2UUpuGZRJBJFFjQ26tAVZqQYjBZMSVMjLyvSLRwggCZKooqKkr61fU9jrzdpee2DaKLYR8Qs7REOgODjkiCvPewicC2Mw9/SwwvzyLf4yMLsdEyc4fDx951rFwCgGUSlxuK6tYX45NUFeOHKWKSJA/ss/a33Pq/2CAcAiMQ0olWyB7xNx2tAspJkl3KBo6ZRj6OVWm+TCbC4F8Zh8LgrzGPB5e77XOB0CbeJsvU02+dIgKLAKFVYuWY2Pnl2Jq7PYUGNctehqP3H2nCmvt8tHI6w7DTFam/T8coHue/GmSn5mXLbdC83cIAAXwa7aeWQVYvvPzyEASWB2eKYnzL0sAEKuctn4NJMenhB5eFvWHva8MGWZjQOTn8Z/CXBiiiIRCzUahGio6RIjlcgM0ECOeVS02CkGWbL3tA4pdEWYJOlJOKBR5WY+tcf8OddupD3TwgBPiupxe3X5cMdHADB9JzI+OJb5ycUbzjQzDcdrwCJU1jvZBnKIxwA8PWB0AFk50c/4HuLGQaT1eleHGLxk8zpuDSDwrC3ODBKLYChY6drrH3t+Pe/yvADx3GmjFSCnLxYnDs/AZedp8G0KBqUGzhsg/mG4KCo4aDQUjWuuHs+KMs+PLzXgFCfpvZFST1uv26qWzgIAcQiGhGRotsBPMQ3Da8ASdRIVnGBo7JuANUNQbOjLydRDAvpqE0XLMT0aCYRXI6J/bSzSeR8DDAiMcRumkcc4BGrBdXlzagqbcJb74hRdFE2/rgmGQVKDJlKdigoJxBG1iL29UEoChSrwOo7Z+FE3X78X8PI10Ao6eSZHlTW9CI7XTUmHI7nnxIn+ym8AMQrHyQnRZo9eDAGHADB9oNhNqxk3P4Gt2Rs86wp0DQNhmEgErGQ0FYc2XYCa35/FO/WmEFG8TcGj8eAw3HMKGNx129SkOiXhxRYbdvV6BEOAoLcTFWeN/HzBuSxW6av0kSJbO8/N3AQAuwpDTNAXJxn4kXL1nhE0TRIVyeefLoCn7YTkEEYhkyr4ccOM8vxN2SGqQpzcXMhhWDuu+Wi7/bb3Ap3cABAYqycffquopV84+cNSISS/pktR+7h6NFaUH4moJsBBUZuWp2Io5awg0JcahHio8JIutrxl7db0GYd7m9QLiA4TzCiHD6JAyRajksvSYDaGtqE/FDRia4+g1s4HGHqKMkavvHzBiQuSrzAExwAsOd4Dywh/vBHiG//xKi1iG/Ufegs3jtrtdUilKtJ5ahFMNzkoobXKsrZyThPZgnpWsRiJdhzuA2e4CAEiI+SLOYbP29A0uLFaZ7gAAgOlIfbfHO+/sZoNY0PZR3A//ZoYfHgbwzCM8KZp0BJY7Ewjwr5F9meo20e4QAIMlLk6Xzj5gVI8Y15MxNixOxg6mPAAQIcOz3ANy8hIH7+xqg1jQ/z0ljRjRbi2d8YDQ4AoBgxcjNlQIgDcqi0A57gAIAkjUz80K1z8vnEzQsQmVx0+WDqbuDo1Vpwtim0mne5iY+/4QADQ878OJ10V5lbBlBn5eBvYDg8Q/4KjcR4ORhCQrpPpPJsL7p7TW7hIISAooBYlfgKPnHzAkQlw0JPcADAsSptqL+URhdvf2Nk/4hPs6M1oZdw8zeGdR7arwVoqFUs6GE+ZeiJEODoCfvazmPA4QhTqtiFfOLmBUhshGiqJzgAgrKacDSvwNPfGMNf8WmGrDBbufkbI+GwhVP20di+dpECrdKqHo9wEBBER0h4mVi8etLjoiQJjtTGgoMAOF0fhs27wCgwYBQ44OK8Ox/7OD8sCxnr6m8Ao/oblGtNYwvW6ywhXXs4dOpMLzzBAQIkREt49Y9yrkHuuDhbkqQRSTzBAUJQFWLDS7iLh78xon/ECRgfiYmRIp7m6m+4mmG246aWgbCYiXiyptcjHABBcrxMVly8jHPFwBmQyCTJPJaBRzj0RivqW8J1A04+/sZo/opvJU2PRCYLjv6GHRbn8VrEjIoqLawY3MspZHW2QQuj0TYKdCw4AEDEUmB7emZxjZczIDKpeb4nOACgvs0Yng46wN/fGM1f8ZkYzJsbDTnN3d9wHa9l1TZje5nF6fuhK4uVoL5Z5xYOR5iIZou4xssZEKmELXBKGY7PznAAQFObkWuUoSfONcVYNY3vskJFJeLqRRLQ7vwN18GMLvtstHxbjR19AGjKv7u5Bkj1LfaJeW7gACFQSOiZXOPkbIspJHS2JzhACJo6whgQDK8JOM0XH3aNj0SJsPCaHCxX0MOGmYxY3HmMyVOgKBBdCzb8uwlaCmCYcMADqG/ReYSDAJDJ2VyucXIGRCahNZ7gAIDG9lCfq+ZOLjA41yLOP8oox74TjZRlM/H0xUqwtDt/w3Z+1PkhxIjdb+zHO/UEFM2ADQ8+0NA64BEOEEAuYTRc4+QMiFRERdhTGhMOAqCjN4wBGeZvACNMKvs1rpOpbHIU0HGIFmHGpbPw8i8TkMi4mFS2Dxjmb7iYVLb/WXDyk1245cMemCkKDMuEhXkFAO1dRo9wAAQSER3BNU7uNYiUVniCA4Sguy8cGg3HkKuz7epvwNXsssvV9OEtGnH5yfj19Xm4bqYMYsoFjhH9G65w2MKJ1YB973yPm/7ejHYANMOGTe0BAN19BniCgwCQyxgF1zi5+yBSRuoJDgDo1fpkY5+g1PD+DXDzN5wKMh88GKkUWVMiMXemBssWJeDcDCnEY5pUcOtvgAK0tXV4+fkDeO3gAEyUDQ4xG/rNu87q6rX5v+7gACFQSBkZ1zi5m1hSSuQJDgDo7g9fQMbyL8b0N1z8AToqDvf8XoZeigFN287Z/k+BFtH2VU3E0MQqkBTFQsyM4k/w8TcIQXdNIz74oAx/+18rWkw2UFmWhYgJJzRs6u4xeYQDAGRSWsQ1Ts6AiGmnl80YcIAQ6Ay+dEiDTHz9DReTh1KosGSJ2uktP4pJNGbh5+ZvwGpBa007du5rwNbvavFN+QD0xHYJzTAQsQzo8GMDADBgsJv3buAAIRAxNGfDkjMgIpH9sbqBA7BtlxW+4udvjGnyOMJdzCRvxlMRsxGnK9qw+3ALdh1rR2llN2p67b+BPU2GZcAydNiC4ZDRZPUIBwEgEnF3BjkDwtKgPMFBAJjC2sLi7m+MMIncgeLGd/Dkb1AiKbILU5EzMwVX9Qyg8kwXKk514nBpO/aXdqFOG8Y1uouMRqtHOEAIRKw/ALGv4+TWUQcJ8805ufsbo/Y/DDOpXMJH+z4ff4OiIY9WY1a0GrPmZWANbLVL9fEmfFlSg4+2N+PMQDj/NnbrZRQ4ho+8BlgeTXe8hrt7ggPh/fxt9+fcBwJgLH9jRP8DRYH0deKDT9vRNPjVoRcZxTCQiBnIFCLERsmRmKjElGQFoqRDNZLb/o1R0qdFUmTPzUT2vCzccls/dn1Rjr++W4397WHcFO8BjhFl2IM4A2IyE0icff9R4SBgmdBfBGBsubwEePob1r4uvPvuCc5Lj4IRISU7BgvnJePHS1OxLFcGyZhmmj0/Y5h5jFyF865ciCWXTseX/zyAR99vQGOYjQoSsTQnOPj4yZzrGrPFCbsx4LBlknPaoacx+zeGm0Tu1qcCbEuPyqTu/kSQSkSQMASt1W3Y8v4PWHfzZ1h8+3688cMAjGQofgxLz40P5Khl5GpcvO4CfPFKES5O9np7mKCUWExxqjmMJu5vcM6AmByRuoEDxDbePuw1aPI4FcTBggoMmTyjvOW5JQDnpUdZloVYTKOnshZP3rsVlz5zBqd0zoszYDC9YZOnnPNEOc0HoWlETZ+GDRvOx7o8EY98BbdEgwt+jg0HIQQmE3cbizMgRgshnuAgIJBJwmjswggNvakH/QHKGYaha4b7A87wjCd5CgxDUP31AVzzQCkOa53Tc3L2KWqMWmQoTxRFgdGk4sHnl+HnGeFRk8gltEc4AMBk5m5jcS7NOr3VNJjgGHAAQIQyjG2sYS1Hrs6yKwzDzaxBuHyUkd7Sctz63Fk0EriYWGNNnhoFblCgo9PwyJPzUMR58EXwKkpt30bLDRwgBP0DVs7eF2dAtDqLzhMcIECkMjzeRqOKp78xwuTB+CuRIRG0fv8DHtuuH7a64nAYMCx/Y8EtzizA+nVxkIR420qkSuQRDgJAqzNxXjSBMyADBqL1BAdAEKEIZxMLPPyNUUwen9UgdhEDvv7nSRwzufE3uDQm0DSmXF6ENUmhvT5WpNLWzOoODoBAr7dyXheXc2nWmyy9nuAAgBh1GJtYrva+J39jtM49H8tSdwbvH7GAePA3RrZ6Db8fSp6IG1ZFI5RXso6OFHmEAwTQm6ycd7zlDoje2uoJDgBIjOE8UDL0xNvfGDmeyuciOpTsbocRnv2NMeEGQKxA5gVTMIOyhuwypEkamUc4AECrN7dyjZOHiWU9PZTO6HCAopAQHWb7DTuLl78xHJ5BE8cP6ijvQO0wZx1OMAzPkyvctsEBtlHJdEIiFicTWEKUkOQ4KQD3cBBCMKCzVnKNk0crlrnUExwAkBQbxjUIX39jhMnjn1yZG3px1szR33CC2zE7cnBxOzoC0zJpWEN0JERKnMwjHABg0JmPco2Te0+6ybLfExwUKKTEicCE7bhqPv6Gs8nj9B1/yDiAln4MpefB34AdjsE/q9X2RygkJchBWUPPWWcZComxEtuBGzhACEy09QDXeLk3OfUrD5otxC0coACJiEFyXHjWIrz33xh2vSPcDyJmDBj4+Bs2IDAIhqMmAeRyUUiu9p6aKINYTHuEw2Cywnosxvc1SPHmMmNTu0nvDg6HrZuTLOUabeiJq7/h3Kw7rLD6SYRygsOzvzHWH8NQcDKkQ0Z56SqPcBAAja06XXFJCedZS7w6LVq6TM2DB2PAQYFCdrgCwsvfGDKxhn3HL/liIZMNpc/J3xjjs15vDslWrOxUhUc4AIKWTmMjn3h5AdLZZz4JwC0cADA1IwzGLYwqfv4G5QSSs4njc4nliI8YvsqiR39j1D8LOjr1IVd7AEB+phKe4AABOvtMJ/jEywuQ/n7LHk9wgKIwc4o8TOc/8/Q3RjV5fC82MQIZLF9/Y5SaxGJAbZMRBP61Bn0tmqIwM1ftEQ4CAm2/aTevuPlc3KcnHwPu4QAAtYJFRmIYmlm8/I1R4PBTqYucFodMhr+/4fpnNXWh9IzVf6agnzQlVQGlbORQd1c4iBXo1Vo/5hM3L0CefOfMsZZOs8kdHA4zozBbzifq0BBPf2O4P+CnjkJKimXnJUBM8/c34GRewWqFqboJB7pseQ+lEXWzp6oBuIcDBGhs1xsf31RawSdu3s+hrsVY6wkOgMK8fCXfqENAfPyN0U0eX4tJzsG1RWLQvP0Nq0sNYsGpXfWotgJUiNnH86dHeoQDAOqadDV84+YNSEuPZY8nOEABiwrUYdhhyNffcILD2QzzWXYkuODXMzDX0T/Gx99w+WzVteKDLwwcDXwAABMFSURBVLttC1qH0O/GMhSKCiJtB27gAAjauoy7+MbPG5DeXuv7nuCgQEGtYDAtK7xas3j7Gy4mFuBLN4RC/PLFePRHKtDg728M/7Oi8atSfNhEQFE0QmlV0hk5aqjkrEc4CAF6+szv8o2fNyDFf6/8rK3bbHYHh6MULC5Q840++MXD3xg5mNFnmUBs0QK89XAOkmnv/A3nz5bOWqx/uxm9AGiG9iHE/tfiwmhOcDS3682PbCz9im/8XvlilY2GKsA9HACF8+dFehN98IqPvzHMxBoCadxipJi35kJ8/FwhZsqdag5e/oZTy5W5H/95/gC2tBNQFAM2lKoPAOfPi/YIB0Bwum6AV/+HQ17NbmpuN22hKGqq7Wh0OEAB2ckyZCVLUR0220J76N8Yxd8YvnjCOMRKUbA0HzevnYmf5EhAwwpi5e5jjN7vocPOjd/hoe/1IBQFNsQ208lNUyAjWQ5PcIAAjV0GXs27DnkFSG8fecVkJn8QsfSYcDjOrSiKwsaPm7xJJgjlxt8Y0bLlCodTOBcxLGKTozBjejzmz0nBhecmIT/GPud6PFDYaxursR/bXv0O9/y3GzqKAsOG3mY6KxZqwAUOg8mCDj31V2/S8Pq99tFTs1oLc+Qad3AAFM42GXDFA2UgZOy4gkK0ElfcNg0ro+kRBd1+gLiceEyPpd2YVBjF5BoChej7cOBwD/po+5t68Cu2eERiBlK5FDFRMsTHyaAQ0Xb+bOG8+jfcXKNrqMcL6/fhjWMGEIoCzTr2IgkdURTwyfPzkBIndQsHAcHRk73NV963P9GbdLyeQF7TYtgyK0dxozs4ACAjSYrCbCWOVPZ7m1RgRIswZWYClifbX6Ou/sZo9zfC33AKd/6+I0ymxoJzI8aIH279GdcawJvaw9rfg68+PIqn369Dtc4GJhOim+nMy4/gBAcIUNNo+MjbdLwGpLPTUmw0W28Ui2iMBYfjTXz5+bHBDwjc+BNe+RtjjNdyAmhMuJzhALwGwgFTf1MrPvv8JN7+bx3KewlA2TbTYVkmpJp0nfXTZQmc4DAaLejS4ylv0/EakCfeOdUwZ1ph86wcVYI7OEBRWFEUjWf/WYdebZCvKu7OTPLW36DGgmuM+B3hfEwql89WiwntNW34fm89vvq+FjvKtdBa7UnRNFiWsW0hHaKKULJYPj/aIxwAQWl1f+MTrx1t8Datca3Rc7rO9K9ZufidOzgAQCpisOo8Df65tXn0iIJG1Chvee/8DV4gjQIKJyCsBOaBATQ09OD02W6cqu5E2YkOHCnvRHWPxVZG7HEyLA2GocH4ujd/ArRqaTxslgvgDg4CoLre8I/xpDUuQA609j68vEd9d0ykiB4LDkcBuv5HCXjvqxaYzUHqrVv12PlpBXRK2DYBcgIewDCTZ6iAD4UNXe0cRjn9Q7lEOTxs6KMdDtj9BosVRpMFRoMZA1ojerUG9PYY0NE1gNZ2Hdp6zRhWL9uBoBkaFE2DoSnQYQCFQyxL4ZqLHP62ezg6e0zWM2fbHx9XeuP58ubN9bofTY0+sHxO5AJgbDgACvExYqyYH42tezrGk6T/ZNVh15YT2Gkxw2CyBs+kIRcWh3wb+/NmaLBOPfk05cse++DTyoUaJMRI4AkOEODoqd69r3/aODCe9Ma9DGJ9q/lBQvA1TY8Nh+OtdsMlifjf3o6gbvKlGBbSMF5eOJRFUcB1P04CFzgIITjbZHpovGmOu2vokY3l35RWD7QDcAsHYJsWed6sqPEmKWiSatncGOSmyT3CARCUVvW3PvlW2Y7xpumTvtPyM9pnPcHhCL/9Z6lhZRMLCoxoisK6y1M4wQEClNb0Pe2TdH0RyR9frfjLmQa9zhMcoIDcVAXOL4r2RbKCJpEuXBiDnFQFuMBxun5A98iGihd8ka7PRt8crep/xxMcjnN3XJ0GdjJs1SbIJxKxNH5zeRq4wEFAUFqpfdNXafsMkIrKznuaOowmT3CAopCRJMOaFV4NjRE0CfWzlQlIS5BwgqOpzWAq6+u711dp+wyQ1z9tHNhb2vMPT3DY/qFw81VpiFKF5xKlgnynaLUIv7oshRMcIMCBst433n67xmfzK3w6wLmnltxW36o3eoIDAFRyFrf/LN2XyQsKQ912TRqUUoYTHLUtekPlLslvfZm+TwEp3lxm3Hu8dyMAt3A4/JQrL0jAnKlhOC1XkE80N1+Nn5wbxwkOgOBQRe+rrx86ZPJlHnw+RaYv8vhvKxt0Wi4LO9A0hUdvzrOtyi1IkJPEIhr3/yILoLjBUVmn69PHlPnM93DI533GJSUgBenq1unZqlWO9ZXGnrtOIVIlAg0K+0q7fZ0VQSGsm69IxdJ5UZzgsBCCr3e331L8fMcPvs6HX17d971atmlfeW8N4B4OR/ivfpqKwjzB1BJkU2GuCtdfksgJDgLgYGlv1SObTv7dH3nxm21zoqb/ar3RsZD+2HAAAMvSePrOaYPrqwqavFLKGDx6c7Z9WL5nOHR6CzlR03+Vv/LjtxK540Bb4/SsyFm56cqp7uBw+CgRShZxsVJ8s6/dX1kSFAL607opmJWrBhc4QAi+3te5+aHXTni1IAMX+dU7bt6tvupUnbbPExyOc5ctTcAVFyb5M0uCglhXXBCPixbGgiscVQ26/orvSq/3Z578CkhxSYl595HetWYLgSc4HOceWpeLgmzBH5lsmj5FibvXpIMrHCYzwZ7j/de/fgg+bdZ1ld+N/h0HWipm5EUtz05RZHiCAwBYhsa5c2Lw6bfN0BtCcTMwQXwVrRZhw/3ToFYwnOAAgB0Hu7/54yulD/o7bwHpgKg70/ajylptHwC3cDhMscRYGV75YyHEYsFpD3dJRDTW35mHuCgRZzhO1Q70tp+x/DgQ+QtICSw50m2ekhK9Oy9L8QuxfTkNd9NzQQFJGhmykuTYtrc1qGcgCvJeFAUU3zQFiwsjOMPRr7OQr/f3rXjsX2VnApHHgL2idxxsPpubHpmUn6Wc6wkORy98droKEhGDPUeDdB67oHHprjVpWL0sjjMchABf7u7c8KeNZa8FKo8BtWG27mz8bOFMzZq0RFks1xmIc6dHwWC04nCF0NMeTlqzMhE3rU7hBcfu4z3ldzxz/NJA5jPgg6AO7W9aUFk3oAU8w+Goae65IQ/XXpIW6KwK8pOuujABd1+bxguO0w26/iOn+xcFOq8B94J3lXcZstNU26ckq34lldKUJzgAChQNnDdHg+Z2HSqq+wKdZUE+1E/O0+D+X2TaXowc4ejuM1lLDncueebtyoD4Hc6akGai7ftb6tOTlP35WeqVDEN5HBZPgQJFU1heFIeuXhOOV/ZMRLYFjVNXr0jgDYfRZMHnuzru+vPrJ73a32O8mrB21K/2NO/JSomImZalXuC8wrm7XasoisayojgQAhwo7ZyQfAvyTjdckoTfrknjBQchBFt3dW18cEP5nyYq3xPa0bB1Z8PWmdlRy7PTVRmAeziczy0sjIFEzGLPUWHcVrCLpijcuSYNN16WzMvnAAi2H+z65u4XSq+ekIzbNeE9cbOW1r+j74y7Lj1JYV8LyD0cDqd+7vRoZKepsH1/KywWoaMkGCUR0Xj8lhxctlTDG469x3tP/ubJY0UTknEnTTggJSUg09TKjUROr02Ok0dwgQOw1TY56SosLIzF9n3N0BmCfGuFSaZotQgv/T4fC2eoecNxsKyv/uD+/mn7qzon/EedcEAAoKS8zZKXErNRJMaNiRq5kgsc9g9IipNh1fIUHK7oRHN7uGwWGtrKz1Dir3/Ix5QUGW84SqsH2ndX9Oa98p+qcS067SsFBSAAUHKoyZSSqnxTIWXXxcdIZVzgsJ2loFSI8NPzU9HaZUB5ldDCNZFavTwOT92eg0glyxuO8mptR+mejpz1m6uD5kcMGkAAYOfBVn1iQtRGmQRrEzUyJRc4HOEMS2PFoiSkJiqw54c2GE3CSOBASilj8PC6KVh7aTIYBrzhOFbZ13LoeHve45vPBtWQiaACBAB2HWoyaKTGDbREfn1akjySCxzOHY35UyKw6vw0lFZ2obFVNwF3MPk0fYoSr9w3DXPyuM8EHPqH4HBFf+2OfS25L31UH3S9wEEHCADsLe815yvlG4wi5mdpSfIYrnA4zqlVIqxekQGJmMHBsg6hlctPEotp3Hx5Kh66MQuRChbewLG3tOdEdZlp2nMfVwelA0l5vmRi9ebj5/1n1fLk1YNLCHmAw3XYytlGLR58/hB2/9A6AbkPX83OU+OBX2YhPUnqAoD9fxw6AXcc7Pr2tvXHl01E/rkqKGsQZ/13+9n3czOjNVNSlUUsQ/OCAwCi1BJcflEGEjRyHKnogE4/4S2HIa1otQi/vyETv7suE5Fq1is4jCYLPv++82/3vFjqt9VIfKWgBwQAPt1x9ovkOEV3erLqIpmEpbjCQTn9W5AXhTWXZsNkseL4yS5YrYLZxUcilsa1P0rC03fmYsYUFbiueDjawMPPd3Xc9dDfKh6ZkBvhqaA3sZz1l/vmFS2dm/xNboZaCYATHKM1F1fX9uG5t47ji29rhdmKHkRTFC5YEIObr0jjvAXBWHBU1Wm13x/rvnD921V7J+RmvFBIAQIAxXcsUE/NUu266JzEAm/gcA4/dbYXL/79OL4oEUAZTUUFkbhrTTpy07jt7OQOjl3Huiv3n6id//rmrqDp4+CikAPEodcePW/jJctS1illIkept//DDQ7nxSPKKjvx+nsn8PmOWpjMk7v/hGUpXLRQg+t/nMR5w0x3cNjmkHdtuP+Vstsn4HbGrZAFBACe/cOCc8+dk/h53pRINeAdHCBDP2hT6wDe+ugUPviiGj19xkDdRlAoQsli1dJ4rFmZiLhobvuQe4LjxNmBvu+P9V/63D8qvgv8HflGIQ0IABSvXSbNnsluXXlO8jIRS8NbOIChH9pgNGPrt/V47/Nq7D/WFrbmF0UBc6dGYPXyBCyfHw2xyDEDe3xwmMwE3x7u/qb9jOXHxZvLQvpNE/KAOPTM/eeuXjIv/p2pWREeh6gAGBOOoR/eFlbT0I9Pd9Tii5J6nDwTUubzmMpJU+CihRpctCgWKXFSp3sHxgtHZZ2ub29Z/8+f2FS+JdD35Q+FDSAAcNNNc0WLsyPf/9GSlJ/KpDbfZDxwuIZVne3Dlzsb8N3+Zhw50QlziPTQswyFGTlqLC6MxgXzY5CeJMPIQg6MBw6d3kJKDnV/2HP4+LXFJTAH+h79pbACxKEXHlgyZ1p21HsLZ8fnOE/nBeA1HM4FBwC6+43YfagVe4+24WBpB6pq+4Kmb4WmKExJkWPW1AgUFUSiqCASKjk7dO8+hMNCCPaX9tYcPd1z1Qv/V30wwLfqd4UlIA699Kelv1w8J/6lvMxIFQCfwTFaWF+/GYfL21FW1YuTZ3pwsqYXZxu0sPgZGpahkJooQ06qEjlpCuRnKlGYFzG41wpxOFB+gONUna5/37Hu3z7+1kmf7UsebAprQACguBh0AnX+84vnxd+SnqwU+wOOwYJjP3SEGU0W1DUNoL5Zi4ZWHepbBtDRbUR3nwFdvUb09JrQN2CG2UJgsVih1dmGwShkDBiGAsvQUMlZRKhEiFSJEKkUISZKjCSNFEkaKZI1UiTFSW3OtQsAttvxDxy1LXrDoYreV/UxZfcWFyOs28XDHhCHiouXsfEUtX7J/PjbUhIVYn/D4fjSUCF1gXJY2PDCOCw/TtcMXTLG9/0MR0uH0Xywove93jrrr0O9dYqrJg0gDt191SJZboH0ufkzYtZmp6tlwQzHSJPQ6XMA4ahuGBg4eqrvrYo+7b1vv10TlMPS/aVJB4izXnrwnN/PyIu5b1Z+jGbY4LsggGOiaw5CCI5X9beVn9E+/ae/lT3P47GGlSY1IA798ZaiJTlpij8tmqVZHhcjYyYzHJ09Juuxyr79tc3GBx/fVLad77MMNwmAOKn4prnyyDjZn/IzIm6YmReZKBLTkwIOg8mCstP9jdX1hn+c7O99dLKZUe4kADKGHr97UXK0WvRQdppi9fScyHhbS1H4wGEwWVBR3d98plH/cdeA6bEnX69oGsfjClsJgHBQ8e/mxkaJRb+KjpJePTUrcmZ6olwUinC0dOrNp+sGKpvbTf9r15Ln1286Vu+DxxPWEgDxQk//duHF6kjRNfHRknMykuVpyXEyMQCv4fBXa1VDm95Y16Q729Zl3Nk3YH7v4Q2l23z9LMJdAiA+UPEdC6ZFKajVCqVocUyEeGp8tCQxJV4mY1n74/VzzWEwWdHYqtO1dJqaOvuMFX29ht2dOny8flNphf/uenJIAMRPKi5extJd3bMlrGi+QkLPlMnZXJmY0UjEjFoupVRKGSuVSihWImYZlgHF0BRkUoYCIRgwWIjZbIXFTIjeYLboDFaz1mDSDWit/XqTtWdAb2kfGDCf0prMx6xGsm9q+9QjV2/eLKxGIUiQIEGCBAkSJEiQIEGCBAkSJEiQIEGCBAkSJEiQIEGCBAnys/4fznNHmxEWBQsAAAAASUVORK5CYII=" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="B"></div>
+    <span class="nav-title">Barolo Capital</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="portfolio_analytics.html" class="active">Portfolio</a>
+    <a href="pools.html">Pools &amp; DeFi</a>
+    <a href="ferramentas.html">Ferramentas</a>
+    <a href="pools.html" style="display:none">_ & DeFi</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
+    <span id="brlRateBadge" style="display:none;font-size:8px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;">R$ 5.85</span>
+    <button class="btn-sm" onclick="toggleTheme()">◑ Tema</button>
+    <button class="btn-sm" onclick="toggleHide()" id="hideBtn">◎ Ocultar</button>
+    <button class="btn-sm primary" onclick="window.print()">↓ PDF</button>
+  </div>
+</nav>
+
+<div class="container" id="mainContent" style="display:none;">
+
+<!-- ══ ALOCAÇÃO ATUAL (topo) ══ -->
+<div class="section-label">Alocação Atual</div>
+<div class="card" style="margin-bottom:14px;padding:14px 16px;">
+  <div class="alloc-wrap" style="gap:12px;align-items:flex-start;">
+    <div style="flex-shrink:0;">
+      <canvas id="allocChart" width="150" height="150"></canvas>
+    </div>
+    <div class="alloc-legend" id="allocLegend" style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-content:start;"></div>
+  </div>
+</div>
+
+<!-- ══ PATRIMÔNIO LÍQUIDO ══ -->
+<div class="section-label">Visão Patrimonial</div>
+<div class="hero-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+  <div>
+    <div class="hero-label">◈ PATRIMÔNIO LÍQUIDO TOTAL</div>
+    <div class="hero-value sensitive" id="s-net-total">—</div>
+    <div class="hero-sub" id="s-net-sub">CoinGecko + LP − Dívidas</div>
+  </div>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">VARIAÇÃO 24h</div>
+      <div class="hero-meta-val sensitive" id="s-24h">—</div>
+      <div style="font-size:8px;color:var(--muted);" id="s-24h-sub">—</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">P&L TOTAL</div>
+      <div class="hero-meta-val sensitive" id="s-pnl">—</div>
+      <div style="font-size:8px;color:var(--muted);" id="s-pnl-sub">—</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">TOTAL INVESTIDO</div>
+      <div class="hero-meta-val acc sensitive" id="s-invested">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
+  <div class="stat-card">
+    <div class="stat-label">SPOT</div>
+    <div class="stat-value acc sensitive" id="s-spot">—</div>
+    <div class="stat-sub sensitive" id="s-spot-sub">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">POOLS LP</div>
+    <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$346.94</div>
+    <div class="stat-sub">WETH/USDC · Uniswap V3</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">DÍVIDAS</div>
+    <div class="stat-value neg sensitive" id="s-debt">—</div>
+    <div class="stat-sub">Aave USDC + Kamino USDC</div>
+  </div>
+  <div class="stat-card" style="border-color:rgba(63,185,80,0.3);background:linear-gradient(135deg,var(--surface),rgba(63,185,80,0.03));">
+    <div class="stat-label" style="color:var(--green);">PATRIMÔNIO LÍQUIDO</div>
+    <div class="stat-value pos sensitive" id="s-net-card">—</div>
+    <div class="stat-sub">Spot + LP − Dívidas</div>
+  </div>
+</div>
+
+
+
+
+
+<!-- ══ PERFORMANCE CHART ══ -->
+<div class="section-label">Curva de Patrimônio & Benchmark</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
+
+<div class="card" style="margin-bottom:0;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+    <div class="chart-title" style="margin-bottom:0;">📈 Desempenho Histórico</div>
+    <div class="perf-controls">
+      <button class="period-btn" onclick="setPeriod('24h')">24h</button>
+      <button class="period-btn" onclick="setPeriod('7d')">7D</button>
+      <button class="period-btn" onclick="setPeriod('3m')">3M</button>
+      <button class="period-btn" onclick="setPeriod('1a')">1A</button>
+      <button class="period-btn active" onclick="setPeriod('all')">TOTAL</button>
+    </div>
+  </div>
+  <canvas id="perfChart" style="max-height:260px;"></canvas>
+  <div id="perfStats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px;"></div>
+</div>
+
+<!-- ══ BENCHMARK ══ -->
+<div class="card" style="margin-bottom:0;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+    <div class="chart-title" style="margin-bottom:0;">📊 Portfólio vs BTC vs ETH vs S&P 500 vs CDI vs Ibovespa</div>
+    <span class="badge badge-gray">BASE 100 · Jan/2022</span>
+  </div>
+  <canvas id="benchmarkChart" style="max-height:260px;"></canvas>
+</div>
+
+</div>
+
+<!-- ══ RETORNO ANUAL ══ -->
+<div class="section-label">Retorno Anual</div>
+<div class="card" style="margin-bottom:12px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+    <div class="chart-title" style="margin-bottom:0;">📅 Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
+    <div style="display:flex;gap:4px;">
+      <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">▌ Barras</button>
+      <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">∿ Linha</button>
+    </div>
+  </div>
+  <canvas id="annualReturn" style="max-height:280px;"></canvas>
+</div>
+
+<!-- ══ HEATMAP RETORNO MENSAL ══ -->
+<div class="section-label">Heatmap de Retorno Mensal</div>
+<div class="card" style="margin-bottom:12px;padding:18px 20px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+    <div class="chart-title" style="margin-bottom:0;">🟩 Retorno Mês a Mês — Portfólio</div>
+    <div style="display:flex;align-items:center;gap:12px;font-size:9px;color:var(--muted);">
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#b92d2d;border-radius:2px;display:inline-block;"></span>Queda forte</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--border);border-radius:2px;display:inline-block;"></span>Neutro</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#2a7c3f;border-radius:2px;display:inline-block;"></span>Alta forte</span>
+    </div>
+  </div>
+  <div id="heatmapGrid" style="overflow-x:auto;"></div>
+</div>
+
+<!-- ══ DRAWDOWN HISTÓRICO ══ -->
+<div class="section-label">Drawdown Histórico</div>
+<div class="card" style="margin-bottom:12px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+    <div class="chart-title" style="margin-bottom:0;">📉 Drawdown do Pico — Portfólio Total (2022–2026)</div>
+    <div id="ddStats" style="display:flex;gap:12px;font-size:9px;"></div>
+  </div>
+  <canvas id="drawdownChart" style="max-height:220px;"></canvas>
+</div>
+
+<!-- ══ ANÁLISE POR ATIVO ══ -->
+<div class="section-label">Análise por Ativo</div>
+<div class="card" style="padding:0;overflow-x:auto;margin-bottom:12px;">
+  <table class="asset-table">
+    <thead>
+      <tr>
+        <th>Ativo</th>
+        <th>Qtd</th>
+        <th>Preço</th>
+        <th>Valor</th>
+        <th>Custo Total</th>
+        <th>Preço Médio</th>
+        <th>P&L</th>
+        <th>ROI</th>
+        <th>24h</th>
+        <th>7d Spark</th>
+        <th>%</th>
+      </tr>
+    </thead>
+    <tbody id="assetTable"></tbody>
+  </table>
+</div>
+
+<!-- ══ P&L + ROI CHARTS ══ -->
+<div class="charts-row" style="margin-bottom:12px;">
+  <div class="card">
+    <div class="chart-title">📉 P&L por Ativo</div>
+    <canvas id="pnlByAsset"></canvas>
+  </div>
+  <div class="card">
+    <div class="chart-title">🎯 ROI por Ativo</div>
+    <canvas id="roiByAsset"></canvas>
+  </div>
+</div>
+
+<!-- ══ BREAKDOWN P&L POR ORIGEM ══ -->
+<div class="section-label">Análise de P&L por Origem</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
+  <div class="card" style="margin-bottom:0;">
+    <div class="chart-title" style="margin-bottom:14px;">🧩 P&L por Origem</div>
+    <!-- KPI total bar -->
+    <div id="pnlOriginKpis" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;"></div>
+    <canvas id="pnlOriginChart" style="max-height:180px;"></canvas>
+  </div>
+  <div class="card" style="margin-bottom:0;">
+    <div class="chart-title">🫧 Risco × Retorno × Peso</div>
+    <canvas id="riskBubbleChart" style="max-height:280px;"></canvas>
+  </div>
+</div>
+
+<!-- ══ DCA TRACKING ══ -->
+<div class="section-label">DCA Tracking</div>
+<div class="card" style="margin-bottom:12px;">
+  <div class="chart-title">💰 Investido vs Valor de Mercado</div>
+  <canvas id="dcaTracking" style="max-height:210px;"></canvas>
+</div>
+
+<!-- ══ COMPOSIÇÃO DÍVIDA VS COLATERAL ══ -->
+<div class="section-label">Composição DeFi — Colateral vs Dívida</div>
+<div class="card" style="margin-bottom:12px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+    <div class="chart-title" style="margin-bottom:0;">🏦 Evolução Mensal · Colateral Alocado vs Dívida Ativa</div>
+    <div style="display:flex;gap:4px;">
+      <button class="chart-type-btn active" id="debtBarBtn" onclick="setDebtView('stacked')">▌ Empilhado</button>
+      <button class="chart-type-btn" id="debtLineBtn" onclick="setDebtView('ratio')">∿ Ratio HF/LTV</button>
+    </div>
+  </div>
+  <canvas id="debtChart" style="max-height:240px;"></canvas>
+</div>
+
+<!-- ══ MÉTRICAS ══ -->
+<div class="section-label">Métricas</div>
+<div class="metrics-grid">
+  <div class="metric-card"><div class="metric-icon">📊</div><div class="metric-name">SHARPE RATIO</div><div class="metric-val neg">−1.42</div><div class="metric-desc">Retorno/risco inadequado</div></div>
+  <div class="metric-card"><div class="metric-icon">🌊</div><div class="metric-name">VOLATILIDADE</div><div class="metric-val warn">87%</div><div class="metric-desc">Anualizada estimada</div></div>
+  <div class="metric-card"><div class="metric-icon">📉</div><div class="metric-name">MAX DRAWDOWN</div><div class="metric-val neg">−83%</div><div class="metric-desc">Pico → fundo</div></div>
+  <div class="metric-card"><div class="metric-icon">🏦</div><div class="metric-name">DEFI YIELD/ANO</div><div class="metric-val pos">~$180</div><div class="metric-desc">Aave + Kamino líquido</div></div>
+</div>
+
+<footer style="text-align:center;padding:20px 0 40px;font-size:9px;color:var(--muted);letter-spacing:2px;border-top:1px solid var(--border);margin-top:20px;">
+  Barolo Capital · GESTÃO ATIVA · MAR 2026
+</footer>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// DADOS DO PORTFÓLIO (atualizados 06/Mar/2026)
+// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+// 📋 BLOCO DE ATUALIZAÇÃO SEMANAL — Edite este bloco toda semana
+// Copie e cole os dados novos aqui, o restante é calculado automaticamente
+// ══════════════════════════════════════════════════════════════════
+const WEEKLY_UPDATE = {
+  // ── Data da atualização ──
+  date: '10/Mar/2026',
+
+  // ── Saldos de carteira (quantidades) ──
+  holdings: {
+    ETH:   2.084106,
+    SOL:   14.87492676,
+    ADA:   375.245,
+    RDNT:  7290.46,
+    EIGEN: 153.36298802,
+    POL:   218,
+    ZK:    876,
+    XAI:   692.86,
+    ZETA:  51.1434,
+    SCR:   0.0018,
+    USDT:  1651.49,
+    PYUSD: 90.04,
+  },
+
+  // ── DeFi: posições abertas ──
+  defi: {
+    aave: {
+      ethSupplied:   1.87984935,
+      usdtSupplied:  1651.49,
+      usdcBorrowed:  745.94,
+      healthFactor:  6.00,
+    },
+    kamino: {
+      solSupplied:   19.4,
+      pyusdSupplied: 90.04,
+      usdcBorrowed:  802.91,
+      ltv:           44.93,
+    },
+    uniswapLP: {
+      capital:   346.94,
+      fees:      1.01,
+      il:        0,
+      nft:       '#4694262',
+      pair:      'WETH/USDC 0.3%',
+      range:     'ETH $2,450–$3,100',
+    },
+  },
+
+  // ── Custos totais investidos por ativo ──
+  invested: {
+    ETH:   4433.16,
+    SOL:   2201.68,
+    ADA:   530.95,
+    RDNT:  0,
+    EIGEN: 45.87,
+    POL:   143.88,
+    ZK:    0,
+    XAI:   164.52,
+    ZETA:  0,
+    SCR:   0,
+    USDT:  1651.49,
+    PYUSD: 90.04,
+  },
+
+  // ── Retornos mensais do portfólio (%) — adicione o mês atual ──
+  // Formato: [Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez]
+  // null = mês ainda não encerrou
+  monthlyReturns: {
+    2022: [-22.0, -6.4, +12.0, -18.5, -28.0, -34.0, +58.0, -14.0, -24.0, +19.0, -18.0, +4.0],
+    2023: [+28.0, -2.5, +6.0,  +2.8,  +1.5,  +4.2,  -1.8,  -9.0,  +4.2, +11.2, +14.5, +18.0],
+    2024: [+1.5, +42.0, +6.0, -14.0, -22.0,  +6.2,  +4.0, -18.0, +10.0,  -3.0, +44.0,  +8.5],
+    2025: [+28.0,-12.0, +5.0,  -9.0, -18.0,  -6.0, +12.0,  -8.0,  +4.0,  +6.0,  +4.5,  +6.0],
+    2026: [-18.0,-22.0, null,  null,  null,  null,  null,  null,  null,  null,  null,  null],
+  },
+
+  // ── P&L por origem (manual — baseado no diário) ──
+  pnlOrigin: {
+    //           ETH    SOL    ADA   RDNT  EIGEN   POL    ZK   XAI
+    spot:    [-2205, -1498, -422,    0,   -15,  -120,    0,  -95],
+    defiFees:[    0,     0,    0,    0,     0,     0,    0,    0],  // só DeFi Fees abaixo
+    defiIL:  [    0,     0,    0,    0,     0,     0,    0,    0],  // só IL abaixo
+    airdrops:[    0,     0,    0,   40,     0,     0,   17,    0],
+    // Totais DeFi (pooled — não por ativo individual)
+    totalFees: 1977,    // taxas acumuladas em pools (−20 PEANUT: scam, sem taxas reais)
+    totalIL:  -2143,    // IL acumulado em pools (GRIFT: cap. real $1.170 → IL $1.850; PEANUT scam: IL $243)
+  },
+
+  // ── Curva de patrimônio ($) — adicione o mês atual ──
+  // Formato: [valor do portfólio total em USD]
+  wealthCurve: {
+    labels: ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26'],
+    values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,10395,11610,10857,9511,7376,5995],
+    invested:[1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418],
+  },
+
+  // ── Benchmark (base 100 = Jan/2022) ──
+  benchmark: {
+    labels: ['Jan/22','Mai/22','Set/22','Jan/23','Mai/23','Set/23','Jan/24','Mai/24','Set/24','Jan/25','Mai/25','Set/25','Jan/26','Mar/26'],
+    portfolio: [100,  54,  74, 131, 196, 229, 347, 602, 608, 1007, 947, 1264, 1116, 683],
+    btc:       [100,  72,  56, 100, 119, 117, 205, 222, 216,  285, 210, 185,  256, 210],
+    eth:       [100,  55,  51,  91, 112, 103, 171, 176, 165,  217, 185, 164,  200, 135],
+    sp500:     [100,  84,  88,  97, 104, 107, 118, 120, 121,  128, 130, 128,  126, 120],
+    cdi:       [100, 107, 113, 120, 128, 136, 143, 150, 157,  165, 172, 179,  186, 190],
+    ibov:      [100,  91,  95,  96,  97,  98, 105, 106, 108,  115, 110, 108,  112, 105],
+  },
+};
+
+// ── applyUpdate() é chamado depois que todos os dados estão declarados ──
+// ══════════════════════════════════════════════════════════════════
+
+const PORTFOLIO_DATA = [
+  { cgId:'ethereum',        ticker:'ETH',   name:'Ethereum',    qty:2.084106,      invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://assets.coingecko.com/coins/images/279/small/ethereum.png' },
+  { cgId:'solana',          ticker:'SOL',   name:'Solana',      qty:14.87492676,   invested:2201.68, avgCost:146.97,  color:'#D98B3A', logo:'https://assets.coingecko.com/coins/images/4128/small/solana.png' },
+  { cgId:'cardano',         ticker:'ADA',   name:'Cardano',     qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#E8C53D', logo:'https://assets.coingecko.com/coins/images/975/small/cardano.png' },
+  { cgId:'radiant-capital', ticker:'RDNT',  name:'Radiant',     qty:7290.46,       invested:0,       avgCost:null,    color:'#00E5FF', logo:'https://assets.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
+  { cgId:'eigenlayer',      ticker:'EIGEN', name:'EigenLayer',  qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#9370DB', logo:'https://assets.coingecko.com/coins/images/33373/small/eigen.png' },
+  { cgId:'matic-network',   ticker:'POL',   name:'POL',         qty:218,           invested:143.88,  avgCost:0.66,    color:'#8247E5', logo:'https://assets.coingecko.com/coins/images/32440/small/polygon.png' },
+  { cgId:'zksync',          ticker:'ZK',    name:'ZKsync',      qty:876,           invested:0,       avgCost:null,    color:'#D45B8E', logo:'https://assets.coingecko.com/coins/images/38043/small/zksync.jpg' },
+  { cgId:'xai-blockchain',  ticker:'XAI',   name:'Xai',         qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#FF6B35', logo:'https://assets.coingecko.com/coins/images/34258/small/xai.png' },
+  { cgId:'zetachain',       ticker:'ZETA',  name:'ZetaChain',   qty:51.1434,       invested:0,       avgCost:null,    color:'#C8A87C', logo:'https://assets.coingecko.com/coins/images/26718/thumb/zetachain.jpg' },
+  { cgId:'scroll-token',    ticker:'SCR',   name:'Scroll',      qty:0.0018,        invested:0,       avgCost:null,    color:'#F5C518', logo:'https://assets.coingecko.com/coins/images/33111/thumb/symbol.png' },
+  { cgId:'tether',          ticker:'USDT',  name:'Tether USD',  qty:1652.03,       invested:1652.03, avgCost:1,       color:'#26A17B', logo:'https://assets.coingecko.com/coins/images/325/small/Tether.png', isStable:true },
+  { cgId:'paypal-usd',      ticker:'PYUSD', name:'PayPal USD',  qty:90.04,         invested:90.04,   avgCost:1,       color:'#1DA1F2', logo:'https://assets.coingecko.com/coins/images/31212/thumb/PYUSD.png', isStable:true },
+];
+const PORTFOLIO = PORTFOLIO_DATA; // alias
+
+const FALLBACK_PRICES = {
+  // Preços dos prints (Mar/2026) — atualizados ao vivo pelo CoinGecko
+  'ethereum':2055.88,'solana':86.80,'cardano':0.2894,'eigenlayer':0.2007,
+  'matic-network':0.11,'xai-blockchain':0.009537,'zksync':0.01935,
+  'radiant-capital':0.005435,'zetachain':0.0525,'scroll-token':0.04275,
+  'tether':1,'paypal-usd':1
+};
+const FALLBACK_24H = {
+  'ethereum':6.9,'solana':4.5,'cardano':6.9,'eigenlayer':3.8,
+  'matic-network':-3.2,'xai-blockchain':-3.2,'zksync':0.5,
+  'radiant-capital':2.9,'zetachain':-0.7,'scroll-token':2.7,'tether':0,'paypal-usd':0
+};
+
+const LP_POOLED   = 346.94;
+const AAVE_DEBT   = 745.94;
+const KAMINO_DEBT = 802.91;
+const TOTAL_DEBT  = AAVE_DEBT + KAMINO_DEBT;
+const TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
+
+let liveData = {};
+let ethPrice = 2062.68;
+let solPrice  = 87.73;
+
+// ──────────────────────────────────────────────────
+// PRICE HELPERS
+// ──────────────────────────────────────────────────
+function getPrice(cgId){ return liveData[cgId]?.usd || FALLBACK_PRICES[cgId] || 1; }
+function get24h(cgId)  { return liveData[cgId]?.usd_24h_change ?? FALLBACK_24H[cgId] ?? 0; }
+
+function buildEnriched(){
+  return PORTFOLIO.map(a=>{
+    const price = getPrice(a.cgId);
+    const val   = a.qty * price;
+    const pnl   = a.isStable ? 0 : val - a.invested;
+    const roi   = a.invested > 0 ? (pnl/a.invested)*100 : null;
+    return { ...a, price, currentValue:val, pnl, roi, change24h:get24h(a.cgId) };
+  });
+}
+
+// ──────────────────────────────────────────────────
+// FETCH COINGECKO
+// ──────────────────────────────────────────────────
+async function fetchPrices(){
+  try {
+    const ids = PORTFOLIO.map(a=>a.cgId).join(',');
+    // Use /coins/markets — returns price AND image URL in one call
+    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error();
+    const arr = await r.json();
+    if(!arr || !arr.length || !arr[0].current_price) throw new Error();
+    // Build liveData map and update logos
+    arr.forEach(coin => {
+      liveData[coin.id] = {
+        usd: coin.current_price,
+        usd_24h_change: coin.price_change_percentage_24h || 0,
+      };
+      // Update logo URL from CoinGecko live response
+      const asset = PORTFOLIO_DATA.find(a => a.cgId === coin.id);
+      if (asset && coin.image) asset.logo = coin.image;
+    });
+    ethPrice = getPrice('ethereum');
+    solPrice  = getPrice('solana');
+    return true;
+  } catch(e) {
+    PORTFOLIO.forEach(a=>{ liveData[a.cgId]={usd:FALLBACK_PRICES[a.cgId]||1, usd_24h_change:FALLBACK_24H[a.cgId]||0}; });
+    return false;
+  }
+}
+
+// ──────────────────────────────────────────────────
+// RENDER UI
+// ──────────────────────────────────────────────────
+let chartsBuilt = false;
+let allocChartInst, pnlChartInst, roiChartInst;
+
+function renderUI(enriched){
+  ethPrice = getPrice('ethereum');
+  solPrice  = getPrice('solana');
+
+  const cgTotal  = enriched.reduce((s,a)=>s+a.currentValue, 0);
+  const netTotal = cgTotal + LP_POOLED - TOTAL_DEBT;
+  const totalPnL = cgTotal + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED + TOTAL_DEBT; // net vs invested
+  const realPnL  = netTotal - TOTAL_INVESTED;
+  const roi      = (realPnL / TOTAL_INVESTED)*100;
+  const ch24     = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0);
+
+  set('s-net-total', fmtCurrency(netTotal, 0));
+  set('s-net-card',  fmtCurrency(netTotal, 0));
+  set('s-net-sub', `CoinGecko ${fmtCurrency(cgTotal,0)} + LP ${fmtCurrency(LP_POOLED,0)} − Dívidas ${fmtCurrency(TOTAL_DEBT,0)}`);
+  set('s-spot',    fmtCurrency(cgTotal, 0));
+  set('s-spot-sub', enriched.length+' ativos');
+  set('s-debt',    '-'+fmtCurrency(TOTAL_DEBT, 0));
+  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
+
+  const pnlEl = document.getElementById('s-pnl');
+  if(pnlEl){ const pabs=Math.abs(realPnL); pnlEl.textContent=(realPnL>=0?'+':'-')+fmtCurrency(pabs,0); pnlEl.className='hero-meta-val sensitive '+(realPnL>=0?'pos':'neg'); }
+  set('s-pnl-sub', 'ROI: '+(roi>=0?'+':'')+roi.toFixed(1)+'%');
+
+  const ch24El = document.getElementById('s-24h');
+  if(ch24El){ const c24abs=Math.abs(ch24); ch24El.textContent=(ch24>=0?'+':'-')+fmtCurrency(c24abs,0); ch24El.className='hero-meta-val sensitive '+(ch24>=0?'pos':'neg'); }
+  set('s-24h-sub', (ch24>=0?'+':'')+((ch24/cgTotal)*100).toFixed(2)+'% 24h');
+  set('s-24h-sub', (ch24>=0?'+':'')+((ch24/cgTotal)*100).toFixed(2)+'% 24h');
+
+  // DeFi positions shown only on Pools & DeFi page
+
+  renderTable(enriched, cgTotal);
+  buildAllocationChart(enriched, cgTotal);
+
+  if(!chartsBuilt){ buildStaticCharts(); chartsBuilt=true; }
+  buildLiveCharts(enriched, cgTotal);
+}
+
+function set(id, val){ const el=document.getElementById(id); if(el) el.textContent=val; }
+
+// ──────────────────────────────────────────────────
+// ASSET TABLE
+// ──────────────────────────────────────────────────
+let sparkCharts = {};
+function renderTable(enriched, totalVal){
+  Object.values(sparkCharts).forEach(c=>{ try{c.destroy();}catch(e){} });
+  sparkCharts = {};
+  const tbody = document.getElementById('assetTable');
+  tbody.innerHTML = '';
+
+  const volatile = [...enriched].filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue);
+  const stables  = enriched.filter(a=>a.isStable);
+
+  tbody.innerHTML += `<tr><td colspan="11" style="background:rgba(0,212,255,0.04);padding:5px 10px;font-size:8px;color:var(--accent);letter-spacing:2px;">▸ ATIVOS VOLÁTEIS</td></tr>`;
+
+  [...volatile,...stables].forEach(a=>{
+    if(a.isStable && a.ticker==='USDT'){
+      tbody.innerHTML += `<tr><td colspan="11" style="background:rgba(38,161,123,0.05);padding:5px 10px;font-size:8px;color:var(--stable);letter-spacing:2px;border-top:1px solid rgba(38,161,123,0.2);">🛡 STABLECOINS</td></tr>`;
+    }
+    const pct = ((a.currentValue/totalVal)*100).toFixed(1);
+    let roi='—', roiCls='neu';
+    if(a.isStable){ roi='1:1'; roiCls='stc'; }
+    else if(a.invested>0){ const r=(a.pnl/a.invested)*100; roi=(r>=0?'+':'')+r.toFixed(1)+'%'; roiCls=r>=0?'pos':'neg'; }
+    else{ roi='Airdrop'; roiCls='acc'; }
+    const pnlCls = a.pnl>0?'pos':(a.pnl<0?'neg':'stc');
+    const c24    = a.change24h||0;
+    const sym = currSymbol();
+    const cx = currentCurrency === 'BRL' ? usdBrlRate : 1;
+    const priceStr = currentCurrency === 'BRL'
+      ? ('R$' + (a.price * usdBrlRate).toLocaleString('pt-BR', {maximumFractionDigits: 2}))
+      : (a.price>=100 ? '$'+a.price.toLocaleString('en-US',{maximumFractionDigits:2}) : a.price>=1 ? '$'+a.price.toFixed(4) : '$'+a.price.toFixed(6));
+    const avgStr = a.avgCost!=null ? (currentCurrency === 'BRL'
+      ? 'R$'+(a.avgCost*usdBrlRate).toLocaleString('pt-BR',{maximumFractionDigits:2})
+      : (a.avgCost>=1?'$'+a.avgCost.toLocaleString('en-US',{maximumFractionDigits:2}):'$'+a.avgCost.toFixed(4))) : '—';
+    const sparkId = 'spark_'+a.ticker;
+
+    tbody.innerHTML += `<tr>
+      <td>
+        <div class="coin-cell">
+          <img class="coin-logo" src="${a.logo}" alt="${a.ticker}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="coin-logo-fallback" style="background:${a.color};display:none;">${a.ticker.substring(0,3)}</div>
+          <div><div class="coin-name" style="color:${a.color}">${a.name}</div><div class="coin-ticker">${a.ticker}</div></div>
+        </div>
+      </td>
+      <td style="color:var(--muted);font-size:9px;" class="sensitive">${a.qty.toLocaleString('en-US',{maximumFractionDigits:4})}</td>
+      <td style="font-size:10px;">${priceStr}</td>
+      <td class="sensitive"><strong>${fmtCurrency(a.currentValue, 2)}</strong></td>
+      <td style="color:var(--muted);font-size:10px;" class="sensitive">${a.isStable?'—':fmtCurrency(a.invested,2)}</td>
+      <td style="font-size:10px;color:var(--muted);">${avgStr}</td>
+      <td class="${pnlCls} sensitive">${a.isStable?'—':(a.pnl>=0?'+':'-')+fmtCurrency(Math.abs(a.pnl),2)}</td>
+      <td class="${roiCls}">${roi}</td>
+      <td class="${c24>=0?'pos':'neg'}">${a.isStable?'—':(c24>=0?'+':'')+c24.toFixed(2)+'%'}</td>
+      <td><canvas id="${sparkId}" width="80" height="30"></canvas></td>
+      <td>${pct}%<div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%;background:${a.color};"></div></div></td>
+    </tr>`;
+  });
+
+  requestAnimationFrame(()=>{
+    [...volatile,...stables].forEach(a=>{
+      const canvas = document.getElementById('spark_'+a.ticker);
+      if(!canvas) return;
+      const c24=a.change24h||0;
+      const sparkData = genSpark(a.price, c24);
+      const color = c24>=0?'#00e676':'#ff4f4f';
+      sparkCharts[a.ticker] = new Chart(canvas,{
+        type:'line',
+        data:{labels:sparkData.map((_,i)=>i), datasets:[{data:sparkData,borderColor:color,backgroundColor:color+'22',borderWidth:1.5,fill:true,tension:0.4,pointRadius:0}]},
+        options:{responsive:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
+      });
+    });
+  });
+}
+
+function genSpark(price, change24h){
+  const start = price / (1 + (change24h||0)/100);
+  const pts = 14; const d=[start];
+  for(let i=1;i<pts-1;i++) d.push(d[i-1]+(Math.random()-0.48)*price*0.035);
+  d.push(price); return d;
+}
+
+// ──────────────────────────────────────────────────
+// ALLOCATION CHART (CoinGecko style)
+// ──────────────────────────────────────────────────
+function buildAllocationChart(enriched, totalVal){
+  const canvas = document.getElementById('allocChart');
+  if(!canvas) return;
+  if(allocChartInst) allocChartInst.destroy();
+
+  const sorted = [...enriched].sort((a,b)=>b.currentValue-a.currentValue);
+
+  allocChartInst = new Chart(canvas,{
+    type:'doughnut',
+    data:{
+      labels: sorted.map(a=>a.ticker),
+      datasets:[{
+        data: sorted.map(a=>a.currentValue),
+        backgroundColor: sorted.map(a=>a.color),
+        borderColor: sorted.map(a=>a.color+'99'),
+        borderWidth:1,
+        hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:false,
+      cutout:'65%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label:ctx=>' '+ctx.label+': $'+ctx.raw.toFixed(2)+' ('+((ctx.raw/totalVal)*100).toFixed(1)+'%)'
+          },
+          backgroundColor:'#1c2128',borderColor:'#2a2520',borderWidth:1,
+          titleColor:'#e6edf3',bodyColor:'#8b7d6b',padding:10,cornerRadius:6
+        }
+      }
+    }
+  });
+
+  // Build legend
+  const leg = document.getElementById('allocLegend');
+  if(!leg) return;
+  leg.innerHTML = sorted.filter(a=>((a.currentValue/totalVal)*100)>=0.1).map(a=>{
+    const pct = ((a.currentValue/totalVal)*100).toFixed(1);
+    return `<div class="alloc-legend-item">
+      <div class="alloc-legend-left">
+        <img style="width:16px;height:16px;border-radius:50%;flex-shrink:0;object-fit:cover;background:${a.color};" src="${a.logo}" alt="${a.ticker}" onerror="this.style.background='${a.color}';this.src='';">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.ticker}</span>
+      </div>
+      <span class="alloc-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+// ──────────────────────────────────────────────────
+// CHART HELPERS
+// ──────────────────────────────────────────────────
+function setupChartDefaults(){
+  const dark = document.documentElement.getAttribute('data-theme')!=='light';
+  Chart.defaults.color        = dark?'#8b7d6b':'#7a6a50';
+  Chart.defaults.borderColor  = dark?'#2a2520':'#d5c9a5';
+  Chart.defaults.font.family  = 'Inter';
+  Chart.defaults.font.size    = 10;
+}
+const tt=()=>{
+  const dark=document.documentElement.getAttribute('data-theme')!=='light';
+  return {backgroundColor:dark?'#1c2128':'#faf6ef',borderColor:dark?'#2a2520':'#d5c9a5',borderWidth:1,titleColor:dark?'#e6edf3':'#16110c',bodyColor:dark?'#8b7d6b':'#7a6a50',padding:10,cornerRadius:6,titleFont:{size:11,weight:'500'},bodyFont:{size:10}};
+};
+
+// ──────────────────────────────────────────────────
+// LIVE CHARTS (P&L, ROI)
+// ──────────────────────────────────────────────────
+function buildLiveCharts(enriched, totalVal){
+  setupChartDefaults();
+  const withInv = enriched.filter(a=>a.invested>0&&!a.isStable).sort((a,b)=>a.pnl-b.pnl);
+  const withROI = enriched.filter(a=>a.invested>0&&!a.isStable).sort((a,b)=>(a.pnl/a.invested)-(b.pnl/b.invested));
+
+  if(pnlChartInst) pnlChartInst.destroy();
+  try{
+    pnlChartInst = new Chart(document.getElementById('pnlByAsset'),{
+      type:'bar',
+      data:{labels:withInv.map(a=>a.ticker),datasets:[{label:'P&L',data:withInv.map(a=>a.pnl),backgroundColor:withInv.map(a=>a.pnl>=0?'rgba(63,185,80,0.7)':'rgba(248,81,73,0.7)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:14}]},
+      options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:10},callback:v=>'$'+v},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}}}}
+    });
+  }catch(e){}
+
+  if(roiChartInst) roiChartInst.destroy();
+  try{
+    roiChartInst = new Chart(document.getElementById('roiByAsset'),{
+      type:'bar',
+      data:{labels:withROI.map(a=>a.ticker),datasets:[{label:'ROI%',data:withROI.map(a=>((a.pnl/a.invested)*100).toFixed(1)),backgroundColor:withROI.map(a=>a.pnl>=0?'rgba(63,185,80,0.7)':'rgba(248,81,73,0.7)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:14}]},
+      options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:10},callback:v=>v+'%'},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}}}}
+    });
+  }catch(e){}
+}
+
+// ──────────────────────────────────────────────────
+// STATIC CHARTS
+// ──────────────────────────────────────────────────
+let annualChartInst, dcaChartInst, benchChartInst, perfChartInst;
+let annualType = 'bar';
+
+function destroyStatic(){
+  [annualChartInst,dcaChartInst,benchChartInst,perfChartInst,debtChartInst].forEach(c=>{try{if(c)c.destroy();}catch(e){}});
+  annualChartInst=dcaChartInst=benchChartInst=perfChartInst=null;
+  // Destroy Chart.js instances on extra canvases
+  ['drawdownChart','pnlOriginChart','riskBubbleChart','chartIL','chartProj'].forEach(id=>{
+    const c=document.getElementById(id);
+    if(c){const ch=Chart.getChart(c);if(ch)ch.destroy();}
+  });
+}
+
+function buildStaticCharts(){
+  setupChartDefaults();
+  destroyStatic();
+  buildAnnualChart();
+  const bc=document.getElementById('annualBreadcrumb');if(bc)bc.textContent='(clique em um ano para ver meses)';
+  buildBenchmarkChart();
+  buildDcaChart();
+  buildPerfChart(activePeriod);
+  buildDebtChart('stacked');
+  // Rebuild inline-IIFE charts
+  try{ buildHeatmap(); }catch(e){}
+  try{ buildDrawdown(); }catch(e){}
+  try{ buildPnlOrigin(); }catch(e){}
+  try{ buildRiskBubble(); }catch(e){}
+}
+
+// ── ANNUAL RETURN (Artemis-style, monthly granularity) ──
+// Monthly returns per year (Jan-Dez, estimated from known annual results)
+// Portfolio: 2022: -58%, 2023: +62%, 2024: +31%, 2025: -15%, 2026: YTD
+const MONTHLY_RETURNS_DATA = {
+  // ETH+SOL heavy portfolio — 2022:down, 2023-2025:up, 2026:down YTD
+  // 2022: ETH -65% | 2023: ETH/SOL rally | 2024: halving year | 2025: SOL rally Q1 | 2026: bear
+  2022: [-22.0,-6.4,+12.0,-18.5,-28.0,-34.0,+58.0,-14.0,-24.0,+19.0,-18.0,+4.0],
+  // Sum ~-50% ↓
+  2023: [+28.0,-2.5,+6.0,+2.8,+1.5,+4.2,-1.8,-9.0,+4.2,+11.2,+14.5,+18.0],
+  // Sum ~+68% ↑
+  2024: [+1.5,+42.0,+6.0,-14.0,-22.0,+6.2,+4.0,-18.0,+10.0,-3.0,+44.0,+8.5],
+  // Sum ~+40% ↑
+  2025: [+28.0,-12.0,+5.0,-9.0,-18.0,-6.0,+12.0,-8.0,+4.0,+6.0,+4.5,+6.0],
+  // Sum ~+14% ↑  (SOL peaked in Jan, pullback, recovery mid-year)
+  2026: [-18.0,-22.0,null,null,null,null,null,null,null,null,null,null],
+  // Sum ~-36% ↓ YTD (ETH $3300→$2056, SOL $190→$87)
+};
+const MES_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MONTHLY_RETURNS = MONTHLY_RETURNS_DATA; // alias for backward compat
+
+let annualView = 'yearly'; // 'yearly' | year num
+let annualTypeMode = 'bar';
+
+function buildAnnualChart(){
+  try{
+    if(annualChartInst) annualChartInst.destroy();
+    const canvas = document.getElementById('annualReturn');
+
+    if(annualView === 'yearly'){
+      // Yearly overview with all 5 years as bars
+      const years  = ['2022','2023','2024','2025','2026 YTD'];
+      const totals = [
+        MONTHLY_RETURNS[2022].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+        MONTHLY_RETURNS[2023].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+        MONTHLY_RETURNS[2024].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+        MONTHLY_RETURNS[2025].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+        MONTHLY_RETURNS[2026].filter(v=>v!==null).reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+      ];
+      annualChartInst = new Chart(canvas,{
+        type: annualTypeMode,
+        data:{
+          labels: years,
+          datasets:[{
+            label:'Retorno Anual %',
+            data: totals,
+            backgroundColor: totals.map(v=>v>=0?'rgba(63,185,80,0.75)':'rgba(248,81,73,0.75)'),
+            borderColor: totals.map(v=>v>=0?'#3fb950':'#f85149'),
+            borderWidth: annualTypeMode==='line'?2:1,
+            borderRadius: annualTypeMode==='bar'?5:0,
+            fill: annualTypeMode==='line'?false:undefined,
+            tension: 0.4,
+            pointBackgroundColor: totals.map(v=>v>=0?'#3fb950':'#f85149'),
+            pointRadius: annualTypeMode==='line'?5:0,
+          }]
+        },
+        options:{
+          responsive:true,
+          plugins:{
+            tooltip:{...tt(),callbacks:{
+              title:ctx=>`${ctx[0].label} — clique para ver meses`,
+              label:ctx=>` Total: ${ctx.raw>=0?'+':''}${ctx.raw.toFixed(1)}%`
+            }},
+            legend:{display:false}
+          },
+          onClick:(evt,els)=>{
+            if(els.length>0){
+              const yr=[2022,2023,2024,2025,2026][els[0].index];
+              annualView=yr; buildAnnualChart();
+            }
+          },
+          scales:{
+            x:{ticks:{color:Chart.defaults.color,font:{size:11,weight:'600'}},grid:{display:false},border:{display:false}},
+            y:{ticks:{color:Chart.defaults.color,callback:v=>v+'%',font:{size:10}},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
+          }
+        }
+      });
+    } else {
+      // Monthly drilldown for a specific year
+      const yr = annualView;
+      const data = MONTHLY_RETURNS[yr];
+      const vals = data.map(v=>v===null?null:parseFloat(v.toFixed(1)));
+      // Build cumulative line
+      let cum=0; const cumLine=[];
+      vals.forEach(v=>{ if(v!==null){ cum+=v; cumLine.push(parseFloat(cum.toFixed(1))); } else cumLine.push(null); });
+
+      annualChartInst = new Chart(canvas,{
+        type:'bar',
+        data:{
+          labels: MES_NAMES,
+          datasets:[
+            {
+              type:'bar',
+              label:'Retorno Mensal %',
+              data: vals,
+              backgroundColor: vals.map(v=>v===null?'transparent':v>=0?'rgba(63,185,80,0.75)':'rgba(248,81,73,0.75)'),
+              borderColor: vals.map(v=>v===null?'transparent':v>=0?'#3fb950':'#f85149'),
+              borderWidth:1, borderRadius:4, yAxisID:'y',
+              order:2
+            },
+            {
+              type:'line',
+              label:'Acum. %',
+              data: cumLine,
+              borderColor:'#b8963a', borderWidth:2,
+              fill:false, tension:0.4, pointRadius:4,
+              pointBackgroundColor:'#b8963a', yAxisID:'y2',
+              order:1
+            }
+          ]
+        },
+        options:{
+          responsive:true,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            tooltip:{...tt(),callbacks:{
+              title:ctx=>`${MES_NAMES[ctx[0].dataIndex]} ${yr}`,
+              label:ctx=>{
+                if(ctx.dataset.label.includes('Mensal')) return ` Mês: ${ctx.raw===null?'—':(ctx.raw>=0?'+':'')+ctx.raw+'%'}`;
+                return ` Acumulado: ${ctx.raw===null?'—':(ctx.raw>=0?'+':'')+ctx.raw+'%'}`;
+              }
+            }},
+            legend:{display:true,labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}},
+            title:{display:true,text:`← Voltar para Visão Anual`,color:'var(--muted)',font:{size:9},align:'start',
+              onClick:()=>{annualView='yearly';buildAnnualChart();}}
+          },
+          scales:{
+            x:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}},
+            y:{ticks:{color:Chart.defaults.color,callback:v=>v+'%',font:{size:10}},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},title:{display:true,text:'Mensal',color:Chart.defaults.color,font:{size:9}}},
+            y2:{ticks:{color:'#b8963a',callback:v=>v+'%',font:{size:10}},position:'right',grid:{display:false},border:{display:false},title:{display:true,text:'Acum.',color:'#b8963a',font:{size:9}}}
+          }
+        }
+      });
+    }
+  }catch(e){ console.warn('annualChart error:',e); }
+}
+
+function setAnnualType(type){
+  annualTypeMode = type;
+  document.getElementById('annualBarBtn').classList.toggle('active', type==='bar');
+  document.getElementById('annualLineBtn').classList.toggle('active', type==='line');
+  buildAnnualChart();
+}
+
+// Update breadcrumb after each annual chart build
+const _origBuildAnnual = buildAnnualChart;
+function buildAnnualChartWrapped(){
+  buildAnnualChart();
+  const bc = document.getElementById('annualBreadcrumb');
+  if(bc){
+    bc.textContent = annualView==='yearly' ? '(clique em um ano para ver meses)' : `← ${annualView} — clique para voltar`;
+  }
+}
+
+// ── BENCHMARK (dados reais atualizados) ──
+// Base 100 = Jan 2022
+// Dados reais: BTC, S&P 500, CDI, Ibovespa + estimativas do portfólio
+// Fontes: slickcharts.com, investidor10.com.br, statusinvest.com.br (Mar 2026)
+function compoundIndex(monthlyPcts) {
+  let idx=100; const out=[100];
+  monthlyPcts.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
+  return out;
+}
+function buildBenchmarkChart(){
+  try{
+    // Monthly labels: Jan/22 → Mar/26 = 26 months + base = 27 points
+    const labels=['Jan/22','Fev/22','Mar/22','Abr/22','Mai/22','Jun/22',
+      'Jul/22','Ago/22','Set/22','Out/22','Nov/22','Dez/22',
+      'Jan/23','Fev/23','Mar/23','Abr/23','Mai/23','Jun/23',
+      'Jul/23','Ago/23','Set/23','Out/23','Nov/23','Dez/23',
+      'Jan/24','Fev/24','Mar/24','Abr/24','Mai/24','Jun/24',
+      'Jul/24','Ago/24','Set/24','Out/24','Nov/24','Dez/24',
+      'Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25',
+      'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
+      'Jan/26','Fev/26','Mar/26'];
+
+    // BTC monthly (anual real: 2022:-64.3%, 2023:+155.4%, 2024:+121.1%, 2025:-6.3%, 2026 YTD:-18.6%)
+    const btcM=[-16.7,-12.5,-2.8,-16.2,-15.6,-37.0,24.2,-14.0,-3.1,5.5,-16.3,0.8,
+                40.0,0.2,22.9,-15.9,-7.0,11.9,-3.8,-11.3,3.9,28.4,8.8,12.8,
+                -0.3,44.4,16.9,-14.5,-7.0,-10.4,3.3,-8.6,7.3,-3.0,37.3,7.5,
+                9.4,0.7,-2.3,-14.9,3.0,-9.5,6.6,2.9,-7.5,-4.0,-2.9,8.4,
+                -3.2,-8.6,-7.0];
+
+    // ETH monthly (anual real: 2022:-67%, 2023:+91%, 2024:+47%, 2025:-44% est, 2026 YTD:-41% est)
+    const ethM=[-26.8,-4.1,6.7,-18.2,-29.4,-44.5,57.1,-12.5,-15.9,15.0,-22.8,1.0,
+                30.2,-4.1,16.5,-15.8,-6.3,4.1,-6.1,-11.3,3.7,8.3,10.3,9.5,
+                -0.3,46.5,8.2,-18.4,-26.9,4.9,3.1,-22.0,9.1,-4.1,45.0,6.3,
+                -21.6,9.7,-14.5,-5.1,-22.9,-10.0,14.8,-20.1,-9.7,-3.6,-5.1,7.4,
+                -21.0,-22.8,-6.0];
+
+    // S&P 500 monthly (anual: 2022:-18.1%, 2023:+26.3%, 2024:+25.0%, 2025:+17.9%, 2026 YTD:-0.1%)
+    const spM=[-5.3,-3.1,3.7,-8.7,0.2,-8.4,9.1,-4.2,-9.2,8.0,5.4,-5.9,
+               6.2,-2.4,3.5,1.5,-0.2,6.5,-3.1,2.5,-4.9,-2.2,8.9,4.4,
+               1.7,5.2,3.1,-4.1,4.8,3.5,1.2,2.3,2.1,-0.9,5.7,2.4,
+               2.8,-1.4,5.6,-0.8,6.2,-0.5,1.2,-6.1,3.4,-1.4,5.9,-2.5,
+               2.8,-1.4,-1.3];
+
+    // CDI monthly (anual: 2022:12.4%, 2023:13.1%, 2024:10.8%, 2025:14.3%, 2026:2.3% YTD)
+    const cdiM=[0.73,0.76,0.93,0.83,1.03,1.03,1.03,1.01,1.08,1.04,1.02,1.12,
+                1.12,0.92,1.17,1.00,1.01,1.07,1.07,1.00,1.00,0.93,0.87,0.90,
+                0.97,0.84,0.84,0.89,0.83,0.79,0.90,0.87,0.84,0.83,0.77,0.97,
+                1.16,0.97,1.07,0.97,0.98,0.96,1.07,1.08,1.07,0.99,0.96,1.07,
+                1.16,0.96,0.92];
+
+    // Ibovespa monthly (anual: 2022:+4.7%, 2023:+22.3%, 2024:-10.4%, 2025:+34.1%, 2026 YTD:+12.6%)
+    const ibovM=[0.9,1.1,6.1,-4.0,-0.5,-11.5,4.7,6.2,-3.0,5.5,-3.1,-2.4,
+                 3.4,-7.5,1.4,2.5,-3.2,9.0,3.3,5.0,-0.7,-2.9,12.5,-5.4,
+                 -4.8,1.0,-1.7,0.6,-3.0,1.5,3.0,-4.5,4.6,-1.6,0.7,-4.8,
+                 4.9,-4.1,6.0,-1.5,-6.8,1.5,6.5,-4.0,3.5,0.8,-3.1,6.7,
+                 5.8,5.1,1.5];
+
+    // Portfolio (estimado seguindo crypto e DeFi)
+    const portM=[-8.2,-3.1,4.5,-15.8,-22.3,-30.1,38.4,-12.1,-8.9,9.2,-18.4,1.2,
+                 25.1,-2.8,12.3,-12.4,-5.8,8.2,-4.2,-9.8,3.1,18.4,9.2,8.9,
+                 0.8,38.4,12.1,-16.2,-18.4,3.8,2.2,-14.2,8.4,-3.2,32.1,5.8,
+                 -19.4,8.2,-10.8,-4.2,-18.4,-6.8,9.4,-15.8,-8.4,-3.2,-3.8,6.4,
+                 -18.4,-20.1,-4.5];
+
+    const portIdx  = compoundIndex(portM);
+    const btcIdx   = compoundIndex(btcM);
+    const ethIdx   = compoundIndex(ethM);
+    const spIdx    = compoundIndex(spM);
+    const cdiIdx   = compoundIndex(cdiM);
+    const ibovIdx  = compoundIndex(ibovM);
+
+    // labels need +1 (base point)
+    const fullLabels = ['Base/Jan22', ...labels];
+
+    benchChartInst = new Chart(document.getElementById('benchmarkChart'),{
+      type:'line',
+      data:{labels:fullLabels, datasets:[
+        {label:'Portfólio', data:portIdx, borderColor:'#b8963a',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:5},
+        {label:'BTC',       data:btcIdx,  borderColor:'#F7931A',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+        {label:'ETH',       data:ethIdx,  borderColor:'#627EEA',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+        {label:'S&P 500',   data:spIdx,   borderColor:'#3fb950',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[5,3]},
+        {label:'CDI',       data:cdiIdx,  borderColor:'#a78bfa',borderWidth:1.5,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[3,3]},
+        {label:'Ibovespa',  data:ibovIdx, borderColor:'#00d4ff',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,2]},
+      ]},
+      options:{
+        responsive:true,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          tooltip:{
+            ...tt(),
+            callbacks:{
+              title:ctx=>ctx[0].label,
+              label:ctx=>{
+                const v=ctx.raw; const prev=ctx.dataset.data[ctx.dataIndex-1]||100;
+                const mo=v&&prev?((v-prev)/prev*100).toFixed(1):null;
+                return ` ${ctx.dataset.label}: ${v?.toFixed(0)} pts${mo?` (${mo>=0?'+':''}${mo}% mês)`:''}`;
+              },
+              afterBody:items=>{
+                const p=items.find(i=>i.datasetIndex===0)?.raw||100;
+                return ['────────────',`Portfólio ${p>=100?'+':''}${(p-100).toFixed(0)} pts vs base`];
+              }
+            }
+          },
+          legend:{
+            labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6,padding:12},
+            onClick:(e,item,legend)=>{
+              const ci=legend.chart;
+              const meta=ci.getDatasetMeta(item.datasetIndex);
+              meta.hidden=!meta.hidden;
+              ci.update();
+            }
+          }
+        },
+        scales:{
+          x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
+          y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
+            title:{display:true,text:'Base 100 = Jan/2022',color:Chart.defaults.color,font:{size:8}}}
+        }
+      }
+    });
+  }catch(e){ console.warn('benchmarkChart error:',e); }
+}
+
+// ── DCA TRACKING ──
+function buildDcaChart(){
+  try{
+    dcaChartInst = new Chart(document.getElementById('dcaTracking'),{
+      type:'line',
+      data:{
+        labels:['01/2022', '05/2022', '09/2022', '01/2023', '05/2023', '09/2023', '01/2024', '05/2024', '09/2024', '01/2025', '05/2025', '09/2025', '01/2026'],
+        datasets:[
+          {label:'Investido',    data:[1061, 1771, 2198, 2431, 2658, 2802, 2977, 3056, 3310, 4127, 5121, 5121, 6230],  borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[5,3],pointRadius:0},
+          {label:'Valor Mercado',data:[853, 1037, 742, 1119, 1570, 1639, 2959, 5471, 5170, 8570, 8069, 8545, 9511],  borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0,pointHoverRadius:4},
+          {label:'Meta $15.000', data:Array(13).fill(15000), borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
+        ]
+      },
+      options:{
+        responsive:true,
+        plugins:{tooltip:tt(),legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}},
+        scales:{
+          x:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}},
+          y:{ticks:{color:Chart.defaults.color,callback:v=>'$'+v.toLocaleString(),font:{size:10}},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
+        }
+      }
+    });
+  }catch(e){}
+}
+
+// ── PERFORMANCE (CURVA DE PATRIMÔNIO) ──
+const perfPeriodsData = {
+  '24h':{ labels:['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00','Agr'],
+          p:[6050,6080,6020,5980,5940,5910,5870,5840,5860,5820,5810,5823,5823], i:[9445,9445,9445,9445,9445,9445,9445,9445,9445,9445,9445,9445,9445] },
+  '7d': { labels:['28/Fev','01/Mar','02/Mar','03/Mar','04/Mar','05/Mar','06/Mar'],
+          p:[6200,6050,5950,5900,5870,5840,5823], i:[9445,9445,9445,9445,9445,9445,9445] },
+  '3m': { labels:['Jan','Jan-M','Fev','Fev-M','Mar'],
+          p:[6500,6200,5800,5840,5823], i:[9050,9050,9445,9445,9445] },
+  '1a': { labels:['Mar/25','Mai/25','Jul/25','Set/25','Nov/25','Jan/26','Mar/26'],
+          p:[5400,6100,5600,4900,5300,5200,5823], i:[8800,8900,9000,9000,9040,9050,9445] },
+  'all':{ labels:['01/2022', '02/2022', '03/2022', '04/2022', '05/2022', '06/2022', '07/2022', '08/2022', '09/2022', '10/2022', '11/2022', '12/2022', '01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023', '01/2024', '02/2024', '03/2024', '04/2024', '05/2024', '06/2024', '07/2024', '08/2024', '09/2024', '10/2024', '11/2024', '12/2024', '01/2025', '02/2025', '03/2025', '04/2025', '05/2025', '06/2025', '07/2025', '08/2025', '09/2025', '10/2025', '11/2025', '12/2025', '01/2026', '02/2026', '03/2026'],
+          p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 10395, 11610, 10857, 9511, 7376, 7513], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
+};
+const perfPeriods = perfPeriodsData; // alias
+let activePeriod = 'all';
+
+// ── Sincroniza WEEKLY_UPDATE → todas as estruturas de dados ──
+// (chamado aqui, depois de todos os const estarem declarados)
+function applyUpdate() {
+  const W = WEEKLY_UPDATE;
+  Object.assign(MONTHLY_RETURNS_DATA, W.monthlyReturns);
+  perfPeriodsData.all.labels = W.wealthCurve.labels;
+  perfPeriodsData.all.p      = W.wealthCurve.values;
+  perfPeriodsData.all.i      = W.wealthCurve.invested;
+  PORTFOLIO_DATA.forEach(a => {
+    if (W.holdings[a.ticker] !== undefined) a.qty      = W.holdings[a.ticker];
+    if (W.invested[a.ticker] !== undefined) a.invested = W.invested[a.ticker];
+  });
+}
+applyUpdate();
+
+function buildPerfChart(period){
+  setupChartDefaults();
+  const d = perfPeriods[period];
+  if(!d) return;
+  if(perfChartInst) perfChartInst.destroy();
+  try{
+    perfChartInst = new Chart(document.getElementById('perfChart'),{
+      type:'line',
+      data:{labels:d.labels, datasets:[
+        {label:'Portfólio',data:d.p,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0},
+        {label:'Investido', data:d.i,borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[6,3],pointRadius:0},
+        {label:'Meta $15K', data:d.p.map(()=>15000),borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
+      ]},
+      options:{
+        responsive:true,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          tooltip:{...tt(),callbacks:{
+            label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString('en-US',{maximumFractionDigits:0})}`,
+            afterBody:items=>{const p=items.find(i=>i.datasetIndex===0)?.raw||0,inv=items.find(i=>i.datasetIndex===1)?.raw||0;return p&&inv?['──────────',` P&L: ${p>=inv?'+':''}$${(p-inv).toLocaleString()}`]:[];}
+          }},
+          legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}
+        },
+        scales:{
+          x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:30},grid:{display:false},border:{display:false}},
+          y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
+        }
+      }
+    });
+    // Stats bar
+    const first=d.p[0], last=d.p[d.p.length-1], peak=Math.max(...d.p);
+    const trough=Math.min(...d.p.slice(d.p.findIndex(v=>v===peak)));
+    const dd=peak>0?(((trough-peak)/peak)*100).toFixed(1):'—';
+    const chg=(((last-first)/first)*100).toFixed(1);
+    const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px;text-align:center;"><div style="font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">${lbl}</div><div style="font-size:14px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
+    document.getElementById('perfStats').innerHTML=
+      cs('INÍCIO','$'+first.toLocaleString())+
+      cs('FIM','$'+last.toLocaleString())+
+      cs('VARIAÇÃO',(parseFloat(chg)>=0?'+':'')+chg+'%',parseFloat(chg)>=0?'var(--green)':'var(--red)')+
+      cs('PICO','$'+peak.toLocaleString(),'var(--green)')+
+      cs('MAX DD',dd+'%','var(--red)');
+  }catch(e){ console.warn('perfChart error:',e); }
+}
+
+function setPeriod(p){
+  activePeriod=p;
+  document.querySelectorAll('.period-btn').forEach(b=>{
+    const map={'24h':'24h','7d':'7D','3m':'3M','1a':'1A','all':'TOTAL'};
+    b.classList.toggle('active',b.textContent.trim()===map[p]);
+  });
+  buildPerfChart(p);
+}
+
+// ──────────────────────────────────────────────────
+// LP REFERENCE TOGGLE
+// ──────────────────────────────────────────────────
+const LP_REFS = {
+  usd:  { pooled:'$346.94', pnl:'+$37.21', roi:'ROI: 11.72%', apr:'447.60%', feeApr:'Fee APR: 74.06%', fees:'$6.16', il:'-$31.06', gas:'Gas: $0.00', wethUsd:'$272.94' },
+  eth:  { pooled:'0.168019 ETH', pnl:'+0.000998 ETH', roi:'ROI: 0.57%', apr:'22.31%', feeApr:'Fee APR: 66.65%', fees:'0.002982 ETH', il:'-0.00198 ETH', gas:'Gas: 0 ETH', wethUsd:'0.13218 ETH' },
+  hold: { pooled:'$346.94', pnl:'+$2.06', roi:'ROI: 0.59%', apr:'22.31%', feeApr:'Fee APR: 67.00%', fees:'$6.16', il:'-$4.09', gas:'Gas: $0.01', wethUsd:'$272.94' }
+};
+function setRef(ref){
+  document.querySelectorAll('.ref-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===ref));
+  const r=LP_REFS[ref];
+  set('lp-pooled',r.pooled); set('lp-pnl',r.pnl); set('lp-roi',r.roi);
+  set('lp-apr',r.apr); set('lp-fee-apr',r.feeApr); set('lp-fees',r.fees);
+  set('lp-il',r.il); set('lp-gas',r.gas); set('lp-weth-usd',r.wethUsd);
+  const pnlEl=document.getElementById('lp-pnl');
+  if(pnlEl){ const pos=!r.pnl.startsWith('-'); pnlEl.className='lp-metric-val sensitive '+(pos?'pos':'neg'); }
+}
+
+// ──────────────────────────────────────────────────
+// THEME / HIDE
+// ──────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+// SISTEMA DE MOEDA — USD / BRL
+// ══════════════════════════════════════════════════════════
+let currentCurrency = 'USD';
+let usdBrlRate = 5.85;
+
+async function fetchBrlRate() {
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=brl');
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.tether && d.tether.brl) { usdBrlRate = d.tether.brl; }
+    const badge = document.getElementById('brlRateBadge');
+    if (badge) badge.textContent = 'R$ ' + usdBrlRate.toFixed(2);
+  } catch(e) {}
+}
+
+function toggleCurrency() {
+  currentCurrency = currentCurrency === 'USD' ? 'BRL' : 'USD';
+  const btn = document.getElementById('currencyBtn');
+  if (btn) btn.textContent = currentCurrency === 'USD' ? '$ USD' : 'R$ BRL';
+  const badge = document.getElementById('brlRateBadge');
+  if (badge) badge.style.display = currentCurrency === 'BRL' ? 'inline-flex' : 'none';
+  const enriched = buildEnriched();
+  try { renderUI(enriched); } catch(e) {}
+  try { buildPnlOrigin(); } catch(e) {}
+  try { buildDebtChart('stacked'); } catch(e) {}
+}
+
+function fmtCurrency(usdValue, decimals) {
+  if (decimals === undefined) decimals = 0;
+  const v = currentCurrency === 'BRL' ? usdValue * usdBrlRate : usdValue;
+  const sym = currentCurrency === 'BRL' ? 'R$ ' : '$';
+  const locale = currentCurrency === 'BRL' ? 'pt-BR' : 'en-US';
+  const formatted = v.toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  return sym + formatted;
+}
+function currSymbol() { return currentCurrency === 'BRL' ? 'R$' : '$'; }
+function toDisplay(usd) { return currentCurrency === 'BRL' ? usd * usdBrlRate : usd; }
+
+
+function toggleTheme(){
+  const html=document.documentElement;
+  const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('bc-theme',next);
+  if(chartsBuilt){
+    chartsBuilt=false;
+    if(allocChartInst) allocChartInst.destroy();
+    destroyStatic();
+    Object.values(sparkCharts).forEach(c=>{try{c.destroy();}catch(e){}});
+    sparkCharts={};
+    const enriched=buildEnriched();
+    renderUI(enriched);
+  }
+}
+
+function toggleHide(){
+  document.body.classList.toggle('hide-values');
+  const btn=document.getElementById('hideBtn');
+  if(btn) btn.textContent=document.body.classList.contains('hide-values')?'◉ Mostrar':'◎ Ocultar';
+}
+
+// ──────────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────────
+async function init(){
+  const saved=localStorage.getItem('bc-theme');
+  document.documentElement.setAttribute('data-theme', saved || 'light');
+
+  const ls=document.getElementById('loadingScreen');
+  const mc=document.getElementById('mainContent');
+
+  // Show UI immediately with fallback
+  PORTFOLIO.forEach(a=>{ liveData[a.cgId]={usd:FALLBACK_PRICES[a.cgId]||1,usd_24h_change:FALLBACK_24H[a.cgId]||0}; });
+  ls.style.display='none';
+  mc.style.display='block';
+
+  const enriched=buildEnriched();
+  try{ renderUI(enriched); }catch(e){ console.warn('renderUI error:',e); }
+
+  // Fetch live in background
+  fetchBrlRate();
+  const ok = await fetchPrices();
+  if(ok){
+    const e2=buildEnriched();
+    try{ renderUI(e2); }catch(e){}
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// 1. HEATMAP RETORNO MENSAL
+// ══════════════════════════════════════════════════════════
+function buildHeatmap() {
+  const container = document.getElementById('heatmapGrid');
+  if (!container) return;
+
+  // Monthly returns (%) derived from perfPeriods['all'].p
+  const data = {
+    2022: [-99,  0.8, 20.6,  6.8, -6.4,-47.5, 41.9, 16.1,-17.2, 24.4,-18.3,  3.0],
+    2023: [ 44.0, 9.4, 13.4, 11.1,  1.8,  6.2,  6.8, -8.8,  0.9, 17.3, 15.8, 17.0],
+    2024: [ 13.6,21.8, 28.7, -2.4, 20.9, -6.6, 16.5,-12.3, -1.1, 16.5, 35.4,  5.9],
+    2025: [ -0.7,-7.7,-14.5, -7.3, 28.8,  3.9, 12.4,-11.2,  2.2, 21.6, 11.7, -6.5],
+    2026: [-12.4,-2.4,  1.9, -99, -99,  -99,  -99,  -99,  -99,  -99,  -99,  -99],
+  };
+  const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const YEARS = [2022,2023,2024,2025,2026];
+
+  function heatColor(v) {
+    if (v === -99) return 'transparent';
+    const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+    const clamp = Math.max(-50, Math.min(50, v));
+    if (v > 0) {
+      const t = Math.min(clamp / 45, 1);
+      return dk ? `rgba(63,185,80,${0.15 + t * 0.75})` : `rgba(42,124,63,${0.12 + t * 0.70})`;
+    } else {
+      const t = Math.min(Math.abs(clamp) / 45, 1);
+      return dk ? `rgba(248,81,73,${0.15 + t * 0.75})` : `rgba(185,45,45,${0.12 + t * 0.70})`;
+    }
+  }
+
+  const CELL = 'padding:7px 4px;text-align:center;border-radius:5px;font-size:9.5px;font-weight:600;font-family:JetBrains Mono,monospace;min-width:48px;transition:opacity .15s;cursor:default;';
+  const LABEL = 'padding:7px 8px;text-align:right;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:500;white-space:nowrap;';
+
+  let html = `<table style="border-collapse:separate;border-spacing:3px;width:100%;">`;
+  // Header row
+  html += `<tr><td style="${LABEL}">ANO</td>`;
+  MONTHS.forEach(m => { html += `<td style="${CELL}color:var(--muted);background:var(--surface2);font-size:8px;">${m}</td>`; });
+  html += `<td style="${CELL}color:var(--accent);background:var(--surface2);font-size:8px;min-width:44px;">ANUAL</td></tr>`;
+
+  YEARS.forEach(yr => {
+    const row = data[yr];
+    const vals = row.filter(v => v !== -99);
+    const annual = vals.length >= 2
+      ? vals.reduce((acc, v) => acc * (1 + v/100), 1) * 100 - 100
+      : null;
+    html += `<tr><td style="${LABEL}">${yr}</td>`;
+    row.forEach(v => {
+      if (v === -99) {
+        html += `<td style="${CELL}"></td>`;
+      } else {
+        const bg = heatColor(v);
+        const tc = document.documentElement.getAttribute('data-theme') === 'dark' ? '#e6edf3' : '#16110c';
+        const sign = v > 0 ? '+' : '';
+        html += `<td style="${CELL}background:${bg};color:${Math.abs(v) > 8 ? tc : 'var(--muted)'};" title="${yr} ${MONTHS[row.indexOf(v)]}: ${sign}${v.toFixed(1)}%">${sign}${v.toFixed(1)}%</td>`;
+      }
+    });
+    const annualBg = annual !== null ? heatColor(annual) : 'transparent';
+    const annualText = annual !== null ? (annual >= 0 ? '+' : '') + annual.toFixed(0) + '%' : '—';
+    html += `<td style="${CELL}background:${annualBg};border:1px solid var(--border);font-weight:700;">${annualText}</td>`;
+    html += `</tr>`;
+  });
+  html += `</table>`;
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// 2. DRAWDOWN HISTÓRICO
+// ══════════════════════════════════════════════════════════
+function buildDrawdown() {
+  const canvas = document.getElementById('drawdownChart');
+  if (!canvas) return;
+  const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+  const p = perfPeriods['all'].p;
+  const labels = perfPeriods['all'].labels;
+
+  let peak = p[0], dd = [];
+  p.forEach(v => {
+    if (v > peak) peak = v;
+    dd.push(peak > 0 ? ((v - peak) / peak) * 100 : 0);
+  });
+
+  const maxDD = Math.min(...dd).toFixed(1);
+  const maxDDIdx = dd.indexOf(Math.min(...dd));
+  const ddEl = document.getElementById('ddStats');
+  if (ddEl) {
+    ddEl.innerHTML = `
+      <span style="color:var(--red);font-weight:700;">Max DD: ${maxDD}%</span>
+      <span style="color:var(--muted);">Em: ${labels[maxDDIdx]}</span>
+      <span style="color:var(--muted);">Atual: ${dd[dd.length-1].toFixed(1)}%</span>`;
+  }
+
+  const RED = dk ? 'rgba(248,81,73,' : 'rgba(185,45,45,';
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Drawdown (%)',
+        data: dd,
+        borderColor: dk ? '#f85149' : '#b92d2d',
+        backgroundColor: RED + '0.18)',
+        fill: true,
+        tension: 0.35,
+        borderWidth: 1.5,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` Drawdown: ${ctx.raw.toFixed(1)}%`,
+            title: items => items[0].label,
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: Chart.defaults.color, font: { size: 9 }, maxRotation: 30, maxTicksLimit: 12 }, grid: { display: false }, border: { display: false } },
+        y: {
+          max: 5, min: Math.min(...dd) * 1.1,
+          ticks: { color: dk ? '#f85149' : '#b92d2d', font: { size: 9 }, callback: v => v.toFixed(0) + '%' },
+          grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// 3. BREAKDOWN P&L POR ORIGEM
+// ══════════════════════════════════════════════════════════
+function buildPnlOrigin() {
+  const canvas = document.getElementById('pnlOriginChart');
+  if (!canvas) return;
+  const existing = Chart.getChart(canvas);
+  if (existing) existing.destroy();
+
+  const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+  const W = WEEKLY_UPDATE.pnlOrigin;
+  const cx = currentCurrency === 'BRL' ? usdBrlRate : 1;
+  const sym = currSymbol();
+
+  // Aggregate into 4 clean categories
+  const spotTotal  = W.spot.reduce((s, v) => s + v, 0) * cx;
+  const feesTotal  = W.totalFees * cx;
+  const ilTotal    = W.totalIL * cx;
+  const airTotal   = W.airdrops.reduce((s, v) => s + v, 0) * cx;
+  const netTotal   = spotTotal + feesTotal + ilTotal + airTotal;
+
+  // KPI cards
+  const kpiEl = document.getElementById('pnlOriginKpis');
+  if (kpiEl) {
+    const mk = (icon, lbl, val, cls) => {
+      const sign = val >= 0 ? '+' : '';
+      const col = val >= 0
+        ? (dk ? '#3fb950' : '#2a7c3f')
+        : (dk ? '#f85149' : '#b92d2d');
+      const neutralCol = dk ? '#c9b99a' : '#4a3520';
+      return `<div style="background:var(--surface2);border-radius:6px;padding:9px 10px;">
+        <div style="font-size:7px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">${icon} ${lbl}</div>
+        <div style="font-size:15px;font-weight:700;font-family:JetBrains Mono,monospace;color:${cls==='neutral'?neutralCol:col};">${sign}${fmtCurrency(Math.abs(val),0)}</div>
+      </div>`;
+    };
+    kpiEl.innerHTML =
+      mk('📊','SPOT P&L',      spotTotal) +
+      mk('💸','DEFI FEES',     feesTotal) +
+      mk('⚠️','IMP. LOSS',     ilTotal) +
+      mk('🎁','AIRDROPS',      airTotal);
+  }
+
+  // Simple 4-bar horizontal chart
+  const labels  = ['Spot Holding', 'Taxas DeFi', 'Imp. Loss', 'Airdrops'];
+  const vals    = [spotTotal, feesTotal, ilTotal, airTotal];
+  const colors  = vals.map(v => v >= 0
+    ? (dk ? 'rgba(63,185,80,0.80)'   : 'rgba(42,124,63,0.72)')
+    : (dk ? 'rgba(248,81,73,0.78)'   : 'rgba(185,45,45,0.72)'));
+  // Airdrops always gold
+  colors[3] = dk ? 'rgba(201,160,80,0.85)' : 'rgba(138,104,32,0.78)';
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: vals,
+        backgroundColor: colors,
+        borderColor: colors.map(c => c.replace(/[\d.]+\)$/, '1)')),
+        borderWidth: 1,
+        borderRadius: [0, 5, 5, 0],
+        borderSkipped: false,
+        barThickness: 22,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const v = ctx.raw;
+              return ` ${v >= 0 ? '+' : ''}${fmtCurrency(v, 0)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            font: { size: 9 }, color: Chart.defaults.color,
+            callback: v => fmtCurrency(v, 0)
+          },
+          grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 },
+          border: { display: false }
+        },
+        y: {
+          ticks: { font: { size: 10, weight: '600' }, color: Chart.defaults.color },
+          grid: { display: false },
+          border: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// 4. CONCENTRAÇÃO DE RISCO — BUBBLE CHART
+// ══════════════════════════════════════════════════════════
+function buildRiskBubble() {
+  const canvas = document.getElementById('riskBubbleChart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  // {x=vol est., y=ROI atual %, r=bubble radius (peso%), label, color}
+  const bubbles = [
+    { x:0.55, y: -49.7, r:18, label:'ETH', color:'#E8773D' },
+    { x:0.70, y: -32.0, r:14, label:'SOL', color:'#D98B3A' },
+    { x:0.80, y: -20.6, r: 5, label:'ADA', color:'#E8C53D' },
+    { x:1.80, y: 9999,  r: 4, label:'RDNT',color:'#00E5FF' },  // airdrop, no cost
+    { x:1.20, y: -32.7, r: 3, label:'EIGEN',color:'#9370DB' },
+    { x:1.50, y: -83.5, r: 2, label:'POL', color:'#8247E5' },
+    { x:2.20, y: 9999,  r: 2, label:'ZK',  color:'#D45B8E' },  // airdrop
+    { x:2.50, y: -95.9, r: 2, label:'XAI', color:'#FF6B35' },
+    { x:0.00, y:   0.1, r:15, label:'USDT',color:'#26A17B' },
+    { x:0.00, y:   0.1, r: 1, label:'PYUSD',color:'#1DA1F2' },
+  ].map(b => ({ ...b, y: b.y === 9999 ? 85 : b.y }));
+
+  new Chart(canvas, {
+    type: 'bubble',
+    data: {
+      datasets: bubbles.map(b => ({
+        label: b.label,
+        data: [{ x: b.x, y: b.y, r: Math.max(5, b.r) }],
+        backgroundColor: b.color + (dk ? 'bb' : '99'),
+        borderColor: b.color,
+        borderWidth: 1.5,
+      }))
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const b = bubbles[ctx.datasetIndex];
+              const roi = b.y === 85 ? 'Airdrop' : (b.y >= 0 ? '+' : '') + b.y.toFixed(1) + '%';
+              return ` ${b.label}: ROI ${roi} · Vol ${b.x.toFixed(1)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Volatilidade Estimada (0=stables → 2.5=micro)', color: Chart.defaults.color, font: { size: 8 } },
+          ticks: { font: { size: 8 }, color: Chart.defaults.color },
+          grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }
+        },
+        y: {
+          title: { display: true, text: 'ROI Atual (%)', color: Chart.defaults.color, font: { size: 8 } },
+          ticks: { font: { size: 9 }, color: Chart.defaults.color, callback: v => v + '%' },
+          grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }
+        }
+      }
+    }
+  });
+
+  // Draw bubble labels manually
+  canvas.addEventListener('afterRender', () => {});
+  setTimeout(() => {
+    const chart = Chart.getChart(canvas);
+    if (!chart) return;
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.font = '600 9px Inter,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    bubbles.forEach((b, i) => {
+      const meta = chart.getDatasetMeta(i);
+      if (!meta.data[0]) return;
+      const pt = meta.data[0];
+      ctx.fillStyle = dk ? '#e6edf3' : '#16110c';
+      ctx.fillText(b.label, pt.x, pt.y);
+    });
+    ctx.restore();
+  }, 300);
+}
+
+// ══════════════════════════════════════════════════════════
+// 5. COMPOSIÇÃO DÍVIDA vs COLATERAL
+// ══════════════════════════════════════════════════════════
+let debtChartInst = null;
+function setDebtView(mode) {
+  document.getElementById('debtBarBtn').classList.toggle('active', mode === 'stacked');
+  document.getElementById('debtLineBtn').classList.toggle('active', mode === 'ratio');
+  buildDebtChart(mode);
+}
+
+function buildDebtChart(mode) {
+  const canvas = document.getElementById('debtChart');
+  if (!canvas) return;
+  if (debtChartInst) { debtChartInst.destroy(); debtChartInst = null; }
+  const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  const labels = ['Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26'];
+
+  if (mode === 'stacked') {
+    // Stacked: AAVE collateral, Kamino collateral, AAVE debt, Kamino debt
+    const aaveCol   = [5650, 5490, 5900, 5580, 5230, 5120, 5493];
+    const kaminoCol = [1820, 1780, 1940, 1860, 1720, 1800, 1790];
+    const aaveDebt  = [ 748,  745,  760,  750,  748,  746,  746];
+    const kaminoDebt= [ 810,  808,  812,  810,  808,  805,  803];
+    debtChartInst = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'AAVE Colateral',  data: aaveCol,    backgroundColor: dk ? 'rgba(63,185,80,0.55)' : 'rgba(42,124,63,0.50)', stack: 'col', borderRadius: 3 },
+          { label: 'Kamino Colateral',data: kaminoCol,  backgroundColor: dk ? 'rgba(126,200,227,0.55)' : 'rgba(70,150,180,0.50)', stack: 'col', borderRadius: 3 },
+          { label: 'AAVE Dívida',     data: aaveDebt.map(v => -v), backgroundColor: dk ? 'rgba(248,81,73,0.60)' : 'rgba(185,45,45,0.55)', stack: 'debt', borderRadius: 3 },
+          { label: 'Kamino Dívida',   data: kaminoDebt.map(v => -v), backgroundColor: dk ? 'rgba(210,153,34,0.60)' : 'rgba(160,115,20,0.55)', stack: 'debt', borderRadius: 3 },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { font: { size: 9 }, color: Chart.defaults.color, boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: $${Math.abs(ctx.raw).toLocaleString()}` } }
+        },
+        scales: {
+          x: { ticks: { font: { size: 9 }, color: Chart.defaults.color }, grid: { display: false }, border: { display: false } },
+          y: { ticks: { font: { size: 9 }, color: Chart.defaults.color, callback: v => '$' + Math.abs(v).toLocaleString() }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false } }
+        }
+      }
+    });
+  } else {
+    // Line: HF AAVE + LTV Kamino
+    const aaveHF  = [6.80, 6.42, 7.10, 6.70, 6.20, 6.05, 6.00];
+    const kaminoLTV = [43.2, 44.1, 42.9, 43.8, 44.5, 44.8, 44.93];
+    debtChartInst = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'AAVE Health Factor', data: aaveHF, borderColor: dk ? '#3fb950' : '#2a7c3f', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2.5, pointRadius: 4, yAxisID: 'y' },
+          { label: 'Kamino LTV (%)', data: kaminoLTV, borderColor: dk ? '#d29922' : '#a06810', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2, pointRadius: 4, borderDash: [5,3], yAxisID: 'y2' }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { font: { size: 9 }, color: Chart.defaults.color, boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.datasetIndex === 0
+                ? ` HF AAVE: ${ctx.raw.toFixed(2)}`
+                : ` LTV Kamino: ${ctx.raw.toFixed(1)}%`
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { font: { size: 9 }, color: Chart.defaults.color }, grid: { display: false }, border: { display: false } },
+          y:  { position: 'left',  min: 4, ticks: { font: { size: 9 }, color: dk ? '#3fb950' : '#2a7c3f', callback: v => 'HF ' + v.toFixed(1) }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }, title: { display: true, text: 'Health Factor', color: dk ? '#3fb950' : '#2a7c3f', font: { size: 8 } } },
+          y2: { position: 'right', min: 30, max: 80, ticks: { font: { size: 9 }, color: dk ? '#d29922' : '#a06810', callback: v => v + '%' }, grid: { display: false }, border: { display: false }, title: { display: true, text: 'LTV %', color: dk ? '#d29922' : '#a06810', font: { size: 8 } } }
+        }
+      }
+    });
+  }
+}
+
+buildDebtChart('stacked');
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
