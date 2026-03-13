@@ -402,6 +402,12 @@ body{
     </div>
   </div>
 
+  <div style="display:flex;gap:12px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;">
+    <a href="portfolio_analytics.html" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border);border-radius:3px;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Portfolio</a>
+    <a href="pools.html" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border);border-radius:3px;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Pools</a>
+    <a href="emprestimos.html" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border);border-radius:3px;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Empréstimos</a>
+    <a href="ferramentas.html" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border);border-radius:3px;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Ferramentas</a>
+  </div>
   <div class="caption">© 2021 Barolo Capital · Asset Management</div>
 </div>
 
@@ -416,14 +422,14 @@ tick(); setInterval(tick,1000);
 
 // Ticker
 const data=[
-  {t:'ETH/USD', v:'$1,842.30', d:'+2.14%', up:true},
-  {t:'SOL/USD', v:'$132.50',   d:'+3.82%', up:true},
-  {t:'BTC/USD', v:'$67,240',   d:'+0.91%', up:true},
-  {t:'ADA/USD', v:'$0.3812',   d:'−1.24%', up:false},
-  {t:'USD/BRL', v:'R$ 5.72',   d:'+0.18%', up:true},
-  {t:'AAVE',    v:'$92.40',    d:'+1.55%', up:true},
-  {t:'RDNT',    v:'$0.0412',   d:'−0.88%', up:false},
-  {t:'PYUSD',   v:'$1.0001',   d:'+0.01%', up:true},
+  {t:'ETH/USD', v:'$2,147', d:'+3.20%', up:true},
+  {t:'SOL/USD', v:'$91.05', d:'+1.85%', up:true},
+  {t:'BTC/USD', v:'$82,400',d:'+2.10%', up:true},
+  {t:'ADA/USD', v:'$0.2787',d:'−0.50%', up:false},
+  {t:'USD/BRL', v:'R$ 5.89',d:'+0.22%', up:true},
+  {t:'EIGEN',   v:'$0.196', d:'−1.20%', up:false},
+  {t:'RDNT',    v:'$0.0055',d:'−2.10%', up:false},
+  {t:'PYUSD',   v:'$1.0001',d:'+0.01%', up:true},
 ];
 const inner=document.getElementById('tickerInner');
 [...data,...data].forEach(a=>{
