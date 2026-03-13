@@ -228,7 +228,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
             <div style="text-align:right;"><div style="font-size:9px;color:var(--green);">1.88%</div><div id="aave-eth-usd" style="font-size:8px;color:var(--muted);">$3,842</div></div>
           </div>
           <div class="defi-row">
-            <div class="defi-asset"><img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" style="width:18px;height:18px;border-radius:50%;flex-shrink:0;" alt="USDT">1,651 USDT</div>
+            <div class="defi-asset"><img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" style="width:18px;height:18px;border-radius:50%;flex-shrink:0;" alt="USDT">1,652 USDT</div>
             <div style="text-align:right;"><div style="font-size:9px;color:var(--green);">1.72%</div><div style="font-size:8px;color:var(--muted);">$1,652</div></div>
           </div>
         </div>
@@ -252,9 +252,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
         </div>
       </div>
       <div class="defi-metrics">
-        <div class="dm"><div class="dm-label">NET WORTH</div><div id="aave-net-worth" class="dm-val acc">$4.75K</div></div>
-        <div class="dm"><div class="dm-label">NET APY</div><div class="dm-val pos">1.77%</div></div>
-        <div class="dm"><div class="dm-label">HEALTH</div><div id="aave-hf-metric" class="dm-val pos">6.00</div></div>
+        <div class="dm"><div class="dm-label">NET WORTH</div><div id="aave-net-worth" class="dm-val acc">$4.91K</div></div>
+        <div class="dm"><div class="dm-label">NET APY</div><div class="dm-val pos">1.60%</div></div>
+        <div class="dm"><div class="dm-label">HEALTH</div><div id="aave-hf-metric" class="dm-val pos">6.17</div></div>
       </div>
       <div style="margin-top:8px;">
         <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-bottom:2px;">
@@ -320,8 +320,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
         </div>
       </div>
       <div class="defi-metrics">
-        <div class="dm"><div class="dm-label">NET VALUE</div><div id="kamino-net-val" class="dm-val warn">$983.97</div></div>
-        <div class="dm"><div class="dm-label">NET APY</div><div class="dm-val pos">6.06%</div></div>
+        <div class="dm"><div class="dm-label">NET VALUE</div><div id="kamino-net-val" class="dm-val pos">$1.03K</div></div>
+        <div class="dm"><div class="dm-label">NET APY</div><div class="dm-val pos">3.70%</div></div>
         <div class="dm"><div class="dm-label">LIQ. LTV</div><div id="kamino-liq-ltv" class="dm-val warn">75.74%</div></div>
       </div>
       <div style="margin-top:8px;">
@@ -717,7 +717,7 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
 (async function fetchAaveData() {
   const WALLET    = '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6';
   const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
-  const ETH_QTY   = 1.87984935;
+  const ETH_QTY   = 1.87;
   const USDT_QTY  = 1651.49;
   const USDT_LT   = 0.75;
   const ETH_LT    = 0.825;
@@ -984,13 +984,16 @@ setTimeout(function calcCapOp() {
   const LP_VALUE = 357.24; // Uniswap V3 WETH/USDC pooled (updated 13/03/2026)
 
   const PORTFOLIO = [
-    { id:'ethereum',      qty:2.07984935,  fallback:2055.88 },
-    { id:'solana',        qty:14.87492676, fallback:86.80   },
-    { id:'cardano',       qty:375.245,     fallback:0.2894  },
-    { id:'eigenlayer',    qty:153.363,     fallback:0.2007  },
-    { id:'matic-network', qty:218,         fallback:0.11    },
-    { id:'tether',        qty:1651.49,     fallback:1       },
-    { id:'paypal-usd',    qty:90.04,       fallback:1       },
+    { id:'ethereum',        qty:2.084106,     fallback:2147.28 }, // from CoinGecko 13/03/26
+    { id:'solana',          qty:14.87492676,  fallback:91.05   },
+    { id:'cardano',         qty:375.245,      fallback:0.2787  },
+    { id:'radiant-capital', qty:7290.46,      fallback:0.00546 },
+    { id:'eigenlayer',      qty:153.363,      fallback:0.1955  },
+    { id:'matic-network',   qty:218,          fallback:0.0987  },
+    { id:'zksync',          qty:876,          fallback:0.0193  },
+    { id:'xai-blockchain',  qty:692.86,       fallback:0.0123  },
+    { id:'tether',          qty:1652.03,      fallback:1       }, // incl. AAVE supply
+    { id:'paypal-usd',      qty:90.04,        fallback:1       }, // incl. Kamino supply
   ];
 
   function render(portfolioTotal) {
