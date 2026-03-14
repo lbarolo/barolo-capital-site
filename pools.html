@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="light">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Barolo Capital — Pools & DeFi</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -866,7 +868,7 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
       if (ethPrice) {
         // Minimal update: just refresh liquidation box with live ETH price
         // Use last known HF from static values
-        updateAave({ totalCollateral: 5654.37, totalDebt: 746.30, liqThreshold: 0.825, healthFactor: 6.17 }, ethPrice || 2074.75);
+        updateAave({ totalCollateral: 5654.37, totalDebt: 746.30, liqThreshold: 0.825, healthFactor: 6.17 }, ethPrice || 2079.21);
         const ts = new Date().toTimeString().slice(0,5);
         setLive(true, `ETH ao vivo · contrato offline · ${ts}`);
       }
@@ -976,7 +978,7 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
   try {
     // SOL price is the critical data — always fetch this first
     const prices   = await getLivePrice(['solana']);
-    const solPrice = prices?.solana?.usd || 86.84;
+    const solPrice = prices?.solana?.usd || 87.28;
 
     // Kamino API is best-effort (CORS may block from file:// origin)
     const apiData  = await tryKaminoAPI();
@@ -1001,14 +1003,14 @@ setTimeout(function calcCapOp() {
   const LP_VALUE = 348.23; // Uniswap V3 WETH/USDC pooled (updated 14/03/2026)
 
   const PORTFOLIO = [
-    { id:'ethereum',        qty:2.084106,     fallback:2074.75 }, // from CoinGecko 14/03/26
-    { id:'solana',          qty:14.87492676,  fallback:86.84   },
-    { id:'cardano',         qty:375.245,      fallback:0.2608  },
-    { id:'radiant-capital', qty:7290.46,      fallback:0.005501},
-    { id:'eigenlayer',      qty:153.363,      fallback:0.1865  },
-    { id:'matic-network',   qty:218,          fallback:0.09661 },
-    { id:'zksync',          qty:876,          fallback:0.01904 },
-    { id:'xai-blockchain',  qty:692.86,       fallback:0.01099 },
+    { id:'ethereum',        qty:2.084106,     fallback:2079.21 }, // from CoinGecko 14/03/26
+    { id:'solana',          qty:19.31226576,  fallback:87.28   },
+    { id:'cardano',         qty:375.245,      fallback:0.2617  },
+    { id:'radiant-capital', qty:7290.46,      fallback:0.005543},
+    { id:'eigenlayer',      qty:153.363,      fallback:0.1870  },
+    { id:'matic-network',   qty:218,          fallback:0.09693 },
+    { id:'zksync',          qty:876,          fallback:0.01914 },
+    { id:'xai-blockchain',  qty:692.86,       fallback:0.01102 },
     { id:'zetachain',       qty:51.1434,      fallback:0.05045 },
     // USDT e PYUSD não incluídos aqui — somados via STABLES_USD acima
   ];
@@ -1090,20 +1092,21 @@ setTimeout(function calcCapOp() {
   // Try live prices first, fallback to static
   // FÓRMULA: SPOT(CG live) + Stables + Pool − Empréstimos
   // Atualizar ao receber prints: STABLES_USD, LP_VALUE, DEBT_USD
-  const STABLES_USD = 1741.53;  // USDT AAVE $1.652,03 + PYUSD Kamino $90,04 — atualizar semanalmente
-  const DEBT_USD    = 1549.71;  // AAVE $746,30 + Kamino $803,41 — atualizar semanalmente
+  const STABLES_USD = 1742.07;  // USDT AAVE $1.652,03 + PYUSD Kamino $90,04 — atualizar semanalmente
+  const DEBT_USD    = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 803.41);
 
   getLivePrice(PORTFOLIO.map(t=>t.id))
     .then(prices => {
       let spot = 0;
       PORTFOLIO.forEach(t => { spot += t.qty * (prices?.[t.id]?.usd || t.fallback); });
-      const total = spot + STABLES_USD + LP_VALUE - DEBT_USD;
+      const total = spot + STABLES_USD - DEBT_USD;
       render(total);
     })
     .catch(() => {
       let spot = 0;
       PORTFOLIO.forEach(t => { spot += t.qty * t.fallback; });
-      const total = spot + STABLES_USD + LP_VALUE - DEBT_USD;
+      const debtFallback = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 803.41);
+      const total = spot + STABLES_USD - debtFallback;
       render(total);
     });
 }, 1500);
@@ -3522,52 +3525,31 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // ── Compute & display Patrimônio Líquido ─────────────────────────
   function updatePatrimonio(evmData, solBal, ethPrice, solPrice) {
+    // Apenas atualiza globals + re-dispara calcCapOp — sem escrever diretamente na UI
+    // Evita dupla contagem com saldos EVM que já estão no CoinGecko
     try {
-      // FÓRMULA CORRETA — acordada com usuário:
-      // NET = SPOT(CG sem stables) + STABLES + LP + SOL Kamino extra − Dívidas
-      const SPOT_TOKENS = [
-        { id:'ethereum',        qty:2.084106,     price: ethPrice||2074.75 },
-        { id:'solana',          qty:14.87492676,  price: solPrice||86.84   },
-        { id:'cardano',         qty:375.245,      price: (window._livePrices?.cardano?.usd        || 0.2608)  },
-        { id:'radiant-capital', qty:7290.46,      price: (window._livePrices?.['radiant-capital']?.usd || 0.005501) },
-        { id:'eigenlayer',      qty:153.363,      price: (window._livePrices?.eigenlayer?.usd     || 0.1865)  },
-        { id:'matic-network',   qty:218,          price: (window._livePrices?.['matic-network']?.usd   || 0.09661) },
-        { id:'zksync',          qty:876,          price: (window._livePrices?.zksync?.usd         || 0.01904) },
-        { id:'xai-blockchain',  qty:692.86,       price: (window._livePrices?.['xai-blockchain']?.usd  || 0.01099) },
-        { id:'zetachain',       qty:51.1434,      price: (window._livePrices?.zetachain?.usd      || 0.05045) },
-      ];
-      const STABLES    = 1742.07;  // USDT AAVE $1652 + PYUSD Kamino $90 — não rastreados pelo CG
-      const LP         = window._liveLpValue   || 357.24;
-      const DEBT       = (window._liveAaveDebt  || 746.30) + (window._liveKaminoDebt || 803.41);
-      const SOL_EXTRA  = Math.max((window._liveKaminoSol || 19.35) - 14.87492676, 0) * (solPrice||86.84);
-
-      const spot = SPOT_TOKENS.reduce((s, t) => s + t.qty * t.price, 0);
-      const total = spot + STABLES + LP + SOL_EXTRA - DEBT;
-
-      console.log(`[Patrimônio] spot=$${spot.toFixed(0)} stables=$${STABLES} lp=$${LP.toFixed(0)} solExtra=$${SOL_EXTRA.toFixed(0)} debt=$${DEBT.toFixed(0)} NET=$${total.toFixed(0)}`);
-
-      window._livePatrimonio = total;
-
-      // Update all patrimônio displays
-      const pat    = total;
-      const brl    = pat * (window.usdBrlRate || 5.33);
-      const patFmt = '$' + pat.toLocaleString('en-US', {maximumFractionDigits:0});
-      const brlFmt = 'R$ ' + brl.toLocaleString('pt-BR', {maximumFractionDigits:0});
-
-      const capopEl = document.getElementById('capop-total');
-      if (capopEl) capopEl.textContent = patFmt;
-
-      ['patrimonio-total','saldo-total','portfolio-net'].forEach(id => {
-        const e = document.getElementById(id); if(e) e.textContent = patFmt;
-      });
-      document.querySelectorAll('.live-patrimonio').forEach(el => {
-        el.textContent = window.currentCurrency === 'BRL' ? brlFmt : patFmt;
-      });
-
-      // Also re-trigger the capop render
-      if (typeof render === 'function') render(total);
-
-      return total;
+      window._liveEthPrice = ethPrice || window._liveEthPrice || 2079.21;
+      window._liveSolPrice = solPrice || window._liveSolPrice || 87.28;
+      // Re-trigger via getLivePrice so calcCapOp recalculates with fresh debt values
+      if (typeof getLivePrice === 'function') {
+        const IDS = ['ethereum','solana','cardano','radiant-capital','eigenlayer',
+                     'matic-network','zksync','xai-blockchain','zetachain'];
+        const QTYS = {ethereum:2.084106,solana:19.31226576,cardano:375.245,
+          'radiant-capital':7290.46,eigenlayer:153.363,'matic-network':218,
+          zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
+        getLivePrice(IDS).then(prices => {
+          let spot = 0;
+          IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
+          const STABLES  = 1742.07; // USDT AAVE + PYUSD — atualizar com prints
+          const DEBT     = (window._liveAaveDebt  || 746.30) + (window._liveKaminoDebt || 803.41);
+          const solExtra = Math.max((window._liveKaminoSol||19.35) - 19.31226576, 0) * (solPrice||87.28);
+          const total    = spot + STABLES + solExtra - DEBT;
+          window._livePatrimonio = total;
+          console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + solExtra $${solExtra.toFixed(2)} − debt $${DEBT.toFixed(0)}`);
+          if (typeof render === 'function') render(total);
+        }).catch(()=>{});
+      }
+      return null;
     } catch(e) {
       console.warn('[Patrimônio] calc failed:', e.message);
       return null;
