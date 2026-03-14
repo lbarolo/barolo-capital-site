@@ -4,7 +4,9 @@
 <script>
 window.addEventListener('error',function(e){if(!e.message||e.message.includes('Script error')){e.stopImmediatePropagation();e.preventDefault();return false;}},true);
 </script>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Barolo Capital — Portfolio</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>if(typeof Chart==='undefined'){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';document.head.appendChild(s);}</script>
@@ -31,7 +33,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:48px;background:rgba(
 [data-theme="light"] nav{background:rgba(244,239,230,0.97);}
 [data-theme="dark"] nav{background:rgba(23,23,31,0.97);}
 .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.nav-logo{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;}
 .nav-title{font-size:15px;font-weight:600;color:var(--text);letter-spacing:.1em;font-family:"Cormorant Garamond",serif;}
 .nav-links{display:flex;gap:2px;}
 .nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
@@ -267,9 +268,23 @@ h1, h2, .section-label, .hero-value,
 
 <!-- NAV -->
 <nav>
-  <a class="nav-brand" href="portfolio_analytics.html">
-    <div class="nav-logo"><img src="data:image/png;base64,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" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="B"></div>
-    <span class="nav-title">Barolo Capital</span>
+  <a class="nav-brand" href="index.html">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+  <defs>
+    <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="18%"  stop-color="#c9a050"/>
+      <stop offset="82%"  stop-color="#c9a050"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+  </defs>
+  <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+  <text x="105" y="20"
+    font-family="Cormorant Garamond, Palatino Linotype, Times New Roman, serif"
+    font-weight="600" font-size="14" letter-spacing="3"
+    fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+  <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+</svg>
   </a>
   <div class="nav-links">
     <a href="index.html">Home</a>
@@ -285,6 +300,7 @@ h1, h2, .section-label, .hero-value,
     <button class="btn-sm" onclick="toggleTheme()">◑ Tema</button>
     <button class="btn-sm" onclick="toggleHide()" id="hideBtn">◎ Ocultar</button>
     <button class="btn-sm primary" onclick="window.print()">↓ PDF</button>
+    <button class="btn-sm" onclick="window.baroloRefresh && window.baroloRefresh()" title="Atualizar dados on-chain">⟳ Live</button>
   </div>
 </nav>
 
@@ -354,6 +370,9 @@ h1, h2, .section-label, .hero-value,
 
 
 
+
+<!-- Cardano Stake Section -->
+<div id="cardano-stake-target" style="margin:0 0 16px;"></div>
 <!-- ══ PERFORMANCE CHART ══ -->
 <div class="section-label">Curva de Patrimônio & Benchmark</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
@@ -600,7 +619,7 @@ const WEEKLY_UPDATE = {
   // Formato: [valor do portfólio total em USD]
   wealthCurve: {
     labels: ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26'],
-    values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,10395,11610,10857,9511,7376,5830],
+    values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,10395,11610,10857,9511,7376,6371],
     invested:[1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418],
   },
 
@@ -621,7 +640,7 @@ const WEEKLY_UPDATE = {
 
 const PORTFOLIO_DATA = [
   { cgId:'ethereum',        ticker:'ETH',   name:'Ethereum',    qty:2.084106,      invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://assets.coingecko.com/coins/images/279/small/ethereum.png' },
-  { cgId:'solana',          ticker:'SOL',   name:'Solana',      qty:14.87492676,   invested:2201.68, avgCost:146.97,  color:'#D98B3A', logo:'https://assets.coingecko.com/coins/images/4128/small/solana.png' },
+  { cgId:'solana',          ticker:'SOL',   name:'Solana',      qty:19.31226576,   invested:2201.68, avgCost:146.97,  color:'#D98B3A', logo:'https://assets.coingecko.com/coins/images/4128/small/solana.png' },
   { cgId:'cardano',         ticker:'ADA',   name:'Cardano',     qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#E8C53D', logo:'https://assets.coingecko.com/coins/images/975/small/cardano.png' },
   { cgId:'radiant-capital', ticker:'RDNT',  name:'Radiant',     qty:7290.46,       invested:0,       avgCost:null,    color:'#00E5FF', logo:'https://assets.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
   { cgId:'eigenlayer',      ticker:'EIGEN', name:'EigenLayer',  qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#9370DB', logo:'https://assets.coingecko.com/coins/images/33373/small/eigen.png' },
@@ -630,17 +649,17 @@ const PORTFOLIO_DATA = [
   { cgId:'xai-blockchain',  ticker:'XAI',   name:'Xai',         qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#FF6B35', logo:'https://assets.coingecko.com/coins/images/34258/small/xai.png' },
   { cgId:'zetachain',       ticker:'ZETA',  name:'ZetaChain',   qty:51.1434,       invested:0,       avgCost:null,    color:'#C8A87C', logo:'https://assets.coingecko.com/coins/images/26718/thumb/zetachain.jpg' },
   { cgId:'scroll-token',    ticker:'SCR',   name:'Scroll',      qty:0.0018,        invested:0,       avgCost:null,    color:'#F5C518', logo:'https://assets.coingecko.com/coins/images/33111/thumb/symbol.png' },
-  { cgId:'tether',          ticker:'USDT',  name:'Tether USD',  qty:1652.03,       invested:1652.03, avgCost:1,       color:'#26A17B', logo:'https://assets.coingecko.com/coins/images/325/small/Tether.png', isStable:true },
-  { cgId:'paypal-usd',      ticker:'PYUSD', name:'PayPal USD',  qty:90.04,         invested:90.04,   avgCost:1,       color:'#1DA1F2', logo:'https://assets.coingecko.com/coins/images/31212/thumb/PYUSD.png', isStable:true },
+  // USDT e PYUSD removidos do PORTFOLIO_DATA — somados via STABLES_USD para evitar dupla contagem
+  // USDT $1.652,03 (supply AAVE) + PYUSD $90,04 (supply Kamino) = $1.742,07 em STABLES_USD
 ];
 const PORTFOLIO = PORTFOLIO_DATA; // alias
 
 const FALLBACK_PRICES = {
   // Preços dos prints (Mar/2026) — atualizados ao vivo pelo CoinGecko
-  'ethereum':2055.88,'solana':86.80,'cardano':0.2894,'eigenlayer':0.2007,
-  'matic-network':0.11,'xai-blockchain':0.009537,'zksync':0.01935,
-  'radiant-capital':0.005435,'zetachain':0.0525,'scroll-token':0.04275,
-  'tether':1,'paypal-usd':1
+  'ethereum':2079.21,'solana':87.28,'cardano':0.2617,'eigenlayer':0.1870,
+  'matic-network':0.09693,'xai-blockchain':0.01102,'zksync':0.01914,
+  'radiant-capital':0.005543,'zetachain':0.05045,'scroll-token':0.04412,
+  // tether e paypal-usd removidos — contabilizados em STABLES_USD
 };
 const FALLBACK_24H = {
   'ethereum':6.9,'solana':4.5,'cardano':6.9,'eigenlayer':3.8,
@@ -648,15 +667,17 @@ const FALLBACK_24H = {
   'radiant-capital':2.9,'zetachain':-0.7,'scroll-token':2.7,'tether':0,'paypal-usd':0
 };
 
-const LP_POOLED   = 346.94;
-const AAVE_DEBT   = 745.94;
-const KAMINO_DEBT = 802.91;
-const TOTAL_DEBT  = AAVE_DEBT + KAMINO_DEBT;
+const LP_POOLED       = 357.24;   // Pool WETH/USDC ativa — atualizar semanalmente
+const STABLES_USD     = 1742.07;  // USDT AAVE $1.652,03 + PYUSD Kamino $90,04 — não no CG
+const AAVE_DEBT       = 746.30;   // atualizar semanalmente
+const KAMINO_DEBT     = 803.41;   // atualizar semanalmente
+const TOTAL_DEBT      = AAVE_DEBT + KAMINO_DEBT;
+const KAMINO_SOL_EXTRA_QTY = 19.35 - 19.31226576; // ~0.038 SOL restante // SOL no Kamino não rastreado pelo CG
 const TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
 let liveData = {};
-let ethPrice = 2062.68;
-let solPrice  = 87.73;
+let ethPrice = 2074.75;
+let solPrice  = 86.84;
 
 // ──────────────────────────────────────────────────
 // PRICE HELPERS
@@ -716,15 +737,19 @@ function renderUI(enriched){
   solPrice  = getPrice('solana');
 
   const cgTotal  = enriched.reduce((s,a)=>s+a.currentValue, 0);
-  const netTotal = cgTotal + LP_POOLED - TOTAL_DEBT;
-  const totalPnL = cgTotal + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED + TOTAL_DEBT; // net vs invested
+  const kaminoSolUsd   = KAMINO_SOL_EXTRA_QTY * (window._liveSolPrice || solPrice || 86.84);
+  const aaveDebtLive   = window._liveAaveDebt   || AAVE_DEBT;
+  const kaminoDebtLive = window._liveKaminoDebt  || KAMINO_DEBT;
+  // Patrimônio = CG SPOT + stables empréstimos + SOL Kamino extra − dívidas
+  const netTotal = cgTotal + STABLES_USD + kaminoSolUsd - (aaveDebtLive + kaminoDebtLive);
+  const totalPnL = cgTotal + STABLES_USD + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
   const realPnL  = netTotal - TOTAL_INVESTED;
   const roi      = (realPnL / TOTAL_INVESTED)*100;
   const ch24     = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0);
 
   set('s-net-total', fmtCurrency(netTotal, 0));
   set('s-net-card',  fmtCurrency(netTotal, 0));
-  set('s-net-sub', `CoinGecko ${fmtCurrency(cgTotal,0)} + LP ${fmtCurrency(LP_POOLED,0)} − Dívidas ${fmtCurrency(TOTAL_DEBT,0)}`);
+  set('s-net-sub', `SPOT ${fmtCurrency(cgTotal,0)} + Stables ${fmtCurrency(STABLES_USD,0)} + SOL Kamino ${fmtCurrency(kaminoSolUsd,0)} − Dívidas ${fmtCurrency(aaveDebtLive+kaminoDebtLive,0)}`);
   set('s-spot',    fmtCurrency(cgTotal, 0));
   set('s-spot-sub', enriched.length+' ativos');
   set('s-debt',    '-'+fmtCurrency(TOTAL_DEBT, 0));
@@ -1269,7 +1294,7 @@ const perfPeriodsData = {
   '1a': { labels:['Mar/25','Mai/25','Jul/25','Set/25','Nov/25','Jan/26','Mar/26'],
           p:[5400,6100,5600,4900,5300,5200,5823], i:[8800,8900,9000,9000,9040,9050,9445] },
   'all':{ labels:['01/2022', '02/2022', '03/2022', '04/2022', '05/2022', '06/2022', '07/2022', '08/2022', '09/2022', '10/2022', '11/2022', '12/2022', '01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023', '01/2024', '02/2024', '03/2024', '04/2024', '05/2024', '06/2024', '07/2024', '08/2024', '09/2024', '10/2024', '11/2024', '12/2024', '01/2025', '02/2025', '03/2025', '04/2025', '05/2025', '06/2025', '07/2025', '08/2025', '09/2025', '10/2025', '11/2025', '12/2025', '01/2026', '02/2026', '03/2026'],
-          p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 10395, 11610, 10857, 9511, 7376, 5830], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
+          p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 10395, 11610, 10857, 9511, 7376, 6371], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
 };
 const perfPeriods = perfPeriodsData; // alias
 let activePeriod = 'all';
@@ -1855,18 +1880,512 @@ buildDebtChart('stacked');
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
-
-function toggleMobileNav(){
-  const nl=document.querySelector('.nav-links');
-  if(nl) nl.classList.toggle('open');
-}
-document.addEventListener('DOMContentLoaded',function(){
-  document.querySelectorAll('.nav-links a').forEach(function(a){
+<!-- mobile nav js moved -->
+document.addEventListener(\'DOMContentLoaded\',function(){
+  document.querySelectorAll(\'.nav-links a\').forEach(function(a){
     a.addEventListener('click',function(){
       const nl=document.querySelector('.nav-links');
       if(nl) nl.classList.remove('open');
     });
   });
 });
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — AUTO-FETCH MULTI-WALLET MODULE
+// EVM (Alchemy) + Solana/Kamino (Helius)
+// ══════════════════════════════════════════════════════════════════
+(function initWalletFetch() {
+
+  const ALCHEMY_KEY = 'R_9y5DBqKNR2NapexG8n7';
+  const HELIUS_KEY  = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
+
+  const ETH_RPC   = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+  const BASE_RPC  = `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+  const HELIUS_RPC= `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+  const HELIUS_API= `https://api.helius.xyz/v0`;
+
+  // ── Wallets ──────────────────────────────────────────────────────
+  const EVM_WALLETS = [
+    '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6',
+    '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396', // AAVE
+    '0x835a5F686c489023064Edb0EA3A0f4ee54BD77F6',
+    '0x8311038D68039f4C3e7237D64f4F2c598fBf4ea3',
+  ];
+  const AAVE_WALLET  = '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396';
+  const SOL_WALLET   = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
+
+  // ── Contracts ────────────────────────────────────────────────────
+  const AAVE_POOL   = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
+  const UNI_NFT     = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
+  const LP_TOKEN_ID = 4694262;
+  const USDT_ADDR   = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+  const USDC_ADDR   = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+  const WETH_ADDR   = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+
+  // Kamino program ID on Solana
+  const KAMINO_PROGRAM = 'KLend2g3cP87fffoy8q1mQqGKjrL9CGMcnvsoBrDgKzX';
+
+  // ── Helpers ──────────────────────────────────────────────────────
+  const padAddr = a => '000000000000000000000000' + a.slice(2).toLowerCase();
+  const padUint = n => BigInt(n).toString(16).padStart(64, '0');
+  const decUint = (hex, offset=0) => BigInt('0x' + (hex.slice(2)||'0').slice(offset*64, (offset+1)*64) || '0');
+  const decNum  = (n, dec) => Number(n) / Math.pow(10, dec);
+  const fmt2    = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmtK    = n => n >= 1000 ? '$' + (n/1000).toFixed(2) + 'K' : fmt2(n);
+  const setEl   = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  const setHtml = (id, v) => { const e = document.getElementById(id); if(e) e.innerHTML = v; };
+  const setColor= (id, c) => { const e = document.getElementById(id); if(e) e.style.color = c; };
+
+  async function rpc(url, method, params) {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({id:1, jsonrpc:'2.0', method, params})
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    return d.result;
+  }
+
+  async function ethCall(rpcUrl, to, data) {
+    return rpc(rpcUrl, 'eth_call', [{to, data}, 'latest']);
+  }
+
+  // ── ETH balance for one address ──────────────────────────────────
+  async function getEthBalance(addr) {
+    const raw = await rpc(ETH_RPC, 'eth_getBalance', [addr, 'latest']);
+    return decNum(BigInt(raw), 18);
+  }
+
+  // ── ERC20 balance ────────────────────────────────────────────────
+  async function getERC20(rpcUrl, token, addr, decimals) {
+    const data = '0x70a08231' + padAddr(addr);
+    const raw  = await ethCall(rpcUrl, token, data);
+    return decNum(decUint(raw, 0), decimals);
+  }
+
+  // ── All EVM wallet balances ──────────────────────────────────────
+  async function fetchAllEVM() {
+    const results = {};
+    await Promise.all(EVM_WALLETS.map(async wallet => {
+      try {
+        const [eth, usdt, usdc, weth] = await Promise.all([
+          getEthBalance(wallet).catch(()=>0),
+          getERC20(ETH_RPC, USDT_ADDR, wallet, 6).catch(()=>0),
+          getERC20(ETH_RPC, USDC_ADDR, wallet, 6).catch(()=>0),
+          getERC20(ETH_RPC, WETH_ADDR, wallet, 18).catch(()=>0),
+        ]);
+        results[wallet] = { eth, usdt, usdc, weth };
+        console.log(`[EVM] ${wallet.slice(0,8)}... ETH:${eth.toFixed(4)} USDT:${usdt.toFixed(2)} USDC:${usdc.toFixed(2)}`);
+      } catch(e) {
+        console.warn(`[EVM] ${wallet.slice(0,8)}... failed:`, e.message);
+        results[wallet] = { eth:0, usdt:0, usdc:0, weth:0 };
+      }
+    }));
+    return results;
+  }
+
+  // ── AAVE V3 ──────────────────────────────────────────────────────
+  async function fetchAave(ethPrice) {
+    try {
+      const data = '0xbf92857c' + padAddr(AAVE_WALLET);
+      const raw  = await ethCall(ETH_RPC, AAVE_POOL, data);
+      // Returns 6 uint256: totalCollateralBase, totalDebtBase, availBorrows, liqThreshold, ltv, healthFactor
+      const collateral = decNum(decUint(raw, 0), 8); // USD 8 decimals
+      const debt       = decNum(decUint(raw, 1), 8);
+      const liqThresh  = decNum(decUint(raw, 3), 4);
+      const hf         = decNum(decUint(raw, 5), 18);
+
+      console.log(`[AAVE] Collateral: $${collateral.toFixed(2)}, Debt: $${debt.toFixed(2)}, HF: ${hf.toFixed(2)}`);
+
+      // Update AAVE card UI
+      setEl('aave-net-worth', fmtK(collateral - debt));
+      const hfEl = document.getElementById('aave-hf-metric');
+      if (hfEl) {
+        hfEl.textContent = hf.toFixed(2);
+        hfEl.style.color = hf > 2 ? 'var(--green)' : hf > 1.3 ? 'var(--yellow)' : 'var(--red)';
+      }
+
+      // Also update via existing updateAave function if available
+      if (typeof updateAave === 'function' && ethPrice) {
+        updateAave({ totalCollateral: collateral, totalDebt: debt, liqThreshold: liqThresh/100, healthFactor: hf }, ethPrice);
+      }
+
+      // Store globals for other calcs
+      window._liveAaveDebt       = debt;
+      window._liveAaveCollateral = collateral;
+      window._liveAaveHF         = hf;
+
+      return { collateral, debt, liqThresh, hf };
+    } catch(e) {
+      console.warn('[AAVE] failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Uniswap V3 position ──────────────────────────────────────────
+  async function fetchUniswapLP() {
+    try {
+      const data = '0x99fbab88' + padUint(LP_TOKEN_ID);
+      const raw  = await ethCall(ETH_RPC, UNI_NFT, data);
+      const liquidity = decUint(raw, 7);
+      const isActive  = liquidity > 0n;
+      console.log(`[UNI] LP #${LP_TOKEN_ID} liquidity: ${liquidity}, active: ${isActive}`);
+      window._liveUniActive = isActive;
+      return { liquidity: liquidity.toString(), isActive };
+    } catch(e) {
+      console.warn('[UNI] failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Solana: native SOL balance ───────────────────────────────────
+  async function fetchSolBalance() {
+    try {
+      const result = await rpc(HELIUS_RPC, 'getBalance', [SOL_WALLET]);
+      const sol = result.value / 1e9;
+      console.log(`[SOL] Balance: ${sol.toFixed(4)} SOL`);
+      window._liveSolWallet = sol;
+      return sol;
+    } catch(e) {
+      console.warn('[SOL] balance failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Solana: all token accounts (for PYUSD, USDC on Solana) ───────
+  async function fetchSolTokens() {
+    try {
+      const result = await rpc(HELIUS_RPC, 'getTokenAccountsByOwner', [
+        SOL_WALLET,
+        { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' },
+        { encoding: 'jsonParsed' }
+      ]);
+      const tokens = {};
+      for (const acc of (result.value || [])) {
+        const info = acc.account?.data?.parsed?.info;
+        if (!info) continue;
+        const mint = info.mint;
+        const amt  = parseFloat(info.tokenAmount?.uiAmountString || '0');
+        if (amt > 0.001) {
+          tokens[mint] = (tokens[mint] || 0) + amt;
+        }
+      }
+      // Known mints
+      const PYUSD_MINT = '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo';
+      const USDC_SOL   = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+      console.log('[SOL Tokens] PYUSD:', tokens[PYUSD_MINT]||0, 'USDC:', tokens[USDC_SOL]||0);
+      window._livePyusd = tokens[PYUSD_MINT] || 0;
+      window._liveUsdcSol = tokens[USDC_SOL] || 0;
+      return tokens;
+    } catch(e) {
+      console.warn('[SOL Tokens] failed:', e.message);
+      return {};
+    }
+  }
+
+  // ── Kamino: fetch position via Helius DAS ────────────────────────
+  async function fetchKamino() {
+    try {
+      // Use Helius DAS to get parsed account data for Kamino
+      const r = await fetch(`${HELIUS_API}/addresses/${SOL_WALLET}/balances?api-key=${HELIUS_KEY}`);
+      if (!r.ok) throw new Error('Helius balances ' + r.status);
+      const data = await r.json();
+
+      // Also try Kamino API directly
+      const kaminoR = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
+      if (kaminoR.ok) {
+        const kData = await kaminoR.json();
+        if (kData && kData.length > 0) {
+          const obligation = kData[0];
+          const deposits = obligation.deposits || [];
+          const borrows  = obligation.borrows  || [];
+
+          let totalDepositUsd = 0;
+          let totalBorrowUsd  = 0;
+          let solQty = 0;
+
+          deposits.forEach(d => {
+            totalDepositUsd += parseFloat(d.marketValueRefreshed || d.marketValue || 0);
+            if (d.mintAddress === 'So11111111111111111111111111111111111111112') {
+              solQty += parseFloat(d.amount || 0);
+            }
+          });
+          borrows.forEach(b => {
+            totalBorrowUsd += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
+          });
+
+          const netValue = totalDepositUsd - totalBorrowUsd;
+          const ltv = totalDepositUsd > 0 ? totalBorrowUsd / totalDepositUsd : 0;
+
+          console.log(`[Kamino] Deposits: $${totalDepositUsd.toFixed(2)}, Borrows: $${totalBorrowUsd.toFixed(2)}, SOL: ${solQty.toFixed(3)}, LTV: ${(ltv*100).toFixed(1)}%`);
+
+          window._liveKaminoDebt       = totalBorrowUsd;
+          window._liveKaminoDeposit    = totalDepositUsd;
+          window._liveKaminoNetVal     = netValue;
+          window._liveKaminoSol        = solQty;
+          window._liveKaminoLtv        = ltv;
+
+          // Update Kamino UI
+          setEl('kamino-net-val', fmtK(netValue));
+          const ltvEl = document.getElementById('kamino-ltv-bar');
+          if (ltvEl) {
+            const fill = ltvEl.querySelector('.bar-fill');
+            if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
+          }
+
+          return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
+        }
+      }
+
+      // Fallback: use static values
+      console.warn('[Kamino] API returned no data, using static fallback');
+      window._liveKaminoDebt    = window._liveKaminoDebt    || 803.41;
+      window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
+      return null;
+    } catch(e) {
+      console.warn('[Kamino] failed:', e.message);
+      window._liveKaminoDebt = window._liveKaminoDebt || 803.41;
+      return null;
+    }
+  }
+
+  // ── Compute & display Patrimônio Líquido ─────────────────────────
+  function updatePatrimonio(evmData, solBal, ethPrice, solPrice) {
+    // In portfolio_analytics, the main netTotal is already computed in renderUI()
+    // This function just updates the live globals so renderUI() picks them up
+    // and re-triggers a refresh
+
+    window._liveEthPrice = ethPrice || window._liveEthPrice || 2079.21;
+    window._liveSolPrice = solPrice || window._liveSolPrice || 87.28;
+
+    // Re-run fetchPrices to update UI with latest live data
+    if (typeof fetchPrices === 'function') {
+      fetchPrices().catch(()=>{});
+    }
+    return null;
+  }
+    // Re-trigger capital operacional chart if on pools page
+    if (typeof getLivePrice === 'function') {
+      getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'])
+        .then(prices => {
+          let total = window._livePatrimonio;
+          if (!total) return;
+          if (typeof render === 'function') render(total);
+        })
+        .catch(()=>{});
+    }
+
+    console.log('[BaroloFetch] Complete ✓');
+  }
+
+  // ── Run ───────────────────────────────────────────────────────────
+  const delay = document.readyState === 'loading' ? 2500 : 1500;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(runAll, delay));
+  } else {
+    setTimeout(runAll, delay);
+  }
+
+  // Expose for manual refresh
+  window.baroloRefresh = runAll;
+
+})();
+
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — CARDANO / ADA STAKE MODULE (Blockfrost)
+// ══════════════════════════════════════════════════════════════════
+(function initCardanoFetch() {
+
+  const BF_KEY  = 'mainnetUUNZyRnZ6sg9uAvwnprB7vNIu8s7VPKm';
+  const BF_URL  = 'https://cardano-mainnet.blockfrost.io/api/v0';
+  const ADA_ADDR= 'addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znuy0ctq737ruk7e72dqkm0a23';
+
+  const LOVELACE = 1_000_000; // 1 ADA = 1_000_000 lovelace
+
+  async function bf(path) {
+    const r = await fetch(`${BF_URL}${path}`, {
+      headers: { 'project_id': BF_KEY }
+    });
+    if (!r.ok) throw new Error(`Blockfrost ${r.status}: ${path}`);
+    return r.json();
+  }
+
+  // ── Fetch ADA wallet balance + stake info ─────────────────────────
+  async function fetchCardano() {
+    try {
+      // 1. Get address info (ADA balance + tokens)
+      const addrInfo = await bf(`/addresses/${ADA_ADDR}`);
+      const adaWallet = (addrInfo.amount?.find(a => a.unit === 'lovelace')?.quantity || 0) / LOVELACE;
+
+      // 2. Get stake address from the payment address
+      const stakeAddr = addrInfo.stake_address;
+      console.log(`[Cardano] Wallet ADA: ${adaWallet.toFixed(2)}, Stake addr: ${stakeAddr}`);
+
+      let stakedAda = 0, rewardsAda = 0, poolName = '—', poolTicker = '—', poolApy = null;
+
+      if (stakeAddr) {
+        // 3. Get stake account info
+        const stakeInfo = await bf(`/accounts/${stakeAddr}`);
+        stakedAda  = parseInt(stakeInfo.controlled_amount || 0) / LOVELACE;
+        rewardsAda = parseInt(stakeInfo.withdrawable_amount || 0) / LOVELACE;
+        const poolId = stakeInfo.pool_id;
+
+        console.log(`[Cardano] Staked: ${stakedAda.toFixed(2)} ADA, Rewards pending: ${rewardsAda.toFixed(4)} ADA`);
+
+        // 4. Get pool info
+        if (poolId) {
+          try {
+            const poolInfo = await bf(`/pools/${poolId}/metadata`);
+            poolName   = poolInfo.name   || poolId.slice(0,12) + '...';
+            poolTicker = poolInfo.ticker || '—';
+            console.log(`[Cardano] Pool: ${poolTicker} — ${poolName}`);
+          } catch(e) { /* pool metadata optional */ }
+
+          // 5. Get pool APY from history
+          try {
+            const poolHistory = await bf(`/pools/${poolId}/history?count=5&order=desc`);
+            if (poolHistory?.length > 0) {
+              const latest = poolHistory[0];
+              // APY ≈ (blocks * avg_reward_per_block / active_stake) * epochs_per_year
+              // Simpler: annualize the epoch ROI
+              const epochRoi = parseFloat(latest.active_stake) > 0
+                ? (parseFloat(latest.rewards) / parseFloat(latest.active_stake)) * 100
+                : 0;
+              poolApy = (epochRoi * 73).toFixed(2); // ~73 epochs/year
+            }
+          } catch(e) { /* APY calc optional */ }
+        }
+
+        // 6. Get recent reward history
+        let totalRewardsEarned = 0;
+        try {
+          const rewardHistory = await bf(`/accounts/${stakeAddr}/rewards?count=20&order=desc`);
+          totalRewardsEarned = rewardHistory.reduce((s, r) => s + parseInt(r.amount||0)/LOVELACE, 0);
+          console.log(`[Cardano] Last 20 epochs rewards: ${totalRewardsEarned.toFixed(2)} ADA`);
+        } catch(e) {}
+
+        window._liveAdaStaked    = stakedAda;
+        window._liveAdaRewards   = rewardsAda;
+        window._liveAdaPool      = { name: poolName, ticker: poolTicker, apy: poolApy };
+        window._liveAdaRewardsHistory = totalRewardsEarned;
+      }
+
+      window._liveAdaWallet = adaWallet;
+
+      // Get ADA price from already-fetched CoinGecko data
+      const adaPrice = window._livePrices?.cardano?.usd || null;
+
+      // Update UI elements
+      updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice });
+
+      return { adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy };
+
+    } catch(e) {
+      console.warn('[Cardano] fetch failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Update UI ────────────────────────────────────────────────────
+  function updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice }) {
+    const fmt2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtA = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+    const setEl = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+
+    // Wallet ADA
+    setEl('ada-wallet-qty',   fmtA(adaWallet) + ' ADA');
+    setEl('ada-staked-qty',   fmtA(stakedAda) + ' ADA');
+    setEl('ada-rewards-qty',  fmtA(rewardsAda) + ' ADA pendentes');
+    setEl('ada-pool-name',    poolTicker ? `${poolTicker} — ${poolName}` : poolName);
+    setEl('ada-pool-apy',     poolApy ? poolApy + '% APY (est.)' : '—');
+
+    if (adaPrice) {
+      setEl('ada-wallet-usd',  '$' + fmt2(adaWallet * adaPrice));
+      setEl('ada-staked-usd',  '$' + fmt2(stakedAda * adaPrice));
+      setEl('ada-rewards-usd', '$' + fmt2(rewardsAda * adaPrice));
+    }
+
+    // Update the portfolio_analytics ADA row
+    const adaRow = document.querySelector('[data-ticker="ADA"]');
+    if (adaRow && stakedAda > 0) {
+      const qtyEl = adaRow.querySelector('.asset-qty, .col-qty');
+      if (qtyEl) qtyEl.textContent = fmtA(stakedAda) + ' ADA';
+    }
+
+    // Update live indicator
+    const liveIndicator = document.getElementById('cardano-live-badge');
+    if (liveIndicator) {
+      liveIndicator.textContent = '● LIVE';
+      liveIndicator.style.color = 'var(--green)';
+    }
+
+    console.log(`[Cardano UI] Updated: wallet=${adaWallet.toFixed(2)}, staked=${stakedAda.toFixed(2)}, rewards=${rewardsAda.toFixed(4)}, pool=${poolTicker}`);
+  }
+
+  // ── Build Cardano section HTML (injected into portfolio page) ────
+  function buildCardanoSection() {
+    const existing = document.getElementById('cardano-stake-section');
+    if (existing) return; // already built
+
+    // Find where to insert — after ADA row in portfolio or at end of DeFi section
+    const target = document.getElementById('cardano-stake-target');
+    if (!target) return;
+
+    target.innerHTML = `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <img src="https://assets.coingecko.com/coins/images/975/small/cardano.png" width="18" height="18" style="border-radius:50%;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;">ADA Stake</span>
+            <span id="cardano-live-badge" style="font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;">● —</span>
+          </div>
+          <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;" id="ada-pool-apy">—</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+            <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">DELEGADO</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;" id="ada-staked-qty">375.24 ADA</div>
+            <div style="font-size:9px;color:var(--muted);" id="ada-staked-usd">—</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+            <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">REWARDS PENDENTES</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--green);" id="ada-rewards-qty">— ADA</div>
+            <div style="font-size:9px;color:var(--muted);" id="ada-rewards-usd">—</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+            <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">POOL</div>
+            <div style="font-size:11px;font-family:'JetBrains Mono',monospace;word-break:break-all;" id="ada-pool-name">—</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ── Run ───────────────────────────────────────────────────────────
+  async function run() {
+    buildCardanoSection();
+    await fetchCardano();
+  }
+
+  // Hook into baroloRefresh
+  const _prev = window.baroloRefresh;
+  window.baroloRefresh = async function() {
+    if (_prev) await _prev();
+    await run();
+  };
+
+  // Auto-run after 3s (after other fetches)
+  const delay = document.readyState === 'loading' ? 3500 : 2500;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(run, delay));
+  } else {
+    setTimeout(run, delay);
+  }
+
+})();
+
+</script>
 </body>
 </html>
