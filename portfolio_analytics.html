@@ -241,6 +241,20 @@ h1, h2, .section-label, .hero-value,
   font-family: 'Cormorant Garamond', serif;
 }
 .nav-title { font-size:15px; font-weight:600; letter-spacing:0.08em; }
+
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
+    background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
+  [data-theme="dark"] .nav-links{background:rgba(23,23,31,.98);}
+  .nav-links.open{display:flex;}
+  .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+  .nav-links a:last-child{border-bottom:none;}
+  .nav-hamburger{display:flex;}
+}
+@media(min-width:769px){.nav-hamburger{display:none!important;}}
+.nav-hamburger{background:none;border:1px solid var(--border);border-radius:4px;
+  padding:5px 9px;cursor:pointer;flex-direction:column;gap:4px;align-items:center;justify-content:center;}
+.nav-hamburger span{display:block;width:16px;height:1.5px;background:var(--muted);transition:all .25s;}
 </style>
 </head>
 <body>
@@ -261,12 +275,13 @@ h1, h2, .section-label, .hero-value,
     <a href="index.html">Home</a>
     <a href="portfolio_analytics.html" class="active">Portfolio</a>
     <a href="pools.html">Pools &amp; DeFi</a>
+    <a href="emprestimos.html">Empréstimos</a>
     <a href="ferramentas.html">Ferramentas</a>
-    <a href="pools.html" style="display:none">_ & DeFi</a>
   </div>
+  <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
   <div class="nav-right">
     <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
-    <span id="brlRateBadge" style="display:none;font-size:8px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;">R$ 5.85</span>
+    <span id="brlRateBadge" style="display:none;font-size:8px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;">R$ 5.33</span>
     <button class="btn-sm" onclick="toggleTheme()">◑ Tema</button>
     <button class="btn-sm" onclick="toggleHide()" id="hideBtn">◎ Ocultar</button>
     <button class="btn-sm primary" onclick="window.print()">↓ PDF</button>
@@ -505,7 +520,7 @@ const WEEKLY_UPDATE = {
   // ── Saldos de carteira (quantidades) ──
   holdings: {
     ETH:   2.084106,
-    SOL:   14.87492676,
+    SOL:   86.84,
     ADA:   375.245,
     RDNT:  7290.46,
     EIGEN: 153.36298802,
@@ -545,7 +560,7 @@ const WEEKLY_UPDATE = {
   // ── Custos totais investidos por ativo ──
   invested: {
     ETH:   4433.16,
-    SOL:   2201.68,
+    SOL:   86.84,
     ADA:   530.95,
     RDNT:  0,
     EIGEN: 45.87,
@@ -585,7 +600,7 @@ const WEEKLY_UPDATE = {
   // Formato: [valor do portfólio total em USD]
   wealthCurve: {
     labels: ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26'],
-    values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,10395,11610,10857,9511,7376,5995],
+    values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,10395,11610,10857,9511,7376,5830],
     invested:[1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418],
   },
 
@@ -1254,7 +1269,7 @@ const perfPeriodsData = {
   '1a': { labels:['Mar/25','Mai/25','Jul/25','Set/25','Nov/25','Jan/26','Mar/26'],
           p:[5400,6100,5600,4900,5300,5200,5823], i:[8800,8900,9000,9000,9040,9050,9445] },
   'all':{ labels:['01/2022', '02/2022', '03/2022', '04/2022', '05/2022', '06/2022', '07/2022', '08/2022', '09/2022', '10/2022', '11/2022', '12/2022', '01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023', '01/2024', '02/2024', '03/2024', '04/2024', '05/2024', '06/2024', '07/2024', '08/2024', '09/2024', '10/2024', '11/2024', '12/2024', '01/2025', '02/2025', '03/2025', '04/2025', '05/2025', '06/2025', '07/2025', '08/2025', '09/2025', '10/2025', '11/2025', '12/2025', '01/2026', '02/2026', '03/2026'],
-          p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 10395, 11610, 10857, 9511, 7376, 7513], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
+          p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 10395, 11610, 10857, 9511, 7376, 5830], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
 };
 const perfPeriods = perfPeriodsData; // alias
 let activePeriod = 'all';
@@ -1352,7 +1367,7 @@ function setRef(ref){
 // SISTEMA DE MOEDA — USD / BRL
 // ══════════════════════════════════════════════════════════
 let currentCurrency = 'USD';
-let usdBrlRate = 5.85;
+let usdBrlRate = 5.33;
 
 async function fetchBrlRate() {
   try {
@@ -1840,5 +1855,18 @@ buildDebtChart('stacked');
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
+
+function toggleMobileNav(){
+  const nl=document.querySelector('.nav-links');
+  if(nl) nl.classList.toggle('open');
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    a.addEventListener('click',function(){
+      const nl=document.querySelector('.nav-links');
+      if(nl) nl.classList.remove('open');
+    });
+  });
+});
 </body>
 </html>
