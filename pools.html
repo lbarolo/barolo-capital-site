@@ -157,7 +157,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   .defi-summary,.lp-bar{grid-template-columns:1fr;}
   .lp-m{border-right:none;border-bottom:1px solid var(--border);}
   .iframe-wrap{height:700px;}
+  .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
+    background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
+  [data-theme="dark"] .nav-links{background:rgba(23,23,31,.98);}
+  .nav-links.open{display:flex;}
+  .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+  .nav-links a:last-child{border-bottom:none;}
+  .nav-hamburger{display:flex;}
 }
+@media(min-width:769px){
+  .nav-hamburger{display:none!important;}
+}
+/* Mobile hamburger button */
+.nav-hamburger{
+  background:none;border:1px solid var(--border);border-radius:4px;
+  padding:5px 9px;cursor:pointer;flex-direction:column;gap:4px;align-items:center;justify-content:center;
+}
+.nav-hamburger span{display:block;width:16px;height:1.5px;background:var(--muted);transition:all .25s;}
 </style>
 </head>
 <body>
@@ -176,7 +192,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   <text x="105" y="20"
     font-family="Cormorant Garamond, Palatino Linotype, Times New Roman, serif"
     font-weight="600" font-size="14" letter-spacing="3"
-    fill="#e8e0d0" text-anchor="middle">BAROLO CAPITAL</text>
+    fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
   <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
 </svg>
   </a>
@@ -296,7 +312,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
             <div style="text-align:right;"><div style="font-size:9px;color:var(--green);">4.94%</div><div id="kamino-sol-usd" style="font-size:8px;color:var(--muted);">$1,700</div></div>
           </div>
           <div class="defi-row">
-            <div class="defi-asset"><img src="https://assets.coingecko.com/coins/images/31212/small/pyusd.png" style="width:18px;height:18px;border-radius:50%;flex-shrink:0;" alt="PYUSD">90.04 PYUSD</div>
+            <div class="defi-asset"><img src="https://assets.coingecko.com/coins/images/31212/small/PYUSD.png" onerror="this.src='https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6c3ea9036406852006290770BEdFcAbA0e23A0e8/logo.png'" style="width:18px;height:18px;border-radius:50%;flex-shrink:0;" alt="PYUSD">90.04 PYUSD</div>
             <div style="text-align:right;"><div style="font-size:9px;color:var(--green);">0.52%</div><div style="font-size:8px;color:var(--muted);">$90</div></div>
           </div>
         </div>
@@ -849,7 +865,7 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
       if (ethPrice) {
         // Minimal update: just refresh liquidation box with live ETH price
         // Use last known HF from static values
-        updateAave({ totalCollateral: 5654.37, totalDebt: 746.30, liqThreshold: 0.825, healthFactor: 6.17 }, ethPrice);
+        updateAave({ totalCollateral: 5654.37, totalDebt: 746.30, liqThreshold: 0.825, healthFactor: 6.17 }, ethPrice || 2074.75);
         const ts = new Date().toTimeString().slice(0,5);
         setLive(true, `ETH ao vivo · contrato offline · ${ts}`);
       }
@@ -959,7 +975,7 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
   try {
     // SOL price is the critical data — always fetch this first
     const prices   = await getLivePrice(['solana']);
-    const solPrice = prices?.solana?.usd || 86.80;
+    const solPrice = prices?.solana?.usd || 86.84;
 
     // Kamino API is best-effort (CORS may block from file:// origin)
     const apiData  = await tryKaminoAPI();
@@ -984,14 +1000,15 @@ setTimeout(function calcCapOp() {
   const LP_VALUE = 357.24; // Uniswap V3 WETH/USDC pooled (updated 13/03/2026)
 
   const PORTFOLIO = [
-    { id:'ethereum',        qty:2.084106,     fallback:2147.28 }, // from CoinGecko 13/03/26
-    { id:'solana',          qty:14.87492676,  fallback:91.05   },
-    { id:'cardano',         qty:375.245,      fallback:0.2787  },
-    { id:'radiant-capital', qty:7290.46,      fallback:0.00546 },
-    { id:'eigenlayer',      qty:153.363,      fallback:0.1955  },
-    { id:'matic-network',   qty:218,          fallback:0.0987  },
-    { id:'zksync',          qty:876,          fallback:0.0193  },
-    { id:'xai-blockchain',  qty:692.86,       fallback:0.0123  },
+    { id:'ethereum',        qty:2.084106,     fallback:2074.75 }, // from CoinGecko 14/03/26
+    { id:'solana',          qty:14.87492676,  fallback:86.84   },
+    { id:'cardano',         qty:375.245,      fallback:0.2608  },
+    { id:'radiant-capital', qty:7290.46,      fallback:0.005501},
+    { id:'eigenlayer',      qty:153.363,      fallback:0.1865  },
+    { id:'matic-network',   qty:218,          fallback:0.09661 },
+    { id:'zksync',          qty:876,          fallback:0.01904 },
+    { id:'xai-blockchain',  qty:692.86,       fallback:0.01099 },
+    { id:'zetachain',       qty:51.1434,      fallback:0.05045 },
     { id:'tether',          qty:1652.03,      fallback:1       }, // incl. AAVE supply
     { id:'paypal-usd',      qty:90.04,        fallback:1       }, // incl. Kamino supply
   ];
@@ -1459,6 +1476,208 @@ document.addEventListener('DOMContentLoaded',()=>{
   </div>
 </div>
 
+<!-- ══ MÉTRICAS DE TOKENS ACUMULADOS ══ -->
+<div class="section-label" style="margin-top:48px;">Tokens Acumulados — Pools & Empréstimos</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;" id="tokenMetricsGrid">
+
+  <!-- Fees por token (Pools) -->
+  <div class="chart-panel" style="margin-bottom:0;">
+    <div class="chart-panel-hdr" style="padding-bottom:10px;">
+      <div>
+        <div class="chart-panel-title">Taxas Coletadas por Token</div>
+        <div class="chart-panel-sub">FEES ACUMULADAS NAS POOLS · ESTIMATIVA</div>
+      </div>
+    </div>
+    <div style="padding:0 18px 18px;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">TOKEN</th>
+            <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">QTD FEES</th>
+            <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">USD (live)</th>
+            <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">DE</th>
+          </tr>
+        </thead>
+        <tbody id="feeTokenBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:9px;color:var(--muted);line-height:1.7;">
+        * Fees de pools fechadas foram coletadas e convertidas no momento do resgate. Valores USD calculados com preço atual para tokens ainda em carteira.
+      </div>
+    </div>
+  </div>
+
+  <!-- Colateral por protocolo -->
+  <div class="chart-panel" style="margin-bottom:0;">
+    <div class="chart-panel-hdr" style="padding-bottom:10px;">
+      <div>
+        <div class="chart-panel-title">Colateral em Empréstimos</div>
+        <div class="chart-panel-sub">TOKENS BLOQUEADOS AAVE &amp; KAMINO · LIVE</div>
+      </div>
+    </div>
+    <div style="padding:0 18px 18px;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">TOKEN</th>
+            <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">QUANTIDADE</th>
+            <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">USD (live)</th>
+            <th style="text-align:left;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">PROTOCOLO</th>
+          </tr>
+        </thead>
+        <tbody id="collateralTokenBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:8px 10px;background:var(--surface2);border-radius:4px;font-size:9px;color:var(--muted);line-height:1.7;">
+        <span style="color:var(--accent);font-weight:600;">AAVE V3:</span> Colateral = 1.87 ETH + 1,652 USDT · Dívida = $746 USDC<br>
+        <span style="color:var(--accent);font-weight:600;">Kamino:</span> Colateral = 19.35 SOL + 90 PYUSD · Dívida = $803 USDC<br>
+        <span style="color:var(--muted);">Total bloqueado como colateral: </span><span id="totalCollateralUsd" style="color:var(--text);font-family:'JetBrains Mono',monospace;">$7,141</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pool LP ativo token breakdown -->
+<div class="chart-panel" style="margin-bottom:24px;">
+  <div class="chart-panel-hdr" style="padding-bottom:10px;">
+    <div>
+      <div class="chart-panel-title">Pool Ativa — Composição de Tokens</div>
+      <div class="chart-panel-sub">WETH/USDC 0.3% · BASE · UNISWAP V3 · NFT #4694262 · LIVE</div>
+    </div>
+  </div>
+  <div style="padding:0 18px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="activeLpTokens">
+    <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
+      <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">WETH NO POOL</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;" id="lp-weth-qty">0.1185</div>
+      <div style="font-size:9px;color:var(--muted);" id="lp-weth-usd">≈ $254.48</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
+      <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">USDC NO POOL</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;">102.76</div>
+      <div style="font-size:9px;color:var(--muted);">$102.76</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
+      <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">FEES WETH</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;" id="lp-fee-weth">0.002982</div>
+      <div style="font-size:9px;color:var(--muted);" id="lp-fee-weth-usd">≈ $6.40</div>
+    </div>
+    <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
+      <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">FEES USDC</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;">2.22</div>
+      <div style="font-size:9px;color:var(--muted);">$2.22</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── TOKEN METRICS ──
+(function buildTokenMetrics() {
+  // Fee tokens from historical pools (estimated quantities at time of collection)
+  // USDC/USDT fees were cash, ETH/ARB/SOL fees converted to portfolio
+  const FEE_TOKENS = [
+    // token, qty_collected, cgId, note
+    { sym:'USDC/USDT', qty:null, usdVal:1468, cgId:null, note:'Fees estáveis — ARB/USDC 23, ARB/USDT 24, ETH pools 23-26' },
+    { sym:'SOL',        qty:23.0, usdVal:null, cgId:'solana',   note:'SOL/GRIFT $1389 + SOL/USDC $23 fees (em SOL)' },
+    { sym:'ETH/WETH',   qty:0.041, usdVal:null, cgId:'ethereum', note:'Fees WETH/USDC ativa: 0.002982 + histórico estimado' },
+    { sym:'ARB',        qty:null, usdVal:47,   cgId:null,        note:'Fees ARB/USDC 23 (convertido)' },
+    { sym:'RDNT',       qty:null, usdVal:90,   cgId:null,        note:'Fees RDNT/ETH 23 (airdrop + fees)' },
+    { sym:'USDC (Kamino)', qty:null, usdVal:23, cgId:null,       note:'Taxas/repagos K2 via pools SOL' },
+  ];
+
+  // Collateral tokens — from prints 13/03/2026
+  const COLLATERAL = [
+    { sym:'ETH',   qty:1.87,    cgId:'ethereum', proto:'AAVE V3',  color:'var(--accent)' },
+    { sym:'USDT',  qty:1652.03, cgId:'tether',   proto:'AAVE V3',  color:'var(--accent)' },
+    { sym:'SOL',   qty:19.35,   cgId:'solana',   proto:'Kamino',   color:'#9945ff'       },
+    { sym:'PYUSD', qty:90.04,   cgId:'paypal-usd',proto:'Kamino',  color:'#1da1f2'       },
+  ];
+
+  const fmt  = (n,d=2) => '$'+n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const fmtN = (n,d=4) => n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:d});
+
+  function renderFeeTable(prices) {
+    const tbody = document.getElementById('feeTokenBody');
+    if (!tbody) return;
+    let html = '';
+    FEE_TOKENS.forEach(t => {
+      const price = t.cgId && prices?.[t.cgId]?.usd;
+      const usd   = price && t.qty ? t.qty * price : t.usdVal;
+      const usdStr = usd ? fmt(usd) : '—';
+      const qtyStr = t.qty ? fmtN(t.qty, t.sym==='USDC/USDT'?0:4) : '—';
+      html += `<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:7px 4px;font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--text);">${t.sym}</td>
+        <td style="padding:7px 4px;text-align:right;font-family:'JetBrains Mono',monospace;">${qtyStr}</td>
+        <td style="padding:7px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--green);">${usdStr}</td>
+        <td style="padding:7px 4px;text-align:right;font-size:8.5px;color:var(--muted);">${t.note}</td>
+      </tr>`;
+    });
+    // Total
+    const total = FEE_TOKENS.reduce((s,t) => {
+      const price = t.cgId && prices?.[t.cgId]?.usd;
+      return s + (price && t.qty ? t.qty*price : (t.usdVal||0));
+    }, 0);
+    html += `<tr style="border-top:2px solid var(--border);">
+      <td colspan="2" style="padding:8px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);">TOTAL FEES</td>
+      <td style="padding:8px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent);">${fmt(total)}</td>
+      <td></td>
+    </tr>`;
+    tbody.innerHTML = html;
+  }
+
+  function renderCollateralTable(prices) {
+    const tbody = document.getElementById('collateralTokenBody');
+    if (!tbody) return;
+    let html = '';
+    let total = 0;
+    COLLATERAL.forEach(t => {
+      const price = t.cgId && prices?.[t.cgId]?.usd || (t.sym==='USDT'||t.sym==='PYUSD'?1:0);
+      const usd   = t.qty * price;
+      total += usd;
+      html += `<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:7px 4px;font-family:'JetBrains Mono',monospace;font-weight:500;">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${t.color};margin-right:5px;vertical-align:middle;"></span>${t.sym}</td>
+        <td style="padding:7px 4px;text-align:right;font-family:'JetBrains Mono',monospace;">${fmtN(t.qty)}</td>
+        <td style="padding:7px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text);">${price ? fmt(usd) : '—'}</td>
+        <td style="padding:7px 4px;font-size:9px;color:var(--muted);">${t.proto}</td>
+      </tr>`;
+    });
+    html += `<tr style="border-top:2px solid var(--border);">
+      <td colspan="2" style="padding:8px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);">TOTAL COLATERAL</td>
+      <td style="padding:8px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent);">${fmt(total)}</td>
+      <td></td>
+    </tr>`;
+    tbody.innerHTML = html;
+    const el = document.getElementById('totalCollateralUsd');
+    if (el) el.textContent = fmt(total);
+
+    // Update WETH qty live
+    const ethPrice = prices?.ethereum?.usd;
+    if (ethPrice) {
+      const wethUsd = 0.1185 * ethPrice;
+      const feeWethUsd = 0.002982 * ethPrice;
+      const el1 = document.getElementById('lp-weth-usd');
+      const el2 = document.getElementById('lp-fee-weth-usd');
+      if (el1) el1.textContent = '≈ ' + fmt(wethUsd);
+      if (el2) el2.textContent = '≈ ' + fmt(feeWethUsd);
+    }
+  }
+
+  // Fetch prices for all needed tokens
+  getLivePrice(['ethereum','solana','tether','paypal-usd'])
+    .then(prices => {
+      renderFeeTable(prices);
+      renderCollateralTable(prices);
+    })
+    .catch(() => {
+      renderFeeTable({});
+      renderCollateralTable({ ethereum:{usd:2074.75}, solana:{usd:86.84}, tether:{usd:1}, 'paypal-usd':{usd:1} });
+    });
+})();
+</script>
+
+
 <!-- ══ MARKET TICKER (fixed bottom) ══ -->
 <div class="market-ticker" id="marketTicker">
   <div class="ticker-gas" title="Gas ETH (Gwei)">
@@ -1492,9 +1711,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <script>
-(function() {
 
-// ── Load Chart.js + Date Adapter ──
+// ── Load Chart.js + Date Adapter (global scope) ──
 function loadChartJs(cb) {
   if (window.Chart && window._chartDateAdapterLoaded) { cb(); return; }
   const s = document.createElement('script');
@@ -2642,13 +2860,13 @@ function buildProjChart() {
 
 }); // end loadChartJs
 
-})();
 </script>
 
 
+<script>
 // ── MOEDA USD / BRL (pools) ──
 let currentCurrency = localStorage.getItem('bc-currency') || 'USD';
-let usdBrlRate = 5.72;
+let usdBrlRate = 5.33;
 (async function fetchRate(){
   try{
     const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
@@ -2677,8 +2895,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // ══════════════════════════════════════════════════════
-// SHARPE RATIO
+// SHARPE RATIO + BREAKEVEN — run after DOM ready
 // ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
 (function buildSharpe() {
   // Dados por pool: retorno anualizado (FCR%), volatilidade estimada do par, resultado
   // vol estimada: stablecoin pair ~5%, blue chip ~25%, memecoin/altcoin ~80-120%
@@ -2739,10 +2958,7 @@ document.addEventListener('DOMContentLoaded',()=>{
               }
             }
           },
-          annotation: { annotations: {
-            zero: { type:'line', yMin:0, yMax:0, borderColor:'rgba(138,104,32,0.4)', borderWidth:1.5, borderDash:[4,3] },
-            good: { type:'line', yMin:1, yMax:1, borderColor:'rgba(74,124,63,0.3)', borderWidth:1, borderDash:[3,3] },
-          }}
+          // annotation plugin not loaded — zero line via dataset instead
         },
         scales: {
           x: { ticks: { font:{family:'Inter,sans-serif',size:8}, color:'#888', maxRotation:30 }, grid: { color: gridColor() }, border:{display:false} },
@@ -2756,7 +2972,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
   });
 })();
-
 // ══════════════════════════════════════════════════════
 // BREAK-EVEN DE REMONTAGEM
 // ══════════════════════════════════════════════════════
@@ -3012,6 +3227,23 @@ document.addEventListener('DOMContentLoaded',()=>{
     setTimeout(() => renderHeatmap(heatMode), 50);
   };
 })();
+}); // end DOMContentLoaded for Sharpe+Breakeven
+
+// ── Mobile Nav Toggle ──
+function toggleMobileNav(){
+  const nl = document.querySelector('.nav-links');
+  if(nl) nl.classList.toggle('open');
+}
+// Close nav when link clicked
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    a.addEventListener('click',function(){
+      const nl=document.querySelector('.nav-links');
+      if(nl) nl.classList.remove('open');
+    });
+  });
+});
+</script>
 
 </body>
 </html>
