@@ -206,6 +206,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   <div style="display:flex;align-items:center;gap:8px;">
     <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
     <button class="btn-sm" onclick="toggleTheme()">◑ Tema</button>
+    <button class="btn-sm" onclick="window.baroloRefresh && window.baroloRefresh()" title="Atualizar dados on-chain" style="color:var(--green)">⟳ Live</button>
   </div>
 </nav>
 
@@ -373,7 +374,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
     <div style="padding:22px 24px;border-right:1px solid var(--border);">
       <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;">CAPITAL LÍQUIDO</div>
-      <div id="capop-total" title="CoinGecko $5.830 + SOL Kamino extra $388 − Dívidas $1.549" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--text);">—</div>
+      <div id="capop-total" title="CoinGecko + USDT AAVE + PYUSD Kamino + SOL extra Kamino − Dívidas" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--text);">—</div>
       <div style="font-size:8px;color:var(--muted);margin-top:5px;">portfólio a mercado (hoje)</div>
     </div>
 
@@ -997,11 +998,8 @@ setTimeout(function calcCapOp() {
   const fmt = (n, d=0) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 
   // LP value — only pools, not lending
-  const LP_VALUE = 357.24; // Uniswap V3 WETH/USDC pooled (updated 13/03/2026)
+  const LP_VALUE = 348.23; // Uniswap V3 WETH/USDC pooled (updated 14/03/2026)
 
-  // NOTA: CoinGecko mostra 14.87 SOL (carteira). Kamino tem 19.35 SOL colateral.
-  // Delta = 4.4751 SOL não rastreado pelo CG → adicionado manualmente ao total.
-  const KAMINO_SOL_EXTRA = 19.35 - 14.87492676; // 4.47507 SOL fora do CoinGecko
   const PORTFOLIO = [
     { id:'ethereum',        qty:2.084106,     fallback:2074.75 }, // from CoinGecko 14/03/26
     { id:'solana',          qty:14.87492676,  fallback:86.84   },
@@ -1012,8 +1010,7 @@ setTimeout(function calcCapOp() {
     { id:'zksync',          qty:876,          fallback:0.01904 },
     { id:'xai-blockchain',  qty:692.86,       fallback:0.01099 },
     { id:'zetachain',       qty:51.1434,      fallback:0.05045 },
-    { id:'tether',          qty:1652.03,      fallback:1       }, // incl. AAVE supply
-    { id:'paypal-usd',      qty:90.04,        fallback:1       }, // incl. Kamino supply
+    // USDT e PYUSD não incluídos aqui — somados via STABLES_USD acima
   ];
 
   function render(portfolioTotal) {
@@ -1027,6 +1024,11 @@ setTimeout(function calcCapOp() {
 
     set('capop-total', fmt(portfolioTotal));
     set('capop-rec',   fmt(meta));
+    // Update breakdown detail if element exists
+    const breakdown = document.getElementById('capop-breakdown');
+    if (breakdown) {
+      breakdown.textContent = 'CG + USDT + PYUSD + SOL extra − dívidas';
+    }
 
     const inEl = $('capop-inuse');
     if (inEl) {
@@ -1070,7 +1072,7 @@ setTimeout(function calcCapOp() {
     } else if (ratio <= 1.2) {
       if (box) { box.style.background='rgba(74,124,63,0.08)'; box.style.borderColor='rgba(74,124,63,0.3)'; }
       txt.innerHTML =
-        `Portfólio líquido: <strong>${fmt(portfolioTotal)}</strong> → meta 5% em pools: <strong style="color:var(--accent)">${fmt(meta)}</strong>. ` +
+        `Patrimônio líquido (CG + stables empréstimos + SOL extra − dívidas): <strong>${fmt(portfolioTotal)}</strong> → meta 5% em pools: <strong style="color:var(--accent)">${fmt(meta)}</strong>. ` +
         `Você tem <strong style="color:var(--green)">${fmt(alocado)}</strong> alocado — dentro da faixa ideal. ` +
         (diff > 0
           ? `Ainda há espaço para mais <strong>${fmt(diff)}</strong> em novos ranges ou pares.`
@@ -1078,7 +1080,7 @@ setTimeout(function calcCapOp() {
     } else {
       if (box) { box.style.background='rgba(196,160,50,0.08)'; box.style.borderColor='rgba(196,160,50,0.3)'; }
       txt.innerHTML =
-        `Portfólio líquido: <strong>${fmt(portfolioTotal)}</strong> → meta 5%: <strong style="color:var(--accent)">${fmt(meta)}</strong>. ` +
+        `Patrimônio líquido (CG + stables empréstimos + SOL extra − dívidas): <strong>${fmt(portfolioTotal)}</strong> → meta 5%: <strong style="color:var(--accent)">${fmt(meta)}</strong>. ` +
         `Você tem <strong style="color:var(--red)">${fmt(alocado)}</strong> em pools — ` +
         `<strong style="color:var(--yellow)">${fmt(Math.abs(diff))}</strong> acima da meta. ` +
         `Considere resgatar parte da posição ou aguardar o portfólio crescer até <strong>${fmt(alocado / 0.05)}</strong>.`;
@@ -1086,22 +1088,22 @@ setTimeout(function calcCapOp() {
   }
 
   // Try live prices first, fallback to static
+  // FÓRMULA: SPOT(CG live) + Stables + Pool − Empréstimos
+  // Atualizar ao receber prints: STABLES_USD, LP_VALUE, DEBT_USD
+  const STABLES_USD = 1741.53;  // USDT AAVE $1.652,03 + PYUSD Kamino $90,04 — atualizar semanalmente
+  const DEBT_USD    = 1549.71;  // AAVE $746,30 + Kamino $803,41 — atualizar semanalmente
+
   getLivePrice(PORTFOLIO.map(t=>t.id))
     .then(prices => {
-      let total = 0;
-      PORTFOLIO.forEach(t => { total += t.qty * (prices?.[t.id]?.usd || t.fallback); });
-      // Add Kamino SOL not tracked by CoinGecko
-      const solPrice = prices?.solana?.usd || 86.84;
-      total += KAMINO_SOL_EXTRA * solPrice;
-      // Subtract total debt (AAVE + Kamino)
-      total -= (746.30 + 803.41);
+      let spot = 0;
+      PORTFOLIO.forEach(t => { spot += t.qty * (prices?.[t.id]?.usd || t.fallback); });
+      const total = spot + STABLES_USD + LP_VALUE - DEBT_USD;
       render(total);
     })
     .catch(() => {
-      let total = 0;
-      PORTFOLIO.forEach(t => { total += t.qty * t.fallback; });
-      total += KAMINO_SOL_EXTRA * 86.84;
-      total -= (746.30 + 803.41);
+      let spot = 0;
+      PORTFOLIO.forEach(t => { spot += t.qty * t.fallback; });
+      const total = spot + STABLES_USD + LP_VALUE - DEBT_USD;
       render(total);
     });
 }, 1500);
@@ -3255,5 +3257,543 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
+
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — AUTO-FETCH MULTI-WALLET MODULE
+// EVM (Alchemy) + Solana/Kamino (Helius)
+// ══════════════════════════════════════════════════════════════════
+(function initWalletFetch() {
+
+  const ALCHEMY_KEY = 'R_9y5DBqKNR2NapexG8n7';
+  const HELIUS_KEY  = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
+
+  const ETH_RPC   = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+  const BASE_RPC  = `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+  const HELIUS_RPC= `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+  const HELIUS_API= `https://api.helius.xyz/v0`;
+
+  // ── Wallets ──────────────────────────────────────────────────────
+  const EVM_WALLETS = [
+    '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6',
+    '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396', // AAVE
+    '0x835a5F686c489023064Edb0EA3A0f4ee54BD77F6',
+    '0x8311038D68039f4C3e7237D64f4F2c598fBf4ea3',
+  ];
+  const AAVE_WALLET  = '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396';
+  const SOL_WALLET   = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
+
+  // ── Contracts ────────────────────────────────────────────────────
+  const AAVE_POOL   = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
+  const UNI_NFT     = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
+  const LP_TOKEN_ID = 4694262;
+  const USDT_ADDR   = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+  const USDC_ADDR   = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+  const WETH_ADDR   = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+
+  // Kamino program ID on Solana
+  const KAMINO_PROGRAM = 'KLend2g3cP87fffoy8q1mQqGKjrL9CGMcnvsoBrDgKzX';
+
+  // ── Helpers ──────────────────────────────────────────────────────
+  const padAddr = a => '000000000000000000000000' + a.slice(2).toLowerCase();
+  const padUint = n => BigInt(n).toString(16).padStart(64, '0');
+  const decUint = (hex, offset=0) => BigInt('0x' + (hex.slice(2)||'0').slice(offset*64, (offset+1)*64) || '0');
+  const decNum  = (n, dec) => Number(n) / Math.pow(10, dec);
+  const fmt2    = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmtK    = n => n >= 1000 ? '$' + (n/1000).toFixed(2) + 'K' : fmt2(n);
+  const setEl   = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  const setHtml = (id, v) => { const e = document.getElementById(id); if(e) e.innerHTML = v; };
+  const setColor= (id, c) => { const e = document.getElementById(id); if(e) e.style.color = c; };
+
+  async function rpc(url, method, params) {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({id:1, jsonrpc:'2.0', method, params})
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    return d.result;
+  }
+
+  async function ethCall(rpcUrl, to, data) {
+    return rpc(rpcUrl, 'eth_call', [{to, data}, 'latest']);
+  }
+
+  // ── ETH balance for one address ──────────────────────────────────
+  async function getEthBalance(addr) {
+    const raw = await rpc(ETH_RPC, 'eth_getBalance', [addr, 'latest']);
+    return decNum(BigInt(raw), 18);
+  }
+
+  // ── ERC20 balance ────────────────────────────────────────────────
+  async function getERC20(rpcUrl, token, addr, decimals) {
+    const data = '0x70a08231' + padAddr(addr);
+    const raw  = await ethCall(rpcUrl, token, data);
+    return decNum(decUint(raw, 0), decimals);
+  }
+
+  // ── All EVM wallet balances ──────────────────────────────────────
+  async function fetchAllEVM() {
+    const results = {};
+    await Promise.all(EVM_WALLETS.map(async wallet => {
+      try {
+        const [eth, usdt, usdc, weth] = await Promise.all([
+          getEthBalance(wallet).catch(()=>0),
+          getERC20(ETH_RPC, USDT_ADDR, wallet, 6).catch(()=>0),
+          getERC20(ETH_RPC, USDC_ADDR, wallet, 6).catch(()=>0),
+          getERC20(ETH_RPC, WETH_ADDR, wallet, 18).catch(()=>0),
+        ]);
+        results[wallet] = { eth, usdt, usdc, weth };
+        console.log(`[EVM] ${wallet.slice(0,8)}... ETH:${eth.toFixed(4)} USDT:${usdt.toFixed(2)} USDC:${usdc.toFixed(2)}`);
+      } catch(e) {
+        console.warn(`[EVM] ${wallet.slice(0,8)}... failed:`, e.message);
+        results[wallet] = { eth:0, usdt:0, usdc:0, weth:0 };
+      }
+    }));
+    return results;
+  }
+
+  // ── AAVE V3 ──────────────────────────────────────────────────────
+  async function fetchAave(ethPrice) {
+    try {
+      const data = '0xbf92857c' + padAddr(AAVE_WALLET);
+      const raw  = await ethCall(ETH_RPC, AAVE_POOL, data);
+      // Returns 6 uint256: totalCollateralBase, totalDebtBase, availBorrows, liqThreshold, ltv, healthFactor
+      const collateral = decNum(decUint(raw, 0), 8); // USD 8 decimals
+      const debt       = decNum(decUint(raw, 1), 8);
+      const liqThresh  = decNum(decUint(raw, 3), 4);
+      const hf         = decNum(decUint(raw, 5), 18);
+
+      console.log(`[AAVE] Collateral: $${collateral.toFixed(2)}, Debt: $${debt.toFixed(2)}, HF: ${hf.toFixed(2)}`);
+
+      // Update AAVE card UI
+      setEl('aave-net-worth', fmtK(collateral - debt));
+      const hfEl = document.getElementById('aave-hf-metric');
+      if (hfEl) {
+        hfEl.textContent = hf.toFixed(2);
+        hfEl.style.color = hf > 2 ? 'var(--green)' : hf > 1.3 ? 'var(--yellow)' : 'var(--red)';
+      }
+
+      // Also update via existing updateAave function if available
+      if (typeof updateAave === 'function' && ethPrice) {
+        updateAave({ totalCollateral: collateral, totalDebt: debt, liqThreshold: liqThresh/100, healthFactor: hf }, ethPrice);
+      }
+
+      // Store globals for other calcs
+      window._liveAaveDebt       = debt;
+      window._liveAaveCollateral = collateral;
+      window._liveAaveHF         = hf;
+
+      return { collateral, debt, liqThresh, hf };
+    } catch(e) {
+      console.warn('[AAVE] failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Uniswap V3 position ──────────────────────────────────────────
+  async function fetchUniswapLP() {
+    try {
+      const data = '0x99fbab88' + padUint(LP_TOKEN_ID);
+      const raw  = await ethCall(ETH_RPC, UNI_NFT, data);
+      const liquidity = decUint(raw, 7);
+      const isActive  = liquidity > 0n;
+      console.log(`[UNI] LP #${LP_TOKEN_ID} liquidity: ${liquidity}, active: ${isActive}`);
+      window._liveUniActive = isActive;
+      return { liquidity: liquidity.toString(), isActive };
+    } catch(e) {
+      console.warn('[UNI] failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Solana: native SOL balance ───────────────────────────────────
+  async function fetchSolBalance() {
+    try {
+      const result = await rpc(HELIUS_RPC, 'getBalance', [SOL_WALLET]);
+      const sol = result.value / 1e9;
+      console.log(`[SOL] Balance: ${sol.toFixed(4)} SOL`);
+      window._liveSolWallet = sol;
+      return sol;
+    } catch(e) {
+      console.warn('[SOL] balance failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Solana: all token accounts (for PYUSD, USDC on Solana) ───────
+  async function fetchSolTokens() {
+    try {
+      const result = await rpc(HELIUS_RPC, 'getTokenAccountsByOwner', [
+        SOL_WALLET,
+        { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' },
+        { encoding: 'jsonParsed' }
+      ]);
+      const tokens = {};
+      for (const acc of (result.value || [])) {
+        const info = acc.account?.data?.parsed?.info;
+        if (!info) continue;
+        const mint = info.mint;
+        const amt  = parseFloat(info.tokenAmount?.uiAmountString || '0');
+        if (amt > 0.001) {
+          tokens[mint] = (tokens[mint] || 0) + amt;
+        }
+      }
+      // Known mints
+      const PYUSD_MINT = '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo';
+      const USDC_SOL   = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+      console.log('[SOL Tokens] PYUSD:', tokens[PYUSD_MINT]||0, 'USDC:', tokens[USDC_SOL]||0);
+      window._livePyusd = tokens[PYUSD_MINT] || 0;
+      window._liveUsdcSol = tokens[USDC_SOL] || 0;
+      return tokens;
+    } catch(e) {
+      console.warn('[SOL Tokens] failed:', e.message);
+      return {};
+    }
+  }
+
+  // ── Kamino: fetch position via Helius DAS ────────────────────────
+  async function fetchKamino() {
+    try {
+      // Use Helius DAS to get parsed account data for Kamino
+      const r = await fetch(`${HELIUS_API}/addresses/${SOL_WALLET}/balances?api-key=${HELIUS_KEY}`);
+      if (!r.ok) throw new Error('Helius balances ' + r.status);
+      const data = await r.json();
+
+      // Also try Kamino API directly
+      const kaminoR = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
+      if (kaminoR.ok) {
+        const kData = await kaminoR.json();
+        if (kData && kData.length > 0) {
+          const obligation = kData[0];
+          const deposits = obligation.deposits || [];
+          const borrows  = obligation.borrows  || [];
+
+          let totalDepositUsd = 0;
+          let totalBorrowUsd  = 0;
+          let solQty = 0;
+
+          deposits.forEach(d => {
+            totalDepositUsd += parseFloat(d.marketValueRefreshed || d.marketValue || 0);
+            if (d.mintAddress === 'So11111111111111111111111111111111111111112') {
+              solQty += parseFloat(d.amount || 0);
+            }
+          });
+          borrows.forEach(b => {
+            totalBorrowUsd += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
+          });
+
+          const netValue = totalDepositUsd - totalBorrowUsd;
+          const ltv = totalDepositUsd > 0 ? totalBorrowUsd / totalDepositUsd : 0;
+
+          console.log(`[Kamino] Deposits: $${totalDepositUsd.toFixed(2)}, Borrows: $${totalBorrowUsd.toFixed(2)}, SOL: ${solQty.toFixed(3)}, LTV: ${(ltv*100).toFixed(1)}%`);
+
+          window._liveKaminoDebt       = totalBorrowUsd;
+          window._liveKaminoDeposit    = totalDepositUsd;
+          window._liveKaminoNetVal     = netValue;
+          window._liveKaminoSol        = solQty;
+          window._liveKaminoLtv        = ltv;
+
+          // Update Kamino UI
+          setEl('kamino-net-val', fmtK(netValue));
+          const ltvEl = document.getElementById('kamino-ltv-bar');
+          if (ltvEl) {
+            const fill = ltvEl.querySelector('.bar-fill');
+            if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
+          }
+
+          return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
+        }
+      }
+
+      // Fallback: use static values
+      console.warn('[Kamino] API returned no data, using static fallback');
+      window._liveKaminoDebt    = window._liveKaminoDebt    || 803.41;
+      window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
+      return null;
+    } catch(e) {
+      console.warn('[Kamino] failed:', e.message);
+      window._liveKaminoDebt = window._liveKaminoDebt || 803.41;
+      return null;
+    }
+  }
+
+  // ── Compute & display Patrimônio Líquido ─────────────────────────
+  function updatePatrimonio(evmData, solBal, ethPrice, solPrice) {
+    try {
+      // FÓRMULA CORRETA — acordada com usuário:
+      // NET = SPOT(CG sem stables) + STABLES + LP + SOL Kamino extra − Dívidas
+      const SPOT_TOKENS = [
+        { id:'ethereum',        qty:2.084106,     price: ethPrice||2074.75 },
+        { id:'solana',          qty:14.87492676,  price: solPrice||86.84   },
+        { id:'cardano',         qty:375.245,      price: (window._livePrices?.cardano?.usd        || 0.2608)  },
+        { id:'radiant-capital', qty:7290.46,      price: (window._livePrices?.['radiant-capital']?.usd || 0.005501) },
+        { id:'eigenlayer',      qty:153.363,      price: (window._livePrices?.eigenlayer?.usd     || 0.1865)  },
+        { id:'matic-network',   qty:218,          price: (window._livePrices?.['matic-network']?.usd   || 0.09661) },
+        { id:'zksync',          qty:876,          price: (window._livePrices?.zksync?.usd         || 0.01904) },
+        { id:'xai-blockchain',  qty:692.86,       price: (window._livePrices?.['xai-blockchain']?.usd  || 0.01099) },
+        { id:'zetachain',       qty:51.1434,      price: (window._livePrices?.zetachain?.usd      || 0.05045) },
+      ];
+      const STABLES    = 1742.07;  // USDT AAVE $1652 + PYUSD Kamino $90 — não rastreados pelo CG
+      const LP         = window._liveLpValue   || 357.24;
+      const DEBT       = (window._liveAaveDebt  || 746.30) + (window._liveKaminoDebt || 803.41);
+      const SOL_EXTRA  = Math.max((window._liveKaminoSol || 19.35) - 14.87492676, 0) * (solPrice||86.84);
+
+      const spot = SPOT_TOKENS.reduce((s, t) => s + t.qty * t.price, 0);
+      const total = spot + STABLES + LP + SOL_EXTRA - DEBT;
+
+      console.log(`[Patrimônio] spot=$${spot.toFixed(0)} stables=$${STABLES} lp=$${LP.toFixed(0)} solExtra=$${SOL_EXTRA.toFixed(0)} debt=$${DEBT.toFixed(0)} NET=$${total.toFixed(0)}`);
+
+      window._livePatrimonio = total;
+
+      // Update all patrimônio displays
+      const pat    = total;
+      const brl    = pat * (window.usdBrlRate || 5.33);
+      const patFmt = '$' + pat.toLocaleString('en-US', {maximumFractionDigits:0});
+      const brlFmt = 'R$ ' + brl.toLocaleString('pt-BR', {maximumFractionDigits:0});
+
+      const capopEl = document.getElementById('capop-total');
+      if (capopEl) capopEl.textContent = patFmt;
+
+      ['patrimonio-total','saldo-total','portfolio-net'].forEach(id => {
+        const e = document.getElementById(id); if(e) e.textContent = patFmt;
+      });
+      document.querySelectorAll('.live-patrimonio').forEach(el => {
+        el.textContent = window.currentCurrency === 'BRL' ? brlFmt : patFmt;
+      });
+
+      // Also re-trigger the capop render
+      if (typeof render === 'function') render(total);
+
+      return total;
+    } catch(e) {
+      console.warn('[Patrimônio] calc failed:', e.message);
+      return null;
+    }
+  }
+    // Re-trigger capital operacional chart if on pools page
+    if (typeof getLivePrice === 'function') {
+      getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'])
+        .then(prices => {
+          let total = window._livePatrimonio;
+          if (!total) return;
+          if (typeof render === 'function') render(total);
+        })
+        .catch(()=>{});
+    }
+
+    console.log('[BaroloFetch] Complete ✓');
+  }
+
+  // ── Run ───────────────────────────────────────────────────────────
+  const delay = document.readyState === 'loading' ? 2500 : 1500;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(runAll, delay));
+  } else {
+    setTimeout(runAll, delay);
+  }
+
+  // Expose for manual refresh
+  window.baroloRefresh = runAll;
+
+})();
+
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — CARDANO / ADA STAKE MODULE (Blockfrost)
+// ══════════════════════════════════════════════════════════════════
+(function initCardanoFetch() {
+
+  const BF_KEY  = 'mainnetUUNZyRnZ6sg9uAvwnprB7vNIu8s7VPKm';
+  const BF_URL  = 'https://cardano-mainnet.blockfrost.io/api/v0';
+  const ADA_ADDR= 'addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znuy0ctq737ruk7e72dqkm0a23';
+
+  const LOVELACE = 1_000_000; // 1 ADA = 1_000_000 lovelace
+
+  async function bf(path) {
+    const r = await fetch(`${BF_URL}${path}`, {
+      headers: { 'project_id': BF_KEY }
+    });
+    if (!r.ok) throw new Error(`Blockfrost ${r.status}: ${path}`);
+    return r.json();
+  }
+
+  // ── Fetch ADA wallet balance + stake info ─────────────────────────
+  async function fetchCardano() {
+    try {
+      // 1. Get address info (ADA balance + tokens)
+      const addrInfo = await bf(`/addresses/${ADA_ADDR}`);
+      const adaWallet = (addrInfo.amount?.find(a => a.unit === 'lovelace')?.quantity || 0) / LOVELACE;
+
+      // 2. Get stake address from the payment address
+      const stakeAddr = addrInfo.stake_address;
+      console.log(`[Cardano] Wallet ADA: ${adaWallet.toFixed(2)}, Stake addr: ${stakeAddr}`);
+
+      let stakedAda = 0, rewardsAda = 0, poolName = '—', poolTicker = '—', poolApy = null;
+
+      if (stakeAddr) {
+        // 3. Get stake account info
+        const stakeInfo = await bf(`/accounts/${stakeAddr}`);
+        stakedAda  = parseInt(stakeInfo.controlled_amount || 0) / LOVELACE;
+        rewardsAda = parseInt(stakeInfo.withdrawable_amount || 0) / LOVELACE;
+        const poolId = stakeInfo.pool_id;
+
+        console.log(`[Cardano] Staked: ${stakedAda.toFixed(2)} ADA, Rewards pending: ${rewardsAda.toFixed(4)} ADA`);
+
+        // 4. Get pool info
+        if (poolId) {
+          try {
+            const poolInfo = await bf(`/pools/${poolId}/metadata`);
+            poolName   = poolInfo.name   || poolId.slice(0,12) + '...';
+            poolTicker = poolInfo.ticker || '—';
+            console.log(`[Cardano] Pool: ${poolTicker} — ${poolName}`);
+          } catch(e) { /* pool metadata optional */ }
+
+          // 5. Get pool APY from history
+          try {
+            const poolHistory = await bf(`/pools/${poolId}/history?count=5&order=desc`);
+            if (poolHistory?.length > 0) {
+              const latest = poolHistory[0];
+              // APY ≈ (blocks * avg_reward_per_block / active_stake) * epochs_per_year
+              // Simpler: annualize the epoch ROI
+              const epochRoi = parseFloat(latest.active_stake) > 0
+                ? (parseFloat(latest.rewards) / parseFloat(latest.active_stake)) * 100
+                : 0;
+              poolApy = (epochRoi * 73).toFixed(2); // ~73 epochs/year
+            }
+          } catch(e) { /* APY calc optional */ }
+        }
+
+        // 6. Get recent reward history
+        let totalRewardsEarned = 0;
+        try {
+          const rewardHistory = await bf(`/accounts/${stakeAddr}/rewards?count=20&order=desc`);
+          totalRewardsEarned = rewardHistory.reduce((s, r) => s + parseInt(r.amount||0)/LOVELACE, 0);
+          console.log(`[Cardano] Last 20 epochs rewards: ${totalRewardsEarned.toFixed(2)} ADA`);
+        } catch(e) {}
+
+        window._liveAdaStaked    = stakedAda;
+        window._liveAdaRewards   = rewardsAda;
+        window._liveAdaPool      = { name: poolName, ticker: poolTicker, apy: poolApy };
+        window._liveAdaRewardsHistory = totalRewardsEarned;
+      }
+
+      window._liveAdaWallet = adaWallet;
+
+      // Get ADA price from already-fetched CoinGecko data
+      const adaPrice = window._livePrices?.cardano?.usd || null;
+
+      // Update UI elements
+      updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice });
+
+      return { adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy };
+
+    } catch(e) {
+      console.warn('[Cardano] fetch failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Update UI ────────────────────────────────────────────────────
+  function updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice }) {
+    const fmt2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtA = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+    const setEl = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+
+    // Wallet ADA
+    setEl('ada-wallet-qty',   fmtA(adaWallet) + ' ADA');
+    setEl('ada-staked-qty',   fmtA(stakedAda) + ' ADA');
+    setEl('ada-rewards-qty',  fmtA(rewardsAda) + ' ADA pendentes');
+    setEl('ada-pool-name',    poolTicker ? `${poolTicker} — ${poolName}` : poolName);
+    setEl('ada-pool-apy',     poolApy ? poolApy + '% APY (est.)' : '—');
+
+    if (adaPrice) {
+      setEl('ada-wallet-usd',  '$' + fmt2(adaWallet * adaPrice));
+      setEl('ada-staked-usd',  '$' + fmt2(stakedAda * adaPrice));
+      setEl('ada-rewards-usd', '$' + fmt2(rewardsAda * adaPrice));
+    }
+
+    // Update the portfolio_analytics ADA row
+    const adaRow = document.querySelector('[data-ticker="ADA"]');
+    if (adaRow && stakedAda > 0) {
+      const qtyEl = adaRow.querySelector('.asset-qty, .col-qty');
+      if (qtyEl) qtyEl.textContent = fmtA(stakedAda) + ' ADA';
+    }
+
+    // Update live indicator
+    const liveIndicator = document.getElementById('cardano-live-badge');
+    if (liveIndicator) {
+      liveIndicator.textContent = '● LIVE';
+      liveIndicator.style.color = 'var(--green)';
+    }
+
+    console.log(`[Cardano UI] Updated: wallet=${adaWallet.toFixed(2)}, staked=${stakedAda.toFixed(2)}, rewards=${rewardsAda.toFixed(4)}, pool=${poolTicker}`);
+  }
+
+  // ── Build Cardano section HTML (injected into portfolio page) ────
+  function buildCardanoSection() {
+    const existing = document.getElementById('cardano-stake-section');
+    if (existing) return; // already built
+
+    // Find where to insert — after ADA row in portfolio or at end of DeFi section
+    const target = document.getElementById('cardano-stake-target');
+    if (!target) return;
+
+    target.innerHTML = `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <img src="https://assets.coingecko.com/coins/images/975/small/cardano.png" width="18" height="18" style="border-radius:50%;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;">ADA Stake</span>
+            <span id="cardano-live-badge" style="font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;">● —</span>
+          </div>
+          <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;" id="ada-pool-apy">—</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+            <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">DELEGADO</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;" id="ada-staked-qty">375.24 ADA</div>
+            <div style="font-size:9px;color:var(--muted);" id="ada-staked-usd">—</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+            <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">REWARDS PENDENTES</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--green);" id="ada-rewards-qty">— ADA</div>
+            <div style="font-size:9px;color:var(--muted);" id="ada-rewards-usd">—</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+            <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">POOL</div>
+            <div style="font-size:11px;font-family:'JetBrains Mono',monospace;word-break:break-all;" id="ada-pool-name">—</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ── Run ───────────────────────────────────────────────────────────
+  async function run() {
+    buildCardanoSection();
+    await fetchCardano();
+  }
+
+  // Hook into baroloRefresh
+  const _prev = window.baroloRefresh;
+  window.baroloRefresh = async function() {
+    if (_prev) await _prev();
+    await run();
+  };
+
+  // Auto-run after 3s (after other fetches)
+  const delay = document.readyState === 'loading' ? 3500 : 2500;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(run, delay));
+  } else {
+    setTimeout(run, delay);
+  }
+
+})();
+
+</script>
 </body>
 </html>
