@@ -131,6 +131,20 @@ td{padding:10px 16px;vertical-align:middle;}
 /* UTILS */
 .pos{color:var(--green);}.neg{color:var(--red);}.acc{color:var(--accent);}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
+    background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
+  [data-theme="dark"] .nav-links{background:rgba(23,23,31,.98);}
+  .nav-links.open{display:flex;}
+  .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+  .nav-links a:last-child{border-bottom:none;}
+  .nav-hamburger{display:flex;}
+}
+@media(min-width:769px){.nav-hamburger{display:none!important;}}
+.nav-hamburger{background:none;border:1px solid var(--border);border-radius:4px;
+  padding:5px 9px;cursor:pointer;flex-direction:column;gap:4px;align-items:center;justify-content:center;}
+.nav-hamburger span{display:block;width:16px;height:1.5px;background:var(--muted);transition:all .25s;}
 </style>
 </head>
 <body>
@@ -146,7 +160,7 @@ td{padding:10px 16px;vertical-align:middle;}
         <stop offset="100%" stop-color="transparent"/>
       </linearGradient></defs>
       <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
-      <text x="105" y="20" font-family="Cormorant Garamond, serif" font-weight="600" font-size="14" letter-spacing="3" fill="#e8e0d0" text-anchor="middle">BAROLO CAPITAL</text>
+      <text x="105" y="20" font-family="Cormorant Garamond, serif" font-weight="600" font-size="14" letter-spacing="3" fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
       <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
     </svg>
   </a>
@@ -157,6 +171,7 @@ td{padding:10px 16px;vertical-align:middle;}
     <a href="emprestimos.html" class="active">Empréstimos</a>
     <a href="ferramentas.html">Ferramentas</a>
   </div>
+  <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
   <div style="display:flex;align-items:center;gap:8px;">
     <button class="btn-sm" onclick="toggleTheme()">◑ Tema</button>
   </div>
@@ -302,8 +317,8 @@ td{padding:10px 16px;vertical-align:middle;}
           <span>0%</span><span style="color:var(--red);">⚠ 80% liquidação</span><span>100%</span>
         </div>
       </div>
-      <div style="margin-top:12px;padding:10px 12px;background:rgba(156,42,42,0.07);border:1px solid rgba(156,42,42,0.15);border-radius:5px;font-size:8.5px;color:var(--muted);line-height:1.65;">
-        <b style="color:var(--red);">⚠ Liquidação registrada:</b> Kamino Borrow foi liquidado quando SOL caiu a ~$86 (~Mar 2026 — conforme gráfico TradingView enviado). Posição atual foi reaberta após a liquidação. USDC emprestados financiaram pools SOL/GRIFT, SOL/USDC e pagamentos parciais via taxas coletadas.
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:5px;font-size:8.5px;color:var(--muted);line-height:1.65;">
+        <b style="color:var(--accent);">Estratégia:</b> SOL loop — supply SOL como colateral → borrow USDC → financia pools (SOL/GRIFT, SOL/USDC). Repagos parciais realizados com taxas coletadas nas pools. Posição ativa e saudável com LTV 43.85%.
       </div>
     </div>
   </div>
@@ -370,7 +385,7 @@ td{padding:10px 16px;vertical-align:middle;}
       <tr>
         <td class="td-mono acc">#K4</td>
         <td class="td-mono">Jan–Mar 2026</td>
-        <td class="td-mono neg">Reaberto pós-liq</td>
+        <td class="td-mono neg">Em curso</td>
         <td class="td-mono pos">$8.65 USDC</td>
         <td class="td-mono neg">3.12% APY</td>
         <td style="font-size:10px;color:var(--muted);">19.35 SOL supply ($1.76K) + PYUSD $90 · USDC $803.41 em aberto · Net APY 3.70% · Juros ganhos +$110.05</td>
@@ -491,13 +506,13 @@ td{padding:10px 16px;vertical-align:middle;}
   <div class="panel-hdr">
     <div>
       <div class="panel-title">Linha do Tempo Completa · Kamino + AAVE</div>
-      <div class="panel-sub">BORROWS · REPAYS · SUPPLIES · LIQUIDAÇÃO · DADOS REAIS DO CSV</div>
+      <div class="panel-sub">BORROWS · REPAYS · SUPPLIES · DADOS REAIS DO CSV</div>
     </div>
     <div style="display:flex;gap:16px;font-size:8.5px;color:var(--muted);">
       <span><span style="color:var(--red);">●</span> Borrow</span>
       <span><span style="color:var(--green);">●</span> Repay</span>
       <span><span style="color:var(--accent);">●</span> Supply</span>
-      <span><span style="color:var(--red);">⚡</span> Liquidação</span>
+
     </div>
   </div>
   <div class="tl-wrap" id="timeline"></div>
@@ -665,7 +680,7 @@ function buildTimeline(){
     {date:'21/02/26',proto:'AAVE',  a:'borrow',amt:'$745',det:'745 USDC'},
     {date:'21/02/26',proto:'AAVE',  a:'repay', amt:'$743',det:'742.76 USDC repagados imediatamente — refinanciamento'},
     {date:'29/01/26',proto:'Kamino',a:'repay', amt:'$8.65',det:'8.65 USDC — taxas coletadas na SOL/USDT pool'},
-    {date:'~Mar/26', proto:'Kamino',a:'liq',   amt:'⚡ LIQUIDAÇÃO',det:'Posição Kamino liquidada — SOL caiu a ~$86 (conforme gráfico TradingView)'},
+    {date:'Mar/26',  proto:'Kamino',a:'supply',amt:'19.35 SOL',det:'Posição ativa · SOL supply em curso · USDC $803.41 em aberto · LTV 43.85%'},
   ];
 
   const protoColors={AAVE:'#6272a4',Kamino:'#9945ff'};
@@ -677,7 +692,7 @@ function buildTimeline(){
     const pc=protoColors[e.proto]||'#888';
     const dc={'borrow':'borrow','repay':'repay','supply':'supply','liq':'liq'}[e.a]||'supply';
     const amtColor={'borrow':'var(--red)','repay':'var(--green)','supply':'var(--accent)','liq':'var(--red)'}[e.a];
-    const actionLabel={'borrow':'borrow','repay':'repay','supply':'supply colateral','liq':'⚡ LIQUIDAÇÃO'}[e.a];
+    const actionLabel={'borrow':'borrow','repay':'repay','supply':'supply colateral','liq':'repay'}[e.a];
     html+=`<div class="tl-row">
       <div class="tl-date-col">
         <div class="tl-date">${e.date}</div>
@@ -704,9 +719,9 @@ let debtChart=null;
 function buildDebtChart(){
   const labels=['Fev/25','Mar/25','Abr/25','Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26'];
   // Kamino running USDC debt by month
-  const debtK=[443,497,697,1087,  810,  810,  810, 253, 403, 403, 403, 403, 403, 754];
+  const debtK=[443,497,697,1087,  810,  810,  810, 253, 403, 403, 403, 403, 803, 803];
   // AAVE running stable debt by month
-  const debtA=[  0,  0, 200,  695, 895, 563, 663, 263, 413, 413, 413, 413, 353, 353];
+  const debtA=[  0,  0, 200,  695, 895, 563, 663, 263, 413, 413, 413, 413, 746, 746];
   // Cumulative repaid
   const repaid=[0,0,0,0, 576,908,1019,1420,1420,1434,1434,1443,2826,3068];
 
@@ -791,5 +806,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   fetchPrices();
 });
 </script>
+
+function toggleMobileNav(){
+  const nl=document.querySelector('.nav-links');
+  if(nl) nl.classList.toggle('open');
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    a.addEventListener('click',function(){
+      const nl=document.querySelector('.nav-links');
+      if(nl) nl.classList.remove('open');
+    });
+  });
+});
 </body>
 </html>
