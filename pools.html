@@ -6,13 +6,6 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Barolo Capital — Pools & DeFi</title>
 <script src="barolo-data.js"></script>
-  <p>EVM Portfolio: <span id="evmValue"></span></p>
-
-<p>SOL Balance: <span id="solBalance"></span></p>
-
-<p>SOL Value: <span id="solValue"></span></p>
-
-<h2>Total Portfolio: <span id="portfolioValue"></span></h2>
 </head>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -891,16 +884,8 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
   const USER_WALLET = 'xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK'; // Solana wallet
   const MARKET      = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'; // Main Market
   const PYUSD_QTY   = 90.04;
-const sol = window.baroloData.solQty;
-const price = window.baroloData.solPrice;
-const debt = window.baroloData.kaminoDebt;
-document.getElementById("sol").innerText = sol.toFixed(3);
-document.getElementById("debt").innerText = debt.toFixed(2);
-document.getElementById("net").innerText = net.toFixed(2);
-
-const net = sol * price - debt;
-
-const net = sol * price - debt;
+  // Fixed position — only update if you change the position manually
+  const FIXED = { solQty: 19.35, debtUsd: 803.41, liqThreshold: 0.7574, currentLtv: 0.4385 };
 
   const $   = id => document.getElementById(id);
   const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
