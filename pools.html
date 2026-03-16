@@ -884,8 +884,16 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
   const USER_WALLET = 'xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK'; // Solana wallet
   const MARKET      = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'; // Main Market
   const PYUSD_QTY   = 90.04;
-  // Fixed position — only update if you change the position manually
-  const FIXED = { solQty: 19.35, debtUsd: 803.41, liqThreshold: 0.7574, currentLtv: 0.4385 };
+const sol = window.baroloData.solQty;
+const price = window.baroloData.solPrice;
+const debt = window.baroloData.kaminoDebt;
+document.getElementById("sol").innerText = sol.toFixed(3);
+document.getElementById("debt").innerText = debt.toFixed(2);
+document.getElementById("net").innerText = net.toFixed(2);
+
+const net = sol * price - debt;
+
+const net = sol * price - debt;
 
   const $   = id => document.getElementById(id);
   const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
