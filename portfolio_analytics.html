@@ -8,6 +8,8 @@ window.addEventListener('error',function(e){if(!e.message||e.message.includes('S
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Barolo Capital — Portfolio</title>
+<script src="barolo-data.js"></script>
+</head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>if(typeof Chart==='undefined'){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';document.head.appendChild(s);}</script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -539,7 +541,7 @@ const WEEKLY_UPDATE = {
   // ── Saldos de carteira (quantidades) ──
   holdings: {
     ETH:   2.084106,
-    SOL:   86.84,
+    SOL:   19.312,
     ADA:   375.245,
     RDNT:  7290.46,
     EIGEN: 153.36298802,
@@ -579,7 +581,7 @@ const WEEKLY_UPDATE = {
   // ── Custos totais investidos por ativo ──
   invested: {
     ETH:   4433.16,
-    SOL:   86.84,
+    SOL:   19.312,
     ADA:   530.95,
     RDNT:  0,
     EIGEN: 45.87,
@@ -2389,3 +2391,4 @@ document.addEventListener(\'DOMContentLoaded\',function(){
 </script>
 </body>
 </html>
+
