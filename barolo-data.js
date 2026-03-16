@@ -1,49 +1,106 @@
-
-const BAROLO_WALLETS = {
-  sol: "xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK"
-};
-
-window.baroloData = {
-  solQty:0,
-  solPrice:0,
-  kaminoDebt:0
-};
-
 async function loadBaroloData(){
 
-  const prices = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=solana,ethereum,cardano&vs_currencies=usd")
-  .then(r=>r.json());
+try{
 
-  window.baroloData.solPrice = prices.solana.usd;
+// PREÇOS
+const priceRes = await fetch(
+"https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana,cardano&vs_currencies=usd"
+);
 
-  try{
+const priceData = await priceRes.json();
 
-    const kamino = await fetch(`https://api.kamino.finance/user-metadata/${BAROLO_WALLETS.sol}/obligations`)
-    .then(r=>r.json());
+const ethPrice = priceData.ethereum.usd;
+const solPrice = priceData.solana.usd;
+const adaPrice = priceData.cardano.usd;
 
-    let sol=0;
-    let debt=0;
 
-    kamino.forEach(o=>{
-      o.deposits.forEach(d=>{
-        if(d.mintAddress==="So11111111111111111111111111111111111111112"){
-          sol+=Number(d.amount);
-        }
-      });
-      o.borrows.forEach(b=>{
-        debt+=Number(b.marketValue);
-      });
-    });
+// QUANTIDADES (AJUSTE SE QUISER)
+const ethQty = 0;
+const solQty = 19.312;
+const adaQty = 0;
 
-    window.baroloData.solQty = sol;
-    window.baroloData.kaminoDebt = debt;
 
-  }catch(e){
-    console.log("Kamino API error",e);
-  }
+// EMPRÉSTIMO
+const kaminoDebt = 803;
 
-  console.log("Barolo data loaded",window.baroloData);
+
+// CALCULOS
+const spotValue =
+(ethQty * ethPrice) +
+(solQty * solPrice) +
+(adaQty * adaPrice);
+
+const netValue = spotValue - kaminoDebt;
+
+
+// SALVAR GLOBAL
+window.baroloData = {
+
+ethPrice,
+solPrice,
+adaPrice,
+
+ethQty,
+solQty,
+adaQty,
+
+kaminoDebt,
+spotValue,
+netValue
+
+};
+
+
+// ATUALIZAR TELA
+updateBaroloUI();
+
+}catch(e){
+
+console.log("API error",e);
+
 }
 
+}
+
+
+// ATUALIZA OS ELEMENTOS DO SITE
+function updateBaroloUI(){
+
+if(!window.baroloData) return;
+
+const d = window.baroloData;
+
+
+function set(id,val){
+
+const el = document.getElementById(id);
+
+if(el) el.innerText = val;
+
+}
+
+
+// QUANTIDADES
+set("solQty", d.solQty.toFixed(3));
+set("ethQty", d.ethQty.toFixed(3));
+
+
+// PREÇOS
+set("solPrice", "$"+d.solPrice.toFixed(2));
+set("ethPrice", "$"+d.ethPrice.toFixed(2));
+
+
+// VALORES
+set("spotValue", "$"+d.spotValue.toFixed(2));
+set("debtValue", "$"+d.kaminoDebt.toFixed(2));
+set("netValue", "$"+d.netValue.toFixed(2));
+
+}
+
+
+// CARREGAR
 loadBaroloData();
+
+
+// ATUALIZA A CADA 60s
 setInterval(loadBaroloData,60000);
