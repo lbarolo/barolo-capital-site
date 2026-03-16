@@ -11,46 +11,32 @@ async function loadBaroloData(){
 
 try{
 
-// =============================
-// PREÇOS
-// =============================
+let totalEVMValue = 0;
 
-const priceRes = await fetch(
-"https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana,cardano&vs_currencies=usd"
-);
-
-const priceData = await priceRes.json();
-
-const ethPrice = priceData.ethereum.usd;
-const solPrice = priceData.solana.usd;
-
-
-// =============================
-// EVM BALANCES
-// =============================
-
-let totalETH = 0;
+// =====================
+// EVM (DeBank)
+// =====================
 
 for(const wallet of EVM_WALLETS){
 
 const res = await fetch(
-`https://api.ethplorer.io/getAddressInfo/${wallet}?apiKey=freekey`
+`https://openapi.debank.com/v1/user/total_balance?id=${wallet}`
 );
 
 const data = await res.json();
 
-if(data.ETH){
+if(data.total_usd_value){
 
-totalETH += data.ETH.balance;
-
-}
+totalEVMValue += data.total_usd_value;
 
 }
 
+}
 
-// =============================
-// SOLANA BALANCE
-// =============================
+
+// =====================
+// SOLANA
+// =====================
 
 const solRes = await fetch("https://api.mainnet-beta.solana.com",{
 method:"POST",
@@ -68,39 +54,43 @@ const solData = await solRes.json();
 const solBalance = solData.result.value / 1e9;
 
 
-// =============================
-// CALCULOS
-// =============================
+// preço SOL
+const priceRes = await fetch(
+"https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
+);
 
-const ethValue = totalETH * ethPrice;
+const priceData = await priceRes.json();
+
+const solPrice = priceData.solana.usd;
+
 const solValue = solBalance * solPrice;
 
-const portfolioValue = ethValue + solValue;
+
+// =====================
+// TOTAL
+// =====================
+
+const portfolioValue = totalEVMValue + solValue;
 
 
-// =============================
-// SALVAR GLOBAL
-// =============================
+// =====================
+// SAVE
+// =====================
 
 window.baroloData = {
 
-totalETH,
+totalEVMValue,
 solBalance,
-
-ethPrice,
 solPrice,
-
-ethValue,
 solValue,
-
 portfolioValue
 
 };
 
 
-// =============================
+// =====================
 // UPDATE UI
-// =============================
+// =====================
 
 updateUI();
 
@@ -128,16 +118,10 @@ if(el) el.innerText = val;
 
 }
 
-set("ethBalance", d.totalETH.toFixed(4));
-set("solBalance", d.solBalance.toFixed(3));
-
-set("ethPrice", "$"+d.ethPrice.toFixed(2));
-set("solPrice", "$"+d.solPrice.toFixed(2));
-
-set("ethValue", "$"+d.ethValue.toFixed(2));
-set("solValue", "$"+d.solValue.toFixed(2));
-
-set("portfolioValue", "$"+d.portfolioValue.toFixed(2));
+set("evmValue","$"+d.totalEVMValue.toFixed(2));
+set("solBalance",d.solBalance.toFixed(3));
+set("solValue","$"+d.solValue.toFixed(2));
+set("portfolioValue","$"+d.portfolioValue.toFixed(2));
 
 }
 
