@@ -14,22 +14,31 @@ const solPrice = priceData.solana.usd;
 const adaPrice = priceData.cardano.usd;
 
 
-// QUANTIDADES (AJUSTE SE QUISER)
+// QUANTIDADES CRYPTO
 const ethQty = 0;
 const solQty = 19.312;
 const adaQty = 0;
 
 
-// EMPRÉSTIMO
-const kaminoDebt = 803;
+// STABLECOINS
+const usdcQty = 0;   // coloque sua quantidade
+const usdtQty = 0;   // coloque sua quantidade
 
 
-// CALCULOS
+// EMPRÉSTIMOS
+const kaminoDebt = 803; // valor da dívida
+
+
+// CALCULO SPOT
 const spotValue =
 (ethQty * ethPrice) +
 (solQty * solPrice) +
-(adaQty * adaPrice);
+(adaQty * adaPrice) +
+usdcQty +
+usdtQty;
 
+
+// VALOR LÍQUIDO
 const netValue = spotValue - kaminoDebt;
 
 
@@ -44,26 +53,30 @@ ethQty,
 solQty,
 adaQty,
 
+usdcQty,
+usdtQty,
+
 kaminoDebt,
+
 spotValue,
 netValue
 
 };
 
 
-// ATUALIZAR TELA
+// ATUALIZAR INTERFACE
 updateBaroloUI();
 
 }catch(e){
 
-console.log("API error",e);
+console.log("Erro API",e);
 
 }
 
 }
 
 
-// ATUALIZA OS ELEMENTOS DO SITE
+
 function updateBaroloUI(){
 
 if(!window.baroloData) return;
@@ -83,11 +96,16 @@ if(el) el.innerText = val;
 // QUANTIDADES
 set("solQty", d.solQty.toFixed(3));
 set("ethQty", d.ethQty.toFixed(3));
+set("adaQty", d.adaQty.toFixed(3));
+
+set("usdcQty", d.usdcQty.toFixed(2));
+set("usdtQty", d.usdtQty.toFixed(2));
 
 
 // PREÇOS
 set("solPrice", "$"+d.solPrice.toFixed(2));
 set("ethPrice", "$"+d.ethPrice.toFixed(2));
+set("adaPrice", "$"+d.adaPrice.toFixed(2));
 
 
 // VALORES
@@ -98,7 +116,8 @@ set("netValue", "$"+d.netValue.toFixed(2));
 }
 
 
-// CARREGAR
+
+// PRIMEIRA CARGA
 loadBaroloData();
 
 
