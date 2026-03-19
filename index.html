@@ -11,7 +11,85 @@
 html{scroll-behavior:smooth;}
 body{background:#0e0e12;color:#e8dfc8;font-family:'EB Garamond','Cormorant Garamond',Georgia,serif;font-size:16px;line-height:1.7;overflow-x:hidden;}
 :root{--gold:#c9a050;--gold2:#9a7228;--cream:#e8dfc8;--muted:#8a7a62;--surface:#141418;--surface2:#1a1a22;--border:#2a2620;--border2:#3a3228;--text:#e8dfc8;--dark:#0e0e12;}
+[data-theme="light"]{--gold:#8a6820;--gold2:#6a5010;--cream:#16110c;--muted:#7a6a50;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;--border2:#c4b58a;--text:#16110c;--dark:#f2ece0;background:#f2ece0;color:#16110c;}
+[data-theme="light"] .hero-glow{background:radial-gradient(ellipse 70% 55% at 50% -10%,rgba(138,104,32,.1) 0%,transparent 65%);}
+[data-theme="light"] #home{background:#f2ece0;}
+[data-theme="light"] #sobre{background:#faf6ef;}
+[data-theme="light"] #estrategias{background:#f2ece0;}
+[data-theme="light"] #portfolio{background:#faf6ef;}
+[data-theme="light"] #acesso{background:#f2ece0;}
+[data-theme="light"] nav{background:rgba(242,236,224,.97);}
+[data-theme="light"] .ticker{background:rgba(242,236,224,.97);}
+[data-theme="light"] footer{background:#f2ece0;}
+[data-theme="light"] .estrategia-card{background:#f2ece0;}
+[data-theme="light"] .estrategia-card:hover{background:#faf6ef;}
+[data-theme="light"] .summary-item{background:#faf6ef;}
+[data-theme="light"] .login-card{background:#faf6ef;}
+[data-theme="light"] .hero-title{color:#16110c;}
+[data-theme="light"] .hero-eyebrow{color:#8a6820;}
+[data-theme="light"] .card-title{color:#16110c;}
+[data-theme="light"] .section-title{color:#16110c;}
+[data-theme="light"] .asset-label{color:#16110c;}
+[data-theme="light"] .asset-value{color:#16110c;}
+[data-theme="light"] .summary-value{color:#16110c;}
+[data-theme="light"] .sobre-text p.lead{color:#16110c;}
+[data-theme="light"] .crenca-lead{color:#8a6820;}
+[data-theme="light"] .nav-input{background:rgba(0,0,0,.04);color:#16110c;}
+[data-theme="light"] .form-input{background:rgba(0,0,0,.03);color:#16110c;}
+[data-theme="light"] .estrategia-cards{background:#c4b58a;}
+[data-theme="light"] .portfolio-summary{background:#c4b58a;}
+[data-theme="light"] .hero-rules::before{background:linear-gradient(90deg,transparent,rgba(138,104,32,.2) 20%,rgba(138,104,32,.2) 80%,transparent);}
+[data-theme="light"] #home::before{opacity:.02;}
+[data-theme="light"]{--gold:#8a6820;--gold2:#6a4f14;--cream:#16110c;--muted:#7a6a50;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;--border2:#c4b58a;--text:#16110c;--dark:#f2ece0;}
+[data-theme="light"] body{background:#f2ece0;}
+[data-theme="light"] #home{background:#f2ece0;}
+[data-theme="light"] #home::before{opacity:.015;}
+[data-theme="light"] .hero-title{color:#16110c;}
+[data-theme="light"] .hero-sub{color:#7a6a50;}
+[data-theme="light"] nav{background:rgba(242,236,224,0.97);border-bottom-color:#d5c9a5;}
+[data-theme="light"] .nav-input{background:rgba(0,0,0,.03);border-color:#d5c9a5;color:#16110c;}
+[data-theme="light"] .nav-btn{border-color:#8a6820;color:#8a6820;}
+[data-theme="light"] .nav-btn:hover{background:#8a6820;color:#faf6ef;}
+[data-theme="light"] .ticker{background:rgba(242,236,224,.97);border-top-color:#d5c9a5;}
+[data-theme="light"] #sobre{background:#faf6ef;}
+[data-theme="light"] #estrategias{background:#f2ece0;}
+[data-theme="light"] .estrategia-card{background:#f2ece0;}
+[data-theme="light"] .estrategia-card:hover{background:#faf6ef;}
+[data-theme="light"] #portfolio{background:#faf6ef;}
+[data-theme="light"] .portfolio-summary{background:#d5c9a5;}
+[data-theme="light"] .summary-item{background:#faf6ef;}
+[data-theme="light"] .portfolio-table th{color:#7a6a50;border-bottom-color:#c4b58a;}
+[data-theme="light"] .portfolio-table td{border-bottom-color:#d5c9a5;}
+[data-theme="light"] #acesso{background:#f2ece0;}
+[data-theme="light"] .login-card{background:#faf6ef;border-color:#d5c9a5;}
+[data-theme="light"] .login-card-header{border-bottom-color:#d5c9a5;}
+[data-theme="light"] .form-input{background:rgba(0,0,0,.03);border-color:#d5c9a5;color:#16110c;}
+[data-theme="light"] .form-input:focus{border-color:#8a6820;}
+[data-theme="light"] footer{background:#f2ece0;border-top-color:#d5c9a5;}
+[data-theme="light"] .sobre-text p{color:#7a6a50;}
+[data-theme="light"] .crencas-wrap{border-left-color:#d5c9a5;}
+[data-theme="light"] .crenca-text{color:#7a6a50;}
+[data-theme="light"] .card-desc{color:#7a6a50;}
+[data-theme="light"] .asset-label{color:#16110c;}
+[data-theme="light"] .asset-qty{color:#7a6a50;}
+[data-theme="light"] .asset-value{color:#16110c;}
+[data-theme="light"] .alloc-bar{background:#d5c9a5;}
+[data-theme="light"] .tag{border-color:#d5c9a5;color:#8a6820;}
+[data-theme="light"] .section-num{color:rgba(138,104,32,.04);}
+[data-theme="light"] .sobre-grid{border-color:#d5c9a5;}
 
+
+/* Token cards */
+.tok-card{background:var(--surface);border:1px solid var(--border);padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:border-color .2s,background .2s;position:relative;}
+.tok-card:hover{border-color:var(--gold2);background:var(--surface2);}
+.tok-logo{width:36px;height:36px;border-radius:50%;object-fit:cover;background:var(--border);}
+.tok-name{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);text-align:center;}
+.tok-ticker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold2);text-align:center;}
+.tok-link{position:absolute;top:8px;right:10px;font-size:12px;color:var(--muted);}
+.tok-card:hover .tok-link{color:var(--gold);}
+.tok-card--wide{flex-direction:row;align-items:center;gap:12px;padding:14px 16px;}
+.tok-card--wide .tok-name{text-align:left;}
+.tok-card--wide .tok-ticker{text-align:left;}
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;height:64px;background:rgba(14,14,18,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
 .nav-logo{cursor:pointer;}
@@ -208,13 +286,14 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
     <li><a href="#sobre"       onclick="setActive(this);closeMobile()">Sobre</a></li>
     <li><a href="#estrategias" onclick="setActive(this);closeMobile()">Estratégias</a></li>
     <li><a href="#portfolio"   onclick="setActive(this);closeMobile()">Portfólio</a></li>
-    <li><a href="#acesso"      onclick="setActive(this);closeMobile()">Acesso</a></li>
   </ul>
 
   <div class="nav-right" id="navRight">
+    <button onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;transition:border-color .2s;" id="themeBtn">☀️</button>
     <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuário" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
     <input type="password" id="np" class="nav-input" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')loginNav()">
     <button class="nav-btn" id="navBtn" onclick="loginNav()">Entrar</button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;transition:border-color .2s,color .2s;flex-shrink:0;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">☀</button>
   </div>
 
   <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
@@ -312,73 +391,58 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
   <div class="section-num" style="right:48px;top:20px;">03</div>
   <div class="container">
     <div class="section-header">
-      <div class="section-tag">Alocação atual</div>
-      <h2 class="section-title">Portfólio <em>diversificado</em> no ecossistema DeFi</h2>
+      <div class="section-tag">Ecossistema</div>
+      <h2 class="section-title">Ativos do <em>portfólio</em></h2>
     </div>
-    <div class="portfolio-summary">
-      <div class="summary-item">
-        <div class="summary-label">Patrimônio Líquido</div>
-        <div class="summary-value" id="ps-net">$6.430</div>
-        <div class="summary-sub">CG + Stables − Dívidas</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-label">Redes Ativas</div>
-        <div class="summary-value">4</div>
-        <div class="summary-sub">ETH · SOL · ADA · ARB</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-label">Ativos em Carteira</div>
-        <div class="summary-value">9</div>
-        <div class="summary-sub">+ posições DeFi ativas</div>
-      </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:32px;">
+
+      <a href="https://ethereum.org" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" class="tok-logo" alt="ETH"><span class="tok-name">Ethereum</span><span class="tok-ticker">ETH</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://solana.com" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" class="tok-logo" alt="SOL"><span class="tok-name">Solana</span><span class="tok-ticker">SOL</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://cardano.org" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/975/small/cardano.png" class="tok-logo" alt="ADA"><span class="tok-name">Cardano</span><span class="tok-ticker">ADA</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/33373/small/eigen.png" class="tok-logo" alt="EIGEN"><span class="tok-name">EigenLayer</span><span class="tok-ticker">EIGEN</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://radiant.capital" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/26536/small/Radiant-Logo.png" class="tok-logo" alt="RDNT"><span class="tok-name">Radiant</span><span class="tok-ticker">RDNT</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://polygon.technology" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/32440/small/polygon.png" class="tok-logo" alt="POL"><span class="tok-name">POL</span><span class="tok-ticker">POL</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://zksync.io" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/38043/small/zksync.jpg" class="tok-logo" alt="ZK"><span class="tok-name">ZKsync</span><span class="tok-ticker">ZK</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://xai.games" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/34258/small/xai.png" class="tok-logo" alt="XAI"><span class="tok-name">Xai</span><span class="tok-ticker">XAI</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://www.zetachain.com" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/26718/thumb/zetachain.jpg" class="tok-logo" alt="ZETA"><span class="tok-name">ZetaChain</span><span class="tok-ticker">ZETA</span><span class="tok-link">↗</span></div>
+      </a>
+
     </div>
-    <table class="portfolio-table">
-      <thead><tr>
-        <th>Ativo</th><th>Rede</th><th>Quantidade</th><th>Valor</th><th>Alocação</th>
-      </tr></thead>
-      <tbody id="portfolioTbody"></tbody>
-    </table>
-    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;color:var(--muted);">
-      * Posições atualizadas via CoinGecko. Inclui colateral em AAVE V3 e Kamino Finance.
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+      <a href="https://aave.com" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12645/small/AAVE.png" class="tok-logo" alt="AAVE"><span class="tok-name">AAVE V3</span><span class="tok-ticker" style="color:var(--muted);">Lending · ETH</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://kamino.finance" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/36181/small/kamino.jpg" class="tok-logo" alt="Kamino"><span class="tok-name">Kamino</span><span class="tok-ticker" style="color:var(--muted);">Lending · SOL</span><span class="tok-link">↗</span></div>
+      </a>
+      <a href="https://app.uniswap.org" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png" class="tok-logo" alt="UNI"><span class="tok-name">Uniswap V3</span><span class="tok-ticker" style="color:var(--muted);">Liquidez · ETH</span><span class="tok-link">↗</span></div>
+      </a>
     </div>
   </div>
 </section>
 
 <!-- ACESSO -->
-<section id="acesso" class="sec" style="padding-bottom:140px;">
-  <div class="section-num" style="left:48px;top:20px;">04</div>
-  <div class="container">
-    <div class="login-grid">
-      <div class="login-left">
-        <div class="section-tag">Plataforma interna</div>
-        <h2 class="section-title" style="max-width:400px;">Acesso <em>restrito</em> à plataforma</h2>
-        <p>A plataforma Barolo Capital reúne dados em tempo real de todas as posições — preços ao vivo, métricas DeFi, histórico de pools e análise de portfólio. Acesso exclusivo para membros autorizados.</p>
-      </div>
-      <div>
-        <div class="login-card">
-          <div class="login-card-header">
-            <span class="login-card-title">Terminal · Acesso Restrito</span>
-            <div class="live-dot-wrap"><div class="live-dot"></div><span>Sistema Operacional</span></div>
-          </div>
-          <div class="form-field">
-            <label class="form-label" for="lu">Identificador</label>
-            <input type="text" id="lu" class="form-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuário" onkeydown="if(event.key==='Enter')document.getElementById('lp').focus()">
-          </div>
-          <div class="form-field">
-            <label class="form-label" for="lp">Autenticador</label>
-            <input type="password" id="lp" class="form-input" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')loginCard()">
-          </div>
-          <button class="form-btn" id="loginCardBtn" onclick="loginCard()">Acessar Sistema</button>
-          <div class="form-err" id="loginCardErr"></div>
-          <div class="login-card-footer">
-            <span>Barolo Capital · Plataforma Interna</span>
-            <span id="cardClk">--:--:--</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <footer>
   <span>© 2021 Barolo Capital · Gestão Estratégica de Capital</span>
@@ -464,6 +528,20 @@ function buildTable(){
   }).join('');
 }
 buildTable();
+
+// Theme
+function toggleTheme(){
+  var html=document.documentElement;
+  var current=html.getAttribute('data-theme')||'dark';
+  var next=current==='dark'?'light':'dark';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('bc-theme',next);
+  document.getElementById('themeToggle').textContent=next==='dark'?'☀':'☾';
+}
+(function(){
+  var saved=localStorage.getItem('bc-theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);var btn=document.getElementById('themeToggle');if(btn)btn.textContent=saved==='dark'?'☀':'☾';}
+})();
 
 // Live prices
 (async function(){
