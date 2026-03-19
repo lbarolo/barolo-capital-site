@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Barolo Capital — Pools & DeFi</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><link rel="canonical" href="/pools">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barolo Capital · Pools & DeFi</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
@@ -356,66 +357,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </div>
 
 <!-- ══ CAPITAL OPERACIONAL ══ -->
-<div class="section-label" style="margin-top:36px;">Capital Operacional — Pools de Liquidez</div>
+<div class="section-label" style="margin-top:36px;">Meta de Alocação em Pools</div>
 
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--card-shadow);margin-bottom:24px;">
-
-  <!-- Header strip -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface2);border-bottom:1px solid var(--border);">
-    <div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;color:var(--accent);">Recomendação de Alocação em Pools</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:2px;letter-spacing:1px;">5% do capital líquido dedicado exclusivamente a pools de liquidez</div>
-    </div>
-    <div id="capop-badge" style="font-size:10px;font-weight:700;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:5px 12px;letter-spacing:.04em;">
-      calculando…
-    </div>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  <div>
+    <div style="font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Política de Alocação</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--accent);">5%</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;">do patrimônio líquido alocado em pools de liquidez</div>
   </div>
-
-  <!-- Three numbers -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);">
-
-    <div style="padding:22px 24px;border-right:1px solid var(--border);">
-      <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;">CAPITAL LÍQUIDO</div>
-      <div id="capop-total" title="CoinGecko + USDT AAVE + PYUSD Kamino + SOL extra Kamino − Dívidas" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--text);">—</div>
-      <div style="font-size:8px;color:var(--muted);margin-top:5px;">portfólio a mercado (hoje)</div>
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="font-size:11px;color:var(--muted);">
+      <span style="color:var(--text);">Meta 5%</span> de 
+      <span id="capop-patrimonio" style="color:var(--text);font-family:'JetBrains Mono',monospace;">—</span>
+      <span style="color:var(--muted);"> = </span>
+      <span id="capop-rec" style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:600;">—</span>
     </div>
-
-    <div style="padding:22px 24px;border-right:1px solid var(--border);">
-      <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;">META EM POOLS (5%)</div>
-      <div id="capop-rec" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);">—</div>
-      <div style="font-size:8px;color:var(--muted);margin-top:5px;">capital operacional ideal em LPs</div>
-    </div>
-
-    <div style="padding:22px 24px;">
-      <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;">ALOCADO EM POOLS</div>
-      <div id="capop-inuse" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--green);">—</div>
-      <div id="capop-inuse-sub" style="font-size:8px;color:var(--muted);margin-top:5px;">Uniswap V3 · WETH/USDC</div>
-    </div>
-
+    <div style="font-size:10px;color:var(--muted);font-style:italic;">Abra nova posição quando houver oportunidade de range dentro da meta.</div>
   </div>
-
-  <!-- Bar + recommendation -->
-  <div style="padding:16px 24px 20px;border-top:1px solid var(--border);">
-    <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-bottom:6px;">
-      <span>Alocado em pools vs. meta de 5%</span>
-      <span id="capop-pct-label" style="font-weight:700;color:var(--accent);">—</span>
-    </div>
-    <div style="position:relative;height:7px;background:var(--bg);border-radius:4px;overflow:visible;border:1px solid var(--border);">
-      <div id="capop-bar-fill" style="height:100%;border-radius:4px;transition:width .7s ease;width:0%;"></div>
-      <!-- 100% target marker = the meta itself -->
-      <div style="position:absolute;top:-3px;bottom:-3px;right:0;width:2px;background:rgba(138,104,32,0.5);border-radius:1px;"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:7px;color:var(--muted);margin-top:3px;">
-      <span>$0</span>
-      <span id="capop-bar-meta" style="color:var(--accent);">meta —</span>
-    </div>
-
-    <!-- Recommendation text -->
-    <div id="capop-rec-box" style="margin-top:14px;padding:12px 16px;border-radius:6px;background:rgba(138,104,32,0.07);border:1px solid rgba(138,104,32,0.22);">
-      <div id="capop-rec-text" style="font-size:10px;color:var(--text);line-height:1.65;">Calculando…</div>
-    </div>
-  </div>
-
 </div>
 
 
@@ -994,121 +952,30 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
   }
 })();
 
-// ── CAPITAL OPERACIONAL ──
-setTimeout(function calcCapOp() {
-  const $ = id => document.getElementById(id);
-  const fmt = (n, d=0) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
-
-  // LP value — only pools, not lending
-  const LP_VALUE = 0; // atualizar com print da pool ativa // Uniswap V3 WETH/USDC pooled (updated 14/03/2026)
-
-  const PORTFOLIO = [
-    { id:'ethereum',        qty:2.084106,     fallback:2079.21 }, // from CoinGecko 14/03/26
-    { id:'solana',          qty:19.31226576,  fallback:87.28   },
-    { id:'cardano',         qty:375.245,      fallback:0.2617  },
-    { id:'radiant-capital', qty:7290.46,      fallback:0.005543},
-    { id:'eigenlayer',      qty:153.363,      fallback:0.1870  },
-    { id:'matic-network',   qty:218,          fallback:0.09693 },
-    { id:'zksync',          qty:876,          fallback:0.01914 },
-    { id:'xai-blockchain',  qty:692.86,       fallback:0.01102 },
-    { id:'zetachain',       qty:51.1434,      fallback:0.05045 },
-    // USDT e PYUSD não incluídos aqui — somados via STABLES_USD acima
-  ];
-
-  function render(portfolioTotal) {
-    const meta    = portfolioTotal * 0.05;
-    const alocado = LP_VALUE;
-    const ratio   = alocado / meta; // 0–1+ vs meta
-    const pct     = (alocado / portfolioTotal * 100);
-
-    const set = (id,v) => { const e=$(id); if(e) e.textContent=v; };
-    const htm = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
-
-    set('capop-total', fmt(portfolioTotal));
-    set('capop-rec',   fmt(meta));
-    // Update breakdown detail if element exists
-    const breakdown = document.getElementById('capop-breakdown');
-    if (breakdown) {
-      breakdown.textContent = 'CG + USDT + PYUSD + SOL extra − dívidas';
-    }
-
-    const inEl = $('capop-inuse');
-    if (inEl) {
-      inEl.textContent = fmt(alocado);
-      inEl.style.color = ratio > 1.2 ? 'var(--red)' : ratio > 0.8 ? 'var(--green)' : 'var(--yellow)';
-    }
-
-    // Bar — width relative to the meta (100% = met the goal exactly)
-    const barFill = $('capop-bar-fill');
-    if (barFill) {
-      const w = Math.min(ratio * 100, 110); // cap slightly above 100 to show overflow
-      barFill.style.width = w + '%';
-      barFill.style.background =
-        ratio > 1.2 ? 'var(--red)' :
-        ratio > 0.8 ? 'var(--green)' :
-                      'var(--yellow)';
-    }
-    set('capop-pct-label', pct.toFixed(2) + '% do portfólio');
-    set('capop-bar-meta',  'meta ' + fmt(meta));
-
-    // Badge
-    const badge = $('capop-badge');
-    if (badge) {
-      if (ratio < 0.5)      { badge.textContent='⬇ Subexposto em LPs';  badge.style.color='var(--muted)'; }
-      else if (ratio <= 1.2){ badge.textContent='✓ Dentro da meta';      badge.style.color='var(--green)'; badge.style.borderColor='rgba(74,124,63,0.4)'; }
-      else                  { badge.textContent='⚠ Acima da meta';       badge.style.color='var(--yellow)'; badge.style.borderColor='rgba(196,160,50,0.4)'; }
-    }
-
-    // Recommendation
-    const box  = $('capop-rec-box');
-    const txt  = $('capop-rec-text');
-    if (!txt) return;
-
-    const diff = meta - alocado;
-    if (ratio < 0.5) {
-      if (box) { box.style.background='rgba(122,106,80,0.08)'; box.style.borderColor='rgba(122,106,80,0.25)'; }
-      txt.innerHTML =
-        `Seu portfólio vale <strong>${fmt(portfolioTotal)}</strong>. A meta de 5% para pools de liquidez é <strong style="color:var(--accent)">${fmt(meta)}</strong>. ` +
-        `Você tem apenas <strong style="color:var(--yellow)">${fmt(alocado)}</strong> alocado na Uniswap V3 — ` +
-        `ainda cabem <strong style="color:var(--green)">${fmt(diff)}</strong> dentro da meta para abrir novas posições.`;
-    } else if (ratio <= 1.2) {
-      if (box) { box.style.background='rgba(74,124,63,0.08)'; box.style.borderColor='rgba(74,124,63,0.3)'; }
-      txt.innerHTML =
-        `Patrimônio líquido (CG + stables empréstimos + SOL extra − dívidas): <strong>${fmt(portfolioTotal)}</strong> → meta 5% em pools: <strong style="color:var(--accent)">${fmt(meta)}</strong>. ` +
-        `Você tem <strong style="color:var(--green)">${fmt(alocado)}</strong> alocado — dentro da faixa ideal. ` +
-        (diff > 0
-          ? `Ainda há espaço para mais <strong>${fmt(diff)}</strong> em novos ranges ou pares.`
-          : `Posição bem calibrada para o tamanho atual do portfólio.`);
-    } else {
-      if (box) { box.style.background='rgba(196,160,50,0.08)'; box.style.borderColor='rgba(196,160,50,0.3)'; }
-      txt.innerHTML =
-        `Patrimônio líquido (CG + stables empréstimos + SOL extra − dívidas): <strong>${fmt(portfolioTotal)}</strong> → meta 5%: <strong style="color:var(--accent)">${fmt(meta)}</strong>. ` +
-        `Você tem <strong style="color:var(--red)">${fmt(alocado)}</strong> em pools — ` +
-        `<strong style="color:var(--yellow)">${fmt(Math.abs(diff))}</strong> acima da meta. ` +
-        `Considere resgatar parte da posição ou aguardar o portfólio crescer até <strong>${fmt(alocado / 0.05)}</strong>.`;
-    }
-  }
-
-  // Try live prices first, fallback to static
-  // FÓRMULA: SPOT(CG live) + Stables + Pool − Empréstimos
-  // Atualizar ao receber prints: STABLES_USD, LP_VALUE, DEBT_USD
-  const STABLES_USD = 1742.07;  // USDT AAVE $1.652,03 + PYUSD Kamino $90,04 — atualizar semanalmente
-  const DEBT_USD    = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 803.41);
-
-  getLivePrice(PORTFOLIO.map(t=>t.id))
-    .then(prices => {
-      let spot = 0;
-      PORTFOLIO.forEach(t => { spot += t.qty * (prices?.[t.id]?.usd || t.fallback); });
-      const total = spot + STABLES_USD - DEBT_USD;
-      render(total);
-    })
-    .catch(() => {
-      let spot = 0;
-      PORTFOLIO.forEach(t => { spot += t.qty * t.fallback; });
-      const debtFallback = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 803.41);
-      const total = spot + STABLES_USD - debtFallback;
-      render(total);
-    });
+// ── META 5% ──
+setTimeout(function() {
+  var STABLES = 1742.07;
+  var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
+  var QTYS = {ethereum:2.084106,solana:19.31226576,cardano:375.245,'radiant-capital':7290.46,
+    eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
+  getLivePrice(ids).then(function(prices) {
+    var spot = 0;
+    ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
+    var debt = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 803.41);
+    var net  = spot + STABLES - debt;
+    var meta = net * 0.05;
+    window._livePatrimonio = net;
+    var pEl = document.getElementById('capop-patrimonio');
+    var rEl = document.getElementById('capop-rec');
+    if(pEl) pEl.textContent = '$' + Math.round(net).toLocaleString('en-US');
+    if(rEl) rEl.textContent = '$' + Math.round(meta).toLocaleString('en-US');
+  }).catch(function() {
+    var fallbackNet = 6430;
+    var pEl = document.getElementById('capop-patrimonio');
+    var rEl = document.getElementById('capop-rec');
+    if(pEl) pEl.textContent = '$' + fallbackNet.toLocaleString('en-US');
+    if(rEl) rEl.textContent = '$' + Math.round(fallbackNet*0.05).toLocaleString('en-US');
+  });
 }, 1500);
 
 // ── LP REF TOGGLE ──
