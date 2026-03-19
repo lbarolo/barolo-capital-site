@@ -434,6 +434,11 @@ nav { border-bottom: 1px solid var(--border) !important; }
   text-transform: uppercase !important;
 }
 
+
+/* Nav link spacing fix */
+.nav-links a { padding: 0 16px !important; letter-spacing: .18em !important; }
+.nav-links { gap: 0 !important; }
+
 </style>
 </head>
 <body>
@@ -830,16 +835,15 @@ const WEEKLY_UPDATE = {
 // ══════════════════════════════════════════════════════════════════
 
 const PORTFOLIO_DATA = [
- { cgId:'ethereum', ticker:'ETH', name:'Ethereum', qty:2.084106, invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://assets.coingecko.com/coins/images/279/small/ethereum.png' },
- { cgId:'solana', ticker:'SOL', name:'Solana', qty:19.31226576, invested:2201.68, avgCost:146.97, color:'#D98B3A', logo:'https://assets.coingecko.com/coins/images/4128/small/solana.png' },
- { cgId:'cardano', ticker:'ADA', name:'Cardano', qty:375.245, invested:530.95, avgCost:1.31, color:'#E8C53D', logo:'https://assets.coingecko.com/coins/images/975/small/cardano.png' },
- { cgId:'radiant-capital', ticker:'RDNT', name:'Radiant', qty:7290.46, invested:0, avgCost:null, color:'#00E5FF', logo:'https://assets.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
- { cgId:'eigenlayer', ticker:'EIGEN', name:'EigenLayer', qty:153.36298802, invested:45.87, avgCost:0.2991, color:'#9370DB', logo:'https://assets.coingecko.com/coins/images/33373/small/eigen.png' },
- { cgId:'matic-network', ticker:'POL', name:'POL', qty:218, invested:143.88, avgCost:0.66, color:'#8247E5', logo:'https://assets.coingecko.com/coins/images/32440/small/polygon.png' },
- { cgId:'zksync', ticker:'ZK', name:'ZKsync', qty:876, invested:0, avgCost:null, color:'#D45B8E', logo:'https://assets.coingecko.com/coins/images/38043/small/zksync.jpg' },
- { cgId:'xai-blockchain', ticker:'XAI', name:'Xai', qty:692.86, invested:164.52, avgCost:0.2375, color:'#FF6B35', logo:'https://assets.coingecko.com/coins/images/34258/small/xai.png' },
- { cgId:'zetachain', ticker:'ZETA', name:'ZetaChain', qty:51.1434, invested:0, avgCost:null, color:'#C8A87C', logo:'https://assets.coingecko.com/coins/images/26718/thumb/zetachain.jpg' },
- { cgId:'scroll-token', ticker:'SCR', name:'Scroll', qty:0.0018, invested:0, avgCost:null, color:'#F5C518', logo:'https://assets.coingecko.com/coins/images/33111/thumb/symbol.png' },
+ { cgId:'ethereum', ticker:'ETH', name:'Ethereum', qty:2.084106, invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
+ { cgId:'solana', ticker:'SOL', name:'Solana', qty:19.31226576, invested:2201.68, avgCost:146.97, color:'#D98B3A', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
+ { cgId:'cardano', ticker:'ADA', name:'Cardano', qty:375.245, invested:530.95, avgCost:1.31, color:'#E8C53D', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
+ { cgId:'radiant-capital', ticker:'RDNT', name:'Radiant', qty:7290.46, invested:0, avgCost:null, color:'#00E5FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
+ { cgId:'eigenlayer', ticker:'EIGEN', name:'EigenLayer', qty:153.36298802, invested:45.87, avgCost:0.2991, color:'#9370DB', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
+ { cgId:'matic-network', ticker:'POL', name:'POL', qty:218, invested:143.88, avgCost:0.66, color:'#8247E5', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
+ { cgId:'zksync', ticker:'ZK', name:'ZKsync', qty:876, invested:0, avgCost:null, color:'#D45B8E', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
+ { cgId:'xai-blockchain', ticker:'XAI', name:'Xai', qty:692.86, invested:164.52, avgCost:0.2375, color:'#FF6B35', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
+ { cgId:'zetachain', ticker:'ZETA', name:'ZetaChain', qty:51.1434, invested:0, avgCost:null, color:'#C8A87C', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
  // USDT e USDS removidos do PORTFOLIO_DATA — somados via STABLES_USD para evitar dupla contagem
  // USDT $1.652,03 (supply AAVE) + USDS $300,39 (supply Kamino) = $1.742,07 em STABLES_USD
 ];
@@ -849,13 +853,12 @@ const FALLBACK_PRICES = {
  // Preços dos prints (Mar/2026) — atualizados ao vivo pelo CoinGecko
  'ethereum':2079.21,'solana':87.28,'cardano':0.2617,'eigenlayer':0.1870,
  'matic-network':0.09693,'xai-blockchain':0.01102,'zksync':0.01914,
- 'radiant-capital':0.005543,'zetachain':0.05045,'scroll-token':0.04412,
- // tether e usds-stablecoin removidos — contabilizados em STABLES_USD
+ 'radiant-capital':0.005543,'zetachain':0.05045,// tether e usds-stablecoin removidos — contabilizados em STABLES_USD
 };
 const FALLBACK_24H = {
  'ethereum':6.9,'solana':4.5,'cardano':6.9,'eigenlayer':3.8,
  'matic-network':-3.2,'xai-blockchain':-3.2,'zksync':0.5,
- 'radiant-capital':2.9,'zetachain':-0.7,'scroll-token':2.7,'tether':0,'usds-stablecoin':0
+ 'radiant-capital':2.9,'zetachain':-0.7,'tether':0,'usds-stablecoin':0
 };
 
 const LP_POOLED = 357.24; // Pool WETH/USDC ativa — atualizar semanalmente
@@ -1090,7 +1093,7 @@ function buildAllocationChart(enriched, totalVal){
  const allocItems = [
  ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
  { ticker:'USDT', name:'USDT (AAVE)', currentValue: 1652.03, color:'#26A17B', logo:'https://assets.coingecko.com/coins/images/325/small/Tether.png', isStable:true },
- { ticker:'USDS', name:'USDS (Kamino)', currentValue: 90.04, color:'#1da1f2', logo:'https://assets.coingecko.com/coins/images/39926/small/usds.png', isStable:true },
+ { ticker:'USDS', name:'USDS (Kamino)', currentValue: 90.04, color:'#1da1f2', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.png', isStable:true },
  ];
  const grandTotal = allocItems.reduce((s,a)=>s+a.currentValue, 0);
 
@@ -2625,7 +2628,7 @@ document.addEventListener('DOMContentLoaded',function(){
  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-top:12px;">
  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
  <div style="display:flex;align-items:center;gap:8px;">
- <img src="https://assets.coingecko.com/coins/images/975/small/cardano.png" width="18" height="18" style="border-radius:50%;">
+ <img src="https://coin-images.coingecko.com/coins/images/975/small/cardano.png" width="18" height="18" style="border-radius:50%;" onerror="this.style.opacity='0'">
  <span style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;">ADA Stake</span>
  <span id="cardano-live-badge" style="font-size:8px;color:var(--muted);letter-spacing:1px;">● —</span>
  </div>
