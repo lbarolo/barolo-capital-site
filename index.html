@@ -3,565 +3,483 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Barolo Capital · Acesso</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Barolo Capital</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='%23c9a050' text-anchor='middle'>B</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;min-height:100%;overflow-x:hidden;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:#0e0e12;color:#e8dfc8;font-family:'EB Garamond','Cormorant Garamond',Georgia,serif;font-size:16px;line-height:1.7;overflow-x:hidden;}
+:root{--gold:#c9a050;--gold2:#9a7228;--cream:#e8dfc8;--muted:#8a7a62;--surface:#141418;--surface2:#1a1a22;--border:#2a2620;--border2:#3a3228;--text:#e8dfc8;--dark:#0e0e12;}
 
-:root{
-  --bg:       #f2ece0;
-  --surface:  #faf6ef;
-  --surface2: #ece5d5;
-  --border:   #d5c9a5;
-  --border2:  #c4b58a;
-  --accent:   #8a6820;
-  --gold:     #c9a050;
-  --text:     #16110c;
-  --muted:    #7a6a50;
-  --faint:    #b8a882;
-  --green:    #4a7c3f;
-  --red:      #9c2a2a;
-}
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Cormorant Garamond','Palatino Linotype',serif;
-}
-
-/* ── BACKGROUND ── */
-.bg-grid{
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    linear-gradient(rgba(138,104,32,.055) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(138,104,32,.055) 1px,transparent 1px);
-  background-size:52px 52px;
-  animation:drift 50s linear infinite;
-}
-@keyframes drift{to{background-position:52px 52px;}}
-
-.bg-glow{
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 75% 50% at 50% -5%,rgba(201,160,80,.14) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 35% at 8%  85%,rgba(138,104,32,.07) 0%,transparent 55%),
-    radial-gradient(ellipse 35% 30% at 92% 80%,rgba(201,160,80,.07) 0%,transparent 55%);
-}
-
-/* ── TOP NAV BAR ── */
-.topbar{
-  position:fixed;top:0;left:0;right:0;
-  height:52px;
-  background:rgba(242,236,224,.97);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(12px);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;
-  z-index:100;
-  opacity:0;animation:fadein .5s ease .1s forwards;
-}
-.topbar-logo{
-  display:flex;align-items:center;gap:0;
-}
-.topbar-login{
-  display:flex;align-items:center;gap:8px;
-}
-.topbar-input{
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:2px;
-  padding:7px 10px 7px 10px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  color:var(--text);
-  outline:none;
-  width:130px;
-  transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;
-}
-.topbar-input::placeholder{color:var(--faint);font-size:10px;letter-spacing:.04em;}
-.topbar-input:focus{
-  border-color:var(--gold);
-  box-shadow:0 0 0 2px rgba(201,160,80,.15);
-}
-.topbar-input.err-field{border-color:var(--red);}
-.topbar-input.pw{letter-spacing:.1em;}
-.topbar-btn{
-  padding:7px 16px;
-  background:linear-gradient(135deg,#7a5c18 0%,#b8900e 55%,#c9a050 100%);
-  border:none;border-radius:2px;
-  font-family:'Cormorant Garamond',serif;
-  font-weight:700;font-size:12px;
-  letter-spacing:.2em;text-transform:uppercase;
-  color:#f7eed6;
-  cursor:pointer;
-  transition:filter .2s;
-  white-space:nowrap;
-}
-.topbar-btn:hover{filter:brightness(1.08);}
-.topbar-btn:disabled{background:var(--surface2);color:var(--faint);cursor:not-allowed;filter:none;}
-.topbar-err{
-  font-family:'JetBrains Mono',monospace;
-  font-size:8.5px;letter-spacing:.08em;
-  color:var(--red);
-  position:absolute;
-  right:28px;top:54px;
-  background:rgba(242,236,224,.97);
-  padding:4px 8px;
-  border:1px solid rgba(156,42,42,.2);
-  border-radius:2px;
-  opacity:0;
-  transition:opacity .2s;
-  pointer-events:none;
-}
-.topbar-err.show{opacity:1;}
-
-@keyframes shake{
-  0%,100%{transform:translateX(0);}
-  20%,60%{transform:translateX(-4px);}
-  40%,80%{transform:translateX(4px);}
-}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;height:64px;background:rgba(14,14,18,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
+.nav-logo{cursor:pointer;}
+.nav-links{display:flex;align-items:center;gap:0;list-style:none;}
+.nav-links a{display:block;padding:0 18px;height:64px;line-height:64px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;white-space:nowrap;position:relative;}
+.nav-links a:hover{color:var(--gold);}
+.nav-links a.active{color:var(--cream);}
+.nav-links a.active::after{content:'';position:absolute;bottom:0;left:18px;right:18px;height:1px;background:var(--gold);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-input{background:rgba(255,255,255,.04);border:1px solid var(--border2);padding:7px 11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cream);outline:none;width:115px;transition:border-color .2s,box-shadow .2s;}
+.nav-input::placeholder{color:var(--muted);font-size:10px;letter-spacing:.06em;}
+.nav-input:focus{border-color:var(--gold2);box-shadow:0 0 0 2px rgba(201,160,80,.1);}
+.nav-input.err{border-color:#7a2020;}
+.nav-btn{padding:8px 18px;background:transparent;border:1px solid var(--gold2);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:background .2s,color .2s;white-space:nowrap;}
+.nav-btn:hover{background:var(--gold);color:#0e0e12;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;}
+.nav-err{position:fixed;right:48px;top:68px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#c45c5c;background:rgba(14,14,18,.97);border:1px solid rgba(122,32,32,.4);padding:5px 12px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;}
+.nav-err.show{opacity:1;}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.nav-hamburger span{display:block;width:22px;height:1px;background:var(--muted);}
+@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-4px);}40%,80%{transform:translateX(4px);}}
 .do-shake{animation:shake .32s ease;}
 
-/* separator */
-.topbar-sep{
-  width:1px;height:20px;
-  background:var(--border);
-  margin:0 8px;
-}
+/* TICKER */
+.ticker{position:fixed;bottom:0;left:0;right:0;height:28px;background:rgba(14,14,18,.97);border-top:1px solid var(--border);display:flex;align-items:center;overflow:hidden;z-index:100;}
+.ticker-track{display:flex;animation:ticker-scroll 35s linear infinite;white-space:nowrap;}
+@keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.tick-item{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:var(--muted);padding:0 28px;border-right:1px solid var(--border);flex-shrink:0;}
+.tick-item b{font-weight:500;color:#a89878;}.up{color:#4a8c3f;}.dn{color:#8c3a3a;}
 
-/* Clock in topbar */
-.topbar-clk{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10px;letter-spacing:.12em;
-  color:var(--faint);
-  display:none;
-}
-@media(min-width:640px){.topbar-clk{display:block;}}
-
-/* ── SCANLINE ── */
-.scanline{
-  position:fixed;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent 0%,rgba(201,160,80,.3) 30%,rgba(201,160,80,.5) 50%,rgba(201,160,80,.3) 70%,transparent 100%);
-  animation:scan 7s ease-in-out infinite;
-  pointer-events:none;z-index:1;
-}
-@keyframes scan{
-  0%{top:52px;opacity:0;}4%{opacity:1;}96%{opacity:1;}100%{top:100vh;opacity:0;}
-}
-
-/* ── TICKER BAR ── */
-.ticker{
-  position:fixed;bottom:0;left:0;right:0;height:26px;
-  background:rgba(242,236,224,.96);
-  border-top:1px solid var(--border);
-  backdrop-filter:blur(10px);
-  display:flex;align-items:center;
-  overflow:hidden;z-index:20;
-  opacity:0;animation:fadein .5s ease 2s forwards;
-}
-.ticker-inner{
-  display:flex;
-  animation:scroll-left 30s linear infinite;
-  white-space:nowrap;
-}
-.tick-item{
-  font-family:'JetBrains Mono',monospace;
-  font-size:8.5px;letter-spacing:.07em;
-  color:var(--muted);
-  padding:0 28px;
-  border-right:1px solid var(--border);
-  flex-shrink:0;
-}
-.tick-item b{font-weight:500;}
-.tick-item .up{color:var(--green);}
-.tick-item .dn{color:var(--red);}
-@keyframes scroll-left{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-
-/* ── PAGE WRAPPER ── */
-.page{
-  position:relative;z-index:10;
-  padding-top:52px;
-  padding-bottom:36px;
-}
-
-/* ── HERO — MOBILE (default) ── */
-.hero{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:48px 24px 40px;
-  text-align:center;
-}
-
-.hero-logo{
-  width:100%;max-width:440px;
-  margin-bottom:36px;
-  opacity:0;animation:slide-down .8s cubic-bezier(.16,1,.3,1) .3s forwards;
-}
-@keyframes slide-down{
-  from{opacity:0;transform:translateY(-12px);}
-  to{opacity:1;transform:translateY(0);}
-}
-
-/* Tagline below hero */
-.hero-tag{
-  font-style:italic;font-size:14px;
-  color:var(--faint);letter-spacing:.04em;
-  margin-top:-16px;
-  margin-bottom:40px;
-  opacity:0;animation:fadein .6s ease 1s forwards;
-}
-
-/* ── DESKTOP LAYOUT ── */
-@media(min-width:900px){
-  .hero{
-    flex-direction:row;
-    align-items:flex-start;
-    justify-content:center;
-    gap:80px;
-    padding:64px 60px 56px;
-    text-align:left;
-    max-width:1200px;
-    margin:0 auto;
-  }
-
-  .hero-left{
-    flex:1;
-    max-width:480px;
-  }
-
-  .hero-right{
-    flex:1;
-    max-width:480px;
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  .hero-logo{
-    max-width:100%;
-    margin-bottom:28px;
-  }
-
-  .hero-tag{
-    text-align:left;
-    margin-bottom:0;
-  }
-}
-
-/* ── INSTITUTIONAL TEXT ── */
-.inst-section{
-  width:100%;
-  opacity:0;animation:fadein .7s ease .9s forwards;
-}
-
-.inst-divider{
-  display:flex;align-items:center;gap:12px;
-  margin-bottom:24px;
-}
-.inst-divider-line{
-  flex:1;height:1px;
-}
-.inst-divider-line.l{background:linear-gradient(90deg,transparent,var(--border));}
-.inst-divider-line.r{background:linear-gradient(90deg,var(--border),transparent);}
-.inst-divider span{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:3.5px;color:var(--muted);text-transform:uppercase;
-  white-space:nowrap;
-}
-
-.inst-text{
-  font-size:15.5px;line-height:1.88;
-  color:var(--muted);
-  margin-bottom:16px;
-}
-.inst-text strong{color:var(--accent);}
-.inst-text.lead{font-size:16.5px;color:var(--text);}
-.inst-text.closing{font-size:15.5px;color:var(--text);font-style:italic;}
-
-/* ── CRENÇAS CARD ── */
-.crencas-card{
-  width:100%;
-  margin-top:32px;
-  padding:24px 26px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:4px;
-  opacity:0;animation:fadein .7s ease 1.1s forwards;
-}
-.crencas-title{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:3px;color:var(--muted);
-  text-transform:uppercase;margin-bottom:18px;
-}
-.crencas-lead{
-  font-size:15px;color:var(--accent);font-weight:600;
-  font-style:italic;
-  margin-bottom:16px;
-  padding-bottom:14px;
-  border-bottom:1px solid var(--border);
-}
-.crencas-list{
-  list-style:none;
-  display:flex;flex-direction:column;gap:8px;
-  padding:0;margin:0;
-}
-.crencas-list li{
-  display:flex;align-items:flex-start;gap:12px;
-  font-size:14.5px;line-height:1.65;color:var(--text);
-}
-.crencas-num{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;color:var(--faint);
-  flex-shrink:0;padding-top:3px;
-  min-width:18px;
-}
-
-/* ── FOOTER ── */
-.page-foot{
-  text-align:center;
-  font-family:'JetBrains Mono',monospace;
-  font-size:8.5px;letter-spacing:2px;color:var(--faint);
-  padding:20px 0 36px;
-  border-top:1px solid var(--border);
-  margin:0 24px;
-  opacity:0;animation:fadein .5s ease 1.4s forwards;
-}
-
-@media(min-width:900px){
-  .page-foot{margin:0 60px;}
-}
-
-/* ── CONTENT SECTION WRAPPER (desktop: two columns) ── */
-.content-wrap{
-  padding:0 24px;
-}
-@media(min-width:900px){
-  .content-wrap{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:60px;
-    max-width:1200px;
-    margin:0 auto;
-    padding:0 60px 48px;
-  }
-}
-
-/* hide on mobile: desktop puts inst text inline */
-@media(max-width:899px){
-  .hero-right{width:100%;}
-  .hero-left{width:100%;}
-  .hero{gap:0;}
-}
-
+/* GENERAL */
+.container{max-width:1160px;margin:0 auto;padding:0 48px;width:100%;}
+.sec{padding:110px 0;position:relative;}
+.section-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.section-tag::before{content:'';width:24px;height:1px;background:var(--gold2);}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,52px);font-weight:300;line-height:1.12;color:var(--cream);max-width:680px;}
+.section-title em{font-style:italic;color:var(--gold);}
+.section-header{margin-bottom:56px;}
+.section-num{position:absolute;font-family:'Cormorant Garamond',serif;font-size:180px;font-weight:700;color:rgba(201,160,80,.04);line-height:1;pointer-events:none;user-select:none;z-index:0;}
+@keyframes reveal{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadein{from{opacity:0;}to{opacity:1;}}
+
+/* HERO */
+#home{background:var(--dark);position:relative;overflow:hidden;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:64px;}
+#home::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.03;pointer-events:none;z-index:0;}
+.hero-glow{position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 55% at 50% -10%,rgba(201,160,80,.12) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 5% 80%,rgba(154,114,40,.07) 0%,transparent 60%),radial-gradient(ellipse 35% 35% at 95% 75%,rgba(201,160,80,.06) 0%,transparent 60%);}
+.hero-rules{position:absolute;left:0;right:0;pointer-events:none;z-index:0;}
+.hero-rules::before{content:'';position:absolute;left:48px;right:48px;top:30%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,.15) 20%,rgba(201,160,80,.15) 80%,transparent);}
+.hero-rules::after{content:'';position:absolute;left:48px;right:48px;top:72%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,.08) 20%,rgba(201,160,80,.08) 80%,transparent);}
+.hero-content{position:relative;z-index:1;padding:100px 48px 80px;max-width:1160px;margin:0 auto;width:100%;}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;display:flex;align-items:center;gap:14px;opacity:0;animation:reveal .6s ease .1s forwards;}
+.hero-eyebrow::before{content:'';width:32px;height:1px;background:var(--gold2);}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6vw,82px);font-weight:300;line-height:1.06;letter-spacing:-.01em;color:var(--cream);max-width:820px;opacity:0;animation:reveal .8s ease .25s forwards;}
+.hero-title em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:17px;color:var(--muted);max-width:520px;margin-top:28px;line-height:1.8;opacity:0;animation:reveal .8s ease .45s forwards;}
+.hero-cta{margin-top:52px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;opacity:0;animation:reveal .6s ease .6s forwards;}
+.btn-primary{padding:13px 32px;background:var(--gold);color:#0e0e12;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s,transform .1s;}
+.btn-primary:hover{background:#d4ae60;transform:translateY(-1px);}
+.btn-ghost{padding:13px 32px;background:transparent;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:color .2s,border-color .2s;}
+.btn-ghost:hover{color:var(--cream);border-color:var(--muted);}
+.hero-scroll{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;animation:fadein .5s ease 1.2s forwards;cursor:pointer;}
+.hero-scroll span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;}
+.scroll-arrow{width:1px;height:36px;background:linear-gradient(180deg,var(--border2),transparent);position:relative;animation:scroll-bounce 2s ease-in-out infinite;}
+.scroll-arrow::after{content:'';position:absolute;bottom:0;left:-3px;width:7px;height:7px;border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);transform:rotate(45deg);}
+@keyframes scroll-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* SOBRE */
+#sobre{background:var(--surface);}
+.sobre-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.sobre-text p{font-size:16px;color:#9a8c78;line-height:1.9;margin-bottom:18px;}
+.sobre-text p.lead{font-size:18px;color:var(--cream);line-height:1.75;}
+.sobre-text p em{font-style:italic;color:#b8a882;}
+.crencas-wrap{border-left:1px solid var(--border2);padding-left:40px;}
+.crencas-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;}
+.crenca-lead{font-size:17px;color:var(--gold);font-style:italic;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);line-height:1.5;}
+.crenca-item{display:flex;gap:16px;margin-bottom:14px;align-items:flex-start;}
+.crenca-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold2);flex-shrink:0;padding-top:4px;min-width:20px;}
+.crenca-text{font-size:15px;color:#9a8c78;line-height:1.65;}
+
+/* ESTRATÉGIAS */
+#estrategias{background:var(--dark);}
+.estrategia-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:48px;}
+.estrategia-card{background:var(--dark);padding:40px 36px;transition:background .3s;position:relative;overflow:hidden;}
+.estrategia-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transition:transform .3s;transform-origin:left;}
+.estrategia-card:hover{background:var(--surface);}
+.estrategia-card:hover::before{transform:scaleX(1);}
+.card-icon{width:36px;height:36px;margin-bottom:24px;color:var(--gold2);}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:var(--cream);margin-bottom:14px;}
+.card-desc{font-size:14.5px;color:var(--muted);line-height:1.75;margin-bottom:24px;}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold2);border:1px solid var(--border2);padding:4px 9px;}
+
+/* PORTFÓLIO */
+#portfolio{background:var(--surface);}
+.portfolio-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:48px;}
+.summary-item{background:var(--surface);padding:28px 32px;}
+.summary-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.summary-value{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--cream);line-height:1;}
+.summary-sub{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);margin-top:6px;}
+.portfolio-table{width:100%;border-collapse:collapse;}
+.portfolio-table th{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 0 16px;border-bottom:1px solid var(--border2);font-weight:400;}
+.portfolio-table th:not(:first-child){text-align:right;}
+.portfolio-table td{padding:18px 0;border-bottom:1px solid var(--border);vertical-align:middle;}
+.portfolio-table td:not(:first-child){text-align:right;}
+.portfolio-table tr:last-child td{border-bottom:none;}
+.portfolio-table tr:hover td{background:rgba(201,160,80,.02);}
+.asset-name{display:flex;align-items:center;gap:14px;}
+.asset-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.asset-label{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--cream);}
+.asset-ticker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);margin-left:4px;}
+.asset-network{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);}
+.asset-qty{font-family:'JetBrains Mono',monospace;font-size:12px;color:#9a8c78;}
+.asset-value{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cream);}
+.alloc-bar-wrap{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
+.alloc-bar{width:60px;height:2px;background:var(--border2);}
+.alloc-fill{height:100%;background:var(--gold);}
+.asset-alloc{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+
+/* ACESSO */
+#acesso{background:var(--dark);}
+.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center;}
+.login-left p{font-size:15.5px;color:var(--muted);line-height:1.8;margin-top:20px;max-width:380px;}
+.login-card{background:var(--surface);border:1px solid var(--border2);padding:48px 44px;}
+.login-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.login-card-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);}
+.live-dot-wrap{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--muted);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#4a8c3f;animation:pulse-g 2.2s ease infinite;}
+@keyframes pulse-g{0%,100%{box-shadow:0 0 0 0 rgba(74,140,63,.5);}50%{box-shadow:0 0 0 5px rgba(74,140,63,0);}}
+.form-field{margin-bottom:18px;}
+.form-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px;}
+.form-input{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border2);padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream);outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input::placeholder{color:var(--muted);font-size:11px;}
+.form-input:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(201,160,80,.08);}
+.form-input.err{border-color:#7a2020;}
+.form-btn{width:100%;margin-top:8px;padding:15px;background:var(--gold);border:none;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:#0e0e12;font-weight:500;cursor:pointer;transition:background .2s;}
+.form-btn:hover{background:#d4ae60;}
+.form-btn:disabled{background:var(--border2);color:var(--muted);cursor:not-allowed;}
+.form-err{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#c45c5c;text-align:center;margin-top:12px;min-height:13px;}
+.login-card-footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;}
+.login-card-footer span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--muted);}
+
+/* FOOTER */
+footer{background:var(--dark);border-top:1px solid var(--border);padding:28px 48px;display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .estrategia-cards{grid-template-columns:1fr;}
+  .sobre-grid{grid-template-columns:1fr;gap:48px;}
+  .crencas-wrap{border-left:none;padding-left:0;border-top:1px solid var(--border2);padding-top:40px;}
+  .login-grid{grid-template-columns:1fr;gap:48px;}
+  .portfolio-summary{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .nav-links,.nav-right{display:none;}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:12px 0;z-index:199;}
+  .nav-links.open a{height:auto;line-height:1.5;padding:14px 24px;}
+  .nav-right.open{display:flex;flex-direction:column;gap:8px;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:80px 24px 16px;z-index:198;}
+  .nav-input{width:100%;}
+  .nav-hamburger{display:flex;}
+  .container{padding:0 20px;}
+  .hero-content{padding:80px 20px 80px;}
+  .hero-rules::before,.hero-rules::after{left:20px;right:20px;}
+  footer{flex-direction:column;gap:8px;text-align:center;padding:20px;}
+  .portfolio-table th:nth-child(3),.portfolio-table td:nth-child(3),
+  .portfolio-table th:nth-child(5),.portfolio-table td:nth-child(5){display:none;}
+  .login-card{padding:28px 20px;}
+}
 </style>
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
-<div class="scanline"></div>
-
-<!-- ══ TOP NAV BAR ══ -->
-<div class="topbar">
-
-  <!-- Logo compacto -->
-  <div class="topbar-logo">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="140" height="20" style="display:block;">
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
       <defs>
         <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stop-color="transparent"/>
-          <stop offset="15%"  stop-color="#c9a050"/>
-          <stop offset="85%"  stop-color="#c9a050"/>
+          <stop offset="0%" stop-color="transparent"/>
+          <stop offset="15%" stop-color="#c9a050"/>
+          <stop offset="85%" stop-color="#c9a050"/>
           <stop offset="100%" stop-color="transparent"/>
         </linearGradient>
       </defs>
       <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.7"/>
-      <text x="105" y="20"
-        font-family="Cormorant Garamond, Palatino Linotype, Times New Roman, serif"
-        font-weight="600" font-size="13" letter-spacing="3"
-        fill="#8a6820" text-anchor="middle">BAROLO CAPITAL</text>
+      <text x="105" y="20" font-family="Cormorant Garamond,Palatino Linotype,serif" font-weight="600" font-size="13" letter-spacing="3" fill="#c9a050" text-anchor="middle">BAROLO CAPITAL</text>
       <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.7"/>
     </svg>
   </div>
 
-  <!-- Login inline -->
-  <div class="topbar-login">
-    <span class="topbar-clk" id="clk">--:--:--</span>
-    <div class="topbar-sep"></div>
-    <input type="text"     id="u" class="topbar-input"
-      autocomplete="username" autocapitalize="none"
-      spellcheck="false" placeholder="usuário"
-      onkeydown="if(event.key==='Enter')document.getElementById('p').focus()">
-    <input type="password" id="p" class="topbar-input pw"
-      autocomplete="current-password" placeholder="••••••"
-      onkeydown="if(event.key==='Enter')login()">
-    <button class="topbar-btn" id="btn" onclick="login()">Entrar</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home"        class="active" onclick="setActive(this);closeMobile()">Início</a></li>
+    <li><a href="#sobre"       onclick="setActive(this);closeMobile()">Sobre</a></li>
+    <li><a href="#estrategias" onclick="setActive(this);closeMobile()">Estratégias</a></li>
+    <li><a href="#portfolio"   onclick="setActive(this);closeMobile()">Portfólio</a></li>
+    <li><a href="#acesso"      onclick="setActive(this);closeMobile()">Acesso</a></li>
+  </ul>
+
+  <div class="nav-right" id="navRight">
+    <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuário" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
+    <input type="password" id="np" class="nav-input" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')loginNav()">
+    <button class="nav-btn" id="navBtn" onclick="loginNav()">Entrar</button>
   </div>
 
-  <div class="topbar-err" id="err">CREDENCIAIS INVÁLIDAS</div>
-</div>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
 
-<!-- Ticker -->
-<div class="ticker"><div class="ticker-inner" id="tickerInner"></div></div>
+  <div class="nav-err" id="navErr">CREDENCIAIS INVÁLIDAS</div>
+</nav>
 
-<!-- ══ PAGE ══ -->
-<div class="page">
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
 
-  <!-- HERO — logo grande + texto institucional -->
-  <div class="hero">
+<!-- HOME -->
+<section id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-rules"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Gestão Estratégica de Capital</div>
+    <h1 class="hero-title">Riqueza construída com<br><em>consistência</em>, não com pressa.</h1>
+    <p class="hero-sub">A Barolo Capital é uma gestora independente focada em estratégias de capital no mercado de criptoativos — com disciplina, visão de longo prazo e preservação como fundamento.</p>
+    <div class="hero-cta">
+      <a href="#sobre" class="btn-primary">Conheça a empresa</a>
+      <a href="#acesso" class="btn-ghost">Acessar plataforma</a>
+    </div>
+  </div>
+  <div class="hero-scroll" onclick="document.querySelector('#sobre').scrollIntoView({behavior:'smooth'})">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
 
-    <!-- COLUNA ESQUERDA -->
-    <div class="hero-left">
-      <!-- Logo grande -->
-      <div class="hero-logo">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 116" width="100%" style="display:block;">
-          <defs>
-            <linearGradient id="gr-gold" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"   stop-color="#f2ece0" stop-opacity="0"/>
-              <stop offset="10%"  stop-color="#c9a050"/>
-              <stop offset="50%"  stop-color="#9a7228"/>
-              <stop offset="90%"  stop-color="#c9a050"/>
-              <stop offset="100%" stop-color="#f2ece0" stop-opacity="0"/>
-            </linearGradient>
-            <linearGradient id="gr-pale" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"   stop-color="#f2ece0" stop-opacity="0"/>
-              <stop offset="22%"  stop-color="#d5c9a5"/>
-              <stop offset="78%"  stop-color="#d5c9a5"/>
-              <stop offset="100%" stop-color="#f2ece0" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <line x1="0" y1="7"   x2="480" y2="7"   stroke="url(#gr-pale)" stroke-width=".6"/>
-          <line x1="0" y1="20"  x2="480" y2="20"  stroke="url(#gr-gold)" stroke-width="1.1"/>
-          <text x="240" y="68"
-            font-family="Cormorant Garamond, Palatino Linotype, Georgia, serif"
-            font-weight="600" font-size="46"
-            fill="#16110c" text-anchor="middle"
-            textLength="420" lengthAdjust="spacing">BAROLO CAPITAL</text>
-          <text x="240" y="90"
-            font-family="Cormorant Garamond, Palatino Linotype, Georgia, serif"
-            font-style="italic" font-size="13.5" letter-spacing="1"
-            fill="#7a6a50" text-anchor="middle">O capital tradicional encontra o futuro financeiro.</text>
-          <line x1="0" y1="103" x2="480" y2="103" stroke="url(#gr-gold)" stroke-width="1.1"/>
-          <line x1="0" y1="113" x2="480" y2="113" stroke="url(#gr-pale)" stroke-width=".6"/>
-        </svg>
+<!-- SOBRE -->
+<section id="sobre" class="sec">
+  <div class="section-num" style="right:48px;top:20px;">01</div>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Sobre a empresa</div>
+      <h2 class="section-title">Uma abordagem <em>diferente</em> para o mercado cripto</h2>
+    </div>
+    <div class="sobre-grid">
+      <div class="sobre-text">
+        <p class="lead">A <strong style="color:var(--gold);font-weight:500;">Barolo Capital</strong> é uma empresa independente focada na gestão estratégica de capital no mercado de criptoativos.</p>
+        <p>Acreditamos que riqueza não é construída com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, nossa abordagem prioriza a preservação de capital, a tomada de decisão racional e a busca por oportunidades sustentáveis.</p>
+        <p>Atuamos de forma seletiva, com foco em estratégias que equilibram risco e retorno — incluindo alocação em protocolos descentralizados, geração de rendimento e posicionamentos estruturados.</p>
+        <p><em>Na Barolo Capital, o verdadeiro valor dos investimentos está na liberdade que eles proporcionam — de tempo, de escolha e de direção.</em></p>
       </div>
+      <div class="crencas-wrap">
+        <div class="crencas-label">Nossas Crenças</div>
+        <p class="crenca-lead">Riqueza real é construída com consistência, não com pressa.</p>
+        <div class="crenca-item"><span class="crenca-num">01</span><span class="crenca-text">Não buscamos o maior ganho, buscamos o ganho sustentável</span></div>
+        <div class="crenca-item"><span class="crenca-num">02</span><span class="crenca-text">Antes de ganhar dinheiro, evitamos perder</span></div>
+        <div class="crenca-item"><span class="crenca-num">03</span><span class="crenca-text">O tempo no mercado vence o timing do mercado</span></div>
+        <div class="crenca-item"><span class="crenca-num">04</span><span class="crenca-text">Decisões boas vêm de mente calma, não de urgência</span></div>
+        <div class="crenca-item"><span class="crenca-num">05</span><span class="crenca-text">Preferimos ganhar menos com paz do que mais com caos</span></div>
+        <div class="crenca-item"><span class="crenca-num">06</span><span class="crenca-text">Se não é simples de entender, não merece capital</span></div>
+        <div class="crenca-item"><span class="crenca-num">07</span><span class="crenca-text">O dinheiro existe para comprar tempo e liberdade</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Texto institucional — coluna esquerda no desktop -->
-      <div class="inst-section">
-        <div class="inst-divider">
-          <div class="inst-divider-line l"></div>
-          <span>Quem Somos</span>
-          <div class="inst-divider-line r"></div>
+<!-- ESTRATÉGIAS -->
+<section id="estrategias" class="sec">
+  <div class="section-num" style="left:48px;top:20px;">02</div>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Como operamos</div>
+      <h2 class="section-title">Estratégias <em>seletivas</em> com foco em retorno ajustado ao risco</h2>
+    </div>
+    <div class="estrategia-cards">
+      <div class="estrategia-card">
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <div class="card-title">Liquidez Ativa</div>
+        <p class="card-desc">Operamos pools de liquidez concentrada em DEXs como Uniswap V3, posicionando capital em ranges otimizados para maximizar a geração de fees com controle de impermanent loss. Cada posição é monitorada continuamente e rebalanceada conforme a volatilidade do par.</p>
+        <div class="card-tags"><span class="tag">Uniswap V3</span><span class="tag">Ethereum</span><span class="tag">Arbitrum</span><span class="tag">zkSync</span><span class="tag">Base</span></div>
+      </div>
+      <div class="estrategia-card">
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8m-4-4v4"/><path d="M6 8h4m-4 4h8"/></svg>
+        <div class="card-title">Lending &amp; Yield</div>
+        <p class="card-desc">Utilizamos protocolos de lending descentralizado como AAVE V3 e Kamino Finance para gerar rendimento sobre colateral enquanto mantemos posições alavancadas de forma controlada. O foco é no equilíbrio entre taxa de rendimento e fator de saúde da posição.</p>
+        <div class="card-tags"><span class="tag">AAVE V3</span><span class="tag">Kamino</span><span class="tag">Solana</span><span class="tag">ETH Mainnet</span></div>
+      </div>
+      <div class="estrategia-card">
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <div class="card-title">Alocação Estruturada</div>
+        <p class="card-desc">Mantemos posicionamentos de longo prazo em ativos fundamentais do ecossistema cripto — ETH, SOL e ADA — com estratégia de acumulação baseada em DCA e gestão de risco que prioriza a preservação durante períodos de bear market prolongado.</p>
+        <div class="card-tags"><span class="tag">ETH</span><span class="tag">SOL</span><span class="tag">ADA</span><span class="tag">DCA</span><span class="tag">Stake</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFÓLIO -->
+<section id="portfolio" class="sec">
+  <div class="section-num" style="right:48px;top:20px;">03</div>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Alocação atual</div>
+      <h2 class="section-title">Portfólio <em>diversificado</em> no ecossistema DeFi</h2>
+    </div>
+    <div class="portfolio-summary">
+      <div class="summary-item">
+        <div class="summary-label">Patrimônio Líquido</div>
+        <div class="summary-value" id="ps-net">$6.430</div>
+        <div class="summary-sub">CG + Stables − Dívidas</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Redes Ativas</div>
+        <div class="summary-value">4</div>
+        <div class="summary-sub">ETH · SOL · ADA · ARB</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Ativos em Carteira</div>
+        <div class="summary-value">9</div>
+        <div class="summary-sub">+ posições DeFi ativas</div>
+      </div>
+    </div>
+    <table class="portfolio-table">
+      <thead><tr>
+        <th>Ativo</th><th>Rede</th><th>Quantidade</th><th>Valor</th><th>Alocação</th>
+      </tr></thead>
+      <tbody id="portfolioTbody"></tbody>
+    </table>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;color:var(--muted);">
+      * Posições atualizadas via CoinGecko. Inclui colateral em AAVE V3 e Kamino Finance.
+    </div>
+  </div>
+</section>
+
+<!-- ACESSO -->
+<section id="acesso" class="sec" style="padding-bottom:140px;">
+  <div class="section-num" style="left:48px;top:20px;">04</div>
+  <div class="container">
+    <div class="login-grid">
+      <div class="login-left">
+        <div class="section-tag">Plataforma interna</div>
+        <h2 class="section-title" style="max-width:400px;">Acesso <em>restrito</em> à plataforma</h2>
+        <p>A plataforma Barolo Capital reúne dados em tempo real de todas as posições — preços ao vivo, métricas DeFi, histórico de pools e análise de portfólio. Acesso exclusivo para membros autorizados.</p>
+      </div>
+      <div>
+        <div class="login-card">
+          <div class="login-card-header">
+            <span class="login-card-title">Terminal · Acesso Restrito</span>
+            <div class="live-dot-wrap"><div class="live-dot"></div><span>Sistema Operacional</span></div>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="lu">Identificador</label>
+            <input type="text" id="lu" class="form-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuário" onkeydown="if(event.key==='Enter')document.getElementById('lp').focus()">
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="lp">Autenticador</label>
+            <input type="password" id="lp" class="form-input" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')loginCard()">
+          </div>
+          <button class="form-btn" id="loginCardBtn" onclick="loginCard()">Acessar Sistema</button>
+          <div class="form-err" id="loginCardErr"></div>
+          <div class="login-card-footer">
+            <span>Barolo Capital · Plataforma Interna</span>
+            <span id="cardClk">--:--:--</span>
+          </div>
         </div>
-
-        <p class="inst-text lead">
-          A <strong>Barolo Capital</strong> é uma empresa independente focada na gestão estratégica de capital no mercado de criptoativos.
-        </p>
-        <p class="inst-text">
-          Acreditamos que riqueza não é construída com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, nossa abordagem prioriza a preservação de capital, a tomada de decisão racional e a busca por oportunidades sustentáveis.
-        </p>
-        <p class="inst-text">
-          Atuamos de forma seletiva, com foco em estratégias que equilibram risco e retorno, incluindo alocação em protocolos descentralizados, geração de rendimento e posicionamentos estruturados. Evitamos exposição desnecessária a movimentos especulativos e priorizamos operações que possam ser compreendidas, monitoradas e ajustadas com clareza.
-        </p>
-        <p class="inst-text">
-          Mais do que buscar o maior retorno possível, nosso objetivo é construir crescimento sólido ao longo do tempo, reduzindo a dependência de decisões impulsivas e criando uma base consistente de capital.
-        </p>
-        <p class="inst-text closing">
-          Na Barolo Capital, entendemos que o verdadeiro valor dos investimentos está na liberdade que eles proporcionam — liberdade de tempo, de escolha e de direção.
-        </p>
       </div>
     </div>
-
-    <!-- COLUNA DIREITA -->
-    <div class="hero-right">
-
-      <!-- Crenças -->
-      <div class="crencas-card">
-        <div class="crencas-title">Nossas Crenças</div>
-        <p class="crencas-lead">Riqueza real é construída com consistência, não com pressa.</p>
-        <ul class="crencas-list">
-          <li><span class="crencas-num">01</span><span>Não buscamos o maior ganho, buscamos o ganho sustentável</span></li>
-          <li><span class="crencas-num">02</span><span>Antes de ganhar dinheiro, evitamos perder</span></li>
-          <li><span class="crencas-num">03</span><span>O tempo no mercado vence o timing do mercado</span></li>
-          <li><span class="crencas-num">04</span><span>Decisões boas vêm de mente calma, não de urgência</span></li>
-          <li><span class="crencas-num">05</span><span>Preferimos ganhar menos com paz do que mais com caos</span></li>
-          <li><span class="crencas-num">06</span><span>Se não é simples de entender, não merece capital</span></li>
-          <li><span class="crencas-num">07</span><span>O dinheiro existe para comprar tempo e liberdade</span></li>
-        </ul>
-      </div>
-
-    </div>
   </div>
+</section>
 
-  <!-- FOOTER -->
-  <div class="page-foot">
-    © 2021 BAROLO CAPITAL · GESTÃO ESTRATÉGICA DE CAPITAL
-  </div>
-
-</div>
+<footer>
+  <span>© 2021 Barolo Capital · Gestão Estratégica de Capital</span>
+  <span>Todos os dados são de uso interno e privado</span>
+</footer>
 
 <script>
-// Clock
-function tick(){
-  var n=new Date(), pad=function(v){return String(v).padStart(2,'0');};
-  var el=document.getElementById('clk');
-  if(el) el.textContent=pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds())+' BRT';
-}
-tick(); setInterval(tick,1000);
-
 // Ticker
-var data=[
-  {t:'ETH/USD', v:'$2,079', d:'-4.90%', up:false},
-  {t:'SOL/USD', v:'$87.28', d:'-4.60%', up:false},
-  {t:'BTC/USD', v:'$82,400',d:'+2.10%', up:true},
-  {t:'ADA/USD', v:'$0.2617',d:'-6.40%', up:false},
-  {t:'USD/BRL', v:'R$ 5.33',d:'-9.5%',  up:false},
-  {t:'EIGEN',   v:'$0.187', d:'-5.10%', up:false},
-  {t:'RDNT',    v:'$0.0055',d:'-1.00%', up:false},
-  {t:'PYUSD',   v:'$1.0001',d:'+0.01%', up:true},
-];
-var inner=document.getElementById('tickerInner');
-[].concat(data,data).forEach(function(a){
-  var el=document.createElement('div');
-  el.className='tick-item';
-  el.innerHTML='<b>'+a.t+'</b>&ensp;<span class="'+(a.up?'up':'dn')+'">'+a.v+' '+a.d+'</span>';
-  inner.appendChild(el);
+var tickerData=[{t:'ETH/USD',v:'$2,079',d:'-4.90%',up:false},{t:'SOL/USD',v:'$87.28',d:'-4.60%',up:false},{t:'BTC/USD',v:'$82,400',d:'+2.10%',up:true},{t:'ADA/USD',v:'$0.2617',d:'-6.40%',up:false},{t:'USD/BRL',v:'R$ 5.33',d:'-9.5%',up:false},{t:'EIGEN',v:'$0.187',d:'-5.10%',up:false},{t:'RDNT',v:'$0.0055',d:'-1.00%',up:false},{t:'PYUSD',v:'$1.0001',d:'+0.01%',up:true}];
+var track=document.getElementById('tickerTrack');
+[].concat(tickerData,tickerData).forEach(function(a){var el=document.createElement('div');el.className='tick-item';el.innerHTML='<b>'+a.t+'</b>&ensp;<span class="'+(a.up?'up':'dn')+'">'+a.v+' '+a.d+'</span>';track.appendChild(el);});
+
+// Clock
+function tick(){var n=new Date(),pad=function(v){return String(v).padStart(2,'0');};var t=pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());var el=document.getElementById('cardClk');if(el)el.textContent=t+' BRT';}
+tick();setInterval(tick,1000);
+
+// Nav active on scroll
+window.addEventListener('scroll',function(){
+  var secs=['home','sobre','estrategias','portfolio','acesso'];
+  var current='home';
+  secs.forEach(function(id){var el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-100)current=id;});
+  document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.toggle('active',a.getAttribute('href').replace('#','')==current);});
 });
+function setActive(el){document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});el.classList.add('active');}
+function toggleMobile(){document.getElementById('navLinks').classList.toggle('open');document.getElementById('navRight').classList.toggle('open');}
+function closeMobile(){document.getElementById('navLinks').classList.remove('open');document.getElementById('navRight').classList.remove('open');}
 
-// Login
-function login(){
-  var u=document.getElementById('u').value.trim().toUpperCase();
-  var p=document.getElementById('p').value.trim();
-  var err=document.getElementById('err');
+// Login nav
+function loginNav(){
+  var u=document.getElementById('nu').value.trim().toUpperCase();
+  var p=document.getElementById('np').value.trim();
+  var err=document.getElementById('navErr');
   err.classList.remove('show');
-
-  if(u==='ADM'&&p==='102030'){
-    var btn=document.getElementById('btn');
-    btn.textContent='…'; btn.disabled=true;
-    setTimeout(function(){window.location.href='portfolio_analytics.html';},480);
-    return;
-  }
-
-  var uEl=document.getElementById('u'), pEl=document.getElementById('p');
-  [uEl,pEl].forEach(function(el){
-    el.classList.add('err-field','do-shake');
-    setTimeout(function(){el.classList.remove('err-field','do-shake');},600);
-  });
-  err.classList.add('show');
-  setTimeout(function(){err.classList.remove('show');},2500);
-  pEl.value='';
+  if(u==='ADM'&&p==='102030'){document.getElementById('navBtn').textContent='…';document.getElementById('navBtn').disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
+  ['nu','np'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err','do-shake');setTimeout(function(){el.classList.remove('err','do-shake');},600);});
+  err.classList.add('show');setTimeout(function(){err.classList.remove('show');},2500);
+  document.getElementById('np').value='';
 }
 
-window.addEventListener('load',function(){
-  setTimeout(function(){document.getElementById('u').focus();},600);
-});
+// Login card
+function loginCard(){
+  var u=document.getElementById('lu').value.trim().toUpperCase();
+  var p=document.getElementById('lp').value.trim();
+  var err=document.getElementById('loginCardErr');
+  err.textContent='';
+  if(u==='ADM'&&p==='102030'){var btn=document.getElementById('loginCardBtn');btn.textContent='Autenticando…';btn.disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
+  ['lu','lp'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err');setTimeout(function(){el.classList.remove('err');},800);});
+  err.textContent='CREDENCIAIS INVÁLIDAS · ACESSO NEGADO';
+  document.getElementById('lp').value='';
+}
+
+// Portfolio table
+var assets=[
+  {name:'Ethereum', ticker:'ETH', cgId:'ethereum',       network:'ETH',    qty:2.084106,    price:2079.21, color:'#E8773D'},
+  {name:'Solana',   ticker:'SOL', cgId:'solana',         network:'SOL',    qty:19.31226576, price:87.28,   color:'#9945FF'},
+  {name:'Cardano',  ticker:'ADA', cgId:'cardano',        network:'ADA',    qty:375.245,     price:0.2617,  color:'#0033AD'},
+  {name:'EigenLayer',ticker:'EIGEN',cgId:'eigenlayer',   network:'ETH',    qty:153.363,     price:0.1870,  color:'#9370DB'},
+  {name:'Radiant',  ticker:'RDNT',cgId:'radiant-capital',network:'ARB',    qty:7290.46,     price:0.005543,color:'#00E5FF'},
+  {name:'POL',      ticker:'POL', cgId:'matic-network',  network:'ETH',    qty:218,         price:0.09693, color:'#8247E5'},
+  {name:'ZKsync',   ticker:'ZK',  cgId:'zksync',         network:'zkSync', qty:876,         price:0.01914, color:'#D45B8E'},
+  {name:'Xai',      ticker:'XAI', cgId:'xai-blockchain', network:'XAI',    qty:692.86,      price:0.01102, color:'#FF6B35'},
+  {name:'ZetaChain',ticker:'ZETA',cgId:'zetachain',      network:'ETH',    qty:51.1434,     price:0.05041, color:'#C8A87C'},
+];
+
+function buildTable(){
+  var total=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
+  var tbody=document.getElementById('portfolioTbody');
+  if(!tbody)return;
+  tbody.innerHTML=assets.map(function(a){
+    var val=a.qty*a.price;
+    var pct=(val/total*100).toFixed(1);
+    var qty=a.qty>=100?a.qty.toFixed(2):a.qty.toFixed(4);
+    var barW=Math.min(parseFloat(pct)/70*100,100);
+    return '<tr>'+
+      '<td><div class="asset-name"><div class="asset-dot" style="background:'+a.color+'"></div>'+
+      '<span class="asset-label">'+a.name+'</span><span class="asset-ticker">'+a.ticker+'</span></div></td>'+
+      '<td><span class="asset-network">'+a.network+'</span></td>'+
+      '<td><span class="asset-qty">'+qty+'</span></td>'+
+      '<td><span class="asset-value">$'+val.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></td>'+
+      '<td><div class="alloc-bar-wrap"><span class="asset-alloc">'+pct+'%</span>'+
+      '<div class="alloc-bar"><div class="alloc-fill" style="width:'+barW+'%"></div></div></div></td>'+
+    '</tr>';
+  }).join('');
+}
+buildTable();
+
+// Live prices
+(async function(){
+  try{
+    var ids=assets.map(function(a){return a.cgId;}).join(',');
+    var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids+'&vs_currencies=usd',{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error();
+    var d=await r.json();
+    assets.forEach(function(a){if(d[a.cgId]&&d[a.cgId].usd)a.price=d[a.cgId].usd;});
+    buildTable();
+    var total2=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
+    var net=total2+1742.07-1549.71;
+    var el=document.getElementById('ps-net');
+    if(el)el.textContent='$'+Math.round(net).toLocaleString('en-US');
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
