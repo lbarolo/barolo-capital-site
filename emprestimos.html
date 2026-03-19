@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="light">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Barolo Capital — Empréstimos</title>
+<meta charset="UTF-8"><link rel="canonical" href="/emprestimos">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barolo Capital · Empréstimos</title>
 <script src="barolo-data.js"></script>
 </head>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -356,7 +357,7 @@ td{padding:10px 16px;vertical-align:middle;}
     <thead><tr>
       <th>Ciclo</th><th>Período</th><th>Emprestado</th><th>Repago</th><th>Juros est.</th><th>Uso do capital</th><th>Status</th>
     </tr></thead>
-    <tbody>
+    <tbody id="kamino-tbody">
       <tr>
         <td class="td-mono acc">#K1</td>
         <td class="td-mono">Fev–Jun 2025</td>
@@ -408,7 +409,7 @@ td{padding:10px 16px;vertical-align:middle;}
     <thead><tr>
       <th>Ciclo</th><th>Período</th><th>Emprestado</th><th>Repago</th><th>Juros est.</th><th>ETH colateral</th><th>Status</th>
     </tr></thead>
-    <tbody>
+    <tbody id="aave-tbody">
       <tr>
         <td class="td-mono acc">#A1</td>
         <td class="td-mono">Abr–Jul 2025</td>
@@ -521,6 +522,18 @@ td{padding:10px 16px;vertical-align:middle;}
 </div>
 
 <!-- ══ DEBT CHART ══ -->
+
+<!-- ══ EVENTOS DO DIÁRIO DEFI ══ -->
+<div class="section-label" style="margin-top:32px;">📓 Eventos Registrados no Diário DeFi</div>
+<div id="diary-events-wrap" style="margin-bottom:24px;">
+  <div id="diary-events-list" style="display:flex;flex-direction:column;gap:6px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);padding:16px;text-align:center;" id="diary-empty">
+      Nenhum evento de empréstimo registrado no Diário DeFi ainda.<br>
+      <span style="font-size:9px;">Registre em Ferramentas → Diário DeFi → tipo "Lending / Borrow"</span>
+    </div>
+  </div>
+</div>
+
 <div class="section-label">Evolução da Dívida Total</div>
 <div class="chart-panel" style="margin-bottom:80px;">
   <div class="chart-panel-hdr">
@@ -553,7 +566,7 @@ const gridColor=()=>isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
 const textColor=()=>isDark()?'#c9b99a':'#5a4030';
 
 // ── LIVE PRICES ──
-let liveEth=2065, liveSol=86;
+let liveEth=2079, liveSol=87;
 async function fetchPrices(){
   try{
     const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana&vs_currencies=usd&include_24hr_change=true');
@@ -822,6 +835,103 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   });
 });
+
+
+// ══════════════════════════════════════════════════════════════════
+// DIARY SYNC — Lê entradas "lending" do Diário DeFi (ferramentas.html)
+// ══════════════════════════════════════════════════════════════════
+(function initDiarySync() {
+  const STORAGE_DIARY = 'bc-diary-v2';
+  const PROTO_LABELS  = { kamino: 'Kamino Finance', aave: 'AAVE V3' };
+  const EVENT_LABELS  = {
+    borrow:           '💸 Borrow',
+    repay:            '💚 Repay',
+    'add-collateral': '🔒 Add Colateral',
+    'remove-collateral':'🔓 Remove Colateral',
+    open:             '🟢 Abriu Ciclo',
+    close:            '🔴 Fechou Ciclo',
+  };
+  const EVENT_COLORS = {
+    borrow: 'var(--red)', repay: 'var(--green)',
+    'add-collateral': 'var(--accent)', 'remove-collateral': 'var(--muted)',
+    open: 'var(--green)', close: 'var(--red)',
+  };
+
+  function loadAndRender() {
+    const entries = JSON.parse(localStorage.getItem(STORAGE_DIARY) || '[]');
+    const lendingEntries = entries.filter(e => e.type === 'lending');
+
+    const list  = document.getElementById('diary-events-list');
+    const empty = document.getElementById('diary-empty');
+    if (!list) return;
+
+    if (!lendingEntries.length) {
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+
+    list.innerHTML = lendingEntries.map(e => {
+      const l = e.lending || {};
+      const proto    = PROTO_LABELS[l.proto]  || l.proto || '—';
+      const evtLabel = EVENT_LABELS[l.event]  || l.event || '—';
+      const evtColor = EVENT_COLORS[l.event]  || 'var(--text)';
+      const amount   = l.amount    ? '<span style="font-family:'JetBrains Mono',monospace;color:var(--red);">$' + l.amount.toFixed(2) + '</span>' : '';
+      const debtAfter= l.debtAfter ? '<span style="font-size:9px;color:var(--muted);">→ dívida: <strong style="font-family:'JetBrains Mono',monospace;">$' + l.debtAfter.toFixed(2) + '</strong></span>' : '';
+      const pnl      = e.pnl       ? '<span style="font-family:'JetBrains Mono',monospace;color:' + (e.pnl>=0?'var(--green)':'var(--red)') + ';">' + (e.pnl>=0?'+':'') + '$' + Math.abs(e.pnl).toFixed(2) + '</span>' : '';
+
+      return `<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:4px;">
+        <div style="flex-shrink:0;width:60px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);padding-top:2px;">${e.date || '—'}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:600;color:${evtColor};">${evtLabel}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);">${proto}</span>
+            ${amount}
+            ${debtAfter}
+            ${pnl}
+          </div>
+          <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${e.title}</div>
+          ${e.body ? '<div style="font-size:12px;color:var(--muted);line-height:1.5;">' + e.body + '</div>' : ''}
+          ${e.tags?.length ? '<div style="display:flex;gap:4px;margin-top:4px;">' + e.tags.map(t=>'<span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);border:1px solid var(--border);padding:1px 6px;border-radius:2px;">' + t + '</span>').join('') + '</div>' : ''}
+        </div>
+        <div style="flex-shrink:0;">
+          <button onclick="deleteDiaryEntry(${e.id})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px;padding:2px 4px;opacity:.6;" title="Remover">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Allow deleting from emprestimos page too
+  window.deleteDiaryEntry = function(id) {
+    if (!confirm('Remover este evento do diário?')) return;
+    const entries = JSON.parse(localStorage.getItem(STORAGE_DIARY) || '[]');
+    const filtered = entries.filter(e => e.id !== id);
+    localStorage.setItem(STORAGE_DIARY, JSON.stringify(filtered));
+    loadAndRender();
+  };
+
+  // Initial load
+  loadAndRender();
+
+  // Listen for changes (same-tab via custom storage event trigger)
+  window.addEventListener('storage', function(e) {
+    if (e.key === STORAGE_DIARY || e.key === 'bc-diary-updated') {
+      loadAndRender();
+    }
+  });
+
+  // Also poll every 5 seconds as fallback (same-tab doesn't fire storage events)
+  var lastUpdate = localStorage.getItem('bc-diary-updated') || '0';
+  setInterval(function() {
+    var current = localStorage.getItem('bc-diary-updated') || '0';
+    if (current !== lastUpdate) {
+      lastUpdate = current;
+      loadAndRender();
+    }
+  }, 5000);
+
+})();
+
 </script>
 </body>
 </html>
