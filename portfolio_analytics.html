@@ -6,8 +6,9 @@ window.addEventListener('error',function(e){if(!e.message||e.message.includes('S
 </script>
 <meta charset="UTF-8">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Barolo Capital — Portfolio</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><link rel="canonical" href="/portfolio">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barolo Capital · Portfólio</title>
 <script src="barolo-data.js"></script>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -311,13 +312,27 @@ h1, h2, .section-label, .hero-value,
 
 <!-- ══ ALOCAÇÃO ATUAL (topo) ══ -->
 <div class="section-label">Alocação Atual</div>
-<div class="card" style="margin-bottom:14px;padding:14px 16px;">
-  <div class="alloc-wrap" style="gap:12px;align-items:flex-start;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+<div class="card" style="margin-bottom:0;padding:14px 16px;">
+  <div class="chart-title" style="margin-bottom:10px;">🥧 Alocação por Ativo</div>
+  <div class="alloc-wrap" style="gap:12px;align-items:center;">
     <div style="flex-shrink:0;">
-      <canvas id="allocChart" width="150" height="150"></canvas>
+      <canvas id="allocChart" width="180" height="180"></canvas>
     </div>
-    <div class="alloc-legend" id="allocLegend" style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-content:start;"></div>
+    <div class="alloc-legend" id="allocLegend" style="display:flex;flex-direction:column;gap:3px;align-content:start;font-size:10px;"></div>
   </div>
+</div>
+<!-- ══ RETORNO ANUAL (moved here, same row) ══ -->
+<div class="card" style="margin-bottom:0;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+    <div class="chart-title" style="margin-bottom:0;">📅 Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
+    <div style="display:flex;gap:4px;">
+      <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">▌ Barras</button>
+      <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">∿ Linha</button>
+    </div>
+  </div>
+  <canvas id="annualReturn" style="max-height:200px;"></canvas>
+</div>
 </div>
 
 <!-- ══ PATRIMÔNIO LÍQUIDO ══ -->
@@ -414,17 +429,7 @@ h1, h2, .section-label, .hero-value,
 </div>
 
 <!-- ══ RETORNO ANUAL ══ -->
-<div class="section-label">Retorno Anual</div>
-<div class="card" style="margin-bottom:12px;">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-    <div class="chart-title" style="margin-bottom:0;">📅 Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
-    <div style="display:flex;gap:4px;">
-      <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">▌ Barras</button>
-      <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">∿ Linha</button>
-    </div>
-  </div>
-  <canvas id="annualReturn" style="max-height:280px;"></canvas>
-</div>
+
 
 <!-- ══ HEATMAP RETORNO MENSAL ══ -->
 <div class="section-label">Heatmap de Retorno Mensal</div>
@@ -898,47 +903,66 @@ function buildAllocationChart(enriched, totalVal){
   if(!canvas) return;
   if(allocChartInst) allocChartInst.destroy();
 
-  const sorted = [...enriched].sort((a,b)=>b.currentValue-a.currentValue);
+  const isDk = isDark();
+
+  // Add stables to the allocation (USDT in AAVE + PYUSD in Kamino)
+  const STABLES_VAL = window.currentCurrency === 'BRL'
+    ? STABLES_USD * (window.usdBrlRate || 5.33)
+    : STABLES_USD;
+
+  // Build alloc data including stables
+  const allocItems = [
+    ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
+    { ticker:'USDT', name:'USDT (AAVE)', currentValue: 1652.03, color:'#26A17B', logo:'https://assets.coingecko.com/coins/images/325/small/Tether.png', isStable:true },
+    { ticker:'PYUSD', name:'PYUSD (Kamino)', currentValue: 90.04, color:'#1da1f2', logo:'https://assets.coingecko.com/coins/images/32383/small/pyusd.png', isStable:true },
+  ];
+  const grandTotal = allocItems.reduce((s,a)=>s+a.currentValue, 0);
 
   allocChartInst = new Chart(canvas,{
     type:'doughnut',
     data:{
-      labels: sorted.map(a=>a.ticker),
+      labels: allocItems.map(a=>a.ticker),
       datasets:[{
-        data: sorted.map(a=>a.currentValue),
-        backgroundColor: sorted.map(a=>a.color),
-        borderColor: sorted.map(a=>a.color+'99'),
-        borderWidth:1,
-        hoverOffset:6
+        data: allocItems.map(a=>a.currentValue),
+        backgroundColor: allocItems.map(a=>a.color),
+        borderColor: isDk ? 'rgba(30,30,40,.8)' : 'rgba(242,236,224,.9)',
+        borderWidth: 2,
+        hoverOffset: 6,
       }]
     },
     options:{
-      responsive:false,
       cutout:'65%',
+      responsive:false,
       plugins:{
         legend:{display:false},
         tooltip:{
           callbacks:{
-            label:ctx=>' '+ctx.label+': $'+ctx.raw.toFixed(2)+' ('+((ctx.raw/totalVal)*100).toFixed(1)+'%)'
+            label: ctx => {
+              const pct = (ctx.raw/grandTotal*100).toFixed(1);
+              return ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
+            }
           },
-          backgroundColor:'#1c2128',borderColor:'#2a2520',borderWidth:1,
-          titleColor:'#e6edf3',bodyColor:'#8b7d6b',padding:10,cornerRadius:6
+          backgroundColor: isDk?'rgba(30,30,40,.95)':'rgba(250,246,239,.97)',
+          borderColor: isDk?'rgba(201,160,80,.3)':'rgba(138,104,32,.2)',
+          borderWidth:1,
+          titleColor:isDk?'#e8e0d0':'#16110c',
+          bodyColor:isDk?'#8a7a60':'#7a6a50',
+          padding:10,
         }
       }
     }
   });
 
-  // Build legend
+  // Legend
   const leg = document.getElementById('allocLegend');
   if(!leg) return;
-  leg.innerHTML = sorted.filter(a=>((a.currentValue/totalVal)*100)>=0.1).map(a=>{
-    const pct = ((a.currentValue/totalVal)*100).toFixed(1);
-    return `<div class="alloc-legend-item">
-      <div class="alloc-legend-left">
-        <img style="width:16px;height:16px;border-radius:50%;flex-shrink:0;object-fit:cover;background:${a.color};" src="${a.logo}" alt="${a.ticker}" onerror="this.style.background='${a.color}';this.src='';">
-        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.ticker}</span>
-      </div>
-      <span class="alloc-pct">${pct}%</span>
+  leg.innerHTML = allocItems.map(a=>{
+    const pct = (a.currentValue/grandTotal*100).toFixed(1);
+    return `<div style="display:flex;align-items:center;gap:7px;padding:2px 0;">
+      <div style="width:7px;height:7px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
+      <img src="${a.logo||''}" width="14" height="14" style="border-radius:50%;flex-shrink:0;" onerror="this.style.display='none'">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;">${a.ticker}</span>
+      <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);flex-shrink:0;">${pct}%</span>
     </div>`;
   }).join('');
 }
