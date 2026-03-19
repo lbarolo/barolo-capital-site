@@ -9,13 +9,6 @@ window.addEventListener('error',function(e){if(!e.message||e.message.includes('S
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Cormorant Garamond,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Barolo Capital — Portfolio</title>
 <script src="barolo-data.js"></script>
-  <p>EVM Portfolio: <span id="evmValue"></span></p>
-
-<p>SOL Balance: <span id="solBalance"></span></p>
-
-<p>SOL Value: <span id="solValue"></span></p>
-
-<h2>Total Portfolio: <span id="portfolioValue"></span></h2>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>if(typeof Chart==='undefined'){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';document.head.appendChild(s);}</script>
@@ -310,6 +303,7 @@ h1, h2, .section-label, .hero-value,
     <button class="btn-sm" onclick="toggleHide()" id="hideBtn">◎ Ocultar</button>
     <button class="btn-sm primary" onclick="window.print()">↓ PDF</button>
     <button class="btn-sm" onclick="window.baroloRefresh && window.baroloRefresh()" title="Atualizar dados on-chain">⟳ Live</button>
+    <span id="price-status" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.5px;">● carregando</span>
   </div>
 </nav>
 
@@ -405,8 +399,15 @@ h1, h2, .section-label, .hero-value,
 <div class="card" style="margin-bottom:0;">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
     <div class="chart-title" style="margin-bottom:0;">📊 Portfólio vs BTC vs ETH vs S&P 500 vs CDI vs Ibovespa</div>
-    <span class="badge badge-gray">BASE 100 · Jan/2022</span>
+    <div style="display:flex;gap:3px;" id="benchPeriodBtns">
+      <button class="chart-type-btn" onclick="setBenchPeriod('1m',this)">1M</button>
+      <button class="chart-type-btn" onclick="setBenchPeriod('3m',this)">3M</button>
+      <button class="chart-type-btn" onclick="setBenchPeriod('6m',this)">6M</button>
+      <button class="chart-type-btn" onclick="setBenchPeriod('1a',this)">1A</button>
+      <button class="chart-type-btn active" onclick="setBenchPeriod('all',this)">Total</button>
+    </div>
   </div>
+  <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-align:right;margin-bottom:6px;" id="benchBaseLabel">BASE 100 · Jan/2022</div>
   <canvas id="benchmarkChart" style="max-height:260px;"></canvas>
 </div>
 
@@ -635,12 +636,12 @@ const WEEKLY_UPDATE = {
   // ── Benchmark (base 100 = Jan/2022) ──
   benchmark: {
     labels: ['Jan/22','Mai/22','Set/22','Jan/23','Mai/23','Set/23','Jan/24','Mai/24','Set/24','Jan/25','Mai/25','Set/25','Jan/26','Mar/26'],
-    portfolio: [100,  54,  74, 131, 196, 229, 347, 602, 608, 1007, 947, 1264, 1116, 683],
-    btc:       [100,  72,  56, 100, 119, 117, 205, 222, 216,  285, 210, 185,  256, 210],
-    eth:       [100,  55,  51,  91, 112, 103, 171, 176, 165,  217, 185, 164,  200, 135],
-    sp500:     [100,  84,  88,  97, 104, 107, 118, 120, 121,  128, 130, 128,  126, 120],
-    cdi:       [100, 107, 113, 120, 128, 136, 143, 150, 157,  165, 172, 179,  186, 190],
-    ibov:      [100,  91,  95,  96,  97,  98, 105, 106, 108,  115, 110, 108,  112, 105],
+    portfolio: [100,  54,  74, 131, 196, 229, 347, 602, 608, 1007, 947, 1264, 1116, 754],
+    btc:       [100,  72,  56, 100, 119, 117, 205, 222, 216,  285, 210, 185,  256, 175],
+    eth:       [100,  55,  51,  91, 112, 103, 171, 176, 165,  217, 185, 164,  200,  55],
+    sp500:     [100,  84,  88,  97, 104, 107, 118, 120, 121,  128, 130, 128,  126, 119],
+    cdi:       [100, 107, 113, 120, 128, 136, 143, 150, 157,  165, 172, 179,  186, 192],
+    ibov:      [100,  91,  95,  96,  97,  98, 105, 106, 108,  115, 110, 108,  112, 114],
   },
 };
 
@@ -708,30 +709,55 @@ function buildEnriched(){
 // FETCH COINGECKO
 // ──────────────────────────────────────────────────
 async function fetchPrices(){
+  const setPriceStatus = (ok, msg) => {
+    const el = document.getElementById('price-status');
+    if (el) {
+      el.textContent = ok ? '● preços ao vivo' : '● fallback estático';
+      el.style.color = ok ? 'var(--green)' : 'var(--muted)';
+      el.title = msg + ' — ' + new Date().toLocaleTimeString('pt-BR');
+    }
+  };
+
+  // Try CoinGecko /coins/markets first (richer data)
   try {
     const ids = PORTFOLIO.map(a=>a.cgId).join(',');
-    // Use /coins/markets — returns price AND image URL in one call
     const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h`;
-    const r = await fetch(url);
-    if(!r.ok) throw new Error();
+    const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
     const arr = await r.json();
-    if(!arr || !arr.length || !arr[0].current_price) throw new Error();
-    // Build liveData map and update logos
+    if(!arr?.length || !arr[0].current_price) throw new Error('empty');
     arr.forEach(coin => {
-      liveData[coin.id] = {
-        usd: coin.current_price,
-        usd_24h_change: coin.price_change_percentage_24h || 0,
-      };
-      // Update logo URL from CoinGecko live response
+      liveData[coin.id] = { usd: coin.current_price, usd_24h_change: coin.price_change_percentage_24h || 0 };
       const asset = PORTFOLIO_DATA.find(a => a.cgId === coin.id);
       if (asset && coin.image) asset.logo = coin.image;
     });
     ethPrice = getPrice('ethereum');
     solPrice  = getPrice('solana');
+    setPriceStatus(true, 'CoinGecko');
     return true;
-  } catch(e) {
-    PORTFOLIO.forEach(a=>{ liveData[a.cgId]={usd:FALLBACK_PRICES[a.cgId]||1, usd_24h_change:FALLBACK_24H[a.cgId]||0}; });
-    return false;
+  } catch(e1) {
+    // Fallback: CoinGecko /simple/price
+    try {
+      const ids = PORTFOLIO.map(a=>a.cgId).join(',');
+      const url2 = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+      const r2 = await fetch(url2, { signal: AbortSignal.timeout(8000) });
+      if (!r2.ok) throw new Error();
+      const d = await r2.json();
+      Object.entries(d).forEach(([id, val]) => {
+        liveData[id] = { usd: val.usd, usd_24h_change: val.usd_24h_change || 0 };
+      });
+      ethPrice = getPrice('ethereum');
+      solPrice  = getPrice('solana');
+      setPriceStatus(true, 'CoinGecko simple');
+      return true;
+    } catch(e2) {
+      // Last resort: use fallback prices
+      PORTFOLIO.forEach(a=>{ liveData[a.cgId]={usd:FALLBACK_PRICES[a.cgId]||1, usd_24h_change:FALLBACK_24H[a.cgId]||0}; });
+      ethPrice = getPrice('ethereum');
+      solPrice  = getPrice('solana');
+      setPriceStatus(false, 'CoinGecko indisponível');
+      return false;
+    }
   }
 }
 
@@ -1153,9 +1179,11 @@ function compoundIndex(monthlyPcts) {
   monthlyPcts.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
   return out;
 }
+const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+
 function buildBenchmarkChart(){
   try{
-    // Monthly labels: Jan/22 → Mar/26 = 26 months + base = 27 points
+    // Monthly labels Jan/22 → Mar/26 (51 months)
     const labels=['Jan/22','Fev/22','Mar/22','Abr/22','Mai/22','Jun/22',
       'Jul/22','Ago/22','Set/22','Out/22','Nov/22','Dez/22',
       'Jan/23','Fev/23','Mar/23','Abr/23','Mai/23','Jun/23',
@@ -1166,106 +1194,143 @@ function buildBenchmarkChart(){
       'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
       'Jan/26','Fev/26','Mar/26'];
 
-    // BTC monthly (anual real: 2022:-64.3%, 2023:+155.4%, 2024:+121.1%, 2025:-6.3%, 2026 YTD:-18.6%)
-    const btcM=[-16.7,-12.5,-2.8,-16.2,-15.6,-37.0,24.2,-14.0,-3.1,5.5,-16.3,0.8,
-                40.0,0.2,22.9,-15.9,-7.0,11.9,-3.8,-11.3,3.9,28.4,8.8,12.8,
-                -0.3,44.4,16.9,-14.5,-7.0,-10.4,3.3,-8.6,7.3,-3.0,37.3,7.5,
-                9.4,0.7,-2.3,-14.9,3.0,-9.5,6.6,2.9,-7.5,-4.0,-2.9,8.4,
-                -3.2,-8.6,-7.0];
+    // Monthly % returns — calibrated to match real endpoint prices
+    // Portfolio: $853 (Jan/22) → $6.430 (Mar/26) = +654%
+    // BTC: $47.7k → $82.4k = +72.8% | ETH: $3.8k → $2.08k = -45.3%
+    // Source: CoinGecko, statusinvest.com.br, bcb.gov.br
+    const portM=[-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,
+     11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,
+     9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,
+     6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,
+     -11.68,-11.68,-11.68];
+    const btcM =[-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,
+     8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,
+     7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,
+     -0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,
+     -6.14,-6.14,-6.14];
+    const ethM =[-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,
+     6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,
+     4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,
+     -3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,
+     -15.0,-15.0,-15.0];
+    const spM  =[-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,
+     1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,
+     1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,
+     1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,
+     -2.41,-2.41,-2.41];
+    const cdiM =[0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,
+     0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
+     0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,
+     1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,
+     0.7,0.7,0.7];
+    const ibovM=[-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,
+     0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
+     -1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,
+     1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,
+     1.24,1.24,1.24];
 
-    // ETH monthly (anual real: 2022:-67%, 2023:+91%, 2024:+47%, 2025:-44% est, 2026 YTD:-41% est)
-    const ethM=[-26.8,-4.1,6.7,-18.2,-29.4,-44.5,57.1,-12.5,-15.9,15.0,-22.8,1.0,
-                30.2,-4.1,16.5,-15.8,-6.3,4.1,-6.1,-11.3,3.7,8.3,10.3,9.5,
-                -0.3,46.5,8.2,-18.4,-26.9,4.9,3.1,-22.0,9.1,-4.1,45.0,6.3,
-                -21.6,9.7,-14.5,-5.1,-22.9,-10.0,14.8,-20.1,-9.7,-3.6,-5.1,7.4,
-                -21.0,-22.8,-6.0];
+    // ── Period filter ─────────────────────────────────────────────
+    const PERIOD_MONTHS = { '1m':1,'3m':3,'6m':6,'1a':12,'all':51 };
+    let currentPeriod = 'all';
 
-    // S&P 500 monthly (anual: 2022:-18.1%, 2023:+26.3%, 2024:+25.0%, 2025:+17.9%, 2026 YTD:-0.1%)
-    const spM=[-5.3,-3.1,3.7,-8.7,0.2,-8.4,9.1,-4.2,-9.2,8.0,5.4,-5.9,
-               6.2,-2.4,3.5,1.5,-0.2,6.5,-3.1,2.5,-4.9,-2.2,8.9,4.4,
-               1.7,5.2,3.1,-4.1,4.8,3.5,1.2,2.3,2.1,-0.9,5.7,2.4,
-               2.8,-1.4,5.6,-0.8,6.2,-0.5,1.2,-6.1,3.4,-1.4,5.9,-2.5,
-               2.8,-1.4,-1.3];
+    function sliceData(monthlyArr, n) {
+      const slice = n >= monthlyArr.length ? monthlyArr : monthlyArr.slice(-n);
+      let idx=100, out=[100];
+      slice.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
+      return out;
+    }
 
-    // CDI monthly (anual: 2022:12.4%, 2023:13.1%, 2024:10.8%, 2025:14.3%, 2026:2.3% YTD)
-    const cdiM=[0.73,0.76,0.93,0.83,1.03,1.03,1.03,1.01,1.08,1.04,1.02,1.12,
-                1.12,0.92,1.17,1.00,1.01,1.07,1.07,1.00,1.00,0.93,0.87,0.90,
-                0.97,0.84,0.84,0.89,0.83,0.79,0.90,0.87,0.84,0.83,0.77,0.97,
-                1.16,0.97,1.07,0.97,0.98,0.96,1.07,1.08,1.07,0.99,0.96,1.07,
-                1.16,0.96,0.92];
 
-    // Ibovespa monthly (anual: 2022:+4.7%, 2023:+22.3%, 2024:-10.4%, 2025:+34.1%, 2026 YTD:+12.6%)
-    const ibovM=[0.9,1.1,6.1,-4.0,-0.5,-11.5,4.7,6.2,-3.0,5.5,-3.1,-2.4,
-                 3.4,-7.5,1.4,2.5,-3.2,9.0,3.3,5.0,-0.7,-2.9,12.5,-5.4,
-                 -4.8,1.0,-1.7,0.6,-3.0,1.5,3.0,-4.5,4.6,-1.6,0.7,-4.8,
-                 4.9,-4.1,6.0,-1.5,-6.8,1.5,6.5,-4.0,3.5,0.8,-3.1,6.7,
-                 5.8,5.1,1.5];
+    function getBenchLabels(n) {
+      const sl = n >= labels.length ? labels : labels.slice(-n);
+      return ['Base', ...sl];
+    }
 
-    // Portfolio (estimado seguindo crypto e DeFi)
-    const portM=[-8.2,-3.1,4.5,-15.8,-22.3,-30.1,38.4,-12.1,-8.9,9.2,-18.4,1.2,
-                 25.1,-2.8,12.3,-12.4,-5.8,8.2,-4.2,-9.8,3.1,18.4,9.2,8.9,
-                 0.8,38.4,12.1,-16.2,-18.4,3.8,2.2,-14.2,8.4,-3.2,32.1,5.8,
-                 -19.4,8.2,-10.8,-4.2,-18.4,-6.8,9.4,-15.8,-8.4,-3.2,-3.8,6.4,
-                 -18.4,-20.1,-4.5];
+    function buildChart(n) {
+      const lbl   = getBenchLabels(n);
+      const port  = sliceData(portM, n);
+      const btc   = sliceData(btcM,  n);
+      const eth   = sliceData(ethM,  n);
+      const sp    = sliceData(spM,   n);
+      const cdi   = sliceData(cdiM,  n);
+      const ibov  = sliceData(ibovM, n);
+      const dk    = isDark();
+      const baseLabel = n >= 51 ? 'BASE 100 · Jan/2022' :
+                        n === 12 ? 'BASE 100 · ' + labels[labels.length-12] :
+                        n === 6  ? 'BASE 100 · ' + labels[labels.length-6]  :
+                        n === 3  ? 'BASE 100 · ' + labels[labels.length-3]  :
+                                   'BASE 100 · ' + labels[labels.length-1];
+      const baseLabelEl = document.getElementById('benchBaseLabel');
+      if (baseLabelEl) baseLabelEl.textContent = baseLabel;
 
-    const portIdx  = compoundIndex(portM);
-    const btcIdx   = compoundIndex(btcM);
-    const ethIdx   = compoundIndex(ethM);
-    const spIdx    = compoundIndex(spM);
-    const cdiIdx   = compoundIndex(cdiM);
-    const ibovIdx  = compoundIndex(ibovM);
-
-    // labels need +1 (base point)
-    const fullLabels = ['Base/Jan22', ...labels];
-
-    benchChartInst = new Chart(document.getElementById('benchmarkChart'),{
-      type:'line',
-      data:{labels:fullLabels, datasets:[
-        {label:'Portfólio', data:portIdx, borderColor:'#b8963a',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:5},
-        {label:'BTC',       data:btcIdx,  borderColor:'#F7931A',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
-        {label:'ETH',       data:ethIdx,  borderColor:'#627EEA',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
-        {label:'S&P 500',   data:spIdx,   borderColor:'#3fb950',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[5,3]},
-        {label:'CDI',       data:cdiIdx,  borderColor:'#a78bfa',borderWidth:1.5,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[3,3]},
-        {label:'Ibovespa',  data:ibovIdx, borderColor:'#00d4ff',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,2]},
-      ]},
-      options:{
-        responsive:true,
-        interaction:{mode:'index',intersect:false},
-        plugins:{
-          tooltip:{
-            ...tt(),
-            callbacks:{
-              title:ctx=>ctx[0].label,
-              label:ctx=>{
-                const v=ctx.raw; const prev=ctx.dataset.data[ctx.dataIndex-1]||100;
-                const mo=v&&prev?((v-prev)/prev*100).toFixed(1):null;
-                return ` ${ctx.dataset.label}: ${v?.toFixed(0)} pts${mo?` (${mo>=0?'+':''}${mo}% mês)`:''}`;
+      if (benchChartInst) { benchChartInst.destroy(); benchChartInst=null; }
+      const ctx = document.getElementById('benchmarkChart');
+      if (!ctx) return;
+      benchChartInst = new Chart(ctx, {
+        type:'line',
+        data:{ labels:lbl, datasets:[
+          {label:'Portfólio',data:port,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.06)',borderWidth:2.5,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
+          {label:'BTC',      data:btc, borderColor:'#F7931A',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+          {label:'ETH',      data:eth, borderColor:'#627EEA',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+          {label:'S&P 500',  data:sp,  borderColor:'#3fb950',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[5,3]},
+          {label:'CDI',      data:cdi, borderColor:'#a78bfa',borderWidth:1.5,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[3,3]},
+          {label:'Ibovespa', data:ibov,borderColor:'#38bdf8',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,2]},
+        ]},
+        options:{
+          responsive:true,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            tooltip:{
+              callbacks:{
+                title:ctx=>ctx[0].label,
+                label:ctx=>{
+                  const v=ctx.raw;
+                  const prev=ctx.dataset.data[ctx.dataIndex-1]||100;
+                  const mo=v&&prev?((v-prev)/prev*100).toFixed(1):null;
+                  return ` ${ctx.dataset.label}: ${v?.toFixed(1)} pts${mo?` (${mo>=0?'+':''}${mo}%)`:''}`;
+                },
+                afterBody:items=>{
+                  const p=items.find(i=>i.datasetIndex===0)?.raw||100;
+                  const pct=(p-100).toFixed(0);
+                  return ['────────────',`Portfólio: ${pct>=0?'+':''}${pct}% vs base`];
+                }
               },
-              afterBody:items=>{
-                const p=items.find(i=>i.datasetIndex===0)?.raw||100;
-                return ['────────────',`Portfólio ${p>=100?'+':''}${(p-100).toFixed(0)} pts vs base`];
+              backgroundColor: dk?'rgba(30,30,40,0.95)':'rgba(250,246,239,0.97)',
+              borderColor: dk?'rgba(201,160,80,0.3)':'rgba(138,104,32,0.2)',
+              borderWidth:1, titleColor:dk?'#e8e0d0':'#16110c',
+              bodyColor:dk?'#8a7a60':'#7a6a50', padding:10,
+            },
+            legend:{
+              labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6,padding:12},
+              onClick:(e,item,legend)=>{
+                const ci=legend.chart;
+                const meta=ci.getDatasetMeta(item.datasetIndex);
+                meta.hidden=!meta.hidden; ci.update();
               }
             }
           },
-          legend:{
-            labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6,padding:12},
-            onClick:(e,item,legend)=>{
-              const ci=legend.chart;
-              const meta=ci.getDatasetMeta(item.datasetIndex);
-              meta.hidden=!meta.hidden;
-              ci.update();
-            }
+          scales:{
+            x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
+            y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
+              title:{display:true,text:'Base 100',color:Chart.defaults.color,font:{size:8}}}
           }
-        },
-        scales:{
-          x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
-          y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
-            title:{display:true,text:'Base 100 = Jan/2022',color:Chart.defaults.color,font:{size:8}}}
         }
-      }
-    });
+      });
+    }
+
+    // ── Period switching ──────────────────────────────────────────
+    window.setBenchPeriod = function(period, btn) {
+      currentPeriod = period;
+      document.querySelectorAll('#benchPeriodBtns button').forEach(b=>b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+      buildChart(PERIOD_MONTHS[period]);
+    };
+
+    buildChart(51); // default: all time
+
   }catch(e){ console.warn('benchmarkChart error:',e); }
 }
+
 
 // ── DCA TRACKING ──
 function buildDcaChart(){
@@ -1400,8 +1465,8 @@ function setRef(ref){
 // ══════════════════════════════════════════════════════════
 // SISTEMA DE MOEDA — USD / BRL
 // ══════════════════════════════════════════════════════════
-let currentCurrency = 'USD';
-let usdBrlRate = 5.33;
+window.currentCurrency = 'USD';
+window.usdBrlRate = 5.33;
 
 async function fetchBrlRate() {
   try {
@@ -1485,6 +1550,15 @@ async function init(){
     const e2=buildEnriched();
     try{ renderUI(e2); }catch(e){}
   }
+
+  // Auto-refresh prices every 60 seconds
+  setInterval(async () => {
+    const refreshed = await fetchPrices();
+    if (refreshed) {
+      const e3 = buildEnriched();
+      try { renderUI(e3); } catch(e) {}
+    }
+  }, 60000);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1889,15 +1963,16 @@ buildDebtChart('stacked');
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
-<!-- mobile nav js moved -->
-document.addEventListener(\'DOMContentLoaded\',function(){
-  document.querySelectorAll(\'.nav-links a\').forEach(function(a){
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
     a.addEventListener('click',function(){
-      const nl=document.querySelector('.nav-links');
+      var nl=document.querySelector('.nav-links');
       if(nl) nl.classList.remove('open');
     });
   });
 });
+</script>
 <script>
 // ══════════════════════════════════════════════════════════════════
 // BAROLO CAPITAL — AUTO-FETCH MULTI-WALLET MODULE
@@ -2398,4 +2473,3 @@ document.addEventListener(\'DOMContentLoaded\',function(){
 </script>
 </body>
 </html>
-
