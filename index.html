@@ -2,6 +2,13 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<script>
+// Theme init — runs before render to avoid flash
+(function(){
+ var t=localStorage.getItem('bc-theme');
+ if(t) document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Barolo Capital</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='0' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='%23c9a050' text-anchor='middle'>B</text></svg>">
@@ -237,27 +244,27 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
 
 /* RESPONSIVE */
 @media(max-width:1024px){
-  .estrategia-cards{grid-template-columns:1fr;}
-  .sobre-grid{grid-template-columns:1fr;gap:48px;}
-  .crencas-wrap{border-left:none;padding-left:0;border-top:1px solid var(--border2);padding-top:40px;}
-  .login-grid{grid-template-columns:1fr;gap:48px;}
-  .portfolio-summary{grid-template-columns:1fr;}
+ .estrategia-cards{grid-template-columns:1fr;}
+ .sobre-grid{grid-template-columns:1fr;gap:48px;}
+ .crencas-wrap{border-left:none;padding-left:0;border-top:1px solid var(--border2);padding-top:40px;}
+ .login-grid{grid-template-columns:1fr;gap:48px;}
+ .portfolio-summary{grid-template-columns:1fr;}
 }
 @media(max-width:768px){
-  nav{padding:0 20px;}
-  .nav-links,.nav-right{display:none;}
-  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:12px 0;z-index:199;}
-  .nav-links.open a{height:auto;line-height:1.5;padding:14px 24px;}
-  .nav-right.open{display:flex;flex-direction:column;gap:8px;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:80px 24px 16px;z-index:198;}
-  .nav-input{width:100%;}
-  .nav-hamburger{display:flex;}
-  .container{padding:0 20px;}
-  .hero-content{padding:80px 20px 80px;}
-  .hero-rules::before,.hero-rules::after{left:20px;right:20px;}
-  footer{flex-direction:column;gap:8px;text-align:center;padding:20px;}
-  .portfolio-table th:nth-child(3),.portfolio-table td:nth-child(3),
-  .portfolio-table th:nth-child(5),.portfolio-table td:nth-child(5){display:none;}
-  .login-card{padding:28px 20px;}
+ nav{padding:0 20px;}
+ .nav-links,.nav-right{display:none;}
+ .nav-links.open{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:12px 0;z-index:199;}
+ .nav-links.open a{height:auto;line-height:1.5;padding:14px 24px;}
+ .nav-right.open{display:flex;flex-direction:column;gap:8px;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:80px 24px 16px;z-index:198;}
+ .nav-input{width:100%;}
+ .nav-hamburger{display:flex;}
+ .container{padding:0 20px;}
+ .hero-content{padding:80px 20px 80px;}
+ .hero-rules::before,.hero-rules::after{left:20px;right:20px;}
+ footer{flex-direction:column;gap:8px;text-align:center;padding:20px;}
+ .portfolio-table th:nth-child(3),.portfolio-table td:nth-child(3),
+ .portfolio-table th:nth-child(5),.portfolio-table td:nth-child(5){display:none;}
+ .login-card{padding:28px 20px;}
 }
 </style>
 </head>
@@ -265,42 +272,43 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
-      <defs>
-        <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="transparent"/>
-          <stop offset="15%" stop-color="#c9a050"/>
-          <stop offset="85%" stop-color="#c9a050"/>
-          <stop offset="100%" stop-color="transparent"/>
-        </linearGradient>
-      </defs>
-      <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.7"/>
-      <text x="105" y="20" font-family="Cormorant Garamond,Palatino Linotype,serif" font-weight="600" font-size="13" letter-spacing="3" fill="#c9a050" text-anchor="middle">BAROLO CAPITAL</text>
-      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.7"/>
-    </svg>
-  </div>
+ <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+ <defs>
+ <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+ <stop offset="0%" stop-color="transparent"/>
+ <stop offset="15%" stop-color="#c9a050"/>
+ <stop offset="85%" stop-color="#c9a050"/>
+ <stop offset="100%" stop-color="transparent"/>
+ </linearGradient>
+ </defs>
+ <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.7"/>
+ <text x="105" y="20" font-family="Cormorant Garamond,Palatino Linotype,serif" font-weight="600" font-size="13" letter-spacing="3" fill="#c9a050" text-anchor="middle">BAROLO CAPITAL</text>
+ <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.7"/>
+ </svg>
+ </div>
 
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#home"        class="active" onclick="setActive(this);closeMobile()">Início</a></li>
-    <li><a href="#sobre"       onclick="setActive(this);closeMobile()">Sobre</a></li>
-    <li><a href="#estrategias" onclick="setActive(this);closeMobile()">Estratégias</a></li>
-    <li><a href="#portfolio"   onclick="setActive(this);closeMobile()">Portfólio</a></li>
-  </ul>
+ <ul class="nav-links" id="navLinks">
+ <li><a href="#home" class="active" onclick="setActive(this);closeMobile()" data-i18n="nav-home">Início</a></li>
+ <li><a href="#sobre" onclick="setActive(this);closeMobile()" data-i18n="nav-sobre">Sobre</a></li>
+ <li><a href="#estrategias" onclick="setActive(this);closeMobile()" data-i18n="nav-strat">Estratégias</a></li>
+ <li><a href="#portfolio" onclick="setActive(this);closeMobile()" data-i18n="nav-port">Portfólio</a></li>
+ </ul>
 
-  <div class="nav-right" id="navRight">
-    <button onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;transition:border-color .2s;" id="themeBtn">☀️</button>
-    <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuário" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
-    <input type="password" id="np" class="nav-input" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')loginNav()">
-    <button class="nav-btn" id="navBtn" onclick="loginNav()">Entrar</button>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;transition:border-color .2s,color .2s;flex-shrink:0;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">☀</button>
-  </div>
+ <div class="nav-right" id="navRight">
+ <button onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;transition:border-color .2s;" id="themeBtn"></button>
+ <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuário" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
+ <input type="password" id="np" class="nav-input" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')loginNav()">
+ <button class="nav-btn" id="navBtn" onclick="loginNav()">Entrar</button>
+ <button style="background:transparent;border:1px solid var(--border2);padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold);cursor:pointer;transition:all .2s;" id="indexLangBtn" onclick="toggleIndexLang()" title="Switch language">PT</button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;transition:border-color .2s,color .2s;flex-shrink:0;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'"></button>
+ </div>
 
-  <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
-    <span></span><span></span><span></span>
-  </div>
+ <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
+ <span></span><span></span><span></span>
+ </div>
 
-  <div class="nav-err" id="navErr">CREDENCIAIS INVÁLIDAS</div>
+ <div class="nav-err" id="navErr">CREDENCIAIS INVÁLIDAS</div>
 </nav>
 
 <!-- TICKER -->
@@ -308,145 +316,145 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
 
 <!-- HOME -->
 <section id="home">
-  <div class="hero-glow"></div>
-  <div class="hero-rules"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">Gestão Estratégica de Capital</div>
-    <h1 class="hero-title">Riqueza construída com<br><em>consistência</em>, não com pressa.</h1>
-    <p class="hero-sub">A Barolo Capital é uma gestora independente focada em estratégias de capital no mercado de criptoativos — com disciplina, visão de longo prazo e preservação como fundamento.</p>
-    <div class="hero-cta">
-      <a href="#sobre" class="btn-primary">Conheça a empresa</a>
-      <a href="#acesso" class="btn-ghost">Acessar plataforma</a>
-    </div>
-  </div>
-  <div class="hero-scroll" onclick="document.querySelector('#sobre').scrollIntoView({behavior:'smooth'})">
-    <span>Scroll</span>
-    <div class="scroll-arrow"></div>
-  </div>
+ <div class="hero-glow"></div>
+ <div class="hero-rules"></div>
+ <div class="hero-content">
+ <div class="hero-eyebrow">Gestão Estratégica de Capital</div>
+ <h1 class="hero-title" data-i18n="hero-title">Riqueza construída com <em>consistência</em>, não com pressa.</h1>
+ <p class="hero-sub" data-i18n="hero-sub">A Barolo Capital é uma gestora independente focada em estratégias de capital no mercado de criptoativos — com disciplina, visão de longo prazo e preservação como fundamento.</p>
+ <div class="hero-cta">
+ <a href="#sobre" class="btn-primary">Conheça a empresa</a>
+ <a href="#acesso" class="btn-ghost">Acessar plataforma</a>
+ </div>
+ </div>
+ <div class="hero-scroll" onclick="document.querySelector('#sobre').scrollIntoView({behavior:'smooth'})">
+ <span>Scroll</span>
+ <div class="scroll-arrow"></div>
+ </div>
 </section>
 
 <!-- SOBRE -->
 <section id="sobre" class="sec">
-  <div class="section-num" style="right:48px;top:20px;">01</div>
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">Sobre a empresa</div>
-      <h2 class="section-title">Uma abordagem <em>diferente</em> para o mercado cripto</h2>
-    </div>
-    <div class="sobre-grid">
-      <div class="sobre-text">
-        <p class="lead">A <strong style="color:var(--gold);font-weight:500;">Barolo Capital</strong> é uma empresa independente focada na gestão estratégica de capital no mercado de criptoativos.</p>
-        <p>Acreditamos que riqueza não é construída com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, nossa abordagem prioriza a preservação de capital, a tomada de decisão racional e a busca por oportunidades sustentáveis.</p>
-        <p>Atuamos de forma seletiva, com foco em estratégias que equilibram risco e retorno — incluindo alocação em protocolos descentralizados, geração de rendimento e posicionamentos estruturados.</p>
-        <p><em>Na Barolo Capital, o verdadeiro valor dos investimentos está na liberdade que eles proporcionam — de tempo, de escolha e de direção.</em></p>
-      </div>
-      <div class="crencas-wrap">
-        <div class="crencas-label">Nossas Crenças</div>
-        <p class="crenca-lead">Riqueza real é construída com consistência, não com pressa.</p>
-        <div class="crenca-item"><span class="crenca-num">01</span><span class="crenca-text">Não buscamos o maior ganho, buscamos o ganho sustentável</span></div>
-        <div class="crenca-item"><span class="crenca-num">02</span><span class="crenca-text">Antes de ganhar dinheiro, evitamos perder</span></div>
-        <div class="crenca-item"><span class="crenca-num">03</span><span class="crenca-text">O tempo no mercado vence o timing do mercado</span></div>
-        <div class="crenca-item"><span class="crenca-num">04</span><span class="crenca-text">Decisões boas vêm de mente calma, não de urgência</span></div>
-        <div class="crenca-item"><span class="crenca-num">05</span><span class="crenca-text">Preferimos ganhar menos com paz do que mais com caos</span></div>
-        <div class="crenca-item"><span class="crenca-num">06</span><span class="crenca-text">Se não é simples de entender, não merece capital</span></div>
-        <div class="crenca-item"><span class="crenca-num">07</span><span class="crenca-text">O dinheiro existe para comprar tempo e liberdade</span></div>
-      </div>
-    </div>
-  </div>
+ <div class="section-num" style="right:48px;top:20px;">01</div>
+ <div class="container">
+ <div class="section-header">
+ <div class="section-tag">Sobre a empresa</div>
+ <h2 class="section-title">Uma abordagem <em>diferente</em> para o mercado cripto</h2>
+ </div>
+ <div class="sobre-grid">
+ <div class="sobre-text">
+ <p class="lead">A <strong style="color:var(--gold);font-weight:500;">Barolo Capital</strong> é uma empresa independente focada na gestão estratégica de capital no mercado de criptoativos.</p>
+ <p>Acreditamos que riqueza não é construída com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, nossa abordagem prioriza a preservação de capital, a tomada de decisão racional e a busca por oportunidades sustentáveis.</p>
+ <p>Atuamos de forma seletiva, com foco em estratégias que equilibram risco e retorno — incluindo alocação em protocolos descentralizados, geração de rendimento e posicionamentos estruturados.</p>
+ <p><em>Na Barolo Capital, o verdadeiro valor dos investimentos está na liberdade que eles proporcionam — de tempo, de escolha e de direção.</em></p>
+ </div>
+ <div class="crencas-wrap">
+ <div class="crencas-label">Nossas Crenças</div>
+ <p class="crenca-lead">Riqueza real é construída com consistência, não com pressa.</p>
+ <div class="crenca-item"><span class="crenca-num">01</span><span class="crenca-text">Não buscamos o maior ganho, buscamos o ganho sustentável</span></div>
+ <div class="crenca-item"><span class="crenca-num">02</span><span class="crenca-text">Antes de ganhar dinheiro, evitamos perder</span></div>
+ <div class="crenca-item"><span class="crenca-num">03</span><span class="crenca-text">O tempo no mercado vence o timing do mercado</span></div>
+ <div class="crenca-item"><span class="crenca-num">04</span><span class="crenca-text">Decisões boas vêm de mente calma, não de urgência</span></div>
+ <div class="crenca-item"><span class="crenca-num">05</span><span class="crenca-text">Preferimos ganhar menos com paz do que mais com caos</span></div>
+ <div class="crenca-item"><span class="crenca-num">06</span><span class="crenca-text">Se não é simples de entender, não merece capital</span></div>
+ <div class="crenca-item"><span class="crenca-num">07</span><span class="crenca-text">O dinheiro existe para comprar tempo e liberdade</span></div>
+ </div>
+ </div>
+ </div>
 </section>
 
 <!-- ESTRATÉGIAS -->
 <section id="estrategias" class="sec">
-  <div class="section-num" style="left:48px;top:20px;">02</div>
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">Como operamos</div>
-      <h2 class="section-title">Estratégias <em>seletivas</em> com foco em retorno ajustado ao risco</h2>
-    </div>
-    <div class="estrategia-cards">
-      <div class="estrategia-card">
-        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <div class="card-title">Liquidez Ativa</div>
-        <p class="card-desc">Operamos pools de liquidez concentrada em DEXs como Uniswap V3, posicionando capital em ranges otimizados para maximizar a geração de fees com controle de impermanent loss. Cada posição é monitorada continuamente e rebalanceada conforme a volatilidade do par.</p>
-        <div class="card-tags"><span class="tag">Uniswap V3</span><span class="tag">Ethereum</span><span class="tag">Arbitrum</span><span class="tag">zkSync</span><span class="tag">Base</span></div>
-      </div>
-      <div class="estrategia-card">
-        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8m-4-4v4"/><path d="M6 8h4m-4 4h8"/></svg>
-        <div class="card-title">Lending &amp; Yield</div>
-        <p class="card-desc">Utilizamos protocolos de lending descentralizado como AAVE V3 e Kamino Finance para gerar rendimento sobre colateral enquanto mantemos posições alavancadas de forma controlada. O foco é no equilíbrio entre taxa de rendimento e fator de saúde da posição.</p>
-        <div class="card-tags"><span class="tag">AAVE V3</span><span class="tag">Kamino</span><span class="tag">Solana</span><span class="tag">ETH Mainnet</span></div>
-      </div>
-      <div class="estrategia-card">
-        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        <div class="card-title">Alocação Estruturada</div>
-        <p class="card-desc">Mantemos posicionamentos de longo prazo em ativos fundamentais do ecossistema cripto — ETH, SOL e ADA — com estratégia de acumulação baseada em DCA e gestão de risco que prioriza a preservação durante períodos de bear market prolongado.</p>
-        <div class="card-tags"><span class="tag">ETH</span><span class="tag">SOL</span><span class="tag">ADA</span><span class="tag">DCA</span><span class="tag">Stake</span></div>
-      </div>
-    </div>
-  </div>
+ <div class="section-num" style="left:48px;top:20px;">02</div>
+ <div class="container">
+ <div class="section-header">
+ <div class="section-tag">Como operamos</div>
+ <h2 class="section-title">Estratégias <em>seletivas</em> com foco em retorno ajustado ao risco</h2>
+ </div>
+ <div class="estrategia-cards">
+ <div class="estrategia-card">
+ <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+ <div class="card-title">Liquidez Ativa</div>
+ <p class="card-desc">Operamos pools de liquidez concentrada em DEXs como Uniswap V3, posicionando capital em ranges otimizados para maximizar a geração de fees com controle de impermanent loss. Cada posição é monitorada continuamente e rebalanceada conforme a volatilidade do par.</p>
+ <div class="card-tags"><span class="tag">Uniswap V3</span><span class="tag">Ethereum</span><span class="tag">Arbitrum</span><span class="tag">zkSync</span><span class="tag">Base</span></div>
+ </div>
+ <div class="estrategia-card">
+ <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8m-4-4v4"/><path d="M6 8h4m-4 4h8"/></svg>
+ <div class="card-title">Lending &amp; Yield</div>
+ <p class="card-desc">Utilizamos protocolos de lending descentralizado como AAVE V3 e Kamino Finance para gerar rendimento sobre colateral enquanto mantemos posições alavancadas de forma controlada. O foco é no equilíbrio entre taxa de rendimento e fator de saúde da posição.</p>
+ <div class="card-tags"><span class="tag">AAVE V3</span><span class="tag">Kamino</span><span class="tag">Solana</span><span class="tag">ETH Mainnet</span></div>
+ </div>
+ <div class="estrategia-card">
+ <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+ <div class="card-title">Alocação Estruturada</div>
+ <p class="card-desc">Mantemos posicionamentos de longo prazo em ativos fundamentais do ecossistema cripto — ETH, SOL e ADA — com estratégia de acumulação baseada em DCA e gestão de risco que prioriza a preservação durante períodos de bear market prolongado.</p>
+ <div class="card-tags"><span class="tag">ETH</span><span class="tag">SOL</span><span class="tag">ADA</span><span class="tag">DCA</span><span class="tag">Stake</span></div>
+ </div>
+ </div>
+ </div>
 </section>
 
 <!-- PORTFÓLIO -->
 <section id="portfolio" class="sec">
-  <div class="section-num" style="right:48px;top:20px;">03</div>
-  <div class="container">
-    <div class="section-header">
-      <div class="section-tag">Ecossistema</div>
-      <h2 class="section-title">Ativos do <em>portfólio</em></h2>
-    </div>
+ <div class="section-num" style="right:48px;top:20px;">03</div>
+ <div class="container">
+ <div class="section-header">
+ <div class="section-tag">Ecossistema</div>
+ <h2 class="section-title">Ativos do <em>portfólio</em></h2>
+ </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:32px;">
+ <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:32px;">
 
-      <a href="https://ethereum.org" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" class="tok-logo" alt="ETH"><span class="tok-name">Ethereum</span><span class="tok-ticker">ETH</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://solana.com" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" class="tok-logo" alt="SOL"><span class="tok-name">Solana</span><span class="tok-ticker">SOL</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://cardano.org" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/975/small/cardano.png" class="tok-logo" alt="ADA"><span class="tok-name">Cardano</span><span class="tok-ticker">ADA</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/33373/small/eigen.png" class="tok-logo" alt="EIGEN"><span class="tok-name">EigenLayer</span><span class="tok-ticker">EIGEN</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://radiant.capital" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/26536/small/Radiant-Logo.png" class="tok-logo" alt="RDNT"><span class="tok-name">Radiant</span><span class="tok-ticker">RDNT</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://polygon.technology" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/32440/small/polygon.png" class="tok-logo" alt="POL"><span class="tok-name">POL</span><span class="tok-ticker">POL</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://zksync.io" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/38043/small/zksync.jpg" class="tok-logo" alt="ZK"><span class="tok-name">ZKsync</span><span class="tok-ticker">ZK</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://xai.games" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/34258/small/xai.png" class="tok-logo" alt="XAI"><span class="tok-name">Xai</span><span class="tok-ticker">XAI</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://www.zetachain.com" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/26718/thumb/zetachain.jpg" class="tok-logo" alt="ZETA"><span class="tok-name">ZetaChain</span><span class="tok-ticker">ZETA</span><span class="tok-link">↗</span></div>
-      </a>
+ <a href="https://ethereum.org" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" class="tok-logo" alt="ETH"><span class="tok-name">Ethereum</span><span class="tok-ticker">ETH</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://solana.com" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" class="tok-logo" alt="SOL"><span class="tok-name">Solana</span><span class="tok-ticker">SOL</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://cardano.org" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/975/small/cardano.png" class="tok-logo" alt="ADA"><span class="tok-name">Cardano</span><span class="tok-ticker">ADA</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/33373/small/eigen.png" class="tok-logo" alt="EIGEN"><span class="tok-name">EigenLayer</span><span class="tok-ticker">EIGEN</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://radiant.capital" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/26536/small/Radiant-Logo.png" class="tok-logo" alt="RDNT"><span class="tok-name">Radiant</span><span class="tok-ticker">RDNT</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://polygon.technology" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/32440/small/polygon.png" class="tok-logo" alt="POL"><span class="tok-name">POL</span><span class="tok-ticker">POL</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://zksync.io" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/38043/small/zksync.jpg" class="tok-logo" alt="ZK"><span class="tok-name">ZKsync</span><span class="tok-ticker">ZK</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://xai.games" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/34258/small/xai.png" class="tok-logo" alt="XAI"><span class="tok-name">Xai</span><span class="tok-ticker">XAI</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://www.zetachain.com" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card"><img src="https://assets.coingecko.com/coins/images/26718/thumb/zetachain.jpg" class="tok-logo" alt="ZETA"><span class="tok-name">ZetaChain</span><span class="tok-ticker">ZETA</span><span class="tok-link">↗</span></div>
+ </a>
 
-    </div>
+ </div>
 
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-      <a href="https://aave.com" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12645/small/AAVE.png" class="tok-logo" alt="AAVE"><span class="tok-name">AAVE V3</span><span class="tok-ticker" style="color:var(--muted);">Lending · ETH</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://kamino.finance" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/36181/small/kamino.jpg" class="tok-logo" alt="Kamino"><span class="tok-name">Kamino</span><span class="tok-ticker" style="color:var(--muted);">Lending · SOL</span><span class="tok-link">↗</span></div>
-      </a>
-      <a href="https://app.uniswap.org" target="_blank" rel="noopener" style="text-decoration:none;">
-        <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png" class="tok-logo" alt="UNI"><span class="tok-name">Uniswap V3</span><span class="tok-ticker" style="color:var(--muted);">Liquidez · ETH</span><span class="tok-link">↗</span></div>
-      </a>
-    </div>
-  </div>
+ <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+ <a href="https://aave.com" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12645/small/AAVE.png" class="tok-logo" alt="AAVE"><span class="tok-name">AAVE V3</span><span class="tok-ticker" style="color:var(--muted);">Lending · ETH</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://kamino.finance" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/36181/small/kamino.jpg" class="tok-logo" alt="Kamino"><span class="tok-name">Kamino</span><span class="tok-ticker" style="color:var(--muted);">Lending · SOL</span><span class="tok-link">↗</span></div>
+ </a>
+ <a href="https://app.uniswap.org" target="_blank" rel="noopener" style="text-decoration:none;">
+ <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png" class="tok-logo" alt="UNI"><span class="tok-name">Uniswap V3</span><span class="tok-ticker" style="color:var(--muted);">Liquidez · ETH</span><span class="tok-link">↗</span></div>
+ </a>
+ </div>
+ </div>
 </section>
 
 <!-- ACESSO -->
 
 
 <footer>
-  <span>© 2021 Barolo Capital · Gestão Estratégica de Capital</span>
-  <span>Todos os dados são de uso interno e privado</span>
+ <span>© 2021 Barolo Capital · Gestão Estratégica de Capital</span>
+ <span>Todos os dados são de uso interno e privado</span>
 </footer>
 
 <script>
@@ -461,10 +469,10 @@ tick();setInterval(tick,1000);
 
 // Nav active on scroll
 window.addEventListener('scroll',function(){
-  var secs=['home','sobre','estrategias','portfolio','acesso'];
-  var current='home';
-  secs.forEach(function(id){var el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-100)current=id;});
-  document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.toggle('active',a.getAttribute('href').replace('#','')==current);});
+ var secs=['home','sobre','estrategias','portfolio','acesso'];
+ var current='home';
+ secs.forEach(function(id){var el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-100)current=id;});
+ document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.toggle('active',a.getAttribute('href').replace('#','')==current);});
 });
 function setActive(el){document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});el.classList.add('active');}
 function toggleMobile(){document.getElementById('navLinks').classList.toggle('open');document.getElementById('navRight').classList.toggle('open');}
@@ -472,92 +480,139 @@ function closeMobile(){document.getElementById('navLinks').classList.remove('ope
 
 // Login nav
 function loginNav(){
-  var u=document.getElementById('nu').value.trim().toUpperCase();
-  var p=document.getElementById('np').value.trim();
-  var err=document.getElementById('navErr');
-  err.classList.remove('show');
-  if(u==='ADM'&&p==='102030'){document.getElementById('navBtn').textContent='…';document.getElementById('navBtn').disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
-  ['nu','np'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err','do-shake');setTimeout(function(){el.classList.remove('err','do-shake');},600);});
-  err.classList.add('show');setTimeout(function(){err.classList.remove('show');},2500);
-  document.getElementById('np').value='';
+ var u=document.getElementById('nu').value.trim().toUpperCase();
+ var p=document.getElementById('np').value.trim();
+ var err=document.getElementById('navErr');
+ err.classList.remove('show');
+ if(u==='ADM'&&p==='102030'){document.getElementById('navBtn').textContent='…';document.getElementById('navBtn').disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
+ ['nu','np'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err','do-shake');setTimeout(function(){el.classList.remove('err','do-shake');},600);});
+ err.classList.add('show');setTimeout(function(){err.classList.remove('show');},2500);
+ document.getElementById('np').value='';
 }
 
 // Login card
 function loginCard(){
-  var u=document.getElementById('lu').value.trim().toUpperCase();
-  var p=document.getElementById('lp').value.trim();
-  var err=document.getElementById('loginCardErr');
-  err.textContent='';
-  if(u==='ADM'&&p==='102030'){var btn=document.getElementById('loginCardBtn');btn.textContent='Autenticando…';btn.disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
-  ['lu','lp'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err');setTimeout(function(){el.classList.remove('err');},800);});
-  err.textContent='CREDENCIAIS INVÁLIDAS · ACESSO NEGADO';
-  document.getElementById('lp').value='';
+ var u=document.getElementById('lu').value.trim().toUpperCase();
+ var p=document.getElementById('lp').value.trim();
+ var err=document.getElementById('loginCardErr');
+ err.textContent='';
+ if(u==='ADM'&&p==='102030'){var btn=document.getElementById('loginCardBtn');btn.textContent='Autenticando…';btn.disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
+ ['lu','lp'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err');setTimeout(function(){el.classList.remove('err');},800);});
+ err.textContent='CREDENCIAIS INVÁLIDAS · ACESSO NEGADO';
+ document.getElementById('lp').value='';
 }
 
 // Portfolio table
 var assets=[
-  {name:'Ethereum', ticker:'ETH', cgId:'ethereum',       network:'ETH',    qty:2.084106,    price:2079.21, color:'#E8773D'},
-  {name:'Solana',   ticker:'SOL', cgId:'solana',         network:'SOL',    qty:19.31226576, price:87.28,   color:'#9945FF'},
-  {name:'Cardano',  ticker:'ADA', cgId:'cardano',        network:'ADA',    qty:375.245,     price:0.2617,  color:'#0033AD'},
-  {name:'EigenLayer',ticker:'EIGEN',cgId:'eigenlayer',   network:'ETH',    qty:153.363,     price:0.1870,  color:'#9370DB'},
-  {name:'Radiant',  ticker:'RDNT',cgId:'radiant-capital',network:'ARB',    qty:7290.46,     price:0.005543,color:'#00E5FF'},
-  {name:'POL',      ticker:'POL', cgId:'matic-network',  network:'ETH',    qty:218,         price:0.09693, color:'#8247E5'},
-  {name:'ZKsync',   ticker:'ZK',  cgId:'zksync',         network:'zkSync', qty:876,         price:0.01914, color:'#D45B8E'},
-  {name:'Xai',      ticker:'XAI', cgId:'xai-blockchain', network:'XAI',    qty:692.86,      price:0.01102, color:'#FF6B35'},
-  {name:'ZetaChain',ticker:'ZETA',cgId:'zetachain',      network:'ETH',    qty:51.1434,     price:0.05041, color:'#C8A87C'},
+ {name:'Ethereum', ticker:'ETH', cgId:'ethereum', network:'ETH', qty:2.084106, price:2079.21, color:'#E8773D'},
+ {name:'Solana', ticker:'SOL', cgId:'solana', network:'SOL', qty:19.31226576, price:87.28, color:'#9945FF'},
+ {name:'Cardano', ticker:'ADA', cgId:'cardano', network:'ADA', qty:375.245, price:0.2617, color:'#0033AD'},
+ {name:'EigenLayer',ticker:'EIGEN',cgId:'eigenlayer', network:'ETH', qty:153.363, price:0.1870, color:'#9370DB'},
+ {name:'Radiant', ticker:'RDNT',cgId:'radiant-capital',network:'ARB', qty:7290.46, price:0.005543,color:'#00E5FF'},
+ {name:'POL', ticker:'POL', cgId:'matic-network', network:'ETH', qty:218, price:0.09693, color:'#8247E5'},
+ {name:'ZKsync', ticker:'ZK', cgId:'zksync', network:'zkSync', qty:876, price:0.01914, color:'#D45B8E'},
+ {name:'Xai', ticker:'XAI', cgId:'xai-blockchain', network:'XAI', qty:692.86, price:0.01102, color:'#FF6B35'},
+ {name:'ZetaChain',ticker:'ZETA',cgId:'zetachain', network:'ETH', qty:51.1434, price:0.05041, color:'#C8A87C'},
 ];
 
 function buildTable(){
-  var total=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
-  var tbody=document.getElementById('portfolioTbody');
-  if(!tbody)return;
-  tbody.innerHTML=assets.map(function(a){
-    var val=a.qty*a.price;
-    var pct=(val/total*100).toFixed(1);
-    var qty=a.qty>=100?a.qty.toFixed(2):a.qty.toFixed(4);
-    var barW=Math.min(parseFloat(pct)/70*100,100);
-    return '<tr>'+
-      '<td><div class="asset-name"><div class="asset-dot" style="background:'+a.color+'"></div>'+
-      '<span class="asset-label">'+a.name+'</span><span class="asset-ticker">'+a.ticker+'</span></div></td>'+
-      '<td><span class="asset-network">'+a.network+'</span></td>'+
-      '<td><span class="asset-qty">'+qty+'</span></td>'+
-      '<td><span class="asset-value">$'+val.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></td>'+
-      '<td><div class="alloc-bar-wrap"><span class="asset-alloc">'+pct+'%</span>'+
-      '<div class="alloc-bar"><div class="alloc-fill" style="width:'+barW+'%"></div></div></div></td>'+
-    '</tr>';
-  }).join('');
+ var total=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
+ var tbody=document.getElementById('portfolioTbody');
+ if(!tbody)return;
+ tbody.innerHTML=assets.map(function(a){
+ var val=a.qty*a.price;
+ var pct=(val/total*100).toFixed(1);
+ var qty=a.qty>=100?a.qty.toFixed(2):a.qty.toFixed(4);
+ var barW=Math.min(parseFloat(pct)/70*100,100);
+ return '<tr>'+
+ '<td><div class="asset-name"><div class="asset-dot" style="background:'+a.color+'"></div>'+
+ '<span class="asset-label">'+a.name+'</span><span class="asset-ticker">'+a.ticker+'</span></div></td>'+
+ '<td><span class="asset-network">'+a.network+'</span></td>'+
+ '<td><span class="asset-qty">'+qty+'</span></td>'+
+ '<td><span class="asset-value">$'+val.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></td>'+
+ '<td><div class="alloc-bar-wrap"><span class="asset-alloc">'+pct+'%</span>'+
+ '<div class="alloc-bar"><div class="alloc-fill" style="width:'+barW+'%"></div></div></div></td>'+
+ '</tr>';
+ }).join('');
 }
 buildTable();
 
 // Theme
 function toggleTheme(){
-  var html=document.documentElement;
-  var current=html.getAttribute('data-theme')||'dark';
-  var next=current==='dark'?'light':'dark';
-  html.setAttribute('data-theme',next);
-  localStorage.setItem('bc-theme',next);
-  document.getElementById('themeToggle').textContent=next==='dark'?'☀':'☾';
+ var html=document.documentElement;
+ var current=html.getAttribute('data-theme')||'dark';
+ var next=current==='dark'?'light':'dark';
+ html.setAttribute('data-theme',next);
+ localStorage.setItem('bc-theme',next);
+ document.getElementById('themeToggle').textContent=next==='dark'?'':'';
 }
 (function(){
-  var saved=localStorage.getItem('bc-theme');
-  if(saved){document.documentElement.setAttribute('data-theme',saved);var btn=document.getElementById('themeToggle');if(btn)btn.textContent=saved==='dark'?'☀':'☾';}
+ var saved=localStorage.getItem('bc-theme');
+ if(saved){document.documentElement.setAttribute('data-theme',saved);var btn=document.getElementById('themeToggle');if(btn)btn.textContent=saved==='dark'?'':'';}
 })();
 
 // Live prices
 (async function(){
-  try{
-    var ids=assets.map(function(a){return a.cgId;}).join(',');
-    var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids+'&vs_currencies=usd',{signal:AbortSignal.timeout(8000)});
-    if(!r.ok)throw new Error();
-    var d=await r.json();
-    assets.forEach(function(a){if(d[a.cgId]&&d[a.cgId].usd)a.price=d[a.cgId].usd;});
-    buildTable();
-    var total2=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
-    var net=total2+1742.07-1549.71;
-    var el=document.getElementById('ps-net');
-    if(el)el.textContent='$'+Math.round(net).toLocaleString('en-US');
-  }catch(e){}
+ try{
+ var ids=assets.map(function(a){return a.cgId;}).join(',');
+ var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids+'&vs_currencies=usd',{signal:AbortSignal.timeout(8000)});
+ if(!r.ok)throw new Error();
+ var d=await r.json();
+ assets.forEach(function(a){if(d[a.cgId]&&d[a.cgId].usd)a.price=d[a.cgId].usd;});
+ buildTable();
+ var total2=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
+ var net=total2+1742.07-1549.71;
+ var el=document.getElementById('ps-net');
+ if(el)el.textContent='$'+Math.round(net).toLocaleString('en-US');
+ }catch(e){}
 })();
+
+// Language toggle — index
+var INDEX_LANG_STRINGS = {
+  'hero-title':  {pt:'Riqueza construída com <em>consistência</em>, não com pressa.',
+                  en:'Wealth built with <em>consistency</em>, not haste.'},
+  'hero-sub':    {pt:'A Barolo Capital é uma gestora independente focada em estratégias de capital no mercado de criptoativos — com disciplina, visão de longo prazo e preservação como fundamento.',
+                  en:'Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.'},
+  'nav-home':    {pt:'Início',       en:'Home'},
+  'nav-sobre':   {pt:'Sobre',        en:'About'},
+  'nav-strat':   {pt:'Estratégias',  en:'Strategies'},
+  'nav-port':    {pt:'Portfólio',    en:'Portfolio'},
+  'nav-access':  {pt:'Acesso',       en:'Access'},
+  'about-title': {pt:'Uma abordagem <em>diferente</em> para o mercado cripto',
+                  en:'A <em>different</em> approach to the crypto market'},
+  'strat-title': {pt:'Estratégias <em>seletivas</em> com foco em retorno ajustado ao risco',
+                  en:'<em>Selective</em> strategies focused on risk-adjusted returns'},
+  'port-title':  {pt:'Portfólio <em>diversificado</em> no ecossistema DeFi',
+                  en:'<em>Diversified</em> portfolio in the DeFi ecosystem'},
+  'access-title':{pt:'Acesso <em>restrito</em> à plataforma',
+                  en:'<em>Restricted</em> platform access'},
+  'btn-enter':   {pt:'Entrar', en:'Enter'},
+};
+
+function applyIndexLang(lang) {
+  document.documentElement.setAttribute('data-lang', lang);
+  var btn = document.getElementById('indexLangBtn');
+  if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
+  Object.entries(INDEX_LANG_STRINGS).forEach(function(kv) {
+    var key = kv[0], strings = kv[1];
+    document.querySelectorAll('[data-i18n="' + key + '"]').forEach(function(el) {
+      el.innerHTML = strings[lang] || strings['pt'];
+    });
+  });
+  // Sync with dashboard pages
+  localStorage.setItem('bc-lang', lang);
+}
+
+function toggleIndexLang() {
+  var current = document.documentElement.getAttribute('data-lang') || 'pt';
+  applyIndexLang(current === 'pt' ? 'en' : 'pt');
+}
+
+(function() {
+  var saved = localStorage.getItem('bc-lang') || 'pt';
+  if (saved !== 'pt') applyIndexLang(saved);
+})();
+
 </script>
 </body>
 </html>
