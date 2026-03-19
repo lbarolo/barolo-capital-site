@@ -388,7 +388,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
     <div style="padding:22px 24px;">
       <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:8px;">ALOCADO EM POOLS</div>
-      <div id="capop-inuse" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--green);">$357.24</div>
+      <div id="capop-inuse" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--green);">—</div>
       <div id="capop-inuse-sub" style="font-size:8px;color:var(--muted);margin-top:5px;">Uniswap V3 · WETH/USDC</div>
     </div>
 
@@ -444,11 +444,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
   <!-- LP metrics bar -->
   <div class="lp-bar">
-    <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$357.24</div><div class="lp-ms">0.1185 WETH + 102.76 USDC</div></div>
-    <div class="lp-m"><div class="lp-ml">TOTAL P&L</div><div class="lp-mv pos" id="lp-pnl">+$49.98</div><div class="lp-ms" id="lp-roi">ROI: +15.82%</div></div>
-    <div class="lp-m"><div class="lp-ml">TOTAL APR</div><div class="lp-mv acc" id="lp-apr">346.15%</div><div class="lp-ms" id="lp-fee-apr">Fee APR: 59.73%</div></div>
-    <div class="lp-m"><div class="lp-ml">FEES N. COLET.</div><div class="lp-mv warn" id="lp-fees">$8.62</div><div class="lp-ms">~$0.52/dia</div></div>
-    <div class="lp-m"><div class="lp-ml">DIV. LOSS</div><div class="lp-mv neg" id="lp-il">-$41.36</div><div class="lp-ms" id="lp-gas">Gas: $0.00</div></div>
+    <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms">0.1185 WETH + 102.76 USDC</div></div>
+    <div class="lp-m"><div class="lp-ml">TOTAL P&L</div><div class="lp-mv pos" id="lp-pnl">—</div><div class="lp-ms" id="lp-roi">—</div></div>
+    <div class="lp-m"><div class="lp-ml">TOTAL APR</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-fee-apr">—</div></div>
+    <div class="lp-m"><div class="lp-ml">FEES N. COLET.</div><div class="lp-mv warn" id="lp-fees">—</div><div class="lp-ms">~$0.52/dia</div></div>
+    <div class="lp-m"><div class="lp-ml">DIV. LOSS</div><div class="lp-mv neg" id="lp-il">—</div><div class="lp-ms" id="lp-gas">—</div></div>
   </div>
 
   <!-- Iframe wrapper with loading overlay -->
@@ -1000,7 +1000,7 @@ setTimeout(function calcCapOp() {
   const fmt = (n, d=0) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 
   // LP value — only pools, not lending
-  const LP_VALUE = 348.23; // Uniswap V3 WETH/USDC pooled (updated 14/03/2026)
+  const LP_VALUE = 0; // atualizar com print da pool ativa // Uniswap V3 WETH/USDC pooled (updated 14/03/2026)
 
   const PORTFOLIO = [
     { id:'ethereum',        qty:2.084106,     fallback:2079.21 }, // from CoinGecko 14/03/26
@@ -1113,9 +1113,9 @@ setTimeout(function calcCapOp() {
 
 // ── LP REF TOGGLE ──
 const REFS = {
-  usd:  {pooled:'$357.24',pnl:'+$49.98',roi:'ROI: +15.82%',apr:'346.15%',feeApr:'Fee APR: 59.73%',fees:'$8.62',il:'-$41.36',gas:'Gas: $0.00',pos:true},
-  eth:  {pooled:'0.168019 ETH',pnl:'+0.000998 ETH',roi:'ROI: +0.57%',apr:'22.31%',feeApr:'Fee APR: 66.65%',fees:'0.002982 ETH',il:'-0.00198 ETH',gas:'Gas: 0 ETH',pos:true},
-  hold: {pooled:'$357.24',pnl:'+$49.98',roi:'ROI: +15.82%',apr:'346.15%',feeApr:'Fee APR: 59.73%',fees:'$8.62',il:'-$41.36',gas:'Gas: $0.00',pos:true}
+  usd:  {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',pos:true},
+  eth:  {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',pos:true},
+  hold: {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',pos:true}
 };
 function setRef(ref){
   document.querySelectorAll('.ref-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===ref));
@@ -1342,7 +1342,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   </div>
   <div class="chart-body"><canvas id="chartRecent" height="110"></canvas></div>
   <div style="padding:0 18px 14px;display:flex;gap:16px;flex-wrap:wrap;">
-    <div style="font-size:8px;color:var(--muted);">Capital: <span style="color:var(--text);font-weight:600;">$357.24</span></div>
+    <div style="font-size:8px;color:var(--muted);">Capital: <span style="color:var(--text);font-weight:600;">—</span></div>
     <div style="font-size:8px;color:var(--muted);">Range: <span style="color:var(--text);font-weight:600;">ETH $2.450 – $3.100</span></div>
     <div style="font-size:8px;color:var(--muted);">Fee tier: <span style="color:var(--text);font-weight:600;">0.30%</span></div>
     <div style="font-size:8px;color:var(--muted);">Aberta: <span style="color:var(--text);font-weight:600;">Fev/2026</span></div>
@@ -1565,22 +1565,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   <div style="padding:0 18px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="activeLpTokens">
     <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
       <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">WETH NO POOL</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;" id="lp-weth-qty">0.1185</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;" id="lp-weth-qty">—</div>
       <div style="font-size:9px;color:var(--muted);" id="lp-weth-usd">≈ $254.48</div>
     </div>
     <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
       <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">USDC NO POOL</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;">102.76</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;">—</div>
       <div style="font-size:9px;color:var(--muted);">$102.76</div>
     </div>
     <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
       <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">FEES WETH</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;" id="lp-fee-weth">0.002982</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;" id="lp-fee-weth">—</div>
       <div style="font-size:9px;color:var(--muted);" id="lp-fee-weth-usd">≈ $6.40</div>
     </div>
     <div style="background:var(--surface2);border-radius:5px;padding:12px 14px;">
       <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.5px;margin-bottom:6px;">FEES USDC</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;">2.22</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;">—</div>
       <div style="font-size:9px;color:var(--muted);">$2.22</div>
     </div>
   </div>
@@ -2880,8 +2880,8 @@ function buildProjChart() {
 
 <script>
 // ── MOEDA USD / BRL (pools) ──
-let currentCurrency = localStorage.getItem('bc-currency') || 'USD';
-let usdBrlRate = 5.33;
+window.currentCurrency = localStorage.getItem('bc-currency') || 'USD';
+window.usdBrlRate = 5.33;
 (async function fetchRate(){
   try{
     const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
