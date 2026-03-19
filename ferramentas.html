@@ -2,8 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<link rel="canonical" href="/ferramentas">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Barolo's Capital — Ferramentas</title>
+<title>Barolo Capital · Ferramentas</title>
 <script src="barolo-data.js"></script>
 </head>
 <script>
@@ -521,7 +522,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;height:50px;background:rgba(
         </div>
         <div class="field">
           <label>Tipo</label>
-          <select id="d-type">
+          <select id="d-type" onchange="toggleLendingFields(this.value)">
             <option value="pool">🟠 Pool de Liquidez</option>
             <option value="lending">🔵 Lending / Borrow</option>
             <option value="trade">🟢 Trade / Swap</option>
@@ -547,6 +548,42 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;height:50px;background:rgba(
             <input type="text" id="d-tags" placeholder="ETH, Uniswap, pool">
           </div>
         </div>
+
+        <!-- Campos extras para Lending/Borrow — aparecem só quando type=lending -->
+        <div id="lending-fields" style="display:none;background:var(--s2);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;border:1px solid var(--border);">
+          <div style="font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">Dados do Empréstimo</div>
+          <div class="two-col">
+            <div class="field">
+              <label>Protocolo</label>
+              <select id="d-proto">
+                <option value="kamino">Kamino Finance</option>
+                <option value="aave">AAVE V3</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Evento</label>
+              <select id="d-event">
+                <option value="borrow">Borrow (tomou emprestado)</option>
+                <option value="repay">Repay (pagou)</option>
+                <option value="add-collateral">Add Collateral</option>
+                <option value="remove-collateral">Remove Collateral</option>
+                <option value="open">Abriu ciclo</option>
+                <option value="close">Fechou ciclo</option>
+              </select>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="field">
+              <label>Valor ($)</label>
+              <input type="number" id="d-amount" placeholder="ex: 200.00" step="0.01">
+            </div>
+            <div class="field">
+              <label>Dívida restante após ($)</label>
+              <input type="number" id="d-debt-after" placeholder="ex: 603.41" step="0.01">
+            </div>
+          </div>
+        </div>
+
         <div style="display:flex;gap:8px;">
           <button class="btn btn-primary" onclick="saveEntry()">💾 SALVAR ENTRADA</button>
           <button class="btn btn-sm" style="background:none;border:1px solid var(--border);color:var(--muted);" onclick="clearForm()">LIMPAR</button>
@@ -1170,27 +1207,62 @@ showRule();
 // ══════════════════════════════════════════════
 //  DIARY
 // ══════════════════════════════════════════════
+function toggleLendingFields(type) {
+  const lf = document.getElementById('lending-fields');
+  if (lf) lf.style.display = type === 'lending' ? 'block' : 'none';
+}
+
 function saveEntry(){
+  const type = document.getElementById('d-type').value;
   const entry = {
     id: Date.now(),
     date: document.getElementById('d-date').value,
-    type: document.getElementById('d-type').value,
+    type: type,
     title: document.getElementById('d-title').value.trim(),
     body: document.getElementById('d-body').value.trim(),
     pnl: parseFloat(document.getElementById('d-pnl').value)||null,
     tags: document.getElementById('d-tags').value.split(',').map(t=>t.trim()).filter(Boolean)
   };
   if(!entry.title){alert('Insira um título para a entrada.'); return;}
+
+  // If lending entry, attach structured data
+  if (type === 'lending') {
+    entry.lending = {
+      proto:      document.getElementById('d-proto').value,
+      event:      document.getElementById('d-event').value,
+      amount:     parseFloat(document.getElementById('d-amount').value) || null,
+      debtAfter:  parseFloat(document.getElementById('d-debt-after').value) || null,
+    };
+  }
+
   diaryEntries.unshift(entry);
   localStorage.setItem(STORAGE_DIARY, JSON.stringify(diaryEntries));
+
+  // Dispatch event so emprestimos.html can pick it up (same-origin pages share localStorage)
+  // Also write a dedicated key for emprestimos sync
+  localStorage.setItem('bc-diary-updated', String(Date.now()));
+
   clearForm();
   renderDiary();
   updateDiaryStats();
+  if (type === 'lending') showSyncBadge();
+}
+
+function showSyncBadge() {
+  const badge = document.createElement('div');
+  badge.textContent = '✓ Entrada sincronizada com Empréstimos';
+  badge.style.cssText = 'position:fixed;bottom:48px;right:20px;background:var(--green);color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;padding:8px 14px;border-radius:3px;z-index:999;opacity:1;transition:opacity .4s;';
+  document.body.appendChild(badge);
+  setTimeout(() => { badge.style.opacity = '0'; setTimeout(() => badge.remove(), 400); }, 2500);
 }
 
 function clearForm(){
-  ['d-title','d-body','d-pnl','d-tags'].forEach(id=>document.getElementById(id).value='');
+  ['d-title','d-body','d-pnl','d-tags','d-amount','d-debt-after'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
   document.getElementById('d-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('d-type').value='pool';
+  toggleLendingFields('pool');
 }
 
 function deleteEntry(id){
@@ -1628,8 +1700,8 @@ async function scanPools() {
 
 <script>
 // ── MOEDA USD / BRL (pools) ──
-let currentCurrency = localStorage.getItem('bc-currency') || 'USD';
-let usdBrlRate = 5.33;
+window.currentCurrency = localStorage.getItem('bc-currency') || 'USD';
+window.usdBrlRate = 5.33;
 (async function fetchRate(){
   try{
     const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
