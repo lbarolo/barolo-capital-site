@@ -290,6 +290,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;height:50px;background:rgba(
 
   <!-- TABS -->
   <div class="tabs">
+    <button class="tab" onclick="switchTab('crencas')">🏛️ CRENÇAS</button>
     <button class="tab active" onclick="switchTab('liquidacao')">💧 LIQUIDAÇÃO</button>
     <button class="tab" onclick="switchTab('cenarios')">🎯 CENÁRIOS</button>
     <button class="tab" onclick="switchTab('diario')">📒 DIÁRIO DEFI</button>
@@ -301,7 +302,74 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;height:50px;background:rgba(
   <!-- ══════════════════════════════════════════════
        TAB 1 — CALCULADORA DE LIQUIDAÇÃO
   ══════════════════════════════════════════════ -->
-  <div class="panel active" id="panel-liquidacao">
+  
+<!-- ══ PAINEL: CRENÇAS ══ -->
+<div class="panel" id="panel-crencas">
+  <div class="section" style="max-width:700px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-family:var(--font-head);font-size:28px;font-weight:600;letter-spacing:.05em;color:var(--text);margin-bottom:8px;">Barolo Capital</div>
+      <div style="font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;">Cultura & Crenças</div>
+    </div>
+
+    <!-- Descrição institucional -->
+    <div style="padding:24px 28px;background:var(--s2);border-radius:var(--radius);margin-bottom:28px;border-left:3px solid var(--accent);">
+      <div style="font-size:10px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;">Descrição Institucional</div>
+      <p style="font-family:var(--font-head);font-size:17px;line-height:1.85;color:var(--text);margin-bottom:14px;">
+        A <strong style="color:var(--accent);">Barolo Capital</strong> é uma empresa independente focada na gestão estratégica de capital no mercado de criptoativos.
+      </p>
+      <p style="font-family:var(--font-head);font-size:15.5px;line-height:1.85;color:var(--muted);margin-bottom:14px;">
+        Acreditamos que riqueza não é construída com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, nossa abordagem prioriza a preservação de capital, a tomada de decisão racional e a busca por oportunidades sustentáveis.
+      </p>
+      <p style="font-family:var(--font-head);font-size:15.5px;line-height:1.85;color:var(--muted);margin-bottom:14px;">
+        Atuamos de forma seletiva, com foco em estratégias que equilibram risco e retorno, incluindo alocação em protocolos descentralizados, geração de rendimento e posicionamentos estruturados. Evitamos exposição desnecessária a movimentos especulativos e priorizamos operações que possam ser compreendidas, monitoradas e ajustadas com clareza.
+      </p>
+      <p style="font-family:var(--font-head);font-size:15.5px;line-height:1.85;color:var(--muted);margin-bottom:14px;">
+        Mais do que buscar o maior retorno possível, nosso objetivo é construir crescimento sólido ao longo do tempo, reduzindo a dependência de decisões impulsivas e criando uma base consistente de capital.
+      </p>
+      <p style="font-family:var(--font-head);font-size:16px;line-height:1.85;color:var(--text);font-style:italic;">
+        Na Barolo Capital, entendemos que o verdadeiro valor dos investimentos está na liberdade que eles proporcionam — liberdade de tempo, de escolha e de direção.
+      </p>
+    </div>
+
+    <!-- Crenças -->
+    <div style="font-size:10px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:20px;">Nossas Crenças</div>
+    <div style="font-family:var(--font-head);font-size:16px;color:var(--accent);font-weight:600;font-style:italic;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border);">
+      Riqueza real é construída com consistência, não com pressa.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--s2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;padding-top:3px;">01</span>
+        <span style="font-family:var(--font-head);font-size:16px;color:var(--text);line-height:1.6;">Não buscamos o maior ganho, buscamos o ganho sustentável</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--s2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;padding-top:3px;">02</span>
+        <span style="font-family:var(--font-head);font-size:16px;color:var(--text);line-height:1.6;">Antes de ganhar dinheiro, evitamos perder</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--s2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;padding-top:3px;">03</span>
+        <span style="font-family:var(--font-head);font-size:16px;color:var(--text);line-height:1.6;">O tempo no mercado vence o timing do mercado</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--s2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;padding-top:3px;">04</span>
+        <span style="font-family:var(--font-head);font-size:16px;color:var(--text);line-height:1.6;">Decisões boas vêm de mente calma, não de urgência</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--s2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;padding-top:3px;">05</span>
+        <span style="font-family:var(--font-head);font-size:16px;color:var(--text);line-height:1.6;">Preferimos ganhar menos com paz do que mais com caos</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--s2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;padding-top:3px;">06</span>
+        <span style="font-family:var(--font-head);font-size:16px;color:var(--text);line-height:1.6;">Se não é simples de entender, não merece capital</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;background:var(--s2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;padding-top:3px;">07</span>
+        <span style="font-family:var(--font-head);font-size:16px;color:var(--text);line-height:1.6;">O dinheiro existe para comprar tempo e liberdade</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel active" id="panel-liquidacao">
     <div class="two-col">
 
       <!-- AAVE V3 -->
@@ -1558,6 +1626,7 @@ async function scanPools() {
 }
 </script>
 
+<script>
 // ── MOEDA USD / BRL (pools) ──
 let currentCurrency = localStorage.getItem('bc-currency') || 'USD';
 let usdBrlRate = 5.33;
@@ -1601,6 +1670,6 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   });
 });
+</script>
 </body>
 </html>
-
