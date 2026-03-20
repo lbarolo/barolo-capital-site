@@ -60,7 +60,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* SECTION LABEL */
-.section-label{font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin:20px 0 10px;border-left:2px solid var(--accent);padding-left:8px;font-family:"Cormorant Garamond",serif;}
+.section-label{font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin:32px 0 16px;border-left:2px solid var(--accent);padding-left:8px;font-family:"Cormorant Garamond",serif;}
 
 /* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--card-shadow);}
@@ -439,6 +439,38 @@ nav { border-bottom: 1px solid var(--border) !important; }
 .nav-links a { padding: 0 16px !important; letter-spacing: .18em !important; }
 .nav-links { gap: 0 !important; }
 
+
+/* Section label — more breathing room from border */
+.section-label {
+  margin: 32px 0 18px !important;
+  padding: 0 0 10px 12px !important;
+  border-left: 2px solid var(--accent) !important;
+  border-bottom: none !important;
+  font-size: 9px !important;
+  letter-spacing: .32em !important;
+}
+/* Nav links — more padding so text doesn't hug the active line */
+.nav-links a {
+  padding: 0 18px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+
+/* Section label spacing fix */
+.section-label {
+  margin-top: 32px !important;
+  margin-bottom: 16px !important;
+  padding-top: 0 !important;
+}
+.container > .section-label:first-child,
+.section-label:first-of-type {
+  margin-top: 24px !important;
+}
+/* Card inner spacing */
+.card { padding: 16px 18px !important; }
+
 </style>
 </head>
 <body>
@@ -495,20 +527,18 @@ nav { border-bottom: 1px solid var(--border) !important; }
 <div class="section-label">Alocação Atual</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
 
-<!-- Allocation donut + legend side by side -->
-<div class="card" style="margin-bottom:0;padding:16px 18px;">
-  <div class="chart-title" style="margin-bottom:12px;">Alocação por Ativo</div>
-  <div style="display:flex;align-items:center;gap:16px;">
-    <!-- Donut -->
-    <div style="flex-shrink:0;">
-      <canvas id="allocChart" width="200" height="200"></canvas>
+<!-- ── ALLOCATION — donut + legend CoinGecko style ── -->
+<div class="card" style="margin-bottom:0;padding:16px 20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Coins Allocation</div>
+  <div style="display:flex;align-items:center;gap:18px;">
+    <div style="flex-shrink:0;position:relative;">
+      <canvas id="allocChart" width="180" height="180"></canvas>
     </div>
-    <!-- Legend vertical -->
-    <div id="allocLegend" style="flex:1;display:flex;flex-direction:column;gap:1px;overflow:hidden;"></div>
+    <div id="allocLegend" style="flex:1;display:flex;flex-direction:column;gap:0;min-width:0;overflow:hidden;"></div>
   </div>
 </div>
 
-<!-- Annual return same height -->
+<!-- ── ANNUAL RETURN same row ── -->
 <div class="card" style="margin-bottom:0;">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
     <div class="chart-title" style="margin-bottom:0;">Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
@@ -521,9 +551,6 @@ nav { border-bottom: 1px solid var(--border) !important; }
 </div>
 
 </div>
-
-<!-- ══ PATRIMÔNIO LÍQUIDO ══ -->
-<div class="section-label">Visão Patrimonial</div>
 <div class="hero-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
  <div>
  <div class="hero-label">◈ PATRIMÔNIO LÍQUIDO TOTAL</div>
@@ -1087,18 +1114,41 @@ function buildAllocationChart(enriched, totalVal){
   const canvas = document.getElementById('allocChart');
   if(!canvas) return;
   if(allocChartInst) allocChartInst.destroy();
-
   const isDk = isDark();
 
-  // All allocation items including stables
+  // All items including stables
   const allocItems = [
     ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
-    { ticker:'USDT', name:'USDT (AAVE)',  currentValue:1652.03, color:'#26A17B',
+    { ticker:'USDT', name:'USDT',  currentValue:1652.03, color:'#26A17B',
       logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png' },
-    { ticker:'USDS', name:'USDS (Kamino)',currentValue:300.40,  color:'#5B7DEF',
+    { ticker:'USDS', name:'USDS',  currentValue:300.40,  color:'#5B7DEF',
       logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.png' },
   ];
   const grandTotal = allocItems.reduce((s,a)=>s+a.currentValue, 0);
+
+  // Center text plugin — shows total net value
+  const centerPlugin = {
+    id:'centerText',
+    afterDraw(chart){
+      const {ctx, chartArea:{width,height,left,top}} = chart;
+      const cx = left + width/2;
+      const cy = top  + height/2;
+      ctx.save();
+      // Main value
+      const net = grandTotal;
+      const netFmt = '$' + (net >= 1000 ? (net/1000).toFixed(1)+'K' : net.toFixed(0));
+      ctx.font = 'bold 15px "JetBrains Mono", monospace';
+      ctx.fillStyle = isDk ? '#e8e0d0' : '#16110c';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(netFmt, cx, cy - 8);
+      // Sub label
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.fillStyle = isDk ? '#8a7a60' : '#7a6a50';
+      ctx.fillText('total', cx, cy + 10);
+      ctx.restore();
+    }
+  };
 
   allocChartInst = new Chart(canvas, {
     type:'doughnut',
@@ -1108,12 +1158,12 @@ function buildAllocationChart(enriched, totalVal){
         data: allocItems.map(a=>a.currentValue),
         backgroundColor: allocItems.map(a=>a.color),
         borderColor: isDk ? '#1e1e28' : '#faf6ef',
-        borderWidth: 2,
-        hoverOffset: 8,
+        borderWidth: 2.5,
+        hoverOffset: 10,
       }]
     },
     options:{
-      cutout:'68%',
+      cutout:'72%',
       responsive: false,
       plugins:{
         legend:{ display:false },
@@ -1126,33 +1176,29 @@ function buildAllocationChart(enriched, totalVal){
           },
           backgroundColor: isDk?'rgba(30,30,40,.95)':'rgba(250,246,239,.97)',
           borderColor: isDk?'rgba(201,160,80,.3)':'rgba(138,104,32,.2)',
-          borderWidth:1,
-          titleColor:isDk?'#e8e0d0':'#16110c',
-          bodyColor:isDk?'#8a7a60':'#7a6a50',
-          padding:10,
+          borderWidth:1, titleColor:isDk?'#e8e0d0':'#16110c',
+          bodyColor:isDk?'#8a7a60':'#7a6a50', padding:10,
         }
       }
-    }
+    },
+    plugins:[centerPlugin]
   });
 
-  // Build legend — token info RIGHT of chart, each row: logo + ticker + name + % bar + pct
+  // Legend — CoinGecko style: colored dot + logo + ticker + %
   const leg = document.getElementById('allocLegend');
   if(!leg) return;
   leg.innerHTML = allocItems.map(a => {
-    const pct  = (a.currentValue / grandTotal * 100).toFixed(1);
-    const barW = Math.min(parseFloat(pct) / 60 * 100, 100); // scale bar (ETH ~54% = full)
+    const pct = (a.currentValue / grandTotal * 100).toFixed(1);
     const logoHtml = a.logo
-      ? `<img src="${a.logo}" width="16" height="16" style="border-radius:50%;flex-shrink:0;background:rgba(128,128,128,.1);" onerror="this.style.display='none'">`
-      : `<div style="width:16px;height:16px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>`;
+      ? `<img src="${a.logo}" width="14" height="14" style="border-radius:50%;flex-shrink:0;" onerror="this.style.display='none'">`
+      : '';
     return `
-      <div style="display:flex;align-items:center;gap:7px;padding:3px 0;min-width:0;">
-        <div style="width:7px;height:7px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
+      <div style="display:flex;align-items:center;gap:6px;padding:2.5px 0;cursor:default;"
+           onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+        <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
         ${logoHtml}
-        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;color:var(--text);min-width:34px;flex-shrink:0;">${a.ticker}</span>
-        <div style="flex:1;height:3px;background:var(--border);border-radius:0;overflow:hidden;">
-          <div style="height:100%;width:${barW}%;background:${a.color};"></div>
-        </div>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);min-width:36px;text-align:right;flex-shrink:0;">${pct}%</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.ticker}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;color:var(--muted);min-width:38px;text-align:right;">${pct}%</span>
       </div>`;
   }).join('');
 }
