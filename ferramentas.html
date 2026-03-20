@@ -414,6 +414,38 @@ nav { border-bottom: 1px solid var(--border) !important; }
 .nav-links a { padding: 0 16px !important; letter-spacing: .18em !important; }
 .nav-links { gap: 0 !important; }
 
+
+/* Section label — more breathing room from border */
+.section-label {
+  margin: 32px 0 18px !important;
+  padding: 0 0 10px 12px !important;
+  border-left: 2px solid var(--accent) !important;
+  border-bottom: none !important;
+  font-size: 9px !important;
+  letter-spacing: .32em !important;
+}
+/* Nav links — more padding so text doesn't hug the active line */
+.nav-links a {
+  padding: 0 18px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+
+/* Section label spacing fix */
+.section-label {
+  margin-top: 32px !important;
+  margin-bottom: 16px !important;
+  padding-top: 0 !important;
+}
+.container > .section-label:first-child,
+.section-label:first-of-type {
+  margin-top: 24px !important;
+}
+/* Card inner spacing */
+.card { padding: 16px 18px !important; }
+
 </style>
 </head>
 <body>
