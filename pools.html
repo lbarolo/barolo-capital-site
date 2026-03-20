@@ -604,7 +604,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 })();
 
 // ── SHARED PRICE UTILS ──
-const _priceCache = {};
+var _priceCache = {};
 
 function fetchTimeout(url, opts, ms) {
  opts = opts || {};
@@ -845,9 +845,9 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
 (async function fetchKaminoData() {
  const USER_WALLET = 'xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK'; // Solana wallet
  const MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'; // Main Market
- const USDS_QTY   = 300.39;
+ const USDS_QTY   = 300.40;
  // Fixed position — only update if you change the position manually
- const FIXED = { solQty: 19.35, debtUsd: 803.41, liqThreshold: 0.7574, currentLtv: 0.4385 };
+ const FIXED = { solQty: 19.33, debtUsd: 804.01, liqThreshold: 0.7722, currentLtv: 0.3964 };
 
  const $ = id => document.getElementById(id);
  const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -902,7 +902,8 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
  const netVal = supplied - debtUsd;
  const ltvPct = currentLtv * 100;
  const liqPct = liqThreshold * 100;
- const liqPrice = debtUsd / (solQty * liqThreshold);
+ const USDS_COVER = 300.40 * 0.90;
+    const liqPrice = Math.max((debtUsd - USDS_COVER) / (solQty * liqThreshold), 0);
  const buffer = solPrice - liqPrice;
  const bufPct = (buffer / solPrice * 100).toFixed(1);
  const danger = liqPrice > solPrice * 0.6;
@@ -960,14 +961,14 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
 
 // ── META 5% ──
 setTimeout(function() {
- var STABLES = 1952.42;
+ var STABLES = 1952.43;
  var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
  var QTYS = {ethereum:2.084106,solana:19.31226576,cardano:375.245,'radiant-capital':7290.46,
  eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 803.41);
+ var debt = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 804.01);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -985,7 +986,7 @@ setTimeout(function() {
 }, 1500);
 
 // ── LP REF TOGGLE ──
-const REFS = {
+var REFS = {
  usd: {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',pos:true},
  eth: {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',pos:true},
  hold: {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',pos:true}
@@ -1453,7 +1454,7 @@ nav { border-bottom: 1px solid var(--border) !important; }
  </table>
  <div style="margin-top:10px;padding:8px 10px;background:var(--surface2);border-radius:4px;font-size:9px;color:var(--muted);line-height:1.7;">
  <span style="color:var(--accent);font-weight:600;">AAVE V3:</span> Colateral = 1.87 ETH + 1,652 USDT · Dívida = $746 USDC<br>
- <span style="color:var(--accent);font-weight:600;">Kamino:</span> Colateral = 19.35 SOL + 90 USDS · Dívida = $803 USDC<br>
+ <span style="color:var(--accent);font-weight:600;">Kamino:</span> Colateral = 19.33 SOL + 90 USDS · Dívida = $803 USDC<br>
  <span style="color:var(--muted);">Total bloqueado como colateral: </span><span id="totalCollateralUsd" style="color:var(--text);font-family:'JetBrains Mono',monospace;">$7,141</span>
  </div>
  </div>
@@ -1633,6 +1634,8 @@ nav { border-bottom: 1px solid var(--border) !important; }
 
 <script>
 
+//
+
 // ── Load Chart.js + Date Adapter (global scope) ──
 function loadChartJs(cb) {
  if (window.Chart && window._chartDateAdapterLoaded) { cb(); return; }
@@ -1649,13 +1652,13 @@ function loadChartJs(cb) {
 }
 
 // ── Colors ──
-const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
-const gc = { green:'#4a7c3f', red:'#b94040', gold:'#8a6820', muted:'#888', blue:'#3a7ec8' };
-const gridColor = () => isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-const textColor = () => isDark() ? '#c9b99a' : '#4a3520';
+var isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+var gc = { green:'#4a7c3f', red:'#b94040', gold:'#8a6820', muted:'#888', blue:'#3a7ec8' };
+var gridColor = () => isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+var textColor = () => isDark() ? '#c9b99a' : '#4a3520';
 
 // ── POOL DATA ──
-const POOLS = [
+var POOLS = [
  // LVR = IL / fees — custo de adversidade por $ de taxa (0 = perfeito, >1 = IL comeu mais do que taxas)
  // FCR = (fees / capital) * (365 / days) — Fee Capture Rate anualizado em %
  // invGrowth = (result / capital) * 100 — Crescimento do inventário vs capital inicial
@@ -1710,9 +1713,9 @@ const POOLS = [
 ];
 
 // ── CHART STATE ──
-const charts = {};
-const chartTypes = { pnl:'bar', fees:'bar', timeline:'bar', apr:'bar', recent:'bar', net:'bar' };
-let recentPeriod = '1d';
+var charts = {};
+var chartTypes = { pnl:'bar', fees:'bar', timeline:'bar', apr:'bar', recent:'bar', net:'bar' };
+var recentPeriod = '1d';
 
 // ── RECENT POOL DATA (estimated daily fees for active WETH/USDC position) ──
 // Simulated based on capital $347 and ~65% APR range
@@ -1764,7 +1767,7 @@ function genRecentData(period) {
 
 // ── BUILD TABLE ──
 // ── TOKEN LOGOS ──
-const TOKEN_LOGOS = {
+var TOKEN_LOGOS = {
  ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
  WETH: 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
  BTC: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
@@ -2640,8 +2643,8 @@ loadChartJs(function() {
 // ══════════════════════════════════════════════════════════
 // CHART: PROJEÇÃO DE RENDA PASSIVA
 // ══════════════════════════════════════════════════════════
-let projChartInst = null;
-let projView = 'monthly';
+var projChartInst = null;
+var projView = 'monthly';
 
 function setProjView(mode, btn) {
  projView = mode;
@@ -2781,7 +2784,7 @@ function buildProjChart() {
 
 }); // end loadChartJs
 
-</script>
+ript>
 
 
 <script>
@@ -3418,12 +3421,12 @@ document.addEventListener('DOMContentLoaded',function(){
 
  // Fallback: use static values
  console.warn('[Kamino] API returned no data, using static fallback');
- window._liveKaminoDebt = window._liveKaminoDebt || 803.41;
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.01;
  window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
  return null;
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 803.41;
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.01;
  return null;
  }
  }
@@ -3445,8 +3448,8 @@ document.addEventListener('DOMContentLoaded',function(){
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
- const STABLES = 1952.42; // USDT AAVE + USDS — atualizar com prints
- const DEBT = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 803.41);
+ const STABLES = 1952.43; // USDT AAVE + USDS — atualizar com prints
+ const DEBT = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 804.01);
  const solExtra = Math.max((window._liveKaminoSol||19.35) - 19.31226576, 0) * (solPrice||87.28);
  const total = spot + STABLES + solExtra - DEBT;
  window._livePatrimonio = total;
@@ -3717,6 +3720,7 @@ function toggleLang() {
   applyLang(saved);
 })();
 
+</script>
 </script>
 </body>
 </html>
