@@ -494,26 +494,32 @@ nav { border-bottom: 1px solid var(--border) !important; }
 <!-- ══ ALOCAÇÃO ATUAL (topo) ══ -->
 <div class="section-label">Alocação Atual</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-<div class="card" style="margin-bottom:0;padding:14px 16px;">
- <div class="chart-title" style="margin-bottom:10px;">Alocação por Ativo</div>
- <div class="alloc-wrap" style="gap:12px;align-items:center;">
- <div style="flex-shrink:0;">
- <canvas id="allocChart" width="180" height="180"></canvas>
- </div>
- <div class="alloc-legend" id="allocLegend" style="display:flex;flex-direction:column;gap:3px;align-content:start;font-size:10px;"></div>
- </div>
+
+<!-- Allocation donut + legend side by side -->
+<div class="card" style="margin-bottom:0;padding:16px 18px;">
+  <div class="chart-title" style="margin-bottom:12px;">Alocação por Ativo</div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <!-- Donut -->
+    <div style="flex-shrink:0;">
+      <canvas id="allocChart" width="200" height="200"></canvas>
+    </div>
+    <!-- Legend vertical -->
+    <div id="allocLegend" style="flex:1;display:flex;flex-direction:column;gap:1px;overflow:hidden;"></div>
+  </div>
 </div>
-<!-- ══ RETORNO ANUAL (moved here, same row) ══ -->
+
+<!-- Annual return same height -->
 <div class="card" style="margin-bottom:0;">
- <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
- <div class="chart-title" style="margin-bottom:0;">Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
- <div style="display:flex;gap:4px;">
- <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">▌ Barras</button>
- <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">∿ Linha</button>
- </div>
- </div>
- <canvas id="annualReturn" style="max-height:200px;"></canvas>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+    <div class="chart-title" style="margin-bottom:0;">Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
+    <div style="display:flex;gap:4px;">
+      <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">Barras</button>
+      <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">Linha</button>
+    </div>
+  </div>
+  <canvas id="annualReturn" style="max-height:200px;"></canvas>
 </div>
+
 </div>
 
 <!-- ══ PATRIMÔNIO LÍQUIDO ══ -->
@@ -835,15 +841,15 @@ var WEEKLY_UPDATE = {
 // ══════════════════════════════════════════════════════════════════
 
 var PORTFOLIO_DATA = [
- { cgId:'ethereum', ticker:'ETH', name:'Ethereum', qty:2.084106, invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
- { cgId:'solana', ticker:'SOL', name:'Solana', qty:19.31226576, invested:2201.68, avgCost:146.97, color:'#D98B3A', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
- { cgId:'cardano', ticker:'ADA', name:'Cardano', qty:375.245, invested:530.95, avgCost:1.31, color:'#E8C53D', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
- { cgId:'radiant-capital', ticker:'RDNT', name:'Radiant', qty:7290.46, invested:0, avgCost:null, color:'#00E5FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
- { cgId:'eigenlayer', ticker:'EIGEN', name:'EigenLayer', qty:153.36298802, invested:45.87, avgCost:0.2991, color:'#9370DB', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
- { cgId:'matic-network', ticker:'POL', name:'POL', qty:218, invested:143.88, avgCost:0.66, color:'#8247E5', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
- { cgId:'zksync', ticker:'ZK', name:'ZKsync', qty:876, invested:0, avgCost:null, color:'#D45B8E', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
- { cgId:'xai-blockchain', ticker:'XAI', name:'Xai', qty:692.86, invested:164.52, avgCost:0.2375, color:'#FF6B35', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
- { cgId:'zetachain', ticker:'ZETA', name:'ZetaChain', qty:51.1434, invested:0, avgCost:null, color:'#C8A87C', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
+ { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.084106,      invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
+ { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:19.31226576,   invested:2201.68, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
+ { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
+ { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
+ { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
+ { cgId:'matic-network', ticker:'POL',  name:'POL',       qty:218,           invested:143.88,  avgCost:0.66,    color:'#A855F7', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
+ { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
+ { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
+ { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
  // USDT e USDS removidos do PORTFOLIO_DATA — somados via STABLES_USD para evitar dupla contagem
  // USDT $1.652,03 (supply AAVE) + USDS $300,40 (supply Kamino) = $1.742,07 em STABLES_USD
 ];
@@ -1078,72 +1084,77 @@ function genSpark(price, change24h){
 // ALLOCATION CHART (CoinGecko style)
 // ──────────────────────────────────────────────────
 function buildAllocationChart(enriched, totalVal){
- const canvas = document.getElementById('allocChart');
- if(!canvas) return;
- if(allocChartInst) allocChartInst.destroy();
+  const canvas = document.getElementById('allocChart');
+  if(!canvas) return;
+  if(allocChartInst) allocChartInst.destroy();
 
- const isDk = isDark();
+  const isDk = isDark();
 
- // Add stables to the allocation (USDT in AAVE + USDS in Kamino)
- const STABLES_VAL = window.currentCurrency === 'BRL'
- ? STABLES_USD * (window.usdBrlRate || 5.33)
- : STABLES_USD;
+  // All allocation items including stables
+  const allocItems = [
+    ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
+    { ticker:'USDT', name:'USDT (AAVE)',  currentValue:1652.03, color:'#26A17B',
+      logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png' },
+    { ticker:'USDS', name:'USDS (Kamino)',currentValue:300.40,  color:'#5B7DEF',
+      logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.png' },
+  ];
+  const grandTotal = allocItems.reduce((s,a)=>s+a.currentValue, 0);
 
- // Build alloc data including stables
- const allocItems = [
- ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
- { ticker:'USDT', name:'USDT (AAVE)', currentValue: 1652.03, color:'#26A17B', logo:'https://assets.coingecko.com/coins/images/325/small/Tether.png', isStable:true },
- { ticker:'USDS', name:'USDS (Kamino)', currentValue: 90.04, color:'#1da1f2', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.png', isStable:true },
- ];
- const grandTotal = allocItems.reduce((s,a)=>s+a.currentValue, 0);
+  allocChartInst = new Chart(canvas, {
+    type:'doughnut',
+    data:{
+      labels: allocItems.map(a=>a.ticker),
+      datasets:[{
+        data: allocItems.map(a=>a.currentValue),
+        backgroundColor: allocItems.map(a=>a.color),
+        borderColor: isDk ? '#1e1e28' : '#faf6ef',
+        borderWidth: 2,
+        hoverOffset: 8,
+      }]
+    },
+    options:{
+      cutout:'68%',
+      responsive: false,
+      plugins:{
+        legend:{ display:false },
+        tooltip:{
+          callbacks:{
+            label: ctx => {
+              const pct = (ctx.raw/grandTotal*100).toFixed(1);
+              return ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
+            }
+          },
+          backgroundColor: isDk?'rgba(30,30,40,.95)':'rgba(250,246,239,.97)',
+          borderColor: isDk?'rgba(201,160,80,.3)':'rgba(138,104,32,.2)',
+          borderWidth:1,
+          titleColor:isDk?'#e8e0d0':'#16110c',
+          bodyColor:isDk?'#8a7a60':'#7a6a50',
+          padding:10,
+        }
+      }
+    }
+  });
 
- allocChartInst = new Chart(canvas,{
- type:'doughnut',
- data:{
- labels: allocItems.map(a=>a.ticker),
- datasets:[{
- data: allocItems.map(a=>a.currentValue),
- backgroundColor: allocItems.map(a=>a.color),
- borderColor: isDk ? 'rgba(30,30,40,.8)' : 'rgba(242,236,224,.9)',
- borderWidth: 2,
- hoverOffset: 6,
- }]
- },
- options:{
- cutout:'65%',
- responsive:false,
- plugins:{
- legend:{display:false},
- tooltip:{
- callbacks:{
- label: ctx => {
- const pct = (ctx.raw/grandTotal*100).toFixed(1);
- return ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
- }
- },
- backgroundColor: isDk?'rgba(30,30,40,.95)':'rgba(250,246,239,.97)',
- borderColor: isDk?'rgba(201,160,80,.3)':'rgba(138,104,32,.2)',
- borderWidth:1,
- titleColor:isDk?'#e8e0d0':'#16110c',
- bodyColor:isDk?'#8a7a60':'#7a6a50',
- padding:10,
- }
- }
- }
- });
-
- // Legend
- const leg = document.getElementById('allocLegend');
- if(!leg) return;
- leg.innerHTML = allocItems.map(a=>{
- const pct = (a.currentValue/grandTotal*100).toFixed(1);
- return `<div style="display:flex;align-items:center;gap:7px;padding:2px 0;">
- <div style="width:7px;height:7px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
- <img src="${a.logo||''}" width="14" height="14" style="border-radius:50%;flex-shrink:0;" onerror="this.style.display='none'">
- <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;">${a.ticker}</span>
- <span style="margin-left:auto;font-size:9px;color:var(--muted);flex-shrink:0;">${pct}%</span>
- </div>`;
- }).join('');
+  // Build legend — token info RIGHT of chart, each row: logo + ticker + name + % bar + pct
+  const leg = document.getElementById('allocLegend');
+  if(!leg) return;
+  leg.innerHTML = allocItems.map(a => {
+    const pct  = (a.currentValue / grandTotal * 100).toFixed(1);
+    const barW = Math.min(parseFloat(pct) / 60 * 100, 100); // scale bar (ETH ~54% = full)
+    const logoHtml = a.logo
+      ? `<img src="${a.logo}" width="16" height="16" style="border-radius:50%;flex-shrink:0;background:rgba(128,128,128,.1);" onerror="this.style.display='none'">`
+      : `<div style="width:16px;height:16px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>`;
+    return `
+      <div style="display:flex;align-items:center;gap:7px;padding:3px 0;min-width:0;">
+        <div style="width:7px;height:7px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
+        ${logoHtml}
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;color:var(--text);min-width:34px;flex-shrink:0;">${a.ticker}</span>
+        <div style="flex:1;height:3px;background:var(--border);border-radius:0;overflow:hidden;">
+          <div style="height:100%;width:${barW}%;background:${a.color};"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);min-width:36px;text-align:right;flex-shrink:0;">${pct}%</span>
+      </div>`;
+  }).join('');
 }
 
 // ──────────────────────────────────────────────────
@@ -2008,13 +2019,13 @@ function buildRiskBubble() {
 
  // {x=vol est., y=ROI atual %, r=bubble radius (peso%), label, color}
  const bubbles = [
- { x:0.55, y: -49.7, r:18, label:'ETH', color:'#E8773D' },
- { x:0.70, y: -32.0, r:14, label:'SOL', color:'#D98B3A' },
- { x:0.80, y: -20.6, r: 5, label:'ADA', color:'#E8C53D' },
+ { x:0.55, y: -49.7, r:18, label:'ETH', color:'#F5A623' },
+ { x:0.70, y: -32.0, r:14, label:'SOL', color:'#9945FF' },
+ { x:0.80, y: -20.6, r: 5, label:'ADA', color:'#0033AD' },
  { x:1.80, y: 9999, r: 4, label:'RDNT',color:'#00E5FF' }, // airdrop, no cost
  { x:1.20, y: -32.7, r: 3, label:'EIGEN',color:'#9370DB' },
  { x:1.50, y: -83.5, r: 2, label:'POL', color:'#8247E5' },
- { x:2.20, y: 9999, r: 2, label:'ZK', color:'#D45B8E' }, // airdrop
+ { x:2.20, y: 9999, r: 2, label:'ZK', color:'#1B55F5' }, // airdrop
  { x:2.50, y: -95.9, r: 2, label:'XAI', color:'#FF6B35' },
  { x:0.00, y: 0.1, r:15, label:'USDT',color:'#26A17B' },
  { x:0.00, y: 0.1, r: 1, label:'USDS',color:'#1DA1F2' },
