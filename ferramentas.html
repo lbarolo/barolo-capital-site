@@ -409,6 +409,11 @@ nav { border-bottom: 1px solid var(--border) !important; }
   text-transform: uppercase !important;
 }
 
+
+/* Nav link spacing fix */
+.nav-links a { padding: 0 16px !important; letter-spacing: .18em !important; }
+.nav-links { gap: 0 !important; }
+
 </style>
 </head>
 <body>
@@ -762,6 +767,7 @@ nav { border-bottom: 1px solid var(--border) !important; }
 
  <div style="display:flex;gap:8px;">
  <button class="btn btn-primary" onclick="saveEntry()">Salvar entrada</button>
+          <button class="btn" onclick="clearAllDiary()" style="color:var(--red);border-color:var(--red);" title="Apagar todas as entradas do diário">Limpar histórico</button>
  <button class="btn btn-sm" style="background:none;border:1px solid var(--border);color:var(--muted);" onclick="clearForm()">Limpar</button>
  </div>
  </div>
@@ -1071,18 +1077,18 @@ nav { border-bottom: 1px solid var(--border) !important; }
 // ══════════════════════════════════════════════
 // STATE & STORAGE
 // ══════════════════════════════════════════════
-const STORAGE_DIARY = 'bc-diary-v2';
-const STORAGE_SNAP = 'bc-snapshots-v2';
-const STORAGE_ALERTS= 'bc-alerts-v2';
-const STORAGE_ALOG = 'bc-alert-log-v2';
+var STORAGE_DIARY = 'bc-diary-v2';
+var STORAGE_SNAP = 'bc-snapshots-v2';
+var STORAGE_ALERTS= 'bc-alerts-v2';
+var STORAGE_ALOG = 'bc-alert-log-v2';
 
-let diaryEntries = JSON.parse(localStorage.getItem(STORAGE_DIARY)||'[]');
-let snapshots = JSON.parse(localStorage.getItem(STORAGE_SNAP)||'[]');
-let alertLog = JSON.parse(localStorage.getItem(STORAGE_ALOG)||'[]');
-let currentDiaryFilter = 'all';
-let evoChart = null;
-let currentEvoView = 'all';
-let liveETH = 1936.22, liveSOL = 83.43, liveETH24h = 0, liveSOL24h = 0;
+var diaryEntries = JSON.parse(localStorage.getItem(STORAGE_DIARY)||'[]');
+var snapshots = JSON.parse(localStorage.getItem(STORAGE_SNAP)||'[]');
+var alertLog = JSON.parse(localStorage.getItem(STORAGE_ALOG)||'[]');
+var currentDiaryFilter = 'all';
+var evoChart = null;
+var currentEvoView = 'all';
+var liveETH = 1936.22, liveSOL = 83.43, liveETH24h = 0, liveSOL24h = 0;
 
 // ══════════════════════════════════════════════
 // THEME + DATE
@@ -1093,7 +1099,7 @@ function toggleTheme(){
  localStorage.setItem('bc-theme',h.getAttribute('data-theme'));
  if(evoChart) renderEvoChart();
 }
-const savedTheme=localStorage.getItem('bc-theme');
+var savedTheme=localStorage.getItem('bc-theme');
 if(savedTheme) document.documentElement.setAttribute('data-theme',savedTheme);
 
 document.getElementById('today-date').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
@@ -1256,7 +1262,7 @@ function calcUni(){
 // SCENARIO SIMULATOR
 // ══════════════════════════════════════════════
 // Portfolio base values
-const BASE = {
+var BASE = {
  ethQty:2.084106, solQty:19.28+0.13059,
  ethPrice:1936.22, solPrice:83.43,
  altVal:150, // ADA+RDNT+ZK+etc rough
@@ -1338,7 +1344,7 @@ function calcScenario(){
 // ══════════════════════════════════════════════
 // DEFI RULES
 // ══════════════════════════════════════════════
-const DEFI_RULES = [
+var DEFI_RULES = [
  "Projetos com cultos podem ser extremamente lucrativos. Basta sair do foguete antes que ele inevitavelmente caia.",
  "Não vale a pena bloquear tokens para obter rendimento adicional. Nada pior do que estar amarrado a uma pia que está afundando.",
  "Proteja sua atenção a todo custo. Você já tem tempo e energia limitados, não os desperdice acompanhando o último drama da criptografia.",
@@ -1371,7 +1377,7 @@ const DEFI_RULES = [
  "TVL não mede atividade da rede. Sempre combine métricas de Stock (TVL) com métricas de Flow (fees, volume).",
  "Um protocolo com crescimento constante por 6 meses equivale a uma empresa com 6 trimestres de melhoria nos lucros."
 ];
-let currentRuleIdx = new Date().getDate() % DEFI_RULES.length;
+var currentRuleIdx = new Date().getDate() % DEFI_RULES.length;
 
 function showRule(){
  document.getElementById('rule-text').textContent = DEFI_RULES[currentRuleIdx];
@@ -1386,6 +1392,20 @@ showRule();
 function toggleLendingFields(type) {
  const lf = document.getElementById('lending-fields');
  if (lf) lf.style.display = type === 'lending' ? 'block' : 'none';
+}
+
+function clearAllDiary(){
+  if(!confirm('Tem certeza? Isso vai apagar TODAS as entradas do Diário DeFi. Esta ação não pode ser desfeita.')) return;
+  diaryEntries = [];
+  localStorage.setItem('bc-diary-v2', JSON.stringify([]));
+  localStorage.setItem('bc-diary-updated', String(Date.now()));
+  renderDiary();
+  updateDiaryStats();
+  const badge = document.createElement('div');
+  badge.textContent = 'Histórico apagado';
+  badge.style.cssText = 'position:fixed;bottom:48px;right:20px;background:var(--red);color:#fff;font-size:10px;padding:8px 14px;z-index:999;opacity:1;transition:opacity .4s;';
+  document.body.appendChild(badge);
+  setTimeout(()=>{badge.style.opacity='0';setTimeout(()=>badge.remove(),400);},2000);
 }
 
 function saveEntry(){
@@ -1739,7 +1759,7 @@ setInterval(()=>checkAlerts(false), 5*60*1000);
 // ══════════════════════════════════════════════
 // APY SCANNER — Uniswap Subgraph
 // ══════════════════════════════════════════════
-const POOL_TARGETS = [
+var POOL_TARGETS = [
  // Ethereum Uniswap V3
  { pair:'WETH/USDC', network:'Ethereum', protocol:'Uniswap V3', fee:'0.05%', id:'0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640', subgraph:'ethereum' },
  { pair:'WETH/USDC', network:'Ethereum', protocol:'Uniswap V3', fee:'0.30%', id:'0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8', subgraph:'ethereum' },
@@ -1752,7 +1772,7 @@ const POOL_TARGETS = [
  { pair:'WETH/USDT', network:'Arbitrum', protocol:'Uniswap V3', fee:'0.05%', id:'0x641c00a822e8b671738d32a431a4fb6074e5c79d', subgraph:'arbitrum' },
 ];
 
-const SUBGRAPH_URLS = {
+var SUBGRAPH_URLS = {
  ethereum: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
  base: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3-base',
  arbitrum: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3-arbitrum',
@@ -1797,8 +1817,8 @@ function aprColor(apr) {
  return 'var(--muted)';
 }
 
-const NET_COLORS = { Ethereum:'#627EEA', Base:'#0052FF', Arbitrum:'#12AAFF' };
-const PROTO_COLORS = { 'Uniswap V3':'#FF007A', 'Uniswap V4':'#8b5cf6' };
+var NET_COLORS = { Ethereum:'#627EEA', Base:'#0052FF', Arbitrum:'#12AAFF' };
+var PROTO_COLORS = { 'Uniswap V3':'#FF007A', 'Uniswap V4':'#8b5cf6' };
 
 async function scanPools() {
  const pairs = {
