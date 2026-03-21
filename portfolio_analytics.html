@@ -60,7 +60,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* SECTION LABEL */
-.section-label{font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin:32px 0 16px;border-left:2px solid var(--accent);padding-left:8px;font-family:"Cormorant Garamond",serif;}
+.section-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:36px 0 20px;padding:0 0 12px 14px;border-left:2px solid var(--accent);font-weight:400;}
 
 /* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--card-shadow);}
@@ -513,7 +513,7 @@ nav { border-bottom: 1px solid var(--border) !important; }
     <button class="btn-sm lang-btn" onclick="toggleLang()" id="langBtn" title="Switch language">PT</button>
  <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
  <span id="brlRateBadge" style="display:none;font-size:8px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;">R$ 5.33</span>
- <button class="btn-sm" onclick="toggleTheme()">◑ Tema</button>
+ <button class="btn-sm" onclick="toggleTheme()">☾</button>
  <button class="btn-sm" onclick="toggleHide()" id="hideBtn">◎ Ocultar</button>
  <button class="btn-sm primary" onclick="window.print()">↓ PDF</button>
  <button class="btn-sm" onclick="window.baroloRefresh && window.baroloRefresh()" title="Atualizar dados on-chain">⟳ Live</button>
@@ -527,28 +527,28 @@ nav { border-bottom: 1px solid var(--border) !important; }
 <div class="section-label">Alocação Atual</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
 
-<!-- ── ALLOCATION — donut + legend CoinGecko style ── -->
-<div class="card" style="margin-bottom:0;padding:16px 20px;">
-  <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Coins Allocation</div>
-  <div style="display:flex;align-items:center;gap:18px;">
-    <div style="flex-shrink:0;position:relative;">
-      <canvas id="allocChart" width="180" height="180"></canvas>
+  <!-- Allocation donut — CoinGecko style -->
+  <div class="card" style="margin-bottom:0;padding:18px 20px;">
+    <div class="chart-title" style="margin-bottom:16px;">Alocação por Ativo</div>
+    <div style="display:flex;align-items:center;gap:18px;">
+      <div style="flex-shrink:0;">
+        <canvas id="allocChart" width="160" height="160" style="display:block;"></canvas>
+      </div>
+      <div id="allocLegend" style="flex:1;min-width:0;"></div>
     </div>
-    <div id="allocLegend" style="flex:1;display:flex;flex-direction:column;gap:0;min-width:0;overflow:hidden;"></div>
   </div>
-</div>
 
-<!-- ── ANNUAL RETURN same row ── -->
-<div class="card" style="margin-bottom:0;">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-    <div class="chart-title" style="margin-bottom:0;">Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
-    <div style="display:flex;gap:4px;">
-      <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">Barras</button>
-      <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">Linha</button>
+  <!-- Annual return -->
+  <div class="card" style="margin-bottom:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <div class="chart-title" style="margin-bottom:0;">Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
+      <div style="display:flex;gap:4px;">
+        <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">Barras</button>
+        <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">Linha</button>
+      </div>
     </div>
+    <canvas id="annualReturn" style="max-height:200px;"></canvas>
   </div>
-  <canvas id="annualReturn" style="max-height:200px;"></canvas>
-</div>
 
 </div>
 <div class="hero-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
@@ -1114,92 +1114,63 @@ function buildAllocationChart(enriched, totalVal){
   const canvas = document.getElementById('allocChart');
   if(!canvas) return;
   if(allocChartInst) allocChartInst.destroy();
-  const isDk = isDark();
 
-  // All items including stables
-  const allocItems = [
+  const dk = isDark();
+
+  // Build items sorted by value, include stables
+  const items = [
     ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
-    { ticker:'USDT', name:'USDT',  currentValue:1652.03, color:'#26A17B',
-      logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png' },
-    { ticker:'USDS', name:'USDS',  currentValue:300.40,  color:'#5B7DEF',
-      logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.png' },
+    { ticker:'USDT', name:'USDT', currentValue:1652.03, color:'#26A17B' },
+    { ticker:'USDS', name:'USDS', currentValue:300.40,  color:'#5B8EF0' },
   ];
-  const grandTotal = allocItems.reduce((s,a)=>s+a.currentValue, 0);
+  const total = items.reduce((s,a)=>s+a.currentValue, 0);
 
-  // Center text plugin — shows total net value
-  const centerPlugin = {
-    id:'centerText',
-    afterDraw(chart){
-      const {ctx, chartArea:{width,height,left,top}} = chart;
-      const cx = left + width/2;
-      const cy = top  + height/2;
-      ctx.save();
-      // Main value
-      const net = grandTotal;
-      const netFmt = '$' + (net >= 1000 ? (net/1000).toFixed(1)+'K' : net.toFixed(0));
-      ctx.font = 'bold 15px "JetBrains Mono", monospace';
-      ctx.fillStyle = isDk ? '#e8e0d0' : '#16110c';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(netFmt, cx, cy - 8);
-      // Sub label
-      ctx.font = '10px "JetBrains Mono", monospace';
-      ctx.fillStyle = isDk ? '#8a7a60' : '#7a6a50';
-      ctx.fillText('total', cx, cy + 10);
-      ctx.restore();
-    }
-  };
-
+  // Chart
   allocChartInst = new Chart(canvas, {
-    type:'doughnut',
-    data:{
-      labels: allocItems.map(a=>a.ticker),
+    type: 'doughnut',
+    data: {
+      labels: items.map(a=>a.ticker),
       datasets:[{
-        data: allocItems.map(a=>a.currentValue),
-        backgroundColor: allocItems.map(a=>a.color),
-        borderColor: isDk ? '#1e1e28' : '#faf6ef',
-        borderWidth: 2.5,
-        hoverOffset: 10,
+        data: items.map(a=>a.currentValue),
+        backgroundColor: items.map(a=>a.color),
+        borderColor: dk ? '#1a1a24' : '#f5f0e8',
+        borderWidth: 2,
+        hoverOffset: 8,
       }]
     },
     options:{
-      cutout:'72%',
       responsive: false,
+      maintainAspectRatio: false,
+      cutout: '66%',
       plugins:{
         legend:{ display:false },
         tooltip:{
           callbacks:{
             label: ctx => {
-              const pct = (ctx.raw/grandTotal*100).toFixed(1);
+              const pct = (ctx.raw/total*100).toFixed(1);
               return ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
             }
           },
-          backgroundColor: isDk?'rgba(30,30,40,.95)':'rgba(250,246,239,.97)',
-          borderColor: isDk?'rgba(201,160,80,.3)':'rgba(138,104,32,.2)',
-          borderWidth:1, titleColor:isDk?'#e8e0d0':'#16110c',
-          bodyColor:isDk?'#8a7a60':'#7a6a50', padding:10,
+          backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+          borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+          borderWidth:1, padding:10,
+          titleColor:dk?'#e8e0d0':'#16110c',
+          bodyColor:dk?'#8a7a60':'#7a6a50',
         }
       }
-    },
-    plugins:[centerPlugin]
+    }
   });
 
-  // Legend — CoinGecko style: colored dot + logo + ticker + %
+  // Legend — CoinGecko style: dot · name (flex-1) · bold%
   const leg = document.getElementById('allocLegend');
   if(!leg) return;
-  leg.innerHTML = allocItems.map(a => {
-    const pct = (a.currentValue / grandTotal * 100).toFixed(1);
-    const logoHtml = a.logo
-      ? `<img src="${a.logo}" width="14" height="14" style="border-radius:50%;flex-shrink:0;" onerror="this.style.display='none'">`
-      : '';
-    return `
-      <div style="display:flex;align-items:center;gap:6px;padding:2.5px 0;cursor:default;"
-           onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
-        <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
-        ${logoHtml}
-        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.ticker}</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;color:var(--muted);min-width:38px;text-align:right;">${pct}%</span>
-      </div>`;
+  leg.innerHTML = items.map(a => {
+    const pct = (a.currentValue/total*100).toFixed(1);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:4.5px 0;border-bottom:1px solid var(--border);">
+      <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);flex:1;">${a.ticker}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--text);">${pct}%</span>
+    </div>`;
   }).join('');
 }
 
@@ -1772,7 +1743,10 @@ function toggleTheme(){
  chartsBuilt=false;
  if(allocChartInst) allocChartInst.destroy();
  destroyStatic();
- Object.values(sparkCharts).forEach(c=>{try{c.destroy();}catch(e){}});
+ Object.values(sparkCharts).forEach(c=>{try{c.destroy();
+  var btn=document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
+}catch(e){}});
  sparkCharts={};
  const enriched=buildEnriched();
  renderUI(enriched);
@@ -2767,6 +2741,14 @@ function toggleLang() {
 (function initLang() {
   var saved = localStorage.getItem('bc-lang') || 'pt';
   applyLang(saved);
+})();
+
+
+// Update theme toggle icon on load
+(function(){
+  var t = localStorage.getItem('bc-theme') || 'light';
+  var btn = document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
 })();
 
 </script>
