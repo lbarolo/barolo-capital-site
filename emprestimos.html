@@ -42,7 +42,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 /* LAYOUT */
 .container{max-width:1280px;margin:0 auto;padding:70px 24px 100px;}
-.section-label{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin:32px 0 16px;padding-left:12px;border-left:2px solid var(--accent);}
+.section-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:36px 0 20px;padding:0 0 12px 14px;border-left:2px solid var(--accent);font-weight:400;}
 
 /* KPI ROW */
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
@@ -388,7 +388,7 @@ nav { border-bottom: 1px solid var(--border) !important; }
  </div>
  <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
  <div style="display:flex;align-items:center;gap:8px;">
- <button class="btn-sm" onclick="toggleTheme()">◑ Tema</button>
+ <button class="btn-sm" onclick="toggleTheme()">☾</button>
  </div>
 </nav>
 
@@ -857,6 +857,9 @@ function toggleTheme(){
  setTimeout(redrawChart, 80);
 
  localStorage.setItem('bc-theme',document.documentElement.getAttribute('data-theme'));
+
+  var btn=document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
 }
 var isDark=()=>document.documentElement.getAttribute('data-theme')==='dark';
 var gridColor=()=>isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
@@ -1528,6 +1531,14 @@ function toggleLang() {
  setLive(false, 'offline — dados estáticos');
  console.debug('[Kamino] using static fallback (open via http:// for live data)');
  }
+})();
+
+
+// Update theme toggle icon on load
+(function(){
+  var t = localStorage.getItem('bc-theme') || 'light';
+  var btn = document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
 })();
 
 </script>
