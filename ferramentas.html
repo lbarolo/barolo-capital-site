@@ -1130,6 +1130,9 @@ function toggleTheme(){
  h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark');
  localStorage.setItem('bc-theme',h.getAttribute('data-theme'));
  if(evoChart) renderEvoChart();
+
+  var btn=document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
 }
 var savedTheme=localStorage.getItem('bc-theme');
 if(savedTheme) document.documentElement.setAttribute('data-theme',savedTheme);
@@ -2004,6 +2007,14 @@ function toggleLang() {
 (function initLang() {
   var saved = localStorage.getItem('bc-lang') || 'pt';
   applyLang(saved);
+})();
+
+
+// Update theme toggle icon on load
+(function(){
+  var t = localStorage.getItem('bc-theme') || 'light';
+  var btn = document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
 })();
 
 </script>
