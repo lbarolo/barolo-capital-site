@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <script>
@@ -289,26 +289,26 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  </div>
 
  <ul class="nav-links" id="navLinks">
- <li><a href="#home" class="active" onclick="setActive(this);closeMobile()" data-i18n="nav-home">Início</a></li>
- <li><a href="#sobre" onclick="setActive(this);closeMobile()" data-i18n="nav-sobre">Sobre</a></li>
- <li><a href="#estrategias" onclick="setActive(this);closeMobile()" data-i18n="nav-strat">Estratégias</a></li>
- <li><a href="#portfolio" onclick="setActive(this);closeMobile()" data-i18n="nav-port">Portfólio</a></li>
+ <li><a href="#home" class="active" onclick="setActive(this);closeMobile()" data-i18n="nav-home">Home</a></li>
+ <li><a href="#sobre" onclick="setActive(this);closeMobile()" data-i18n="nav-sobre">About</a></li>
+ <li><a href="#estrategias" onclick="setActive(this);closeMobile()" data-i18n="nav-strat">Strategies</a></li>
+ <li><a href="#portfolio" onclick="setActive(this);closeMobile()" data-i18n="nav-port">Portfolio</a></li>
  </ul>
 
  <div class="nav-right" id="navRight">
  <button onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;transition:border-color .2s;" id="themeBtn"></button>
- <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="usuário" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
+ <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="username" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
  <input type="password" id="np" class="nav-input" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')loginNav()">
- <button class="nav-btn" id="navBtn" onclick="loginNav()">Entrar</button>
- <button style="background:transparent;border:1px solid var(--border2);padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold);cursor:pointer;transition:all .2s;" id="indexLangBtn" onclick="toggleIndexLang()" title="Switch language">PT</button>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;transition:border-color .2s,color .2s;flex-shrink:0;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'"></button>
+ <button class="nav-btn" id="navBtn" onclick="loginNav()">Enter</button>
+ <button style="background:transparent;border:1px solid var(--border2);padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold);cursor:pointer;transition:all .2s;" id="indexLangBtn" onclick="toggleIndexLang()" title="Switch to Portuguese">PT</button>
+    <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border2);width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:border-color .2s;">☾</button>
  </div>
 
  <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
  <span></span><span></span><span></span>
  </div>
 
- <div class="nav-err" id="navErr">CREDENCIAIS INVÁLIDAS</div>
+ <div class="nav-err" id="navErr">INVALID CREDENTIALS</div>
 </nav>
 
 <!-- TICKER -->
@@ -319,12 +319,12 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  <div class="hero-glow"></div>
  <div class="hero-rules"></div>
  <div class="hero-content">
- <div class="hero-eyebrow">Gestão Estratégica de Capital</div>
- <h1 class="hero-title" data-i18n="hero-title">Riqueza construída com <em>consistência</em>, não com pressa.</h1>
- <p class="hero-sub" data-i18n="hero-sub">A Barolo Capital é uma gestora independente focada em estratégias de capital no mercado de criptoativos — com disciplina, visão de longo prazo e preservação como fundamento.</p>
+ <div class="hero-eyebrow">Strategic Capital Management</div>
+ <h1 class="hero-title" data-i18n="hero-title">Wealth built with <em>consistency</em>, not haste.</h1>
+ <p class="hero-sub" data-i18n="hero-sub">Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as its foundation.</p>
  <div class="hero-cta">
- <a href="#sobre" class="btn-primary">Conheça a empresa</a>
- <a href="#acesso" class="btn-ghost">Acessar plataforma</a>
+ <a href="#sobre" class="btn-primary">Discover the firm</a>
+ <a href="#acesso" class="btn-ghost">Access platform</a>
  </div>
  </div>
  <div class="hero-scroll" onclick="document.querySelector('#sobre').scrollIntoView({behavior:'smooth'})">
@@ -338,26 +338,26 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  <div class="section-num" style="right:48px;top:20px;">01</div>
  <div class="container">
  <div class="section-header">
- <div class="section-tag">Sobre a empresa</div>
- <h2 class="section-title">Uma abordagem <em>diferente</em> para o mercado cripto</h2>
+ <div class="section-tag">About</div>
+ <h2 class="section-title">A <em>different</em> approach to the crypto market</h2>
  </div>
  <div class="sobre-grid">
  <div class="sobre-text">
- <p class="lead">A <strong style="color:var(--gold);font-weight:500;">Barolo Capital</strong> é uma empresa independente focada na gestão estratégica de capital no mercado de criptoativos.</p>
- <p>Acreditamos que riqueza não é construída com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, nossa abordagem prioriza a preservação de capital, a tomada de decisão racional e a busca por oportunidades sustentáveis.</p>
- <p>Atuamos de forma seletiva, com foco em estratégias que equilibram risco e retorno — incluindo alocação em protocolos descentralizados, geração de rendimento e posicionamentos estruturados.</p>
- <p><em>Na Barolo Capital, o verdadeiro valor dos investimentos está na liberdade que eles proporcionam — de tempo, de escolha e de direção.</em></p>
+ <p class="lead">Barolo Capital is an independent firm focused on strategic capital management in the crypto market.</p>
+ <p>We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, our approach prioritizes capital preservation, rational decision-making and the pursuit of sustainable opportunities.</p>
+ <p>We operate selectively, focused on strategies that balance risk and return — including allocation in decentralized protocols, yield generation and structured positions.</p>
+ <p><em>At Barolo Capital, the true value of investments lies in the freedom they provide — freedom of time, of choice and of direction.</em></p>
  </div>
  <div class="crencas-wrap">
- <div class="crencas-label">Nossas Crenças</div>
- <p class="crenca-lead">Riqueza real é construída com consistência, não com pressa.</p>
- <div class="crenca-item"><span class="crenca-num">01</span><span class="crenca-text">Não buscamos o maior ganho, buscamos o ganho sustentável</span></div>
- <div class="crenca-item"><span class="crenca-num">02</span><span class="crenca-text">Antes de ganhar dinheiro, evitamos perder</span></div>
- <div class="crenca-item"><span class="crenca-num">03</span><span class="crenca-text">O tempo no mercado vence o timing do mercado</span></div>
- <div class="crenca-item"><span class="crenca-num">04</span><span class="crenca-text">Decisões boas vêm de mente calma, não de urgência</span></div>
- <div class="crenca-item"><span class="crenca-num">05</span><span class="crenca-text">Preferimos ganhar menos com paz do que mais com caos</span></div>
- <div class="crenca-item"><span class="crenca-num">06</span><span class="crenca-text">Se não é simples de entender, não merece capital</span></div>
- <div class="crenca-item"><span class="crenca-num">07</span><span class="crenca-text">O dinheiro existe para comprar tempo e liberdade</span></div>
+ <div class="crencas-label">Our Beliefs</div>
+ <p class="crenca-lead">Real wealth is built with consistency, not haste.</p>
+ <div class="crenca-item"><span class="crenca-num">01</span><span class="crenca-text">We do not seek the largest gain, we seek the sustainable gain</span></div>
+ <div class="crenca-item"><span class="crenca-num">02</span><span class="crenca-text">Before making money, we avoid losing it</span></div>
+ <div class="crenca-item"><span class="crenca-num">03</span><span class="crenca-text">Time in the market beats timing the market</span></div>
+ <div class="crenca-item"><span class="crenca-num">04</span><span class="crenca-text">Good decisions come from a calm mind, not urgency</span></div>
+ <div class="crenca-item"><span class="crenca-num">05</span><span class="crenca-text">We prefer earning less in peace than more in chaos</span></div>
+ <div class="crenca-item"><span class="crenca-num">06</span><span class="crenca-text">If it is not simple to understand, it does not deserve capital</span></div>
+ <div class="crenca-item"><span class="crenca-num">07</span><span class="crenca-text">Money exists to buy time and freedom</span></div>
  </div>
  </div>
  </div>
@@ -368,26 +368,26 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  <div class="section-num" style="left:48px;top:20px;">02</div>
  <div class="container">
  <div class="section-header">
- <div class="section-tag">Como operamos</div>
- <h2 class="section-title">Estratégias <em>seletivas</em> com foco em retorno ajustado ao risco</h2>
+ <div class="section-tag">How we operate</div>
+ <h2 class="section-title">Selective <em>strategies</em> focused on risk-adjusted returns</h2>
  </div>
  <div class="estrategia-cards">
  <div class="estrategia-card">
  <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
- <div class="card-title">Liquidez Ativa</div>
- <p class="card-desc">Operamos pools de liquidez concentrada em DEXs como Uniswap V3, posicionando capital em ranges otimizados para maximizar a geração de fees com controle de impermanent loss. Cada posição é monitorada continuamente e rebalanceada conforme a volatilidade do par.</p>
+ <div class="card-title">Active Liquidity</div>
+ <p class="card-desc">We operate concentrated liquidity pools on DEXs such as Uniswap V3, positioning capital in optimized ranges to maximize fee generation while managing impermanent loss. Each position is continuously monitored and rebalanced according to pair volatility.</p>
  <div class="card-tags"><span class="tag">Uniswap V3</span><span class="tag">Ethereum</span><span class="tag">Arbitrum</span><span class="tag">zkSync</span><span class="tag">Base</span></div>
  </div>
  <div class="estrategia-card">
  <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8m-4-4v4"/><path d="M6 8h4m-4 4h8"/></svg>
  <div class="card-title">Lending &amp; Yield</div>
- <p class="card-desc">Utilizamos protocolos de lending descentralizado como AAVE V3 e Kamino Finance para gerar rendimento sobre colateral enquanto mantemos posições alavancadas de forma controlada. O foco é no equilíbrio entre taxa de rendimento e fator de saúde da posição.</p>
+ <p class="card-desc">We use decentralized lending protocols such as AAVE V3 and Kamino Finance to generate yield on collateral while maintaining controlled leveraged positions. The focus is on balancing the yield rate with the position health factor.</p>
  <div class="card-tags"><span class="tag">AAVE V3</span><span class="tag">Kamino</span><span class="tag">Solana</span><span class="tag">ETH Mainnet</span></div>
  </div>
  <div class="estrategia-card">
  <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
- <div class="card-title">Alocação Estruturada</div>
- <p class="card-desc">Mantemos posicionamentos de longo prazo em ativos fundamentais do ecossistema cripto — ETH, SOL e ADA — com estratégia de acumulação baseada em DCA e gestão de risco que prioriza a preservação durante períodos de bear market prolongado.</p>
+ <div class="card-title">Structured Allocation</div>
+ <p class="card-desc">We maintain long-term positions in fundamental crypto assets — ETH, SOL and ADA — with a DCA-based accumulation strategy and risk management that prioritizes preservation during extended bear market periods.</p>
  <div class="card-tags"><span class="tag">ETH</span><span class="tag">SOL</span><span class="tag">ADA</span><span class="tag">DCA</span><span class="tag">Stake</span></div>
  </div>
  </div>
@@ -399,8 +399,8 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  <div class="section-num" style="right:48px;top:20px;">03</div>
  <div class="container">
  <div class="section-header">
- <div class="section-tag">Ecossistema</div>
- <h2 class="section-title">Ativos do <em>portfólio</em></h2>
+ <div class="section-tag">DeFi Ecosystem</div>
+ <h2 class="section-title">Ativos do <em>portfolio</em></h2>
  </div>
 
  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:32px;">
@@ -453,8 +453,8 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
 
 
 <footer>
- <span>© 2021 Barolo Capital · Gestão Estratégica de Capital</span>
- <span>Todos os dados são de uso interno e privado</span>
+ <span>© 2021 Barolo Capital · Strategic Capital Management</span>
+ <span>All data is for internal and private use only</span>
 </footer>
 
 <script>
@@ -486,7 +486,7 @@ function loginNav(){
  err.classList.remove('show');
  if(u==='ADM'&&p==='102030'){document.getElementById('navBtn').textContent='…';document.getElementById('navBtn').disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
  ['nu','np'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err','do-shake');setTimeout(function(){el.classList.remove('err','do-shake');},600);});
- err.classList.add('show');setTimeout(function(){err.classList.remove('show');},2500);
+ err.classList.add('show'); // already handledsetTimeout(function(){err.classList.remove('show');},2500);
  document.getElementById('np').value='';
 }
 
@@ -496,9 +496,9 @@ function loginCard(){
  var p=document.getElementById('lp').value.trim();
  var err=document.getElementById('loginCardErr');
  err.textContent='';
- if(u==='ADM'&&p==='102030'){var btn=document.getElementById('loginCardBtn');btn.textContent='Autenticando…';btn.disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
+ if(u==='ADM'&&p==='102030'){var btn=document.getElementById('loginCardBtn');btn.textContent='Authenticating…';btn.disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
  ['lu','lp'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err');setTimeout(function(){el.classList.remove('err');},800);});
- err.textContent='CREDENCIAIS INVÁLIDAS · ACESSO NEGADO';
+ err.textContent='INVALID CREDENTIALS · ACESSO NEGADO';
  document.getElementById('lp').value='';
 }
 
@@ -539,12 +539,13 @@ buildTable();
 
 // Theme
 function toggleTheme(){
- var html=document.documentElement;
- var current=html.getAttribute('data-theme')||'dark';
- var next=current==='dark'?'light':'dark';
- html.setAttribute('data-theme',next);
- localStorage.setItem('bc-theme',next);
- document.getElementById('themeToggle').textContent=next==='dark'?'':'';
+  var html=document.documentElement;
+  var current=html.getAttribute('data-theme')||'dark';
+  var next=current==='dark'?'light':'dark';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('bc-theme',next);
+  var btn=document.getElementById('themeToggle');
+  if(btn) btn.textContent = next==='dark' ? '☾' : '☀';
 }
 (function(){
  var saved=localStorage.getItem('bc-theme');
@@ -580,11 +581,11 @@ var INDEX_LANG_STRINGS = {
   'nav-access':  {pt:'Acesso',       en:'Access'},
   'about-title': {pt:'Uma abordagem <em>diferente</em> para o mercado cripto',
                   en:'A <em>different</em> approach to the crypto market'},
-  'strat-title': {pt:'Estratégias <em>seletivas</em> com foco em retorno ajustado ao risco',
+  'strat-title': {pt:'Selective <em>strategies</em> focused on risk-adjusted returns',
                   en:'<em>Selective</em> strategies focused on risk-adjusted returns'},
-  'port-title':  {pt:'Portfólio <em>diversificado</em> no ecossistema DeFi',
+  'port-title':  {pt:'A <em>diversified</em> DeFi portfolio',
                   en:'<em>Diversified</em> portfolio in the DeFi ecosystem'},
-  'access-title':{pt:'Acesso <em>restrito</em> à plataforma',
+  'access-title':{pt:'Restricted <em>access</em> to the platform',
                   en:'<em>Restricted</em> platform access'},
   'btn-enter':   {pt:'Entrar', en:'Enter'},
 };
@@ -609,8 +610,14 @@ function toggleIndexLang() {
 }
 
 (function() {
-  var saved = localStorage.getItem('bc-lang') || 'pt';
-  if (saved !== 'pt') applyIndexLang(saved);
+  // Set initial theme icon
+  var savedTheme = localStorage.getItem('bc-theme') || 'dark';
+  var btn = document.getElementById('themeToggle');
+  if(btn) btn.textContent = savedTheme === 'dark' ? '☾' : '☀';
+  // Default lang is EN
+  var savedLang = localStorage.getItem('bc-lang') || 'en';
+  // Default is EN — only apply if saved is PT
+if (savedLang === 'pt') applyIndexLang('pt');
 })();
 
 </script>
