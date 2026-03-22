@@ -1990,7 +1990,8 @@ async function updateGas() {
 }
 
 // ── CHARTS ──
-loadChartJs(function() {
+document.addEventListener('DOMContentLoaded', function() {
+ loadChartJs(function() {
  const font = { family: 'Inter, sans-serif', size: 9 };
  const monoFont = { family: 'JetBrains Mono, monospace', size: 9 };
 
@@ -2382,7 +2383,7 @@ loadChartJs(function() {
  if (!ctx) return;
  if (charts.net) { charts.net.destroy(); }
  const isLine = type === 'line';
- const netColors = ['rgba(138,104,32,0.7)','rgba(74,124,63,0.7)','rgba(58,126,200,0.7)','rgba(128,80,200,0.7)','rgba(200,140,50,0.7)'];
+ const netColors = ['rgba(138, 104, 32, 0.7)', 'rgba(74];
  charts.net = new Chart(ctx, {
  type: isLine ? 'line' : 'bar',
  data: {
@@ -2836,7 +2837,8 @@ function buildProjChart() {
  setInterval(updateTicker, 60000);
  setInterval(updateGas, 30000);
 
-}); // end loadChartJs
+ }); // end loadChartJs
+}); // end DOMContentLoaded
 
 ript>
 
