@@ -266,6 +266,70 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  .portfolio-table th:nth-child(5),.portfolio-table td:nth-child(5){display:none;}
  .login-card{padding:28px 20px;}
 }
+
+/* Portfolio asset cards — clean with prominent logo */
+.tok-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--border2) !important;
+  border-radius: 0 !important;
+  padding: 16px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: background .2s, border-color .2s !important;
+  cursor: pointer !important;
+  height: 100% !important;
+}
+.tok-card:hover {
+  background: var(--surface2) !important;
+  border-color: var(--gold2) !important;
+}
+.tok-logo {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  background: rgba(128,128,128,.08) !important;
+}
+.tok-name {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--cream) !important;
+  text-align: center !important;
+}
+.tok-ticker {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .16em !important;
+  color: var(--muted) !important;
+}
+.tok-link {
+  font-size: 10px !important;
+  color: var(--gold2) !important;
+}
+/* Wide protocol cards */
+.tok-card--wide {
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 14px 16px !important;
+  gap: 12px !important;
+}
+.tok-card--wide .tok-logo {
+  width: 32px !important;
+  height: 32px !important;
+  flex-shrink: 0 !important;
+}
+.tok-card--wide .tok-name {
+  font-size: 15px !important;
+  text-align: left !important;
+}
+.tok-card--wide .tok-link {
+  margin-left: auto !important;
+}
+[data-theme="light"] .tok-name { color: var(--dark) !important; }
+
 </style>
 </head>
 <body>
@@ -296,12 +360,13 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  </ul>
 
  <div class="nav-right" id="navRight">
- <button onclick="toggleTheme()" title="Alternar tema" style="background:transparent;border:1px solid var(--border2);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;transition:border-color .2s;" id="themeBtn"></button>
+ 
  <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="username" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
  <input type="password" id="np" class="nav-input" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')loginNav()">
  <button class="nav-btn" id="navBtn" onclick="loginNav()">Enter</button>
- <button style="background:transparent;border:1px solid var(--border2);padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold);cursor:pointer;transition:all .2s;" id="indexLangBtn" onclick="toggleIndexLang()" title="Switch to Portuguese">PT</button>
+ 
     <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border2);width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:border-color .2s;">☾</button>
+    <button id="indexLangBtn" onclick="toggleIndexLang()" title="Switch to Portuguese" style="background:transparent;border:1px solid var(--border2);padding:0 10px;height:34px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);cursor:pointer;flex-shrink:0;">PT</button>
  </div>
 
  <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
@@ -400,52 +465,123 @@ footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacin
  <div class="container">
  <div class="section-header">
  <div class="section-tag">DeFi Ecosystem</div>
- <h2 class="section-title">Ativos do <em>portfolio</em></h2>
+ <h2 class="section-title">Portfolio <em>Assets</em></h2>
  </div>
 
- <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:32px;">
-
- <a href="https://ethereum.org" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/279/small/ethereum.png" class="tok-logo" alt="ETH" onerror="this.style.opacity='0'"><span class="tok-name">Ethereum</span><span class="tok-ticker">ETH</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://solana.com" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/4128/small/solana.png" class="tok-logo" alt="SOL" onerror="this.style.opacity='0'"><span class="tok-name">Solana</span><span class="tok-ticker">SOL</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://cardano.org" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/975/small/cardano.png" class="tok-logo" alt="ADA" onerror="this.style.opacity='0'"><span class="tok-name">Cardano</span><span class="tok-ticker">ADA</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/33373/small/eigen.png" class="tok-logo" alt="EIGEN" onerror="this.style.opacity='0'"><span class="tok-name">EigenLayer</span><span class="tok-ticker">EIGEN</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://radiant.capital" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png" class="tok-logo" alt="RDNT" onerror="this.style.opacity='0'"><span class="tok-name">Radiant</span><span class="tok-ticker">RDNT</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://polygon.technology" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/32440/small/polygon.png" class="tok-logo" alt="POL" onerror="this.style.opacity='0'"><span class="tok-name">POL</span><span class="tok-ticker">POL</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://zksync.io" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg" class="tok-logo" alt="ZK" onerror="this.style.opacity='0'"><span class="tok-name">ZKsync</span><span class="tok-ticker">ZK</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://xai.games" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/34258/small/xai.png" class="tok-logo" alt="XAI" onerror="this.style.opacity='0'"><span class="tok-name">Xai</span><span class="tok-ticker">XAI</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://www.zetachain.com" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card"><img src="https://coin-images.coingecko.com/coins/images/26718/small/logo.png" class="tok-logo" alt="ZETA" onerror="this.style.opacity='0'"><span class="tok-name">ZetaChain</span><span class="tok-ticker">ZETA</span><span class="tok-link">↗</span></div>
- </a>
-
+ <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:1px;">
+  <a href="https://ethereum.org" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png" alt="ETH" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Ethereum</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ETH</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://solana.com" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/4128/large/solana.png" alt="SOL" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Solana</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">SOL</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://cardano.org" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/975/large/cardano.png" alt="ADA" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Cardano</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ADA</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/33373/large/eigen.png" alt="EIGEN" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">EigenLayer</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">EIGEN</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://radiant.capital" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/26536/large/Radiant-Logo.png" alt="RDNT" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Radiant</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">RDNT</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://polygon.technology" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/32440/large/polygon.png" alt="POL" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">POL</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">POL</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://zksync.io" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/38043/large/zksync.jpg" alt="ZK" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">ZKsync</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ZK</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://xai.games" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/34258/large/xai.png" alt="XAI" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Xai</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">XAI</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://zetachain.com" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/26718/large/zetachain.png" alt="ZETA" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">ZetaChain</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ZETA</div>
+      </div>
+    </div>
+  </a>
  </div>
 
- <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
- <a href="https://aave.com" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12645/small/AAVE.png" class="tok-logo" alt="AAVE" onerror="this.style.opacity='0'"><span class="tok-name">AAVE V3</span><span class="tok-ticker" style="color:var(--muted);">Lending · ETH</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://kamino.finance" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/36430/small/kamino.jpg" class="tok-logo" alt="Kamino" onerror="this.style.opacity='0'"><span class="tok-name">Kamino</span><span class="tok-ticker" style="color:var(--muted);">Lending · SOL</span><span class="tok-link">↗</span></div>
- </a>
- <a href="https://app.uniswap.org" target="_blank" rel="noopener" style="text-decoration:none;">
- <div class="tok-card tok-card--wide"><img src="https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png" class="tok-logo" alt="UNI" onerror="this.style.opacity='0'"><span class="tok-name">Uniswap V3</span><span class="tok-ticker" style="color:var(--muted);">Liquidez · ETH</span><span class="tok-link">↗</span></div>
- </a>
+ <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:0;">
+  <a href="https://aave.com" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png" alt="AAVE" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">AAVE V3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">AAVE</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://kamino.finance" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/36217/large/kmno_logo.png" alt="KMNO" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Kamino</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">KMNO</div>
+      </div>
+    </div>
+  </a>
+  <a href="https://app.uniswap.org" target="_blank" rel="noopener" style="text-decoration:none;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <img src="https://coin-images.coingecko.com/coins/images/12504/large/uniswap-uni.png" alt="UNI" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
+      <div style="text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Uniswap V3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">UNI</div>
+      </div>
+    </div>
+  </a>
  </div>
+
  </div>
 </section>
 
