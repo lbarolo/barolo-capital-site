@@ -895,10 +895,10 @@ var FALLBACK_24H = {
 };
 
 var LP_POOLED = 357.24; // Pool WETH/USDC ativa — atualizar semanalmente
-var STABLES_USD = 1952.43; // USDT AAVE $1.652,03 + USDS Kamino $300,04 — não no CG
-var AAVE_DEBT = 746.30; // atualizar semanalmente
-var KAMINO_DEBT = 804.01; // atualizar semanalmente
-var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $746.30 + $804.01 = $1,550.31
+var STABLES_USD = 1953.32; // USDT AAVE $1.652,03 + USDS Kamino $300,04 — não no CG
+var AAVE_DEBT = 746.99; // atualizar semanalmente
+var KAMINO_DEBT = 804.22; // atualizar semanalmente
+var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $746.99 + $804.22 = $1,550.31
 var KAMINO_SOL_EXTRA_QTY = 19.35 - 19.31226576; // ~0.038 SOL restante // SOL no Kamino não rastreado pelo CG
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
@@ -1121,7 +1121,7 @@ function buildAllocationChart(enriched, totalVal){
   const items = [
     ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
     { ticker:'USDT', name:'USDT', currentValue:1652.03, color:'#26A17B' },
-    { ticker:'USDS', name:'USDS', currentValue:300.40,  color:'#5B8EF0' },
+    { ticker:'USDS', name:'USDS', currentValue:300.42,  color:'#5B8EF0' },
   ];
   const total = items.reduce((s,a)=>s+a.currentValue, 0);
 
@@ -2461,12 +2461,12 @@ document.addEventListener('DOMContentLoaded',function(){
 
  // Fallback: use static values
  console.warn('[Kamino] API returned no data, using static fallback');
- window._liveKaminoDebt = window._liveKaminoDebt || 804.01;
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
  window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
  return null;
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 804.01;
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
  return null;
  }
  }
