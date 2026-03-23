@@ -420,78 +420,90 @@ body, input, button, select, textarea {
 <div class="section-label">Posições Ativas — DeFi</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
 
-  <!-- AAVE V3 -->
+  <!-- AAVE V3 — STATIC DATA -->
   <div class="card" style="padding:16px 18px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:6px;height:6px;border-radius:50%;background:#b6509e;"></div>
         <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:#b6509e;">AAVE V3</span>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:8px;">
-        <div id="aave-live-dot" style="width:5px;height:5px;border-radius:50%;background:var(--muted);"></div>
-        <span id="aave-live-label" style="color:var(--muted);">—</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--green);"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Core Instance · ETH Mainnet</span>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
       <div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:4px;">SUPPLY</div>
-        <div id="aave-supplied-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">$5,718.50</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;">1.87 ETH + 1,652.90 USDT</div>
       </div>
       <div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:4px;">BORROW</div>
-        <div id="aave-borrowed-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);">$746.99 USDC</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;">3.28% APY</div>
       </div>
     </div>
     <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);">
       <div style="text-align:center;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">NET</div>
-        <div id="aave-net-worth" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);">$4,971</div>
       </div>
       <div style="text-align:center;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">HEALTH FACTOR</div>
-        <div id="aave-hf-metric" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--green);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--green);">6.24</div>
       </div>
       <div style="text-align:center;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">LIQ. PRICE</div>
-        <div id="aave-liq-main" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">BORROW POWER</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);">16.55%</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">NET APY</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green);">1.48%</div>
       </div>
     </div>
   </div>
 
-  <!-- KAMINO -->
+  <!-- KAMINO — STATIC DATA -->
   <div class="card" style="padding:16px 18px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:6px;height:6px;border-radius:50%;background:#7C3AED;"></div>
         <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:#7C3AED;">KAMINO</span>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:8px;">
-        <div id="kamino-live-dot" style="width:5px;height:5px;border-radius:50%;background:var(--muted);"></div>
-        <span id="kamino-live-label" style="color:var(--muted);">—</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--green);"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Main Market · Solana</span>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
       <div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:4px;">SUPPLY</div>
-        <div id="kamino-supplied-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">$2,050</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;">19.33 SOL + 300.42 USDS</div>
       </div>
       <div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:4px;">BORROW</div>
-        <div id="kamino-borrowed-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);">$804.22 USDC</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;">3.18% APY</div>
       </div>
     </div>
     <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);">
       <div style="text-align:center;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">NET</div>
-        <div id="kamino-net-val" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);">$1,250</div>
       </div>
       <div style="text-align:center;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">LTV</div>
-        <div id="kamino-ltv-label" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--muted);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--green);">39.22%</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">LIQ. LTV</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--yellow,#c9a050);">77.20%</div>
       </div>
       <div style="text-align:center;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--muted);margin-bottom:3px;">LIQ. PRICE</div>
-        <div id="kamino-liq-main" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);">—</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);">$35.77/SOL</div>
       </div>
     </div>
   </div>
@@ -1292,269 +1304,6 @@ function toggleLang() {
 })();
 
 
-// ── LIVE DEFI DATA (AAVE + KAMINO) ──
-// ── AAVE V3 LIVE DATA ──
-(async function fetchAaveData() {
- const WALLET = '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6';
- const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
- const ETH_QTY = 1.87;
- const USDT_QTY = 1651.49;
- const USDT_LT = 0.75;
- const ETH_LT = 0.825;
- const SELECTOR = '0xbf92857c';
-
- // Public Ethereum RPCs — sorted by CORS reliability
- const RPCS = [
- 'https://eth.drpc.org',
- 'https://1rpc.io/eth',
- 'https://rpc.payload.de',
- 'https://eth.llamarpc.com',
- 'https://rpc.ankr.com/eth',
- 'https://cloudflare-eth.com',
- ];
-
- const $ = id => document.getElementById(id);
- const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
-
- function setLive(ok, msg) {
- const dot = $('aave-live-dot'), lbl = $('aave-live-label');
- if (!dot) return;
- dot.style.background = ok ? '#3fb950' : '#e74c3c';
- dot.style.boxShadow = ok ? '0 0 5px #3fb950' : '0 0 5px #e74c3c';
- lbl.textContent = msg;
- lbl.style.color = ok ? 'var(--green)' : 'var(--red)';
- }
-
- async function callAave(rpc) {
- const calldata = SELECTOR + WALLET.slice(2).padStart(64,'0');
- const res = await fetchTimeout(rpc, {
- method: 'POST',
- headers: { 'Content-Type':'application/json' },
- body: JSON.stringify({ jsonrpc:'2.0', method:'eth_call',
- params:[{ to: AAVE_POOL, data: calldata }, 'latest'], id: 1 })
- }, 7000);
- if (!res.ok) throw new Error(`HTTP ${res.status}`);
- const j = await res.json();
- if (j.error) throw new Error(j.error.message || 'RPC error');
- if (!j.result || j.result === '0x') throw new Error('empty result');
- const hex = j.result.slice(2);
- const u = i => Number(BigInt('0x' + hex.slice(i*64,(i+1)*64)));
- return {
- totalCollateral : u(0) / 1e8,
- totalDebt : u(1) / 1e8,
- liqThreshold : u(3) / 10000,
- healthFactor : Number(BigInt('0x' + hex.slice(5*64,6*64))) / 1e18,
- };
- }
-
- function updateAave(aave, ethPrice) {
- const ethUsd = ETH_QTY * ethPrice;
- const hf = aave.healthFactor;
- const debt = aave.totalDebt;
- const netWorth = aave.totalCollateral - debt;
-
- const hfColor = hf < 1.2 ? 'var(--red)' : hf < 2 ? 'var(--yellow)' : 'var(--green)';
- const hfZone = hf < 1.2 ? 'RISCO' : hf < 2 ? 'Atenção' : 'Zona segura';
- const hfText = hf > 99 ? '>99' : hf.toFixed(2);
-
- const set = (id,v) => { const e=$(id); if(e) e.textContent=v; };
- const col = (id,c) => { const e=$(id); if(e) e.style.color=c; };
- const htm = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
-
- set('aave-supplied-label', '▲ SUPPLIED ' + fmt(aave.totalCollateral, 0));
- set('aave-borrowed-label', '▼ BORROWED ' + fmt(debt));
- set('aave-eth-usd', fmt(ethUsd, 0));
- set('aave-usdc-debt', fmt(debt));
- set('aave-net-worth', netWorth >= 1000 ? '$'+(netWorth/1000).toFixed(2)+'K' : fmt(netWorth));
- set('aave-hf-metric', hfText);
- set('aave-hf-bottom', `Atual ${hfText}`);
- htm('aave-hf-badge', `HF ${hfText} ${hf >= 2 ? '' : ''}`);
- htm('aave-hf-label', `${hfText} — ${hfZone}`);
- col('aave-hf-badge', hfColor);
- col('aave-hf-metric', hfColor);
- col('aave-hf-label', hfColor);
-
- const bar = $('aave-health-bar');
- if (bar) bar.style.width = Math.min(hf / 5, 1) * 100 + '%';
-
- // Liquidation box
- const usdt_prot = USDT_QTY * USDT_LT;
- const eth_liq_num = debt - usdt_prot;
- const liqPrice = eth_liq_num / (ETH_QTY * ETH_LT);
- const blindado = liqPrice <= 0;
- const usdtCovPct = Math.round((usdt_prot / debt) * 100);
-
- const box = $('aave-liq-box');
- if (blindado) {
- if (box) box.className = 'liq-box-safe';
- htm('aave-liq-main', `<span style="color:var(--green);font-size:24px;font-weight:900;">BLINDADO</span>`);
- htm('aave-liq-sub', `ETH precisaria ir a <strong>$0</strong> para liquidar`);
- col('aave-liq-sub', 'var(--green)');
- htm('aave-liq-detail1',`USDT cobre <strong style="color:var(--green)">${usdtCovPct}%</strong> da dívida sozinho`);
- set('aave-liq-detail2',`USDT: ${fmt(USDT_QTY,0)} · Dívida: ${fmt(debt,0)} · Excedente: +${fmt(usdt_prot-debt,0)}`);
- } else {
- const danger = liqPrice > ethPrice * 0.5;
- const c = danger ? 'var(--red)' : 'var(--yellow)';
- const pctDown = ((ethPrice - liqPrice) / ethPrice * 100).toFixed(1);
- if (box) box.className = danger ? 'liq-box-danger' : 'liq-box-warn';
- htm('aave-liq-main', `<span style="color:${c};font-size:20px;font-weight:900;">${fmt(liqPrice)} / ETH</span>`);
- htm('aave-liq-sub', `−${pctDown}% do preço atual <span style="color:var(--muted)">(${fmt(ethPrice,0)})</span>`);
- col('aave-liq-sub', c);
- htm('aave-liq-detail1',`Buffer: <strong style="color:${c}">${fmt(ethPrice-liqPrice,0)}</strong> até liquidação`);
- set('aave-liq-detail2',`ETH atual: ${fmt(ethPrice,0)} · Liq. threshold: ${(ETH_LT*100).toFixed(0)}%`);
- }
- }
-
- try {
- // Prices first (faster) — then RPC in parallel
- const pricePromise = getLivePrice(['ethereum']);
- let aaveData;
- for (const rpc of RPCS) {
- try { aaveData = await callAave(rpc); break; }
- catch(e) { console.debug(`[AAVE] RPC ${rpc} unavailable`); } // normal when opening as file://
- }
- if (!aaveData) throw new Error('All AAVE RPCs failed');
- const prices = await pricePromise;
- const ethPrice = prices?.ethereum?.usd || 2055;
- updateAave(aaveData, ethPrice);
- const ts = new Date().toTimeString().slice(0,5);
- setLive(true, `ao vivo · ${ts}`);
- } catch(e) {
- setLive(false, 'offline — dados estáticos');
- console.debug('[AAVE] using static fallback (open via http:// for live data)');
- // Still try to update liquidation price with CoinGecko only
- try {
- const prices = await getLivePrice(['ethereum']);
- const ethPrice = prices?.ethereum?.usd;
- if (ethPrice) {
- // Minimal update: just refresh liquidation box with live ETH price
- // Use last known HF from static values
- updateAave({ totalCollateral: 5654.37, totalDebt: 746.99, liqThreshold: 0.825, healthFactor: 6.24 }, ethPrice || 2079.21);
- const ts = new Date().toTimeString().slice(0,5);
- setLive(true, `ETH ao vivo · contrato offline · ${ts}`);
- }
- } catch(_) {}
- }
-})();
-
-// ── KAMINO LIVE DATA ──
-// URL: kamino.com/lend/{MARKET}/{USER_WALLET}
-(async function fetchKaminoData() {
- const USER_WALLET = 'xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK'; // Solana wallet
- const MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'; // Main Market
- const USDS_QTY   = 300.42;
- // Fixed position — only update if you change the position manually
- const FIXED = { solQty: 19.33, debtUsd: 804.22, liqThreshold: 0.7720, currentLtv: 0.3922 };
-
- const $ = id => document.getElementById(id);
- const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
-
- function setLive(ok, msg) {
- const dot = $('kamino-live-dot'), lbl = $('kamino-live-label');
- if (!dot) return;
- dot.style.background = ok ? '#3fb950' : '#e74c3c';
- dot.style.boxShadow = ok ? '0 0 5px #3fb950' : '0 0 5px #e74c3c';
- lbl.textContent = msg;
- lbl.style.color = ok ? 'var(--green)' : 'var(--red)';
- }
-
- // Kamino API — best-effort, CORS may block from file:// origin
- async function tryKaminoAPI() {
- const urls = [
- `https://api.kamino.finance/v2/users/${USER_WALLET}/lending-positions`,
- `https://api.kamino.finance/v2/users/${USER_WALLET}/obligations?market=${MARKET}`,
- `https://api.kamino.finance/v2/lending/markets/${MARKET}/obligations?owner=${USER_WALLET}`,
- ];
- for (const url of urls) {
- try {
- const res = await fetchTimeout(url, { headers:{ Accept:'application/json' } }, 6000);
- if (!res.ok) continue;
- const data = await res.json();
- // Find the relevant market position in array responses
- const pos = Array.isArray(data)
- ? (data.find(o => (o.market||o.lendingMarket||o.marketAddress||'') === MARKET) || data[0])
- : data;
- if (!pos) continue;
- // Parse deposits
- const deps = pos.deposits || pos.collaterals || pos.positions?.deposits || [];
- const bors = pos.borrows || pos.loans || pos.positions?.borrows || [];
- const solD = [].concat(deps).find(d => (d.mintSymbol||d.symbol||'').toUpperCase().replace('W','') === 'SOL');
- const usdcB= [].concat(bors).find(b => (b.mintSymbol||b.symbol||'').toUpperCase().includes('USDC'));
- if (solD || usdcB) {
- return {
- solQty: parseFloat(solD?.amount || solD?.depositedAmount || FIXED.solQty),
- debtUsd: parseFloat(usdcB?.marketValueRefreshed || usdcB?.marketValue || usdcB?.amount || FIXED.debtUsd),
- liqThreshold: parseFloat(pos.liquidationLtv || pos.liqThreshold || pos.liqLtv || FIXED.liqThreshold),
- currentLtv: parseFloat(pos.ltv || pos.loanToValue || pos.currentLtv || FIXED.currentLtv),
- };
- }
- } catch(e) { console.debug('[Kamino] API unavailable'); }
- }
- return null; // All failed — caller will use FIXED
- }
-
- function updateKamino({ solQty, debtUsd, liqThreshold, currentLtv }, solPrice) {
- const solUsd = solQty * solPrice;
- const supplied = solUsd + USDS_QTY;
- const netVal = supplied - debtUsd;
- const ltvPct = currentLtv * 100;
- const liqPct = liqThreshold * 100;
- const USDS_COVER = 300.42 * 0.90;
-    const liqPrice = Math.max((debtUsd - USDS_COVER) / (solQty * liqThreshold), 0);
- const buffer = solPrice - liqPrice;
- const bufPct = (buffer / solPrice * 100).toFixed(1);
- const danger = liqPrice > solPrice * 0.6;
- const col = danger ? 'var(--red)' : 'var(--yellow)';
-
- const set = (id,v) => { const e=$(id); if(e) e.textContent=v; };
- const htm = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
- const clr = (id,c) => { const e=$(id); if(e) e.style.color=c; };
-
- set('kamino-supplied-label', '▲ SUPPLIED ' + fmt(supplied, 0));
- set('kamino-borrowed-label', '▼ BORROWED ' + fmt(debtUsd));
- set('kamino-sol-qty', solQty.toFixed(3));
- set('kamino-sol-usd', fmt(solUsd, 0));
- set('kamino-usdc-debt', fmt(debtUsd));
- set('kamino-net-val', netVal >= 1000 ? '$'+(netVal/1000).toFixed(2)+'K' : fmt(netVal));
- set('kamino-liq-ltv', liqPct.toFixed(2)+'%');
- set('kamino-ltv-label', `${ltvPct.toFixed(2)}% / ${liqPct.toFixed(2)}%`);
- set('kamino-ltv-liqpct',`Liq. ${liqPct.toFixed(2)}%`);
-
- const badge = $('kamino-ltv-badge');
- if (badge) { badge.textContent=`LTV ${ltvPct.toFixed(2)}% ${ltvPct>60?'':''}`; badge.style.color=ltvPct>60?col:'var(--green)'; }
-
- const bar = $('kamino-ltv-bar');
- if (bar) bar.style.width = Math.min(ltvPct/liqPct,1)*100+'%';
- clr('kamino-ltv-ptr', col);
-
- const box = $('kamino-liq-box');
- if (box) box.className = danger ? 'liq-box-danger' : 'liq-box-warn';
- htm('kamino-liq-main', `${fmt(liqPrice)} <span style="font-size:12px;font-weight:500;color:var(--muted);">/ SOL</span>`);
- clr('kamino-liq-main', col);
- htm('kamino-liq-sub', `−${bufPct}% do preço atual <span style="color:var(--muted);">(${fmt(solPrice,0)})</span>`);
- clr('kamino-liq-sub', col);
- htm('kamino-liq-detail1', `Buffer: <strong style="color:${col}">${fmt(buffer,0)}</strong> até liquidação`);
- set('kamino-liq-detail2', `LTV liq.: ${liqPct.toFixed(2)}% · LTV atual: ${ltvPct.toFixed(2)}%`);
- }
-
- try {
- // SOL price is the critical data — always fetch this first
- const prices = await getLivePrice(['solana']);
- const solPrice = prices?.solana?.usd || 87.28;
-
- // Kamino API is best-effort (CORS may block from file:// origin)
- const apiData = await tryKaminoAPI();
- const position = apiData || FIXED;
- const source = apiData ? 'ao vivo' : 'SOL ao vivo · posição fixa';
-
- updateKamino(position, solPrice);
- const ts = new Date().toTimeString().slice(0,5);
- setLive(true, `${source} · ${ts}`);
- } catch(e) {
- setLive(false, 'offline — dados estáticos');
- console.debug('[Kamino] using static fallback (open via http:// for live data)');
- }
-})();
 
 
 // Update theme toggle icon on load
@@ -1562,6 +1311,34 @@ function toggleLang() {
   var t = localStorage.getItem('bc-theme') || 'light';
   var btn = document.querySelector('button[onclick="toggleTheme()"]');
   if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
+})();
+
+
+// ── STATIC VALUES — shown immediately, overridden if live fetch succeeds ──
+(function initStaticValues() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var setEl  = function(id, v) { var el=document.getElementById(id); if(el) el.textContent = v; };
+    var setHtm = function(id, v) { var el=document.getElementById(id); if(el) el.innerHTML = v; };
+    var setClr = function(id, c) { var el=document.getElementById(id); if(el) el.style.background = c; };
+
+    // AAVE static
+    setClr('aave-live-dot',  '#8a6820');
+    setEl('aave-live-label', 'dados estáticos');
+    setEl('aave-supplied-label',  '▲ SUPPLIED $5,719');
+    setEl('aave-borrowed-label',  '▼ BORROWED $746.99');
+    setEl('aave-net-worth',       '$4.97K');
+    setEl('aave-hf-metric',       '6.24');
+    setHtm('aave-liq-main', '<span style="color:var(--green);font-size:20px;font-weight:900;">BLINDADO</span>');
+
+    // KAMINO static
+    setClr('kamino-live-dot',  '#8a6820');
+    setEl('kamino-live-label', 'dados estáticos');
+    setEl('kamino-supplied-label',  '▲ SUPPLIED $2.05K');
+    setEl('kamino-borrowed-label',  '▼ BORROWED $804.22');
+    setEl('kamino-net-val',         '$1.25K');
+    setEl('kamino-ltv-label',       '39.22% / 77.20%');
+    setHtm('kamino-liq-main', '$35.77 <span style="font-size:10px;color:var(--muted);">/ SOL</span>');
+  });
 })();
 
 </script>
