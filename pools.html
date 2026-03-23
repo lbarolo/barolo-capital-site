@@ -853,7 +853,7 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
  if (ethPrice) {
  // Minimal update: just refresh liquidation box with live ETH price
  // Use last known HF from static values
- updateAave({ totalCollateral: 5654.37, totalDebt: 746.30, liqThreshold: 0.825, healthFactor: 6.17 }, ethPrice || 2079.21);
+ updateAave({ totalCollateral: 5654.37, totalDebt: 746.99, liqThreshold: 0.825, healthFactor: 6.24 }, ethPrice || 2079.21);
  const ts = new Date().toTimeString().slice(0,5);
  setLive(true, `ETH ao vivo · contrato offline · ${ts}`);
  }
@@ -866,9 +866,9 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
 (async function fetchKaminoData() {
  const USER_WALLET = 'xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK'; // Solana wallet
  const MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'; // Main Market
- const USDS_QTY   = 300.40;
+ const USDS_QTY   = 300.42;
  // Fixed position — only update if you change the position manually
- const FIXED = { solQty: 19.33, debtUsd: 804.01, liqThreshold: 0.7722, currentLtv: 0.3964 };
+ const FIXED = { solQty: 19.33, debtUsd: 804.22, liqThreshold: 0.7720, currentLtv: 0.3922 };
 
  const $ = id => document.getElementById(id);
  const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -923,7 +923,7 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
  const netVal = supplied - debtUsd;
  const ltvPct = currentLtv * 100;
  const liqPct = liqThreshold * 100;
- const USDS_COVER = 300.40 * 0.90;
+ const USDS_COVER = 300.42 * 0.90;
     const liqPrice = Math.max((debtUsd - USDS_COVER) / (solQty * liqThreshold), 0);
  const buffer = solPrice - liqPrice;
  const bufPct = (buffer / solPrice * 100).toFixed(1);
@@ -982,14 +982,14 @@ initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 9000);
 
 // ── META 5% ──
 setTimeout(function() {
- var STABLES = 1952.43;
+ var STABLES = 1953.32;
  var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
  var QTYS = {ethereum:2.084106,solana:19.31226576,cardano:375.245,'radiant-capital':7290.46,
  eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 804.01);
+ var debt = (window._liveAaveDebt || 746.99) + (window._liveKaminoDebt || 804.22);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -3473,12 +3473,12 @@ document.addEventListener('DOMContentLoaded',function(){
 
  // Fallback: use static values
  console.warn('[Kamino] API returned no data, using static fallback');
- window._liveKaminoDebt = window._liveKaminoDebt || 804.01;
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
  window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
  return null;
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 804.01;
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
  return null;
  }
  }
@@ -3500,8 +3500,8 @@ document.addEventListener('DOMContentLoaded',function(){
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
- const STABLES = 1952.43; // USDT AAVE + USDS — atualizar com prints
- const DEBT = (window._liveAaveDebt || 746.30) + (window._liveKaminoDebt || 804.01);
+ const STABLES = 1953.32; // USDT AAVE + USDS — atualizar com prints
+ const DEBT = (window._liveAaveDebt || 746.99) + (window._liveKaminoDebt || 804.22);
  const solExtra = Math.max((window._liveKaminoSol||19.35) - 19.31226576, 0) * (solPrice||87.28);
  const total = spot + STABLES + solExtra - DEBT;
  window._livePatrimonio = total;
