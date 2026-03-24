@@ -1741,8 +1741,6 @@ var POOLS = [
  // ── 2026 ──
  // Capital: 0.17 ETH (~$453 na época, posição ativa ainda); fees parciais coletadas $0.487 ETH + $0.524 USDC (~$1.01 fase 1); pool aberta/remontada várias vezes
  { pair:'ETH/USDC 0.3%', net:'Base', open:'30/01/2026', close:'24/02/2026', days:25, capital:453, fees:16, il:0, result:16, status:'closed', lvr:0, fcr:52.8, invGrowth:3.5 },
- // Capital: ~$100 (0.0008 SOL + $0.62 USDT de taxas recicladas); pool pequena finalizada
- { pair:'SOL/USDT 0.01%', net:'Solana', open:'29/01/2026', close:'04/02/2026', days:7, capital:100, fees:0.62, il:0, result:0.62, status:'closed', lvr:0, fcr:32.3, invGrowth:0.6 },
 
  // ── 2025 ──
  // Capital inicial: 0.0729 ETH ($276.97) + aportes adicionais até ~0.17 ETH total; saiu com 0.13 ETH + fees $15.74 USDC + 0.005 ETH (~$34)
@@ -1777,7 +1775,6 @@ var POOLS = [
  // ETH/USDC ARB primeira pool (FOMO): capital $1.014,30; 209 dias; fees $22.02; saiu 0.148 ETH + $30.95 USDC
  { pair:'ETH/USDC 0.05%', net:'Arbitrum', open:'17/04/2023', close:'12/2023', days:209, capital:1014,fees:22, il:0, result:22, status:'closed', lvr:0, fcr:3.8, invGrowth:2.2 },
  // ETH/USDC zkSync: capital $159; fees ~$4; 60 dias
- { pair:'ETH/USDC 0.05%', net:'zkSync', open:'21/08/2023', close:'20/10/2023', days:60, capital:159, fees:4, il:0, result:4, status:'closed', lvr:0, fcr:15.3, invGrowth:2.5 },
  // RDNT/ETH pool original 2023: capital $956.88 (~0.39 ETH + compra RDNT); fees $89.85; 21 dias
  { pair:'RDNT/ETH 0.3%', net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21, capital:957, fees:90, il:0, result:90, status:'closed', lvr:0, fcr:163.3, invGrowth:9.4 },
 
@@ -2032,7 +2029,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
  // Chart 1 — P&L Líquido (dados corrigidos pelo Diário DeFi + imagens)
  // Ordem cronológica: ETH/USDC ARB 23 | zkSync 23 | ARB/USDC 23 | RDNT/ETH 23 | ARB/USDT 24 | MSTR/ETH 24 | PEANUT 24 | SOL/GRIFT 25 | XAI/WETH 25 | ETH/USDT 25 | SOL/USDC 25 | ETH/USDC BASE 26 | SOL/USDT 26 | WETH/USDC 26
- const pnlLabels = ['ETH/USDC\nARB 23','zkSync\n23','ARB/USDC\n23','RDNT/ETH\n23','ARB/USDT\n24','MSTR/ETH\n24','PEANUT\n24','SOL/GRIFT\n25','XAI/WETH\n25','ETH/USDT\n25','SOL/USDC\n25','ETH/USDC\nBASE 26','SOL/USDT\n26','WETH/USDC\nETH 26'];
+ const pnlLabels = ['ETH/USDC\nARB 23','ARB/USDC\n23','RDNT/ETH\n23','ARB/USDT\n24','MSTR/ETH\n24','PEANUT\n24','SOL/GRIFT\n25','XAI/WETH\n25','ETH/USDT\n25','SOL/USDC\n25','ETH/USDC\nBASE 26','WETH/USDC\nETH 26'];
  // Capital real confirmado:
  // ETH/USDC ARB 23: $1.014 | fees $22 | result +$22
  // zkSync 23: $159 | fees $4 | result +$4
@@ -2048,9 +2045,9 @@ document.addEventListener('DOMContentLoaded', function() {
  // ETH/USDC BASE 26: $453 | fees $16 | result +$16
  // SOL/USDT 26: $100 | fees $0.62 | result +$0.62
  // WETH/USDC ETH 26: $365 entrada | fees $8.62 | PnL $49.98 | IL -$41.36
- const pnlNet = [22, 4, 155, 90, 73, 36, -243, -1510, -14, 34, 23, 16, 1, 1];
- const pnlFees = [22, 4, 155, 90, 73, 36, 0, 1389, 7, 34, 23, 16, 1, 1];
- const pnlIL = [ 0, 0, 0, 0, 0, 0, 243, 500, 21, 0, 0, 0, 0, 0];
+ const pnlNet = [22, 155, 90, 73, 36, -243, -1510, -14, 34, 23, 16, 1];
+ const pnlFees = [22, 155, 90, 73, 36, 0, 1389, 7, 34, 23, 16, 1];
+ const pnlIL = [ 0, 0, 0, 0, 0, 243, 500, 21, 0, 0, 0, 0];
 
  function buildPnl(type) {
  const ctx = document.getElementById('chartPnl');
@@ -2311,8 +2308,8 @@ document.addEventListener('DOMContentLoaded', function() {
  }
 
  // Chart 4 — APR
- const aprLabels = ['ETH/USDC\nARB 23','zkSync\n23','ARB/USDC\n23','SOL/GRIFT\n25','SOL/USDC\n25','ETH/USDT\n25','ETH/USDC\nBASE 26','XAI/GRIFT\n25'];
- const aprData = [19, 700, 35, 800, 16, 22, 86, 90];
+ const aprLabels = ['ETH/USDC\nARB 23','ARB/USDC\n23','SOL/GRIFT\n25','SOL/USDC\n25','ETH/USDT\n25','ETH/USDC\nBASE 26','XAI/WETH\n25'];
+ const aprData = [19, 35, 800, 16, 22, 86, 90];
 
  function buildApr(type) {
  const ctx = document.getElementById('chartApr');
@@ -2394,9 +2391,9 @@ document.addEventListener('DOMContentLoaded', function() {
  }
 
  // Chart 6 — Distribuição por rede
- const netLabels = ['Arbitrum','Solana','Ethereum','zkSync','Base'];
- const netPools = [8, 7, 3, 1, 2];
- const netFees = [540, 1430, 20, 4, 15];
+ const netLabels = ['Arbitrum','Solana','Ethereum','Base'];
+ const netPools = [7, 6, 3, 2];
+ const netFees = [540, 1430, 20, 15];
 
  function buildNet(type) {
  const ctx = document.getElementById('chartNet');
@@ -2462,7 +2459,6 @@ document.addEventListener('DOMContentLoaded', function() {
  // Closed pools with known days (excludes active + SOL/GRIFT outlier flagged)
  const scatter = [
  { label:'ETH/USDC ARB 23', days:209, eff:22.02/1014*100, capital:1014, net:22, net:'Arbitrum', color:'#5882d2', result:'pos' },
- { label:'ETH/USDC zkSync', days:60, eff:4/159*100, capital:159, net:'zkSync', color:'#d45b8e', result:'pos' },
  { label:'RDNT/ETH ARB', days:8, eff:90/957*100, capital:957, net:'Arbitrum', color:'#5882d2', result:'pos' },
  { label:'ARB/USDC ARB', days:5, eff:180/900*100, capital:900, net:'Arbitrum', color:'#5882d2', result:'pos' },
  { label:'PEANUT/ETH ETH', days:10, eff:0/300*100, capital:300, net:'Ethereum', color:'#E8773D', result:'neg' }, // SCAM: 0 fees reais
@@ -2470,7 +2466,6 @@ document.addEventListener('DOMContentLoaded', function() {
  { label:'XAI/WETH ARB', days:60, eff:7/80*100, capital:80, net:'Arbitrum', color:'#5882d2', result:'neg' },
  { label:'ETH/USDC ARB 25', days:105, eff:50.65/277*100, capital:277, net:'Arbitrum', color:'#5882d2', result:'pos' },
  { label:'SOL/USDC SOL', days:93, eff:23/605*100, capital:605, net:'Solana', color:'#D98B3A', result:'pos' },
- { label:'SOL/USDT SOL', days:7, eff:0.62/100*100, capital:100, net:'Solana', color:'#D98B3A', result:'pos' },
  { label:'ETH/USDC Base', days:25, eff:15/300*100, capital:300, net:'Base', color:'#4fa8ff', result:'pos' },
  ];
 
@@ -2901,9 +2896,7 @@ document.addEventListener('DOMContentLoaded', function() {
  // vol estimada: stablecoin pair ~5%, blue chip ~25%, memecoin/altcoin ~80-120%
  const pools_s = [
  { label:'ARB/USDC\n23', ret:35.2, vol:22, result:'pos' },
- { label:'ARB/USDC\n23b', ret:1460, vol:22, result:'pos' },
  { label:'ETH/USDC\nARB 23',ret:3.8, vol:18, result:'pos' },
- { label:'zkSync\n23', ret:15.3, vol:18, result:'pos' },
  { label:'RDNT/ETH\n23', ret:163.3, vol:55, result:'pos' },
  { label:'ARB/USDT\n24', ret:88.0, vol:22, result:'pos' },
  { label:'MSTR/ETH\n24', ret:390.1, vol:70, result:'pos' },
@@ -2977,12 +2970,9 @@ document.addEventListener('DOMContentLoaded', function() {
  // gas_cost: custo médio de remontagem por rede ($)
  // fee_hora: taxa por hora estimada = (capital * FCR/100) / (365*24)
  const pools_b = [
- { label:'ARB/USDC 23', gas:2.95, feeH: 884*0.352/8760, net:'Arbitrum' },
- { label:'ETH/USDC ARB 23', gas:3.0, feeH:1014*0.038/8760, net:'Arbitrum' },
  { label:'RDNT/ETH 23', gas:2.5, feeH: 957*1.633/8760, net:'Arbitrum' },
  { label:'ARB/USDT 24', gas:2.0, feeH: 628*0.88/8760, net:'Arbitrum' },
  { label:'MSTR/ETH 24', gas:18.0, feeH: 260*3.901/8760, net:'Ethereum' },
- { label:'PEANUT 24', gas:22.0, feeH: 0, net:'Ethereum' },
  { label:'SOL/GRIFT 25', gas:0.05, feeH: 780*8.157/8760, net:'Solana' },
  { label:'ETH/USDT 25', gas:1.5, feeH: 277*0.427/8760, net:'Arbitrum' },
  { label:'SOL/USDC 25', gas:0.05, feeH: 660*0.137/8760, net:'Solana' },
