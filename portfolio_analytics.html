@@ -575,7 +575,7 @@ body, input, button, select, textarea {
  <div>
  <div style="display:flex;align-items:center;gap:8px;"><div class="hero-label">◈ PATRIMÔNIO LÍQUIDO TOTAL</div>
  <div class="hero-value sensitive" id="s-net-total">—</div><button onclick="toggleHide()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px;opacity:.7;transition:opacity .2s;" title="Ocultar valores" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">👁</button></div>
- <div class="hero-sub" id="s-net-sub">CoinGecko + LP − Dívidas</div>
+ 
  </div>
  <div class="hero-meta">
  <div class="hero-meta-item">
@@ -597,26 +597,27 @@ body, input, button, select, textarea {
 
 <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
  <div class="stat-card">
- <div class="stat-label">SPOT</div>
- <div class="stat-value acc sensitive" id="s-spot">—</div>
- <div class="stat-sub sensitive" id="s-spot-sub">—</div>
+  <div class="stat-label">SPOT</div>
+  <div class="stat-value acc sensitive" id="s-spot">—</div>
+  <div class="stat-sub sensitive" id="s-spot-sub">—</div>
  </div>
  <div class="stat-card">
- <div class="stat-label">POOLS LP</div>
- <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$346.94</div>
- <div class="stat-sub">WETH/USDC · Uniswap V3</div>
+  <div class="stat-label">POOLS LP</div>
+  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$346.94</div>
+  <div class="stat-sub">WETH/USDC · Uniswap V3</div>
  </div>
  <div class="stat-card">
- <div class="stat-label">DÍVIDAS</div>
- <div class="stat-value neg sensitive" id="s-debt">—</div>
- <div class="stat-sub">Aave USDC + Kamino USDC</div>
+  <div class="stat-label">DÍVIDAS</div>
+  <div class="stat-value neg sensitive" id="s-debt">—</div>
+  <div class="stat-sub">Aave USDC + Kamino USDC</div>
  </div>
- <div class="stat-card" style="border-color:rgba(63,185,80,0.3);background:linear-gradient(135deg,var(--surface),rgba(63,185,80,0.03));">
- <div class="stat-label" style="color:var(--green);">PATRIMÔNIO LÍQUIDO</div>
- <div class="stat-value pos sensitive" id="s-net-card">—</div>
- <div class="stat-sub">Spot + LP − Dívidas</div>
+ <div class="stat-card" style="border-color:rgba(58,126,200,0.3);background:linear-gradient(135deg,var(--surface),rgba(58,126,200,0.04));">
+  <div class="stat-label" style="color:var(--blue,#3a7ec8);">CAIXA</div>
+  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$1,953</div>
+  <div class="stat-sub">USDT $1,653 · USDS $300</div>
  </div>
 </div>
+
 
 
 
@@ -760,105 +761,6 @@ body, input, button, select, textarea {
 </div>
 
 <!-- ══ MÉTRICAS ══ -->
-<!-- ══ FEAR & GREED INDEX ══ -->
-<div class="section-label">Sentimento de Mercado</div>
-<div class="card" style="margin-bottom:12px;padding:20px 22px;">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-    
-    <!-- Left: gauge display -->
-    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
-      <div id="fg-gauge-wrap" style="position:relative;width:120px;height:120px;flex-shrink:0;">
-        <canvas id="fg-gauge" width="120" height="120"></canvas>
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-40%);text-align:center;pointer-events:none;">
-          <div id="fg-value" style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--text);line-height:1;">—</div>
-          <div id="fg-label" style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--muted);margin-top:3px;">LOADING</div>
-        </div>
-      </div>
-      <div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Fear & Greed Index</div>
-        <div style="font-family:'Satoshi',sans-serif;font-size:13px;color:var(--text);margin-bottom:4px;">Crypto Market Sentiment</div>
-        <div id="fg-updated" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">Atualizando...</div>
-        <div style="margin-top:12px;display:flex;gap:6px;align-items:center;">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Ontem:</div>
-          <div id="fg-yesterday" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--text);">—</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-left:10px;">Semana passada:</div>
-          <div id="fg-week" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--text);">—</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right: scale reference -->
-    <div style="display:flex;flex-direction:column;gap:4px;min-width:160px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--muted);margin-bottom:6px;text-transform:uppercase;">Escala</div>
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:#b22222;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">0–24 · Medo Extremo</span></div>
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:#cd5c5c;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">25–44 · Medo</span></div>
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:#daa520;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">45–55 · Neutro</span></div>
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:#3cb371;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">56–74 · Ganância</span></div>
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:#228b22;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">75–100 · Ganância Extrema</span></div>
-      <div style="margin-top:8px;">
-        <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--accent);text-decoration:none;">alternative.me ↗</a>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ══ FEAR & GREED INDEX ══ -->
-<div class="section-label">Fear & Greed Index</div>
-<div class="card" style="margin-bottom:14px;padding:20px 24px;">
-  <div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap;">
-    
-    <!-- Widget iframe from alternative.me -->
-    <div style="flex-shrink:0;">
-      <iframe 
-        src="https://alternative.me/crypto/fear-and-greed-index/widget.html?&orientation=vertical&width=120" 
-        frameborder="0" 
-        scrolling="no" 
-        width="120" 
-        height="160"
-        style="border:none;background:transparent;"
-        title="Fear and Greed Index"
-      ></iframe>
-    </div>
-
-    <!-- Explanation -->
-    <div style="flex:1;min-width:200px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">Sentimento do Mercado</div>
-      <div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:12px;">
-        O <strong style="color:var(--accent);">Fear &amp; Greed Index</strong> mede o sentimento do mercado cripto em tempo real. 
-        Valores próximos de <strong>0 = Medo Extremo</strong> (possível oportunidade de compra) 
-        e próximos de <strong>100 = Ganância Extrema</strong> (possível sinal de topo).
-      </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">
-          <span style="color:#e74c3c;">0–24</span> Medo Extremo
-        </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">
-          <span style="color:#e67e22;">25–44</span> Medo
-        </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">
-          <span style="color:#f1c40f;">45–55</span> Neutro
-        </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">
-          <span style="color:#2ecc71;">56–74</span> Ganância
-        </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">
-          <span style="color:#27ae60;">75–100</span> Ganância Extrema
-        </div>
-      </div>
-    </div>
-
-    <!-- Live value via API -->
-    <div style="flex-shrink:0;text-align:center;border-left:1px solid var(--border);padding-left:24px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Agora</div>
-      <div id="fg-value" style="font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;color:var(--accent);line-height:1;">—</div>
-      <div id="fg-label" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:.1em;">—</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;opacity:.6;">alternative.me</div>
-    </div>
-
-  </div>
-</div>
-
 <div class="section-label">Métricas</div>
 <div class="metrics-grid">
  <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">SHARPE RATIO</div><div class="metric-val neg">−1.42</div><div class="metric-desc">Retorno/risco inadequado</div></div>
@@ -1120,7 +1022,9 @@ function renderUI(enriched){
 
  set('s-net-total', fmtCurrency(netTotal, 0));
  set('s-net-card', fmtCurrency(netTotal, 0));
- set('s-net-sub', `SPOT ${fmtCurrency(cgTotal,0)} + Stables ${fmtCurrency(STABLES_USD,0)} + SOL Kamino ${fmtCurrency(kaminoSolUsd,0)} − Dívidas ${fmtCurrency(aaveDebtLive+kaminoDebtLive,0)}`);
+  // Update CAIXA card with stables
+  var stablesTotal = STABLES_USD;
+  set('s-stables', fmtCurrency(stablesTotal, 0));
  set('s-spot', fmtCurrency(cgTotal, 0));
  set('s-spot-sub', enriched.length+' ativos');
  set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
@@ -2871,97 +2775,6 @@ function toggleLang() {
 })();
 
 
-// ── FEAR & GREED INDEX ──────────────────────────────────────────────────────
-(function initFearGreed() {
-  function fgColor(v) {
-    if (v <= 24) return '#b22222';
-    if (v <= 44) return '#cd5c5c';
-    if (v <= 55) return '#daa520';
-    if (v <= 74) return '#3cb371';
-    return '#228b22';
-  }
-  function fgLabel(v) {
-    if (v <= 24) return 'MEDO EXTREMO';
-    if (v <= 44) return 'MEDO';
-    if (v <= 55) return 'NEUTRO';
-    if (v <= 74) return 'GANÂNCIA';
-    return 'GANÂNCIA EXT.';
-  }
-
-  var fgGaugeInst = null;
-
-  function drawGauge(value) {
-    var canvas = document.getElementById('fg-gauge');
-    if (!canvas || typeof Chart === 'undefined') return;
-    if (fgGaugeInst) fgGaugeInst.destroy();
-    var pct = value / 100;
-    var color = fgColor(value);
-    var dk = document.documentElement.getAttribute('data-theme') === 'dark';
-    fgGaugeInst = new Chart(canvas, {
-      type: 'doughnut',
-      data: {
-        datasets: [{
-          data: [value, 100 - value],
-          backgroundColor: [color, dk ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'],
-          borderWidth: 0,
-          hoverOffset: 0,
-        }]
-      },
-      options: {
-        responsive: false,
-        cutout: '72%',
-        rotation: -90,
-        circumference: 180,
-        plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        animation: { duration: 600, easing: 'easeOutQuart' }
-      }
-    });
-    var valEl = document.getElementById('fg-value');
-    var lblEl = document.getElementById('fg-label');
-    if (valEl) { valEl.textContent = value; valEl.style.color = color; }
-    if (lblEl) { lblEl.textContent = fgLabel(value); lblEl.style.color = color; }
-  }
-
-  function fetchFG() {
-    fetch('https://api.alternative.me/fng/?limit=7')
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (!d || !d.data || !d.data.length) return;
-        var today     = parseInt(d.data[0].value);
-        var yesterday = parseInt(d.data[1].value);
-        var weekAgo   = parseInt(d.data[6].value);
-        var ts        = new Date(parseInt(d.data[0].timestamp) * 1000);
-        var dateStr   = ts.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
-
-        drawGauge(today);
-
-        var updEl = document.getElementById('fg-updated');
-        if (updEl) updEl.textContent = 'Atualizado: ' + dateStr;
-
-        var yEl = document.getElementById('fg-yesterday');
-        if (yEl) {
-          yEl.textContent = yesterday + ' (' + fgLabel(yesterday).split(' ')[0] + ')';
-          yEl.style.color = fgColor(yesterday);
-        }
-        var wEl = document.getElementById('fg-week');
-        if (wEl) {
-          wEl.textContent = weekAgo + ' (' + fgLabel(weekAgo).split(' ')[0] + ')';
-          wEl.style.color = fgColor(weekAgo);
-        }
-      })
-      .catch(function() {
-        // Fallback static value
-        drawGauge(30);
-        var updEl = document.getElementById('fg-updated');
-        if (updEl) updEl.textContent = 'Dados estáticos · API indisponível';
-      });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(fetchFG, 800);
-    setInterval(fetchFG, 5 * 60 * 1000); // refresh every 5 min
-  });
-})();
 
 
 // ── Fear & Greed Index ──────────────────────────────────────────
