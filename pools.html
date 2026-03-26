@@ -1533,7 +1533,7 @@ body, input, button, select, textarea {
  </table>
  <div style="margin-top:10px;padding:8px 10px;background:var(--surface2);border-radius:4px;font-size:9px;color:var(--muted);line-height:1.7;">
  <span style="color:var(--accent);font-weight:600;">AAVE V3:</span> Colateral = 1.87 ETH + 1,652 USDT · Dívida = $746 USDC<br>
- <span style="color:var(--accent);font-weight:600;">Kamino:</span> Colateral = 19.33 SOL + 90 USDS · Dívida = $803 USDC<br>
+ <span style="color:var(--accent);font-weight:600;">Kamino:</span> Colateral = 19.33 SOL + 300.42 USDS · Dívida = $804.22 USDC<br>
  <span style="color:var(--muted);">Total bloqueado como colateral: </span><span id="totalCollateralUsd" style="color:var(--text);font-family:'JetBrains Mono',monospace;">$7,141</span>
  </div>
  </div>
@@ -1592,7 +1592,7 @@ body, input, button, select, textarea {
  { sym:'ETH', qty:1.87, cgId:'ethereum', proto:'AAVE V3', color:'var(--accent)' },
  { sym:'USDT', qty:1652.03, cgId:'tether', proto:'AAVE V3', color:'var(--accent)' },
  { sym:'SOL', qty:19.35, cgId:'solana', proto:'Kamino', color:'#14F195' },
- { sym:'USDS', qty:90.04, cgId:'usds-stablecoin',proto:'Kamino', color:'#1da1f2' },
+ { sym:'USDS', qty:300.42, cgId:'usds',proto:'Kamino', color:'#1da1f2' },
  ];
 
  const fmt = (n,d=2) => '$'+n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -2731,7 +2731,7 @@ function buildProjChart() {
 
  // Monthly income by source (current positions, based on APY)
  // AAVE: ETH 1.88% APY on ~$3842 = $72/yr = $6/mo; USDT 2.31% on $1651 = $38/yr = $3.2/mo
- // Kamino: SOL 4.94% on ~$1679 = $83/yr = $6.9/mo; USDS 0.52% on $90 = $0.47/yr = $0.04/mo
+ // Kamino: SOL 4.94% on ~$1750 = $86/yr = $7.2/mo; USDS 3.03% on $300 = $9.09/yr = $0.76/mo
  // Net after borrow (AAVE 3.54% on $746 = $26.4/yr, Kamino 3.07% on $803 = $24.7/yr)
  // AAVE net: 6+3.2-2.2 = $7/mo; Kamino net: 6.9+0.04-2.06 = $4.88/mo
  // Uniswap LP: ~$0.64/day = $19.5/mo
