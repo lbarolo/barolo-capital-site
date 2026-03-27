@@ -571,11 +571,13 @@ body, input, button, select, textarea {
   </div>
 
 </div>
-<div class="hero-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
- <div>
- <div style="display:flex;align-items:center;gap:8px;"><div class="hero-label">◈ PATRIMÔNIO LÍQUIDO TOTAL</div>
- <div class="hero-value sensitive" id="s-net-total">—</div><button onclick="toggleHide()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px;opacity:.7;transition:opacity .2s;" title="Ocultar valores" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">👁</button></div>
- 
+<div class="hero-card" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+ <div style="display:flex;flex-direction:column;gap:4px;">
+  <div class="hero-label" style="margin-bottom:2px;">◈ PATRIMÔNIO LÍQUIDO TOTAL</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+   <div class="hero-value sensitive" id="s-net-total">—</div>
+   <button onclick="toggleHide()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px;opacity:.7;transition:opacity .2s;" title="Ocultar valores" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">👁</button>
+  </div>
  </div>
  <div class="hero-meta">
  <div class="hero-meta-item">
