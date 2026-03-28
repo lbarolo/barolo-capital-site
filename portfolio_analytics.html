@@ -763,6 +763,113 @@ body, input, button, select, textarea {
 </div>
 
 <!-- ══ MÉTRICAS ══ -->
+<!-- ══ FEAR & GREED INDEX ══ -->
+<div class="section-label">Sentimento de Mercado</div>
+<div class="card" style="margin-bottom:12px;padding:18px 20px;">
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:space-between;">
+
+    <!-- Gauge + value -->
+    <div style="display:flex;align-items:center;gap:20px;">
+      <!-- Semi-circular arc -->
+      <div style="position:relative;width:110px;height:60px;flex-shrink:0;">
+        <svg viewBox="0 0 110 60" width="110" height="60">
+          <!-- Background arc -->
+          <path d="M10,55 A45,45 0 0,1 100,55" fill="none" stroke="var(--border)" stroke-width="10" stroke-linecap="round"/>
+          <!-- Colored arc — drawn by JS -->
+          <path id="fg-arc" d="M10,55 A45,45 0 0,1 100,55" fill="none" stroke="var(--muted)" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 141.37"/>
+          <!-- Needle -->
+          <line id="fg-needle" x1="55" y1="55" x2="55" y2="16" stroke="var(--text)" stroke-width="2" stroke-linecap="round" transform-origin="55 55" transform="rotate(0,55,55)"/>
+          <circle cx="55" cy="55" r="4" fill="var(--text)"/>
+        </svg>
+        <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);text-align:center;line-height:1;">
+          <div id="fg-value" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--muted);">—</div>
+        </div>
+      </div>
+
+      <!-- Label + meta -->
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Fear & Greed Index</div>
+        <div id="fg-label" style="font-family:'Satoshi',sans-serif;font-size:16px;font-weight:600;color:var(--muted);margin-bottom:8px;">—</div>
+        <div id="fg-updated" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">—</div>
+      </div>
+    </div>
+
+    <!-- Yesterday + last week comparison -->
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Ontem</div>
+        <div id="fg-yesterday" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--muted);">—</div>
+        <div id="fg-yesterday-lbl" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">—</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">7 dias</div>
+        <div id="fg-week" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--muted);">—</div>
+        <div id="fg-week-lbl" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">—</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">30 dias</div>
+        <div id="fg-month" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--muted);">—</div>
+        <div id="fg-month-lbl" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">—</div>
+      </div>
+    </div>
+
+    <!-- Scale legend -->
+    <div style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Escala</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#c0392b;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">0–24 Medo Extremo</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#e67e22;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">25–44 Medo</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#f1c40f;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">45–55 Neutro</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#2ecc71;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">56–74 Ganância</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#27ae60;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">75–100 Ganância Extrema</span></div>
+      <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:var(--accent);text-decoration:none;margin-top:4px;">alternative.me ↗</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ FEAR & GREED ══ -->
+<div class="section-label">Sentimento de Mercado</div>
+<div class="card" style="margin-bottom:12px;padding:18px 22px;">
+  <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
+
+    <!-- Semicircle gauge -->
+    <div style="position:relative;width:130px;height:70px;flex-shrink:0;">
+      <canvas id="fg-gauge" width="130" height="70" style="display:block;"></canvas>
+      <div style="position:absolute;bottom:0;left:0;right:0;text-align:center;">
+        <div id="fg-value" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1;">—</div>
+        <div id="fg-label" style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.18em;margin-top:2px;color:var(--muted);">—</div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div style="flex:1;min-width:160px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">Fear &amp; Greed Index · Crypto</div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Ontem</span>
+        <span id="fg-yesterday" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;">—</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Semana passada</span>
+        <span id="fg-week" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;">—</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Atualizado</span>
+        <span id="fg-updated" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">—</span>
+      </div>
+    </div>
+
+    <!-- Scale bar -->
+    <div style="flex-shrink:0;min-width:140px;">
+      <div style="height:6px;width:100%;border-radius:3px;background:linear-gradient(90deg,#b22222,#cd5c5c,#daa520,#3cb371,#228b22);margin-bottom:6px;position:relative;">
+        <div id="fg-needle" style="position:absolute;top:-3px;width:2px;height:12px;background:var(--text);border-radius:1px;transform:translateX(-50%);transition:left .6s ease;left:50%;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);">
+        <span>Medo Ext.</span><span>Neutro</span><span>Ganância Ext.</span>
+      </div>
+      <div style="margin-top:10px;">
+        <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--accent);text-decoration:none;letter-spacing:.1em;">alternative.me ↗</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="section-label">Métricas</div>
 <div class="metrics-grid">
  <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">SHARPE RATIO</div><div class="metric-val neg">−1.42</div><div class="metric-desc">Retorno/risco inadequado</div></div>
@@ -2779,35 +2886,197 @@ function toggleLang() {
 
 
 
-// ── Fear & Greed Index ──────────────────────────────────────────
-(function fetchFearGreed() {
-  async function load() {
-    try {
-      const r = await fetch('https://api.alternative.me/fng/?limit=1&format=json', 
-        { signal: AbortSignal.timeout(8000) });
-      const d = await r.json();
-      if (!d.data || !d.data[0]) return;
-      const val = parseInt(d.data[0].value);
-      const txt = d.data[0].value_classification;
-      const colors = {
-        'Extreme Fear': '#e74c3c',
-        'Fear': '#e67e22', 
-        'Neutral': '#f1c40f',
-        'Greed': '#2ecc71',
-        'Extreme Greed': '#27ae60'
-      };
-      const col = colors[txt] || 'var(--accent)';
-      const el_v = document.getElementById('fg-value');
-      const el_l = document.getElementById('fg-label');
-      if (el_v) { el_v.textContent = val; el_v.style.color = col; }
-      if (el_l) { el_l.textContent = txt; el_l.style.color = col; }
-    } catch(e) {
-      // fallback: keep showing —
+
+
+// ══ FEAR & GREED INDEX ═════════════════════════════════════════════════════
+(function() {
+  function fgColor(v) {
+    if (v <= 24) return '#c0392b';
+    if (v <= 44) return '#e67e22';
+    if (v <= 55) return '#f1c40f';
+    if (v <= 74) return '#2ecc71';
+    return '#27ae60';
+  }
+  function fgClassify(v) {
+    if (v <= 24) return 'Medo Extremo';
+    if (v <= 44) return 'Medo';
+    if (v <= 55) return 'Neutro';
+    if (v <= 74) return 'Ganância';
+    return 'Ganância Extrema';
+  }
+  function updateNeedle(val) {
+    // val 0-100 → rotation -90° (left) to +90° (right)
+    var deg = (val / 100) * 180 - 90;
+    var needle = document.getElementById('fg-needle');
+    if (needle) needle.setAttribute('transform', 'rotate(' + deg + ',55,55)');
+    // Arc: total arc length ≈ 141.37 (half circle), fill proportionally
+    var arc = document.getElementById('fg-arc');
+    if (arc) {
+      var filled = (val / 100) * 141.37;
+      arc.setAttribute('stroke-dasharray', filled + ' ' + (141.37 - filled));
+      arc.setAttribute('stroke', fgColor(val));
     }
   }
+  function setEl(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  function setColor(id, col) { var el = document.getElementById(id); if (el) el.style.color = col; }
+
+  function render(data) {
+    var today = data[0], yesterday = data[1], week = data[6], month = data[29] || data[data.length-1];
+    var v = parseInt(today.value);
+    var col = fgColor(v);
+    var ts = new Date(parseInt(today.timestamp) * 1000);
+    var dateStr = ts.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
+
+    updateNeedle(v);
+    setEl('fg-value', v); setColor('fg-value', col);
+    setEl('fg-label', fgClassify(v)); setColor('fg-label', col);
+    setEl('fg-updated', 'Atualizado ' + dateStr);
+
+    var vy = parseInt(yesterday.value);
+    setEl('fg-yesterday', vy); setColor('fg-yesterday', fgColor(vy));
+    setEl('fg-yesterday-lbl', fgClassify(vy));
+
+    var vw = parseInt(week.value);
+    setEl('fg-week', vw); setColor('fg-week', fgColor(vw));
+    setEl('fg-week-lbl', fgClassify(vw));
+
+    var vm = parseInt(month.value);
+    setEl('fg-month', vm); setColor('fg-month', fgColor(vm));
+    setEl('fg-month-lbl', fgClassify(vm));
+  }
+
+  function load() {
+    fetch('https://api.alternative.me/fng/?limit=30&format=json')
+      .then(function(r) { return r.json(); })
+      .then(function(d) { if (d && d.data && d.data.length >= 7) render(d.data); })
+      .catch(function() {
+        // Static fallback — current known value (Fear)
+        updateNeedle(30);
+        setEl('fg-value', 30); setColor('fg-value', fgColor(30));
+        setEl('fg-label', 'Medo'); setColor('fg-label', fgColor(30));
+        setEl('fg-updated', 'Dados estáticos');
+      });
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     load();
-    setInterval(load, 300000); // refresh every 5 min
+    setInterval(load, 5 * 60 * 1000);
+  });
+})();
+
+
+// ── FEAR & GREED INDEX ──────────────────────────────────────────────────────
+(function() {
+  function fgColor(v) {
+    if (v <= 24) return '#b22222';
+    if (v <= 44) return '#cd5c5c';
+    if (v <= 55) return '#daa520';
+    if (v <= 74) return '#3cb371';
+    return '#228b22';
+  }
+  function fgText(v) {
+    if (v <= 24) return 'MEDO EXTREMO';
+    if (v <= 44) return 'MEDO';
+    if (v <= 55) return 'NEUTRO';
+    if (v <= 74) return 'GANANCIA';
+    return 'GANANCIA EXT.';
+  }
+  var fgInst = null;
+
+  function drawGauge(val) {
+    var canvas = document.getElementById('fg-gauge');
+    if (!canvas) return;
+    var ctx2 = canvas.getContext('2d');
+    var W = 130, H = 70, cx = 65, cy = 68, r = 58;
+    ctx2.clearRect(0, 0, W, H);
+
+    // Background arc
+    ctx2.beginPath();
+    ctx2.arc(cx, cy, r, Math.PI, 0);
+    ctx2.lineWidth = 10;
+    ctx2.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark'
+      ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+    ctx2.stroke();
+
+    // Colored arc
+    var grad = ctx2.createLinearGradient(cx - r, cy, cx + r, cy);
+    grad.addColorStop(0,    '#b22222');
+    grad.addColorStop(0.25, '#cd5c5c');
+    grad.addColorStop(0.5,  '#daa520');
+    grad.addColorStop(0.75, '#3cb371');
+    grad.addColorStop(1,    '#228b22');
+    var pct = val / 100;
+    ctx2.beginPath();
+    ctx2.arc(cx, cy, r, Math.PI, Math.PI + Math.PI * pct);
+    ctx2.lineWidth = 10;
+    ctx2.lineCap = 'round';
+    ctx2.strokeStyle = fgColor(val);
+    ctx2.stroke();
+
+    // Needle
+    var angle = Math.PI + Math.PI * pct;
+    var nx = cx + (r - 5) * Math.cos(angle);
+    var ny = cy + (r - 5) * Math.sin(angle);
+    ctx2.beginPath();
+    ctx2.moveTo(cx, cy);
+    ctx2.lineTo(nx, ny);
+    ctx2.lineWidth = 2.5;
+    ctx2.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark'
+      ? '#e8e0d0' : '#16110c';
+    ctx2.lineCap = 'round';
+    ctx2.stroke();
+
+    // Center dot
+    ctx2.beginPath();
+    ctx2.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx2.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark'
+      ? '#e8e0d0' : '#16110c';
+    ctx2.fill();
+
+    // Update text
+    var vEl = document.getElementById('fg-value');
+    var lEl = document.getElementById('fg-label');
+    var ndl = document.getElementById('fg-needle');
+    if (vEl) { vEl.textContent = val; vEl.style.color = fgColor(val); }
+    if (lEl) { lEl.textContent = fgText(val); lEl.style.color = fgColor(val); }
+    if (ndl) ndl.style.left = (val) + '%';
+  }
+
+  function setHist(id, val) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val + ' · ' + fgText(val);
+    el.style.color = fgColor(val);
+  }
+
+  function fetchFG() {
+    fetch('https://api.alternative.me/fng/?limit=7&format=json')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d || !d.data || !d.data.length) throw new Error('no data');
+        var today = parseInt(d.data[0].value);
+        var yest  = parseInt(d.data[1].value);
+        var week  = parseInt(d.data[6].value);
+        var ts    = new Date(parseInt(d.data[0].timestamp) * 1000);
+        drawGauge(today);
+        setHist('fg-yesterday', yest);
+        setHist('fg-week', week);
+        var upEl = document.getElementById('fg-updated');
+        if (upEl) upEl.textContent = ts.toLocaleDateString('pt-BR');
+      })
+      .catch(function() {
+        // static fallback
+        drawGauge(30);
+        setHist('fg-yesterday', 28);
+        setHist('fg-week', 35);
+        var upEl = document.getElementById('fg-updated');
+        if (upEl) upEl.textContent = 'dados estaticos';
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(fetchFG, 600);
+    setInterval(fetchFG, 300000); // every 5 min
   });
 })();
 
