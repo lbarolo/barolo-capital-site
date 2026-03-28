@@ -1361,17 +1361,38 @@ body, input, button, select, textarea {
 <!-- ══ SEÇÃO: ANÁLISE AVANÇADA DE POOLS ══ -->
 <div class="section-label" style="margin-top:48px;">Análise Avançada — Pools & DeFi</div>
 
-<!-- ROW 1: Eficiência -->
-<div style="margin-bottom:14px;">
+<!-- ROW 1: Ranking + Waterfall -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
 
+ <!-- Ranking FCR -->
  <div class="chart-panel" style="margin-bottom:0;">
- <div class="chart-panel-hdr">
- <div>
- <div class="chart-panel-title">Eficiência de Capital — Scatter</div>
- <div class="chart-panel-sub">DIAS ABERTA × TAXA/CAPITAL % · TAMANHO = CAPITAL</div>
+  <div class="chart-panel-hdr">
+   <div>
+    <div class="chart-panel-title">Ranking de Eficiência — FCR%</div>
+    <div class="chart-panel-sub">FEE CAPTURE RATE ANUALIZADO · POOLS ENCERRADAS</div>
+   </div>
+   <div class="ct-toggle">
+    <button class="active" onclick="setRankingMode('fcr',this)">FCR%</button>
+    <button onclick="setRankingMode('net',this)">Net $</button>
+   </div>
+  </div>
+  <div class="chart-body"><canvas id="chartRanking" height="220"></canvas></div>
  </div>
- </div>
- <div class="chart-body"><canvas id="chartScatter" height="160"></canvas></div>
+
+ <!-- Waterfall P&L -->
+ <div class="chart-panel" style="margin-bottom:0;">
+  <div class="chart-panel-hdr">
+   <div>
+    <div class="chart-panel-title">Composição do Resultado — Waterfall</div>
+    <div class="chart-panel-sub">TAXAS · IL · RESULTADO LÍQUIDO POR POOL</div>
+   </div>
+  </div>
+  <div class="chart-body"><canvas id="chartWaterfall" height="220"></canvas></div>
+  <div style="padding:6px 18px 10px;display:flex;gap:16px;font-size:9px;">
+   <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:rgba(74,124,63,0.8);display:inline-block;"></span>Taxas</span>
+   <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:rgba(185,64,64,0.75);display:inline-block;"></span>IL / Perda</span>
+   <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:rgba(138,104,32,0.8);display:inline-block;"></span>Net</span>
+  </div>
  </div>
 
 </div>
@@ -1397,84 +1418,37 @@ body, input, button, select, textarea {
 </div>
 
 <!-- ══ ANÁLISE QUANTITATIVA ══ -->
-<div class="section-label" style="margin-top:48px;">Análise Quantitativa — Risco & Eficiência</div>
+<div class="section-label" style="margin-top:48px;">Performance — Ranking & Composição de Resultado</div>
 
-<!-- Sharpe + Break-even -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
 
- <div class="chart-panel" style="margin-bottom:0;">
- <div class="chart-panel-hdr">
- <div>
- <div class="chart-panel-title">Sharpe Ratio por Pool</div>
- <div class="chart-panel-sub">RETORNO AJUSTADO AO RISCO · BENCHMARK 5% a.a.</div>
- </div>
- </div>
- <div class="chart-body"><canvas id="chartSharpe" height="180"></canvas></div>
- <div style="padding:4px 18px 10px;font-size:8.5px;color:var(--muted);font-style:italic;">
- Sharpe = (retorno anualizado − 5%) ÷ volatilidade estimada do par. Pools com token volátil penalizam mesmo com fees altas.
- </div>
- </div>
+  <!-- FCR Horizontal Bar -->
+  <div class="chart-panel">
+    <div class="chart-panel-hdr">
+      <div class="chart-panel-title">Eficiência Anualizada (FCR%) por Pool</div>
+      <div style="font-size:8px;color:var(--muted);letter-spacing:1px;">Taxas / Capital × 365 / Dias</div>
+    </div>
+    <div class="chart-body"><canvas id="chartFCR" height="240"></canvas></div>
+  </div>
 
- <div class="chart-panel" style="margin-bottom:0;">
- <div class="chart-panel-hdr">
- <div>
- <div class="chart-panel-title">Break-even de Remontagem</div>
- <div class="chart-panel-sub">HORAS NECESSÁRIAS P/ RECUPERAR CUSTO DE GAS</div>
- </div>
- </div>
- <div class="chart-body"><canvas id="chartBreakeven" height="180"></canvas></div>
- <div style="padding:4px 18px 10px;" id="breakEvenInsight"></div>
- </div>
+  <!-- Waterfall Fees vs IL -->
+  <div class="chart-panel">
+    <div class="chart-panel-hdr">
+      <div class="chart-panel-title">Composição do Resultado — Taxas vs IL</div>
+      <div style="font-size:8px;color:var(--muted);letter-spacing:1px;">Barras verdes = taxas · Barras vermelhas = impermanent loss</div>
+    </div>
+    <div class="chart-body"><canvas id="chartWaterfall" height="240"></canvas></div>
+  </div>
 
 </div>
 
-<!-- Heatmap -->
+<!-- Net by pool — horizontal ranking -->
 <div class="chart-panel" style="margin-bottom:14px;">
- <div class="chart-panel-hdr" style="padding-bottom:10px;">
- <div>
- <div class="chart-panel-title">Heatmap de Performance — Taxas por Mês</div>
- <div class="chart-panel-sub">RENDA EM FEES POR MÊS · COR = INTENSIDADE · DADOS DO DIÁRIO 2023–2026</div>
- </div>
- <div class="ct-toggle" id="tglHeatmap">
- <button class="active" onclick="setHeatmapMode('fees',this)">Taxas $</button>
- <button onclick="setHeatmapMode('activity',this)">Remontagens</button>
- </div>
- </div>
- <div style="padding:4px 18px 18px;">
- <div id="heatmapGrid" style="overflow-x:auto;"></div>
- <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:8px;color:var(--muted);letter-spacing:.06em;">
- <span>MENOS</span>
- <div id="heatmapLegend" style="display:flex;gap:3px;"></div>
- <span>MAIS</span>
- <span style="margin-left:14px;font-style:italic;">Passe o mouse para detalhes</span>
- </div>
- </div>
-</div>
-
-<!-- Lições -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:80px;">
- <div class="chart-panel" style="margin-bottom:0;">
- <div class="chart-panel-hdr" style="padding-bottom:14px;">
- <div>
- <div class="chart-panel-title">Lições do Diário</div>
- <div class="chart-panel-sub">PADRÕES DE ERRO E ACERTO</div>
- </div>
- </div>
- <div style="padding:0 18px 18px;display:flex;flex-direction:column;gap:8px;" id="licoesBox"></div>
- </div>
- <div class="chart-panel" style="margin-bottom:0;">
- <div class="chart-panel-hdr" style="padding-bottom:14px;">
- <div>
- <div class="chart-panel-title">Distribuição por Rede</div>
- <div class="chart-panel-sub">% DE POOLS POR BLOCKCHAIN</div>
- </div>
- <div class="ct-toggle" id="tgl6">
- <button class="active" onclick="setChartType('net','bar',this)">▐▌ Barras</button>
- <button onclick="setChartType('net','line',this)">∿ Linha</button>
- </div>
- </div>
- <div class="chart-body"><canvas id="chartNet" height="200"></canvas></div>
- </div>
+  <div class="chart-panel-hdr">
+    <div class="chart-panel-title">Resultado Líquido por Pool (Taxas − IL)</div>
+    <div style="font-size:8px;color:var(--muted);letter-spacing:1px;">Ordenado por retorno líquido</div>
+  </div>
+  <div class="chart-body"><canvas id="chartNetRanking" height="180"></canvas></div>
 </div>
 
 <!-- ══ MÉTRICAS DE TOKENS ACUMULADOS ══ -->
@@ -2449,72 +2423,188 @@ document.addEventListener('DOMContentLoaded', function() {
  buildRecent('bar', '1d');
  buildNet('bar');
 // ══════════════════════════════════════════════════════════
-// CHART: EFICIÊNCIA DE CAPITAL — SCATTER
+// CHARTS: RANKING FCR + WATERFALL
 // ══════════════════════════════════════════════════════════
-(function buildScatter() {
- const canvas = document.getElementById('chartScatter');
- if (!canvas || typeof Chart === 'undefined') return;
- const dk = isDark();
+var rankingChart = null, waterfallChart = null, rankingMode = 'fcr';
 
- // Closed pools with known days (excludes active + SOL/GRIFT outlier flagged)
- const scatter = [
- { label:'ETH/USDC ARB 23', days:209, eff:22.02/1014*100, capital:1014, net:22, net:'Arbitrum', color:'#5882d2', result:'pos' },
- { label:'RDNT/ETH ARB', days:8, eff:90/957*100, capital:957, net:'Arbitrum', color:'#5882d2', result:'pos' },
- { label:'ARB/USDC ARB', days:5, eff:180/900*100, capital:900, net:'Arbitrum', color:'#5882d2', result:'pos' },
- { label:'PEANUT/ETH ETH', days:10, eff:0/300*100, capital:300, net:'Ethereum', color:'#E8773D', result:'neg' }, // SCAM: 0 fees reais
- { label:'SOL/GRIFT SOL', days:80, eff:1389/780*100, capital:780, net:'Solana', color:'#D98B3A', result:'neg', outlier:true }, // entrada real 4 SOL ~$780
- { label:'XAI/WETH ARB', days:60, eff:7/80*100, capital:80, net:'Arbitrum', color:'#5882d2', result:'neg' },
- { label:'ETH/USDC ARB 25', days:105, eff:50.65/277*100, capital:277, net:'Arbitrum', color:'#5882d2', result:'pos' },
- { label:'SOL/USDC SOL', days:93, eff:23/605*100, capital:605, net:'Solana', color:'#D98B3A', result:'pos' },
- { label:'ETH/USDC Base', days:25, eff:15/300*100, capital:300, net:'Base', color:'#4fa8ff', result:'pos' },
- ];
+function setRankingMode(mode, btn) {
+  rankingMode = mode;
+  document.querySelectorAll('#chartRanking').forEach(function(){});
+  var btns = document.querySelectorAll('.ct-toggle button');
+  btns.forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  buildRanking();
+}
 
- const datasets = scatter.map(s => ({
- label: s.label,
- data: [{ x: s.days, y: parseFloat(s.eff.toFixed(2)), r: Math.max(5, Math.min(28, s.capital / 120)) }],
- backgroundColor: s.result === 'neg'
- ? (dk ? 'rgba(248,81,73,0.65)' : 'rgba(185,45,45,0.60)')
- : (s.color + (dk ? 'bb' : '99')),
- borderColor: s.result === 'neg' ? (dk ? '#f85149' : '#b92d2d') : s.color,
- borderWidth: s.outlier ? 2.5 : 1.5,
- borderDash: s.outlier ? [4, 3] : [],
- }));
+function buildRanking() {
+  var canvas = document.getElementById('chartRanking');
+  if (!canvas || typeof Chart === 'undefined') return;
+  if (rankingChart) rankingChart.destroy();
+  var dk = isDark();
+  var tc = textColor();
+  var gr = gridColor();
 
- new Chart(canvas, {
- type: 'bubble',
- data: { datasets },
- options: {
- responsive: true,
- plugins: {
- legend: { display: false },
- tooltip: {
- callbacks: {
- label: ctx => {
- const s = scatter[ctx.datasetIndex];
- return [
- ` ${s.label}`,
- ` ${s.days} dias · ${s.eff.toFixed(1)}% taxa/capital`,
- ` Capital: $${s.capital.toLocaleString()}`,
- ];
- }
- }
- }
- },
- scales: {
- x: {
- title: { display: true, text: 'Dias Aberta', color: Chart.defaults.color, font: { size: 8 } },
- ticks: { font: font, color: gc.muted },
- grid: { color: gridColor(), lineWidth: 0.5 }, border: { display: false }
- },
- y: {
- title: { display: true, text: 'Taxas / Capital (%)', color: Chart.defaults.color, font: { size: 8 } },
- ticks: { font: font, color: gc.muted, callback: v => v + '%' },
- grid: { color: gridColor(), lineWidth: 0.5 }, border: { display: false }
- }
- }
- }
- });
-})();
+  // Pool data: [label, fees, capital, days, net]
+  var pools = [
+    { l:'ARB/USDC x2',   fees:335, cap:900,  days:5,   net:335, il:0    },
+    { l:'RDNT/ETH x2',   fees:180, cap:957,  days:14,  net:180, il:0    },
+    { l:'MSTR/ETH',      fees:36,  cap:260,  days:13,  net:36,  il:0    },
+    { l:'ARB/USDT',      fees:73,  cap:628,  days:48,  net:73,  il:0    },
+    { l:'ETH/USDC Base', fees:16,  cap:453,  days:25,  net:16,  il:0    },
+    { l:'ETH/USDT ARB',  fees:34,  cap:277,  days:105, net:34,  il:0    },
+    { l:'SOL/USDC',      fees:23,  cap:660,  days:93,  net:23,  il:0    },
+    { l:'ETH/USDC ARB',  fees:22,  cap:1014, days:209, net:22,  il:0    },
+    { l:'XAI/WETH',      fees:7,   cap:35,   days:60,  net:-14, il:21   },
+    { l:'SOL/GRIFT',     fees:1389,cap:780,  days:80,  net:-1510,il:500 },
+    { l:'PEANUT/ETH',    fees:0,   cap:300,  days:10,  net:-243,il:243  },
+  ];
+
+  var sorted;
+  if (rankingMode === 'fcr') {
+    pools.forEach(function(p) {
+      p.fcr = p.days > 0 ? (p.fees / p.cap * (365 / p.days) * 100) : 0;
+    });
+    sorted = pools.slice().sort(function(a,b) { return b.fcr - a.fcr; });
+    var labels = sorted.map(function(p) { return p.l; });
+    var data   = sorted.map(function(p) { return parseFloat(p.fcr.toFixed(1)); });
+    var colors = sorted.map(function(p) { return p.net >= 0 ? 'rgba(74,124,63,0.75)' : 'rgba(185,64,64,0.70)'; });
+
+    rankingChart = new Chart(canvas, {
+      type: 'bar',
+      data: { labels: labels, datasets: [{ label: 'FCR% Anualizado', data: data, backgroundColor: colors, borderRadius: 3, borderWidth: 0 }] },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function(ctx) { var p = sorted[ctx.dataIndex]; return [' FCR: ' + ctx.raw + '%', ' Net: $' + p.net, ' Fees: $' + p.fees, ' Capital: $' + p.cap]; } } }
+        },
+        scales: {
+          x: { ticks: { color: tc, font: { size: 9 }, callback: function(v) { return v + '%'; } }, grid: { color: gr }, border: { display: false } },
+          y: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, border: { display: false } }
+        }
+      }
+    });
+  } else {
+    sorted = pools.slice().sort(function(a,b) { return b.net - a.net; });
+    var labels = sorted.map(function(p) { return p.l; });
+    var data   = sorted.map(function(p) { return p.net; });
+    var colors = sorted.map(function(p) { return p.net >= 0 ? 'rgba(74,124,63,0.75)' : 'rgba(185,64,64,0.70)'; });
+
+    rankingChart = new Chart(canvas, {
+      type: 'bar',
+      data: { labels: labels, datasets: [{ label: 'Net $', data: data, backgroundColor: colors, borderRadius: 3, borderWidth: 0 }] },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function(ctx) { return ' Net: $' + ctx.raw; } } }
+        },
+        scales: {
+          x: { ticks: { color: tc, font: { size: 9 }, callback: function(v) { return '$' + v; } }, grid: { color: gr }, border: { display: false } },
+          y: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, border: { display: false } }
+        }
+      }
+    });
+  }
+}
+
+function buildWaterfall() {
+  var canvas = document.getElementById('chartWaterfall');
+  if (!canvas || typeof Chart === 'undefined') return;
+  if (waterfallChart) waterfallChart.destroy();
+  var dk = isDark();
+  var tc = textColor();
+  var gr = gridColor();
+
+  // Waterfall: each pool shows stacked fees (green) and IL/loss (red), with net marker
+  var pools = [
+    { l:'ARB/USDC', fees:335, il:0,    net:335  },
+    { l:'RDNT/ETH', fees:180, il:0,    net:180  },
+    { l:'ARB/USDT', fees:73,  il:0,    net:73   },
+    { l:'MSTR/ETH', fees:36,  il:0,    net:36   },
+    { l:'ETH/USDT', fees:34,  il:0,    net:34   },
+    { l:'SOL/USDC', fees:23,  il:0,    net:23   },
+    { l:'ETH/USDC', fees:22,  il:0,    net:22   },
+    { l:'ETH/Base', fees:16,  il:0,    net:16   },
+    { l:'XAI/WETH', fees:7,   il:21,   net:-14  },
+    { l:'PEANUT',   fees:0,   il:243,  net:-243 },
+    { l:'SOL/GRIFT',fees:1389,il:1899, net:-1510},
+  ];
+
+  // Sort by net descending
+  pools.sort(function(a,b) { return b.net - a.net; });
+
+  var labels  = pools.map(function(p) { return p.l; });
+  var fees    = pools.map(function(p) { return p.fees; });
+  var losses  = pools.map(function(p) { return -(p.il + Math.max(0, -p.net - p.il)); });
+  var netLine = pools.map(function(p) { return p.net; });
+
+  waterfallChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Taxas',
+          data: fees,
+          backgroundColor: 'rgba(74,124,63,0.75)',
+          borderRadius: 3, borderWidth: 0,
+        },
+        {
+          label: 'IL / Perda',
+          data: losses,
+          backgroundColor: 'rgba(185,64,64,0.70)',
+          borderRadius: 3, borderWidth: 0,
+        },
+        {
+          label: 'Net',
+          data: netLine,
+          type: 'line',
+          borderColor: dk ? '#c9a050' : '#8a6820',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderDash: [4,3],
+          pointRadius: 4,
+          pointBackgroundColor: netLine.map(function(v) { return v >= 0 ? '#4a7c3f' : '#b94040'; }),
+          pointBorderColor: dk ? '#1e1e28' : '#faf6ef',
+          pointBorderWidth: 1.5,
+          tension: 0.3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.dataset.label === 'Net') return ' Net: $' + ctx.raw;
+              if (ctx.dataset.label === 'IL / Perda') return ' IL/Perda: $' + Math.abs(ctx.raw);
+              return ' Taxas: $' + ctx.raw;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { stacked: true, ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, border: { display: false } },
+        y: { stacked: true, ticks: { color: tc, font: { size: 9 }, callback: function(v) { return '$' + v; } }, grid: { color: gr }, border: { display: false } }
+      }
+    }
+  });
+}
+
+// Auto-build on load
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.Chart) {
+    buildRanking();
+    buildWaterfall();
+  } else {
+    loadChartJs(function() { buildRanking(); buildWaterfall(); });
+  }
+});
 
 // ══════════════════════════════════════════════════════════
 // CHART: GANTT DE POOLS — TIMELINE HORIZONTAL
@@ -2890,166 +2980,215 @@ document.addEventListener('DOMContentLoaded',()=>{
 // ══════════════════════════════════════════════════════
 // SHARPE RATIO + BREAKEVEN — run after DOM ready
 // ══════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function() {
-(function buildSharpe() {
- // Dados por pool: retorno anualizado (FCR%), volatilidade estimada do par, resultado
- // vol estimada: stablecoin pair ~5%, blue chip ~25%, memecoin/altcoin ~80-120%
- const pools_s = [
- { label:'ARB/USDC\n23', ret:35.2, vol:22, result:'pos' },
- { label:'ETH/USDC\nARB 23',ret:3.8, vol:18, result:'pos' },
- { label:'RDNT/ETH\n23', ret:163.3, vol:55, result:'pos' },
- { label:'ARB/USDT\n24', ret:88.0, vol:22, result:'pos' },
- { label:'MSTR/ETH\n24', ret:390.1, vol:70, result:'pos' },
- { label:'PEANUT\n24', ret:0, vol:120, result:'neg' },
- { label:'SOL/GRIFT\n25', ret:815.7, vol:150, result:'neg' },
- { label:'XAI/WETH\n25', ret:121.9, vol:90, result:'neg' },
- { label:'ETH/USDT\n25', ret:42.7, vol:20, result:'pos' },
- { label:'SOL/USDC\n25', ret:13.7, vol:22, result:'pos' },
- { label:'ETH/USDC\nBASE 26',ret:52.8, vol:20, result:'pos' },
- { label:'WETH/USDC\nETH 26', ret:59.73,vol:20, result:'pos' },
- ];
- const rf = 5; // risk-free benchmark %
- const sharpes = pools_s.map(p => +((p.ret - rf) / p.vol).toFixed(2));
 
- loadChartJs(function() {
- const ctx = document.getElementById('chartSharpe');
- if (!ctx) return;
- const dk = isDark();
- const colors = sharpes.map(s =>
- s > 2 ? 'rgba(74,124,63,0.80)' :
- s > 0.5 ? 'rgba(74,124,63,0.45)' :
- s > 0 ? 'rgba(201,160,80,0.55)' :
- 'rgba(185,64,64,0.70)'
- );
- new Chart(ctx, {
- type: 'bar',
- data: {
- labels: pools_s.map(p => p.label.split('\n')),
- datasets: [{
- label: 'Sharpe Ratio',
- data: sharpes,
- backgroundColor: colors,
- borderColor: sharpes.map(s => s > 0 ? 'rgba(74,124,63,0.9)' : 'rgba(185,64,64,0.9)'),
- borderWidth: 1,
- borderRadius: 3,
- }]
- },
- options: {
- responsive: true,
- animation: { duration: 500 },
- plugins: {
- legend: { display: false },
- tooltip: {
- callbacks: {
- label: ctx => {
- const p = pools_s[ctx.dataIndex];
- const s = ctx.parsed.y;
- const rating = s > 2 ? 'Excelente' : s > 0.5 ? 'Bom' : s > 0 ? 'Fraco' : 'Negativo';
- return [` Sharpe: ${s} ${rating}`, ` FCR anual: ${p.ret}%`, ` Vol estimada: ${p.vol}%`];
- }
- }
- },
- // annotation plugin not loaded — zero line via dataset instead
- },
- scales: {
- x: { ticks: { font:{family:'Inter,sans-serif',size:8}, color:'#888', maxRotation:30 }, grid: { color: gridColor() }, border:{display:false} },
- y: {
- ticks: { font:{family:'JetBrains Mono,monospace',size:8}, color:'#888', callback: v => v.toFixed(1) },
- grid: { color: gridColor() }, border:{display:false},
- title: { display:true, text:'Sharpe', font:{size:8}, color:'#888' }
- }
- }
- }
- });
- });
+// ══ FCR RANKING — HORIZONTAL BAR ════════════════════════════════════════
+(function buildFCR() {
+  const canvas = document.getElementById('chartFCR');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const dk = isDark();
+
+  // FCR = (fees / capital) * (365 / days) * 100
+  const pools_fcr = [
+    { label: 'ARB/USDC 23b', fees: 180, capital: 900,  days: 5,   net: 'Arbitrum' },
+    { label: 'RDNT/ETH 23',  fees:  90, capital: 957,  days: 8,   net: 'Arbitrum' },
+    { label: 'MSTR/ETH 24',  fees:  36, capital: 260,  days: 13,  net: 'Ethereum' },
+    { label: 'ARB/USDT 24',  fees:  73, capital: 628,  days: 48,  net: 'Arbitrum' },
+    { label: 'ETH/USDC BASE',fees:  16, capital: 453,  days: 25,  net: 'Base'     },
+    { label: 'SOL/GRIFT 25', fees: 1389,capital: 780,  days: 80,  net: 'Solana'   },
+    { label: 'ETH/USDT 25',  fees:  34, capital: 277,  days: 105, net: 'Arbitrum' },
+    { label: 'SOL/USDC 25',  fees:  23, capital: 660,  days: 93,  net: 'Solana'   },
+    { label: 'ETH/USDC ARB', fees:  22, capital: 1014, days: 209, net: 'Arbitrum' },
+    { label: 'WETH/USDC ETH',fees:   9, capital: 365,  days: 17,  net: 'Ethereum' },
+    { label: 'XAI/WETH 25',  fees:   7, capital:  35,  days: 60,  net: 'Arbitrum' },
+    { label: 'PEANUT 24',    fees:   0, capital: 300,  days: 10,  net: 'Ethereum' },
+  ].map(p => ({ ...p, fcr: ((p.fees / p.capital) * (365 / p.days) * 100) }))
+   .sort((a, b) => b.fcr - a.fcr);
+
+  const netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff' };
+  const colors = pools_fcr.map(p =>
+    p.fees === 0 ? (dk?'rgba(248,81,73,0.6)':'rgba(185,45,45,0.5)') :
+    (p.net === 'Solana' ? '#14F195' + 'bb' : (netColors[p.net]||'#888') + 'cc')
+  );
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: pools_fcr.map(p => p.label),
+      datasets: [{
+        label: 'FCR% Anualizado',
+        data: pools_fcr.map(p => +p.fcr.toFixed(1)),
+        backgroundColor: colors,
+        borderColor: colors.map(c => c.replace(/cc|bb$/,'ff')),
+        borderWidth: 1,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const p = pools_fcr[ctx.dataIndex];
+            return [
+              ` FCR: ${ctx.raw}% / ano`,
+              ` Taxas: $${p.fees}  Capital: $${p.capital}  Dias: ${p.days}`,
+              ` Rede: ${p.net}`
+            ];
+          }
+        }, backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+           borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+           borderWidth:1, padding:10,
+           titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50' }
+      },
+      scales: {
+        x: { ticks: { font, color: gc.muted, callback: v => v + '%' },
+             grid: { color: gridColor() }, border: { display: false } },
+        y: { ticks: { font, color: gc.muted, padding: 4 },
+             grid: { display: false }, border: { display: false } }
+      }
+    }
+  });
 })();
-// ══════════════════════════════════════════════════════
-// BREAK-EVEN DE REMONTAGEM
-// ══════════════════════════════════════════════════════
-(function buildBreakeven() {
- // gas_cost: custo médio de remontagem por rede ($)
- // fee_hora: taxa por hora estimada = (capital * FCR/100) / (365*24)
- const pools_b = [
- { label:'RDNT/ETH 23', gas:2.5, feeH: 957*1.633/8760, net:'Arbitrum' },
- { label:'ARB/USDT 24', gas:2.0, feeH: 628*0.88/8760, net:'Arbitrum' },
- { label:'MSTR/ETH 24', gas:18.0, feeH: 260*3.901/8760, net:'Ethereum' },
- { label:'SOL/GRIFT 25', gas:0.05, feeH: 780*8.157/8760, net:'Solana' },
- { label:'ETH/USDT 25', gas:1.5, feeH: 277*0.427/8760, net:'Arbitrum' },
- { label:'SOL/USDC 25', gas:0.05, feeH: 660*0.137/8760, net:'Solana' },
- { label:'ETH/USDC BASE 26',gas:0.10, feeH: 453*0.528/8760, net:'Base' },
- { label:'WETH/USDC ETH 26',gas:8.0, feeH: 365*0.5973/8760, net:'Ethereum' },
- ];
 
- const beHours = pools_b.map(p =>
- p.feeH > 0 ? Math.round(p.gas / p.feeH) : 9999
- );
+// ══ WATERFALL — FEES vs IL ═══════════════════════════════════════════════
+(function buildWaterfall() {
+  const canvas = document.getElementById('chartWaterfall');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const dk = isDark();
 
- const netColor = { Arbitrum:'rgba(88,130,210,0.70)', Ethereum:'rgba(130,88,210,0.70)', Solana:'rgba(74,180,100,0.70)', Base:'rgba(62,160,220,0.70)' };
- const netBorder= { Arbitrum:'#5882d2', Ethereum:'#8258d2', Solana:'#4ab464', Base:'#3ea0dc' };
+  const pools_w = [
+    { label: 'SOL/GRIFT',  fees: 1389, il: 500 },
+    { label: 'ARB/USDC 23b',fees: 180, il: 0   },
+    { label: 'RDNT/ETH',   fees:  90,  il: 0   },
+    { label: 'ARB/USDT',   fees:  73,  il: 0   },
+    { label: 'ETH/USDT 25',fees:  34,  il: 0   },
+    { label: 'MSTR/ETH',   fees:  36,  il: 0   },
+    { label: 'ETH/USDC ARB',fees: 22,  il: 0   },
+    { label: 'SOL/USDC',   fees:  23,  il: 0   },
+    { label: 'ETH/USDC BASE',fees: 16, il: 0   },
+    { label: 'WETH/USDC',  fees:   9,  il: 0   },
+    { label: 'XAI/WETH',   fees:   7,  il: 21  },
+    { label: 'PEANUT',     fees:   0,  il: 243 },
+  ];
 
- loadChartJs(function() {
- const ctx = document.getElementById('chartBreakeven');
- if (!ctx) return;
-
- new Chart(ctx, {
- type: 'bar',
- data: {
- labels: pools_b.map(p => p.label),
- datasets: [{
- label: 'Horas p/ Break-even',
- data: beHours.map(h => h >= 9999 ? null : Math.min(h, 500)),
- backgroundColor: pools_b.map(p => netColor[p.net] || 'rgba(138,104,32,0.6)'),
- borderColor: pools_b.map(p => netBorder[p.net] || '#8a6820'),
- borderWidth: 1, borderRadius: 3,
- }]
- },
- options: {
- responsive: true,
- animation: { duration: 500 },
- plugins: {
- legend: { display: false },
- tooltip: {
- callbacks: {
- label: ctx => {
- const p = pools_b[ctx.dataIndex];
- const h = beHours[ctx.dataIndex];
- if (h >= 9999) return [' Sem fees geradas (SCAM)', ` Gas: $${p.gas}`];
- const rating = h < 6 ? 'Ótimo' : h < 24 ? 'Ok' : h < 72 ? 'Cuidado' : 'Caro';
- return [
- ` Break-even: ${h}h ${rating}`,
- ` Custo gas: $${p.gas}`,
- ` Fee/hora: $${p.feeH.toFixed(4)}`,
- ` Rede: ${p.net}`
- ];
- }
- }
- }
- },
- scales: {
- x: { ticks:{font:{size:8},color:'#888',maxRotation:35}, grid:{color:gridColor()}, border:{display:false} },
- y: {
- ticks:{font:{family:'JetBrains Mono,monospace',size:8},color:'#888', callback: v => v+'h'},
- grid:{color:gridColor()}, border:{display:false},
- title:{display:true,text:'Horas',font:{size:8},color:'#888'}
- }
- }
- }
- });
-
- // Insight card
- const insight = document.getElementById('breakEvenInsight');
- if (insight) {
- const valid = beHours.filter(h => h < 9999);
- const avg = Math.round(valid.reduce((a,b)=>a+b,0)/valid.length);
- const best = pools_b[beHours.indexOf(Math.min(...beHours.filter(h=>h<9999)))];
- insight.innerHTML = `<span style="font-size:8.5px;color:var(--muted);font-style:italic;">
- Média geral: <b style="color:var(--accent)">${avg}h</b> para recuperar custo de gas. 
- Melhor pool: <b style="color:var(--green)">${best.label}</b> (${Math.round(best.gas/best.feeH)}h). 
- Solana é estruturalmente superior para remontagens frequentes (gas ~$0,05 vs ~$8–22 na Ethereum).
- </span>`;
- }
- });
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: pools_w.map(p => p.label),
+      datasets: [
+        {
+          label: 'Taxas',
+          data: pools_w.map(p => p.fees),
+          backgroundColor: dk ? 'rgba(74,124,63,0.75)' : 'rgba(42,92,42,0.70)',
+          borderColor: dk ? '#4a7c3f' : '#2a5c2a',
+          borderWidth: 1, borderRadius: 3,
+        },
+        {
+          label: 'Impermanent Loss',
+          data: pools_w.map(p => -p.il),
+          backgroundColor: dk ? 'rgba(185,64,64,0.70)' : 'rgba(140,40,40,0.65)',
+          borderColor: dk ? '#b94040' : '#8c2828',
+          borderWidth: 1, borderRadius: 3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: true, labels: { font, color: dk?'#c9b99a':'#4a3520', usePointStyle: true, pointStyleWidth: 10 } },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const v = ctx.raw;
+            return ` ${ctx.dataset.label}: $${Math.abs(v).toFixed(0)}`;
+          }
+        }, backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+           borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+           borderWidth:1, padding:10,
+           titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50' }
+      },
+      scales: {
+        x: { ticks: { font, color: gc.muted, maxRotation: 35 },
+             grid: { display: false }, border: { display: false } },
+        y: { ticks: { font, color: gc.muted, callback: v => '$' + Math.abs(v) },
+             grid: { color: gridColor() }, border: { display: false } }
+      }
+    }
+  });
 })();
+
+// ══ NET RANKING — HORIZONTAL BAR ══════════════════════════════════════════
+(function buildNetRanking() {
+  const canvas = document.getElementById('chartNetRanking');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const dk = isDark();
+
+  const pools_net = [
+    { label: 'SOL/GRIFT 25', net: -1510, note: 'IL severo' },
+    { label: 'PEANUT 24',    net: -243,  note: 'Scam/rugpull' },
+    { label: 'XAI/WETH 25',  net: -14,   note: 'IL > fees' },
+    { label: 'WETH/USDC ETH',net: 1,     note: 'Ativa parcial' },
+    { label: 'ARB/USDC ARB', net: 22,    note: '' },
+    { label: 'SOL/USDC 25',  net: 23,    note: '' },
+    { label: 'ETH/USDC BASE',net: 16,    note: '' },
+    { label: 'MSTR/ETH 24',  net: 36,    note: '' },
+    { label: 'ETH/USDT 25',  net: 34,    note: '' },
+    { label: 'ARB/USDT 24',  net: 73,    note: '' },
+    { label: 'RDNT/ETH 23',  net: 90,    note: '' },
+    { label: 'ARB/USDC 23b', net: 180,   note: 'Best trade' },
+  ].sort((a, b) => a.net - b.net);
+
+  const colors = pools_net.map(p =>
+    p.net < 0
+      ? (dk ? 'rgba(248,81,73,0.70)' : 'rgba(155,42,42,0.65)')
+      : (dk ? 'rgba(63,185,80,0.70)' : 'rgba(32,110,52,0.65)')
+  );
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: pools_net.map(p => p.label),
+      datasets: [{
+        label: 'Resultado Líquido',
+        data: pools_net.map(p => p.net),
+        backgroundColor: colors,
+        borderColor: colors.map(c => c.replace('0.70','1').replace('0.65','1')),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const p = pools_net[ctx.dataIndex];
+            return [
+              ` Resultado: ${ctx.raw >= 0 ? '+' : ''}$${ctx.raw}`,
+              p.note ? ` Nota: ${p.note}` : ''
+            ].filter(Boolean);
+          }
+        }, backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+           borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+           borderWidth:1, padding:10,
+           titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50' }
+      },
+      scales: {
+        x: { ticks: { font, color: gc.muted, callback: v => '$' + v },
+             grid: { color: gridColor() }, border: { display: false },
+             afterDataLimits: axis => { if(axis.min > -20) axis.min = -20; } },
+        y: { ticks: { font, color: gc.muted, padding: 4 },
+             grid: { display: false }, border: { display: false } }
+      }
+    }
+  });
+})();
+
 
 // ══════════════════════════════════════════════════════
 // HEATMAP DE PERFORMANCE
