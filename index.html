@@ -1,7 +1,10 @@
-<!DOCTYPE html>
-<html lang="en" data-lang="en">
+<html lang="pt-BR" data-theme="light">
 <head>
+<script>
+window.addEventListener('error',function(e){if(!e.message||e.message.includes('Script error')){e.stopImmediatePropagation();e.preventDefault();return false;}},true);
+</script>
 <meta charset="UTF-8">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 <script>
 // Theme init — runs before render to avoid flash
 (function(){
@@ -9,766 +12,3072 @@
  if(t) document.documentElement.setAttribute('data-theme',t);
 })();
 </script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml"><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Satoshi,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Satoshi,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><link rel="canonical" href="/portfolio">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Barolo Capital</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml"><rect width='32' height='32' rx='0' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='%23c9a050' text-anchor='middle'>B</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Barolo Capital · Portfólio</title>
+<script src="barolo-data.js"></script>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>if(typeof Chart==='undefined'){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';document.head.appendChild(s);}</script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:#0e0e12;color:#e8dfc8;font-family:'EB Garamond','Cormorant Garamond',Georgia,serif;font-size:16px;line-height:1.7;overflow-x:hidden;}
-:root{--gold:#c9a050;--gold2:#9a7228;--cream:#e8dfc8;--muted:#8a7a62;--surface:#141418;--surface2:#1a1a22;--border:#2a2620;--border2:#3a3228;--text:#e8dfc8;--dark:#0e0e12;}
-[data-theme="light"]{--gold:#8a6820;--gold2:#6a5010;--cream:#16110c;--muted:#7a6a50;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;--border2:#c4b58a;--text:#16110c;--dark:#f2ece0;background:#f2ece0;color:#16110c;}
-[data-theme="light"] .hero-glow{background:radial-gradient(ellipse 70% 55% at 50% -10%,rgba(138,104,32,.1) 0%,transparent 65%);}
-[data-theme="light"] #home{background:#f2ece0;}
-[data-theme="light"] #sobre{background:#faf6ef;}
-[data-theme="light"] #estrategias{background:#f2ece0;}
-[data-theme="light"] #portfolio{background:#faf6ef;}
-[data-theme="light"] #acesso{background:#f2ece0;}
-[data-theme="light"] nav{background:rgba(242,236,224,.97);}
-[data-theme="light"] .ticker{background:rgba(242,236,224,.97);}
-[data-theme="light"] footer{background:#f2ece0;}
-[data-theme="light"] .estrategia-card{background:#f2ece0;}
-[data-theme="light"] .estrategia-card:hover{background:#faf6ef;}
-[data-theme="light"] .summary-item{background:#faf6ef;}
-[data-theme="light"] .login-card{background:#faf6ef;}
-[data-theme="light"] .hero-title{
-  color:#16110c;
-  font-size:clamp(40px,5.5vw,76px) !important;
-  line-height:1.08 !important;
-  font-weight:300 !important;
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+ --bg:#17171f;--surface:#1e1e28;--surface2:#232330;--border:#2e2a3a;
+ --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--orange:#db6d28;
+ --text:#e6edf3;--muted:#8b7d6b;--stable:#3fb950;--card-shadow:none;
 }
-[data-theme="dark"] .hero-title { color:var(--cream) !important; }
-[data-theme="light"] .hero-eyebrow{color:#8a6820;}
-[data-theme="light"] .card-title{color:#16110c;}
-[data-theme="light"] .section-title{color:#16110c;}
-[data-theme="light"] .asset-label{color:#16110c;}
-[data-theme="light"] .asset-value{color:#16110c;}
-[data-theme="light"] .summary-value{color:#16110c;}
-[data-theme="light"] .sobre-text p.lead{color:#16110c;}
-[data-theme="light"] .crenca-lead{color:#8a6820;}
-[data-theme="light"] .nav-input{background:rgba(0,0,0,.04);color:#16110c;}
-[data-theme="light"] .form-input{background:rgba(0,0,0,.03);color:#16110c;}
-[data-theme="light"] .estrategia-cards{background:#c4b58a;}
-[data-theme="light"] .portfolio-summary{background:#c4b58a;}
-[data-theme="light"] .hero-rules::before{background:linear-gradient(90deg,transparent,rgba(138,104,32,.2) 20%,rgba(138,104,32,.2) 80%,transparent);}
-[data-theme="light"] #home::before{opacity:.02;}
-[data-theme="light"]{--gold:#8a6820;--gold2:#6a4f14;--cream:#16110c;--muted:#7a6a50;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;--border2:#c4b58a;--text:#16110c;--dark:#f2ece0;}
-[data-theme="light"] body{background:#f2ece0;}
-[data-theme="light"] #home{background:#f2ece0;}
-[data-theme="light"] #home::before{opacity:.015;}
-[data-theme="light"] .hero-title{
-  color:#16110c;
-  font-size:clamp(40px,5.5vw,76px) !important;
-  line-height:1.08 !important;
-  font-weight:300 !important;
+[data-theme="light"]{
+ --bg:#f2ece0;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;
+ --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--orange:#9c4a1a;
+ --text:#16110c;--muted:#7a6a50;--stable:#3a6030;
+ --card-shadow:0 1px 4px rgba(22,17,12,0.08);
 }
-[data-theme="dark"] .hero-title { color:var(--cream) !important; }
-[data-theme="light"] .hero-sub{color:#7a6a50;}
-[data-theme="light"] nav{background:rgba(242,236,224,0.97);border-bottom-color:#d5c9a5;}
-[data-theme="light"] .nav-input{background:rgba(0,0,0,.03);border-color:#d5c9a5;color:#16110c;}
-[data-theme="light"] .nav-btn{border-color:#8a6820;color:#8a6820;}
-[data-theme="light"] .nav-btn:hover{background:#8a6820;color:#faf6ef;}
-[data-theme="light"] .ticker{background:rgba(242,236,224,.97);border-top-color:#d5c9a5;}
-[data-theme="light"] #sobre{background:#faf6ef;}
-[data-theme="light"] #estrategias{background:#f2ece0;}
-[data-theme="light"] .estrategia-card{background:#f2ece0;}
-[data-theme="light"] .estrategia-card:hover{background:#faf6ef;}
-[data-theme="light"] #portfolio{background:#faf6ef;}
-[data-theme="light"] .portfolio-summary{background:#d5c9a5;}
-[data-theme="light"] .summary-item{background:#faf6ef;}
-[data-theme="light"] .portfolio-table th{color:#7a6a50;border-bottom-color:#c4b58a;}
-[data-theme="light"] .portfolio-table td{border-bottom-color:#d5c9a5;}
-[data-theme="light"] #acesso{background:#f2ece0;}
-[data-theme="light"] .login-card{background:#faf6ef;border-color:#d5c9a5;}
-[data-theme="light"] .login-card-header{border-bottom-color:#d5c9a5;}
-[data-theme="light"] .form-input{background:rgba(0,0,0,.03);border-color:#d5c9a5;color:#16110c;}
-[data-theme="light"] .form-input:focus{border-color:#8a6820;}
-[data-theme="light"] footer{background:#f2ece0;border-top-color:#d5c9a5;}
-[data-theme="light"] .sobre-text p{color:#7a6a50;}
-[data-theme="light"] .crencas-wrap{border-left-color:#d5c9a5;}
-[data-theme="light"] .crenca-text{color:#7a6a50;}
-[data-theme="light"] .card-desc{color:#7a6a50;}
-[data-theme="light"] .asset-label{color:#16110c;}
-[data-theme="light"] .asset-qty{color:#7a6a50;}
-[data-theme="light"] .asset-value{color:#16110c;}
-[data-theme="light"] .alloc-bar{background:#d5c9a5;}
-[data-theme="light"] .tag{border-color:#d5c9a5;color:#8a6820;}
-[data-theme="light"] .section-num{color:rgba(138,104,32,.04);}
-[data-theme="light"] .sobre-grid{border-color:#d5c9a5;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Satoshi',sans-serif;font-size:13px;min-height:100vh;}
+.container{max-width:1440px;margin:0 auto;padding:80px 20px 72px;}
 
-
-/* Token cards */
-.tok-card{background:var(--surface);border:1px solid var(--border);padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:border-color .2s,background .2s;position:relative;}
-.tok-card:hover{border-color:var(--gold2);background:var(--surface2);}
-.tok-logo{width:36px;height:36px;border-radius:50%;object-fit:cover;background:var(--border);}
-.tok-name{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);text-align:center;}
-.tok-ticker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold2);text-align:center;}
-.tok-link{position:absolute;top:8px;right:10px;font-size:12px;color:var(--muted);}
-.tok-card:hover .tok-link{color:var(--gold);}
-.tok-card--wide{flex-direction:row;align-items:center;gap:12px;padding:14px 16px;}
-.tok-card--wide .tok-name{text-align:left;}
-.tok-card--wide .tok-ticker{text-align:left;}
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;height:64px;background:rgba(14,14,18,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
-.nav-logo{cursor:pointer;}
-.nav-links{display:flex;align-items:center;gap:0;list-style:none;}
-.nav-links a{display:block;padding:0 18px;height:64px;line-height:64px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;white-space:nowrap;position:relative;}
-.nav-links a:hover{color:var(--gold);}
-.nav-links a.active{color:var(--cream);}
-.nav-links a.active::after{content:'';position:absolute;bottom:0;left:18px;right:18px;height:1px;background:var(--gold);}
-.nav-right{display:flex;align-items:center;gap:8px;}
-.nav-input{background:rgba(255,255,255,.04);border:1px solid var(--border2);padding:7px 11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cream);outline:none;width:115px;transition:border-color .2s,box-shadow .2s;}
-.nav-input::placeholder{color:var(--muted);font-size:10px;letter-spacing:.06em;}
-.nav-input:focus{border-color:var(--gold2);box-shadow:0 0 0 2px rgba(201,160,80,.1);}
-.nav-input.err{border-color:#7a2020;}
-.nav-btn{padding:8px 18px;background:transparent;border:1px solid var(--gold2);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:background .2s,color .2s;white-space:nowrap;}
-.nav-btn:hover{background:var(--gold);color:#0e0e12;}
-.nav-btn:disabled{opacity:.4;cursor:not-allowed;}
-.nav-err{position:fixed;right:48px;top:68px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#c45c5c;background:rgba(14,14,18,.97);border:1px solid rgba(122,32,32,.4);padding:5px 12px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;}
-.nav-err.show{opacity:1;}
-.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
-.nav-hamburger span{display:block;width:22px;height:1px;background:var(--muted);}
-@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-4px);}40%,80%{transform:translateX(4px);}}
-.do-shake{animation:shake .32s ease;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(244,239,230,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);transition:background .3s;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:8px;}
+[data-theme="light"] nav{background:rgba(244,239,230,0.97);}
+[data-theme="dark"] nav{background:rgba(23,23,31,0.97);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-title{font-size:15px;font-weight:600;color:var(--text);letter-spacing:.1em;font-family:'Satoshi', sans-serif;}
+.nav-links{display:flex;gap:0;flex-shrink:1;overflow:hidden;}
+.nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a.active{color:var(--accent);background:rgba(184,150,58,0.1);border:1px solid rgba(184,150,58,0.3);}
+.nav-right{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;overflow:hidden;}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:4px;padding:5px 9px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:all .2s;}
+.btn-sm:hover{color:var(--accent);border-color:var(--accent);}
+.btn-sm.primary{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .btn-sm.primary{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
 
-/* TICKER */
-.ticker{position:fixed;bottom:0;left:0;right:0;height:28px;background:rgba(14,14,18,.97);border-top:1px solid var(--border);display:flex;align-items:center;overflow:hidden;z-index:100;}
-.ticker-track{display:flex;animation:ticker-scroll 35s linear infinite;white-space:nowrap;}
-@keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-.tick-item{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:var(--muted);padding:0 28px;border-right:1px solid var(--border);flex-shrink:0;}
-.tick-item b{font-weight:500;color:#a89878;}.up{color:#4a8c3f;}.dn{color:#8c3a3a;}
+/* LOADING */
+#loadingScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+.loader-ring{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-/* GENERAL */
-.container{max-width:1160px;margin:0 auto;padding:0 48px;width:100%;}
-.sec{padding:110px 0;position:relative;}
-.section-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:14px;margin-bottom:20px;}
-.section-tag::before{content:'';width:24px;height:1px;background:var(--gold2);}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,52px);font-weight:300;line-height:1.12;color:var(--cream);max-width:680px;}
-.section-title em{font-style:italic;color:var(--gold);}
-.section-header{margin-bottom:56px;}
-.section-num{position:absolute;font-family:'Cormorant Garamond',serif;font-size:180px;font-weight:700;color:rgba(201,160,80,.04);line-height:1;pointer-events:none;user-select:none;z-index:0;}
-@keyframes reveal{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-@keyframes fadein{from{opacity:0;}to{opacity:1;}}
+/* SECTION LABEL */
+.section-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:36px 0 20px;padding:0 0 12px 14px;border-left:2px solid var(--accent);font-weight:400;}
 
-/* HERO */
-#home{background:var(--dark);position:relative;overflow:hidden;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:64px;}
-#home::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.03;pointer-events:none;z-index:0;}
-.hero-glow{position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 55% at 50% -10%,rgba(201,160,80,.12) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 5% 80%,rgba(154,114,40,.07) 0%,transparent 60%),radial-gradient(ellipse 35% 35% at 95% 75%,rgba(201,160,80,.06) 0%,transparent 60%);}
-.hero-rules{position:absolute;left:0;right:0;pointer-events:none;z-index:0;}
-.hero-rules::before{content:'';position:absolute;left:48px;right:48px;top:30%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,.15) 20%,rgba(201,160,80,.15) 80%,transparent);}
-.hero-rules::after{content:'';position:absolute;left:48px;right:48px;top:72%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,.08) 20%,rgba(201,160,80,.08) 80%,transparent);}
-.hero-content{position:relative;z-index:1;padding:100px 48px 80px;max-width:1160px;margin:0 auto;width:100%;}
-.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;display:flex;align-items:center;gap:14px;opacity:0;animation:reveal .6s ease .1s forwards;}
-.hero-eyebrow::before{content:'';width:32px;height:1px;background:var(--gold2);}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6vw,82px);font-weight:300;line-height:1.12;letter-spacing:-.01em;color:var(--cream);max-width:900px;opacity:0;animation:reveal .8s ease .25s forwards;}
-.hero-title em{font-style:italic;color:var(--gold);}
-.hero-sub{font-size:17px;color:var(--muted);max-width:520px;margin-top:28px;line-height:1.8;opacity:0;animation:reveal .8s ease .45s forwards;}
-.hero-cta{margin-top:52px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;opacity:0;animation:reveal .6s ease .6s forwards;}
-.btn-primary{padding:13px 32px;background:var(--gold);color:#0e0e12;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s,transform .1s;}
-.btn-primary:hover{background:#d4ae60;transform:translateY(-1px);}
-.btn-ghost{padding:13px 32px;background:transparent;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:color .2s,border-color .2s;}
-.btn-ghost:hover{color:var(--cream);border-color:var(--muted);}
-.hero-scroll{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;animation:fadein .5s ease 1.2s forwards;cursor:pointer;}
-.hero-scroll span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;}
-.scroll-arrow{width:1px;height:36px;background:linear-gradient(180deg,var(--border2),transparent);position:relative;animation:scroll-bounce 2s ease-in-out infinite;}
-.scroll-arrow::after{content:'';position:absolute;bottom:0;left:-3px;width:7px;height:7px;border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);transform:rotate(45deg);}
-@keyframes scroll-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--card-shadow);}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}.charts-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.chart-title{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
 
-/* SOBRE */
-#sobre{background:var(--surface);}
-.sobre-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
-.sobre-text p{font-size:16px;color:#9a8c78;line-height:1.9;margin-bottom:18px;}
-.sobre-text p.lead{font-size:18px;color:var(--cream);line-height:1.75;}
-.sobre-text p em{font-style:italic;color:#b8a882;}
-.crencas-wrap{border-left:1px solid var(--border2);padding-left:40px;}
-.crencas-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;}
-.crenca-lead{font-size:17px;color:var(--gold);font-style:italic;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);line-height:1.5;}
-.crenca-item{display:flex;gap:16px;margin-bottom:14px;align-items:flex-start;}
-.crenca-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold2);flex-shrink:0;padding-top:4px;min-width:20px;}
-.crenca-text{font-size:15px;color:#9a8c78;line-height:1.65;}
+/* NET WORTH HERO */
+.hero-card{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid rgba(184,150,58,0.3);border-radius:12px;padding:24px 30px;margin-bottom:16px;}
+.hero-label{font-size:9px;color:var(--accent);letter-spacing:3px;margin-bottom:6px;font-family:'Satoshi', sans-serif;font-size:11px;}
+.hero-value{font-size:38px;font-weight:700;line-height:1;font-family:'Satoshi', sans-serif;}
+.hero-sub{font-size:10px;color:var(--muted);margin-top:5px;}
+.hero-meta{display:flex;gap:24px;flex-wrap:wrap;}
+.hero-meta-item{text-align:center;}
+.hero-meta-label{font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:3px;}
+.hero-meta-val{font-size:16px;font-weight:700;}
 
-/* ESTRATÉGIAS */
-#estrategias{background:var(--dark);}
-.estrategia-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:48px;}
-.estrategia-card{background:var(--dark);padding:40px 36px;transition:background .3s;position:relative;overflow:hidden;}
-.estrategia-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transition:transform .3s;transform-origin:left;}
-.estrategia-card:hover{background:var(--surface);}
-.estrategia-card:hover::before{transform:scaleX(1);}
-.card-icon{width:36px;height:36px;margin-bottom:24px;color:var(--gold2);}
-.card-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:var(--cream);margin-bottom:14px;}
-.card-desc{font-size:14.5px;color:var(--muted);line-height:1.75;margin-bottom:24px;}
-.card-tags{display:flex;flex-wrap:wrap;gap:6px;}
-.tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold2);border:1px solid var(--border2);padding:4px 9px;}
+/* STATS ROW */
+.stats-row{display:grid;gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;box-shadow:var(--card-shadow);}
+.stat-label{font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:6px;}
+.stat-value{font-size:20px;font-weight:700;}
+.stat-sub{font-size:9px;color:var(--muted);margin-top:3px;}
+.pos{color:var(--green);}
+.neg{color:var(--red);}
+.acc{color:var(--accent);}
+.stc{color:var(--stable);}
+.warn{color:var(--yellow);}
+.neu{color:var(--muted);}
 
-/* PORTFÓLIO */
-#portfolio{background:var(--surface);}
-.portfolio-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:48px;}
-.summary-item{background:var(--surface);padding:28px 32px;}
-.summary-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-.summary-value{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--cream);line-height:1;}
-.summary-sub{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);margin-top:6px;}
-.portfolio-table{width:100%;border-collapse:collapse;}
-.portfolio-table th{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 0 16px;border-bottom:1px solid var(--border2);font-weight:400;}
-.portfolio-table th:not(:first-child){text-align:right;}
-.portfolio-table td{padding:18px 0;border-bottom:1px solid var(--border);vertical-align:middle;}
-.portfolio-table td:not(:first-child){text-align:right;}
-.portfolio-table tr:last-child td{border-bottom:none;}
-.portfolio-table tr:hover td{background:rgba(201,160,80,.02);}
-.asset-name{display:flex;align-items:center;gap:14px;}
-.asset-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.asset-label{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--cream);}
-.asset-ticker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);margin-left:4px;}
-.asset-network{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);}
-.asset-qty{font-family:'JetBrains Mono',monospace;font-size:12px;color:#9a8c78;}
-.asset-value{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cream);}
-.alloc-bar-wrap{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
-.alloc-bar{width:60px;height:2px;background:var(--border2);}
-.alloc-fill{height:100%;background:var(--gold);}
-.asset-alloc{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+/* DEFI GRID */
+.defi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.defi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.defi-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.defi-body{padding:14px 16px;}
+.defi-protocol{font-size:12px;font-weight:700;}
+.defi-tag{font-size:8px;border:1px solid var(--border);border-radius:3px;padding:2px 6px;color:var(--muted);}
+.defi-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
+.defi-row:last-child{border-bottom:none;}
+.defi-asset{display:flex;align-items:center;gap:6px;font-size:11px;}
+.defi-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.defi-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+.defi-metric{text-align:center;background:var(--bg);border-radius:5px;padding:6px;}
+.defi-metric-label{font-size:7px;color:var(--muted);margin-bottom:2px;letter-spacing:1px;}
+.defi-metric-val{font-size:13px;font-weight:700;}
+.health-bar-track{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin:4px 0;}
+.health-bar-fill{height:100%;border-radius:3px;transition:width .4s;}
 
-/* ACESSO */
-#acesso{background:var(--dark);}
-.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center;}
-.login-left p{font-size:15.5px;color:var(--muted);line-height:1.8;margin-top:20px;max-width:380px;}
-.login-card{background:var(--surface);border:1px solid var(--border2);padding:48px 44px;}
-.login-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:20px;border-bottom:1px solid var(--border);}
-.login-card-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);}
-.live-dot-wrap{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--muted);}
-.live-dot{width:6px;height:6px;border-radius:50%;background:#4a8c3f;animation:pulse-g 2.2s ease infinite;}
-@keyframes pulse-g{0%,100%{box-shadow:0 0 0 0 rgba(74,140,63,.5);}50%{box-shadow:0 0 0 5px rgba(74,140,63,0);}}
-.form-field{margin-bottom:18px;}
-.form-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px;}
-.form-input{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border2);padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream);outline:none;transition:border-color .2s,box-shadow .2s;}
-.form-input::placeholder{color:var(--muted);font-size:11px;}
-.form-input:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(201,160,80,.08);}
-.form-input.err{border-color:#7a2020;}
-.form-btn{width:100%;margin-top:8px;padding:15px;background:var(--gold);border:none;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:#0e0e12;font-weight:500;cursor:pointer;transition:background .2s;}
-.form-btn:hover{background:#d4ae60;}
-.form-btn:disabled{background:var(--border2);color:var(--muted);cursor:not-allowed;}
-.form-err{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#c45c5c;text-align:center;margin-top:12px;min-height:13px;}
-.login-card-footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;}
-.login-card-footer span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--muted);}
+/* LP CARD */
+.lp-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.lp-header{background:var(--surface2);padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.lp-metrics{display:grid;grid-template-columns:repeat(5,1fr);}
+.lp-metric{padding:12px 14px;border-right:1px solid var(--border);}
+.lp-metric:last-child{border-right:none;}
+.lp-metric-label{font-size:7px;color:var(--muted);letter-spacing:2px;margin-bottom:4px;}
+.lp-metric-val{font-size:16px;font-weight:700;}
+.lp-metric-sub{font-size:8px;color:var(--muted);margin-top:2px;}
+.lp-body{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);}
+.lp-body-col{padding:14px 16px;border-right:1px solid var(--border);}
+.lp-body-col:last-child{border-right:none;}
+.ref-toggle{display:flex;gap:4px;}
+.ref-btn{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
+.ref-btn.active{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .ref-btn.active{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
+.badge{font-size:8px;border-radius:10px;padding:2px 8px;border:1px solid;}
+.badge-green{background:rgba(74,124,63,0.12);color:var(--green);border-color:rgba(74,124,63,0.3);}
+[data-theme="dark"] .badge-green{background:rgba(63,185,80,0.12);color:#3fb950;border-color:rgba(63,185,80,0.3);}
+.badge-gold{background:rgba(138,104,32,0.12);color:var(--accent);border-color:rgba(138,104,32,0.3);}
+[data-theme="dark"] .badge-gold{background:rgba(201,160,80,0.12);color:#c9a050;border-color:rgba(201,160,80,0.3);}
+.badge-gray{background:var(--surface2);color:var(--muted);border-color:var(--border);}
 
-/* FOOTER */
-footer{background:var(--dark);border-top:1px solid var(--border);padding:28px 48px;display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
-footer span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+/* ALLOCATION CHART - CoinGecko style */
+.alloc-wrap{display:flex;align-items:center;gap:20px;}
+.alloc-legend{flex:1;min-width:0;}
+.alloc-legend-item{display:flex;align-items:center;justify-content:space-between;padding:3px 0;gap:6px;}
+.alloc-legend-left{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text);min-width:0;}
+.alloc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.alloc-pct{font-size:10px;font-weight:700;color:var(--text);white-space:nowrap;}
+
+/* PERF CHART CONTROLS */
+.perf-controls{display:flex;align-items:center;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.period-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
+.period-btn.active{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .period-btn.active{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
+.period-sep{color:var(--border);padding:0 4px;}
+
+/* ASSET TABLE */
+.asset-table{width:100%;border-collapse:collapse;font-size:11px;}
+.asset-table th{padding:8px 10px;text-align:left;font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+.asset-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.asset-table tr:hover td{background:rgba(138,104,32,0.04);}
+.asset-table tr:last-child td{border-bottom:none;}
+.coin-cell{display:flex;align-items:center;gap:8px;}
+.coin-logo{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--surface2);object-fit:cover;}
+.coin-logo-fallback{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;font-family:'Satoshi',sans-serif;}
+.coin-name{font-weight:500;font-size:12px;}
+.coin-ticker{font-size:9px;color:var(--muted);margin-top:1px;}
+.mini-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:3px;overflow:hidden;}
+.mini-bar-fill{height:100%;border-radius:2px;}
+.sparkline-cell{line-height:0;}
+
+/* ANNUAL RETURN TOGGLE */
+.chart-type-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
+.chart-type-btn.active{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.5);color:var(--accent);}
+[data-theme="dark"] .chart-type-btn.active{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.5);}
+
+/* METRICS */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}.stats-row-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.metric-icon{font-size:18px;margin-bottom:6px;}
+.metric-name{font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;}
+.metric-val{font-size:18px;font-weight:700;margin-bottom:2px;}
+.metric-desc{font-size:8px;color:var(--muted);}
+
+/* SENSITIVE */
+.sensitive{transition:filter .2s;}
+body.hide-values .sensitive{filter:blur(5px);user-select:none;}
+
+/* RANGE BAR */
+.range-bar-wrap{background:var(--border);border-radius:4px;height:6px;position:relative;overflow:hidden;margin:6px 0;}
+.range-bar-range{position:absolute;height:100%;background:linear-gradient(90deg,rgba(0,212,255,0.2),rgba(0,230,118,0.2));}
+.range-bar-cursor{position:absolute;width:3px;height:100%;background:var(--green);border-radius:2px;}
 
 /* RESPONSIVE */
-@media(max-width:1024px){
- .estrategia-cards{grid-template-columns:1fr;}
- .sobre-grid{grid-template-columns:1fr;gap:48px;}
- .crencas-wrap{border-left:none;padding-left:0;border-top:1px solid var(--border2);padding-top:40px;}
- .login-grid{grid-template-columns:1fr;gap:48px;}
- .portfolio-summary{grid-template-columns:1fr;}
-}
 @media(max-width:768px){
- nav{padding:0 20px;}
- .nav-links,.nav-right{display:none;}
- .nav-links.open{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:12px 0;z-index:199;}
- .nav-links.open a{height:auto;line-height:1.5;padding:14px 24px;}
- .nav-right.open{display:flex;flex-direction:column;gap:8px;position:fixed;top:64px;left:0;right:0;background:rgba(14,14,18,.98);border-bottom:1px solid var(--border);padding:80px 24px 16px;z-index:198;}
- .nav-input{width:100%;}
- .nav-hamburger{display:flex;}
- .container{padding:0 20px;}
- .hero-content{padding:80px 20px 80px;}
- .hero-rules::before,.hero-rules::after{left:20px;right:20px;}
- footer{flex-direction:column;gap:8px;text-align:center;padding:20px;}
- .portfolio-table th:nth-child(3),.portfolio-table td:nth-child(3),
- .portfolio-table th:nth-child(5),.portfolio-table td:nth-child(5){display:none;}
- .login-card{padding:28px 20px;}
+ .charts-row,.defi-grid,.metrics-grid{grid-template-columns:1fr;}
+ .asset-table th:nth-child(n+5),.asset-table td:nth-child(n+5){display:none;}
+ .asset-table th:nth-child(2),.asset-table td:nth-child(2){display:none;}
+ .lp-metrics{grid-template-columns:repeat(2,1fr);}
+ .lp-body{grid-template-columns:1fr;}
+ .lp-body-col{border-right:none;border-bottom:1px solid var(--border);}
+ .stats-row{grid-template-columns:repeat(2,1fr);}
+ .chart-pair-row{grid-template-columns:1fr !important;}
 }
 
-/* Portfolio asset cards — clean with prominent logo */
-.tok-card {
-  background: var(--surface) !important;
-  border: 1px solid var(--border2) !important;
-  border-radius: 0 !important;
-  padding: 16px 14px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 10px !important;
-  transition: background .2s, border-color .2s !important;
-  cursor: pointer !important;
-  height: 100% !important;
+
+/* TOKEN LOGOS */
+.tok-logo{width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+.tok-logo-sm{width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+.tok-cell{display:flex;align-items:center;gap:8px;}
+.tok-name{display:flex;flex-direction:column;}
+.alloc-logo{width:18px;height:18px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.ticker-logo{width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+
+/* PRINT */
+@media print{nav,#loadingScreen,.btn-sm,.perf-controls,.ref-toggle,.chart-type-btn{display:none!important;}.container{padding:10px;}}
+
+/* LIGHT MODE — wine label aesthetic */
+[data-theme="light"] .hero-card{
+ background:linear-gradient(135deg,#faf6ee,rgba(138,106,32,0.06));
+ border-color:rgba(138,106,32,0.3);
 }
-.tok-card:hover {
-  background: var(--surface2) !important;
-  border-color: var(--gold2) !important;
+[data-theme="light"] .card{
+ background:#faf6ee;
+ box-shadow:0 1px 4px rgba(26,20,16,0.08);
 }
-.tok-logo {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  object-fit: cover !important;
-  background: rgba(128,128,128,.08) !important;
+[data-theme="light"] .section-label{
+ border-left-color:#8a6820;
+ color:#8a6820;
 }
-.tok-name {
-  font-family: 'Cormorant Garamond', serif !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  color: var(--cream) !important;
-  text-align: center !important;
+[data-theme="light"] .stat-card{
+ background:#faf6ee;
+ box-shadow:0 1px 3px rgba(26,20,16,0.06);
 }
-.tok-ticker {
+[data-theme="light"] .asset-table th{
+ background:#efe8d8;
+}
+[data-theme="light"] .lp-card,
+[data-theme="light"] .defi-card,
+[data-theme="light"] .pool-card{
+ background:#faf6ee;
+ box-shadow:0 1px 3px rgba(26,20,16,0.06);
+}
+[data-theme="light"] .defi-header,
+[data-theme="light"] .lp-header,
+[data-theme="light"] .pool-card-header{
+ background:#efe8d8;
+}
+[data-theme="light"] body{
+ background-image:
+ linear-gradient(rgba(138,106,32,0.025) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(138,106,32,0.025) 1px,transparent 1px);
+ background-size:40px 40px;
+}
+
+/* ══ CORMORANT GARAMOND HEADINGS ══ */
+.nav-title, .brand-name, .brand-text .title,
+h1, h2, .section-label, .hero-value,
+.pool-pair-name, .defi-protocol, .login-title {
+ font-family: 'Satoshi', sans-serif;
+}
+.nav-title { font-size:15px; font-weight:600; letter-spacing:0.08em; }
+
+@media(max-width:768px){
+ .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
+ background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
+ [data-theme="dark"] .nav-links{background:rgba(23,23,31,.98);}
+ .nav-links.open{display:flex;}
+ .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+ .nav-links a:last-child{border-bottom:none;}
+ .nav-hamburger{display:flex;}
+}
+@media(min-width:769px){.nav-hamburger{display:none!important;}}
+.nav-hamburger{background:none;border:1px solid var(--border);border-radius:4px;
+ padding:5px 9px;cursor:pointer;flex-direction:column;gap:4px;align-items:center;justify-content:center;}
+.nav-hamburger span{display:block;width:16px;height:1.5px;background:var(--muted);transition:all .25s;}
+
+/* ── DESIGN SYSTEM PATCH — Professional Redesign ── */
+/* Remove all decorative pill badges default glow */
+.badge { border-radius: 2px !important; font-size: 8px !important; letter-spacing: .18em !important; }
+
+/* Section labels — cleaner, editorial */
+.section-label {
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 9px !important;
-  letter-spacing: .16em !important;
+  letter-spacing: .32em !important;
+  text-transform: uppercase !important;
   color: var(--muted) !important;
+  padding: 0 0 10px 0 !important;
+  margin: 28px 0 14px !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-weight: 400 !important;
+  background: none !important;
 }
-.tok-link {
-  font-size: 10px !important;
-  color: var(--gold2) !important;
+[data-theme="light"] .section-label { color: var(--muted) !important; border-bottom-color: var(--border) !important; }
+
+/* Chart titles */
+.chart-title {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .22em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  font-weight: 400 !important;
+  margin-bottom: 14px !important;
 }
-/* Wide protocol cards */
-.tok-card--wide {
-  flex-direction: row !important;
+
+/* Tab system — clean underline style */
+.tabs {
+  display: flex !important;
+  gap: 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  margin-bottom: 24px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  background: none !important;
+}
+.tabs::-webkit-scrollbar { display: none !important; }
+.tab {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  padding: 10px 18px !important;
+  cursor: pointer !important;
+  transition: color .2s, border-color .2s !important;
+  white-space: nowrap !important;
+}
+.tab:hover { color: var(--text) !important; }
+.tab.active {
+  color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+  background: none !important;
+}
+
+/* Period buttons — clean */
+.period-btn, .chart-type-btn {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .16em !important;
+  text-transform: uppercase !important;
+  padding: 5px 10px !important;
+  background: none !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  transition: all .18s !important;
+}
+.period-btn:hover, .chart-type-btn:hover { color: var(--text) !important; border-color: var(--muted) !important; }
+.period-btn.active, .chart-type-btn.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--bg) !important;
+}
+
+/* Cards — more refined */
+.card {
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+}
+.stat-card {
+  border-radius: 0 !important;
+}
+.defi-card {
+  border-radius: 0 !important;
+}
+.hero-card {
+  border-radius: 0 !important;
+}
+
+/* Btn-sm — tighter, cleaner */
+.btn-sm {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  padding: 5px 10px !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Lang button accent */
+.lang-btn { color: var(--accent) !important; border-color: var(--accent) !important; }
+.lang-btn:hover { background: var(--accent) !important; color: var(--bg) !important; }
+
+/* Stat labels — cleaner */
+.stat-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  letter-spacing: .24em !important;
+  text-transform: uppercase !important;
+}
+
+/* Hero label */
+.hero-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .28em !important;
+}
+
+/* Pool table headers */
+.tbl-hdr {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  letter-spacing: .22em !important;
+}
+
+/* Remove all box-shadow decorations */
+.defi-card, .card, .stat-card { box-shadow: none !important; }
+
+
+/* Nav professional polish */
+nav { border-bottom: 1px solid var(--border) !important; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9.5px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  text-decoration: none !important;
+  padding: 0 14px !important;
+  height: 100% !important;
+  display: flex !important;
   align-items: center !important;
-  padding: 14px 16px !important;
-  gap: 12px !important;
+  transition: color .2s !important;
+  border-bottom: 2px solid transparent !important;
 }
-.tok-card--wide .tok-logo {
-  width: 32px !important;
-  height: 32px !important;
-  flex-shrink: 0 !important;
+.nav-links a:hover { color: var(--text) !important; }
+.nav-links a.active { color: var(--accent) !important; border-bottom-color: var(--accent) !important; }
+
+/* Defi card header font */
+.defi-proto {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
 }
-.tok-card--wide .tok-name {
-  font-size: 15px !important;
-  text-align: left !important;
+
+
+/* Nav link spacing fix */
+.nav-links a { padding: 0 16px !important; letter-spacing: .18em !important; }
+.nav-links { gap: 0 !important; }
+
+
+/* Section label — more breathing room from border */
+.section-label {
+  margin: 32px 0 18px !important;
+  padding: 0 0 10px 12px !important;
+  border-left: 2px solid var(--accent) !important;
+  border-bottom: none !important;
+  font-size: 9px !important;
+  letter-spacing: .32em !important;
 }
-.tok-card--wide .tok-link {
-  margin-left: auto !important;
+/* Nav links — more padding so text doesn't hug the active line */
+.nav-links a {
+  padding: 0 18px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
 }
-[data-theme="light"] .tok-name { color: var(--dark) !important; }
+
+
+/* Section label spacing fix */
+.section-label {
+  margin-top: 32px !important;
+  margin-bottom: 16px !important;
+  padding-top: 0 !important;
+}
+.container > .section-label:first-child,
+.section-label:first-of-type {
+  margin-top: 24px !important;
+}
+/* Card inner spacing */
+.card { padding: 16px 18px !important; }
+
+
+/* Satoshi universal font override */
+*, *::before, *::after {
+  font-family: inherit;
+}
+body, input, button, select, textarea {
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+/* Keep monospace for data/numbers */
+.mono, code, pre, kbd,
+[style*="JetBrains"],
+[class*="mono"] {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+}
+/* Keep explicitly set monospace classes */
+.hero-value, .stat-value, .hero-meta-val,
+.badge, .nav-links a, .btn-sm, .section-label,
+.chart-title, .period-btn, .chart-type-btn,
+.tab, .stat-label, .hero-label {
+  font-family: 'Satoshi', sans-serif !important;
+}
 
 </style>
 </head>
 <body>
 
+<!-- LOADING -->
+<div id="loadingScreen">
+ <div class="loader-ring"></div>
+ <div style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px;">CARREGANDO...</div>
+</div>
+
 <!-- NAV -->
 <nav>
- <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">
+ <a class="nav-brand" href="index.html">
  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
  <defs>
  <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
  <stop offset="0%" stop-color="transparent"/>
- <stop offset="15%" stop-color="#c9a050"/>
- <stop offset="85%" stop-color="#c9a050"/>
+ <stop offset="18%" stop-color="#c9a050"/>
+ <stop offset="82%" stop-color="#c9a050"/>
  <stop offset="100%" stop-color="transparent"/>
  </linearGradient>
  </defs>
- <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.7"/>
- <text x="105" y="20" font-family="Cormorant Garamond,Palatino Linotype,serif" font-weight="600" font-size="13" letter-spacing="3" fill="#c9a050" text-anchor="middle">BAROLO CAPITAL</text>
- <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.7"/>
- </svg>
+ <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+ <text x="105" y="20"
+ font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
+ font-weight="600" font-size="14" letter-spacing="3"
+ fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+ <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+</svg>
+ </a>
+ <div class="nav-links">
+ <a href="index.html" data-i18n="nav-home">Início</a>
+ <a href="portfolio_analytics.html" class="active" data-i18n="nav-portfolio">Portfolio</a>
+ <a href="pools.html" data-i18n="nav-pools">Pools &amp; DeFi</a>
+ <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
+ <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
  </div>
-
- <ul class="nav-links" id="navLinks">
- <li><a href="#home" class="active" onclick="setActive(this);closeMobile()" data-i18n="nav-home">Home</a></li>
- <li><a href="#sobre" onclick="setActive(this);closeMobile()" data-i18n="nav-sobre">About</a></li>
- <li><a href="#estrategias" onclick="setActive(this);closeMobile()" data-i18n="nav-strat">Strategies</a></li>
- <li><a href="#portfolio" onclick="setActive(this);closeMobile()" data-i18n="nav-port">Portfolio</a></li>
- </ul>
-
- <div class="nav-right" id="navRight">
+ <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+ <div class="nav-right">
+    <button class="btn-sm lang-btn" onclick="toggleLang()" id="langBtn" title="Switch language">PT</button>
+ <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
+ <span id="brlRateBadge" style="display:none;font-size:8px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;">R$ 5.33</span>
+ <button class="btn-sm" onclick="toggleTheme()">☾</button>
  
- <input type="text" id="nu" class="nav-input" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="username" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
- <input type="password" id="np" class="nav-input" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')loginNav()">
- <button class="nav-btn" id="navBtn" onclick="loginNav()">Enter</button>
- 
-    <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border2);width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:border-color .2s;">☾</button>
-    <button id="indexLangBtn" onclick="toggleIndexLang()" title="Switch to Portuguese" style="background:transparent;border:1px solid var(--border2);padding:0 10px;height:34px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);cursor:pointer;flex-shrink:0;">PT</button>
+ <button class="btn-sm primary" onclick="window.print()">↓ PDF</button>
  </div>
-
- <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
- <span></span><span></span><span></span>
- </div>
-
- <div class="nav-err" id="navErr">INVALID CREDENTIALS</div>
 </nav>
 
-<!-- TICKER -->
-<div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+<div class="container" id="mainContent" style="display:none;">
 
-<!-- HOME -->
-<section id="home">
- <div class="hero-glow"></div>
- <div class="hero-rules"></div>
- <div class="hero-content">
- <div class="hero-eyebrow" data-i18n="eyebrow">Strategic Capital Management</div>
- <h1 class="hero-title" data-i18n="hero-title">Wealth built with <em>consistency</em>, not haste.</h1>
- <p class="hero-sub" data-i18n="hero-sub">Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as its foundation.</p>
- <div class="hero-cta">
- <a href="#sobre" class="btn-primary" data-i18n="cta-about">About</a>
- <a href="#portfolio" class="btn-ghost" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'});return false;" data-i18n="cta-portfolio">Portfolio</a>
- </div>
- </div>
- <div class="hero-scroll" onclick="document.querySelector('#sobre').scrollIntoView({behavior:'smooth'})">
- <span>Scroll</span>
- <div class="scroll-arrow"></div>
- </div>
-</section>
+<!-- ══ ALOCAÇÃO ATUAL (topo) ══ -->
+<div class="section-label">Alocação Atual</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
 
-<!-- SOBRE -->
-<section id="sobre" class="sec" style="padding-top:120px;">
- <div class="section-num" style="right:48px;top:20px;">01</div>
- <div class="container">
- <div class="section-header">
- <div class="section-tag">About</div>
- <h2 class="section-title">A <em>different</em> approach to the crypto market</h2>
- </div>
- <div class="sobre-grid">
- <div class="sobre-text">
- <p class="lead">Barolo Capital is an independent firm focused on strategic capital management in the crypto market.</p>
- <p>We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, our approach prioritizes capital preservation, rational decision-making and the pursuit of sustainable opportunities.</p>
- <p>We operate selectively, focused on strategies that balance risk and return — including allocation in decentralized protocols, yield generation and structured positions.</p>
- <p><em>At Barolo Capital, the true value of investments lies in the freedom they provide — freedom of time, of choice and of direction.</em></p>
- </div>
- <div class="crencas-wrap">
- <div class="crencas-label">Our Beliefs</div>
- <p class="crenca-lead">Real wealth is built with consistency, not haste.</p>
- <div class="crenca-item"><span class="crenca-num">01</span><span class="crenca-text">We do not seek the largest gain, we seek the sustainable gain</span></div>
- <div class="crenca-item"><span class="crenca-num">02</span><span class="crenca-text">Before making money, we avoid losing it</span></div>
- <div class="crenca-item"><span class="crenca-num">03</span><span class="crenca-text">Time in the market beats timing the market</span></div>
- <div class="crenca-item"><span class="crenca-num">04</span><span class="crenca-text">Good decisions come from a calm mind, not urgency</span></div>
- <div class="crenca-item"><span class="crenca-num">05</span><span class="crenca-text">We prefer earning less in peace than more in chaos</span></div>
- <div class="crenca-item"><span class="crenca-num">06</span><span class="crenca-text">If it is not simple to understand, it does not deserve capital</span></div>
- <div class="crenca-item"><span class="crenca-num">07</span><span class="crenca-text">Money exists to buy time and freedom</span></div>
- </div>
- </div>
- </div>
-</section>
+  <!-- Allocation donut — CoinGecko style -->
+  <div class="card" style="margin-bottom:0;padding:18px 20px;">
+    <div class="chart-title" style="margin-bottom:16px;">Alocação por Ativo</div>
+    <div style="display:flex;align-items:center;gap:18px;">
+      <div style="flex-shrink:0;">
+        <canvas id="allocChart" width="160" height="160" style="display:block;"></canvas>
+      </div>
+      <div id="allocLegend" style="flex:1;min-width:0;"></div>
+    </div>
+  </div>
 
-<!-- ESTRATÉGIAS -->
-<section id="estrategias" class="sec">
- <div class="section-num" style="left:48px;top:20px;">02</div>
- <div class="container">
- <div class="section-header">
- <div class="section-tag">How we operate</div>
- <h2 class="section-title">Selective <em>strategies</em> focused on risk-adjusted returns</h2>
- </div>
- <div class="estrategia-cards">
- <div class="estrategia-card">
- <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
- <div class="card-title">Active Liquidity</div>
- <p class="card-desc">We operate concentrated liquidity pools on DEXs such as Uniswap V3, positioning capital in optimized ranges to maximize fee generation while managing impermanent loss. Each position is continuously monitored and rebalanced according to pair volatility.</p>
- <div class="card-tags"><span class="tag">Uniswap V3</span><span class="tag">Ethereum</span><span class="tag">Arbitrum</span><span class="tag">zkSync</span><span class="tag">Base</span></div>
- </div>
- <div class="estrategia-card">
- <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8m-4-4v4"/><path d="M6 8h4m-4 4h8"/></svg>
- <div class="card-title">Lending &amp; Yield</div>
- <p class="card-desc">We use decentralized lending protocols such as AAVE V3 and Kamino Finance to generate yield on collateral while maintaining controlled leveraged positions. The focus is on balancing the yield rate with the position health factor.</p>
- <div class="card-tags"><span class="tag">AAVE V3</span><span class="tag">Kamino</span><span class="tag">Solana</span><span class="tag">ETH Mainnet</span></div>
- </div>
- <div class="estrategia-card">
- <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
- <div class="card-title">Structured Allocation</div>
- <p class="card-desc">We maintain long-term positions in fundamental crypto assets — ETH, SOL and ADA — with a DCA-based accumulation strategy and risk management that prioritizes preservation during extended bear market periods.</p>
- <div class="card-tags"><span class="tag">ETH</span><span class="tag">SOL</span><span class="tag">ADA</span><span class="tag">DCA</span><span class="tag">Stake</span></div>
- </div>
- </div>
- </div>
-</section>
+  <!-- Annual return -->
+  <div class="card" style="margin-bottom:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <div class="chart-title" style="margin-bottom:0;">Retorno Anual <span id="annualBreadcrumb" style="font-size:9px;color:var(--accent);margin-left:8px;cursor:pointer;" onclick="annualView='yearly';buildAnnualChart();"></span></div>
+      <div style="display:flex;gap:4px;">
+        <button class="chart-type-btn active" id="annualBarBtn" onclick="setAnnualType('bar')">Barras</button>
+        <button class="chart-type-btn" id="annualLineBtn" onclick="setAnnualType('line')">Linha</button>
+      </div>
+    </div>
+    <canvas id="annualReturn" style="max-height:200px;"></canvas>
+  </div>
 
-<!-- PORTFÓLIO -->
-<section id="portfolio" class="sec">
- <div class="section-num" style="right:48px;top:20px;">03</div>
- <div class="container">
- <div class="section-header">
- <div class="section-tag">DeFi Ecosystem</div>
- <h2 class="section-title">Portfolio <em>Assets</em></h2>
+</div>
+<div class="hero-card" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+ <div style="display:flex;flex-direction:column;gap:4px;">
+  <div class="hero-label" style="margin-bottom:2px;">◈ PATRIMÔNIO LÍQUIDO TOTAL</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+   <div class="hero-value sensitive" id="s-net-total">—</div>
+   <button onclick="toggleHide()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px;opacity:.7;transition:opacity .2s;" title="Ocultar valores" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">👁</button>
+  </div>
  </div>
-
- <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:1px;">
-  <a href="https://ethereum.org" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png" alt="ETH" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Ethereum</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ETH</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://solana.com" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/4128/large/solana.png" alt="SOL" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Solana</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">SOL</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://cardano.org" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/975/large/cardano.png" alt="ADA" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Cardano</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ADA</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/33373/large/eigen.png" alt="EIGEN" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">EigenLayer</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">EIGEN</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://radiant.capital" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/26536/large/Radiant-Logo.png" alt="RDNT" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Radiant</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">RDNT</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://polygon.technology" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/32440/large/polygon.png" alt="POL" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">POL</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">POL</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://zksync.io" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/38043/large/zksync.jpg" alt="ZK" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">ZKsync</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ZK</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://xai.games" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/34258/large/xai.png" alt="XAI" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Xai</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">XAI</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://zetachain.com" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/26718/large/zetachain.png" alt="ZETA" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">ZetaChain</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">ZETA</div>
-      </div>
-    </div>
-  </a>
+ <div class="hero-meta">
+ <div class="hero-meta-item">
+ <div class="hero-meta-label">VARIAÇÃO 24h</div>
+ <div class="hero-meta-val sensitive" id="s-24h">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-24h-sub">—</div>
  </div>
-
- <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:0;">
-  <a href="https://aave.com" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png" alt="AAVE" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">AAVE V3</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">AAVE</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://kamino.finance" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/36217/large/kmno_logo.png" alt="KMNO" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Kamino</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">KMNO</div>
-      </div>
-    </div>
-  </a>
-  <a href="https://app.uniswap.org" target="_blank" rel="noopener" style="text-decoration:none;">
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .25s,background .25s;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border)'">
-      <img src="https://coin-images.coingecko.com/coins/images/12504/large/uniswap-uni.png" alt="UNI" width="40" height="40" style="border-radius:50%;display:block;" onerror="this.onerror=null;this.src='';this.style.display='none'">
-      <div style="text-align:center;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--cream);line-height:1.2;">Uniswap V3</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--muted);margin-top:2px;">UNI</div>
-      </div>
-    </div>
-  </a>
+ <div class="hero-meta-item">
+ <div class="hero-meta-label">P&L TOTAL</div>
+ <div class="hero-meta-val sensitive" id="s-pnl">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-pnl-sub">—</div>
  </div>
-
+ <div class="hero-meta-item">
+ <div class="hero-meta-label">TOTAL INVESTIDO</div>
+ <div class="hero-meta-val acc sensitive" id="s-invested">—</div>
  </div>
-</section>
+ </div>
+</div>
 
-<!-- ACESSO -->
+<div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
+ <div class="stat-card">
+  <div class="stat-label">SPOT</div>
+  <div class="stat-value acc sensitive" id="s-spot">—</div>
+  <div class="stat-sub sensitive" id="s-spot-sub">—</div>
+ </div>
+ <div class="stat-card">
+  <div class="stat-label">POOLS LP</div>
+  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$346.94</div>
+  <div class="stat-sub">WETH/USDC · Uniswap V3</div>
+ </div>
+ <div class="stat-card">
+  <div class="stat-label">DÍVIDAS</div>
+  <div class="stat-value neg sensitive" id="s-debt">—</div>
+  <div class="stat-sub">Aave USDC + Kamino USDC</div>
+ </div>
+ <div class="stat-card" style="border-color:rgba(58,126,200,0.3);background:linear-gradient(135deg,var(--surface),rgba(58,126,200,0.04));">
+  <div class="stat-label" style="color:var(--blue,#3a7ec8);">CAIXA</div>
+  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$1,953</div>
+  <div class="stat-sub">USDT $1,653 · USDS $300</div>
+ </div>
+</div>
 
 
-<footer>
- <span>© 2021 Barolo Capital · Strategic Capital Management</span>
- <span>All data is for internal and private use only</span>
+
+
+
+
+
+<!-- Cardano Stake Section -->
+<div id="cardano-stake-target" style="margin:0 0 16px;"></div>
+<!-- ══ PERFORMANCE CHART ══ -->
+<div class="section-label">Curva de Patrimônio & Benchmark</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
+
+<div class="card" style="margin-bottom:0;">
+ <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+ <div class="chart-title" style="margin-bottom:0;">Desempenho Histórico</div>
+ <div class="perf-controls">
+ <button class="period-btn" onclick="setPeriod('24h')">24h</button>
+ <button class="period-btn" onclick="setPeriod('7d')">7D</button>
+ <button class="period-btn" onclick="setPeriod('3m')">3M</button>
+ <button class="period-btn" onclick="setPeriod('1a')">1A</button>
+ <button class="period-btn active" onclick="setPeriod('all')">TOTAL</button>
+ </div>
+ </div>
+ <canvas id="perfChart" style="max-height:260px;"></canvas>
+ <div id="perfStats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px;"></div>
+</div>
+
+<!-- ══ BENCHMARK ══ -->
+<div class="card" style="margin-bottom:0;">
+ <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+ <div class="chart-title" style="margin-bottom:0;">Portfólio vs BTC vs ETH vs S&P 500 vs CDI vs Ibovespa</div>
+ <div style="display:flex;gap:3px;" id="benchPeriodBtns">
+ <button class="chart-type-btn" onclick="setBenchPeriod('1m',this)">1M</button>
+ <button class="chart-type-btn" onclick="setBenchPeriod('3m',this)">3M</button>
+ <button class="chart-type-btn" onclick="setBenchPeriod('6m',this)">6M</button>
+ <button class="chart-type-btn" onclick="setBenchPeriod('1a',this)">1A</button>
+ <button class="chart-type-btn active" onclick="setBenchPeriod('all',this)">Total</button>
+ </div>
+ </div>
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-align:right;margin-bottom:6px;" id="benchBaseLabel">BASE 100 · Jan/2022</div>
+ <canvas id="benchmarkChart" style="max-height:260px;"></canvas>
+</div>
+
+</div>
+
+<!-- ══ RETORNO ANUAL ══ -->
+
+
+<!-- ══ HEATMAP RETORNO MENSAL ══ -->
+<div class="section-label">Heatmap de Retorno Mensal</div>
+<div class="card" style="margin-bottom:12px;padding:18px 20px;">
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+ <div class="chart-title" style="margin-bottom:0;">Retorno Mês a Mês — Portfólio</div>
+ <div style="display:flex;align-items:center;gap:12px;font-size:9px;color:var(--muted);">
+ <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#b92d2d;border-radius:2px;display:inline-block;"></span>Queda forte</span>
+ <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--border);border-radius:2px;display:inline-block;"></span>Neutro</span>
+ <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#2a7c3f;border-radius:2px;display:inline-block;"></span>Alta forte</span>
+ </div>
+ </div>
+ <div id="heatmapGrid" style="overflow-x:auto;"></div>
+</div>
+
+<!-- ══ DRAWDOWN HISTÓRICO ══ -->
+<div class="section-label">Drawdown Histórico</div>
+<div class="card" style="margin-bottom:12px;">
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+ <div class="chart-title" style="margin-bottom:0;">Drawdown do Pico — Portfólio Total (2022–2026)</div>
+ <div id="ddStats" style="display:flex;gap:12px;font-size:9px;"></div>
+ </div>
+ <canvas id="drawdownChart" style="max-height:220px;"></canvas>
+</div>
+
+<!-- ══ ANÁLISE POR ATIVO ══ -->
+<div class="section-label">Análise por Ativo</div>
+<div class="card" style="padding:0;overflow-x:auto;margin-bottom:12px;">
+ <table class="asset-table">
+ <thead>
+ <tr>
+ <th>Ativo</th>
+ <th>Qtd</th>
+ <th>Preço</th>
+ <th>Valor</th>
+ <th>Custo Total</th>
+ <th>Preço Médio</th>
+ <th>P&L</th>
+ <th>ROI</th>
+ <th>24h</th>
+ <th>7d Spark</th>
+ <th>%</th>
+ </tr>
+ </thead>
+ <tbody id="assetTable"></tbody>
+ </table>
+</div>
+
+<!-- ══ P&L + ROI CHARTS ══ -->
+<div class="charts-row" style="margin-bottom:12px;">
+ <div class="card">
+ <div class="chart-title">P&L por Ativo</div>
+ <canvas id="pnlByAsset"></canvas>
+ </div>
+ <div class="card">
+ <div class="chart-title">ROI por Ativo</div>
+ <canvas id="roiByAsset"></canvas>
+ </div>
+</div>
+
+<!-- ══ BREAKDOWN P&L POR ORIGEM ══ -->
+<div class="section-label">Análise de P&L por Origem</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
+ <div class="card" style="margin-bottom:0;">
+ <div class="chart-title" style="margin-bottom:14px;">P&L por Origem</div>
+ <!-- KPI total bar -->
+ <div id="pnlOriginKpis" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;"></div>
+ <canvas id="pnlOriginChart" style="max-height:180px;"></canvas>
+ </div>
+ <div class="card" style="margin-bottom:0;">
+ <div class="chart-title">Risco × Retorno × Peso</div>
+ <canvas id="riskBubbleChart" style="max-height:280px;"></canvas>
+ </div>
+</div>
+
+<!-- ══ DCA TRACKING ══ -->
+<div class="section-label">DCA Tracking</div>
+<div class="card" style="margin-bottom:12px;">
+ <div class="chart-title">Investido vs Valor de Mercado</div>
+ <canvas id="dcaTracking" style="max-height:210px;"></canvas>
+</div>
+
+<!-- ══ COMPOSIÇÃO DÍVIDA VS COLATERAL ══ -->
+<div class="section-label">Composição DeFi — Colateral vs Dívida</div>
+<div class="card" style="margin-bottom:12px;">
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+ <div class="chart-title" style="margin-bottom:0;">Evolução Mensal · Colateral Alocado vs Dívida Ativa</div>
+ <div style="display:flex;gap:4px;">
+ <button class="chart-type-btn active" id="debtBarBtn" onclick="setDebtView('stacked')">▌ Empilhado</button>
+ <button class="chart-type-btn" id="debtLineBtn" onclick="setDebtView('ratio')">∿ Ratio HF/LTV</button>
+ </div>
+ </div>
+ <canvas id="debtChart" style="max-height:240px;"></canvas>
+</div>
+
+<!-- ══ MÉTRICAS ══ -->
+<!-- ══ FEAR & GREED INDEX ══ -->
+<div class="section-label">Sentimento de Mercado</div>
+<div class="card" style="margin-bottom:12px;padding:18px 20px;">
+  <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:space-between;">
+
+    <!-- Gauge + value -->
+    <div style="display:flex;align-items:center;gap:20px;">
+      <!-- Semi-circular arc -->
+      <div style="position:relative;width:110px;height:60px;flex-shrink:0;">
+        <svg viewBox="0 0 110 60" width="110" height="60">
+          <!-- Background arc -->
+          <path d="M10,55 A45,45 0 0,1 100,55" fill="none" stroke="var(--border)" stroke-width="10" stroke-linecap="round"/>
+          <!-- Colored arc — drawn by JS -->
+          <path id="fg-arc" d="M10,55 A45,45 0 0,1 100,55" fill="none" stroke="var(--muted)" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 141.37"/>
+          <!-- Needle -->
+          <line id="fg-needle" x1="55" y1="55" x2="55" y2="16" stroke="var(--text)" stroke-width="2" stroke-linecap="round" transform-origin="55 55" transform="rotate(0,55,55)"/>
+          <circle cx="55" cy="55" r="4" fill="var(--text)"/>
+        </svg>
+        <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);text-align:center;line-height:1;">
+          <div id="fg-value" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--muted);">—</div>
+        </div>
+      </div>
+
+      <!-- Label + meta -->
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Fear & Greed Index</div>
+        <div id="fg-label" style="font-family:'Satoshi',sans-serif;font-size:16px;font-weight:600;color:var(--muted);margin-bottom:8px;">—</div>
+        <div id="fg-updated" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">—</div>
+      </div>
+    </div>
+
+    <!-- Yesterday + last week comparison -->
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Ontem</div>
+        <div id="fg-yesterday" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--muted);">—</div>
+        <div id="fg-yesterday-lbl" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">—</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">7 dias</div>
+        <div id="fg-week" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--muted);">—</div>
+        <div id="fg-week-lbl" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">—</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">30 dias</div>
+        <div id="fg-month" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--muted);">—</div>
+        <div id="fg-month-lbl" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">—</div>
+      </div>
+    </div>
+
+    <!-- Scale legend -->
+    <div style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Escala</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#c0392b;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">0–24 Medo Extremo</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#e67e22;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">25–44 Medo</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#f1c40f;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">45–55 Neutro</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#2ecc71;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">56–74 Ganância</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:#27ae60;flex-shrink:0;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">75–100 Ganância Extrema</span></div>
+      <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:var(--accent);text-decoration:none;margin-top:4px;">alternative.me ↗</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ FEAR & GREED ══ -->
+<div class="section-label">Sentimento de Mercado</div>
+<div class="card" style="margin-bottom:12px;padding:18px 22px;">
+  <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
+
+    <!-- Semicircle gauge -->
+    <div style="position:relative;width:130px;height:70px;flex-shrink:0;">
+      <canvas id="fg-gauge" width="130" height="70" style="display:block;"></canvas>
+      <div style="position:absolute;bottom:0;left:0;right:0;text-align:center;">
+        <div id="fg-value" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1;">—</div>
+        <div id="fg-label" style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.18em;margin-top:2px;color:var(--muted);">—</div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div style="flex:1;min-width:160px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">Fear &amp; Greed Index · Crypto</div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Ontem</span>
+        <span id="fg-yesterday" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;">—</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Semana passada</span>
+        <span id="fg-week" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;">—</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">Atualizado</span>
+        <span id="fg-updated" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">—</span>
+      </div>
+    </div>
+
+    <!-- Scale bar -->
+    <div style="flex-shrink:0;min-width:140px;">
+      <div style="height:6px;width:100%;border-radius:3px;background:linear-gradient(90deg,#b22222,#cd5c5c,#daa520,#3cb371,#228b22);margin-bottom:6px;position:relative;">
+        <div id="fg-needle" style="position:absolute;top:-3px;width:2px;height:12px;background:var(--text);border-radius:1px;transform:translateX(-50%);transition:left .6s ease;left:50%;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);">
+        <span>Medo Ext.</span><span>Neutro</span><span>Ganância Ext.</span>
+      </div>
+      <div style="margin-top:10px;">
+        <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--accent);text-decoration:none;letter-spacing:.1em;">alternative.me ↗</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section-label">Métricas</div>
+<div class="metrics-grid">
+ <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">SHARPE RATIO</div><div class="metric-val neg">−1.42</div><div class="metric-desc">Retorno/risco inadequado</div></div>
+ <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">VOLATILIDADE</div><div class="metric-val warn">87%</div><div class="metric-desc">Anualizada estimada</div></div>
+ <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">MAX DRAWDOWN</div><div class="metric-val neg">−83%</div><div class="metric-desc">Pico → fundo</div></div>
+ <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">DEFI YIELD/ANO</div><div class="metric-val pos">~$180</div><div class="metric-desc">Aave + Kamino líquido</div></div>
+</div>
+
+<footer style="text-align:center;padding:20px 0 40px;font-size:9px;color:var(--muted);letter-spacing:2px;border-top:1px solid var(--border);margin-top:20px;">
+ Barolo Capital · GESTÃO ATIVA · MAR 2026
 </footer>
+</div>
 
 <script>
-// Ticker
-var tickerData=[{t:'ETH/USD',v:'$2,079',d:'-4.90%',up:false},{t:'SOL/USD',v:'$87.28',d:'-4.60%',up:false},{t:'BTC/USD',v:'$82,400',d:'+2.10%',up:true},{t:'ADA/USD',v:'$0.2617',d:'-6.40%',up:false},{t:'USD/BRL',v:'R$ 5.33',d:'-9.5%',up:false},{t:'EIGEN',v:'$0.187',d:'-5.10%',up:false},{t:'RDNT',v:'$0.0055',d:'-1.00%',up:false},{t:'PYUSD',v:'$1.0001',d:'+0.01%',up:true}];
-var track=document.getElementById('tickerTrack');
-[].concat(tickerData,tickerData).forEach(function(a){var el=document.createElement('div');el.className='tick-item';el.innerHTML='<b>'+a.t+'</b>&ensp;<span class="'+(a.up?'up':'dn')+'">'+a.v+' '+a.d+'</span>';track.appendChild(el);});
+// ══════════════════════════════════════════════════
+// DADOS DO PORTFÓLIO (atualizados 06/Mar/2026)
+// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+// BLOCO DE ATUALIZAÇÃO SEMANAL — Edite este bloco toda semana
+// Copie e cole os dados novos aqui, o restante é calculado automaticamente
+// ══════════════════════════════════════════════════════════════════
+var WEEKLY_UPDATE = {
+ // ── Data da atualização ──
+ date: '10/Mar/2026',
 
-// Clock
-function tick(){var n=new Date(),pad=function(v){return String(v).padStart(2,'0');};var t=pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());var el=document.getElementById('cardClk');if(el)el.textContent=t+' BRT';}
-tick();setInterval(tick,1000);
+ // ── Saldos de carteira (quantidades) ──
+ holdings: {
+ ETH: 2.084106,
+ SOL: 19.312,
+ ADA: 375.245,
+ RDNT: 7290.46,
+ EIGEN: 153.36298802,
+ POL: 218,
+ ZK: 876,
+ XAI: 692.86,
+ ZETA: 51.1434,
+ SCR: 0.0018,
+ USDT: 1651.49,
+ USDS: 90.04,
+ },
 
-// Nav active on scroll
-window.addEventListener('scroll',function(){
- var secs=['home','sobre','estrategias','portfolio','acesso'];
- var current='home';
- secs.forEach(function(id){var el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-100)current=id;});
- document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.toggle('active',a.getAttribute('href').replace('#','')==current);});
-});
-function setActive(el){document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});el.classList.add('active');}
-function toggleMobile(){document.getElementById('navLinks').classList.toggle('open');document.getElementById('navRight').classList.toggle('open');}
-function closeMobile(){document.getElementById('navLinks').classList.remove('open');document.getElementById('navRight').classList.remove('open');}
+ // ── DeFi: posições abertas ──
+ defi: {
+ aave: {
+ ethSupplied: 1.87984935,
+ usdtSupplied: 1651.49,
+ usdcBorrowed: 745.94,
+ healthFactor: 6.00,
+ },
+ kamino: {
+ solSupplied: 19.4,
+ pyusdSupplied: 90.04,
+ usdcBorrowed: 802.91,
+ ltv: 44.93,
+ },
+ uniswapLP: {
+ capital: 346.94,
+ fees: 1.01,
+ il: 0,
+ nft: '#4694262',
+ pair: 'WETH/USDC 0.3%',
+ range: 'ETH $2,450–$3,100',
+ },
+ },
 
-// Login nav
-function loginNav(){
- var u=document.getElementById('nu').value.trim().toUpperCase();
- var p=document.getElementById('np').value.trim();
- var err=document.getElementById('navErr');
- err.classList.remove('show');
- if(u==='ADM'&&p==='102030'){document.getElementById('navBtn').textContent='…';document.getElementById('navBtn').disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
- ['nu','np'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err','do-shake');setTimeout(function(){el.classList.remove('err','do-shake');},600);});
- err.classList.add('show'); // already handledsetTimeout(function(){err.classList.remove('show');},2500);
- document.getElementById('np').value='';
-}
+ // ── Custos totais investidos por ativo ──
+ invested: {
+ ETH: 4433.16,
+ SOL: 19.312,
+ ADA: 530.95,
+ RDNT: 0,
+ EIGEN: 45.87,
+ POL: 143.88,
+ ZK: 0,
+ XAI: 164.52,
+ ZETA: 0,
+ SCR: 0,
+ USDT: 1651.49,
+ USDS: 90.04,
+ },
 
-// Login card
-function loginCard(){
- var u=document.getElementById('lu').value.trim().toUpperCase();
- var p=document.getElementById('lp').value.trim();
- var err=document.getElementById('loginCardErr');
- err.textContent='';
- if(u==='ADM'&&p==='102030'){var btn=document.getElementById('loginCardBtn');btn.textContent='Authenticating…';btn.disabled=true;setTimeout(function(){window.location.href='portfolio_analytics.html';},480);return;}
- ['lu','lp'].forEach(function(id){var el=document.getElementById(id);el.classList.add('err');setTimeout(function(){el.classList.remove('err');},800);});
- err.textContent='INVALID CREDENTIALS · ACESSO NEGADO';
- document.getElementById('lp').value='';
-}
+ // ── Retornos mensais do portfólio (%) — adicione o mês atual ──
+ // Formato: [Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez]
+ // null = mês ainda não encerrou
+ monthlyReturns: {
+ 2022: [-22.0, -6.4, +12.0, -18.5, -28.0, -34.0, +58.0, -14.0, -24.0, +19.0, -18.0, +4.0],
+ 2023: [+28.0, -2.5, +6.0, +2.8, +1.5, +4.2, -1.8, -9.0, +4.2, +11.2, +14.5, +18.0],
+ 2024: [+1.5, +42.0, +6.0, -14.0, -22.0, +6.2, +4.0, -18.0, +10.0, -3.0, +44.0, +8.5],
+ 2025: [+28.0,-12.0, +5.0, -9.0, -18.0, -6.0, +12.0, -8.0, +4.0, +6.0, +4.5, +6.0],
+ 2026: [-18.0,-22.0, null, null, null, null, null, null, null, null, null, null],
+ },
 
-// Portfolio table
-var assets=[
- {name:'Ethereum', ticker:'ETH', cgId:'ethereum', network:'ETH', qty:2.084106, price:2079.21, color:'#E8773D'},
- {name:'Solana', ticker:'SOL', cgId:'solana', network:'SOL', qty:19.31226576, price:87.28, color:'#14F195'},
- {name:'Cardano', ticker:'ADA', cgId:'cardano', network:'ADA', qty:375.245, price:0.2617, color:'#0033AD'},
- {name:'EigenLayer',ticker:'EIGEN',cgId:'eigenlayer', network:'ETH', qty:153.363, price:0.1870, color:'#6B3FF5'},
- {name:'Radiant', ticker:'RDNT',cgId:'radiant-capital',network:'ARB', qty:7290.46, price:0.005543,color:'#00E5FF'},
- {name:'POL', ticker:'POL', cgId:'matic-network', network:'ETH', qty:218, price:0.09693, color:'#A855F7'},
- {name:'ZKsync', ticker:'ZK', cgId:'zksync', network:'zkSync', qty:876, price:0.01914, color:'#D45B8E'},
- {name:'Xai', ticker:'XAI', cgId:'xai-blockchain', network:'XAI', qty:692.86, price:0.01102, color:'#F59E0B'},
- {name:'ZetaChain',ticker:'ZETA',cgId:'zetachain', network:'ETH', qty:51.1434, price:0.05041, color:'#C8A87C'},
-];
+ // ── P&L por origem (manual — baseado no diário) ──
+ pnlOrigin: {
+ // ETH SOL ADA RDNT EIGEN POL ZK XAI
+ spot: [-2205, -1498, -422, 0, -15, -120, 0, -95],
+ defiFees:[ 0, 0, 0, 0, 0, 0, 0, 0], // só DeFi Fees abaixo
+ defiIL: [ 0, 0, 0, 0, 0, 0, 0, 0], // só IL abaixo
+ airdrops:[ 0, 0, 0, 40, 0, 0, 17, 0],
+ // Totais DeFi (pooled — não por ativo individual)
+ totalFees: 1977, // taxas acumuladas em pools (−20 PEANUT: scam, sem taxas reais)
+ totalIL: -2143, // IL acumulado em pools (GRIFT: cap. real $1.170 → IL $1.850; PEANUT scam: IL $243)
+ },
 
-function buildTable(){
- var total=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
- var tbody=document.getElementById('portfolioTbody');
- if(!tbody)return;
- tbody.innerHTML=assets.map(function(a){
- var val=a.qty*a.price;
- var pct=(val/total*100).toFixed(1);
- var qty=a.qty>=100?a.qty.toFixed(2):a.qty.toFixed(4);
- var barW=Math.min(parseFloat(pct)/70*100,100);
- return '<tr>'+
- '<td><div class="asset-name"><div class="asset-dot" style="background:'+a.color+'"></div>'+
- '<span class="asset-label">'+a.name+'</span><span class="asset-ticker">'+a.ticker+'</span></div></td>'+
- '<td><span class="asset-network">'+a.network+'</span></td>'+
- '<td><span class="asset-qty">'+qty+'</span></td>'+
- '<td><span class="asset-value">$'+val.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></td>'+
- '<td><div class="alloc-bar-wrap"><span class="asset-alloc">'+pct+'%</span>'+
- '<div class="alloc-bar"><div class="alloc-fill" style="width:'+barW+'%"></div></div></div></td>'+
- '</tr>';
- }).join('');
-}
-buildTable();
+ // ── Curva de patrimônio ($) — adicione o mês atual ──
+ // Formato: [valor do portfólio total em USD]
+ wealthCurve: {
+ labels: ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26'],
+ values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,10395,11610,10857,9511,7376,6371],
+ invested:[1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418],
+ },
 
-// Theme
-function toggleTheme(){
-  var html=document.documentElement;
-  var current=html.getAttribute('data-theme')||'dark';
-  var next=current==='dark'?'light':'dark';
-  html.setAttribute('data-theme',next);
-  localStorage.setItem('bc-theme',next);
-  var btn=document.getElementById('themeToggle');
-  if(btn) btn.textContent = next==='dark' ? '☾' : '☀';
-}
-(function(){
- var saved=localStorage.getItem('bc-theme');
- if(saved){document.documentElement.setAttribute('data-theme',saved);var btn=document.getElementById('themeToggle');if(btn)btn.textContent=saved==='dark'?'':'';}
-})();
-
-// Live prices
-(async function(){
- try{
- var ids=assets.map(function(a){return a.cgId;}).join(',');
- var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids+'&vs_currencies=usd',{signal:AbortSignal.timeout(8000)});
- if(!r.ok)throw new Error();
- var d=await r.json();
- assets.forEach(function(a){if(d[a.cgId]&&d[a.cgId].usd)a.price=d[a.cgId].usd;});
- buildTable();
- var total2=assets.reduce(function(s,a){return s+a.qty*a.price;},0);
- var net=total2+1742.07-1549.71;
- var el=document.getElementById('ps-net');
- if(el)el.textContent='$'+Math.round(net).toLocaleString('en-US');
- }catch(e){}
-})();
-
-// Language toggle — index
-var INDEX_LANG_STRINGS = {
-  'hero-title':  {pt:'Riqueza construída com <em>consistência</em>, não com pressa.',
-                  en:'Wealth built with <em>consistency</em>, not haste.'},
-  'hero-sub':    {pt:'A Barolo Capital é uma gestora independente focada em estratégias de capital no mercado de criptoativos — com disciplina, visão de longo prazo e preservação como fundamento.',
-                  en:'Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.'},
-  'nav-home':    {pt:'Início',       en:'Home'},
-  'nav-sobre':   {pt:'Sobre',        en:'About'},
-  'nav-strat':   {pt:'Estratégias',  en:'Strategies'},
-  'nav-port':    {pt:'Portfólio',    en:'Portfolio'},
-  'nav-access':  {pt:'Acesso',       en:'Access'},
-  'about-title': {pt:'Uma abordagem <em>diferente</em> para o mercado cripto',
-                  en:'A <em>different</em> approach to the crypto market'},
-  'strat-title': {pt:'Selective <em>strategies</em> focused on risk-adjusted returns',
-                  en:'<em>Selective</em> strategies focused on risk-adjusted returns'},
-  'port-title':  {pt:'A <em>diversified</em> DeFi portfolio',
-                  en:'<em>Diversified</em> portfolio in the DeFi ecosystem'},
-  'access-title':{pt:'Restricted <em>access</em> to the platform',
-                  en:'<em>Restricted</em> platform access'},
-  'btn-enter':   {pt:'Entrar', en:'Enter'},
-  'eyebrow': {pt:'Gestão Estratégica de Capital', en:'Strategic Capital Management'},
-  'cta-about':    {pt:'Sobre', en:'About'},
-  'cta-portfolio':{pt:'Portfólio', en:'Portfolio'},
+ // ── Benchmark (base 100 = Jan/2022) ──
+ benchmark: {
+ labels: ['Jan/22','Mai/22','Set/22','Jan/23','Mai/23','Set/23','Jan/24','Mai/24','Set/24','Jan/25','Mai/25','Set/25','Jan/26','Mar/26'],
+ portfolio: [100, 54, 74, 131, 196, 229, 347, 602, 608, 1007, 947, 1264, 1116, 754],
+ btc: [100, 72, 56, 100, 119, 117, 205, 222, 216, 285, 210, 185, 256, 175],
+ eth: [100, 55, 51, 91, 112, 103, 171, 176, 165, 217, 185, 164, 200, 55],
+ sp500: [100, 84, 88, 97, 104, 107, 118, 120, 121, 128, 130, 128, 126, 119],
+ cdi: [100, 107, 113, 120, 128, 136, 143, 150, 157, 165, 172, 179, 186, 192],
+ ibov: [100, 91, 95, 96, 97, 98, 105, 106, 108, 115, 110, 108, 112, 114],
+ },
 };
 
-function applyIndexLang(lang) {
-  document.documentElement.setAttribute('data-lang', lang);
-  var btn = document.getElementById('indexLangBtn');
-  if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
-  Object.entries(INDEX_LANG_STRINGS).forEach(function(kv) {
-    var key = kv[0], strings = kv[1];
-    document.querySelectorAll('[data-i18n="' + key + '"]').forEach(function(el) {
-      el.innerHTML = strings[lang] || strings['pt'];
-    });
+// ── applyUpdate() é chamado depois que todos os dados estão declarados ──
+// ══════════════════════════════════════════════════════════════════
+
+var PORTFOLIO_DATA = [
+ { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.084106,      invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
+ { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:19.31226576,   invested:2201.68, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
+ { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
+ { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
+ { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
+ { cgId:'matic-network', ticker:'POL',  name:'POL',       qty:218,           invested:143.88,  avgCost:0.66,    color:'#A855F7', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
+ { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
+ { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
+ { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
+ // USDT e USDS removidos do PORTFOLIO_DATA — somados via STABLES_USD para evitar dupla contagem
+ // USDT $1.652,03 (supply AAVE) + USDS $300,40 (supply Kamino) = $1.742,07 em STABLES_USD
+];
+var PORTFOLIO = PORTFOLIO_DATA; // alias
+
+var FALLBACK_PRICES = {
+ // Preços dos prints (Mar/2026) — atualizados ao vivo pelo CoinGecko
+ 'ethereum':2079.21,'solana':87.28,'cardano':0.2617,'eigenlayer':0.1870,
+ 'matic-network':0.09693,'xai-blockchain':0.01102,'zksync':0.01914,
+ 'radiant-capital':0.005543,'zetachain':0.05045,// tether e usds-stablecoin removidos — contabilizados em STABLES_USD
+};
+var FALLBACK_24H = {
+ 'ethereum':6.9,'solana':4.5,'cardano':6.9,'eigenlayer':3.8,
+ 'matic-network':-3.2,'xai-blockchain':-3.2,'zksync':0.5,
+ 'radiant-capital':2.9,'zetachain':-0.7,'tether':0,'usds-stablecoin':0
+};
+
+var LP_POOLED = 357.24; // Pool WETH/USDC ativa — atualizar semanalmente
+var STABLES_USD = 1953.32; // USDT AAVE $1.652,03 + USDS Kamino $300,04 — não no CG
+var AAVE_DEBT = 746.99; // atualizar semanalmente
+var KAMINO_DEBT = 804.22; // atualizar semanalmente
+var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $746.99 + $804.22 = $1,550.31
+var KAMINO_SOL_EXTRA_QTY = 19.35 - 19.31226576; // ~0.038 SOL restante // SOL no Kamino não rastreado pelo CG
+var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
+
+var liveData = {};
+var ethPrice = 2074.75;
+var solPrice = 86.84;
+
+// ──────────────────────────────────────────────────
+// PRICE HELPERS
+// ──────────────────────────────────────────────────
+function getPrice(cgId){ return liveData[cgId]?.usd || FALLBACK_PRICES[cgId] || 1; }
+function get24h(cgId) { return liveData[cgId]?.usd_24h_change ?? FALLBACK_24H[cgId] ?? 0; }
+
+function buildEnriched(){
+ return PORTFOLIO.map(a=>{
+ const price = getPrice(a.cgId);
+ const val = a.qty * price;
+ const pnl = a.isStable ? 0 : val - a.invested;
+ const roi = a.invested > 0 ? (pnl/a.invested)*100 : null;
+ return { ...a, price, currentValue:val, pnl, roi, change24h:get24h(a.cgId) };
+ });
+}
+
+// ──────────────────────────────────────────────────
+// FETCH COINGECKO
+// ──────────────────────────────────────────────────
+async function fetchPrices(){
+ const setPriceStatus = (ok, msg) => {
+ const el = document.getElementById('price-status');
+ if (el) {
+ el.textContent = ok ? '' : '';
+ el.style.color = ok ? 'var(--green)' : 'var(--muted)';
+ el.title = msg + ' — ' + new Date().toLocaleTimeString('pt-BR');
+ }
+ };
+
+ // Try CoinGecko /coins/markets first (richer data)
+ try {
+ const ids = PORTFOLIO.map(a=>a.cgId).join(',');
+ const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h`;
+ const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+ if(!r.ok) throw new Error('HTTP ' + r.status);
+ const arr = await r.json();
+ if(!arr?.length || !arr[0].current_price) throw new Error('empty');
+ arr.forEach(coin => {
+ liveData[coin.id] = { usd: coin.current_price, usd_24h_change: coin.price_change_percentage_24h || 0 };
+ const asset = PORTFOLIO_DATA.find(a => a.cgId === coin.id);
+ if (asset && coin.image) asset.logo = coin.image;
+ });
+ ethPrice = getPrice('ethereum');
+ solPrice = getPrice('solana');
+ setPriceStatus(true, 'CoinGecko');
+ return true;
+ } catch(e1) {
+ // Fallback: CoinGecko /simple/price
+ try {
+ const ids = PORTFOLIO.map(a=>a.cgId).join(',');
+ const url2 = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+ const r2 = await fetch(url2, { signal: AbortSignal.timeout(8000) });
+ if (!r2.ok) throw new Error();
+ const d = await r2.json();
+ Object.entries(d).forEach(([id, val]) => {
+ liveData[id] = { usd: val.usd, usd_24h_change: val.usd_24h_change || 0 };
+ });
+ ethPrice = getPrice('ethereum');
+ solPrice = getPrice('solana');
+ setPriceStatus(true, 'CoinGecko simple');
+ return true;
+ } catch(e2) {
+ // Last resort: use fallback prices
+ PORTFOLIO.forEach(a=>{ liveData[a.cgId]={usd:FALLBACK_PRICES[a.cgId]||1, usd_24h_change:FALLBACK_24H[a.cgId]||0}; });
+ ethPrice = getPrice('ethereum');
+ solPrice = getPrice('solana');
+ setPriceStatus(false, 'CoinGecko indisponível');
+ return false;
+ }
+ }
+}
+
+// ──────────────────────────────────────────────────
+// RENDER UI
+// ──────────────────────────────────────────────────
+var chartsBuilt = false;
+var allocChartInst, pnlChartInst, roiChartInst;
+
+function renderUI(enriched){
+ ethPrice = getPrice('ethereum');
+ solPrice = getPrice('solana');
+
+ const cgTotal = enriched.reduce((s,a)=>s+a.currentValue, 0);
+ const kaminoSolUsd = KAMINO_SOL_EXTRA_QTY * (window._liveSolPrice || solPrice || 86.84);
+ const aaveDebtLive = window._liveAaveDebt || AAVE_DEBT;
+ const kaminoDebtLive = window._liveKaminoDebt || KAMINO_DEBT;
+ // Patrimônio = CG SPOT + stables empréstimos + SOL Kamino extra − dívidas
+ const netTotal = cgTotal + STABLES_USD + kaminoSolUsd - (aaveDebtLive + kaminoDebtLive);
+ const totalPnL = cgTotal + STABLES_USD + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
+ const realPnL = netTotal - TOTAL_INVESTED;
+ const roi = (realPnL / TOTAL_INVESTED)*100;
+ const ch24 = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0);
+
+ set('s-net-total', fmtCurrency(netTotal, 0));
+ set('s-net-card', fmtCurrency(netTotal, 0));
+  // Update CAIXA card with stables
+  var stablesTotal = STABLES_USD;
+  set('s-stables', fmtCurrency(stablesTotal, 0));
+ set('s-spot', fmtCurrency(cgTotal, 0));
+ set('s-spot-sub', enriched.length+' ativos');
+ set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
+ set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
+
+ const pnlEl = document.getElementById('s-pnl');
+ if(pnlEl){ const pabs=Math.abs(realPnL); pnlEl.textContent=(realPnL>=0?'+':'-')+fmtCurrency(pabs,0); pnlEl.className='hero-meta-val sensitive '+(realPnL>=0?'pos':'neg'); }
+ set('s-pnl-sub', 'ROI: '+(roi>=0?'+':'')+roi.toFixed(1)+'%');
+
+ const ch24El = document.getElementById('s-24h');
+ if(ch24El){ const c24abs=Math.abs(ch24); ch24El.textContent=(ch24>=0?'+':'-')+fmtCurrency(c24abs,0); ch24El.className='hero-meta-val sensitive '+(ch24>=0?'pos':'neg'); }
+ set('s-24h-sub', (ch24>=0?'+':'')+((ch24/cgTotal)*100).toFixed(2)+'% 24h');
+ set('s-24h-sub', (ch24>=0?'+':'')+((ch24/cgTotal)*100).toFixed(2)+'% 24h');
+
+ // DeFi positions shown only on Pools & DeFi page
+
+ renderTable(enriched, cgTotal);
+ buildAllocationChart(enriched, cgTotal);
+
+ if(!chartsBuilt){ buildStaticCharts(); chartsBuilt=true; }
+ buildLiveCharts(enriched, cgTotal);
+}
+
+function set(id, val){ const el=document.getElementById(id); if(el) el.textContent=val; }
+
+// ──────────────────────────────────────────────────
+// ASSET TABLE
+// ──────────────────────────────────────────────────
+var sparkCharts = {};
+function renderTable(enriched, totalVal){
+ Object.values(sparkCharts).forEach(c=>{ try{c.destroy();}catch(e){} });
+ sparkCharts = {};
+ const tbody = document.getElementById('assetTable');
+ tbody.innerHTML = '';
+
+ const volatile = [...enriched].filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue);
+ const stables = enriched.filter(a=>a.isStable);
+
+ tbody.innerHTML += `<tr><td colspan="11" style="background:rgba(0,212,255,0.04);padding:5px 10px;font-size:8px;color:var(--accent);letter-spacing:2px;">▸ ATIVOS VOLÁTEIS</td></tr>`;
+
+ [...volatile,...stables].forEach(a=>{
+ if(a.isStable && a.ticker==='USDT'){
+ tbody.innerHTML += `<tr><td colspan="11" style="background:rgba(38,161,123,0.05);padding:5px 10px;font-size:8px;color:var(--stable);letter-spacing:2px;border-top:1px solid rgba(38,161,123,0.2);">STABLECOINS</td></tr>`;
+ }
+ const pct = ((a.currentValue/totalVal)*100).toFixed(1);
+ let roi='—', roiCls='neu';
+ if(a.isStable){ roi='1:1'; roiCls='stc'; }
+ else if(a.invested>0){ const r=(a.pnl/a.invested)*100; roi=(r>=0?'+':'')+r.toFixed(1)+'%'; roiCls=r>=0?'pos':'neg'; }
+ else{ roi='Airdrop'; roiCls='acc'; }
+ const pnlCls = a.pnl>0?'pos':(a.pnl<0?'neg':'stc');
+ const c24 = a.change24h||0;
+ const sym = currSymbol();
+ const cx = currentCurrency === 'BRL' ? usdBrlRate : 1;
+ const priceStr = currentCurrency === 'BRL'
+ ? ('R$' + (a.price * usdBrlRate).toLocaleString('pt-BR', {maximumFractionDigits: 2}))
+ : (a.price>=100 ? '$'+a.price.toLocaleString('en-US',{maximumFractionDigits:2}) : a.price>=1 ? '$'+a.price.toFixed(4) : '$'+a.price.toFixed(6));
+ const avgStr = a.avgCost!=null ? (currentCurrency === 'BRL'
+ ? 'R$'+(a.avgCost*usdBrlRate).toLocaleString('pt-BR',{maximumFractionDigits:2})
+ : (a.avgCost>=1?'$'+a.avgCost.toLocaleString('en-US',{maximumFractionDigits:2}):'$'+a.avgCost.toFixed(4))) : '—';
+ const sparkId = 'spark_'+a.ticker;
+
+ tbody.innerHTML += `<tr>
+ <td>
+ <div class="coin-cell">
+ <img class="coin-logo" src="${a.logo}" alt="${a.ticker}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+ <div class="coin-logo-fallback" style="background:${a.color};display:none;">${a.ticker.substring(0,3)}</div>
+ <div><div class="coin-name" style="color:${a.color}">${a.name}</div><div class="coin-ticker">${a.ticker}</div></div>
+ </div>
+ </td>
+ <td style="color:var(--muted);font-size:9px;" class="sensitive">${a.qty.toLocaleString('en-US',{maximumFractionDigits:4})}</td>
+ <td style="font-size:10px;">${priceStr}</td>
+ <td class="sensitive"><strong>${fmtCurrency(a.currentValue, 2)}</strong></td>
+ <td style="color:var(--muted);font-size:10px;" class="sensitive">${a.isStable?'—':fmtCurrency(a.invested,2)}</td>
+ <td style="font-size:10px;color:var(--muted);">${avgStr}</td>
+ <td class="${pnlCls} sensitive">${a.isStable?'—':(a.pnl>=0?'+':'-')+fmtCurrency(Math.abs(a.pnl),2)}</td>
+ <td class="${roiCls}">${roi}</td>
+ <td class="${c24>=0?'pos':'neg'}">${a.isStable?'—':(c24>=0?'+':'')+c24.toFixed(2)+'%'}</td>
+ <td><canvas id="${sparkId}" width="80" height="30"></canvas></td>
+ <td>${pct}%<div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%;background:${a.color};"></div></div></td>
+ </tr>`;
+ });
+
+ requestAnimationFrame(()=>{
+ [...volatile,...stables].forEach(a=>{
+ const canvas = document.getElementById('spark_'+a.ticker);
+ if(!canvas) return;
+ const c24=a.change24h||0;
+ const sparkData = genSpark(a.price, c24);
+ const color = c24>=0?'#00e676':'#ff4f4f';
+ sparkCharts[a.ticker] = new Chart(canvas,{
+ type:'line',
+ data:{labels:sparkData.map((_,i)=>i), datasets:[{data:sparkData,borderColor:color,backgroundColor:color+'22',borderWidth:1.5,fill:true,tension:0.4,pointRadius:0}]},
+ options:{responsive:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
+ });
+ });
+ });
+}
+
+function genSpark(price, change24h){
+ const start = price / (1 + (change24h||0)/100);
+ const pts = 14; const d=[start];
+ for(let i=1;i<pts-1;i++) d.push(d[i-1]+(Math.random()-0.48)*price*0.035);
+ d.push(price); return d;
+}
+
+// ──────────────────────────────────────────────────
+// ALLOCATION CHART (CoinGecko style)
+// ──────────────────────────────────────────────────
+function buildAllocationChart(enriched, totalVal){
+  const canvas = document.getElementById('allocChart');
+  if(!canvas) return;
+  if(allocChartInst) allocChartInst.destroy();
+
+  const dk = isDark();
+
+  // Build items sorted by value, include stables
+  const items = [
+    ...enriched.filter(a=>!a.isStable).sort((a,b)=>b.currentValue-a.currentValue),
+    { ticker:'USDT', name:'USDT', currentValue:1652.03, color:'#26A17B' },
+    { ticker:'USDS', name:'USDS', currentValue:300.42,  color:'#5B8EF0' },
+  ];
+  const total = items.reduce((s,a)=>s+a.currentValue, 0);
+
+  // Chart
+  allocChartInst = new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: items.map(a=>a.ticker),
+      datasets:[{
+        data: items.map(a=>a.currentValue),
+        backgroundColor: items.map(a=>a.color),
+        borderColor: dk ? '#1a1a24' : '#f5f0e8',
+        borderWidth: 2,
+        hoverOffset: 8,
+      }]
+    },
+    options:{
+      responsive: false,
+      maintainAspectRatio: false,
+      cutout: '66%',
+      plugins:{
+        legend:{ display:false },
+        tooltip:{
+          callbacks:{
+            label: ctx => {
+              const pct = (ctx.raw/total*100).toFixed(1);
+              return ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
+            }
+          },
+          backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+          borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+          borderWidth:1, padding:10,
+          titleColor:dk?'#e8e0d0':'#16110c',
+          bodyColor:dk?'#8a7a60':'#7a6a50',
+        }
+      }
+    }
   });
-  // Sync with dashboard pages
-  localStorage.setItem('bc-lang', lang);
+
+  // Legend — CoinGecko style: dot · name (flex-1) · bold%
+  const leg = document.getElementById('allocLegend');
+  if(!leg) return;
+  leg.innerHTML = items.map(a => {
+    const pct = (a.currentValue/total*100).toFixed(1);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:4.5px 0;border-bottom:1px solid var(--border);">
+      <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);flex:1;">${a.ticker}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--text);">${pct}%</span>
+    </div>`;
+  }).join('');
 }
 
-function toggleIndexLang() {
+// ──────────────────────────────────────────────────
+// CHART HELPERS
+// ──────────────────────────────────────────────────
+function setupChartDefaults(){
+ const dark = document.documentElement.getAttribute('data-theme')!=='light';
+ Chart.defaults.color = dark?'#8b7d6b':'#7a6a50';
+ Chart.defaults.borderColor = dark?'#2a2520':'#d5c9a5';
+ Chart.defaults.font.family = 'Satoshi';
+ Chart.defaults.font.size = 10;
+}
+var tt=()=>{
+ const dark=document.documentElement.getAttribute('data-theme')!=='light';
+ return {backgroundColor:dark?'#1c2128':'#faf6ef',borderColor:dark?'#2a2520':'#d5c9a5',borderWidth:1,titleColor:dark?'#e6edf3':'#16110c',bodyColor:dark?'#8b7d6b':'#7a6a50',padding:10,cornerRadius:6,titleFont:{size:11,weight:'500'},bodyFont:{size:10}};
+};
+
+// ──────────────────────────────────────────────────
+// LIVE CHARTS (P&L, ROI)
+// ──────────────────────────────────────────────────
+function buildLiveCharts(enriched, totalVal){
+ setupChartDefaults();
+ const withInv = enriched.filter(a=>a.invested>0&&!a.isStable).sort((a,b)=>a.pnl-b.pnl);
+ const withROI = enriched.filter(a=>a.invested>0&&!a.isStable).sort((a,b)=>(a.pnl/a.invested)-(b.pnl/b.invested));
+
+ if(pnlChartInst) pnlChartInst.destroy();
+ try{
+ pnlChartInst = new Chart(document.getElementById('pnlByAsset'),{
+ type:'bar',
+ data:{labels:withInv.map(a=>a.ticker),datasets:[{label:'P&L',data:withInv.map(a=>a.pnl),backgroundColor:withInv.map(a=>a.pnl>=0?'rgba(63,185,80,0.7)':'rgba(248,81,73,0.7)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:14}]},
+ options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:10},callback:v=>'$'+v},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}}}}
+ });
+ }catch(e){}
+
+ if(roiChartInst) roiChartInst.destroy();
+ try{
+ roiChartInst = new Chart(document.getElementById('roiByAsset'),{
+ type:'bar',
+ data:{labels:withROI.map(a=>a.ticker),datasets:[{label:'ROI%',data:withROI.map(a=>((a.pnl/a.invested)*100).toFixed(1)),backgroundColor:withROI.map(a=>a.pnl>=0?'rgba(63,185,80,0.7)':'rgba(248,81,73,0.7)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:14}]},
+ options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:10},callback:v=>v+'%'},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}}}}
+ });
+ }catch(e){}
+}
+
+// ──────────────────────────────────────────────────
+// STATIC CHARTS
+// ──────────────────────────────────────────────────
+var annualChartInst, dcaChartInst, benchChartInst, perfChartInst;
+var annualType = 'bar';
+
+function destroyStatic(){
+ [annualChartInst,dcaChartInst,benchChartInst,perfChartInst,debtChartInst].forEach(c=>{try{if(c)c.destroy();}catch(e){}});
+ annualChartInst=dcaChartInst=benchChartInst=perfChartInst=null;
+ // Destroy Chart.js instances on extra canvases
+ ['drawdownChart','pnlOriginChart','riskBubbleChart','chartIL','chartProj'].forEach(id=>{
+ const c=document.getElementById(id);
+ if(c){const ch=Chart.getChart(c);if(ch)ch.destroy();}
+ });
+}
+
+function buildStaticCharts(){
+ setupChartDefaults();
+ destroyStatic();
+ buildAnnualChart();
+ const bc=document.getElementById('annualBreadcrumb');if(bc)bc.textContent='(clique em um ano para ver meses)';
+ buildBenchmarkChart();
+ buildDcaChart();
+ buildPerfChart(activePeriod);
+ buildDebtChart('stacked');
+ // Rebuild inline-IIFE charts
+ try{ buildHeatmap(); }catch(e){}
+ try{ buildDrawdown(); }catch(e){}
+ try{ buildPnlOrigin(); }catch(e){}
+ try{ buildRiskBubble(); }catch(e){}
+}
+
+// ── ANNUAL RETURN (Artemis-style, monthly granularity) ──
+// Monthly returns per year (Jan-Dez, estimated from known annual results)
+// Portfolio: 2022: -58%, 2023: +62%, 2024: +31%, 2025: -15%, 2026: YTD
+var MONTHLY_RETURNS_DATA = {
+ // ETH+SOL heavy portfolio — 2022:down, 2023-2025:up, 2026:down YTD
+ // 2022: ETH -65% | 2023: ETH/SOL rally | 2024: halving year | 2025: SOL rally Q1 | 2026: bear
+ 2022: [-22.0,-6.4,+12.0,-18.5,-28.0,-34.0,+58.0,-14.0,-24.0,+19.0,-18.0,+4.0],
+ // Sum ~-50% ↓
+ 2023: [+28.0,-2.5,+6.0,+2.8,+1.5,+4.2,-1.8,-9.0,+4.2,+11.2,+14.5,+18.0],
+ // Sum ~+68% ↑
+ 2024: [+1.5,+42.0,+6.0,-14.0,-22.0,+6.2,+4.0,-18.0,+10.0,-3.0,+44.0,+8.5],
+ // Sum ~+40% ↑
+ 2025: [+28.0,-12.0,+5.0,-9.0,-18.0,-6.0,+12.0,-8.0,+4.0,+6.0,+4.5,+6.0],
+ // Sum ~+14% ↑ (SOL peaked in Jan, pullback, recovery mid-year)
+ 2026: [-18.0,-22.0,null,null,null,null,null,null,null,null,null,null],
+ // Sum ~-36% ↓ YTD (ETH $3300→$2056, SOL $190→$87)
+};
+var MES_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+var MONTHLY_RETURNS = MONTHLY_RETURNS_DATA; // alias for backward compat
+
+var annualView = 'yearly'; // 'yearly' | year num
+var annualTypeMode = 'bar';
+
+function buildAnnualChart(){
+ try{
+ if(annualChartInst) annualChartInst.destroy();
+ const canvas = document.getElementById('annualReturn');
+
+ if(annualView === 'yearly'){
+ // Yearly overview with all 5 years as bars
+ const years = ['2022','2023','2024','2025','2026 YTD'];
+ const totals = [
+ MONTHLY_RETURNS[2022].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+ MONTHLY_RETURNS[2023].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+ MONTHLY_RETURNS[2024].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+ MONTHLY_RETURNS[2025].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+ MONTHLY_RETURNS[2026].filter(v=>v!==null).reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
+ ];
+ annualChartInst = new Chart(canvas,{
+ type: annualTypeMode,
+ data:{
+ labels: years,
+ datasets:[{
+ label:'Retorno Anual %',
+ data: totals,
+ backgroundColor: totals.map(v=>v>=0?'rgba(63,185,80,0.75)':'rgba(248,81,73,0.75)'),
+ borderColor: totals.map(v=>v>=0?'#3fb950':'#f85149'),
+ borderWidth: annualTypeMode==='line'?2:1,
+ borderRadius: annualTypeMode==='bar'?5:0,
+ fill: annualTypeMode==='line'?false:undefined,
+ tension: 0.4,
+ pointBackgroundColor: totals.map(v=>v>=0?'#3fb950':'#f85149'),
+ pointRadius: annualTypeMode==='line'?5:0,
+ }]
+ },
+ options:{
+ responsive:true,
+ plugins:{
+ tooltip:{...tt(),callbacks:{
+ title:ctx=>`${ctx[0].label} — clique para ver meses`,
+ label:ctx=>` Total: ${ctx.raw>=0?'+':''}${ctx.raw.toFixed(1)}%`
+ }},
+ legend:{display:false}
+ },
+ onClick:(evt,els)=>{
+ if(els.length>0){
+ const yr=[2022,2023,2024,2025,2026][els[0].index];
+ annualView=yr; buildAnnualChart();
+ }
+ },
+ scales:{
+ x:{ticks:{color:Chart.defaults.color,font:{size:11,weight:'600'}},grid:{display:false},border:{display:false}},
+ y:{ticks:{color:Chart.defaults.color,callback:v=>v+'%',font:{size:10}},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
+ }
+ }
+ });
+ } else {
+ // Monthly drilldown for a specific year
+ const yr = annualView;
+ const data = MONTHLY_RETURNS[yr];
+ const vals = data.map(v=>v===null?null:parseFloat(v.toFixed(1)));
+ // Build cumulative line
+ let cum=0; const cumLine=[];
+ vals.forEach(v=>{ if(v!==null){ cum+=v; cumLine.push(parseFloat(cum.toFixed(1))); } else cumLine.push(null); });
+
+ annualChartInst = new Chart(canvas,{
+ type:'bar',
+ data:{
+ labels: MES_NAMES,
+ datasets:[
+ {
+ type:'bar',
+ label:'Retorno Mensal %',
+ data: vals,
+ backgroundColor: vals.map(v=>v===null?'transparent':v>=0?'rgba(63,185,80,0.75)':'rgba(248,81,73,0.75)'),
+ borderColor: vals.map(v=>v===null?'transparent':v>=0?'#3fb950':'#f85149'),
+ borderWidth:1, borderRadius:4, yAxisID:'y',
+ order:2
+ },
+ {
+ type:'line',
+ label:'Acum. %',
+ data: cumLine,
+ borderColor:'#b8963a', borderWidth:2,
+ fill:false, tension:0.4, pointRadius:4,
+ pointBackgroundColor:'#b8963a', yAxisID:'y2',
+ order:1
+ }
+ ]
+ },
+ options:{
+ responsive:true,
+ interaction:{mode:'index',intersect:false},
+ plugins:{
+ tooltip:{...tt(),callbacks:{
+ title:ctx=>`${MES_NAMES[ctx[0].dataIndex]} ${yr}`,
+ label:ctx=>{
+ if(ctx.dataset.label.includes('Mensal')) return ` Mês: ${ctx.raw===null?'—':(ctx.raw>=0?'+':'')+ctx.raw+'%'}`;
+ return ` Acumulado: ${ctx.raw===null?'—':(ctx.raw>=0?'+':'')+ctx.raw+'%'}`;
+ }
+ }},
+ legend:{display:true,labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}},
+ title:{display:true,text:`← Voltar para Visão Anual`,color:'var(--muted)',font:{size:9},align:'start',
+ onClick:()=>{annualView='yearly';buildAnnualChart();}}
+ },
+ scales:{
+ x:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}},
+ y:{ticks:{color:Chart.defaults.color,callback:v=>v+'%',font:{size:10}},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},title:{display:true,text:'Mensal',color:Chart.defaults.color,font:{size:9}}},
+ y2:{ticks:{color:'#b8963a',callback:v=>v+'%',font:{size:10}},position:'right',grid:{display:false},border:{display:false},title:{display:true,text:'Acum.',color:'#b8963a',font:{size:9}}}
+ }
+ }
+ });
+ }
+ }catch(e){ console.warn('annualChart error:',e); }
+}
+
+function setAnnualType(type){
+ annualTypeMode = type;
+ document.getElementById('annualBarBtn').classList.toggle('active', type==='bar');
+ document.getElementById('annualLineBtn').classList.toggle('active', type==='line');
+ buildAnnualChart();
+}
+
+// Update breadcrumb after each annual chart build
+var _origBuildAnnual = buildAnnualChart;
+function buildAnnualChartWrapped(){
+ buildAnnualChart();
+ const bc = document.getElementById('annualBreadcrumb');
+ if(bc){
+ bc.textContent = annualView==='yearly' ? '(clique em um ano para ver meses)' : `← ${annualView} — clique para voltar`;
+ }
+}
+
+// ── BENCHMARK (dados reais atualizados) ──
+// Base 100 = Jan 2022
+// Dados reais: BTC, S&P 500, CDI, Ibovespa + estimativas do portfólio
+// Fontes: slickcharts.com, investidor10.com.br, statusinvest.com.br (Mar 2026)
+function compoundIndex(monthlyPcts) {
+ let idx=100; const out=[100];
+ monthlyPcts.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
+ return out;
+}
+var isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+
+function buildBenchmarkChart(){
+ try{
+ // Monthly labels Jan/22 → Mar/26 (51 months)
+ const labels=['Jan/22','Fev/22','Mar/22','Abr/22','Mai/22','Jun/22',
+ 'Jul/22','Ago/22','Set/22','Out/22','Nov/22','Dez/22',
+ 'Jan/23','Fev/23','Mar/23','Abr/23','Mai/23','Jun/23',
+ 'Jul/23','Ago/23','Set/23','Out/23','Nov/23','Dez/23',
+ 'Jan/24','Fev/24','Mar/24','Abr/24','Mai/24','Jun/24',
+ 'Jul/24','Ago/24','Set/24','Out/24','Nov/24','Dez/24',
+ 'Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25',
+ 'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
+ 'Jan/26','Fev/26','Mar/26'];
+
+ // Monthly % returns — calibrated to match real endpoint prices
+ // Portfolio: $853 (Jan/22) → $6.430 (Mar/26) = +654%
+ // BTC: $47.7k → $82.4k = +72.8% | ETH: $3.8k → $2.08k = -45.3%
+ // Source: CoinGecko, statusinvest.com.br, bcb.gov.br
+ const portM=[-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,
+ 11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,
+ 9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,
+ 6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,
+ -11.68,-11.68,-11.68];
+ const btcM =[-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,
+ 8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,
+ 7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,
+ -0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,
+ -6.14,-6.14,-6.14];
+ const ethM =[-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,
+ 6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,
+ 4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,
+ -3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,
+ -15.0,-15.0,-15.0];
+ const spM =[-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,
+ 1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,
+ 1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,
+ 1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,
+ -2.41,-2.41,-2.41];
+ const cdiM =[0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,
+ 0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
+ 0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,
+ 1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,
+ 0.7,0.7,0.7];
+ const ibovM=[-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,
+ 0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
+ -1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,
+ 1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,
+ 1.24,1.24,1.24];
+
+ // ── Period filter ─────────────────────────────────────────────
+ const PERIOD_MONTHS = { '1m':1,'3m':3,'6m':6,'1a':12,'all':51 };
+ let currentPeriod = 'all';
+
+ function sliceData(monthlyArr, n) {
+ const slice = n >= monthlyArr.length ? monthlyArr : monthlyArr.slice(-n);
+ let idx=100, out=[100];
+ slice.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
+ return out;
+ }
+
+
+ function getBenchLabels(n) {
+ const sl = n >= labels.length ? labels : labels.slice(-n);
+ return ['Base', ...sl];
+ }
+
+ function buildChart(n) {
+ const lbl = getBenchLabels(n);
+ const port = sliceData(portM, n);
+ const btc = sliceData(btcM, n);
+ const eth = sliceData(ethM, n);
+ const sp = sliceData(spM, n);
+ const cdi = sliceData(cdiM, n);
+ const ibov = sliceData(ibovM, n);
+ const dk = isDark();
+ const baseLabel = n >= 51 ? 'BASE 100 · Jan/2022' :
+ n === 12 ? 'BASE 100 · ' + labels[labels.length-12] :
+ n === 6 ? 'BASE 100 · ' + labels[labels.length-6] :
+ n === 3 ? 'BASE 100 · ' + labels[labels.length-3] :
+ 'BASE 100 · ' + labels[labels.length-1];
+ const baseLabelEl = document.getElementById('benchBaseLabel');
+ if (baseLabelEl) baseLabelEl.textContent = baseLabel;
+
+ if (benchChartInst) { benchChartInst.destroy(); benchChartInst=null; }
+ const ctx = document.getElementById('benchmarkChart');
+ if (!ctx) return;
+ benchChartInst = new Chart(ctx, {
+ type:'line',
+ data:{ labels:lbl, datasets:[
+ {label:'Portfólio',data:port,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.06)',borderWidth:2.5,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
+ {label:'BTC', data:btc, borderColor:'#F7931A',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+ {label:'ETH', data:eth, borderColor:'#627EEA',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+ {label:'S&P 500', data:sp, borderColor:'#3fb950',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[5,3]},
+ {label:'CDI', data:cdi, borderColor:'#a78bfa',borderWidth:1.5,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[3,3]},
+ {label:'Ibovespa', data:ibov,borderColor:'#38bdf8',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,2]},
+ ]},
+ options:{
+ responsive:true,
+ interaction:{mode:'index',intersect:false},
+ plugins:{
+ tooltip:{
+ callbacks:{
+ title:ctx=>ctx[0].label,
+ label:ctx=>{
+ const v=ctx.raw;
+ const prev=ctx.dataset.data[ctx.dataIndex-1]||100;
+ const mo=v&&prev?((v-prev)/prev*100).toFixed(1):null;
+ return ` ${ctx.dataset.label}: ${v?.toFixed(1)} pts${mo?` (${mo>=0?'+':''}${mo}%)`:''}`;
+ },
+ afterBody:items=>{
+ const p=items.find(i=>i.datasetIndex===0)?.raw||100;
+ const pct=(p-100).toFixed(0);
+ return ['────────────',`Portfólio: ${pct>=0?'+':''}${pct}% vs base`];
+ }
+ },
+ backgroundColor: dk?'rgba(30,30,40,0.95)':'rgba(250,246,239,0.97)',
+ borderColor: dk?'rgba(201,160,80,0.3)':'rgba(138,104,32,0.2)',
+ borderWidth:1, titleColor:dk?'#e8e0d0':'#16110c',
+ bodyColor:dk?'#8a7a60':'#7a6a50', padding:10,
+ },
+ legend:{
+ labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6,padding:12},
+ onClick:(e,item,legend)=>{
+ const ci=legend.chart;
+ const meta=ci.getDatasetMeta(item.datasetIndex);
+ meta.hidden=!meta.hidden; ci.update();
+ }
+ }
+ },
+ scales:{
+ x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
+ y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
+ title:{display:true,text:'Base 100',color:Chart.defaults.color,font:{size:8}}}
+ }
+ }
+ });
+ }
+
+ // ── Period switching ──────────────────────────────────────────
+ window.setBenchPeriod = function(period, btn) {
+ currentPeriod = period;
+ document.querySelectorAll('#benchPeriodBtns button').forEach(b=>b.classList.remove('active'));
+ if(btn) btn.classList.add('active');
+ buildChart(PERIOD_MONTHS[period]);
+ };
+
+ buildChart(51); // default: all time
+
+ }catch(e){ console.warn('benchmarkChart error:',e); }
+}
+
+
+// ── DCA TRACKING ──
+function buildDcaChart(){
+ try{
+ dcaChartInst = new Chart(document.getElementById('dcaTracking'),{
+ type:'line',
+ data:{
+ labels:['01/2022', '05/2022', '09/2022', '01/2023', '05/2023', '09/2023', '01/2024', '05/2024', '09/2024', '01/2025', '05/2025', '09/2025', '01/2026'],
+ datasets:[
+ {label:'Investido', data:[1061, 1771, 2198, 2431, 2658, 2802, 2977, 3056, 3310, 4127, 5121, 5121, 6230], borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[5,3],pointRadius:0},
+ {label:'Valor Mercado',data:[853, 1037, 742, 1119, 1570, 1639, 2959, 5471, 5170, 8570, 8069, 8545, 9511], borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0,pointHoverRadius:4},
+ {label:'Meta $15.000', data:Array(13).fill(15000), borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
+ ]
+ },
+ options:{
+ responsive:true,
+ plugins:{tooltip:tt(),legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}},
+ scales:{
+ x:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}},
+ y:{ticks:{color:Chart.defaults.color,callback:v=>'$'+v.toLocaleString(),font:{size:10}},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
+ }
+ }
+ });
+ }catch(e){}
+}
+
+// ── PERFORMANCE (CURVA DE PATRIMÔNIO) ──
+var perfPeriodsData = {
+ '24h':{ labels:['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00','Agr'],
+ p:[6050,6080,6020,5980,5940,5910,5870,5840,5860,5820,5810,5823,5823], i:[9445,9445,9445,9445,9445,9445,9445,9445,9445,9445,9445,9445,9445] },
+ '7d': { labels:['28/Fev','01/Mar','02/Mar','03/Mar','04/Mar','05/Mar','06/Mar'],
+ p:[6200,6050,5950,5900,5870,5840,5823], i:[9445,9445,9445,9445,9445,9445,9445] },
+ '3m': { labels:['Jan','Jan-M','Fev','Fev-M','Mar'],
+ p:[6500,6200,5800,5840,5823], i:[9050,9050,9445,9445,9445] },
+ '1a': { labels:['Mar/25','Mai/25','Jul/25','Set/25','Nov/25','Jan/26','Mar/26'],
+ p:[5400,6100,5600,4900,5300,5200,5823], i:[8800,8900,9000,9000,9040,9050,9445] },
+ 'all':{ labels:['01/2022', '02/2022', '03/2022', '04/2022', '05/2022', '06/2022', '07/2022', '08/2022', '09/2022', '10/2022', '11/2022', '12/2022', '01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023', '01/2024', '02/2024', '03/2024', '04/2024', '05/2024', '06/2024', '07/2024', '08/2024', '09/2024', '10/2024', '11/2024', '12/2024', '01/2025', '02/2025', '03/2025', '04/2025', '05/2025', '06/2025', '07/2025', '08/2025', '09/2025', '10/2025', '11/2025', '12/2025', '01/2026', '02/2026', '03/2026'],
+ p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 10395, 11610, 10857, 9511, 7376, 6371], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
+};
+var perfPeriods = perfPeriodsData; // alias
+var activePeriod = 'all';
+
+// ── Sincroniza WEEKLY_UPDATE → todas as estruturas de dados ──
+// (chamado aqui, depois de todos os const estarem declarados)
+function applyUpdate() {
+ const W = WEEKLY_UPDATE;
+ Object.assign(MONTHLY_RETURNS_DATA, W.monthlyReturns);
+ perfPeriodsData.all.labels = W.wealthCurve.labels;
+ perfPeriodsData.all.p = W.wealthCurve.values;
+ perfPeriodsData.all.i = W.wealthCurve.invested;
+ PORTFOLIO_DATA.forEach(a => {
+ if (W.holdings[a.ticker] !== undefined) a.qty = W.holdings[a.ticker];
+ if (W.invested[a.ticker] !== undefined) a.invested = W.invested[a.ticker];
+ });
+}
+applyUpdate();
+
+function buildPerfChart(period){
+ setupChartDefaults();
+ const d = perfPeriods[period];
+ if(!d) return;
+ if(perfChartInst) perfChartInst.destroy();
+ try{
+ perfChartInst = new Chart(document.getElementById('perfChart'),{
+ type:'line',
+ data:{labels:d.labels, datasets:[
+ {label:'Portfólio',data:d.p,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0},
+ {label:'Investido', data:d.i,borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[6,3],pointRadius:0},
+ {label:'Meta $15K', data:d.p.map(()=>15000),borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
+ ]},
+ options:{
+ responsive:true,
+ interaction:{mode:'index',intersect:false},
+ plugins:{
+ tooltip:{...tt(),callbacks:{
+ label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString('en-US',{maximumFractionDigits:0})}`,
+ afterBody:items=>{const p=items.find(i=>i.datasetIndex===0)?.raw||0,inv=items.find(i=>i.datasetIndex===1)?.raw||0;return p&&inv?['──────────',` P&L: ${p>=inv?'+':''}$${(p-inv).toLocaleString()}`]:[];}
+ }},
+ legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}
+ },
+ scales:{
+ x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:30},grid:{display:false},border:{display:false}},
+ y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
+ }
+ }
+ });
+ // Stats bar
+ const first=d.p[0], last=d.p[d.p.length-1], peak=Math.max(...d.p);
+ const trough=Math.min(...d.p.slice(d.p.findIndex(v=>v===peak)));
+ const dd=peak>0?(((trough-peak)/peak)*100).toFixed(1):'—';
+ const chg=(((last-first)/first)*100).toFixed(1);
+ const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px;text-align:center;"><div style="font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">${lbl}</div><div style="font-size:14px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
+ document.getElementById('perfStats').innerHTML=
+ cs('INÍCIO','$'+first.toLocaleString())+
+ cs('FIM','$'+last.toLocaleString())+
+ cs('VARIAÇÃO',(parseFloat(chg)>=0?'+':'')+chg+'%',parseFloat(chg)>=0?'var(--green)':'var(--red)')+
+ cs('PICO','$'+peak.toLocaleString(),'var(--green)')+
+ cs('MAX DD',dd+'%','var(--red)');
+ }catch(e){ console.warn('perfChart error:',e); }
+}
+
+function setPeriod(p){
+ activePeriod=p;
+ document.querySelectorAll('.period-btn').forEach(b=>{
+ const map={'24h':'24h','7d':'7D','3m':'3M','1a':'1A','all':'TOTAL'};
+ b.classList.toggle('active',b.textContent.trim()===map[p]);
+ });
+ buildPerfChart(p);
+}
+
+// ──────────────────────────────────────────────────
+// LP REFERENCE TOGGLE
+// ──────────────────────────────────────────────────
+var LP_REFS = {
+ usd: { pooled:'$346.94', pnl:'+$37.21', roi:'ROI: 11.72%', apr:'447.60%', feeApr:'Fee APR: 74.06%', fees:'$6.16', il:'-$31.06', gas:'Gas: $0.00', wethUsd:'$272.94' },
+ eth: { pooled:'0.168019 ETH', pnl:'+0.000998 ETH', roi:'ROI: 0.57%', apr:'22.31%', feeApr:'Fee APR: 66.65%', fees:'0.002982 ETH', il:'-0.00198 ETH', gas:'Gas: 0 ETH', wethUsd:'0.13218 ETH' },
+ hold: { pooled:'$346.94', pnl:'+$2.06', roi:'ROI: 0.59%', apr:'22.31%', feeApr:'Fee APR: 67.00%', fees:'$6.16', il:'-$4.09', gas:'Gas: $0.01', wethUsd:'$272.94' }
+};
+function setRef(ref){
+ document.querySelectorAll('.ref-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===ref));
+ const r=LP_REFS[ref];
+ set('lp-pooled',r.pooled); set('lp-pnl',r.pnl); set('lp-roi',r.roi);
+ set('lp-apr',r.apr); set('lp-fee-apr',r.feeApr); set('lp-fees',r.fees);
+ set('lp-il',r.il); set('lp-gas',r.gas); set('lp-weth-usd',r.wethUsd);
+ const pnlEl=document.getElementById('lp-pnl');
+ if(pnlEl){ const pos=!r.pnl.startsWith('-'); pnlEl.className='lp-metric-val sensitive '+(pos?'pos':'neg'); }
+}
+
+// ──────────────────────────────────────────────────
+// THEME / HIDE
+// ──────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+// SISTEMA DE MOEDA — USD / BRL
+// ══════════════════════════════════════════════════════════
+window.currentCurrency = 'USD';
+window.usdBrlRate = 5.33;
+
+async function fetchBrlRate() {
+ try {
+ const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=brl');
+ if (!r.ok) return;
+ const d = await r.json();
+ if (d.tether && d.tether.brl) { usdBrlRate = d.tether.brl; }
+ const badge = document.getElementById('brlRateBadge');
+ if (badge) badge.textContent = 'R$ ' + usdBrlRate.toFixed(2);
+ } catch(e) {}
+}
+
+function toggleCurrency() {
+ currentCurrency = currentCurrency === 'USD' ? 'BRL' : 'USD';
+ const btn = document.getElementById('currencyBtn');
+ if (btn) btn.textContent = currentCurrency === 'USD' ? '$ USD' : 'R$ BRL';
+ const badge = document.getElementById('brlRateBadge');
+ if (badge) badge.style.display = currentCurrency === 'BRL' ? 'inline-flex' : 'none';
+ const enriched = buildEnriched();
+ try { renderUI(enriched); } catch(e) {}
+ try { buildPnlOrigin(); } catch(e) {}
+ try { buildDebtChart('stacked'); } catch(e) {}
+}
+
+function fmtCurrency(usdValue, decimals) {
+ if (decimals === undefined) decimals = 0;
+ const v = currentCurrency === 'BRL' ? usdValue * usdBrlRate : usdValue;
+ const sym = currentCurrency === 'BRL' ? 'R$ ' : '$';
+ const locale = currentCurrency === 'BRL' ? 'pt-BR' : 'en-US';
+ const formatted = v.toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+ return sym + formatted;
+}
+function currSymbol() { return currentCurrency === 'BRL' ? 'R$' : '$'; }
+function toDisplay(usd) { return currentCurrency === 'BRL' ? usd * usdBrlRate : usd; }
+
+
+function toggleTheme(){
+ const html=document.documentElement;
+ const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+ html.setAttribute('data-theme',next);
+ localStorage.setItem('bc-theme',next);
+ if(chartsBuilt){
+ chartsBuilt=false;
+ if(allocChartInst) allocChartInst.destroy();
+ destroyStatic();
+ Object.values(sparkCharts).forEach(c=>{try{c.destroy();
+  var btn=document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
+}catch(e){}});
+ sparkCharts={};
+ const enriched=buildEnriched();
+ renderUI(enriched);
+ }
+}
+
+function toggleHide(){
+ document.body.classList.toggle('hide-values');
+ const btn=document.getElementById('hideBtn');
+ if(btn) btn.textContent=document.body.classList.contains('hide-values')?'◉ Mostrar':'◎ Ocultar';
+}
+
+// ──────────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────────
+async function init(){
+ const saved=localStorage.getItem('bc-theme');
+ document.documentElement.setAttribute('data-theme', saved || 'light');
+ // Update theme button icon
+ const thBtn=document.querySelector('button[onclick="toggleTheme()"]');
+ if(thBtn && saved==='dark') thBtn.textContent='◑ Tema';
+
+ const ls=document.getElementById('loadingScreen');
+ const mc=document.getElementById('mainContent');
+
+ // Show UI immediately with fallback
+ PORTFOLIO.forEach(a=>{ liveData[a.cgId]={usd:FALLBACK_PRICES[a.cgId]||1,usd_24h_change:FALLBACK_24H[a.cgId]||0}; });
+ ls.style.display='none';
+ mc.style.display='block';
+
+ const enriched=buildEnriched();
+ try{ renderUI(enriched); }catch(e){ console.warn('renderUI error:',e); }
+
+ // Fetch live in background
+ fetchBrlRate();
+ const ok = await fetchPrices();
+ if(ok){
+ const e2=buildEnriched();
+ try{ renderUI(e2); }catch(e){}
+ }
+
+ // Auto-refresh prices every 60 seconds
+ setInterval(async () => {
+ const refreshed = await fetchPrices();
+ if (refreshed) {
+ const e3 = buildEnriched();
+ try { renderUI(e3); } catch(e) {}
+ }
+ }, 60000);
+}
+
+// ══════════════════════════════════════════════════════════
+// 1. HEATMAP RETORNO MENSAL
+// ══════════════════════════════════════════════════════════
+function buildHeatmap() {
+ const container = document.getElementById('heatmapGrid');
+ if (!container) return;
+
+ // Monthly returns (%) derived from perfPeriods['all'].p
+ const data = {
+ 2022: [-99, 0.8, 20.6, 6.8, -6.4,-47.5, 41.9, 16.1,-17.2, 24.4,-18.3, 3.0],
+ 2023: [ 44.0, 9.4, 13.4, 11.1, 1.8, 6.2, 6.8, -8.8, 0.9, 17.3, 15.8, 17.0],
+ 2024: [ 13.6,21.8, 28.7, -2.4, 20.9, -6.6, 16.5,-12.3, -1.1, 16.5, 35.4, 5.9],
+ 2025: [ -0.7,-7.7,-14.5, -7.3, 28.8, 3.9, 12.4,-11.2, 2.2, 21.6, 11.7, -6.5],
+ 2026: [-12.4,-2.4, 1.9, -99, -99, -99, -99, -99, -99, -99, -99, -99],
+ };
+ const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+ const YEARS = [2022,2023,2024,2025,2026];
+
+ function heatColor(v) {
+ if (v === -99) return 'transparent';
+ const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+ const clamp = Math.max(-50, Math.min(50, v));
+ if (v > 0) {
+ const t = Math.min(clamp / 45, 1);
+ return dk ? `rgba(63,185,80,${0.15 + t * 0.75})` : `rgba(42,124,63,${0.12 + t * 0.70})`;
+ } else {
+ const t = Math.min(Math.abs(clamp) / 45, 1);
+ return dk ? `rgba(248,81,73,${0.15 + t * 0.75})` : `rgba(185,45,45,${0.12 + t * 0.70})`;
+ }
+ }
+
+ const CELL = 'padding:7px 4px;text-align:center;border-radius:5px;font-size:9.5px;font-weight:600;font-family:JetBrains Mono,monospace;min-width:48px;transition:opacity .15s;cursor:default;';
+ const LABEL = 'padding:7px 8px;text-align:right;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:500;white-space:nowrap;';
+
+ let html = `<table style="border-collapse:separate;border-spacing:3px;width:100%;">`;
+ // Header row
+ html += `<tr><td style="${LABEL}">ANO</td>`;
+ MONTHS.forEach(m => { html += `<td style="${CELL}color:var(--muted);background:var(--surface2);font-size:8px;">${m}</td>`; });
+ html += `<td style="${CELL}color:var(--accent);background:var(--surface2);font-size:8px;min-width:44px;">ANUAL</td></tr>`;
+
+ YEARS.forEach(yr => {
+ const row = data[yr];
+ const vals = row.filter(v => v !== -99);
+ const annual = vals.length >= 2
+ ? vals.reduce((acc, v) => acc * (1 + v/100), 1) * 100 - 100
+ : null;
+ html += `<tr><td style="${LABEL}">${yr}</td>`;
+ row.forEach(v => {
+ if (v === -99) {
+ html += `<td style="${CELL}"></td>`;
+ } else {
+ const bg = heatColor(v);
+ const tc = document.documentElement.getAttribute('data-theme') === 'dark' ? '#e6edf3' : '#16110c';
+ const sign = v > 0 ? '+' : '';
+ html += `<td style="${CELL}background:${bg};color:${Math.abs(v) > 8 ? tc : 'var(--muted)'};" title="${yr} ${MONTHS[row.indexOf(v)]}: ${sign}${v.toFixed(1)}%">${sign}${v.toFixed(1)}%</td>`;
+ }
+ });
+ const annualBg = annual !== null ? heatColor(annual) : 'transparent';
+ const annualText = annual !== null ? (annual >= 0 ? '+' : '') + annual.toFixed(0) + '%' : '—';
+ html += `<td style="${CELL}background:${annualBg};border:1px solid var(--border);font-weight:700;">${annualText}</td>`;
+ html += `</tr>`;
+ });
+ html += `</table>`;
+ container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// 2. DRAWDOWN HISTÓRICO
+// ══════════════════════════════════════════════════════════
+function buildDrawdown() {
+ const canvas = document.getElementById('drawdownChart');
+ if (!canvas) return;
+ const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+ const p = perfPeriods['all'].p;
+ const labels = perfPeriods['all'].labels;
+
+ let peak = p[0], dd = [];
+ p.forEach(v => {
+ if (v > peak) peak = v;
+ dd.push(peak > 0 ? ((v - peak) / peak) * 100 : 0);
+ });
+
+ const maxDD = Math.min(...dd).toFixed(1);
+ const maxDDIdx = dd.indexOf(Math.min(...dd));
+ const ddEl = document.getElementById('ddStats');
+ if (ddEl) {
+ ddEl.innerHTML = `
+ <span style="color:var(--red);font-weight:700;">Max DD: ${maxDD}%</span>
+ <span style="color:var(--muted);">Em: ${labels[maxDDIdx]}</span>
+ <span style="color:var(--muted);">Atual: ${dd[dd.length-1].toFixed(1)}%</span>`;
+ }
+
+ const RED = dk ? 'rgba(248,81,73,' : 'rgba(185,45,45,';
+ new Chart(canvas, {
+ type: 'line',
+ data: {
+ labels,
+ datasets: [{
+ label: 'Drawdown (%)',
+ data: dd,
+ borderColor: dk ? '#f85149' : '#b92d2d',
+ backgroundColor: RED + '0.18)',
+ fill: true,
+ tension: 0.35,
+ borderWidth: 1.5,
+ pointRadius: 0,
+ pointHoverRadius: 4,
+ }]
+ },
+ options: {
+ responsive: true,
+ interaction: { mode: 'index', intersect: false },
+ plugins: {
+ legend: { display: false },
+ tooltip: {
+ callbacks: {
+ label: ctx => ` Drawdown: ${ctx.raw.toFixed(1)}%`,
+ title: items => items[0].label,
+ }
+ }
+ },
+ scales: {
+ x: { ticks: { color: Chart.defaults.color, font: { size: 9 }, maxRotation: 30, maxTicksLimit: 12 }, grid: { display: false }, border: { display: false } },
+ y: {
+ max: 5, min: Math.min(...dd) * 1.1,
+ ticks: { color: dk ? '#f85149' : '#b92d2d', font: { size: 9 }, callback: v => v.toFixed(0) + '%' },
+ grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }
+ }
+ }
+ }
+ });
+}
+
+// ══════════════════════════════════════════════════════════
+// 3. BREAKDOWN P&L POR ORIGEM
+// ══════════════════════════════════════════════════════════
+function buildPnlOrigin() {
+ const canvas = document.getElementById('pnlOriginChart');
+ if (!canvas) return;
+ const existing = Chart.getChart(canvas);
+ if (existing) existing.destroy();
+
+ const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+ const W = WEEKLY_UPDATE.pnlOrigin;
+ const cx = currentCurrency === 'BRL' ? usdBrlRate : 1;
+ const sym = currSymbol();
+
+ // Aggregate into 4 clean categories
+ const spotTotal = W.spot.reduce((s, v) => s + v, 0) * cx;
+ const feesTotal = W.totalFees * cx;
+ const ilTotal = W.totalIL * cx;
+ const airTotal = W.airdrops.reduce((s, v) => s + v, 0) * cx;
+ const netTotal = spotTotal + feesTotal + ilTotal + airTotal;
+
+ // KPI cards
+ const kpiEl = document.getElementById('pnlOriginKpis');
+ if (kpiEl) {
+ const mk = (icon, lbl, val, cls) => {
+ const sign = val >= 0 ? '+' : '';
+ const col = val >= 0
+ ? (dk ? '#3fb950' : '#2a7c3f')
+ : (dk ? '#f85149' : '#b92d2d');
+ const neutralCol = dk ? '#c9b99a' : '#4a3520';
+ return `<div style="background:var(--surface2);border-radius:6px;padding:9px 10px;">
+ <div style="font-size:7px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">${icon} ${lbl}</div>
+ <div style="font-size:15px;font-weight:700;font-family:JetBrains Mono,monospace;color:${cls==='neutral'?neutralCol:col};">${sign}${fmtCurrency(Math.abs(val),0)}</div>
+ </div>`;
+ };
+ kpiEl.innerHTML =
+ mk('','SPOT P&L', spotTotal) +
+ mk('','DEFI FEES', feesTotal) +
+ mk('','IMP. LOSS', ilTotal) +
+ mk('','AIRDROPS', airTotal);
+ }
+
+ // Simple 4-bar horizontal chart
+ const labels = ['Spot Holding', 'Taxas DeFi', 'Imp. Loss', 'Airdrops'];
+ const vals = [spotTotal, feesTotal, ilTotal, airTotal];
+ const colors = vals.map(v => v >= 0
+ ? (dk ? 'rgba(63,185,80,0.80)' : 'rgba(42,124,63,0.72)')
+ : (dk ? 'rgba(248,81,73,0.78)' : 'rgba(185,45,45,0.72)'));
+ // Airdrops always gold
+ colors[3] = dk ? 'rgba(201,160,80,0.85)' : 'rgba(138,104,32,0.78)';
+
+ new Chart(canvas, {
+ type: 'bar',
+ data: {
+ labels,
+ datasets: [{
+ data: vals,
+ backgroundColor: colors,
+ borderColor: colors.map(c => c.replace(/[\d.]+\)$/, '1)')),
+ borderWidth: 1,
+ borderRadius: [0, 5, 5, 0],
+ borderSkipped: false,
+ barThickness: 22,
+ }]
+ },
+ options: {
+ indexAxis: 'y',
+ responsive: true,
+ plugins: {
+ legend: { display: false },
+ tooltip: {
+ callbacks: {
+ label: ctx => {
+ const v = ctx.raw;
+ return ` ${v >= 0 ? '+' : ''}${fmtCurrency(v, 0)}`;
+ }
+ }
+ }
+ },
+ scales: {
+ x: {
+ ticks: {
+ font: { size: 9 }, color: Chart.defaults.color,
+ callback: v => fmtCurrency(v, 0)
+ },
+ grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 },
+ border: { display: false }
+ },
+ y: {
+ ticks: { font: { size: 10, weight: '600' }, color: Chart.defaults.color },
+ grid: { display: false },
+ border: { display: false }
+ }
+ }
+ }
+ });
+}
+
+// ══════════════════════════════════════════════════════════
+// 4. CONCENTRAÇÃO DE RISCO — BUBBLE CHART
+// ══════════════════════════════════════════════════════════
+function buildRiskBubble() {
+ const canvas = document.getElementById('riskBubbleChart');
+ if (!canvas || typeof Chart === 'undefined') return;
+ const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+
+ // {x=vol est., y=ROI atual %, r=bubble radius (peso%), label, color}
+ const bubbles = [
+ { x:0.55, y: -49.7, r:18, label:'ETH', color:'#F5A623' },
+ { x:0.70, y: -32.0, r:14, label:'SOL', color:'#9945FF' },
+ { x:0.80, y: -20.6, r: 5, label:'ADA', color:'#0033AD' },
+ { x:1.80, y: 9999, r: 4, label:'RDNT',color:'#00E5FF' }, // airdrop, no cost
+ { x:1.20, y: -32.7, r: 3, label:'EIGEN',color:'#9370DB' },
+ { x:1.50, y: -83.5, r: 2, label:'POL', color:'#8247E5' },
+ { x:2.20, y: 9999, r: 2, label:'ZK', color:'#1B55F5' }, // airdrop
+ { x:2.50, y: -95.9, r: 2, label:'XAI', color:'#FF6B35' },
+ { x:0.00, y: 0.1, r:15, label:'USDT',color:'#26A17B' },
+ { x:0.00, y: 0.1, r: 1, label:'USDS',color:'#1DA1F2' },
+ ].map(b => ({ ...b, y: b.y === 9999 ? 85 : b.y }));
+
+ new Chart(canvas, {
+ type: 'bubble',
+ data: {
+ datasets: bubbles.map(b => ({
+ label: b.label,
+ data: [{ x: b.x, y: b.y, r: Math.max(5, b.r) }],
+ backgroundColor: b.color + (dk ? 'bb' : '99'),
+ borderColor: b.color,
+ borderWidth: 1.5,
+ }))
+ },
+ options: {
+ responsive: true,
+ plugins: {
+ legend: { display: false },
+ tooltip: {
+ callbacks: {
+ label: ctx => {
+ const b = bubbles[ctx.datasetIndex];
+ const roi = b.y === 85 ? 'Airdrop' : (b.y >= 0 ? '+' : '') + b.y.toFixed(1) + '%';
+ return ` ${b.label}: ROI ${roi} · Vol ${b.x.toFixed(1)}`;
+ }
+ }
+ }
+ },
+ scales: {
+ x: {
+ title: { display: true, text: 'Volatilidade Estimada (0=stables → 2.5=micro)', color: Chart.defaults.color, font: { size: 8 } },
+ ticks: { font: { size: 8 }, color: Chart.defaults.color },
+ grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }
+ },
+ y: {
+ title: { display: true, text: 'ROI Atual (%)', color: Chart.defaults.color, font: { size: 8 } },
+ ticks: { font: { size: 9 }, color: Chart.defaults.color, callback: v => v + '%' },
+ grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }
+ }
+ }
+ }
+ });
+
+ // Draw bubble labels manually
+ canvas.addEventListener('afterRender', () => {});
+ setTimeout(() => {
+ const chart = Chart.getChart(canvas);
+ if (!chart) return;
+ const ctx = canvas.getContext('2d');
+ ctx.save();
+ ctx.font = '600 9px Inter,sans-serif';
+ ctx.textAlign = 'center';
+ ctx.textBaseline = 'middle';
+ bubbles.forEach((b, i) => {
+ const meta = chart.getDatasetMeta(i);
+ if (!meta.data[0]) return;
+ const pt = meta.data[0];
+ ctx.fillStyle = dk ? '#e6edf3' : '#16110c';
+ ctx.fillText(b.label, pt.x, pt.y);
+ });
+ ctx.restore();
+ }, 300);
+}
+
+// ══════════════════════════════════════════════════════════
+// 5. COMPOSIÇÃO DÍVIDA vs COLATERAL
+// ══════════════════════════════════════════════════════════
+var debtChartInst = null;
+function setDebtView(mode) {
+ document.getElementById('debtBarBtn').classList.toggle('active', mode === 'stacked');
+ document.getElementById('debtLineBtn').classList.toggle('active', mode === 'ratio');
+ buildDebtChart(mode);
+}
+
+function buildDebtChart(mode) {
+ const canvas = document.getElementById('debtChart');
+ if (!canvas) return;
+ if (debtChartInst) { debtChartInst.destroy(); debtChartInst = null; }
+ const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+
+ const labels = ['Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26'];
+
+ if (mode === 'stacked') {
+ // Stacked: AAVE collateral, Kamino collateral, AAVE debt, Kamino debt
+ const aaveCol = [5650, 5490, 5900, 5580, 5230, 5120, 5493];
+ const kaminoCol = [1820, 1780, 1940, 1860, 1720, 1800, 1790];
+ const aaveDebt = [ 748, 745, 760, 750, 748, 746, 746];
+ const kaminoDebt= [ 810, 808, 812, 810, 808, 805, 803];
+ debtChartInst = new Chart(canvas, {
+ type: 'bar',
+ data: {
+ labels,
+ datasets: [
+ { label: 'AAVE Colateral', data: aaveCol, backgroundColor: dk ? 'rgba(63,185,80,0.55)' : 'rgba(42,124,63,0.50)', stack: 'col', borderRadius: 3 },
+ { label: 'Kamino Colateral',data: kaminoCol, backgroundColor: dk ? 'rgba(126,200,227,0.55)' : 'rgba(70,150,180,0.50)', stack: 'col', borderRadius: 3 },
+ { label: 'AAVE Dívida', data: aaveDebt.map(v => -v), backgroundColor: dk ? 'rgba(248,81,73,0.60)' : 'rgba(185,45,45,0.55)', stack: 'debt', borderRadius: 3 },
+ { label: 'Kamino Dívida', data: kaminoDebt.map(v => -v), backgroundColor: dk ? 'rgba(210,153,34,0.60)' : 'rgba(160,115,20,0.55)', stack: 'debt', borderRadius: 3 },
+ ]
+ },
+ options: {
+ responsive: true,
+ interaction: { mode: 'index', intersect: false },
+ plugins: {
+ legend: { labels: { font: { size: 9 }, color: Chart.defaults.color, boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } },
+ tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: $${Math.abs(ctx.raw).toLocaleString()}` } }
+ },
+ scales: {
+ x: { ticks: { font: { size: 9 }, color: Chart.defaults.color }, grid: { display: false }, border: { display: false } },
+ y: { ticks: { font: { size: 9 }, color: Chart.defaults.color, callback: v => '$' + Math.abs(v).toLocaleString() }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false } }
+ }
+ }
+ });
+ } else {
+ // Line: HF AAVE + LTV Kamino
+ const aaveHF = [6.80, 6.42, 7.10, 6.70, 6.20, 6.05, 6.00];
+ const kaminoLTV = [43.2, 44.1, 42.9, 43.8, 44.5, 44.8, 44.93];
+ debtChartInst = new Chart(canvas, {
+ type: 'line',
+ data: {
+ labels,
+ datasets: [
+ { label: 'AAVE Health Factor', data: aaveHF, borderColor: dk ? '#3fb950' : '#2a7c3f', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2.5, pointRadius: 4, yAxisID: 'y' },
+ { label: 'Kamino LTV (%)', data: kaminoLTV, borderColor: dk ? '#d29922' : '#a06810', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2, pointRadius: 4, borderDash: [5,3], yAxisID: 'y2' }
+ ]
+ },
+ options: {
+ responsive: true,
+ interaction: { mode: 'index', intersect: false },
+ plugins: {
+ legend: { labels: { font: { size: 9 }, color: Chart.defaults.color, boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } },
+ tooltip: {
+ callbacks: {
+ label: ctx => ctx.datasetIndex === 0
+ ? ` HF AAVE: ${ctx.raw.toFixed(2)}`
+ : ` LTV Kamino: ${ctx.raw.toFixed(1)}%`
+ }
+ }
+ },
+ scales: {
+ x: { ticks: { font: { size: 9 }, color: Chart.defaults.color }, grid: { display: false }, border: { display: false } },
+ y: { position: 'left', min: 4, ticks: { font: { size: 9 }, color: dk ? '#3fb950' : '#2a7c3f', callback: v => 'HF ' + v.toFixed(1) }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }, title: { display: true, text: 'Health Factor', color: dk ? '#3fb950' : '#2a7c3f', font: { size: 8 } } },
+ y2: { position: 'right', min: 30, max: 80, ticks: { font: { size: 9 }, color: dk ? '#d29922' : '#a06810', callback: v => v + '%' }, grid: { display: false }, border: { display: false }, title: { display: true, text: 'LTV %', color: dk ? '#d29922' : '#a06810', font: { size: 8 } } }
+ }
+ }
+ });
+ }
+}
+
+buildDebtChart('stacked');
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ document.querySelectorAll('.nav-links a').forEach(function(a){
+ a.addEventListener('click',function(){
+ var nl=document.querySelector('.nav-links');
+ if(nl) nl.classList.remove('open');
+ });
+ });
+});
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — AUTO-FETCH MULTI-WALLET MODULE
+// EVM (Alchemy) + Solana/Kamino (Helius)
+// ══════════════════════════════════════════════════════════════════
+(function initWalletFetch() {
+
+ const ALCHEMY_KEY = 'R_9y5DBqKNR2NapexG8n7';
+ const HELIUS_KEY = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
+
+ const ETH_RPC = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+ const BASE_RPC = `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+ const HELIUS_RPC= `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+ const HELIUS_API= `https://api.helius.xyz/v0`;
+
+ // ── Wallets ──────────────────────────────────────────────────────
+ const EVM_WALLETS = [
+ '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6',
+ '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396', // AAVE
+ '0x835a5F686c489023064Edb0EA3A0f4ee54BD77F6',
+ '0x8311038D68039f4C3e7237D64f4F2c598fBf4ea3',
+ ];
+ const AAVE_WALLET = '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396';
+ const SOL_WALLET = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
+
+ // ── Contracts ────────────────────────────────────────────────────
+ const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
+ const UNI_NFT = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
+ const LP_TOKEN_ID = 4694262;
+ const USDT_ADDR = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+ const USDC_ADDR = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+ const WETH_ADDR = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+
+ // Kamino program ID on Solana
+ const KAMINO_PROGRAM = 'KLend2g3cP87fffoy8q1mQqGKjrL9CGMcnvsoBrDgKzX';
+
+ // ── Helpers ──────────────────────────────────────────────────────
+ const padAddr = a => '000000000000000000000000' + a.slice(2).toLowerCase();
+ const padUint = n => BigInt(n).toString(16).padStart(64, '0');
+ const decUint = (hex, offset=0) => BigInt('0x' + (hex.slice(2)||'0').slice(offset*64, (offset+1)*64) || '0');
+ const decNum = (n, dec) => Number(n) / Math.pow(10, dec);
+ const fmt2 = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+ const fmtK = n => n >= 1000 ? '$' + (n/1000).toFixed(2) + 'K' : fmt2(n);
+ const setEl = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+ const setHtml = (id, v) => { const e = document.getElementById(id); if(e) e.innerHTML = v; };
+ const setColor= (id, c) => { const e = document.getElementById(id); if(e) e.style.color = c; };
+
+ async function rpc(url, method, params) {
+ const r = await fetch(url, {
+ method: 'POST',
+ headers: {'Content-Type':'application/json'},
+ body: JSON.stringify({id:1, jsonrpc:'2.0', method, params})
+ });
+ const d = await r.json();
+ if (d.error) throw new Error(d.error.message);
+ return d.result;
+ }
+
+ async function ethCall(rpcUrl, to, data) {
+ return rpc(rpcUrl, 'eth_call', [{to, data}, 'latest']);
+ }
+
+ // ── ETH balance for one address ──────────────────────────────────
+ async function getEthBalance(addr) {
+ const raw = await rpc(ETH_RPC, 'eth_getBalance', [addr, 'latest']);
+ return decNum(BigInt(raw), 18);
+ }
+
+ // ── ERC20 balance ────────────────────────────────────────────────
+ async function getERC20(rpcUrl, token, addr, decimals) {
+ const data = '0x70a08231' + padAddr(addr);
+ const raw = await ethCall(rpcUrl, token, data);
+ return decNum(decUint(raw, 0), decimals);
+ }
+
+ // ── All EVM wallet balances ──────────────────────────────────────
+ async function fetchAllEVM() {
+ const results = {};
+ await Promise.all(EVM_WALLETS.map(async wallet => {
+ try {
+ const [eth, usdt, usdc, weth] = await Promise.all([
+ getEthBalance(wallet).catch(()=>0),
+ getERC20(ETH_RPC, USDT_ADDR, wallet, 6).catch(()=>0),
+ getERC20(ETH_RPC, USDC_ADDR, wallet, 6).catch(()=>0),
+ getERC20(ETH_RPC, WETH_ADDR, wallet, 18).catch(()=>0),
+ ]);
+ results[wallet] = { eth, usdt, usdc, weth };
+ console.log(`[EVM] ${wallet.slice(0,8)}... ETH:${eth.toFixed(4)} USDT:${usdt.toFixed(2)} USDC:${usdc.toFixed(2)}`);
+ } catch(e) {
+ console.warn(`[EVM] ${wallet.slice(0,8)}... failed:`, e.message);
+ results[wallet] = { eth:0, usdt:0, usdc:0, weth:0 };
+ }
+ }));
+ return results;
+ }
+
+ // ── AAVE V3 ──────────────────────────────────────────────────────
+ async function fetchAave(ethPrice) {
+ try {
+ const data = '0xbf92857c' + padAddr(AAVE_WALLET);
+ const raw = await ethCall(ETH_RPC, AAVE_POOL, data);
+ // Returns 6 uint256: totalCollateralBase, totalDebtBase, availBorrows, liqThreshold, ltv, healthFactor
+ const collateral = decNum(decUint(raw, 0), 8); // USD 8 decimals
+ const debt = decNum(decUint(raw, 1), 8);
+ const liqThresh = decNum(decUint(raw, 3), 4);
+ const hf = decNum(decUint(raw, 5), 18);
+
+ console.log(`[AAVE] Collateral: $${collateral.toFixed(2)}, Debt: $${debt.toFixed(2)}, HF: ${hf.toFixed(2)}`);
+
+ // Update AAVE card UI
+ setEl('aave-net-worth', fmtK(collateral - debt));
+ const hfEl = document.getElementById('aave-hf-metric');
+ if (hfEl) {
+ hfEl.textContent = hf.toFixed(2);
+ hfEl.style.color = hf > 2 ? 'var(--green)' : hf > 1.3 ? 'var(--yellow)' : 'var(--red)';
+ }
+
+ // Also update via existing updateAave function if available
+ if (typeof updateAave === 'function' && ethPrice) {
+ updateAave({ totalCollateral: collateral, totalDebt: debt, liqThreshold: liqThresh/100, healthFactor: hf }, ethPrice);
+ }
+
+ // Store globals for other calcs
+ window._liveAaveDebt = debt;
+ window._liveAaveCollateral = collateral;
+ window._liveAaveHF = hf;
+
+ return { collateral, debt, liqThresh, hf };
+ } catch(e) {
+ console.warn('[AAVE] failed:', e.message);
+ return null;
+ }
+ }
+
+ // ── Uniswap V3 position ──────────────────────────────────────────
+ async function fetchUniswapLP() {
+ try {
+ const data = '0x99fbab88' + padUint(LP_TOKEN_ID);
+ const raw = await ethCall(ETH_RPC, UNI_NFT, data);
+ const liquidity = decUint(raw, 7);
+ const isActive = liquidity > 0n;
+ console.log(`[UNI] LP #${LP_TOKEN_ID} liquidity: ${liquidity}, active: ${isActive}`);
+ window._liveUniActive = isActive;
+ return { liquidity: liquidity.toString(), isActive };
+ } catch(e) {
+ console.warn('[UNI] failed:', e.message);
+ return null;
+ }
+ }
+
+ // ── Solana: native SOL balance ───────────────────────────────────
+ async function fetchSolBalance() {
+ try {
+ const result = await rpc(HELIUS_RPC, 'getBalance', [SOL_WALLET]);
+ const sol = result.value / 1e9;
+ console.log(`[SOL] Balance: ${sol.toFixed(4)} SOL`);
+ window._liveSolWallet = sol;
+ return sol;
+ } catch(e) {
+ console.warn('[SOL] balance failed:', e.message);
+ return null;
+ }
+ }
+
+ // ── Solana: all token accounts (for USDS, USDC on Solana) ───────
+ async function fetchSolTokens() {
+ try {
+ const result = await rpc(HELIUS_RPC, 'getTokenAccountsByOwner', [
+ SOL_WALLET,
+ { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' },
+ { encoding: 'jsonParsed' }
+ ]);
+ const tokens = {};
+ for (const acc of (result.value || [])) {
+ const info = acc.account?.data?.parsed?.info;
+ if (!info) continue;
+ const mint = info.mint;
+ const amt = parseFloat(info.tokenAmount?.uiAmountString || '0');
+ if (amt > 0.001) {
+ tokens[mint] = (tokens[mint] || 0) + amt;
+ }
+ }
+ // Known mints
+ const PYUSD_MINT = '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo';
+ const USDC_SOL = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+ console.log('[SOL Tokens] USDS:', tokens[PYUSD_MINT]||0, 'USDC:', tokens[USDC_SOL]||0);
+ window._livePyusd = tokens[PYUSD_MINT] || 0;
+ window._liveUsdcSol = tokens[USDC_SOL] || 0;
+ return tokens;
+ } catch(e) {
+ console.warn('[SOL Tokens] failed:', e.message);
+ return {};
+ }
+ }
+
+ // ── Kamino: fetch position via Helius DAS ────────────────────────
+ async function fetchKamino() {
+ try {
+ // Use Helius DAS to get parsed account data for Kamino
+ const r = await fetch(`${HELIUS_API}/addresses/${SOL_WALLET}/balances?api-key=${HELIUS_KEY}`);
+ if (!r.ok) throw new Error('Helius balances ' + r.status);
+ const data = await r.json();
+
+ // Also try Kamino API directly
+ const kaminoR = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
+ if (kaminoR.ok) {
+ const kData = await kaminoR.json();
+ if (kData && kData.length > 0) {
+ const obligation = kData[0];
+ const deposits = obligation.deposits || [];
+ const borrows = obligation.borrows || [];
+
+ let totalDepositUsd = 0;
+ let totalBorrowUsd = 0;
+ let solQty = 0;
+
+ deposits.forEach(d => {
+ totalDepositUsd += parseFloat(d.marketValueRefreshed || d.marketValue || 0);
+ if (d.mintAddress === 'So11111111111111111111111111111111111111112') {
+ solQty += parseFloat(d.amount || 0);
+ }
+ });
+ borrows.forEach(b => {
+ totalBorrowUsd += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
+ });
+
+ const netValue = totalDepositUsd - totalBorrowUsd;
+ const ltv = totalDepositUsd > 0 ? totalBorrowUsd / totalDepositUsd : 0;
+
+ console.log(`[Kamino] Deposits: $${totalDepositUsd.toFixed(2)}, Borrows: $${totalBorrowUsd.toFixed(2)}, SOL: ${solQty.toFixed(3)}, LTV: ${(ltv*100).toFixed(1)}%`);
+
+ window._liveKaminoDebt = totalBorrowUsd;
+ window._liveKaminoDeposit = totalDepositUsd;
+ window._liveKaminoNetVal = netValue;
+ window._liveKaminoSol = solQty;
+ window._liveKaminoLtv = ltv;
+
+ // Update Kamino UI
+ setEl('kamino-net-val', fmtK(netValue));
+ const ltvEl = document.getElementById('kamino-ltv-bar');
+ if (ltvEl) {
+ const fill = ltvEl.querySelector('.bar-fill');
+ if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
+ }
+
+ return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
+ }
+ }
+
+ // Fallback: use static values
+ console.warn('[Kamino] API returned no data, using static fallback');
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
+ window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
+ return null;
+ } catch(e) {
+ console.warn('[Kamino] failed:', e.message);
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
+ return null;
+ }
+ }
+
+ // ── Compute & display Patrimônio Líquido ─────────────────────────
+ function updatePatrimonio(evmData, solBal, ethPrice, solPrice) {
+ // In portfolio_analytics, the main netTotal is already computed in renderUI()
+ // This function just updates the live globals so renderUI() picks them up
+ // and re-triggers a refresh
+
+ window._liveEthPrice = ethPrice || window._liveEthPrice || 2079.21;
+ window._liveSolPrice = solPrice || window._liveSolPrice || 87.28;
+
+ // Re-run fetchPrices to update UI with latest live data
+ if (typeof fetchPrices === 'function') {
+ fetchPrices().catch(()=>{});
+ }
+ return null;
+ }
+ // Re-trigger capital operacional chart if on pools page
+ if (typeof getLivePrice === 'function') {
+ getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'])
+ .then(prices => {
+ let total = window._livePatrimonio;
+ if (!total) return;
+ if (typeof render === 'function') render(total);
+ })
+ .catch(()=>{});
+ }
+
+ console.log('[BaroloFetch] Complete ');
+ }
+
+ // ── Run ───────────────────────────────────────────────────────────
+ const delay = document.readyState === 'loading' ? 2500 : 1500;
+ if (document.readyState === 'loading') {
+ document.addEventListener('DOMContentLoaded', () => setTimeout(runAll, delay));
+ } else {
+ setTimeout(runAll, delay);
+ }
+
+ // Expose for manual refresh
+ window.baroloRefresh = runAll;
+
+})();
+
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — CARDANO / ADA STAKE MODULE (Blockfrost)
+// ══════════════════════════════════════════════════════════════════
+(function initCardanoFetch() {
+
+ const BF_KEY = 'mainnetUUNZyRnZ6sg9uAvwnprB7vNIu8s7VPKm';
+ const BF_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
+ const ADA_ADDR= 'addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znuy0ctq737ruk7e72dqkm0a23';
+
+ const LOVELACE = 1_000_000; // 1 ADA = 1_000_000 lovelace
+
+ async function bf(path) {
+ const r = await fetch(`${BF_URL}${path}`, {
+ headers: { 'project_id': BF_KEY }
+ });
+ if (!r.ok) throw new Error(`Blockfrost ${r.status}: ${path}`);
+ return r.json();
+ }
+
+ // ── Fetch ADA wallet balance + stake info ─────────────────────────
+ async function fetchCardano() {
+ try {
+ // 1. Get address info (ADA balance + tokens)
+ const addrInfo = await bf(`/addresses/${ADA_ADDR}`);
+ const adaWallet = (addrInfo.amount?.find(a => a.unit === 'lovelace')?.quantity || 0) / LOVELACE;
+
+ // 2. Get stake address from the payment address
+ const stakeAddr = addrInfo.stake_address;
+ console.log(`[Cardano] Wallet ADA: ${adaWallet.toFixed(2)}, Stake addr: ${stakeAddr}`);
+
+ let stakedAda = 0, rewardsAda = 0, poolName = '—', poolTicker = '—', poolApy = null;
+
+ if (stakeAddr) {
+ // 3. Get stake account info
+ const stakeInfo = await bf(`/accounts/${stakeAddr}`);
+ stakedAda = parseInt(stakeInfo.controlled_amount || 0) / LOVELACE;
+ rewardsAda = parseInt(stakeInfo.withdrawable_amount || 0) / LOVELACE;
+ const poolId = stakeInfo.pool_id;
+
+ console.log(`[Cardano] Staked: ${stakedAda.toFixed(2)} ADA, Rewards pending: ${rewardsAda.toFixed(4)} ADA`);
+
+ // 4. Get pool info
+ if (poolId) {
+ try {
+ const poolInfo = await bf(`/pools/${poolId}/metadata`);
+ poolName = poolInfo.name || poolId.slice(0,12) + '...';
+ poolTicker = poolInfo.ticker || '—';
+ console.log(`[Cardano] Pool: ${poolTicker} — ${poolName}`);
+ } catch(e) { /* pool metadata optional */ }
+
+ // 5. Get pool APY from history
+ try {
+ const poolHistory = await bf(`/pools/${poolId}/history?count=5&order=desc`);
+ if (poolHistory?.length > 0) {
+ const latest = poolHistory[0];
+ // APY ≈ (blocks * avg_reward_per_block / active_stake) * epochs_per_year
+ // Simpler: annualize the epoch ROI
+ const epochRoi = parseFloat(latest.active_stake) > 0
+ ? (parseFloat(latest.rewards) / parseFloat(latest.active_stake)) * 100
+ : 0;
+ poolApy = (epochRoi * 73).toFixed(2); // ~73 epochs/year
+ }
+ } catch(e) { /* APY calc optional */ }
+ }
+
+ // 6. Get recent reward history
+ let totalRewardsEarned = 0;
+ try {
+ const rewardHistory = await bf(`/accounts/${stakeAddr}/rewards?count=20&order=desc`);
+ totalRewardsEarned = rewardHistory.reduce((s, r) => s + parseInt(r.amount||0)/LOVELACE, 0);
+ console.log(`[Cardano] Last 20 epochs rewards: ${totalRewardsEarned.toFixed(2)} ADA`);
+ } catch(e) {}
+
+ window._liveAdaStaked = stakedAda;
+ window._liveAdaRewards = rewardsAda;
+ window._liveAdaPool = { name: poolName, ticker: poolTicker, apy: poolApy };
+ window._liveAdaRewardsHistory = totalRewardsEarned;
+ }
+
+ window._liveAdaWallet = adaWallet;
+
+ // Get ADA price from already-fetched CoinGecko data
+ const adaPrice = window._livePrices?.cardano?.usd || null;
+
+ // Update UI elements
+ updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice });
+
+ return { adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy };
+
+ } catch(e) {
+ console.warn('[Cardano] fetch failed:', e.message);
+ return null;
+ }
+ }
+
+ // ── Update UI ────────────────────────────────────────────────────
+ function updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice }) {
+ const fmt2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+ const fmtA = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+ const setEl = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+
+ // Wallet ADA
+ setEl('ada-wallet-qty', fmtA(adaWallet) + ' ADA');
+ setEl('ada-staked-qty', fmtA(stakedAda) + ' ADA');
+ setEl('ada-rewards-qty', fmtA(rewardsAda) + ' ADA pendentes');
+ setEl('ada-pool-name', poolTicker ? `${poolTicker} — ${poolName}` : poolName);
+ setEl('ada-pool-apy', poolApy ? poolApy + '% APY (est.)' : '—');
+
+ if (adaPrice) {
+ setEl('ada-wallet-usd', '$' + fmt2(adaWallet * adaPrice));
+ setEl('ada-staked-usd', '$' + fmt2(stakedAda * adaPrice));
+ setEl('ada-rewards-usd', '$' + fmt2(rewardsAda * adaPrice));
+ }
+
+ // Update the portfolio_analytics ADA row
+ const adaRow = document.querySelector('[data-ticker="ADA"]');
+ if (adaRow && stakedAda > 0) {
+ const qtyEl = adaRow.querySelector('.asset-qty, .col-qty');
+ if (qtyEl) qtyEl.textContent = fmtA(stakedAda) + ' ADA';
+ }
+
+ // Update live indicator
+ const liveIndicator = document.getElementById('cardano-live-badge');
+ if (liveIndicator) {
+ liveIndicator.textContent = '● LIVE';
+ liveIndicator.style.color = 'var(--green)';
+ }
+
+ console.log(`[Cardano UI] Updated: wallet=${adaWallet.toFixed(2)}, staked=${stakedAda.toFixed(2)}, rewards=${rewardsAda.toFixed(4)}, pool=${poolTicker}`);
+ }
+
+ // ── Build Cardano section HTML (injected into portfolio page) ────
+ function buildCardanoSection() {
+ const existing = document.getElementById('cardano-stake-section');
+ if (existing) return; // already built
+
+ // Find where to insert — after ADA row in portfolio or at end of DeFi section
+ const target = document.getElementById('cardano-stake-target');
+ if (!target) return;
+
+ target.innerHTML = `
+ <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-top:12px;">
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+ <div style="display:flex;align-items:center;gap:8px;">
+ <img src="https://coin-images.coingecko.com/coins/images/975/small/cardano.png" width="18" height="18" style="border-radius:50%;" onerror="this.style.opacity='0'">
+ <span style="font-family:'Satoshi',serif;font-size:14px;font-weight:600;">ADA Stake</span>
+ <span id="cardano-live-badge" style="font-size:8px;color:var(--muted);letter-spacing:1px;">● —</span>
+ </div>
+ <span style="font-size:9px;color:var(--muted);" id="ada-pool-apy">—</span>
+ </div>
+ <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+ <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">DELEGADO</div>
+ <div style="font-size:13px;font-weight:600;" id="ada-staked-qty">375.24 ADA</div>
+ <div style="font-size:9px;color:var(--muted);" id="ada-staked-usd">—</div>
+ </div>
+ <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">REWARDS PENDENTES</div>
+ <div style="font-size:13px;font-weight:600;color:var(--green);" id="ada-rewards-qty">— ADA</div>
+ <div style="font-size:9px;color:var(--muted);" id="ada-rewards-usd">—</div>
+ </div>
+ <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">POOL</div>
+ <div style="font-size:11px;word-break:break-all;" id="ada-pool-name">—</div>
+ </div>
+ </div>
+ </div>`;
+ }
+
+ // ── Run ───────────────────────────────────────────────────────────
+ async function run() {
+ buildCardanoSection();
+ await fetchCardano();
+ }
+
+ // Hook into baroloRefresh
+ const _prev = window.baroloRefresh;
+ window.baroloRefresh = async function() {
+ if (_prev) await _prev();
+ await run();
+ };
+
+ // Auto-run after 3s (after other fetches)
+ const delay = document.readyState === 'loading' ? 3500 : 2500;
+ if (document.readyState === 'loading') {
+ document.addEventListener('DOMContentLoaded', () => setTimeout(run, delay));
+ } else {
+ setTimeout(run, delay);
+ }
+
+})();
+
+
+// ── Language toggle ──────────────────────────────────────
+var LANG_STRINGS = {
+  // nav
+  'nav-home':        {pt:'Início',       en:'Home'},
+  'nav-portfolio':   {pt:'Portfolio',    en:'Portfolio'},
+  'nav-pools':       {pt:'Pools & DeFi', en:'Pools & DeFi'},
+  'nav-loans':       {pt:'Empréstimos',  en:'Loans'},
+  'nav-tools':       {pt:'Ferramentas',  en:'Tools'},
+  // section labels — will be found by data-i18n attribute
+};
+
+function applyLang(lang) {
+  document.documentElement.setAttribute('data-lang', lang);
+  var btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
+  // Apply to all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    var s = LANG_STRINGS[key];
+    if (s && s[lang]) el.textContent = s[lang];
+  });
+}
+
+function toggleLang() {
   var current = document.documentElement.getAttribute('data-lang') || 'pt';
-  applyIndexLang(current === 'pt' ? 'en' : 'pt');
+  var next = current === 'pt' ? 'en' : 'pt';
+  localStorage.setItem('bc-lang', next);
+  applyLang(next);
 }
 
+(function initLang() {
+  var saved = localStorage.getItem('bc-lang') || 'pt';
+  applyLang(saved);
+})();
+
+
+// Update theme toggle icon on load
+(function(){
+  var t = localStorage.getItem('bc-theme') || 'light';
+  var btn = document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
+})();
+
+
+
+
+
+
+// ══ FEAR & GREED INDEX ═════════════════════════════════════════════════════
 (function() {
-  // Set initial theme icon
-  var savedTheme = localStorage.getItem('bc-theme') || 'dark';
-  var btn = document.getElementById('themeToggle');
-  if(btn) btn.textContent = savedTheme === 'dark' ? '☾' : '☀';
-  // Default lang is EN
-  var savedLang = localStorage.getItem('bc-lang') || 'en';
-  // Default is EN — only apply if saved is PT
-if (savedLang === 'pt') applyIndexLang('pt');
+  function fgColor(v) {
+    if (v <= 24) return '#c0392b';
+    if (v <= 44) return '#e67e22';
+    if (v <= 55) return '#f1c40f';
+    if (v <= 74) return '#2ecc71';
+    return '#27ae60';
+  }
+  function fgClassify(v) {
+    if (v <= 24) return 'Medo Extremo';
+    if (v <= 44) return 'Medo';
+    if (v <= 55) return 'Neutro';
+    if (v <= 74) return 'Ganância';
+    return 'Ganância Extrema';
+  }
+  function updateNeedle(val) {
+    // val 0-100 → rotation -90° (left) to +90° (right)
+    var deg = (val / 100) * 180 - 90;
+    var needle = document.getElementById('fg-needle');
+    if (needle) needle.setAttribute('transform', 'rotate(' + deg + ',55,55)');
+    // Arc: total arc length ≈ 141.37 (half circle), fill proportionally
+    var arc = document.getElementById('fg-arc');
+    if (arc) {
+      var filled = (val / 100) * 141.37;
+      arc.setAttribute('stroke-dasharray', filled + ' ' + (141.37 - filled));
+      arc.setAttribute('stroke', fgColor(val));
+    }
+  }
+  function setEl(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  function setColor(id, col) { var el = document.getElementById(id); if (el) el.style.color = col; }
+
+  function render(data) {
+    var today = data[0], yesterday = data[1], week = data[6], month = data[29] || data[data.length-1];
+    var v = parseInt(today.value);
+    var col = fgColor(v);
+    var ts = new Date(parseInt(today.timestamp) * 1000);
+    var dateStr = ts.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
+
+    updateNeedle(v);
+    setEl('fg-value', v); setColor('fg-value', col);
+    setEl('fg-label', fgClassify(v)); setColor('fg-label', col);
+    setEl('fg-updated', 'Atualizado ' + dateStr);
+
+    var vy = parseInt(yesterday.value);
+    setEl('fg-yesterday', vy); setColor('fg-yesterday', fgColor(vy));
+    setEl('fg-yesterday-lbl', fgClassify(vy));
+
+    var vw = parseInt(week.value);
+    setEl('fg-week', vw); setColor('fg-week', fgColor(vw));
+    setEl('fg-week-lbl', fgClassify(vw));
+
+    var vm = parseInt(month.value);
+    setEl('fg-month', vm); setColor('fg-month', fgColor(vm));
+    setEl('fg-month-lbl', fgClassify(vm));
+  }
+
+  function load() {
+    fetch('https://api.alternative.me/fng/?limit=30&format=json')
+      .then(function(r) { return r.json(); })
+      .then(function(d) { if (d && d.data && d.data.length >= 7) render(d.data); })
+      .catch(function() {
+        // Static fallback — current known value (Fear)
+        updateNeedle(30);
+        setEl('fg-value', 30); setColor('fg-value', fgColor(30));
+        setEl('fg-label', 'Medo'); setColor('fg-label', fgColor(30));
+        setEl('fg-updated', 'Dados estáticos');
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    load();
+    setInterval(load, 5 * 60 * 1000);
+  });
+})();
+
+
+// ── FEAR & GREED INDEX ──────────────────────────────────────────────────────
+(function() {
+  function fgColor(v) {
+    if (v <= 24) return '#b22222';
+    if (v <= 44) return '#cd5c5c';
+    if (v <= 55) return '#daa520';
+    if (v <= 74) return '#3cb371';
+    return '#228b22';
+  }
+  function fgText(v) {
+    if (v <= 24) return 'MEDO EXTREMO';
+    if (v <= 44) return 'MEDO';
+    if (v <= 55) return 'NEUTRO';
+    if (v <= 74) return 'GANANCIA';
+    return 'GANANCIA EXT.';
+  }
+  var fgInst = null;
+
+  function drawGauge(val) {
+    var canvas = document.getElementById('fg-gauge');
+    if (!canvas) return;
+    var ctx2 = canvas.getContext('2d');
+    var W = 130, H = 70, cx = 65, cy = 68, r = 58;
+    ctx2.clearRect(0, 0, W, H);
+
+    // Background arc
+    ctx2.beginPath();
+    ctx2.arc(cx, cy, r, Math.PI, 0);
+    ctx2.lineWidth = 10;
+    ctx2.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark'
+      ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+    ctx2.stroke();
+
+    // Colored arc
+    var grad = ctx2.createLinearGradient(cx - r, cy, cx + r, cy);
+    grad.addColorStop(0,    '#b22222');
+    grad.addColorStop(0.25, '#cd5c5c');
+    grad.addColorStop(0.5,  '#daa520');
+    grad.addColorStop(0.75, '#3cb371');
+    grad.addColorStop(1,    '#228b22');
+    var pct = val / 100;
+    ctx2.beginPath();
+    ctx2.arc(cx, cy, r, Math.PI, Math.PI + Math.PI * pct);
+    ctx2.lineWidth = 10;
+    ctx2.lineCap = 'round';
+    ctx2.strokeStyle = fgColor(val);
+    ctx2.stroke();
+
+    // Needle
+    var angle = Math.PI + Math.PI * pct;
+    var nx = cx + (r - 5) * Math.cos(angle);
+    var ny = cy + (r - 5) * Math.sin(angle);
+    ctx2.beginPath();
+    ctx2.moveTo(cx, cy);
+    ctx2.lineTo(nx, ny);
+    ctx2.lineWidth = 2.5;
+    ctx2.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark'
+      ? '#e8e0d0' : '#16110c';
+    ctx2.lineCap = 'round';
+    ctx2.stroke();
+
+    // Center dot
+    ctx2.beginPath();
+    ctx2.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx2.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark'
+      ? '#e8e0d0' : '#16110c';
+    ctx2.fill();
+
+    // Update text
+    var vEl = document.getElementById('fg-value');
+    var lEl = document.getElementById('fg-label');
+    var ndl = document.getElementById('fg-needle');
+    if (vEl) { vEl.textContent = val; vEl.style.color = fgColor(val); }
+    if (lEl) { lEl.textContent = fgText(val); lEl.style.color = fgColor(val); }
+    if (ndl) ndl.style.left = (val) + '%';
+  }
+
+  function setHist(id, val) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val + ' · ' + fgText(val);
+    el.style.color = fgColor(val);
+  }
+
+  function fetchFG() {
+    fetch('https://api.alternative.me/fng/?limit=7&format=json')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d || !d.data || !d.data.length) throw new Error('no data');
+        var today = parseInt(d.data[0].value);
+        var yest  = parseInt(d.data[1].value);
+        var week  = parseInt(d.data[6].value);
+        var ts    = new Date(parseInt(d.data[0].timestamp) * 1000);
+        drawGauge(today);
+        setHist('fg-yesterday', yest);
+        setHist('fg-week', week);
+        var upEl = document.getElementById('fg-updated');
+        if (upEl) upEl.textContent = ts.toLocaleDateString('pt-BR');
+      })
+      .catch(function() {
+        // static fallback
+        drawGauge(30);
+        setHist('fg-yesterday', 28);
+        setHist('fg-week', 35);
+        var upEl = document.getElementById('fg-updated');
+        if (upEl) upEl.textContent = 'dados estaticos';
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(fetchFG, 600);
+    setInterval(fetchFG, 300000); // every 5 min
+  });
 })();
 
 </script>
