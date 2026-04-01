@@ -1698,7 +1698,49 @@ body, input, button, select, textarea {
 
 //
 
-// ── Load Chart.js + Date Adapter (global scope) ──
+// ── Load C
+  // ── New Performance Charts ──
+  buildFCR();
+  buildWaterfall();
+  buildNetRanking();
+
+
+// ── MOEDA USD / BRL (pools) ──
+window.currentCurrency = localStorage.getItem('bc-currency') || 'USD';
+window.usdBrlRate = 5.33;
+(async function fetchRate(){
+ try{
+ const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+ const d = await r.json();
+ if(d.rates && d.rates.BRL) usdBrlRate = d.rates.BRL;
+ }catch(e){}
+})();
+function toggleCurrency(){
+ currentCurrency = currentCurrency==='USD'?'BRL':'USD';
+ localStorage.setItem('bc-currency', currentCurrency);
+ const btn = document.getElementById('currencyBtn');
+ if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
+ document.querySelectorAll('[data-usd]').forEach(el=>{
+ const v = parseFloat(el.getAttribute('data-usd'));
+ if(isNaN(v)) return;
+ if(currentCurrency==='BRL'){
+ el.textContent = 'R$ '+( v*usdBrlRate).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+ } else {
+ el.textContent = '$'+ v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ }
+ });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ const btn=document.getElementById('currencyBtn');
+ if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
+});
+
+// ══════════════════════════════════════════════════════
+// SHARPE RATIO + BREAKEVEN — run after DOM ready
+// ══════════════════════════════════════════════════════
+
+// Close nav when link clicked
+hart.js + Date Adapter (global scope) ──
 function loadChartJs(cb) {
   if (window.Chart) { cb(); return; }
   var s = document.createElement('script');
@@ -2432,190 +2474,6 @@ document.addEventListener('DOMContentLoaded', function() {
  buildRecent('bar', '1d');
  buildNet('bar');
 // ══════════════════════════════════════════════════════════
-// CHARTS: RANKING FCR + WATERFALL
-// ══════════════════════════════════════════════════════════
-var rankingChart = null, waterfallChart = null, rankingMode = 'fcr';
-
-function setRankingMode(mode, btn) {
-  rankingMode = mode;
-  document.querySelectorAll('#chartRanking').forEach(function(){});
-  var btns = document.querySelectorAll('.ct-toggle button');
-  btns.forEach(function(b) { b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  buildRanking();
-}
-
-function buildRanking() {
-  var canvas = document.getElementById('chartRanking');
-  if (!canvas || typeof Chart === 'undefined') return;
-  if (rankingChart) rankingChart.destroy();
-  var dk = isDark();
-  var tc = textColor();
-  var gr = gridColor();
-
-  // Pool data: [label, fees, capital, days, net]
-  var pools = [
-    { l:'ARB/USDC x2',   fees:335, cap:900,  days:5,   net:335, il:0    },
-    { l:'RDNT/ETH x2',   fees:180, cap:957,  days:14,  net:180, il:0    },
-    { l:'MSTR/ETH',      fees:36,  cap:260,  days:13,  net:36,  il:0    },
-    { l:'ARB/USDT',      fees:73,  cap:628,  days:48,  net:73,  il:0    },
-    { l:'ETH/USDC Base', fees:16,  cap:453,  days:25,  net:16,  il:0    },
-    { l:'ETH/USDT ARB',  fees:34,  cap:277,  days:105, net:34,  il:0    },
-    { l:'SOL/USDC',      fees:23,  cap:660,  days:93,  net:23,  il:0    },
-    { l:'ETH/USDC ARB',  fees:22,  cap:1014, days:209, net:22,  il:0    },
-    { l:'XAI/WETH',      fees:7,   cap:35,   days:60,  net:-14, il:21   },
-    { l:'SOL/GRIFT',     fees:1389,cap:780,  days:80,  net:-1510,il:500 },
-    { l:'PEANUT/ETH',    fees:0,   cap:300,  days:10,  net:-243,il:243  },
-  ];
-
-  var sorted;
-  if (rankingMode === 'fcr') {
-    pools.forEach(function(p) {
-      p.fcr = p.days > 0 ? (p.fees / p.cap * (365 / p.days) * 100) : 0;
-    });
-    sorted = pools.slice().sort(function(a,b) { return b.fcr - a.fcr; });
-    var labels = sorted.map(function(p) { return p.l; });
-    var data   = sorted.map(function(p) { return parseFloat(p.fcr.toFixed(1)); });
-    var colors = sorted.map(function(p) { return p.net >= 0 ? 'rgba(74,124,63,0.75)' : 'rgba(185,64,64,0.70)'; });
-
-    rankingChart = new Chart(canvas, {
-      type: 'bar',
-      data: { labels: labels, datasets: [{ label: 'FCR% Anualizado', data: data, backgroundColor: colors, borderRadius: 3, borderWidth: 0 }] },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: function(ctx) { var p = sorted[ctx.dataIndex]; return [' FCR: ' + ctx.raw + '%', ' Net: $' + p.net, ' Fees: $' + p.fees, ' Capital: $' + p.cap]; } } }
-        },
-        scales: {
-          x: { ticks: { color: tc, font: { size: 9 }, callback: function(v) { return v + '%'; } }, grid: { color: gr }, border: { display: false } },
-          y: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, border: { display: false } }
-        }
-      }
-    });
-  } else {
-    sorted = pools.slice().sort(function(a,b) { return b.net - a.net; });
-    var labels = sorted.map(function(p) { return p.l; });
-    var data   = sorted.map(function(p) { return p.net; });
-    var colors = sorted.map(function(p) { return p.net >= 0 ? 'rgba(74,124,63,0.75)' : 'rgba(185,64,64,0.70)'; });
-
-    rankingChart = new Chart(canvas, {
-      type: 'bar',
-      data: { labels: labels, datasets: [{ label: 'Net $', data: data, backgroundColor: colors, borderRadius: 3, borderWidth: 0 }] },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: function(ctx) { return ' Net: $' + ctx.raw; } } }
-        },
-        scales: {
-          x: { ticks: { color: tc, font: { size: 9 }, callback: function(v) { return '$' + v; } }, grid: { color: gr }, border: { display: false } },
-          y: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, border: { display: false } }
-        }
-      }
-    });
-  }
-}
-
-function buildWaterfall() {
-  var canvas = document.getElementById('chartWaterfall');
-  if (!canvas || typeof Chart === 'undefined') return;
-  if (waterfallChart) waterfallChart.destroy();
-  var dk = isDark();
-  var tc = textColor();
-  var gr = gridColor();
-
-  // Waterfall: each pool shows stacked fees (green) and IL/loss (red), with net marker
-  var pools = [
-    { l:'ARB/USDC', fees:335, il:0,    net:335  },
-    { l:'RDNT/ETH', fees:180, il:0,    net:180  },
-    { l:'ARB/USDT', fees:73,  il:0,    net:73   },
-    { l:'MSTR/ETH', fees:36,  il:0,    net:36   },
-    { l:'ETH/USDT', fees:34,  il:0,    net:34   },
-    { l:'SOL/USDC', fees:23,  il:0,    net:23   },
-    { l:'ETH/USDC', fees:22,  il:0,    net:22   },
-    { l:'ETH/Base', fees:16,  il:0,    net:16   },
-    { l:'XAI/WETH', fees:7,   il:21,   net:-14  },
-    { l:'PEANUT',   fees:0,   il:243,  net:-243 },
-    { l:'SOL/GRIFT',fees:1389,il:1899, net:-1510},
-  ];
-
-  // Sort by net descending
-  pools.sort(function(a,b) { return b.net - a.net; });
-
-  var labels  = pools.map(function(p) { return p.l; });
-  var fees    = pools.map(function(p) { return p.fees; });
-  var losses  = pools.map(function(p) { return -(p.il + Math.max(0, -p.net - p.il)); });
-  var netLine = pools.map(function(p) { return p.net; });
-
-  waterfallChart = new Chart(canvas, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Taxas',
-          data: fees,
-          backgroundColor: 'rgba(74,124,63,0.75)',
-          borderRadius: 3, borderWidth: 0,
-        },
-        {
-          label: 'IL / Perda',
-          data: losses,
-          backgroundColor: 'rgba(185,64,64,0.70)',
-          borderRadius: 3, borderWidth: 0,
-        },
-        {
-          label: 'Net',
-          data: netLine,
-          type: 'line',
-          borderColor: dk ? '#c9a050' : '#8a6820',
-          backgroundColor: 'transparent',
-          borderWidth: 2,
-          borderDash: [4,3],
-          pointRadius: 4,
-          pointBackgroundColor: netLine.map(function(v) { return v >= 0 ? '#4a7c3f' : '#b94040'; }),
-          pointBorderColor: dk ? '#1e1e28' : '#faf6ef',
-          pointBorderWidth: 1.5,
-          tension: 0.3,
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(ctx) {
-              if (ctx.dataset.label === 'Net') return ' Net: $' + ctx.raw;
-              if (ctx.dataset.label === 'IL / Perda') return ' IL/Perda: $' + Math.abs(ctx.raw);
-              return ' Taxas: $' + ctx.raw;
-            }
-          }
-        }
-      },
-      scales: {
-        x: { stacked: true, ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, border: { display: false } },
-        y: { stacked: true, ticks: { color: tc, font: { size: 9 }, callback: function(v) { return '$' + v; } }, grid: { color: gr }, border: { display: false } }
-      }
-    }
-  });
-}
-
-// Auto-build on load
-document.addEventListener('DOMContentLoaded', function() {
-  if (window.Chart) {
-    buildRanking();
-    buildWaterfall();
-  } else {
-    loadChartJs(function() { buildRanking(); buildWaterfall(); });
-  }
-});
-
-// ══════════════════════════════════════════════════════════
 // CHART: GANTT DE POOLS — TIMELINE HORIZONTAL
 // ══════════════════════════════════════════════════════════
 (function buildGantt() {
@@ -2950,45 +2808,7 @@ function buildProjChart() {
  setInterval(updateTicker, 60000);
  setInterval(updateGas, 30000);
 
- }); // end loadChartJs
-}); // end DOMContentLoaded
-</script>
 
-
-<script>
-// ── MOEDA USD / BRL (pools) ──
-window.currentCurrency = localStorage.getItem('bc-currency') || 'USD';
-window.usdBrlRate = 5.33;
-(async function fetchRate(){
- try{
- const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
- const d = await r.json();
- if(d.rates && d.rates.BRL) usdBrlRate = d.rates.BRL;
- }catch(e){}
-})();
-function toggleCurrency(){
- currentCurrency = currentCurrency==='USD'?'BRL':'USD';
- localStorage.setItem('bc-currency', currentCurrency);
- const btn = document.getElementById('currencyBtn');
- if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
- document.querySelectorAll('[data-usd]').forEach(el=>{
- const v = parseFloat(el.getAttribute('data-usd'));
- if(isNaN(v)) return;
- if(currentCurrency==='BRL'){
- el.textContent = 'R$ '+( v*usdBrlRate).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
- } else {
- el.textContent = '$'+ v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
- }
- });
-}
-document.addEventListener('DOMContentLoaded',()=>{
- const btn=document.getElementById('currencyBtn');
- if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
-});
-
-// ══════════════════════════════════════════════════════
-// SHARPE RATIO + BREAKEVEN — run after DOM ready
-// ══════════════════════════════════════════════════════
 
 // ══ FCR RANKING — HORIZONTAL BAR ════════════════════════════════════════
 (function buildFCR() {
@@ -3362,27 +3182,13 @@ document.addEventListener('DOMContentLoaded',()=>{
  setTimeout(() => renderHeatmap(heatMode), 50);
  };
 })();
-}); // end DOMContentLoaded for Sharpe+Breakeven
 
-// ── Mobile Nav Toggle ──
-function toggleMobileNav(){
- const nl = document.querySelector('.nav-links');
- if(nl) nl.classList.toggle('open');
-}
-// Close nav when link clicked
-document.addEventListener('DOMContentLoaded',function(){
- document.querySelectorAll('.nav-links a').forEach(function(a){
- a.addEventListener('click',function(){
- const nl=document.querySelector('.nav-links');
- if(nl) nl.classList.remove('open');
- });
- });
-});
-
-
-
-
+   }); // end loadChartJs
+}); // end DOMContentLoaded
 </script>
+
+
+
 <script>
 // ══════════════════════════════════════════════════════════════════
 // BAROLO CAPITAL — AUTO-FETCH MULTI-WALLET MODULE
