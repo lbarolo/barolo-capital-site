@@ -736,7 +736,7 @@ footer span:first-of-type{margin-right:auto}
       </div>
       <div class="hero-divider"></div>
       <div>
-        <div class="hero-stat-val">+654%</div>
+        <div class="hero-stat-val" id="heroReturn">+654%</div>
         <div class="hero-stat-lbl">Total return</div>
       </div>
       <div class="hero-divider"></div>
@@ -840,7 +840,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png" alt="ETH" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">Ethereum</div>
-          <div class="token-ticker">ETH · 2.08</div>
+          <div class="token-ticker">ETH</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -849,7 +849,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/4128/large/solana.png" alt="SOL" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">Solana</div>
-          <div class="token-ticker">SOL · 20.31</div>
+          <div class="token-ticker">SOL</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -858,7 +858,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/975/large/cardano.png" alt="ADA" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">Cardano</div>
-          <div class="token-ticker">ADA · 375.2</div>
+          <div class="token-ticker">ADA</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -867,7 +867,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/37441/large/eigencloud.jpg" alt="EIGEN" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">EigenLayer</div>
-          <div class="token-ticker">EIGEN · 153.3</div>
+          <div class="token-ticker">EIGEN</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -876,7 +876,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/26536/large/Radiant-Logo-200x200.png" alt="RDNT" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">Radiant</div>
-          <div class="token-ticker">RDNT · 7,290</div>
+          <div class="token-ticker">RDNT</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -885,7 +885,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/32440/large/polygon.png" alt="POL" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">POL</div>
-          <div class="token-ticker">POL · 218</div>
+          <div class="token-ticker">POL</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -894,7 +894,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/38043/large/ZKTokenBlack.png" alt="ZK" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">ZKsync</div>
-          <div class="token-ticker">ZK · 876</div>
+          <div class="token-ticker">ZK</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -903,7 +903,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/34258/large/xai.png" alt="XAI" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">Xai</div>
-          <div class="token-ticker">XAI · 692.8</div>
+          <div class="token-ticker">XAI</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -912,7 +912,7 @@ footer span:first-of-type{margin-right:auto}
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/26718/large/Twitter_icon.png" alt="ZETA" onerror="this.style.display='none'">
         <div class="token-info">
           <div class="token-name">ZetaChain</div>
-          <div class="token-ticker">ZETA · 51.1</div>
+          <div class="token-ticker">ZETA</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -1107,41 +1107,84 @@ function toggleMobile() {
 }
 
 // ══════════════════════════════════
-// TICKER
+// TICKER + RETORNO AO VIVO
 // ══════════════════════════════════
 (function initTicker() {
-  var ASSETS = [
-    { sym: 'BTC',  id: 'bitcoin' },
-    { sym: 'ETH',  id: 'ethereum' },
-    { sym: 'SOL',  id: 'solana' },
-    { sym: 'ADA',  id: 'cardano' },
+  // Tokens exibidos no ticker
+  var TICKER_ASSETS = [
+    { sym: 'BTC', id: 'bitcoin' },
+    { sym: 'ETH', id: 'ethereum' },
+    { sym: 'SOL', id: 'solana' },
+    { sym: 'ADA', id: 'cardano' },
   ];
+
+  // Portfólio interno para cálculo de retorno (quantidades não exibidas)
+  var HOLDINGS = [
+    { id: 'ethereum',       qty: 2.084106,      invested: 4433.16 },
+    { id: 'solana',         qty: 20.31134268,   invested: 2201.68 },
+    { id: 'cardano',        qty: 375.245,        invested: 530.95  },
+    { id: 'eigenlayer',     qty: 153.363,        invested: 45.87   },
+    { id: 'radiant-capital',qty: 7290.46,        invested: 0       },
+    { id: 'matic-network',  qty: 218,            invested: 143.88  },
+    { id: 'zksync',         qty: 876,            invested: 0       },
+    { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
+    { id: 'zetachain',      qty: 51.1434,        invested: 0       },
+  ];
+  var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
+  var STABLES_USD    = 1950.55;  // USDT 1650 + USDS 300.55
+  var LP_POOLED      = 365;
+  var TOTAL_DEBT     = 1553.20;  // AAVE 747.50 + Kamino 805.70
+
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
 
-  function fmt(n) { return n >= 1000 ? '$' + n.toLocaleString('en-US', {minimumFractionDigits:0,maximumFractionDigits:0}) : '$' + n.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmt(n) {
+    return n >= 1000
+      ? '$' + n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0})
+      : '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
 
   function renderTicker(prices) {
-    var items = ASSETS.map(function(a) {
-      var p = prices[a.id] || FALLBACK[a.id];
+    var items = TICKER_ASSETS.map(function(a) {
+      var p  = prices[a.id] || FALLBACK[a.id];
       var ch = prices[a.id + '_change'] || 0;
       var chClass = ch >= 0 ? 't-up' : 't-dn';
-      var chSign = ch >= 0 ? '+' : '';
+      var chSign  = ch >= 0 ? '+' : '';
       return '<div class="ticker-item"><span class="t-sym">' + a.sym + '</span><span class="t-val">' + fmt(p) + '</span><span class="' + chClass + '">' + chSign + ch.toFixed(2) + '%</span></div>';
     });
-    // duplicate for seamless loop
     var html = items.join('') + items.join('');
     var track = document.getElementById('tickerTrack');
     if (track) track.innerHTML = html;
   }
 
+  function updateHeroReturn(prices) {
+    var spotVal = HOLDINGS.reduce(function(s, h) {
+      var p = prices[h.id];
+      return p ? s + h.qty * p : s;
+    }, 0);
+    var netWorth = spotVal + STABLES_USD + LP_POOLED - TOTAL_DEBT;
+    var roi = ((netWorth - TOTAL_INVESTED) / TOTAL_INVESTED) * 100;
+    var el = document.getElementById('heroReturn');
+    if (el && isFinite(roi)) {
+      el.textContent = (roi >= 0 ? '+' : '') + Math.round(roi) + '%';
+    }
+  }
+
+  // IDs de todos os tokens para fetch (ticker + portfolio)
+  var allIds = Array.from(new Set(
+    TICKER_ASSETS.map(function(a){ return a.id; }).concat(HOLDINGS.map(function(h){ return h.id; }))
+  )).join(',');
+
   async function fetchTicker() {
     try {
-      var ids = ASSETS.map(function(a){ return a.id; }).join(',');
-      var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=usd&include_24hr_change=true', { signal: AbortSignal.timeout(6000) });
+      var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + allIds + '&vs_currencies=usd&include_24hr_change=true', { signal: AbortSignal.timeout(8000) });
       var d = await r.json();
       var prices = {};
-      Object.keys(d).forEach(function(id) { prices[id] = d[id].usd; prices[id + '_change'] = d[id].usd_24h_change || 0; });
+      Object.keys(d).forEach(function(id) {
+        prices[id] = d[id].usd;
+        prices[id + '_change'] = d[id].usd_24h_change || 0;
+      });
       renderTicker(prices);
+      updateHeroReturn(prices);
     } catch(e) {
       renderTicker({});
     }
