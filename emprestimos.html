@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml"><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>">
+<script>
+// Theme init — runs before render to avoid flash
+(function(){
+ var t=localStorage.getItem('bc-theme');
+ if(t) document.documentElement.setAttribute('data-theme',t);
+})();
+</script><link rel="canonical" href="/emprestimos">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barolo Capital · Empréstimos</title>
+</head>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+ --bg:#f2ece0;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;
+ --accent:#8a6820;--gold:#c9a050;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a7020;
+ --text:#16110c;--muted:#7a6a50;--card-shadow:0 1px 4px rgba(22,17,12,0.08);
+}
+[data-theme="dark"]{
+ --bg:#17171f;--surface:#1e1e28;--surface2:#232330;--border:#2e2a3a;
+ --accent:#c9a050;--gold:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;
+ --text:#e8e0d0;--muted:#8a7a60;--card-shadow:0 2px 8px rgba(0,0,0,0.3);
+}
+body{background:var(--bg);color:var(--text);font-family:'Satoshi',sans-serif;font-size:13px;min-height:100vh;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(242,236,224,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+[data-theme="dark"] nav{background:rgba(23,23,31,0.96);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-links{display:flex;gap:2px;}
+.nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a.active{color:var(--accent);background:rgba(138,104,32,0.1);border:1px solid rgba(138,104,32,0.25);}
+[data-theme="dark"] .nav-links a.active{background:rgba(201,160,80,0.1);border-color:rgba(201,160,80,0.25);}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:all .2s;}
+.btn-sm:hover{color:var(--accent);border-color:var(--accent);}
+
+/* LAYOUT */
+.container{max-width:1280px;margin:0 auto;padding:70px 24px 100px;}
+.section-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:36px 0 20px;padding:0 0 12px 14px;border-left:2px solid var(--accent);font-weight:400;}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;box-shadow:var(--card-shadow);}
+.kpi-lbl{font-size:7.5px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:6px;}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;line-height:1;}
+.kpi-sub{font-size:8px;color:var(--muted);margin-top:5px;}
+
+/* PROTOCOL GRID */
+.proto-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.proto-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--card-shadow);}
+.proto-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.proto-name{font-family:'Satoshi',serif;font-size:17px;font-weight:700;letter-spacing:.05em;}
+.proto-body{padding:18px 20px;}
+.proto-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.proto-row:last-child{border-bottom:none;padding-bottom:0;}
+.pl{color:var(--muted);}
+.pv{font-family:'JetBrains Mono',monospace;font-weight:600;text-align:right;}
+.bar-wrap{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin:4px 0 2px;}
+.bar-fill{height:100%;border-radius:3px;transition:width .8s ease;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:8px;border-radius:3px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-weight:500;letter-spacing:.05em;}
+.badge-open {background:rgba(138,104,32,0.15);color:var(--accent);border:1px solid rgba(138,104,32,0.3);}
+.badge-closed{background:rgba(74,124,63,0.15);color:var(--green);border:1px solid rgba(74,124,63,0.3);}
+.badge-liq {background:rgba(156,42,42,0.15);color:var(--red);border:1px solid rgba(156,42,42,0.3);}
+[data-theme="dark"] .badge-open {background:rgba(201,160,80,0.12);color:#c9a050;border-color:rgba(201,160,80,0.25);}
+[data-theme="dark"] .badge-closed{background:rgba(63,185,80,0.12);color:#3fb950;border-color:rgba(63,185,80,0.25);}
+[data-theme="dark"] .badge-liq {background:rgba(248,81,73,0.12);color:#f85149;border-color:rgba(248,81,73,0.25);}
+
+/* PANEL */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;box-shadow:var(--card-shadow);}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.panel-title{font-family:'Satoshi',serif;font-size:15px;font-weight:700;}
+.panel-sub{font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-top:1px;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:11px;}
+thead th{font-size:8px;letter-spacing:1.2px;color:var(--muted);text-transform:uppercase;padding:9px 16px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface2);font-weight:500;font-family:'JetBrains Mono',monospace;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--surface2);}
+td{padding:10px 16px;vertical-align:middle;}
+.td-mono{font-family:'JetBrains Mono',monospace;font-weight:500;}
+
+/* COLLATERAL BARS */
+.coll-list{padding:16px 20px 20px;}
+.coll-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.coll-date{font-size:8.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;width:76px;flex-shrink:0;text-align:right;}
+.coll-track{flex:1;height:20px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.coll-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:8px;font-size:8.5px;font-family:'JetBrains Mono',monospace;font-weight:600;color:rgba(255,255,255,0.85);white-space:nowrap;transition:width .7s ease;}
+.coll-meta{font-size:8.5px;font-family:'JetBrains Mono',monospace;width:120px;flex-shrink:0;text-align:right;}
+
+/* TIMELINE */
+.tl-wrap{padding:20px 24px 8px;}
+.tl-row{display:flex;gap:0;}
+.tl-date-col{width:96px;flex-shrink:0;padding-top:2px;}
+.tl-date{font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;line-height:1.4;}
+.tl-proto{font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.tl-spine{width:22px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:2px solid;flex-shrink:0;margin-top:2px;z-index:1;}
+.tl-dot.borrow{border-color:var(--red); background:rgba(156,42,42,0.2);}
+.tl-dot.repay {border-color:var(--green);background:rgba(74,124,63,0.2);}
+.tl-dot.supply{border-color:var(--accent);background:rgba(138,104,32,0.15);}
+.tl-dot.liq {border-color:var(--red); background:var(--red);}
+.tl-line{width:2px;background:var(--border);flex:1;min-height:16px;}
+.tl-content{flex:1;padding:0 0 18px 12px;}
+.tl-amount{font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.tl-detail{font-size:9px;color:var(--muted);margin-top:1px;}
+
+/* INSIGHT PAIR */
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;box-shadow:var(--card-shadow);}
+.insight-title{font-family:'Satoshi',serif;font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.insight-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.insight-row:last-child{border-bottom:none;}
+.insight-total{padding-top:12px;margin-top:4px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.insight-total-lbl{font-family:'Satoshi',sans-serif;font-size:11px;font-weight:400;color:var(--muted);}
+
+/* CHART */
+.chart-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;box-shadow:var(--card-shadow);}
+.chart-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;flex-wrap:wrap;gap:8px;}
+.chart-panel-title{font-family:'Satoshi',serif;font-size:15px;font-weight:700;color:var(--text);}
+.chart-panel-sub{font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-top:1px;}
+.chart-body{padding:14px 18px 18px;}
+
+/* TICKER */
+.market-ticker{position:fixed;bottom:0;left:0;right:0;z-index:90;height:30px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:9px;}
+.ticker-inner{display:flex;gap:32px;animation:ticker-scroll 50s linear infinite;white-space:nowrap;padding-left:100%;}
+@keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.t-item{display:flex;align-items:center;gap:5px;}
+.t-sym{color:var(--accent);font-weight:600;}
+.t-chg.pos{color:var(--green);}.t-chg.neg{color:var(--red);}
+.t-sep{color:var(--border);margin:0 4px;}
+
+/* UTILS */
+.pos{color:var(--green);}.neg{color:var(--red);}.acc{color:var(--accent);}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+ .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
+ background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
+ [data-theme="dark"] .nav-links{background:rgba(23,23,31,.98);}
+ .nav-links.open{display:flex;}
+ .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+ .nav-links a:last-child{border-bottom:none;}
+ .nav-hamburger{display:flex;}
+}
+@media(min-width:769px){.nav-hamburger{display:none!important;}}
+.nav-hamburger{background:none;border:1px solid var(--border);border-radius:4px;
+ padding:5px 9px;cursor:pointer;flex-direction:column;gap:4px;align-items:center;justify-content:center;}
+.nav-hamburger span{display:block;width:16px;height:1.5px;background:var(--muted);transition:all .25s;}
+
+/* ── DESIGN SYSTEM PATCH — Professional Redesign ── */
+/* Remove all decorative pill badges default glow */
+.badge { border-radius: 2px !important; font-size: 8px !important; letter-spacing: .18em !important; }
+
+/* Section labels — cleaner, editorial */
+.section-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .32em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  padding: 0 0 10px 0 !important;
+  margin: 28px 0 14px !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-weight: 400 !important;
+  background: none !important;
+}
+[data-theme="light"] .section-label { color: var(--muted) !important; border-bottom-color: var(--border) !important; }
+
+/* Chart titles */
+.chart-title {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .22em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  font-weight: 400 !important;
+  margin-bottom: 14px !important;
+}
+
+/* Tab system — clean underline style */
+.tabs {
+  display: flex !important;
+  gap: 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  margin-bottom: 24px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  background: none !important;
+}
+.tabs::-webkit-scrollbar { display: none !important; }
+.tab {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  padding: 10px 18px !important;
+  cursor: pointer !important;
+  transition: color .2s, border-color .2s !important;
+  white-space: nowrap !important;
+}
+.tab:hover { color: var(--text) !important; }
+.tab.active {
+  color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+  background: none !important;
+}
+
+/* Period buttons — clean */
+.period-btn, .chart-type-btn {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .16em !important;
+  text-transform: uppercase !important;
+  padding: 5px 10px !important;
+  background: none !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  transition: all .18s !important;
+}
+.period-btn:hover, .chart-type-btn:hover { color: var(--text) !important; border-color: var(--muted) !important; }
+.period-btn.active, .chart-type-btn.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--bg) !important;
+}
+
+/* Cards — more refined */
+.card {
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+}
+.stat-card {
+  border-radius: 0 !important;
+}
+.defi-card {
+  border-radius: 0 !important;
+}
+.hero-card {
+  border-radius: 0 !important;
+}
+
+/* Btn-sm — tighter, cleaner */
+.btn-sm {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  padding: 5px 10px !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Lang button accent */
+.lang-btn { color: var(--accent) !important; border-color: var(--accent) !important; }
+.lang-btn:hover { background: var(--accent) !important; color: var(--bg) !important; }
+
+/* Stat labels — cleaner */
+.stat-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  letter-spacing: .24em !important;
+  text-transform: uppercase !important;
+}
+
+/* Hero label */
+.hero-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .28em !important;
+}
+
+/* Pool table headers */
+.tbl-hdr {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  letter-spacing: .22em !important;
+}
+
+/* Remove all box-shadow decorations */
+.defi-card, .card, .stat-card { box-shadow: none !important; }
+
+
+/* Nav professional polish */
+nav { border-bottom: 1px solid var(--border) !important; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9.5px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  text-decoration: none !important;
+  padding: 0 14px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: color .2s !important;
+  border-bottom: 2px solid transparent !important;
+}
+.nav-links a:hover { color: var(--text) !important; }
+.nav-links a.active { color: var(--accent) !important; border-bottom-color: var(--accent) !important; }
+
+/* Defi card header font */
+.defi-proto {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+}
+
+
+/* Nav link spacing fix */
+.nav-links a { padding: 0 16px !important; letter-spacing: .18em !important; }
+.nav-links { gap: 0 !important; }
+
+
+/* Section label — more breathing room from border */
+.section-label {
+  margin: 32px 0 18px !important;
+  padding: 0 0 10px 12px !important;
+  border-left: 2px solid var(--accent) !important;
+  border-bottom: none !important;
+  font-size: 9px !important;
+  letter-spacing: .32em !important;
+}
+/* Nav links — more padding so text doesn't hug the active line */
+.nav-links a {
+  padding: 0 18px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+
+/* Section label spacing fix */
+.section-label {
+  margin-top: 32px !important;
+  margin-bottom: 16px !important;
+  padding-top: 0 !important;
+}
+.container > .section-label:first-child,
+.section-label:first-of-type {
+  margin-top: 24px !important;
+}
+/* Card inner spacing */
+.card { padding: 16px 18px !important; }
+
+
+/* Satoshi universal font override */
+*, *::before, *::after {
+  font-family: inherit;
+}
+body, input, button, select, textarea {
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+/* Keep monospace for data/numbers */
+.mono, code, pre, kbd,
+[style*="JetBrains"],
+[class*="mono"] {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+}
+/* Keep explicitly set monospace classes */
+.hero-value, .stat-value, .hero-meta-val,
+.badge, .nav-links a, .btn-sm, .section-label,
+.chart-title, .period-btn, .chart-type-btn,
+.tab, .stat-label, .hero-label {
+  font-family: 'Satoshi', sans-serif !important;
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+ <a class="nav-brand" href="portfolio_analytics.html">
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21">
+ <defs><linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+ <stop offset="0%" stop-color="transparent"/>
+ <stop offset="18%" stop-color="#c9a050"/>
+ <stop offset="82%" stop-color="#c9a050"/>
+ <stop offset="100%" stop-color="transparent"/>
+ </linearGradient></defs>
+ <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+ <text x="105" y="20" font-family="Satoshi, serif" font-weight="600" font-size="14" letter-spacing="3" fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+ <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+ </svg>
+ </a>
+ <div class="nav-links">
+ <a href="index.html" data-i18n="nav-home">Início</a>
+ <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
+ <a href="pools.html" data-i18n="nav-pools">Pools &amp; DeFi</a>
+ <a href="emprestimos.html" class="active" data-i18n="nav-loans">Empréstimos</a>
+ <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
+
+ </div>
+ <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+ <div style="display:flex;align-items:center;gap:8px;">
+ <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
+ <button class="btn-sm lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+ <button class="btn-sm" onclick="toggleTheme()">☾</button>
+ </div>
+</nav>
+
+<div class="container">
+<!-- ══ POSIÇÕES ATIVAS ══ -->
+<div class="section-label">Posições Ativas — DeFi</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+
+  <!-- AAVE V4 -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <!-- Header -->
+    <div style="background:var(--surface2);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#b6509e;flex-shrink:0;"></div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#b6509e;">AAVE V4</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:var(--muted);margin-top:1px;">ETHEREUM MAINNET · ETH LOOP</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--green);"></div>
+        <span class="badge badge-open">● ABERTO</span>
+      </div>
+    </div>
+    <!-- Supply / Borrow -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);">
+      <div style="padding:14px 18px;border-right:1px solid var(--border);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:var(--green);margin-bottom:8px;">↑ SUPPLY</div>
+        <div id="em-aave-supply" data-usd="5718" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--green);line-height:1;">$5,718</div>
+        <div id="em-aave-supply-detail" style="font-size:9px;color:var(--muted);margin-top:7px;line-height:1.8;">
+          <span id="em-aave-weth-qty">1.88</span> WETH <span style="color:var(--text);">·</span> <span id="em-aave-eth-usd">$3,100</span><br>
+          <span id="em-aave-usdt-qty">1,650</span> USDT <span style="color:var(--text);">·</span> <span id="em-aave-usdt-usd">$1,650</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">APY: WETH <span id="em-aave-weth-apy">1.25%</span> · USDT <span id="em-aave-usdt-apy">1.87%</span></div>
+      </div>
+      <div style="padding:14px 18px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:var(--red);margin-bottom:8px;">↓ BORROW</div>
+        <div id="em-aave-borrow" data-usd="747.50" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">$747.50</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:7px;line-height:1.8;">
+          <span id="em-aave-borrow-qty">747.50</span> <span id="em-aave-borrow-token">GHO</span><br>
+          APY borrow: <span id="em-aave-borrow-apy">3.84%</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">Borrow power: <span id="em-aave-borrow-power">16.55%</span></div>
+      </div>
+    </div>
+    <!-- Métricas -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);">
+      <div style="padding:10px 0;border-right:1px solid var(--border);text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">NET WORTH</div>
+        <div id="em-aave-net" data-usd="4971" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text);">$4,971</div>
+      </div>
+      <div style="padding:10px 0;border-right:1px solid var(--border);text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">HEALTH FACTOR</div>
+        <div id="em-aave-hf" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green);">6.24</div>
+      </div>
+      <div style="padding:10px 0;border-right:1px solid var(--border);text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">LTV ATUAL</div>
+        <div id="em-aave-ltv-pct" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green);">13.2%</div>
+      </div>
+      <div style="padding:10px 0;text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">NET APY</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green);">+1.48%</div>
+      </div>
+    </div>
+    <!-- LTV bar -->
+    <div style="padding:10px 18px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--muted);margin-bottom:5px;">
+        <span>LTV atual <b id="em-aave-ltv-lbl" style="color:var(--green);">13.2%</b></span>
+        <span>Liquidação em <b style="color:var(--red);">82.5%</b></span>
+      </div>
+      <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;position:relative;">
+        <div id="em-aave-ltv-fill" style="height:100%;width:13.2%;background:var(--green);border-radius:3px;"></div>
+        <div style="position:absolute;top:0;bottom:0;left:82.5%;width:1px;background:var(--red);opacity:.5;"></div>
+      </div>
+    </div>
+    <!-- Estratégia -->
+    <div style="padding:10px 18px;font-size:8.5px;color:var(--muted);line-height:1.7;">
+      <span style="color:var(--accent);font-weight:600;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">ESTRATÉGIA</span> — ETH loop: supply ETH como colateral → borrow stables → compra mais ETH. USDT $1,650 como colateral adicional. Ciclo A3 em aberto desde Set/25.
+    </div>
+  </div>
+
+  <!-- KAMINO -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <!-- Header -->
+    <div style="background:var(--surface2);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#9945ff;flex-shrink:0;"></div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#9945ff;">KAMINO FINANCE</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:var(--muted);margin-top:1px;">SOLANA · SOL LOOP + POOL FUNDING</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--green);"></div>
+        <span class="badge badge-open">● ABERTO</span>
+      </div>
+    </div>
+    <!-- Supply / Borrow -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);">
+      <div style="padding:14px 18px;border-right:1px solid var(--border);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:var(--green);margin-bottom:8px;">↑ SUPPLY</div>
+        <div id="em-kamino-supply" data-usd="2050" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--green);line-height:1;">$2,050</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:7px;line-height:1.8;">
+          <span id="em-kamino-sol-qty">19.37</span> SOL <span style="color:var(--text);">·</span> <span id="em-kamino-sol-usd">$1,680</span><br>
+          <span id="em-kamino-usds-qty">300.55</span> USDS <span style="color:var(--text);">·</span> <span id="em-kamino-usds-usd">$301</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">APY: SOL <span id="em-kamino-sol-apy">3.19%</span> · USDS <span id="em-kamino-usds-apy">3.69%</span></div>
+      </div>
+      <div style="padding:14px 18px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:var(--red);margin-bottom:8px;">↓ BORROW</div>
+        <div id="em-kamino-borrow" data-usd="805.70" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">$805.70</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:7px;line-height:1.8;">
+          <span id="em-kamino-borrow-qty">805.70</span> USDC<br>
+          APY borrow: <span id="em-kamino-borrow-apy">4.09%</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">Liq. price SOL: <span id="em-kamino-liq">$35.77</span></div>
+      </div>
+    </div>
+    <!-- Métricas -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);">
+      <div style="padding:10px 0;border-right:1px solid var(--border);text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">NET VALUE</div>
+        <div id="em-kamino-net" data-usd="1250" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text);">$1,250</div>
+      </div>
+      <div style="padding:10px 0;border-right:1px solid var(--border);text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">LTV ATUAL</div>
+        <div id="em-kamino-ltv-pct" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green);">39.22%</div>
+      </div>
+      <div style="padding:10px 0;border-right:1px solid var(--border);text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">LIQ. LTV</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--yellow,#c9a050);">77.20%</div>
+      </div>
+      <div style="padding:10px 0;text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;">NET APY</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green);">+3.83%</div>
+      </div>
+    </div>
+    <!-- LTV bar -->
+    <div style="padding:10px 18px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--muted);margin-bottom:5px;">
+        <span>LTV atual <b id="em-kamino-ltv-lbl" style="color:var(--green);">39.22%</b></span>
+        <span>Liquidação em <b style="color:var(--red);">77.20%</b></span>
+      </div>
+      <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;position:relative;">
+        <div id="em-kamino-ltv-fill" style="height:100%;width:50.8%;background:var(--green);border-radius:3px;"></div>
+        <div style="position:absolute;top:0;bottom:0;left:100%;width:1px;background:var(--red);opacity:.5;"></div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);margin-top:3px;text-align:right;">SOL a <span id="em-kamino-liq2">$35.77</span> → liquidação</div>
+    </div>
+    <!-- Estratégia -->
+    <div style="padding:10px 18px;font-size:8.5px;color:var(--muted);line-height:1.7;">
+      <span style="color:var(--accent);font-weight:600;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">ESTRATÉGIA</span> — SOL loop: supply SOL como colateral → borrow USDC → financia pools LP. Ciclo K4 em aberto desde Jan/26. Repagos parciais via taxas coletadas.
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- ══ KPI ══ -->
+<div class="section-label">Visão Geral — Histórico de Empréstimos DeFi</div>
+<div class="kpi-row">
+ <div class="kpi-card">
+ <div class="kpi-lbl">Total Emprestado</div>
+ <div class="kpi-val" data-usd="4538" style="color:#3a7ec8;">$4,538</div>
+ <div class="kpi-sub">AAVE $2,731 · Kamino $1,807</div>
+ </div>
+ <div class="kpi-card">
+ <div class="kpi-lbl">Total Repago</div>
+ <div class="kpi-val" data-usd="3068" style="color:var(--green);">$3,068</div>
+ <div class="kpi-sub">Ciclos fechados + parciais</div>
+ </div>
+ <div class="kpi-card">
+ <div class="kpi-lbl">Dívida em Aberto</div>
+ <div id="em-kpi-debt" class="kpi-val" data-usd="1553" style="color:var(--accent);">$1,553</div>
+ <div class="kpi-sub">AAVE $748 · Kamino $806</div>
+ </div>
+ <div class="kpi-card">
+ <div class="kpi-lbl">Juros Pagos (est.)</div>
+ <div class="kpi-val" style="color:var(--red);">~$47</div>
+ <div class="kpi-sub">Ciclos encerrados confirmados</div>
+ </div>
+ <div class="kpi-card">
+ <div class="kpi-lbl">Colateral Total</div>
+ <div class="kpi-val" data-usd="7769">$7,769</div>
+ <div class="kpi-sub">1.87 ETH + 1,653 USDT + 19.33 SOL + 300 USDS</div>
+ </div>
+</div>
+
+
+<!-- ══ COLATERAL HISTORY ══ -->
+<div class="section-label">Colateral — Entradas de ETH no AAVE (cronológico)</div>
+<div class="panel">
+ <div class="panel-hdr">
+ <div>
+ <div class="panel-title">ETH acumulado como colateral — AAVE V4</div>
+ <div class="panel-sub">SUPPLY CRONOLÓGICO · VERDE = ENTRADA ABAIXO DO PREÇO ATUAL · VERMELHO = ACIMA</div>
+ </div>
+ <div style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">
+ Preço atual ETH: <span class="neg" id="ethNow">$2.065</span>
+ </div>
+ </div>
+ <div class="coll-list" id="collChart"></div>
+</div>
+
+<!-- ══ CICLOS TABLE ══ -->
+<div class="section-label">Ciclos de Empréstimo — Detalhamento</div>
+
+<div class="panel">
+ <div class="panel-hdr">
+ <div>
+ <div class="panel-title">Kamino — Ciclos USDC / SOL</div>
+ <div class="panel-sub">FEV 2025 – MAR 2026 · CSV DE TRANSAÇÕES</div>
+ </div>
+ </div>
+ <table>
+ <thead><tr>
+ <th>Ciclo</th><th>Período</th><th>Emprestado</th><th>Repago</th><th>Juros est.</th><th>Uso do capital</th><th>Status</th>
+ </tr></thead>
+ <tbody id="kamino-tbody">
+ <tr>
+ <td class="td-mono acc">#K1</td>
+ <td class="td-mono">Fev–Jun 2025</td>
+ <td class="td-mono neg">$1.237 USDC</td>
+ <td class="td-mono pos">$576 USDC</td>
+ <td class="td-mono" style="color:var(--muted);">—</td>
+ <td style="font-size:10px;color:var(--muted);">SOL/GRIFT pool · SOL/USDC pool · colateral adicional</td>
+ <td><span class="badge badge-closed">PARCIAL</span></td>
+ </tr>
+ <tr>
+ <td class="td-mono acc">#K2</td>
+ <td class="td-mono">Jun–Set 2025</td>
+ <td class="td-mono neg">$320 USDC</td>
+ <td class="td-mono pos">$554 USDC</td>
+ <td class="td-mono neg">≈ $17</td>
+ <td style="font-size:10px;color:var(--muted);">SOL/USDC pool · repagos via taxas das pools</td>
+ <td><span class="badge badge-closed">FECHADO</span></td>
+ </tr>
+ <tr>
+ <td class="td-mono acc">#K3</td>
+ <td class="td-mono">Set–Nov 2025</td>
+ <td class="td-mono neg">$250 USDC</td>
+ <td class="td-mono pos">$23 USDC</td>
+ <td class="td-mono" style="color:var(--muted);">acumulando</td>
+ <td style="font-size:10px;color:var(--muted);">ETH/USDT pool (Out) · parcial taxas SOL</td>
+ <td><span class="badge badge-open">● ABERTO</span></td>
+ </tr>
+ <tr>
+ <td class="td-mono acc">#K4</td>
+ <td class="td-mono">Jan 2026–hoje</td>
+ <td class="td-mono neg">$804.22</td>
+ <td class="td-mono pos">$8.65</td>
+ <td class="td-mono neg">3.18% APY</td>
+ <td style="font-size:10px;color:var(--muted);">19.33 SOL + 300.42 USDS supply · LTV 39.22% · Liq. $35.77/SOL</td>
+ <td><span class="badge badge-open">● ABERTO</span></td>
+ </tr>
+ </tbody>
+ </table>
+</div>
+
+<div class="panel" style="margin-bottom:14px;">
+ <div class="panel-hdr">
+ <div>
+ <div class="panel-title">AAVE — Ciclos GHO / USDT / USDC / USDG</div>
+ <div class="panel-sub">ETHEREUM MAINNET · ABR 2025 – MAR 2026</div>
+ </div>
+ </div>
+ <table>
+ <thead><tr>
+ <th>Ciclo</th><th>Período</th><th>Emprestado</th><th>Repago</th><th>Juros est.</th><th>ETH colateral</th><th>Status</th>
+ </tr></thead>
+ <tbody id="aave-tbody">
+ <tr>
+ <td class="td-mono acc">#A1</td>
+ <td class="td-mono">Abr–Jul 2025</td>
+ <td class="td-mono neg">$895 GHO</td>
+ <td class="td-mono pos">$332</td>
+ <td class="td-mono neg">≈ $20</td>
+ <td class="td-mono">+0.97 ETH @ $1.782</td>
+ <td><span class="badge badge-open">PARCIAL</span></td>
+ </tr>
+ <tr>
+ <td class="td-mono acc">#A2</td>
+ <td class="td-mono">Ago–Set 2025</td>
+ <td class="td-mono neg">$100 GHO</td>
+ <td class="td-mono pos">$300</td>
+ <td class="td-mono neg">≈ $5</td>
+ <td class="td-mono">+0.04 ETH @ $3.829</td>
+ <td><span class="badge badge-closed">FECHADO</span></td>
+ </tr>
+ <tr>
+ <td class="td-mono acc">#A3</td>
+ <td class="td-mono">Set 2025–hoje</td>
+ <td class="td-mono neg">$1.736 mix</td>
+ <td class="td-mono pos">$1.383</td>
+ <td class="td-mono neg">≈ $22</td>
+ <td class="td-mono">+1.88 WETH + 1650 USDT supply · HF 6.24</td>
+ <td><span class="badge badge-open">● ABERTO · $747</span></td>
+ </tr>
+ </tbody>
+ </table>
+</div>
+
+<!-- ══ P&L ══ -->
+<div class="section-label">P&L — Lucro Gerado pelo Alavancamento</div>
+<div class="insight-grid">
+
+ <div class="insight-card">
+ <div class="insight-title">Ciclos Fechados — Lucro Realizado</div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">Ciclo K2 — taxas pools via capital emprestado</span>
+ <span class="td-mono pos">+$23 est.</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">Ciclo A2 — ETH acumulado no colateral</span>
+ <span class="td-mono pos">+ETH realizado</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">Taxas pools financiadas pelo borrow (K1+K2)</span>
+ <span class="td-mono pos">+$233 est.</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">Juros pagos (ciclos confirmados)</span>
+ <span class="td-mono neg">−$47 est.</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">Níveis vermelhos gráfico (realizados)</span>
+ <span class="td-mono pos">Lucro realizado</span>
+ </div>
+ <div class="insight-total">
+ <span class="insight-total-lbl">Lucro líquido ciclos fechados (est.)</span>
+ <span class="pos">+$209 est.</span>
+ </div>
+ </div>
+
+ <div class="insight-card">
+ <div class="insight-title">⏳ Posições Abertas — P&L Latente</div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">1.87 ETH colateral AAVE · 20.31 SOL Kamino</span>
+ <span class="td-mono neg">−$659 ETH latente</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">18.6 SOL em supply Kamino</span>
+ <span class="td-mono" style="color:var(--muted);">em aberto</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">Dívida AAVE (USDC)</span>
+ <span class="td-mono neg">−$747</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);">Dívida Kamino (USDC)</span>
+ <span class="td-mono neg">−$804</span>
+ </div>
+ <div class="insight-row">
+ <span style="color:var(--muted);font-size:9px;font-style:italic;">Níveis verdes no gráfico = posições abertas aguardando venda</span>
+ <span class="td-mono acc">holding</span>
+ </div>
+ <div class="insight-total">
+ <span class="insight-total-lbl">Saldo total dívida aberta</span>
+ <span class="neg">−$1.550</span>
+ </div>
+ </div>
+
+</div>
+
+<div class="section-label">Evolução da Dívida Total</div>
+<div class="chart-panel">
+ <div class="chart-panel-hdr">
+ <div>
+ <div class="chart-panel-title">Dívida Acumulada vs Repagamentos — AAVE + Kamino</div>
+ <div class="chart-panel-sub">USD TOTAL · DADOS REAIS DO CSV · MENSAL</div>
+ </div>
+ </div>
+ <div class="chart-body">
+ <canvas id="chartDebt" height="160"></canvas>
+ </div>
+</div>
+
+<!-- ══ TIMELINE ══ -->
+<div class="section-label">Timeline — Todos os Eventos (CSV + Gráfico)</div>
+<div class="panel">
+ <div class="panel-hdr">
+ <div>
+ <div class="panel-title">Linha do Tempo Completa · Kamino + AAVE</div>
+ <div class="panel-sub">BORROWS · REPAYS · SUPPLIES · DADOS REAIS DO CSV</div>
+ </div>
+ <div style="display:flex;gap:16px;font-size:8.5px;color:var(--muted);">
+ <span><span style="color:var(--red);">●</span> Borrow</span>
+ <span><span style="color:var(--green);">●</span> Repay</span>
+ <span><span style="color:var(--accent);">●</span> Supply</span>
+ </div>
+ </div>
+ <div class="tl-wrap" id="timeline"></div>
+</div>
+
+<!-- ══ EVENTOS DO DIÁRIO DEFI ══ -->
+<div class="section-label" style="margin-top:32px;">Eventos Registrados no Diário DeFi</div>
+<div id="diary-events-wrap" style="margin-bottom:60px;">
+ <div id="diary-events-list" style="display:flex;flex-direction:column;gap:6px;">
+ <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);padding:16px;text-align:center;" id="diary-empty">
+ Nenhum evento de empréstimo registrado no Diário DeFi ainda.<br>
+ <span style="font-size:9px;">Registre em Ferramentas → Diário DeFi → tipo "Lending / Borrow"</span>
+ </div>
+ </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- TICKER -->
+<div class="market-ticker">
+ <div class="ticker-inner" id="tickerInner"></div>
+</div>
+
+<script>
+// ── THEME ──
+function toggleTheme(){
+ const h=document.documentElement;
+ h.setAttribute('data-theme', h.getAttribute('data-theme')==='dark'?'light':'dark');
+ setTimeout(redrawChart, 80);
+
+ localStorage.setItem('bc-theme',document.documentElement.getAttribute('data-theme'));
+
+  var btn=document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
+}
+var isDark=()=>document.documentElement.getAttribute('data-theme')==='dark';
+var gridColor=()=>isDark()?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
+var textColor=()=>isDark()?'#c9b99a':'#5a4030';
+
+// ── LIVE PRICES ──
+var liveEth=2079, liveSol=87;
+async function fetchPrices(){
+ try{
+ const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana&vs_currencies=usd&include_24hr_change=true');
+ const d=await r.json();
+ if(d.ethereum){ liveEth=d.ethereum.usd; updateEthUI(d.ethereum.usd, d.ethereum.usd_24h_change); }
+ if(d.solana) { liveSol=d.solana.usd; }
+ buildTicker(d);
+ buildCollChart(); // re-render bars with live price
+ }catch(e){ buildTicker(null); }
+}
+
+function updateEthUI(price, chg){
+ const sign=chg>=0?'+':'';
+ const col=chg>=0?'var(--green)':'var(--red)';
+ const el=document.getElementById('ethPricePv');
+ if(el) el.innerHTML=`<span style="color:${col};">$${price.toLocaleString('en-US',{maximumFractionDigits:0})} <span style="font-size:9px;">${sign}${chg.toFixed(1)}%</span></span>`;
+ const en=document.getElementById('ethNow');
+ if(en) en.textContent='$'+price.toLocaleString('en-US',{maximumFractionDigits:0});
+}
+
+// ── COLLATERAL BARS ──
+function buildCollChart(){
+ const entries=[
+ {date:'03/04/25', eth:0.316, price:1782.44, note:'Lote 1 — início loop'},
+ {date:'07/04/25', eth:0.270, price:1782.44, note:'Lote 2'},
+ {date:'16/04/25', eth:0.140, price:1782.44, note:'Lote 3'},
+ {date:'06/05/25', eth:0.086, price:1782.44, note:'Lote 4'},
+ {date:'31/05/25', eth:0.059, price:1782.44, note:'Lote 5'},
+ {date:'02/06/25', eth:0.056, price:1782.44, note:'Lote 6'},
+ {date:'13/06/25', eth:0.043, price:1782.44, note:'Lote 7'},
+ {date:'11/10/25', eth:0.040, price:3829.66, note:'Lote 8 — ETH @$3.829'},
+ {date:'21/01/26', eth:0.923, price:2975.94, note:'Lote 9 — maior entrada'},
+ {date:'22/01/26', eth:0.007, price:2940.84, note:'Lote 10'},
+ {date:'30/01/26', eth:0.026, price:2722.49, note:'Lote 11'},
+ {date:'10/02/26', eth:0.035, price:2016.34, note:'Lote 12 — recente'},
+ ];
+ const maxUsd=Math.max(...entries.map(e=>e.eth*e.price));
+ const cur=liveEth;
+ const c=document.getElementById('collChart');
+ if(!c) return;
+
+ let cumEth=0, cumUsdIn=0;
+ let html='';
+ entries.forEach(e=>{
+ cumEth+=e.eth; cumUsdIn+=e.eth*e.price;
+ const usd=e.eth*e.price;
+ const pct=Math.max(4,Math.round(usd/maxUsd*100));
+ const vsNow=((cur/e.price)-1)*100;
+ const good=vsNow>=0;
+ const fillBg=good?'rgba(74,124,63,0.72)':'rgba(156,42,42,0.65)';
+ const sign=good?'+':'';
+ const metaColor=good?'var(--green)':'var(--red)';
+ html+=`<div class="coll-row">
+ <div class="coll-date">${e.date}</div>
+ <div class="coll-track">
+ <div class="coll-fill" style="width:${pct}%;background:${fillBg};">
+ ${e.eth.toFixed(3)} ETH
+ </div>
+ </div>
+ <div class="coll-meta">
+ <span style="color:var(--muted);">$${Math.round(usd).toLocaleString()}</span>
+ <span style="color:${metaColor};margin-left:6px;">${sign}${vsNow.toFixed(1)}%</span>
+ </div>
+ </div>`;
+ });
+
+ const avgIn=cumUsdIn/cumEth;
+ const curVal=cumEth*cur;
+ const pnl=curVal-cumUsdIn;
+ const pnlColor=pnl>=0?'var(--green)':'var(--red)';
+ html+=`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:9px;color:var(--muted);">
+ <span>Total: <b style="color:var(--text);">${cumEth.toFixed(4)} ETH</b></span>
+ <span>Preço médio entrada: <b style="color:var(--accent);">$${Math.round(avgIn).toLocaleString()}</b></span>
+ <span>Valor atual colateral: <b style="color:var(--text);">$${Math.round(curVal).toLocaleString()}</b></span>
+ <span>P&L colateral: <b style="color:${pnlColor};">${pnl>=0?'+':''}$${Math.round(pnl).toLocaleString()}</b></span>
+ </div>`;
+ c.innerHTML=html;
+}
+
+// ── TIMELINE ──
+function buildTimeline(){
+ const events=[
+ {date:'01/02/25',proto:'Kamino',a:'borrow',amt:'$293',det:'293.09 USDC · abertura posição + 3.29 SOL supply'},
+ {date:'18/02/25',proto:'Kamino',a:'borrow',amt:'$150',det:'150 USDC · +2.56 SOL supply'},
+ {date:'10/03/25',proto:'Kamino',a:'borrow',amt:'$54', det:'54 USDC · +1.52 SOL supply'},
+ {date:'03/04/25',proto:'AAVE', a:'supply',amt:'0.316 ETH',det:'ETH @ $1.782 · supply colateral — início loop'},
+ {date:'03/04/25',proto:'AAVE', a:'borrow',amt:'$200',det:'200 GHO — comprado ETH adicional'},
+ {date:'07/04/25',proto:'AAVE', a:'borrow',amt:'$100',det:'100 GHO · +0.27 ETH supply'},
+ {date:'16/04/25',proto:'Kamino',a:'borrow',amt:'$100',det:'100 USDC · +0.74 SOL'},
+ {date:'16/04/25',proto:'AAVE', a:'borrow',amt:'$185',det:'185 GHO · +0.14 ETH supply'},
+ {date:'06/05/25',proto:'Kamino',a:'borrow',amt:'$150',det:'150 USDC · +1.03 SOL'},
+ {date:'06/05/25',proto:'AAVE', a:'borrow',amt:'$150',det:'150 GHO · +0.086 ETH supply'},
+ {date:'31/05/25',proto:'Kamino',a:'borrow',amt:'$240',det:'240 USDC · +1.56 SOL'},
+ {date:'31/05/25',proto:'AAVE', a:'borrow',amt:'$150',det:'150 GHO · +0.059 ETH supply'},
+ {date:'05/06/25',proto:'Kamino',a:'borrow',amt:'$250',det:'250 USDC · +1.71 SOL'},
+ {date:'05/06/25',proto:'Kamino',a:'repay', amt:'$576',det:'576.22 USDC repagados — fechamento parcial ciclo K1'},
+ {date:'13/06/25',proto:'AAVE', a:'borrow',amt:'$110',det:'110 USDT · +0.043 ETH supply'},
+ {date:'12/06/25',proto:'Kamino',a:'borrow',amt:'$100',det:'100 USDC · +0.63 SOL'},
+ {date:'20/06/25',proto:'Kamino',a:'borrow',amt:'$110',det:'110 USDC · +0.80 SOL'},
+ {date:'11/07/25',proto:'AAVE', a:'repay', amt:'$120',det:'119.87 GHO repagados'},
+ {date:'21/07/25',proto:'AAVE', a:'repay', amt:'$101',det:'101.44 GHO repagados'},
+ {date:'25/07/25',proto:'Kamino',a:'borrow',amt:'$110',det:'110 USDC · +0.57 SOL'},
+ {date:'08/08/25',proto:'AAVE', a:'repay', amt:'$111',det:'110.83 USDT repagados'},
+ {date:'19/08/25',proto:'AAVE', a:'borrow',amt:'$100',det:'100 GHO → comprou ETH 0.024'},
+ {date:'01/09/25',proto:'Kamino',a:'repay', amt:'$103',det:'102.82 USDC · -0.52 SOL withdraw'},
+ {date:'04/09/25',proto:'Kamino',a:'repay', amt:'$150',det:'150 USDC · -0.74 SOL withdraw'},
+ {date:'04/09/25',proto:'AAVE', a:'repay', amt:'$100',det:'100 GHO'},
+ {date:'10/09/25',proto:'Kamino',a:'repay', amt:'$100',det:'100 USDC · -0.45 SOL withdraw'},
+ {date:'12/09/25',proto:'Kamino',a:'repay', amt:'$101',det:'100.88 USDC · -0.42 SOL'},
+ {date:'12/09/25',proto:'AAVE', a:'repay', amt:'$100',det:'100 GHO'},
+ {date:'13/09/25',proto:'AAVE', a:'repay', amt:'$100',det:'100 GHO · +0.0001 ETH supply (fees)'},
+ {date:'25/09/25',proto:'Kamino',a:'borrow',amt:'$100',det:'100 USDC · +0.50 SOL'},
+ {date:'25/09/25',proto:'AAVE', a:'borrow',amt:'$100',det:'100 GHO'},
+ {date:'11/10/25',proto:'Kamino',a:'borrow',amt:'$150',det:'150 USDC · +0.81 SOL'},
+ {date:'11/10/25',proto:'AAVE', a:'borrow',amt:'$150',det:'150 GHO · +0.04 ETH @ $3.829'},
+ {date:'28/10/25',proto:'Kamino',a:'repay', amt:'-4 SOL',det:'4 SOL retirado colateral (capital para pools)'},
+ {date:'06/11/25',proto:'Kamino',a:'repay', amt:'$5.82',det:'Parcial — taxas SOL pool'},
+ {date:'13/11/25',proto:'Kamino',a:'repay', amt:'$5.38',det:'Parcial — taxas SOL pool'},
+ {date:'21/11/25',proto:'Kamino',a:'repay', amt:'$3.13',det:'Parcial + +1.03 SOL supply adicional'},
+ {date:'21/01/26',proto:'AAVE', a:'supply',amt:'0.923 ETH',det:'ETH @ $2.975 · maior aporte único'},
+ {date:'22/01/26',proto:'AAVE', a:'supply',amt:'+0.033 ETH',det:'ETH @ ~$2.940 · supply adicional'},
+ {date:'04/02/26',proto:'AAVE', a:'borrow',amt:'$100',det:'100 USDG'},
+ {date:'06/02/26',proto:'AAVE', a:'repay', amt:'$640',det:'640.44 USDG repagados — refinanciamento de token'},
+ {date:'06/02/26',proto:'AAVE', a:'borrow',amt:'$641',det:'641 USDG — swap interno USDT→USDG'},
+ {date:'10/02/26',proto:'AAVE', a:'supply',amt:'0.035 ETH',det:'ETH @ $2.016 · supply mais recente'},
+ {date:'21/02/26',proto:'AAVE', a:'borrow',amt:'$745',det:'745 USDC'},
+ {date:'21/02/26',proto:'AAVE', a:'repay', amt:'$743',det:'742.76 USDC repagados imediatamente — refinanciamento'},
+ {date:'29/01/26',proto:'Kamino',a:'repay', amt:'$8.65',det:'8.65 USDC — taxas coletadas na SOL/USDT pool'},
+ {date:'Mar/26', proto:'Kamino',a:'supply',amt:'20.31 SOL',det:'Posição ativa · SOL supply em curso · USDC $804.22 em aberto · LTV 43.85%'},
+ ];
+
+ const protoColors={AAVE:'#6272a4',Kamino:'#9945ff'};
+ const tl=document.getElementById('timeline');
+ if(!tl) return;
+ let html='';
+ events.forEach((e,i)=>{
+ const isLast=i===events.length-1;
+ const pc=protoColors[e.proto]||'#888';
+ const dc={'borrow':'borrow','repay':'repay','supply':'supply','liq':'liq'}[e.a]||'supply';
+ const amtColor={'borrow':'var(--red)','repay':'var(--green)','supply':'var(--accent)','liq':'var(--red)'}[e.a];
+ const actionLabel={'borrow':'borrow','repay':'repay','supply':'supply colateral','liq':'repay'}[e.a];
+ html+=`<div class="tl-row">
+ <div class="tl-date-col">
+ <div class="tl-date">${e.date}</div>
+ <div class="tl-proto" style="color:${pc};">${e.proto}</div>
+ </div>
+ <div class="tl-spine">
+ <div class="tl-dot ${dc}"></div>
+ ${!isLast?'<div class="tl-line"></div>':''}
+ </div>
+ <div class="tl-content">
+ <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+ <span class="tl-amount" style="color:${amtColor};">${e.amt}</span>
+ <span style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">${actionLabel}</span>
+ </div>
+ <div class="tl-detail">${e.det}</div>
+ </div>
+ </div>`;
+ });
+ tl.innerHTML=html;
+}
+
+// ── DEBT CHART ──
+var debtChart=null;
+function buildDebtChart(){
+ const labels=['Fev/25','Mar/25','Abr/25','Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26'];
+ // Kamino running USDC debt by month
+ const debtK=[443,497,697,1087, 810, 810, 810, 253, 403, 403, 403, 403, 803, 803];
+ // AAVE running stable debt by month
+ const debtA=[ 0, 0, 200, 695, 895, 563, 663, 263, 413, 413, 413, 413, 746, 746];
+ // Cumulative repaid
+ const repaid=[0,0,0,0, 576,908,1019,1420,1420,1434,1434,1443,2826,3068];
+
+ function build(){
+ const ctx=document.getElementById('chartDebt');
+ if(!ctx) return;
+ if(debtChart){ debtChart.destroy(); debtChart=null; }
+ debtChart=new Chart(ctx,{
+ type:'bar',
+ data:{
+ labels,
+ datasets:[
+ {label:'Dívida Kamino (USDC)',data:debtK,backgroundColor:'rgba(153,69,255,0.55)',borderColor:'#9945ff',borderWidth:1,borderRadius:3,stack:'d'},
+ {label:'Dívida AAVE (stables)',data:debtA,backgroundColor:'rgba(98,114,164,0.65)',borderColor:'#6272a4',borderWidth:1,borderRadius:3,stack:'d'},
+ {label:'Total Repagado Acumulado',data:repaid,type:'line',borderColor:'rgba(74,124,63,0.9)',backgroundColor:'rgba(74,124,63,0.08)',borderWidth:2,fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:'rgba(74,124,63,0.9)'},
+ ]
+ },
+ options:{
+ responsive:true,animation:{duration:400},
+ plugins:{
+ legend:{labels:{font:{family:'Inter,sans-serif',size:9},color:textColor(),usePointStyle:true,boxHeight:5}},
+ tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${c.parsed.y.toLocaleString('pt-BR',{maximumFractionDigits:0})}`}}
+ },
+ scales:{
+ x:{stacked:true,ticks:{font:{size:8},color:'#888',maxRotation:30},grid:{color:gridColor()},border:{display:false}},
+ y:{stacked:true,ticks:{font:{family:'JetBrains Mono,monospace',size:8},color:'#888',callback:v=>'$'+v.toLocaleString()},grid:{color:gridColor()},border:{display:false}},
+ }
+ }
+ });
+ }
+
+ if(window.Chart){build();}
+ else{
+ const s=document.createElement('script');
+ s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+ s.onload=build;
+ document.head.appendChild(s);
+ }
+}
+function redrawChart(){
+ if(debtChart){ debtChart.options.plugins.legend.labels.color=textColor();
+ debtChart.options.scales.x.grid.color=gridColor();
+ debtChart.options.scales.y.grid.color=gridColor();
+ debtChart.update(); }
+}
+
+// ── TICKER ──
+function buildTicker(prices){
+ const eth=prices?.ethereum?.usd||liveEth;
+ const sol=prices?.solana?.usd||liveSol;
+ const ethChg=prices?.ethereum?.usd_24h_change||0;
+ const solChg=prices?.solana?.usd_24h_change||0;
+
+ const items=[
+ {sym:'ETH', val:'$'+eth.toLocaleString('en-US',{maximumFractionDigits:0}), chg:(ethChg>=0?'+':'')+ethChg.toFixed(2)+'%', up:ethChg>=0},
+ {sym:'SOL', val:'$'+sol.toFixed(2), chg:(solChg>=0?'+':'')+solChg.toFixed(2)+'%', up:solChg>=0},
+ {sym:'DÍVIDA TOTAL', val:'$1.550', chg:'aberta', up:false},
+ {sym:'AAVE LTV', val:'16.55% BP', up:true},
+ {sym:'KAMINO LTV', val:'43.85%', chg:'WATCH', up:null},
+ {sym:'ETH ENTRADA', val:'avg $2.394', chg:((eth/2394-1)*100).toFixed(1)+'%', up:eth>=2394},
+ {sym:'COLATERAL', val:'$7.141', chg:'1.87 ETH + 20.31 SOL', up:true},
+ {sym:'JUROS PAGOS', val:'~$47', chg:'est.', up:null},
+ ];
+
+ const doubled=[...items,...items];
+ const inner=document.getElementById('tickerInner');
+ if(!inner) return;
+ inner.innerHTML=doubled.map((t,i)=>`
+ <span class="t-item">
+ <span class="t-sym">${t.sym}</span>
+ <span>${t.val}</span>
+ ${t.chg?`<span class="t-chg ${t.up===true?'pos':t.up===false?'neg':''}">${t.chg}</span>`:''}
+ </span>
+ ${i<doubled.length-1?'<span class="t-sep">·</span>':''}`).join('');
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+ buildCollChart();
+ buildTimeline();
+ buildDebtChart();
+ fetchPrices();
+});
+</script>
+
+<script>
+function toggleMobileNav(){
+ const nl=document.querySelector('.nav-links');
+ if(nl) nl.classList.toggle('open');
+}
+document.addEventListener('DOMContentLoaded',function(){
+ document.querySelectorAll('.nav-links a').forEach(function(a){
+ a.addEventListener('click',function(){
+ const nl=document.querySelector('.nav-links');
+ if(nl) nl.classList.remove('open');
+ });
+ });
+});
+
+
+// ══════════════════════════════════════════════════════════════════
+// DIARY SYNC — Lê entradas "lending" do Diário DeFi (ferramentas.html)
+// ══════════════════════════════════════════════════════════════════
+(function initDiarySync() {
+ const STORAGE_DIARY = 'bc-diary-v2';
+ const PROTO_LABELS = { kamino: 'Kamino Finance', aave: 'AAVE V4' };
+ const EVENT_LABELS = {
+ borrow: 'Borrow',
+ repay: 'Repay',
+ 'add-collateral': 'Add Colateral',
+ 'remove-collateral':'Remove Colateral',
+ open: 'Abriu Ciclo',
+ close: 'Fechou Ciclo',
+ };
+ const EVENT_COLORS = {
+ borrow: 'var(--red)', repay: 'var(--green)',
+ 'add-collateral': 'var(--accent)', 'remove-collateral': 'var(--muted)',
+ open: 'var(--green)', close: 'var(--red)',
+ };
+
+ function loadAndRender() {
+ const entries = JSON.parse(localStorage.getItem(STORAGE_DIARY) || '[]');
+ const lendingEntries = entries.filter(e => e.type === 'lending');
+
+ const list = document.getElementById('diary-events-list');
+ const empty = document.getElementById('diary-empty');
+ if (!list) return;
+
+ if (!lendingEntries.length) {
+ if (empty) empty.style.display = 'block';
+ return;
+ }
+ if (empty) empty.style.display = 'none';
+
+ list.innerHTML = lendingEntries.map(e => {
+ const l = e.lending || {};
+ const proto = PROTO_LABELS[l.proto] || l.proto || '—';
+ const evtLabel = EVENT_LABELS[l.event] || l.event || '—';
+ const evtColor = EVENT_COLORS[l.event] || 'var(--text)';
+ const amount = l.amount ? '<span style="color:var(--red);">$' + l.amount.toFixed(2) + '</span>' : '';
+ const debtAfter= l.debtAfter ? '<span style="font-size:9px;color:var(--muted);">→ dívida: <strong style="">$' + l.debtAfter.toFixed(2) + '</strong></span>' : '';
+ const pnl = e.pnl ? '<span style="color:' + (e.pnl>=0?'var(--green)':'var(--red)') + ';">' + (e.pnl>=0?'+':'') + '$' + Math.abs(e.pnl).toFixed(2) + '</span>' : '';
+
+ return `<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:4px;">
+ <div style="flex-shrink:0;width:60px;font-size:9px;color:var(--muted);padding-top:2px;">${e.date || '—'}</div>
+ <div style="flex:1;min-width:0;">
+ <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+ <span style="font-size:11px;font-weight:600;color:${evtColor};">${evtLabel}</span>
+ <span style="font-size:9px;color:var(--accent);">${proto}</span>
+ ${amount}
+ ${debtAfter}
+ ${pnl}
+ </div>
+ <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${e.title}</div>
+ ${e.body ? '<div style="font-size:12px;color:var(--muted);line-height:1.5;">' + e.body + '</div>' : ''}
+ ${e.tags?.length ? '<div style="display:flex;gap:4px;margin-top:4px;">' + e.tags.map(t=>'<span style="font-size:8px;color:var(--muted);border:1px solid var(--border);padding:1px 6px;border-radius:2px;">' + t + '</span>').join('') + '</div>' : ''}
+ </div>
+ <div style="flex-shrink:0;">
+ <button onclick="deleteDiaryEntry(${e.id})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px;padding:2px 4px;opacity:.6;" title="Remover"></button>
+ </div>
+ </div>`;
+ }).join('');
+ }
+
+ // Allow deleting from emprestimos page too
+ window.deleteDiaryEntry = function(id) {
+ if (!confirm('Remover este evento do diário?')) return;
+ const entries = JSON.parse(localStorage.getItem(STORAGE_DIARY) || '[]');
+ const filtered = entries.filter(e => e.id !== id);
+ localStorage.setItem(STORAGE_DIARY, JSON.stringify(filtered));
+ loadAndRender();
+ };
+
+ // Initial load
+ loadAndRender();
+
+ // Listen for changes (same-tab via custom storage event trigger)
+ window.addEventListener('storage', function(e) {
+ if (e.key === STORAGE_DIARY || e.key === 'bc-diary-updated') {
+ loadAndRender();
+ }
+ });
+
+ // Also poll every 5 seconds as fallback (same-tab doesn't fire storage events)
+ var lastUpdate = localStorage.getItem('bc-diary-updated') || '0';
+ setInterval(function() {
+ var current = localStorage.getItem('bc-diary-updated') || '0';
+ if (current !== lastUpdate) {
+ lastUpdate = current;
+ loadAndRender();
+ }
+ }, 5000);
+
+})();
+
+
+// ── Moeda USD / BRL ──────────────────────────────────────
+window.currentCurrency = localStorage.getItem('bc-currency') || 'USD';
+window.usdBrlRate = 5.33;
+(async function fetchRate(){
+  try{
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const d = await r.json();
+    if(d.rates && d.rates.BRL) usdBrlRate = d.rates.BRL;
+  }catch(e){}
+})();
+function toggleCurrency(){
+  currentCurrency = currentCurrency==='USD'?'BRL':'USD';
+  localStorage.setItem('bc-currency', currentCurrency);
+  const btn = document.getElementById('currencyBtn');
+  if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
+  document.querySelectorAll('[data-usd]').forEach(el=>{
+    const v = parseFloat(el.getAttribute('data-usd'));
+    if(isNaN(v)) return;
+    if(currentCurrency==='BRL'){
+      el.textContent = 'R$ '+(v*usdBrlRate).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    } else {
+      const fmt = v % 1 === 0
+        ? '$'+v.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})
+        : '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+      el.textContent = fmt;
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const btn = document.getElementById('currencyBtn');
+  if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
+  if(currentCurrency==='BRL') toggleCurrency(); // aplicar estado salvo
+});
+
+// ── Language toggle ──────────────────────────────────────
+var LANG_STRINGS = {
+  // nav
+  'nav-home':        {pt:'Início',       en:'Home'},
+  'nav-portfolio':   {pt:'Portfolio',    en:'Portfolio'},
+  'nav-pools':       {pt:'Pools & DeFi', en:'Pools & DeFi'},
+  'nav-loans':       {pt:'Empréstimos',  en:'Loans'},
+  'nav-tools':       {pt:'Ferramentas',  en:'Tools'},
+  // section labels — will be found by data-i18n attribute
+};
+
+function applyLang(lang) {
+  document.documentElement.setAttribute('data-lang', lang);
+  var btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
+  // Apply to all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    var s = LANG_STRINGS[key];
+    if (s && s[lang]) el.textContent = s[lang];
+  });
+}
+
+function toggleLang() {
+  var current = document.documentElement.getAttribute('data-lang') || 'pt';
+  var next = current === 'pt' ? 'en' : 'pt';
+  localStorage.setItem('bc-lang', next);
+  applyLang(next);
+}
+
+(function initLang() {
+  var saved = localStorage.getItem('bc-lang') || 'pt';
+  applyLang(saved);
+})();
+
+
+
+
+// Update theme toggle icon on load
+(function(){
+  var t = localStorage.getItem('bc-theme') || 'light';
+  var btn = document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
+})();
+
+
+// ── STATIC VALUES — shown immediately, overridden if live fetch succeeds ──
+(function initStaticValues() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var setEl  = function(id, v) { var el=document.getElementById(id); if(el) el.textContent = v; };
+    var setHtm = function(id, v) { var el=document.getElementById(id); if(el) el.innerHTML = v; };
+    var setClr = function(id, c) { var el=document.getElementById(id); if(el) el.style.background = c; };
+
+    // AAVE static
+    setClr('aave-live-dot',  '#8a6820');
+    setEl('aave-live-label', 'dados estáticos');
+    setEl('aave-supplied-label',  '▲ SUPPLIED $5,719');
+    setEl('aave-borrowed-label',  '▼ BORROWED $746.99');
+    setEl('aave-net-worth',       '$4.97K');
+    setEl('aave-hf-metric',       '6.24');
+    setHtm('aave-liq-main', '<span style="color:var(--green);font-size:20px;font-weight:900;">BLINDADO</span>');
+
+    // KAMINO static
+    setClr('kamino-live-dot',  '#8a6820');
+    setEl('kamino-live-label', 'dados estáticos');
+    setEl('kamino-supplied-label',  '▲ SUPPLIED $2.14K');
+    setEl('kamino-borrowed-label',  '▼ BORROWED $804.22');
+    setEl('kamino-net-val',         '$1.25K');
+    setEl('kamino-ltv-label',       '39.22% / 77.20%');
+    setHtm('kamino-liq-main', '$35.77 <span style="font-size:10px;color:var(--muted);">/ SOL</span>');
+  });
+})();
+
+</script>
+
+<!-- ══ EVENTOS ESPECIAIS — PERDAS NÃO OPERACIONAIS ══ -->
+<div class="section-label" style="margin-top:36px;">Eventos Especiais — Perdas Não Operacionais</div>
+
+<div class="card" style="margin-bottom:16px;border-color:rgba(185,64,64,0.35);background:linear-gradient(135deg,var(--surface),rgba(185,64,64,0.03));">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    
+    <div style="flex:1;min-width:260px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#b94040;flex-shrink:0;"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#b94040;">HACK · Radiant Capital</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">2025</span>
+      </div>
+      <div style="font-family:'Satoshi',sans-serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;">1,079.17 ARB perdidos em stake</div>
+      <div style="font-family:'Satoshi',sans-serif;font-size:13px;color:var(--muted);line-height:1.7;">
+        Tokens em stake no protocolo Radiant desde <strong style="color:var(--text);">25/03/2024</strong>. 
+        Na época do hack o protocolo foi explorado e os fundos não foram recuperados. 
+        Terceiro exploit sofrido pelo protocolo — risco estrutural de segurança não identificado a tempo.
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:300px;">
+      <div class="stat-card" style="padding:12px 14px;">
+        <div class="stat-label">EM STAKE DESDE</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);margin-top:4px;">25/03/2024</div>
+      </div>
+      <div class="stat-card" style="padding:12px 14px;">
+        <div class="stat-label">QUANTIDADE</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);margin-top:4px;">1,079.17 ARB</div>
+      </div>
+      <div class="stat-card" style="padding:12px 14px;">
+        <div class="stat-label">VALOR NA ÉPOCA DO HACK</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#b94040;margin-top:4px;">~$971</div>
+        <div style="font-size:8px;color:var(--muted);margin-top:2px;">~$0.90/ARB</div>
+      </div>
+      <div class="stat-card" style="padding:12px 14px;">
+        <div class="stat-label">REEMBOLSO PROMETIDO</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);margin-top:4px;">~$300</div>
+        <div style="font-size:8px;color:var(--muted);margin-top:2px;">Pendente · Dado como perdido</div>
+      </div>
+      <div class="stat-card" style="grid-column:span 2;padding:12px 14px;border-color:rgba(185,64,64,0.25);">
+        <div class="stat-label">PREJUÍZO EFETIVO</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#b94040;margin-top:4px;">~$671</div>
+        <div style="font-size:8px;color:var(--muted);margin-top:2px;">Valor na época do hack − reembolso esperado · Não computado no P&L operacional</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Lição aprendida:</div>
+    <div style="font-family:'Satoshi',sans-serif;font-size:12px;color:var(--muted);flex:1;">
+      Três exploits no mesmo protocolo indicam falha estrutural de segurança. Avaliar histórico de auditorias e incidentes anteriores antes de fazer stake em protocolos de menor capitalização. Risco de protocolo ≠ risco de mercado — não é coberto por diversificação de ativos.
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// LIVE FETCH — AAVE V4 + KAMINO (Empréstimos)
+// ══════════════════════════════════════════════════════════════════
+(function initLiveFetch() {
+
+  const ALCHEMY_KEY  = 'R_9y5DBqKNR2NapexG8n7';
+  const HELIUS_KEY   = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
+  const ETH_RPC      = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+  const HELIUS_API   = `https://api.helius.xyz/v0`;
+  const AAVE_WALLET  = '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396';
+  const SOL_WALLET   = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
+  const AAVE_POOL    = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
+  // aTokens e dívida GHO
+  const AWETH_TOKEN  = '0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8';
+  const AUSDT_TOKEN  = '0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a';
+  const VDEBT_GHO    = '0x786dBff3f1292ae8F92ea68Cf93c30b34B1ed04B';
+  // Assets para consulta de APY
+  const AAVE_DATA_PROVIDER = '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3';
+  const WETH_ADDR    = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+  const USDT_ADDR    = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+  const GHO_ADDR     = '0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2d';
+
+  // ── Helpers ─────────────────────────────────────────────────────
+  const padAddr = a => '000000000000000000000000' + a.slice(2).toLowerCase();
+  const decUint = (hex, offset=0) => BigInt('0x' + (hex.slice(2)||'0').slice(offset*64, (offset+1)*64) || '0');
+  const decNum  = (n, dec) => Number(n) / Math.pow(10, dec);
+  const $       = id => document.getElementById(id);
+  const set     = (id, v) => { const e = $(id); if(e) e.textContent = v; };
+  const setCol  = (id, c) => { const e = $(id); if(e) e.style.color = c; };
+  const fmtUsd  = v => '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmtK    = v => v >= 1000 ? '$' + (v/1000).toFixed(2) + 'K' : fmtUsd(v);
+
+  async function rpc(url, method, params) {
+    const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({id:1, jsonrpc:'2.0', method, params}) });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    return d.result;
+  }
+
+  function updateDataUsd(id, value) {
+    const el = $(id);
+    if (!el) return;
+    el.setAttribute('data-usd', value);
+    // Se moeda já estiver em BRL, converte
+    const cur = window.currentCurrency || 'USD';
+    const rate = window.usdBrlRate || 5.33;
+    if (cur === 'BRL') {
+      el.textContent = 'R$ ' + (value * rate).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    } else {
+      el.textContent = fmtUsd(value);
+    }
+  }
+
+  // ── Helpers: saldo de token ERC-20/aToken ────────────────────────
+  async function tokenBalance(tokenAddr, decimals) {
+    const data = '0x70a08231' + padAddr(AAVE_WALLET);
+    const raw = await rpc(ETH_RPC, 'eth_call', [{to: tokenAddr, data}, 'latest']);
+    return decNum(decUint(raw, 0), decimals);
+  }
+
+  // ── APYs da AAVE via Protocol DataProvider ────────────────────────
+  // selector 0x35ea6a75 = getReserveData(address)
+  // offset 5 = liquidityRate (supply APY em RAY=27dec), offset 6 = variableBorrowRate
+  async function fetchAaveApys() {
+    const sel = '0x35ea6a75';
+    async function rateOf(asset) {
+      const data = sel + padAddr(asset);
+      const raw = await rpc(ETH_RPC, 'eth_call', [{to: AAVE_DATA_PROVIDER, data}, 'latest']);
+      return {
+        supply: decNum(decUint(raw, 5), 27) * 100,
+        borrow: decNum(decUint(raw, 6), 27) * 100
+      };
+    }
+    const [weth, usdt, gho] = await Promise.all([
+      rateOf(WETH_ADDR), rateOf(USDT_ADDR), rateOf(GHO_ADDR)
+    ]);
+    return { weth, usdt, gho };
+  }
+
+  // ── AAVE V4 ─────────────────────────────────────────────────────
+  async function fetchAave(ethPrice) {
+    try {
+      const accData = '0xbf92857c' + padAddr(AAVE_WALLET);
+      const balData = '0x70a08231' + padAddr(AAVE_WALLET);
+
+      // Busca paralela: dados da conta + saldos dos aTokens + APYs
+      const [raw, wethRaw, usdtRaw, ghoRaw, apys] = await Promise.all([
+        rpc(ETH_RPC, 'eth_call', [{to: AAVE_POOL, data: accData}, 'latest']),
+        rpc(ETH_RPC, 'eth_call', [{to: AWETH_TOKEN, data: balData}, 'latest']).catch(() => null),
+        rpc(ETH_RPC, 'eth_call', [{to: AUSDT_TOKEN, data: balData}, 'latest']).catch(() => null),
+        rpc(ETH_RPC, 'eth_call', [{to: VDEBT_GHO,  data: balData}, 'latest']).catch(() => null),
+        fetchAaveApys().catch(() => null)
+      ]);
+
+      const collateral = decNum(decUint(raw, 0), 8);
+      const debt       = decNum(decUint(raw, 1), 8);
+      const liqThresh  = decNum(decUint(raw, 3), 4);
+      const hf         = decNum(decUint(raw, 5), 18);
+      const net        = collateral - debt;
+      const ltv        = collateral > 0 ? (debt / collateral * 100) : 0;
+      const borrowPwr  = collateral > 0 ? (debt / (collateral * liqThresh) * 100) : 0;
+
+      // Quantidades dinâmicas dos aTokens (fallback para valores conhecidos)
+      const ethQty  = (wethRaw && decNum(decUint(wethRaw, 0), 18) > 0) ? decNum(decUint(wethRaw, 0), 18) : 1.88;
+      const usdtQty = (usdtRaw && decNum(decUint(usdtRaw, 0), 6) > 0) ? decNum(decUint(usdtRaw, 0), 6) : 1650;
+      const ghoQty  = (ghoRaw  && decNum(decUint(ghoRaw,  0), 18) > 0) ? decNum(decUint(ghoRaw, 0), 18) : debt;
+
+      // APYs (fallback para valores do usuário)
+      const wethApy = (apys?.weth?.supply > 0) ? apys.weth.supply : 1.25;
+      const usdtApy = (apys?.usdt?.supply > 0) ? apys.usdt.supply : 1.87;
+      const ghoApy  = (apys?.gho?.borrow > 0)  ? apys.gho.borrow  : 3.84;
+
+      const ethUsd  = ethQty * (ethPrice || liveEth || 2079);
+      const usdt    = usdtQty; // USDT é estável, qty ≈ USD
+
+      console.log(`[AAVE] Supply $${collateral.toFixed(0)} Debt $${debt.toFixed(0)} HF ${hf.toFixed(2)} LTV ${ltv.toFixed(1)}%`);
+      // Sanity check — RPC pode retornar 0x vazio em rate-limit/falha silenciosa
+      if (!isFinite(collateral) || !isFinite(debt) || !isFinite(hf)) {
+        console.warn('[AAVE Emp] Sanity: valor não-finito detectado, descartando'); return null;
+      }
+      if (collateral < 100) { console.warn('[AAVE Emp] Sanity: colateral $' + collateral.toFixed(2) + ' < $100, descartando'); return null; }
+      // Se debt=0 com colateral alto, AAVE retorna HF = uint256.max (~1.16e77) — dados inválidos para esta posição
+      if (hf > 1e15) { console.warn('[AAVE Emp] Sanity: HF impossível (' + hf.toExponential(2) + ') — provavelmente debt=0 ou bloco vazio, descartando'); return null; }
+      // liqThresh inválido causaria borrowPwr=Infinity
+      if (liqThresh < 0.5 || liqThresh > 1) { console.warn('[AAVE Emp] Sanity: liqThresh inválido (' + liqThresh + '), descartando'); return null; }
+
+      // Supply
+      updateDataUsd('em-aave-supply', collateral);
+      set('em-aave-weth-qty', ethQty.toFixed(3));
+      set('em-aave-usdt-qty', Math.round(usdtQty).toLocaleString('en-US'));
+      set('em-aave-eth-usd',  '$' + ethUsd.toFixed(0));
+      set('em-aave-usdt-usd', '$' + Math.round(usdt).toLocaleString('en-US'));
+      set('em-aave-weth-apy', wethApy.toFixed(2) + '%');
+      set('em-aave-usdt-apy', usdtApy.toFixed(2) + '%');
+
+      // Borrow
+      updateDataUsd('em-aave-borrow', debt);
+      set('em-aave-borrow-qty', ghoQty.toFixed(2));
+      set('em-aave-borrow-apy', ghoApy.toFixed(2) + '%');
+
+      // Métricas
+      updateDataUsd('em-aave-net', net);
+      const hfColor = hf > 3 ? 'var(--green)' : hf > 1.5 ? 'var(--yellow,#d29922)' : 'var(--red)';
+      set('em-aave-hf', hf.toFixed(2)); setCol('em-aave-hf', hfColor);
+      const ltvColor = ltv < 50 ? 'var(--green)' : ltv < 70 ? 'var(--yellow,#d29922)' : 'var(--red)';
+      set('em-aave-ltv-pct', ltv.toFixed(1) + '%'); setCol('em-aave-ltv-pct', ltvColor);
+      set('em-aave-ltv-lbl', ltv.toFixed(1) + '%'); setCol('em-aave-ltv-lbl', ltvColor);
+      set('em-aave-borrow-power', borrowPwr.toFixed(1) + '%');
+
+      // LTV bar (escala até liq 82.5%)
+      const fillPct = Math.min(ltv / 82.5 * 100, 100).toFixed(1);
+      const fill = $('em-aave-ltv-fill');
+      if (fill) { fill.style.width = fillPct + '%'; fill.style.background = ltvColor; }
+
+      // KPI dívida total
+      const kaminoDebt = window._liveKaminoDebt || 805.70;
+      updateDataUsd('em-kpi-debt', debt + kaminoDebt);
+      const kpiDebtSub = $('em-kpi-debt')?.nextElementSibling;
+      if (kpiDebtSub) kpiDebtSub.textContent = `AAVE $${debt.toFixed(0)} · Kamino $${kaminoDebt.toFixed(0)}`;
+
+      window._liveAaveHF   = hf;
+      window._liveAaveDebt = debt;
+      window._liveAaveCollateral = collateral;
+      return { collateral, debt, hf, ltv };
+    } catch(e) {
+      console.warn('[AAVE Emp] failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Kamino Finance ───────────────────────────────────────────────
+  async function fetchKamino(solPrice) {
+    try {
+      const r = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
+      if (!r.ok) throw new Error('Kamino API ' + r.status);
+      const kData = await r.json();
+      if (!kData || !kData.length) throw new Error('no obligations');
+
+      const obligation = kData[0];
+      const deposits   = obligation.deposits || [];
+      const borrows    = obligation.borrows  || [];
+      const SOL_MINT   = 'So11111111111111111111111111111111111111112';
+      const USDS_MINT  = '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo';
+
+      let totalDeposit = 0, totalBorrow = 0, solQty = 0, usdsQty = 0;
+      let solApy = 0, usdsApy = 0, borrowApy = 0;
+      deposits.forEach(d => {
+        const usd = parseFloat(d.marketValueRefreshed || d.marketValue || 0);
+        totalDeposit += usd;
+        if (d.mintAddress === SOL_MINT) {
+          solQty  += parseFloat(d.amount || 0);
+          // Kamino API: supplyInterestAPY ou apy (decimal, ex: 0.0319 = 3.19%)
+          const apy = parseFloat(d.supplyInterestAPY || d.apy || d.supplyApy || 0);
+          if (apy > 0) solApy = apy * 100;
+        }
+        if (d.mintAddress === USDS_MINT) {
+          usdsQty += parseFloat(d.amount || 0);
+          const apy = parseFloat(d.supplyInterestAPY || d.apy || d.supplyApy || 0);
+          if (apy > 0) usdsApy = apy * 100;
+        }
+      });
+      borrows.forEach(b => {
+        totalBorrow += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
+        const apy = parseFloat(b.borrowInterestAPY || b.apy || b.borrowApy || 0);
+        if (apy > 0) borrowApy = apy * 100;
+      });
+      // Fallback para valores informados pelo usuário se API não retornar APY
+      if (solApy === 0)    solApy    = 3.19;
+      if (usdsApy === 0)   usdsApy   = 3.69;
+      if (borrowApy === 0) borrowApy = 4.09;
+
+      const net    = totalDeposit - totalBorrow;
+      const ltv    = totalDeposit > 0 ? (totalBorrow / totalDeposit * 100) : 0;
+      const liqLtv = 77.20;
+      const sp     = solPrice || window._liveSolPrice || 87;
+      const liqPriceSol = totalBorrow > 0 && solQty > 0 ? (totalBorrow / (solQty * liqLtv / 100)).toFixed(2) : '—';
+      const solUsd  = solQty * sp;
+      const usdsUsd = totalDeposit - solUsd;
+
+      console.log(`[Kamino Emp] Deposit $${totalDeposit.toFixed(0)} Borrow $${totalBorrow.toFixed(0)} SOL ${solQty.toFixed(2)} LTV ${ltv.toFixed(1)}%`);
+      // Sanity check — API pode retornar dados zerados/incompletos
+      if (totalDeposit < 100) { console.warn('[Kamino Emp] Sanity: deposit $' + totalDeposit.toFixed(2) + ' < $100, descartando'); return null; }
+
+      // Supply
+      updateDataUsd('em-kamino-supply', totalDeposit);
+      set('em-kamino-sol-qty',  solQty.toFixed(2));
+      set('em-kamino-sol-usd',  '$' + solUsd.toFixed(0));
+      set('em-kamino-usds-qty', usdsQty > 0 ? usdsQty.toFixed(2) : Math.max(0, usdsUsd).toFixed(2));
+      set('em-kamino-usds-usd', '$' + Math.max(0, usdsUsd).toFixed(0));
+      set('em-kamino-sol-apy',  solApy.toFixed(2) + '%');
+      set('em-kamino-usds-apy', usdsApy.toFixed(2) + '%');
+
+      // Borrow
+      updateDataUsd('em-kamino-borrow', totalBorrow);
+      set('em-kamino-borrow-qty', totalBorrow.toFixed(2));
+      set('em-kamino-borrow-apy', borrowApy.toFixed(2) + '%');
+
+      // Métricas
+      updateDataUsd('em-kamino-net', net);
+      const ltvColor = ltv < 50 ? 'var(--green)' : ltv < 65 ? 'var(--yellow,#d29922)' : 'var(--red)';
+      set('em-kamino-ltv-pct', ltv.toFixed(1) + '%'); setCol('em-kamino-ltv-pct', ltvColor);
+      set('em-kamino-ltv-lbl', ltv.toFixed(1) + '%'); setCol('em-kamino-ltv-lbl', ltvColor);
+      set('em-kamino-liq',  '$' + liqPriceSol);
+      set('em-kamino-liq2', '$' + liqPriceSol);
+
+      // LTV bar (escala até liq 77.20%)
+      const fillPct = Math.min(ltv / liqLtv * 100, 100).toFixed(1);
+      const fill = $('em-kamino-ltv-fill');
+      if (fill) { fill.style.width = fillPct + '%'; fill.style.background = ltvColor; }
+
+      // KPI dívida total (atualiza depois do AAVE)
+      const aaveDebt = window._liveAaveDebt || 747.50;
+      updateDataUsd('em-kpi-debt', aaveDebt + totalBorrow);
+      const kpiDebtSub = $('em-kpi-debt')?.nextElementSibling;
+      if (kpiDebtSub) kpiDebtSub.textContent = `AAVE $${aaveDebt.toFixed(0)} · Kamino $${totalBorrow.toFixed(0)}`;
+
+      window._liveKaminoDebt    = totalBorrow;
+      window._liveKaminoDeposit = totalDeposit;
+      window._liveKaminoNetVal  = net;
+      window._liveKaminoSol     = solQty;
+      window._liveKaminoLtv     = ltv / 100;
+      return { totalDeposit, totalBorrow, net, solQty, ltv };
+    } catch(e) {
+      console.warn('[Kamino Emp] failed:', e.message);
+      return null;
+    }
+  }
+
+  // ── Run ──────────────────────────────────────────────────────────
+  async function runFetch() {
+    try {
+      const priceR  = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana&vs_currencies=usd');
+      const prices  = await priceR.json();
+      const ethPrice = prices?.ethereum?.usd || window.liveEth || 2079;
+      const solPrice = prices?.solana?.usd    || window.liveSol || 87;
+      window.liveEth = ethPrice;
+      window.liveSol = solPrice;
+      // Update collateral bars with live ETH price
+      if (typeof buildCollChart === 'function') buildCollChart();
+      await Promise.all([fetchAave(ethPrice), fetchKamino(solPrice)]);
+    } catch(e) {
+      console.warn('[LiveFetch Emp] price fetch failed, trying without price');
+      await Promise.all([fetchAave(), fetchKamino()]);
+    }
+  }
+
+  const delay = document.readyState === 'loading' ? 2000 : 800;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(runFetch, delay));
+  } else {
+    setTimeout(runFetch, delay);
+  }
+
+  // Auto-refresh a cada 5 minutos
+  setInterval(runFetch, 5 * 60 * 1000);
+
+  window.emprestimosRefresh = runFetch;
+
+})();
+</script>
+</body>
+</html>

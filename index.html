@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Barolo Capital</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<script>
+(function(){
+  var t=localStorage.getItem('bc-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+
+<style>
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* ── Variables ── */
+:root{
+  --gold:#c9a050;
+  --gold2:#9a7228;
+  --cream:#e8dfc8;
+  --muted:#8a7a62;
+  --surface:#141418;
+  --surface2:#1a1a20;
+  --border:#2a2620;
+  --border2:#3a3228;
+  --text:#e8dfc8;
+  --dark:#0e0e12;
+  --bg:#0e0e12;
+  --accent:#c9a050;
+  --green:#3fb950;
+  --red:#f85149;
+}
+[data-theme="light"]{
+  --bg:#f5f0e8;
+  --surface:#faf6ee;
+  --surface2:#f0ebe0;
+  --border:#ddd4c0;
+  --border2:#ccc2a8;
+  --text:#2a1e0e;
+  --cream:#2a1e0e;
+  --muted:#7a6a52;
+  --dark:#2a1e0e;
+}
+
+/* ── Base ── */
+body{
+  font-family:'Satoshi',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-size:15px;
+  line-height:1.6;
+}
+
+/* ── Ticker ── */
+.ticker-wrap{
+  background:var(--dark);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+  height:32px;
+  display:flex;
+  align-items:center;
+}
+.ticker-track{
+  display:flex;
+  gap:0;
+  animation:ticker 40s linear infinite;
+  white-space:nowrap;
+}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:0 28px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.08em;
+  border-right:1px solid var(--border);
+}
+.ticker-item .t-sym{color:var(--muted)}
+.ticker-item .t-val{color:var(--text)}
+.ticker-item .t-up{color:#3fb950}
+.ticker-item .t-dn{color:#f85149}
+
+/* ── Nav ── */
+nav{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(14,14,18,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  height:60px;
+  padding:0 28px;
+  gap:20px;
+}
+[data-theme="light"] nav{background:rgba(245,240,232,.92)}
+.nav-logo{cursor:pointer;flex-shrink:0}
+.nav-links{
+  display:flex;
+  gap:2px;
+  align-items:center;
+  flex:1;
+  justify-content:center;
+}
+.nav-links a{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  padding:6px 14px;
+  border-radius:2px;
+  transition:color .2s,background .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);background:rgba(201,160,80,.07)}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-input{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  padding:5px 10px;
+  width:100px;
+  outline:none;
+  letter-spacing:.04em;
+  transition:border-color .2s;
+}
+.nav-input:focus{border-color:var(--gold2)}
+.nav-btn{
+  background:var(--gold);
+  color:#0e0e12;
+  border:none;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.2em;
+  padding:7px 14px;
+  cursor:pointer;
+  font-weight:700;
+  transition:opacity .2s;
+}
+.nav-btn:hover{opacity:.85}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.nav-hamburger span{width:22px;height:1.5px;background:var(--muted);display:block;transition:.3s}
+
+/* ── Hero ── */
+.hero{
+  min-height:calc(100vh - 92px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:80px 48px 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 50%, rgba(201,160,80,.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 30%, rgba(201,160,80,.025) 0%, transparent 60%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.38em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:28px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.hero-eyebrow::before{
+  content:'';
+  width:32px;
+  height:1px;
+  background:var(--gold);
+  opacity:.5;
+  flex-shrink:0;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,6vw,88px);
+  font-weight:300;
+  line-height:1.06;
+  color:var(--cream);
+  max-width:720px;
+  margin-bottom:32px;
+  letter-spacing:-.01em;
+}
+.hero-title em{
+  font-style:italic;
+  color:var(--gold);
+}
+[data-theme="light"] .hero-title{color:var(--dark)}
+.hero-sub{
+  font-size:15px;
+  color:var(--muted);
+  max-width:480px;
+  line-height:1.75;
+  margin-bottom:44px;
+  font-weight:400;
+}
+.hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--gold);
+  color:#0e0e12;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-weight:700;
+  padding:13px 28px;
+  text-decoration:none;
+  transition:opacity .2s;
+  cursor:pointer;
+}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  color:var(--muted);
+  border:1px solid var(--border2);
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  padding:13px 28px;
+  text-decoration:none;
+  transition:all .2s;
+  cursor:pointer;
+}
+.btn-ghost:hover{border-color:var(--gold2);color:var(--gold)}
+.hero-stats{
+  position:absolute;
+  right:48px;
+  bottom:80px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  text-align:right;
+}
+.hero-stat-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;
+  font-weight:300;
+  color:var(--cream);
+  line-height:1;
+}
+[data-theme="light"] .hero-stat-val{color:var(--dark)}
+.hero-stat-lbl{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-top:4px;
+}
+.hero-divider{
+  width:1px;
+  height:48px;
+  background:var(--border2);
+  margin:4px auto;
+}
+
+/* ── Sections ── */
+section{
+  padding:100px 48px;
+  position:relative;
+  border-top:1px solid var(--border);
+}
+.container{max-width:1100px;margin:0 auto}
+.section-num{
+  position:absolute;
+  right:48px;
+  top:28px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.2em;
+  color:var(--border2);
+  user-select:none;
+}
+.section-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8.5px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.section-tag::before{
+  content:'';
+  width:20px;
+  height:1px;
+  background:var(--gold);
+  opacity:.5;
+}
+.section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,4vw,54px);
+  font-weight:300;
+  line-height:1.1;
+  color:var(--cream);
+  margin-bottom:48px;
+  max-width:640px;
+}
+[data-theme="light"] .section-title{color:var(--dark)}
+.section-title em{font-style:italic;color:var(--gold)}
+
+/* ── About ── */
+.sobre-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:64px;
+  align-items:start;
+}
+.sobre-text p{
+  color:var(--muted);
+  line-height:1.8;
+  margin-bottom:20px;
+  font-size:15px;
+}
+.sobre-text p.lead{
+  font-size:18px;
+  color:var(--text);
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;
+  line-height:1.6;
+}
+[data-theme="light"] .sobre-text p.lead{color:var(--dark)}
+.beliefs-grid{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  border:1px solid var(--border);
+}
+.belief-item{
+  padding:22px 24px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  transition:background .2s;
+}
+.belief-item:last-child{border-bottom:none}
+.belief-item:hover{background:var(--surface2)}
+.belief-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--gold);
+  opacity:.5;
+  flex-shrink:0;
+  padding-top:3px;
+  letter-spacing:.1em;
+}
+.belief-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;
+  color:var(--cream);
+  line-height:1.5;
+  font-weight:300;
+}
+[data-theme="light"] .belief-text{color:var(--dark)}
+
+/* ── Strategies ── */
+.strat-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+}
+.strat-card{
+  background:var(--surface);
+  padding:32px 28px;
+  transition:background .2s;
+}
+.strat-card:hover{background:var(--surface2)}
+.strat-icon{
+  font-size:22px;
+  margin-bottom:20px;
+  opacity:.8;
+}
+.strat-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+}
+.strat-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;
+  font-weight:300;
+  color:var(--cream);
+  margin-bottom:14px;
+  line-height:1.25;
+}
+[data-theme="light"] .strat-title{color:var(--dark)}
+.strat-desc{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.strat-tags{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+.strat-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.14em;
+  color:var(--muted);
+  border:1px solid var(--border2);
+  padding:3px 8px;
+}
+
+/* ── Portfolio tokens ── */
+.token-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  margin-bottom:1px;
+}
+.token-card{
+  background:var(--surface);
+  padding:22px 20px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  text-decoration:none;
+  transition:background .25s;
+  position:relative;
+}
+.token-card:hover{background:var(--surface2)}
+.token-card:hover .token-arrow{opacity:1;transform:translateX(2px)}
+.token-logo{
+  width:38px;height:38px;
+  border-radius:50%;
+  flex-shrink:0;
+  background:var(--border);
+  object-fit:cover;
+}
+.token-info{flex:1;min-width:0}
+.token-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;
+  font-weight:400;
+  color:var(--cream);
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+[data-theme="light"] .token-name{color:var(--dark)}
+.token-ticker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.16em;
+  color:var(--muted);
+  margin-top:3px;
+}
+.token-arrow{
+  font-size:12px;
+  color:var(--gold);
+  opacity:0;
+  transition:opacity .2s,transform .2s;
+  flex-shrink:0;
+}
+
+/* Protocol cards (full-width row) */
+.protocol-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-top:none;
+}
+.protocol-card{
+  background:var(--surface);
+  padding:18px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  transition:background .25s;
+}
+.protocol-card:hover{background:var(--surface2)}
+.protocol-card:hover .token-arrow{opacity:1}
+.proto-logo{
+  width:32px;height:32px;
+  border-radius:50%;
+  flex-shrink:0;
+  background:var(--border);
+  object-fit:cover;
+}
+.proto-info{flex:1;min-width:0}
+.proto-name{
+  font-family:'Satoshi',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  color:var(--cream);
+  line-height:1.2;
+}
+[data-theme="light"] .proto-name{color:var(--dark)}
+.proto-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.12em;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+/* ── Access section ── */
+.access-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:64px;
+  align-items:center;
+}
+.access-text p{
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.8;
+  margin-bottom:16px;
+}
+.access-form-wrap{
+  border:1px solid var(--border);
+  padding:36px;
+  background:var(--surface);
+}
+.access-form-title{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:24px;
+}
+.access-form-fields{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:16px;
+}
+.access-input{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  padding:11px 14px;
+  outline:none;
+  letter-spacing:.06em;
+  transition:border-color .2s;
+  width:100%;
+}
+.access-input:focus{border-color:var(--gold2)}
+.access-input::placeholder{color:var(--muted);opacity:.5}
+#access-error{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.1em;
+  color:#f85149;
+  margin-bottom:8px;
+  min-height:14px;
+}
+
+/* ── Contact section ── */
+.contact-block{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:32px;
+  max-width:640px;
+}
+.contact-block p{
+  font-size:17px;
+  line-height:1.7;
+  color:var(--muted);
+}
+.contact-email{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  letter-spacing:.04em;
+  color:var(--gold);
+  text-decoration:none;
+  border:1px solid rgba(201,160,80,.25);
+  padding:14px 24px;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.contact-email::before{
+  content:'✉';
+  font-size:16px;
+  opacity:.7;
+}
+.contact-email:hover{
+  background:rgba(201,160,80,.07);
+  border-color:rgba(201,160,80,.6);
+  color:var(--cream);
+}
+
+/* ── Footer ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:24px 48px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+footer span{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.12em;
+  color:var(--muted);
+}
+footer span:first-of-type{margin-right:auto}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .hero{padding:60px 24px}
+  .hero-stats{display:none}
+  section{padding:72px 24px}
+  nav{padding:0 20px}
+  .sobre-grid,.access-wrap{grid-template-columns:1fr;gap:40px}
+  .strat-grid{grid-template-columns:1fr}
+  .token-grid{grid-template-columns:repeat(2,1fr)}
+  .protocol-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .nav-links.open{
+    display:flex;flex-direction:column;
+    position:fixed;top:60px;left:0;right:0;
+    background:var(--dark);
+    border-bottom:1px solid var(--border);
+    padding:16px;gap:4px;z-index:99;
+  }
+}
+@media(max-width:600px){
+  .hero-title{font-size:clamp(38px,8vw,56px)}
+  .token-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+<script>
+// Theme init — runs before render to avoid flash
+(function(){
+  var t=localStorage.getItem('bc-theme');
+  if(t) document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 30" width="195" height="22" style="display:block;">
+      <text x="0" y="22" font-family="Cormorant Garamond, Georgia, serif" font-size="21" font-weight="500" fill="#c9a050" letter-spacing="5">BAROLO CAPITAL</text>
+    </svg>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="#home"        onclick="setActive(this);closeMobile()" data-i18n="nav-home">Home</a>
+    <a href="#sobre"       onclick="setActive(this);closeMobile()" data-i18n="nav-sobre">About</a>
+    <a href="#estrategias" onclick="setActive(this);closeMobile()" data-i18n="nav-strat">Strategies</a>
+    <a href="#portfolio"   onclick="setActive(this);closeMobile()" data-i18n="nav-port">Portfolio</a>
+    <a href="#contato"     onclick="setActive(this);closeMobile()" data-i18n="nav-contact">Contact</a>
+  </div>
+
+  <div class="nav-right">
+    <input type="text"     id="nu" class="nav-input" autocomplete="username"         autocapitalize="none" spellcheck="false" placeholder="username" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
+    <input type="password" id="np" class="nav-input" autocomplete="current-password"                       placeholder="••••••"   onkeydown="if(event.key==='Enter')loginNav()">
+    <button class="nav-btn" onclick="loginNav()" data-i18n="btn-enter">Enter</button>
+    <button style="background:transparent;border:1px solid var(--border2);padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold);cursor:pointer;transition:all .2s;" id="indexLangBtn" onclick="toggleIndexLang()" title="Switch to Portuguese">PT</button>
+    <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border2);width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:border-color .2s;">☾</button>
+  </div>
+
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" style="border-top:none;padding:0">
+  <div class="hero">
+    <div class="hero-eyebrow" data-i18n="eyebrow">Strategic Capital Management</div>
+    <h1 class="hero-title" data-i18n="hero-title">Wealth built with <em>consistency</em>, not haste.</h1>
+    <p class="hero-sub" data-i18n="hero-sub">Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.</p>
+    <div class="hero-cta">
+      <a href="#sobre" class="btn-primary" data-i18n="cta-about">About</a>
+      <a href="#portfolio" class="btn-ghost" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'});return false;" data-i18n="cta-portfolio">Portfolio</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">2022</div>
+        <div class="hero-stat-lbl">Since</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val">+654%</div>
+        <div class="hero-stat-lbl">Total return</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val">DeFi</div>
+        <div class="hero-stat-lbl">Focus</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="sobre">
+  <div class="section-num">01</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="about-tag">About</div>
+    <h2 class="section-title" data-i18n="about-title">A <em>different</em> approach to the crypto market</h2>
+    <div class="sobre-grid">
+      <div class="sobre-text">
+        <p class="lead" data-i18n="about-lead">Barolo Capital is an independent firm focused on strategic capital management in the crypto market.</p>
+        <p data-i18n="about-p1">We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, we act selectively — focusing only on opportunities where we have genuine conviction.</p>
+        <p data-i18n="about-p2">We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols as tools for generating yield, managing risk and expanding positions in assets we believe in.</p>
+      </div>
+      <div class="beliefs-grid">
+        <div class="belief-item">
+          <span class="belief-num">01</span>
+          <span class="belief-text" data-i18n="belief-1">Real wealth is built with consistency, not haste.</span>
+        </div>
+        <div class="belief-item">
+          <span class="belief-num">02</span>
+          <span class="belief-text" data-i18n="belief-2">We do not seek the largest gain — we seek the sustainable gain.</span>
+        </div>
+        <div class="belief-item">
+          <span class="belief-num">03</span>
+          <span class="belief-text" data-i18n="belief-3">Concentration in what we understand is better than diversification in what we do not.</span>
+        </div>
+        <div class="belief-item">
+          <span class="belief-num">04</span>
+          <span class="belief-text" data-i18n="belief-4">Bear markets are buying opportunities, not reasons to exit.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGIES -->
+<section id="estrategias">
+  <div class="section-num">02</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="strat-tag">Strategies</div>
+    <h2 class="section-title" data-i18n="strat-title"><em>Selective</em> strategies focused on DeFi</h2>
+    <div class="strat-grid">
+      <div class="strat-card">
+        <div class="strat-icon">◈</div>
+        <div class="strat-name" data-i18n="strat1-tag">Active Liquidity</div>
+        <div class="strat-title" data-i18n="strat1-title">Concentrated Liquidity Pools</div>
+        <div class="strat-desc" data-i18n="strat1-desc">Concentrated liquidity positions on DEXs like Uniswap V3, used both to capture fees and as a disciplined exit strategy on selected positions.</div>
+        <div class="strat-tags">
+          <span class="strat-tag">Uniswap V3</span>
+          <span class="strat-tag">Raydium</span>
+          <span class="strat-tag">Ethereum · Arbitrum · Solana</span>
+        </div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-icon">⬡</div>
+        <div class="strat-name" data-i18n="strat2-tag">Lending</div>
+        <div class="strat-title" data-i18n="strat2-title">Collateralised Borrowing</div>
+        <div class="strat-desc" data-i18n="strat2-desc">Supply ETH and stablecoins as collateral on AAVE V4 and Kamino Finance, borrowing USDC at strategic rates to optimise capital efficiency.</div>
+        <div class="strat-tags">
+          <span class="strat-tag">AAVE V4</span>
+          <span class="strat-tag">Kamino</span>
+          <span class="strat-tag">Ethereum · Solana</span>
+        </div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-icon">◎</div>
+        <div class="strat-name" data-i18n="strat3-tag">Accumulation</div>
+        <div class="strat-title" data-i18n="strat3-title">Long-Term Conviction</div>
+        <div class="strat-desc" data-i18n="strat3-desc">Monthly DCA into ETH, SOL and ADA with a 10+ year horizon. Bear markets are treated as accumulation phases, not reasons to exit.</div>
+        <div class="strat-tags">
+          <span class="strat-tag">ETH · SOL · ADA</span>
+          <span class="strat-tag">DCA mensal</span>
+          <span class="strat-tag">10+ anos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-num">03</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="port-tag">DeFi Ecosystem</div>
+    <h2 class="section-title" data-i18n="port-title">Portfolio <em>Assets</em></h2>
+
+    <!-- Token grid — 3 columns, clean rows -->
+    <div class="token-grid">
+
+      <a href="https://ethereum.org" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png" alt="ETH" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Ethereum</div>
+          <div class="token-ticker">ETH · 2.08</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://solana.com" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/4128/large/solana.png" alt="SOL" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Solana</div>
+          <div class="token-ticker">SOL · 20.31</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://cardano.org" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/975/large/cardano.png" alt="ADA" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Cardano</div>
+          <div class="token-ticker">ADA · 375.2</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/33373/large/eigen.png" alt="EIGEN" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">EigenLayer</div>
+          <div class="token-ticker">EIGEN · 153.3</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://radiant.capital" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/26536/large/Radiant-Logo.png" alt="RDNT" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Radiant</div>
+          <div class="token-ticker">RDNT · 7,290</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://polygon.technology" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/32440/large/polygon.png" alt="POL" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">POL</div>
+          <div class="token-ticker">POL · 218</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://zksync.io" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/38043/large/zksync.jpg" alt="ZK" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">ZKsync</div>
+          <div class="token-ticker">ZK · 876</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://xai.games" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/34258/large/xai.png" alt="XAI" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Xai</div>
+          <div class="token-ticker">XAI · 692.8</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://zetachain.com" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/26718/large/zetachain.png" alt="ZETA" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">ZetaChain</div>
+          <div class="token-ticker">ZETA · 51.1</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+    </div><!-- /token-grid -->
+
+    <!-- Protocols row -->
+    <div class="protocol-grid">
+
+      <a href="https://pro.aave.com" target="_blank" rel="noopener" class="protocol-card">
+        <img class="proto-logo" src="https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png" alt="AAVE" onerror="this.style.display='none'">
+        <div class="proto-info">
+          <div class="proto-name">AAVE V4</div>
+          <div class="proto-sub">Lending · Ethereum</div>
+        </div>
+        <span class="token-arrow" style="opacity:0.4;">↗</span>
+      </a>
+
+      <a href="https://kamino.finance" target="_blank" rel="noopener" class="protocol-card">
+        <img class="proto-logo" src="https://coin-images.coingecko.com/coins/images/36217/large/kmno_logo.png" alt="Kamino" onerror="this.style.display='none'">
+        <div class="proto-info">
+          <div class="proto-name">Kamino</div>
+          <div class="proto-sub">Lending · Solana</div>
+        </div>
+        <span class="token-arrow" style="opacity:0.4;">↗</span>
+      </a>
+
+      <a href="https://app.uniswap.org" target="_blank" rel="noopener" class="protocol-card">
+        <img class="proto-logo" src="https://coin-images.coingecko.com/coins/images/12504/large/uniswap-uni.png" alt="UNI" onerror="this.style.display='none'">
+        <div class="proto-info">
+          <div class="proto-name">Uniswap V3</div>
+          <div class="proto-sub">Liquidity · Ethereum</div>
+        </div>
+        <span class="token-arrow" style="opacity:0.4;">↗</span>
+      </a>
+
+    </div><!-- /protocol-grid -->
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contato">
+  <div class="section-num">04</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="contact-tag">Contact</div>
+    <h2 class="section-title" data-i18n="contact-title">Get in <em>touch</em></h2>
+    <div class="contact-block">
+      <p data-i18n="contact-desc">For partnerships, questions or collaboration opportunities — reach out directly.</p>
+      <a href="mailto:contato@barolocapital.com.br" class="contact-email">contato@barolocapital.com.br</a>
+    </div>
+  </div>
+</section>
+
+<script>
+// ══════════════════════════════════
+// LOGIN
+// ══════════════════════════════════
+function loginNav() {
+  var u = (document.getElementById('nu') || {}).value || '';
+  var p = (document.getElementById('np') || {}).value || '';
+  var err = document.getElementById('access-error');
+  if (u.trim().toUpperCase() === 'ADM' && p === '102030') {
+    window.location.href = 'portfolio_analytics.html';
+  } else {
+    if (err) { err.textContent = 'Invalid credentials.'; }
+    // shake the button
+    var btn = document.querySelector('.nav-btn');
+    if (btn) { btn.style.opacity = '.4'; setTimeout(function(){ btn.style.opacity = '1'; }, 400); }
+  }
+}
+
+// Access section login (if exists)
+function loginAccess() {
+  var u = (document.getElementById('au') || {}).value || '';
+  var p = (document.getElementById('ap') || {}).value || '';
+  var err = document.getElementById('access-error');
+  if (u.trim().toUpperCase() === 'ADM' && p === '102030') {
+    window.location.href = 'portfolio_analytics.html';
+  } else {
+    if (err) { err.textContent = 'Credenciais inválidas. Tente novamente.'; }
+  }
+}
+
+// ══════════════════════════════════
+// THEME TOGGLE
+// ══════════════════════════════════
+function toggleTheme() {
+  var html = document.documentElement;
+  var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('bc-theme', next);
+  var btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '☾' : '☀';
+}
+
+// ══════════════════════════════════
+// LANGUAGE TOGGLE
+// ══════════════════════════════════
+var INDEX_LANG = 'en';
+
+var INDEX_LANG_STRINGS = {
+  en: {
+    'nav-home': 'Home', 'nav-sobre': 'About', 'nav-strat': 'Strategies', 'nav-port': 'Portfolio',
+    'btn-enter': 'Enter',
+    'eyebrow': 'Strategic Capital Management',
+    'hero-title': 'Wealth built with <em>consistency</em>, not haste.',
+    'hero-sub': 'Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.',
+    'cta-about': 'About', 'cta-portfolio': 'Portfolio',
+    'about-tag': 'About',
+    'about-title': 'A <em>different</em> approach to the crypto market',
+    'about-lead': 'Barolo Capital is an independent firm focused on strategic capital management in the crypto market.',
+    'about-p1': 'We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, we act selectively — focusing only on opportunities where we have genuine conviction.',
+    'about-p2': 'We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols as tools for generating yield, managing risk and expanding positions in assets we believe in.',
+    'belief-1': 'Real wealth is built with consistency, not haste.',
+    'belief-2': 'We do not seek the largest gain — we seek the sustainable gain.',
+    'belief-3': 'Concentration in what we understand is better than diversification in what we do not.',
+    'belief-4': 'Bear markets are buying opportunities, not reasons to exit.',
+    'strat-tag': 'Strategies',
+    'strat-title': '<em>Selective</em> strategies focused on DeFi',
+    'strat1-tag': 'Active Liquidity', 'strat1-title': 'Concentrated Liquidity Pools',
+    'strat1-desc': 'Concentrated liquidity positions on DEXs like Uniswap V3, used both to capture fees and as a disciplined exit strategy on selected positions.',
+    'strat2-tag': 'Lending', 'strat2-title': 'Collateralised Borrowing',
+    'strat2-desc': 'Supply ETH and stablecoins as collateral on AAVE V4 and Kamino Finance, borrowing USDC at strategic rates to optimise capital efficiency.',
+    'strat3-tag': 'Accumulation', 'strat3-title': 'Long-Term Conviction',
+    'strat3-desc': 'Monthly DCA into ETH, SOL and ADA with a 10+ year horizon. Bear markets are treated as accumulation phases, not reasons to exit.',
+    'port-tag': 'DeFi Ecosystem', 'port-title': 'Portfolio <em>Assets</em>',
+    'nav-contact': 'Contact',
+    'contact-tag': 'Contact',
+    'contact-title': 'Get in <em>touch</em>',
+    'contact-desc': 'For partnerships, questions or collaboration opportunities — reach out directly.',
+  },
+  pt: {
+    'nav-home': 'Início', 'nav-sobre': 'Sobre', 'nav-strat': 'Estratégias', 'nav-port': 'Portfólio',
+    'btn-enter': 'Entrar',
+    'eyebrow': 'Gestão Estratégica de Capital',
+    'hero-title': 'Patrimônio construído com <em>consistência</em>, não pressa.',
+    'hero-sub': 'Barolo Capital é uma gestora independente focada em estratégias de capital no mercado cripto — com disciplina, visão de longo prazo e preservação como base.',
+    'cta-about': 'Sobre', 'cta-portfolio': 'Portfólio',
+    'about-tag': 'Sobre',
+    'about-title': 'Uma abordagem <em>diferente</em> do mercado cripto',
+    'about-lead': 'Barolo Capital é uma firma independente focada em gestão estratégica de capital no mercado de criptoativos.',
+    'about-p1': 'Acreditamos que patrimônio não é construído com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, atuamos de forma seletiva — focando apenas nas oportunidades onde temos convicção genuína.',
+    'about-p2': 'Operamos na interseção entre estratégias DeFi ativas e acumulação de longo prazo, usando protocolos descentralizados como ferramentas de geração de yield, gestão de risco e expansão de posições nos ativos em que acreditamos.',
+    'belief-1': 'Patrimônio real é construído com consistência, não com pressa.',
+    'belief-2': 'Não buscamos o maior ganho — buscamos o ganho sustentável.',
+    'belief-3': 'Concentração no que entendemos é melhor do que diversificação no que não entendemos.',
+    'belief-4': 'Bear markets são oportunidades de compra, não razão para sair.',
+    'strat-tag': 'Estratégias',
+    'strat-title': 'Estratégias <em>seletivas</em> focadas em DeFi',
+    'strat1-tag': 'Liquidez Ativa', 'strat1-title': 'Pools de Liquidez Concentrada',
+    'strat1-desc': 'Posições de liquidez concentrada em DEXs como Uniswap V3, usadas tanto para capturar taxas quanto como estratégia de saída disciplinada em posições selecionadas.',
+    'strat2-tag': 'Lending', 'strat2-title': 'Empréstimos Colateralizados',
+    'strat2-desc': 'Supply de ETH e stablecoins como colateral no AAVE V4 e Kamino Finance, tomando USDC emprestado a taxas estratégicas para otimizar a eficiência de capital.',
+    'strat3-tag': 'Acumulação', 'strat3-title': 'Convicção de Longo Prazo',
+    'strat3-desc': 'DCA mensal em ETH, SOL e ADA com horizonte de 10+ anos. Bear markets são tratados como fases de acumulação, não razão para sair.',
+    'port-tag': 'Ecossistema DeFi', 'port-title': 'Ativos do <em>Portfólio</em>',
+    'nav-contact': 'Contato',
+    'contact-tag': 'Contato',
+    'contact-title': 'Entre em <em>contato</em>',
+    'contact-desc': 'Para parcerias, dúvidas ou oportunidades de colaboração — fale diretamente.',
+  }
+};
+
+function toggleIndexLang() {
+  INDEX_LANG = INDEX_LANG === 'en' ? 'pt' : 'en';
+  var strings = INDEX_LANG_STRINGS[INDEX_LANG];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (strings[key] !== undefined) {
+      el.innerHTML = strings[key];
+    }
+  });
+  var label = INDEX_LANG === 'en' ? 'PT' : 'EN';
+  var btns = document.querySelectorAll('#indexLangBtn, #indexLangBtnFooter');
+  btns.forEach(function(b){ b.textContent = label; });
+  document.documentElement.setAttribute('lang', INDEX_LANG === 'en' ? 'en' : 'pt-BR');
+}
+
+// ══════════════════════════════════
+// NAV HELPERS
+// ══════════════════════════════════
+function setActive(el) {
+  document.querySelectorAll('.nav-links a').forEach(function(a){ a.classList.remove('active'); });
+  el.classList.add('active');
+}
+function closeMobile() {
+  document.getElementById('navLinks').classList.remove('open');
+}
+function toggleMobile() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// ══════════════════════════════════
+// TICKER
+// ══════════════════════════════════
+(function initTicker() {
+  var ASSETS = [
+    { sym: 'BTC',  id: 'bitcoin' },
+    { sym: 'ETH',  id: 'ethereum' },
+    { sym: 'SOL',  id: 'solana' },
+    { sym: 'ADA',  id: 'cardano' },
+  ];
+  var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
+
+  function fmt(n) { return n >= 1000 ? '$' + n.toLocaleString('en-US', {minimumFractionDigits:0,maximumFractionDigits:0}) : '$' + n.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  function renderTicker(prices) {
+    var items = ASSETS.map(function(a) {
+      var p = prices[a.id] || FALLBACK[a.id];
+      var ch = prices[a.id + '_change'] || 0;
+      var chClass = ch >= 0 ? 't-up' : 't-dn';
+      var chSign = ch >= 0 ? '+' : '';
+      return '<div class="ticker-item"><span class="t-sym">' + a.sym + '</span><span class="t-val">' + fmt(p) + '</span><span class="' + chClass + '">' + chSign + ch.toFixed(2) + '%</span></div>';
+    });
+    // duplicate for seamless loop
+    var html = items.join('') + items.join('');
+    var track = document.getElementById('tickerTrack');
+    if (track) track.innerHTML = html;
+  }
+
+  async function fetchTicker() {
+    try {
+      var ids = ASSETS.map(function(a){ return a.id; }).join(',');
+      var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=usd&include_24hr_change=true', { signal: AbortSignal.timeout(6000) });
+      var d = await r.json();
+      var prices = {};
+      Object.keys(d).forEach(function(id) { prices[id] = d[id].usd; prices[id + '_change'] = d[id].usd_24h_change || 0; });
+      renderTicker(prices);
+    } catch(e) {
+      renderTicker({});
+    }
+  }
+
+  renderTicker({});
+  fetchTicker();
+  setInterval(fetchTicker, 60000);
+})();
+
+// Set initial theme icon
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀';
+  // Set first nav link active
+  var first = document.querySelector('.nav-links a');
+  if (first) first.classList.add('active');
+});
+</script>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:8px;margin-right:auto;">
+    <button id="indexLangBtnFooter" onclick="toggleIndexLang()" style="background:transparent;border:1px solid rgba(201,160,80,.3);padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);cursor:pointer;">PT</button>
+  </div>
+  <span>© 2021 Barolo Capital · Strategic Capital Management</span>
+  <span>All data is for internal and private use only</span>
+</footer>
+

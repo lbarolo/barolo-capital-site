@@ -1,0 +1,3535 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<script>
+// Theme init — runs before render to avoid flash
+(function(){
+ var t=localStorage.getItem('bc-theme');
+ if(t) document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml"><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Satoshi,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Satoshi,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><link rel="canonical" href="/pools">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Barolo Capital · Pools & DeFi</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+ --bg:#f2ece0;--surface:#faf6ef;--surface2:#ece5d5;--border:#d5c9a5;
+ --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;
+ --text:#16110c;--muted:#7a6a50;--card-shadow:0 1px 4px rgba(22,17,12,0.08);
+}
+[data-theme="dark"]{
+ --bg:#17171f;--surface:#1e1e28;--surface2:#232330;--border:#2e2a3a;
+ --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;
+ --text:#e6edf3;--muted:#8b7d6b;--card-shadow:none;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Satoshi',sans-serif;font-size:13px;min-height:100vh;}
+.container{max-width:1440px;margin:0 auto;padding:80px 28px 50px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(242,236,224,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+[data-theme="dark"] nav{background:rgba(23,23,31,0.96);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;}
+.nav-logo img{width:100%;height:100%;object-fit:cover;}
+.nav-title{font-family:'Satoshi',serif;font-size:16px;font-weight:600;color:var(--text);letter-spacing:.1em;}
+.nav-links{display:flex;gap:2px;}
+.nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a.active{color:var(--accent);background:rgba(138,104,32,0.1);border:1px solid rgba(138,104,32,0.25);}
+[data-theme="dark"] .nav-links a.active{background:rgba(201,160,80,0.1);border-color:rgba(201,160,80,0.25);}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:all .2s;}
+.btn-sm:hover{color:var(--accent);border-color:var(--accent);}
+
+/* SECTION */
+.section-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:36px 0 20px;padding:0 0 12px 14px;border-left:2px solid var(--accent);font-weight:400;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--card-shadow);}
+
+/* DEFI CARDS */
+.defi-summary{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.defi-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--card-shadow);}
+.defi-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.defi-proto{font-size:12px;font-weight:700;font-family:'Satoshi',serif;letter-spacing:.05em;}
+.defi-body{padding:16px 20px;}
+.defi-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.defi-row:last-child{border-bottom:none;}
+.defi-asset{display:flex;align-items:center;gap:6px;font-size:11px;}
+.icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.defi-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
+.dm{text-align:center;background:var(--bg);border-radius:4px;padding:10px 8px;}
+.dm-label{font-size:7px;color:var(--muted);margin-bottom:2px;letter-spacing:1px;}
+.dm-val{font-size:12px;font-weight:700;}
+.health-track{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;margin:4px 0;}
+.health-fill{height:100%;border-radius:2px;}
+.tag{font-size:8px;border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--muted);}
+.pos{color:var(--green);}
+.neg{color:var(--red);}
+.acc{color:var(--accent);}
+.warn{color:var(--yellow);}
+
+/* LIQUIDATION BADGES */
+.liq-box-safe{
+ margin-top:8px;
+ background:rgba(74,124,63,0.12);
+ border:2px solid rgba(74,124,63,0.5);
+ border-radius:8px;padding:10px 12px;
+ box-shadow:0 0 14px rgba(74,124,63,0.18);
+}
+.liq-box-warn{
+ margin-top:8px;
+ background:rgba(196,160,50,0.12);
+ border:2px solid rgba(196,160,50,0.55);
+ border-radius:8px;padding:10px 12px;
+ box-shadow:0 0 14px rgba(196,160,50,0.22);
+}
+.liq-box-danger{
+ margin-top:8px;
+ background:rgba(156,42,42,0.14);
+ border:2px solid rgba(156,42,42,0.6);
+ border-radius:8px;padding:10px 12px;
+ box-shadow:0 0 14px rgba(156,42,42,0.25);
+}
+
+/* REVERT PANEL */
+.revert-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--card-shadow);margin-bottom:20px;}
+.revert-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+.revert-title{display:flex;align-items:center;gap:8px;}
+.revert-title span{font-size:11px;font-weight:600;font-family:'Satoshi',serif;letter-spacing:.06em;}
+.btn-open{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:5px;padding:6px 14px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;cursor:pointer;text-decoration:none;transition:opacity .2s;}
+.btn-open:hover{opacity:.85;}
+[data-theme="dark"] .btn-open{background:#c9a050;color:#16110c;}
+.badge-green{background:rgba(74,124,63,0.12);color:var(--green);border:1px solid rgba(74,124,63,0.3);border-radius:10px;padding:2px 8px;font-size:8px;}
+[data-theme="dark"] .badge-green{background:rgba(63,185,80,0.12);color:#3fb950;border-color:rgba(63,185,80,0.3);}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.badge-warn {
+  background: rgba(248,81,73,0.15);
+  color: var(--red);
+  border: 1px solid rgba(248,81,73,0.35);
+  border-radius: 3px;
+  font-size: 8px;
+  padding: 2px 7px;
+  letter-spacing: .08em;
+}
+
+/* PANEL FOOTER (generic) */
+.panel-footer{padding:10px 18px;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+
+/* GENERIC IFRAME SPINNER */
+.iframe-spinner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--surface);z-index:3;pointer-events:none;transition:opacity .5s;}
+.spin-ring{width:36px;height:36px;border:3px solid rgba(201,160,80,0.2);border-radius:50%;animation:spin .9s linear infinite;}
+.spin-label{font-size:9px;color:var(--muted);letter-spacing:2px;}
+
+/* GENERIC IFRAME FALLBACK */
+.iframe-fallback{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;background:var(--surface);z-index:2;}
+.fb-icon{font-size:34px;opacity:.3;}
+.fb-title{font-family:'Satoshi',serif;font-size:18px;color:var(--text);font-weight:600;}
+.fb-sub{font-size:11px;color:var(--muted);max-width:360px;line-height:1.7;}
+
+/* LP SUMMARY BAR */
+.lp-bar{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border);}
+.lp-m{padding:16px 18px;border-right:1px solid var(--border);}
+.lp-m:last-child{border-right:none;}
+.lp-ml{font-size:7px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.lp-mv{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.lp-ms{font-size:8px;color:var(--muted);margin-top:2px;}
+
+/* REF TOGGLE */
+.ref-toggle{display:flex;gap:3px;}
+.ref-btn{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:'JetBrains Mono',monospace;font-weight:500;transition:all .2s;}
+.ref-btn.active{background:rgba(138,104,32,0.12);border-color:rgba(138,104,32,0.4);color:var(--accent);}
+[data-theme="dark"] .ref-btn.active{background:rgba(201,160,80,0.12);border-color:rgba(201,160,80,0.4);color:#c9a050;}
+
+/* IFRAME */
+.iframe-wrap{position:relative;width:100%;height:1080px;overflow:hidden;background:var(--surface);}
+.iframe-wrap.expanded{height:1600px;}
+.iframe-wrap iframe{width:100%;height:100%;border:none;display:block;}
+
+/* FALLBACK when iframe blocked */
+.revert-fallback{
+ display:none;
+ flex-direction:column;align-items:center;justify-content:center;
+ height:300px;gap:18px;padding:32px;
+ text-align:center;
+}
+.revert-fallback.show{display:flex;}
+.revert-fallback-icon{font-size:36px;opacity:.4;}
+.revert-fallback-title{font-family:'Satoshi',serif;font-size:17px;color:var(--text);font-weight:600;}
+.revert-fallback-sub{font-size:11px;color:var(--muted);max-width:360px;line-height:1.6;}
+.btn-open-lg{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:6px;padding:10px 22px;font-size:11px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;cursor:pointer;text-decoration:none;transition:opacity .2s;margin-top:4px;}
+.btn-open-lg:hover{opacity:.85;}
+[data-theme="dark"] .btn-open-lg{background:#c9a050;color:#16110c;}
+
+/* SHARED IFRAME PANEL COMPONENTS */
+.iframe-spinner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--surface);z-index:3;pointer-events:none;transition:opacity .5s;}
+.spinner-ring{width:36px;height:36px;border:3px solid rgba(201,160,80,0.2);border-top-color:#c9a050;border-radius:50%;animation:spin .9s linear infinite;}
+.spinner-label{font-size:9px;color:var(--muted);letter-spacing:2px;}
+.iframe-fallback{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;background:var(--surface);z-index:2;}
+.ifb-icon{font-size:34px;opacity:.35;}
+.ifb-title{font-family:'Satoshi',serif;font-size:17px;color:var(--text);font-weight:600;}
+.ifb-sub{font-size:11px;color:var(--muted);max-width:360px;line-height:1.7;}
+.ifb-addr{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;opacity:.7;}
+.panel-footer{padding:10px 20px;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:9px;color:var(--muted);}
+
+@media(max-width:768px){
+ .defi-summary,.lp-bar{grid-template-columns:1fr;}
+ .lp-m{border-right:none;border-bottom:1px solid var(--border);}
+ .iframe-wrap{height:700px;}
+ .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
+ background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
+ [data-theme="dark"] .nav-links{background:rgba(23,23,31,.98);}
+ .nav-links.open{display:flex;}
+ .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+ .nav-links a:last-child{border-bottom:none;}
+ .nav-hamburger{display:flex;}
+}
+@media(min-width:769px){
+ .nav-hamburger{display:none!important;}
+}
+/* Mobile hamburger button */
+.nav-hamburger{
+ background:none;border:1px solid var(--border);border-radius:4px;
+ padding:5px 9px;cursor:pointer;flex-direction:column;gap:4px;align-items:center;justify-content:center;
+}
+.nav-hamburger span{display:block;width:16px;height:1.5px;background:var(--muted);transition:all .25s;}
+
+/* ── DESIGN SYSTEM PATCH — Professional Redesign ── */
+/* Remove all decorative pill badges default glow */
+.badge { border-radius: 2px !important; font-size: 8px !important; letter-spacing: .18em !important; }
+
+/* Section labels — cleaner, editorial */
+.section-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .32em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  padding: 0 0 10px 0 !important;
+  margin: 28px 0 14px !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-weight: 400 !important;
+  background: none !important;
+}
+[data-theme="light"] .section-label { color: var(--muted) !important; border-bottom-color: var(--border) !important; }
+
+/* Chart titles */
+.chart-title {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .22em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  font-weight: 400 !important;
+  margin-bottom: 14px !important;
+}
+
+/* Tab system — clean underline style */
+.tabs {
+  display: flex !important;
+  gap: 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  margin-bottom: 24px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  background: none !important;
+}
+.tabs::-webkit-scrollbar { display: none !important; }
+.tab {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  padding: 10px 18px !important;
+  cursor: pointer !important;
+  transition: color .2s, border-color .2s !important;
+  white-space: nowrap !important;
+}
+.tab:hover { color: var(--text) !important; }
+.tab.active {
+  color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+  background: none !important;
+}
+
+/* Period buttons — clean */
+.period-btn, .chart-type-btn {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .16em !important;
+  text-transform: uppercase !important;
+  padding: 5px 10px !important;
+  background: none !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  transition: all .18s !important;
+}
+.period-btn:hover, .chart-type-btn:hover { color: var(--text) !important; border-color: var(--muted) !important; }
+.period-btn.active, .chart-type-btn.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--bg) !important;
+}
+
+/* Cards — more refined */
+.card {
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+}
+.stat-card {
+  border-radius: 0 !important;
+}
+.defi-card {
+  border-radius: 0 !important;
+}
+.hero-card {
+  border-radius: 0 !important;
+}
+
+/* Btn-sm — tighter, cleaner */
+.btn-sm {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  padding: 5px 10px !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Lang button accent */
+.lang-btn { color: var(--accent) !important; border-color: var(--accent) !important; }
+.lang-btn:hover { background: var(--accent) !important; color: var(--bg) !important; }
+
+/* Stat labels — cleaner */
+.stat-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  letter-spacing: .24em !important;
+  text-transform: uppercase !important;
+}
+
+/* Hero label */
+.hero-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8.5px !important;
+  letter-spacing: .28em !important;
+}
+
+/* Pool table headers */
+.tbl-hdr {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 8px !important;
+  letter-spacing: .22em !important;
+}
+
+/* Remove all box-shadow decorations */
+.defi-card, .card, .stat-card { box-shadow: none !important; }
+
+
+/* ── SECTION LABEL DEFINITIVE ── */
+.section-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .30em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  margin: 36px 0 20px !important;
+  padding: 0 0 12px 14px !important;
+  border-left: 2px solid var(--accent) !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  font-weight: 400 !important;
+  background: none !important;
+  line-height: 1 !important;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+</head>
+<body>
+<nav>
+ <a class="nav-brand" href="index.html">
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+ <defs>
+ <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+ <stop offset="0%" stop-color="transparent"/>
+ <stop offset="18%" stop-color="#c9a050"/>
+ <stop offset="82%" stop-color="#c9a050"/>
+ <stop offset="100%" stop-color="transparent"/>
+ </linearGradient>
+ </defs>
+ <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+ <text x="105" y="20"
+ font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
+ font-weight="600" font-size="14" letter-spacing="3"
+ fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+ <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+</svg>
+ </a>
+ <div class="nav-links">
+ <a href="index.html" data-i18n="nav-home">Início</a>
+ <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
+ <a href="pools.html" class="active" data-i18n="nav-pools">Pools &amp; DeFi</a>
+ <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
+ <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
+ </div>
+ <div style="display:flex;align-items:center;gap:8px;">
+ <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
+ <button class="btn-sm" onclick="toggleTheme()">☾</button>
+ <button class="btn-sm" onclick="window.baroloRefresh && window.baroloRefresh()" title="Atualizar dados on-chain" style="color:var(--green)">⟳ Live</button>
+ </div>
+</nav>
+
+<div class="container">
+
+<!-- ══ CAPITAL OPERACIONAL ══ -->
+<div class="section-label" style="margin-top:32px;">Meta de Alocação em Pools</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+ <div>
+ <div style="font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Política de Alocação</div>
+ <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--accent);">5%</div>
+ <div style="font-size:11px;color:var(--muted);margin-top:4px;">do patrimônio líquido alocado em pools de liquidez</div>
+ </div>
+ <div style="display:flex;flex-direction:column;gap:8px;">
+ <div style="font-size:11px;color:var(--muted);">
+ <span style="color:var(--text);">Meta 5%</span> de 
+ <span id="capop-patrimonio" style="color:var(--text);font-family:'JetBrains Mono',monospace;">—</span>
+ <span style="color:var(--muted);"> = </span>
+ <span id="capop-rec" style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:600;">—</span>
+ </div>
+ <div style="font-size:10px;color:var(--muted);font-style:italic;">Abra nova posição quando houver oportunidade de range dentro da meta.</div>
+ </div>
+</div>
+
+
+<!-- ══ P&L 2026 YTD ══ -->
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div style="font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;white-space:nowrap;">P&L 2026 YTD</div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;flex:1;">
+    <div style="min-width:90px;">
+      <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">FEES BRUTAS</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:var(--green);" id="ytd-fees">—</div>
+    </div>
+    <div style="min-width:90px;">
+      <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">P&L LÍQUIDO</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;" id="ytd-pnl">—</div>
+    </div>
+    <div style="min-width:80px;">
+      <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">POOLS ATIVAS</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:var(--accent);" id="ytd-active">—</div>
+    </div>
+    <div style="min-width:80px;">
+      <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">DIAS OP.</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:var(--muted);" id="ytd-dias">—</div>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  function calcYTD() {
+    if (typeof POOLS === 'undefined') return;
+    var fees2026 = 0, pnl2026 = 0, activePools = 0, dias2026 = 0;
+    POOLS.forEach(function(p) {
+      var is2026 = (p.open && p.open.indexOf('2026') !== -1) || p.status === 'active';
+      if (!is2026) return;
+      fees2026 += p.fees || 0;
+      pnl2026  += p.result || 0;
+      if (p.status === 'active') activePools++;
+      dias2026 += p.days || 0;
+    });
+    var feesEl = document.getElementById('ytd-fees');
+    var pnlEl  = document.getElementById('ytd-pnl');
+    var actEl  = document.getElementById('ytd-active');
+    var diasEl = document.getElementById('ytd-dias');
+    if (feesEl) feesEl.textContent = '$' + fees2026.toFixed(0);
+    if (pnlEl)  {
+      pnlEl.textContent = (pnl2026 >= 0 ? '+' : '') + '$' + pnl2026.toFixed(0);
+      pnlEl.style.color = pnl2026 >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+    if (actEl)  actEl.textContent = activePools;
+    if (diasEl) diasEl.textContent = dias2026 + ' dias';
+  }
+  document.addEventListener('DOMContentLoaded', calcYTD);
+  // Also try after POOLS may be defined if DOMContentLoaded already fired
+  if (document.readyState !== 'loading') calcYTD();
+})();
+</script>
+
+<!-- ══ UNISWAP V3 LP — REVERT ══ -->
+<div class="section-label">Liquidity Pool Ativa — Uniswap V3</div>
+
+<div class="revert-panel">
+ <!-- Toolbar -->
+ <div class="revert-toolbar">
+ <div class="revert-title">
+ <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ WETH/USDC</span>
+ <span style="font-size:9px;color:var(--muted);">0.30% · NFT #4694262</span>
+ <span class="badge-green">● IN-RANGE</span>
+ </div>
+ <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+ <div class="ref-toggle">
+ <button class="ref-btn active" onclick="setRef('usd')">USD</button>
+ <button class="ref-btn" onclick="setRef('eth')">ETH</button>
+ <button class="ref-btn" onclick="setRef('hold')">HOLD</button>
+ </div>
+ <a class="btn-open" href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" target="_blank" rel="noopener">
+ ↗ Abrir Revert
+ </a>
+ <button class="btn-sm" onclick="Notification.requestPermission()" title="Ativar alertas de out-of-range" id="btnNotif" style="display:none;">🔔 Alertas</button>
+ </div>
+ </div>
+
+ <!-- LP metrics bar -->
+ <div class="lp-bar">
+ <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms">0.1185 WETH + 102.76 USDC</div></div>
+ <div class="lp-m"><div class="lp-ml">TOTAL P&L</div><div class="lp-mv pos" id="lp-pnl">—</div><div class="lp-ms" id="lp-roi">—</div></div>
+ <div class="lp-m"><div class="lp-ml">TOTAL APR</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-fee-apr">—</div></div>
+ <div class="lp-m"><div class="lp-ml">UNCOLLECTED FEES</div><div class="lp-mv warn" id="lp-fees">—</div><div class="lp-ms" id="lp-daily-fees">—/dia</div></div>
+ <div class="lp-m"><div class="lp-ml">DIV. LOSS</div><div class="lp-mv neg" id="lp-il">—</div><div class="lp-ms" id="lp-gas">—</div></div>
+ </div>
+
+ <!-- Iframe wrapper with loading overlay -->
+ <div class="iframe-wrap" id="iframeWrap" style="height:480px;">
+
+ <!-- Spinner overlay (fades out after load or timeout) -->
+ <div id="revertLoading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--surface);z-index:3;pointer-events:none;transition:opacity .5s;">
+ <div style="width:36px;height:36px;border:3px solid rgba(201,160,80,0.2);border-top-color:#c9a050;border-radius:50%;animation:spin .9s linear infinite;"></div>
+ <div style="font-size:9px;color:var(--muted);letter-spacing:2px;">CARREGANDO REVERT…</div>
+ </div>
+
+ <!-- The actual iframe -->
+ <iframe
+ id="revertFrame"
+ src="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6"
+ title="Revert Finance — Barolo Capital LP"
+ allow="clipboard-write; clipboard-read; web-share"
+ sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation allow-downloads"
+ referrerpolicy="no-referrer-when-downgrade"
+ style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
+ </iframe>
+
+ <!-- Fallback (shown only when blocked) -->
+ <div id="revertFallback" style="display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;text-align:center;background:var(--surface);z-index:2;">
+ <div style="font-size:36px;opacity:.35;">⬡</div>
+ <div style="font-family:'Satoshi',serif;font-size:17px;color:var(--text);font-weight:600;">Revert Finance</div>
+ <div style="font-size:11px;color:var(--muted);max-width:360px;line-height:1.7;">
+ O site bloqueia carregamento em iframe via <strong>X-Frame-Options</strong>.<br>
+ Clique abaixo para ver sua posição completa.
+ </div>
+ <a href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6"
+ target="_blank" rel="noopener"
+ class="btn-open-lg">↗ Abrir no Revert Finance</a>
+ <div style="font-size:9px;color:var(--muted);">0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6</div>
+ </div>
+ </div>
+
+ <!-- Footer bar -->
+ <div style="padding:8px 14px;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+ <span style="font-size:9px;color:var(--muted);">Revert Finance · 0x5Ff957···4aE4B6</span>
+ <div style="display:flex;gap:6px;">
+ <button class="btn-sm" onclick="toggleHeight()">⤢ Expandir</button>
+ <button class="btn-sm" onclick="reloadFrame()">↺ Recarregar</button>
+ <a class="btn-open" href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
+ </div>
+ </div>
+</div>
+
+
+<!-- ══ UNISWAP EXPLORE ══ -->
+<div class="section-label" style="margin-top:32px;">Uniswap — Explore Pools</div>
+<div class="revert-panel">
+ <div class="revert-toolbar">
+ <div class="revert-title">
+ <span style="font-size:15px;font-weight:800;font-family:'Satoshi',serif;">
+ <span style="color:#ff007a;">◈</span> UNISWAP
+ </span>
+ <span style="font-size:9px;color:var(--muted);">app.uniswap.org · Explore Pools</span>
+ </div>
+ <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener">↗ Abrir Uniswap</a>
+ </div>
+ <div class="iframe-wrap" id="uniswapWrap">
+ <div class="iframe-spinner" id="uniswapLoading">
+ <div class="spinner-ring" style="border-top-color:#ff007a;"></div>
+ <div class="spinner-label">CARREGANDO UNISWAP…</div>
+ </div>
+ <iframe id="uniswapFrame"
+ src="https://app.uniswap.org/explore/pools"
+ title="Uniswap Explore Pools"
+ sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation"
+ allow="clipboard-write; clipboard-read; web-share"
+ referrerpolicy="no-referrer-when-downgrade"
+ style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
+ </iframe>
+ <div class="iframe-fallback" id="uniswapFallback">
+ <div class="ifb-icon" style="color:#ff007a;">◈</div>
+ <div class="ifb-title">Uniswap</div>
+ <div class="ifb-sub">Uniswap bloqueia embed via <strong>X-Frame-Options</strong>.<br>Clique para abrir em nova aba.</div>
+ <a href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir Uniswap Explore</a>
+ <div class="ifb-addr">app.uniswap.org/explore/pools</div>
+ </div>
+ </div>
+ <div class="panel-footer">
+ <span style="font-size:9px;color:var(--muted);">Uniswap V3/V4 · Explore Pools</span>
+ <div style="display:flex;gap:6px;">
+ <button class="btn-sm" onclick="togglePanel('uniswapWrap',this)">⤢ Expandir</button>
+ <button class="btn-sm" onclick="reloadPanel('uniswapFrame','uniswapLoading','uniswapFallback')">↺ Recarregar</button>
+ <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
+ </div>
+ </div>
+</div>
+
+
+
+
+<!-- ══ RAYDIUM ══ -->
+<div class="section-label" style="margin-top:32px;">Raydium — Portfolio</div>
+<div class="revert-panel">
+ <div class="revert-toolbar">
+ <div class="revert-title">
+ <span style="font-size:15px;color:#c200fb;font-weight:800;font-family:'Satoshi',serif;">◎ RAYDIUM</span>
+ <span style="font-size:9px;color:var(--muted);">Portfolio · Solana</span>
+ </div>
+ <a class="btn-open" href="https://raydium.io/portfolio/" target="_blank" rel="noopener">↗ Abrir Raydium</a>
+ </div>
+ <div class="iframe-wrap" id="raydiumWrap">
+ <div class="iframe-spinner" id="raydiumLoading">
+ <div class="spinner-ring" style="border-top-color:#c200fb;"></div>
+ <div class="spinner-label">CARREGANDO RAYDIUM…</div>
+ </div>
+ <iframe id="raydiumFrame"
+ src="https://raydium.io/portfolio/"
+ title="Raydium Portfolio"
+ sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation allow-downloads"
+ allow="clipboard-write; clipboard-read; web-share"
+ referrerpolicy="no-referrer-when-downgrade"
+ style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
+ </iframe>
+ <div class="iframe-fallback" id="raydiumFallback">
+ <div class="ifb-icon" style="color:#c200fb;">◎</div>
+ <div class="ifb-title">Raydium Portfolio</div>
+ <div class="ifb-sub">O site bloqueia embed via <strong>X-Frame-Options</strong>.<br>Clique para abrir em nova aba.</div>
+ <a href="https://raydium.io/portfolio/" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir no Raydium</a>
+ <div class="ifb-addr">raydium.io/portfolio</div>
+ </div>
+ </div>
+ <div class="panel-footer">
+ <span>Raydium · raydium.io/portfolio</span>
+ <div style="display:flex;gap:6px;">
+ <button class="btn-sm" onclick="togglePanel('raydiumWrap',this)">⤢ Expandir</button>
+ <button class="btn-sm" onclick="reloadPanel('raydiumFrame','raydiumLoading','raydiumFallback')">↺ Recarregar</button>
+ <a class="btn-open" href="https://raydium.io/portfolio/" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
+ </div>
+ </div>
+</div>
+
+<!-- ══ AAVE ══ -->
+<div class="section-label" style="margin-top:32px;">AAVE V4 — Dashboard</div>
+<div class="revert-panel">
+ <div class="revert-toolbar">
+ <div class="revert-title">
+ <span style="font-size:15px;color:#b6509e;font-weight:800;font-family:'Satoshi',serif;">⬡ AAVE V4</span>
+ <span style="font-size:9px;color:var(--muted);">pro.aave.com · Ethereum</span>
+ </div>
+ <a class="btn-open" href="https://pro.aave.com/" target="_blank" rel="noopener">↗ Abrir AAVE</a>
+ </div>
+ <div class="iframe-wrap" id="aaveWrap">
+ <div class="iframe-spinner" id="aaveAppLoading">
+ <div class="spinner-ring" style="border-top-color:#b6509e;"></div>
+ <div class="spinner-label">CARREGANDO AAVE…</div>
+ </div>
+ <iframe id="aaveFrame"
+ src="https://pro.aave.com/"
+ title="AAVE V4 Dashboard"
+ sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation allow-downloads"
+ allow="clipboard-write; clipboard-read; web-share"
+ referrerpolicy="no-referrer-when-downgrade"
+ style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
+ </iframe>
+ <div class="iframe-fallback" id="aaveAppFallback">
+ <div class="ifb-icon" style="color:#b6509e;">⬡</div>
+ <div class="ifb-title">AAVE V4</div>
+ <div class="ifb-sub">O site bloqueia embed via <strong>X-Frame-Options</strong>.<br>Clique para abrir em nova aba e conectar sua carteira.</div>
+ <a href="https://pro.aave.com/" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir no AAVE</a>
+ <div class="ifb-addr">pro.aave.com</div>
+ </div>
+ </div>
+ <div class="panel-footer">
+ <span>AAVE V4 · Core Instance · Ethereum</span>
+ <div style="display:flex;gap:6px;">
+ <button class="btn-sm" onclick="togglePanel('aaveWrap',this)">⤢ Expandir</button>
+ <button class="btn-sm" onclick="reloadPanel('aaveFrame','aaveAppLoading','aaveAppFallback')">↺ Recarregar</button>
+ <a class="btn-open" href="https://pro.aave.com/" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
+ </div>
+ </div>
+</div>
+
+<!-- ══ KAMINO ══ -->
+
+
+<script>
+// ── ENVIRONMENT CHECK ──
+(function() {
+ if (window.location.protocol === 'file:') {
+ console.info('%c Barolo Capital %c Abra via http:// para dados ao vivo',
+ 'background:#8a6820;color:#fff;padding:2px 6px;border-radius:3px;font-weight:bold;',
+ 'color:#8a6820;');
+ }
+})();
+
+// ── SHARED PRICE UTILS ──
+var _priceCache = {};
+
+function fetchTimeout(url, opts, ms) {
+ opts = opts || {};
+ ms = ms || 7000;
+ const timer = new Promise(function(_,rej){ setTimeout(function(){ rej(new Error('timeout')); }, ms); });
+ return Promise.race([fetch(url, opts), timer]);
+}
+
+async function getLivePrice(ids) {
+ const key = ids.join(',');
+ if (_priceCache[key] && Date.now() - _priceCache[key].ts < 60000) return _priceCache[key].data;
+ try {
+ const r = await fetchTimeout(
+ 'https://api.coingecko.com/api/v3/simple/price?ids=' + ids.join(',') + '&vs_currencies=usd',
+ {}, 8000
+ );
+ if (!r.ok) throw new Error('CoinGecko HTTP ' + r.status);
+ const data = await r.json();
+ _priceCache[key] = { ts: Date.now(), data: data };
+ return data;
+ } catch(e) {
+ const data = {};
+ for (const id of ids) {
+ try {
+ const jupId = id === 'ethereum' ? 'ETH' : id === 'solana' ? 'SOL' : id.toUpperCase();
+ const r2 = await fetchTimeout('https://price.jup.ag/v6/price?ids=' + jupId, {}, 6000);
+ const j = await r2.json();
+ if (j && j.data && j.data[jupId] && j.data[jupId].price) data[id] = { usd: j.data[jupId].price };
+ } catch(_) {}
+ }
+ if (Object.keys(data).length) return data;
+ throw e;
+ }
+}
+
+// ── GENERIC IFRAME PANEL HELPER ──
+function initIframePanel(frameId, loadingId, fallbackId, ms) {
+ const frame = document.getElementById(frameId);
+ const loading = document.getElementById(loadingId);
+ const fallback= document.getElementById(fallbackId);
+ if (!frame) return;
+
+ let done = false;
+
+ function hideSpinner() {
+ if (!loading) return;
+ loading.style.opacity = '0';
+ setTimeout(() => { loading.style.display = 'none'; }, 500);
+ }
+ function showFrame() {
+ if (done) return; done = true;
+ clearTimeout(timer);
+ hideSpinner();
+ frame.style.opacity = '1';
+ }
+ function showFallback() {
+ if (done) return; done = true;
+ clearTimeout(timer);
+ hideSpinner();
+ frame.style.display = 'none';
+ if (fallback) fallback.style.display = 'flex';
+ }
+
+ // Load event — fires when page loads OR when X-Frame-Options blocks it
+ frame.addEventListener('load', function() {
+ try {
+ const loc = frame.contentWindow.location.href;
+ // about:blank = X-Frame-Options blocked the page (Chrome behaviour)
+ // Don't act here — let the timeout handle it after a short grace period
+ if (!loc || loc === 'about:blank') return;
+ // Same-origin URL = loaded fine
+ showFrame();
+ } catch(e) {
+ // SecurityError = cross-origin page loaded successfully
+ showFrame();
+ }
+ });
+
+ // Timeout: if not resolved in time, show fallback
+ // Use a shorter timeout (6s) since blocked sites resolve near-instantly to about:blank
+ const timer = setTimeout(showFallback, ms || 8000);
+}
+
+// Initialise Revert, Raydium, AAVE
+initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 8000);
+initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 8000);
+initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 8000);
+initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 8000);
+
+// ── AAVE V4 LIVE DATA ──
+(async function fetchAaveData() {
+ const WALLET = '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6';
+ const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
+ const ETH_QTY = 1.87;
+ const USDT_QTY = 1651.49;
+ const USDT_LT = 0.75;
+ const ETH_LT = 0.825;
+ const SELECTOR = '0xbf92857c';
+
+ // Public Ethereum RPCs — sorted by CORS reliability
+ const RPCS = [
+ 'https://eth.drpc.org',
+ 'https://1rpc.io/eth',
+ 'https://rpc.payload.de',
+ 'https://eth.llamarpc.com',
+ 'https://rpc.ankr.com/eth',
+ 'https://cloudflare-eth.com',
+ ];
+
+ const $ = id => document.getElementById(id);
+ const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+ function setLive(ok, msg) {
+ const dot = $('aave-live-dot'), lbl = $('aave-live-label');
+ if (!dot) return;
+ dot.style.background = ok ? '#3fb950' : '#e74c3c';
+ dot.style.boxShadow = ok ? '0 0 5px #3fb950' : '0 0 5px #e74c3c';
+ lbl.textContent = msg;
+ lbl.style.color = ok ? 'var(--green)' : 'var(--red)';
+ }
+
+ async function callAave(rpc) {
+ const calldata = SELECTOR + WALLET.slice(2).padStart(64,'0');
+ const res = await fetchTimeout(rpc, {
+ method: 'POST',
+ headers: { 'Content-Type':'application/json' },
+ body: JSON.stringify({ jsonrpc:'2.0', method:'eth_call',
+ params:[{ to: AAVE_POOL, data: calldata }, 'latest'], id: 1 })
+ }, 7000);
+ if (!res.ok) throw new Error(`HTTP ${res.status}`);
+ const j = await res.json();
+ if (j.error) throw new Error(j.error.message || 'RPC error');
+ if (!j.result || j.result === '0x') throw new Error('empty result');
+ const hex = j.result.slice(2);
+ const u = i => Number(BigInt('0x' + hex.slice(i*64,(i+1)*64)));
+ return {
+ totalCollateral : u(0) / 1e8,
+ totalDebt : u(1) / 1e8,
+ liqThreshold : u(3) / 10000,
+ healthFactor : Number(BigInt('0x' + hex.slice(5*64,6*64))) / 1e18,
+ };
+ }
+
+ function updateAave(aave, ethPrice) {
+ const ethUsd = ETH_QTY * ethPrice;
+ const hf = aave.healthFactor;
+ const debt = aave.totalDebt;
+ const netWorth = aave.totalCollateral - debt;
+
+ const hfColor = hf < 1.2 ? 'var(--red)' : hf < 2 ? 'var(--yellow)' : 'var(--green)';
+ const hfZone = hf < 1.2 ? 'RISCO' : hf < 2 ? 'Atenção' : 'Zona segura';
+ const hfText = hf > 99 ? '>99' : hf.toFixed(2);
+
+ const set = (id,v) => { const e=$(id); if(e) e.textContent=v; };
+ const col = (id,c) => { const e=$(id); if(e) e.style.color=c; };
+ const htm = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
+
+ set('aave-supplied-label', '▲ SUPPLIED ' + fmt(aave.totalCollateral, 0));
+ set('aave-borrowed-label', '▼ BORROWED ' + fmt(debt));
+ set('aave-eth-usd', fmt(ethUsd, 0));
+ set('aave-usdc-debt', fmt(debt));
+ set('aave-net-worth', netWorth >= 1000 ? '$'+(netWorth/1000).toFixed(2)+'K' : fmt(netWorth));
+ set('aave-hf-metric', hfText);
+ set('aave-hf-bottom', `Atual ${hfText}`);
+ htm('aave-hf-badge', `HF ${hfText} ${hf >= 2 ? '' : ''}`);
+ htm('aave-hf-label', `${hfText} — ${hfZone}`);
+ col('aave-hf-badge', hfColor);
+ col('aave-hf-metric', hfColor);
+ col('aave-hf-label', hfColor);
+
+ const bar = $('aave-health-bar');
+ if (bar) bar.style.width = Math.min(hf / 5, 1) * 100 + '%';
+
+ // Liquidation box
+ const usdt_prot = USDT_QTY * USDT_LT;
+ const eth_liq_num = debt - usdt_prot;
+ const liqPrice = eth_liq_num / (ETH_QTY * ETH_LT);
+ const blindado = liqPrice <= 0;
+ const usdtCovPct = Math.round((usdt_prot / debt) * 100);
+
+ const box = $('aave-liq-box');
+ if (blindado) {
+ if (box) box.className = 'liq-box-safe';
+ htm('aave-liq-main', `<span style="color:var(--green);font-size:24px;font-weight:900;">BLINDADO</span>`);
+ htm('aave-liq-sub', `ETH precisaria ir a <strong>$0</strong> para liquidar`);
+ col('aave-liq-sub', 'var(--green)');
+ htm('aave-liq-detail1',`USDT cobre <strong style="color:var(--green)">${usdtCovPct}%</strong> da dívida sozinho`);
+ set('aave-liq-detail2',`USDT: ${fmt(USDT_QTY,0)} · Dívida: ${fmt(debt,0)} · Excedente: +${fmt(usdt_prot-debt,0)}`);
+ } else {
+ const danger = liqPrice > ethPrice * 0.5;
+ const c = danger ? 'var(--red)' : 'var(--yellow)';
+ const pctDown = ((ethPrice - liqPrice) / ethPrice * 100).toFixed(1);
+ if (box) box.className = danger ? 'liq-box-danger' : 'liq-box-warn';
+ htm('aave-liq-main', `<span style="color:${c};font-size:20px;font-weight:900;">${fmt(liqPrice)} / ETH</span>`);
+ htm('aave-liq-sub', `−${pctDown}% do preço atual <span style="color:var(--muted)">(${fmt(ethPrice,0)})</span>`);
+ col('aave-liq-sub', c);
+ htm('aave-liq-detail1',`Buffer: <strong style="color:${c}">${fmt(ethPrice-liqPrice,0)}</strong> até liquidação`);
+ set('aave-liq-detail2',`ETH atual: ${fmt(ethPrice,0)} · Liq. threshold: ${(ETH_LT*100).toFixed(0)}%`);
+ }
+ }
+
+ try {
+ // Prices first (faster) — then RPC in parallel
+ const pricePromise = getLivePrice(['ethereum']);
+ let aaveData;
+ for (const rpc of RPCS) {
+ try { aaveData = await callAave(rpc); break; }
+ catch(e) { console.debug(`[AAVE] RPC ${rpc} unavailable`); } // normal when opening as file://
+ }
+ if (!aaveData) throw new Error('All AAVE RPCs failed');
+ const prices = await pricePromise;
+ const ethPrice = prices?.ethereum?.usd || 2055;
+ updateAave(aaveData, ethPrice);
+ const ts = new Date().toTimeString().slice(0,5);
+ setLive(true, `ao vivo · ${ts}`);
+ } catch(e) {
+ setLive(false, 'offline — dados estáticos');
+ console.debug('[AAVE] using static fallback (open via http:// for live data)');
+ // Still try to update liquidation price with CoinGecko only
+ try {
+ const prices = await getLivePrice(['ethereum']);
+ const ethPrice = prices?.ethereum?.usd;
+ if (ethPrice) {
+ // Minimal update: just refresh liquidation box with live ETH price
+ // Use last known HF from static values
+ updateAave({ totalCollateral: 5654.37, totalDebt: 746.99, liqThreshold: 0.825, healthFactor: 6.24 }, ethPrice || 2079.21);
+ const ts = new Date().toTimeString().slice(0,5);
+ setLive(true, `ETH ao vivo · contrato offline · ${ts}`);
+ }
+ } catch(_) {}
+ }
+})();
+
+// ── KAMINO LIVE DATA ──
+// URL: kamino.com/lend/{MARKET}/{USER_WALLET}
+(async function fetchKaminoData() {
+ const USER_WALLET = 'xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK'; // Solana wallet
+ const MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'; // Main Market
+ const USDS_QTY   = 300.42;
+ // Fixed position — only update if you change the position manually
+ const FIXED = { solQty: 19.33, debtUsd: 804.22, liqThreshold: 0.7720, currentLtv: 0.3922 };
+
+ const $ = id => document.getElementById(id);
+ const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+ function setLive(ok, msg) {
+ const dot = $('kamino-live-dot'), lbl = $('kamino-live-label');
+ if (!dot) return;
+ dot.style.background = ok ? '#3fb950' : '#e74c3c';
+ dot.style.boxShadow = ok ? '0 0 5px #3fb950' : '0 0 5px #e74c3c';
+ lbl.textContent = msg;
+ lbl.style.color = ok ? 'var(--green)' : 'var(--red)';
+ }
+
+ // Kamino API — best-effort, CORS may block from file:// origin
+ async function tryKaminoAPI() {
+ const urls = [
+ `https://api.kamino.finance/v2/users/${USER_WALLET}/lending-positions`,
+ `https://api.kamino.finance/v2/users/${USER_WALLET}/obligations?market=${MARKET}`,
+ `https://api.kamino.finance/v2/lending/markets/${MARKET}/obligations?owner=${USER_WALLET}`,
+ ];
+ for (const url of urls) {
+ try {
+ const res = await fetchTimeout(url, { headers:{ Accept:'application/json' } }, 6000);
+ if (!res.ok) continue;
+ const data = await res.json();
+ // Find the relevant market position in array responses
+ const pos = Array.isArray(data)
+ ? (data.find(o => (o.market||o.lendingMarket||o.marketAddress||'') === MARKET) || data[0])
+ : data;
+ if (!pos) continue;
+ // Parse deposits
+ const deps = pos.deposits || pos.collaterals || pos.positions?.deposits || [];
+ const bors = pos.borrows || pos.loans || pos.positions?.borrows || [];
+ const solD = [].concat(deps).find(d => (d.mintSymbol||d.symbol||'').toUpperCase().replace('W','') === 'SOL');
+ const usdcB= [].concat(bors).find(b => (b.mintSymbol||b.symbol||'').toUpperCase().includes('USDC'));
+ if (solD || usdcB) {
+ return {
+ solQty: parseFloat(solD?.amount || solD?.depositedAmount || FIXED.solQty),
+ debtUsd: parseFloat(usdcB?.marketValueRefreshed || usdcB?.marketValue || usdcB?.amount || FIXED.debtUsd),
+ liqThreshold: parseFloat(pos.liquidationLtv || pos.liqThreshold || pos.liqLtv || FIXED.liqThreshold),
+ currentLtv: parseFloat(pos.ltv || pos.loanToValue || pos.currentLtv || FIXED.currentLtv),
+ };
+ }
+ } catch(e) { console.debug('[Kamino] API unavailable'); }
+ }
+ return null; // All failed — caller will use FIXED
+ }
+
+ function updateKamino({ solQty, debtUsd, liqThreshold, currentLtv }, solPrice) {
+ const solUsd = solQty * solPrice;
+ const supplied = solUsd + USDS_QTY;
+ const netVal = supplied - debtUsd;
+ const ltvPct = currentLtv * 100;
+ const liqPct = liqThreshold * 100;
+ const USDS_COVER = 300.42 * 0.90;
+    const liqPrice = Math.max((debtUsd - USDS_COVER) / (solQty * liqThreshold), 0);
+ const buffer = solPrice - liqPrice;
+ const bufPct = (buffer / solPrice * 100).toFixed(1);
+ const danger = liqPrice > solPrice * 0.6;
+ const col = danger ? 'var(--red)' : 'var(--yellow)';
+
+ const set = (id,v) => { const e=$(id); if(e) e.textContent=v; };
+ const htm = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
+ const clr = (id,c) => { const e=$(id); if(e) e.style.color=c; };
+
+ set('kamino-supplied-label', '▲ SUPPLIED ' + fmt(supplied, 0));
+ set('kamino-borrowed-label', '▼ BORROWED ' + fmt(debtUsd));
+ set('kamino-sol-qty', solQty.toFixed(3));
+ set('kamino-sol-usd', fmt(solUsd, 0));
+ set('kamino-usdc-debt', fmt(debtUsd));
+ set('kamino-net-val', netVal >= 1000 ? '$'+(netVal/1000).toFixed(2)+'K' : fmt(netVal));
+ set('kamino-liq-ltv', liqPct.toFixed(2)+'%');
+ set('kamino-ltv-label', `${ltvPct.toFixed(2)}% / ${liqPct.toFixed(2)}%`);
+ set('kamino-ltv-liqpct',`Liq. ${liqPct.toFixed(2)}%`);
+
+ const badge = $('kamino-ltv-badge');
+ if (badge) { badge.textContent=`LTV ${ltvPct.toFixed(2)}% ${ltvPct>60?'':''}`; badge.style.color=ltvPct>60?col:'var(--green)'; }
+
+ const bar = $('kamino-ltv-bar');
+ if (bar) bar.style.width = Math.min(ltvPct/liqPct,1)*100+'%';
+ clr('kamino-ltv-ptr', col);
+
+ const box = $('kamino-liq-box');
+ if (box) box.className = danger ? 'liq-box-danger' : 'liq-box-warn';
+ htm('kamino-liq-main', `${fmt(liqPrice)} <span style="font-size:12px;font-weight:500;color:var(--muted);">/ SOL</span>`);
+ clr('kamino-liq-main', col);
+ htm('kamino-liq-sub', `−${bufPct}% do preço atual <span style="color:var(--muted);">(${fmt(solPrice,0)})</span>`);
+ clr('kamino-liq-sub', col);
+ htm('kamino-liq-detail1', `Buffer: <strong style="color:${col}">${fmt(buffer,0)}</strong> até liquidação`);
+ set('kamino-liq-detail2', `LTV liq.: ${liqPct.toFixed(2)}% · LTV atual: ${ltvPct.toFixed(2)}%`);
+ }
+
+ try {
+ // SOL price is the critical data — always fetch this first
+ const prices = await getLivePrice(['solana']);
+ const solPrice = prices?.solana?.usd || 87.28;
+
+ // Kamino API is best-effort (CORS may block from file:// origin)
+ const apiData = await tryKaminoAPI();
+ const position = apiData || FIXED;
+ const source = apiData ? 'ao vivo' : 'SOL ao vivo · posição fixa';
+
+ updateKamino(position, solPrice);
+ const ts = new Date().toTimeString().slice(0,5);
+ setLive(true, `${source} · ${ts}`);
+ } catch(e) {
+ setLive(false, 'offline — dados estáticos');
+ console.debug('[Kamino] using static fallback (open via http:// for live data)');
+ }
+})();
+
+// ── META 5% ──
+setTimeout(function() {
+ var STABLES = 1953.32;
+ var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
+ var QTYS = {ethereum:2.084106,solana:20.31134268,cardano:375.245,'radiant-capital':7290.46,
+ eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
+ getLivePrice(ids).then(function(prices) {
+ var spot = 0;
+ ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
+ var debt = (window._liveAaveDebt || 746.99) + (window._liveKaminoDebt || 804.22);
+ var net = spot + STABLES - debt;
+ var meta = net * 0.05;
+ window._livePatrimonio = net;
+ var pEl = document.getElementById('capop-patrimonio');
+ var rEl = document.getElementById('capop-rec');
+ if(pEl) pEl.textContent = '$' + Math.round(net).toLocaleString('en-US');
+ if(rEl) rEl.textContent = '$' + Math.round(meta).toLocaleString('en-US');
+ }).catch(function() {
+ var fallbackNet = 6430;
+ var pEl = document.getElementById('capop-patrimonio');
+ var rEl = document.getElementById('capop-rec');
+ if(pEl) pEl.textContent = '$' + fallbackNet.toLocaleString('en-US');
+ if(rEl) rEl.textContent = '$' + Math.round(fallbackNet*0.05).toLocaleString('en-US');
+ });
+}, 1500);
+
+// ── LP REF TOGGLE ──
+var REFS = {
+ usd: {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',dailyFees:'—',pos:true},
+ eth: {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',dailyFees:'—',pos:true},
+ hold: {pooled:'—',pnl:'—',roi:'—',apr:'—',feeApr:'—',fees:'—',il:'—',gas:'—',dailyFees:'—',pos:true}
+};
+function setRef(ref){
+ document.querySelectorAll('.ref-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===ref));
+ const r=REFS[ref];
+ const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+ s('lp-pooled',r.pooled);s('lp-pnl',r.pnl);s('lp-roi',r.roi);
+ s('lp-apr',r.apr);s('lp-fee-apr',r.feeApr);s('lp-fees',r.fees);s('lp-il',r.il);s('lp-gas',r.gas);s('lp-daily-fees',r.dailyFees||'—');
+ document.getElementById('lp-pnl').className='lp-mv '+(r.pos?'pos':'neg');
+}
+
+// Generic reload — used by all 4 panels
+function reloadPanel(frameId, loadingId, fallbackId) {
+ const f = document.getElementById(frameId);
+ const l = document.getElementById(loadingId);
+ const b = document.getElementById(fallbackId);
+ if (!f) return;
+ if (b) b.style.display='none';
+ f.style.display=''; f.style.opacity='0';
+ if (l) { l.style.display='flex'; l.style.opacity='1'; }
+ initIframePanel(frameId, loadingId, fallbackId, 14000);
+ f.src = f.src;
+}
+// Legacy alias for Revert's existing "Recarregar" button
+function reloadFrame() { reloadPanel('revertFrame','revertLoading','revertFallback'); }
+
+// Generic expand/collapse
+function togglePanel(wrapId, btn) {
+ const w = document.getElementById(wrapId);
+ if (!w) return;
+ w.classList.toggle('expanded');
+ btn.textContent = w.classList.contains('expanded') ? '⤡ Compactar' : '⤢ Expandir';
+}
+// Legacy alias for Revert's "Expandir" button
+function toggleHeight() { togglePanel('iframeWrap', event.target); }
+
+// ── THEME ──
+function toggleTheme(){
+ const html=document.documentElement;
+ html.setAttribute('data-theme',html.getAttribute('data-theme')==='light'?'dark':'light');
+ localStorage.setItem('bc-theme',html.getAttribute('data-theme'));
+
+  var btn=document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ const saved=localStorage.getItem('bc-theme');
+ if(saved)document.documentElement.setAttribute('data-theme',saved);
+});
+</script>
+<!-- ══ PERFORMANCE DEFI HISTÓRICO ══ -->
+<div class="section-label" style="margin-top:48px;">Performance DeFi — Histórico Completo</div>
+
+<style>
+.chart-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.chart-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;flex-wrap:wrap;gap:8px;}
+.chart-panel-title{font-family:'Satoshi',serif;font-size:15px;font-weight:700;color:var(--text);}
+.chart-panel-sub{font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-top:1px;}
+.chart-body{padding:12px 18px 18px;position:relative;}
+.ct-toggle{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.ct-toggle button{background:none;border:none;padding:4px 10px;font-size:9px;font-family:'Satoshi',sans-serif;font-weight:600;color:var(--muted);cursor:pointer;letter-spacing:.04em;transition:all .15s;}
+.ct-toggle button.active{background:var(--accent);color:#fff;}
+[data-theme="dark"] .ct-toggle button.active{background:#c9a050;color:#16110c;}
+.ct-period{display:flex;gap:2px;}
+.ct-period button{background:none;border:1px solid transparent;border-radius:3px;padding:3px 8px;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--muted);cursor:pointer;transition:all .15s;}
+.ct-period button:hover{border-color:var(--border);color:var(--text);}
+.ct-period button.active{border-color:var(--accent);color:var(--accent);}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 14px;position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi-card.kc-green::before{background:linear-gradient(90deg,#4a7c3f,transparent);}
+.kpi-card.kc-red::before{background:linear-gradient(90deg,#b94040,transparent);}
+.kpi-card.kc-gold::before{background:linear-gradient(90deg,#8a6820,transparent);}
+.kpi-card.kc-blue::before{background:linear-gradient(90deg,#3a7ec8,transparent);}
+.kpi-card.kc-muted::before{background:linear-gradient(90deg,#555,transparent);}
+.kpi-lbl{font-size:7.5px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:7px;}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1;}
+.kpi-sub{font-size:8px;color:var(--muted);margin-top:5px;}
+.pool-tbl{width:100%;border-collapse:collapse;font-size:9px;}
+.pool-tbl th{font-size:7px;color:var(--muted);letter-spacing:1.5px;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);}
+.pool-tbl td{padding:7px 10px;border-bottom:1px solid rgba(128,128,128,0.07);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:8.5px;vertical-align:middle;}
+.pool-tbl tr:last-child td{border-bottom:none;}
+.pool-tbl tr:hover td{background:var(--surface2);}
+.pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:7.5px;font-weight:700;letter-spacing:.04em;}
+.pill-green{background:rgba(74,124,63,0.15);color:#4a7c3f;}
+.pill-red{background:rgba(185,64,64,0.15);color:#b94040;}
+.pill-gold{background:rgba(138,104,32,0.15);color:#8a6820;}
+.pill-muted{background:rgba(128,128,128,0.1);color:var(--muted);}
+
+/* Market ticker bar */
+.market-ticker{position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:0;height:28px;font-family:'JetBrains Mono',monospace;font-size:10px;}
+.ticker-item{display:flex;align-items:center;gap:6px;padding:0 16px;border-right:1px solid var(--border);height:100%;white-space:nowrap;}
+.ticker-lbl{font-size:8px;color:var(--muted);letter-spacing:.08em;}
+.ticker-price{font-weight:700;color:var(--text);}
+.ticker-chg{font-size:8px;font-weight:600;}
+.ticker-chg.up{color:var(--green);}
+.ticker-chg.dn{color:var(--red);}
+.ticker-gas{display:flex;align-items:center;gap:5px;padding:0 16px;border-right:1px solid var(--border);height:100%;}
+.ticker-gas svg{opacity:.5;}
+.gas-val{font-weight:700;color:var(--text);}
+.gas-unit{font-size:8px;color:var(--muted);}
+.ticker-spacer{flex:1;}
+.ticker-ts{padding:0 14px;font-size:7.5px;color:var(--muted);letter-spacing:.04em;}
+
+/* Nav professional polish */
+nav { border-bottom: 1px solid var(--border) !important; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9.5px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  text-decoration: none !important;
+  padding: 0 14px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: color .2s !important;
+  border-bottom: 2px solid transparent !important;
+}
+.nav-links a:hover { color: var(--text) !important; }
+.nav-links a.active { color: var(--accent) !important; border-bottom-color: var(--accent) !important; }
+
+/* Defi card header font */
+.defi-proto {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+}
+
+
+/* Nav link spacing fix */
+.nav-links a { padding: 0 16px !important; letter-spacing: .18em !important; }
+.nav-links { gap: 0 !important; }
+
+
+/* Section label — more breathing room from border */
+.section-label {
+  margin: 32px 0 18px !important;
+  padding: 0 0 10px 12px !important;
+  border-left: 2px solid var(--accent) !important;
+  border-bottom: none !important;
+  font-size: 9px !important;
+  letter-spacing: .32em !important;
+}
+/* Nav links — more padding so text doesn't hug the active line */
+.nav-links a {
+  padding: 0 18px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+
+/* Section label spacing fix */
+.section-label {
+  margin-top: 32px !important;
+  margin-bottom: 16px !important;
+  padding-top: 0 !important;
+}
+.container > .section-label:first-child,
+.section-label:first-of-type {
+  margin-top: 24px !important;
+}
+/* Card inner spacing */
+.card { padding: 16px 18px !important; }
+
+
+/* Satoshi universal font override */
+*, *::before, *::after {
+  font-family: inherit;
+}
+body, input, button, select, textarea {
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+/* Keep monospace for data/numbers */
+.mono, code, pre, kbd,
+[style*="JetBrains"],
+[class*="mono"] {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+}
+/* Keep explicitly set monospace classes */
+.hero-value, .stat-value, .hero-meta-val,
+.badge, .nav-links a, .btn-sm, .section-label,
+.chart-title, .period-btn, .chart-type-btn,
+.tab, .stat-label, .hero-label {
+  font-family: 'Satoshi', sans-serif !important;
+}
+
+</style>
+
+<!-- KPI Summary -->
+<div class="kpi-grid">
+ <div class="kpi-card kc-gold">
+ <div class="kpi-lbl">Pools Abertas</div>
+ <div class="kpi-val" style="color:var(--accent);">25+</div>
+ <div class="kpi-sub">Ago/2023 → hoje</div>
+ </div>
+ <div class="kpi-card kc-green">
+ <div class="kpi-lbl">Taxas Totais</div>
+ <div class="kpi-val" style="color:var(--green);">$2.128</div>
+ <div class="kpi-sub">todas as pools · atualizado 14/03/26</div>
+ </div>
+ <div class="kpi-card kc-red">
+ <div class="kpi-lbl">Maior Drawdown</div>
+ <div class="kpi-val" style="color:var(--red);">-$1.510</div>
+ <div class="kpi-sub">SOL/GRIFT · token → zero</div>
+ </div>
+ <div class="kpi-card kc-blue">
+ <div class="kpi-lbl">P&L Líquido Total</div>
+ <div class="kpi-val" style="color:#3a7ec8;">-$1.021</div>
+ <div class="kpi-sub">taxas $2.128 − IL/perdas $3.149</div>
+ </div>
+ <div class="kpi-card kc-muted">
+ <div class="kpi-lbl">Redes Utilizadas</div>
+ <div class="kpi-val" style="color:var(--text);">5</div>
+ <div class="kpi-sub">ARB · SOL · zkSync · BASE · ETH</div>
+ </div>
+</div>
+
+<div style="margin:0 0 16px;padding:10px 14px;background:rgba(185,64,64,0.06);border:1px solid rgba(185,64,64,0.25);border-radius:4px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#b94040;flex-shrink:0;">Perda Não Operacional</div>
+  <div style="font-family:'Satoshi',sans-serif;font-size:12px;color:var(--muted);flex:1;">
+    <strong style="color:var(--text);">Hack Radiant Capital (2025)</strong> — 1,079.17 ARB em stake perdidos · Valor ~$971 na época · Reembolso ~$300 prometido e pendente.
+    Este valor <strong style="color:var(--text);">não está incluído</strong> no P&L operacional de pools acima.
+  </div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#b94040;flex-shrink:0;">−$671</div>
+</div>
+
+<!-- Metrics legend -->
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 8px;font-size:10px;color:var(--muted);align-items:center;">
+ <span style="color:var(--accent);font-weight:600;letter-spacing:1px;">MÉTRICAS AVANÇADAS</span>
+ <span style="padding:2px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;" title="IL ÷ Fees. 0=perfeito, >1=IL comeu mais que taxas">LVR — Loss vs Rebalancing</span>
+ <span style="padding:2px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;" title="(Fees ÷ Capital) × (365 ÷ Dias) — quanto a pool rende por ano">FCR — Fee Capture Rate anual.</span>
+ <span style="padding:2px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;" title="Resultado líquido ÷ capital × 100">INV.GROWTH — Crescimento do inventário</span>
+</div>
+
+<!-- CHART 1 + Projeção: lado a lado -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+ <!-- P&L Líquido -->
+ <div class="chart-panel" style="margin-bottom:0;">
+  <div class="chart-panel-hdr">
+   <div>
+    <div class="chart-panel-title">Resultado Líquido por Pool</div>
+    <div class="chart-panel-sub">TAXAS COLETADAS − IMPERMANENT LOSS</div>
+   </div>
+   <div class="ct-toggle" id="tgl1">
+    <button class="active" onclick="setChartType('pnl','bar',this)">▐▌ Barras</button>
+    <button onclick="setChartType('pnl','line',this)">∿ Linha</button>
+   </div>
+  </div>
+  <div class="chart-body"><canvas id="chartPnl" height="120"></canvas></div>
+ </div>
+
+ <!-- Projeção de Renda Passiva -->
+ <div class="chart-panel" style="margin-bottom:0;">
+  <div class="chart-panel-hdr">
+   <div>
+    <div class="chart-panel-title">Projeção de Renda Passiva</div>
+    <div class="chart-panel-sub">POSIÇÕES ABERTAS · APY ATUAL · PRÓXIMOS 12 MESES</div>
+   </div>
+   <div class="ct-toggle" id="tglProj">
+    <button class="active" onclick="setProjView('monthly',this)">Mensal</button>
+    <button onclick="setProjView('cumulative',this)">Acum.</button>
+   </div>
+  </div>
+  <div class="chart-body"><canvas id="chartProj" height="120"></canvas></div>
+  <div style="padding:8px 18px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="projKpis"></div>
+ </div>
+
+</div>
+
+<!-- CHART 2: Taxas por Ano + linha cumulativa -->
+<div class="chart-panel">
+ <div class="chart-panel-hdr">
+ <div>
+ <div class="chart-panel-title">Taxas Coletadas — Evolução Anual</div>
+ <div class="chart-panel-sub">RENDA BRUTA EM POOLS · LINHA = ACUMULADO</div>
+ </div>
+ <div class="ct-toggle" id="tgl2">
+ <button class="active" onclick="setChartType('fees','bar',this)">▐▌ Barras</button>
+ <button onclick="setChartType('fees','line',this)">∿ Linha</button>
+ </div>
+ </div>
+ <div class="chart-body"><canvas id="chartFees" height="75"></canvas></div>
+</div>
+
+<!-- CHART 3: Timeline atividade + APR por período -->
+<div style="display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:14px;">
+
+ <div class="chart-panel" style="margin-bottom:0;">
+ <div class="chart-panel-hdr">
+ <div>
+ <div class="chart-panel-title">Atividade por Trimestre</div>
+ <div class="chart-panel-sub">POOLS ABERTAS / REMONTADAS</div>
+ </div>
+ <div class="ct-toggle" id="tgl3">
+ <button class="active" onclick="setChartType('timeline','bar',this)">▐▌ Barras</button>
+ <button onclick="setChartType('timeline','line',this)">∿ Linha</button>
+ </div>
+ </div>
+ <div class="chart-body"><canvas id="chartTimeline" height="180"></canvas></div>
+ </div>
+
+ <div class="chart-panel" style="margin-bottom:0;">
+ <div class="chart-panel-hdr">
+ <div>
+ <div class="chart-panel-title">APR de Entrada Observado</div>
+ <div class="chart-panel-sub">NO MOMENTO DE ABERTURA</div>
+ </div>
+ <div class="ct-toggle" id="tgl4">
+ <button class="active" onclick="setChartType('apr','bar',this)">▐▌ Barras</button>
+ <button onclick="setChartType('apr','line',this)">∿ Linha</button>
+ </div>
+ </div>
+ <div class="chart-body"><canvas id="chartApr" height="180"></canvas></div>
+ </div>
+
+</div>
+
+
+<!-- TABELA HISTÓRICA COMPLETA -->
+<div class="chart-panel">
+ <div class="chart-panel-hdr" style="padding-bottom:14px;">
+ <div>
+ <div class="chart-panel-title">Todas as Pools — Registro Histórico</div>
+ <div class="chart-panel-sub">DADOS EXTRAÍDOS DO DIÁRIO · 2023–2026</div>
+ </div>
+ <div style="font-size:8px;color:var(--muted);">* IL estimado onde não documentado</div>
+ </div>
+ <div style="overflow-x:auto;padding:0 18px 18px;">
+ <table class="pool-tbl">
+ <thead>
+ <tr>
+ <th>PAR</th><th>REDE</th><th>ABERTURA</th><th>FECHAMENTO</th><th>DIAS</th>
+ <th>CAPITAL</th><th>TAXAS</th><th>IL EST.</th><th title="Loss vs Rebalancing — IL ÷ Fees. 0=perfeito, &gt;1=IL comeu mais que taxas">LVR</th><th title="Fee Capture Rate anualizado — (Fees ÷ Capital) × (365 ÷ Dias)">FCR %</th><th title="Crescimento do inventário vs capital inicial">INV.GROWTH</th><th>LÍQUIDO</th><th>STATUS</th>
+ </tr>
+ </thead>
+ <tbody id="poolTableBody"></tbody>
+ </table>
+ </div>
+</div>
+
+<!-- ══ SEÇÃO: ANÁLISE AVANÇADA DE POOLS ══ -->
+<div class="section-label" style="margin-top:48px;">Análise Avançada — Pools & DeFi</div>
+
+<!-- ROW 1: Ranking + Waterfall -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+ <!-- Ranking FCR -->
+ <div class="chart-panel" style="margin-bottom:0;">
+  <div class="chart-panel-hdr">
+   <div>
+    <div class="chart-panel-title">Ranking de Eficiência — FCR%</div>
+    <div class="chart-panel-sub">FEE CAPTURE RATE ANUALIZADO · POOLS ENCERRADAS</div>
+   </div>
+   <div class="ct-toggle">
+    <button class="active" onclick="setRankingMode('fcr',this)">FCR%</button>
+    <button onclick="setRankingMode('net',this)">Net $</button>
+   </div>
+  </div>
+  <div class="chart-body"><canvas id="chartRanking" height="220"></canvas></div>
+ </div>
+
+ <!-- Waterfall P&L -->
+ <div class="chart-panel" style="margin-bottom:0;">
+  <div class="chart-panel-hdr">
+   <div>
+    <div class="chart-panel-title">Composição do Resultado — Waterfall</div>
+    <div class="chart-panel-sub">TAXAS · IL · RESULTADO LÍQUIDO POR POOL</div>
+   </div>
+  </div>
+  <div class="chart-body"><canvas id="chartWaterfallAdv" height="220"></canvas></div>
+  <div style="padding:6px 18px 10px;display:flex;gap:16px;font-size:9px;">
+   <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:rgba(74,124,63,0.8);display:inline-block;"></span>Taxas</span>
+   <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:rgba(185,64,64,0.75);display:inline-block;"></span>IL / Perda</span>
+   <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:rgba(138,104,32,0.8);display:inline-block;"></span>Net</span>
+  </div>
+ </div>
+
+</div>
+
+
+<!-- ══ ANÁLISE QUANTITATIVA ══ -->
+<div class="section-label" style="margin-top:48px;">Performance — Ranking & Composição de Resultado</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+  <!-- FCR Horizontal Bar -->
+  <div class="chart-panel">
+    <div class="chart-panel-hdr">
+      <div class="chart-panel-title">Eficiência Anualizada (FCR%) por Pool</div>
+      <div style="font-size:8px;color:var(--muted);letter-spacing:1px;">Taxas / Capital × 365 / Dias</div>
+    </div>
+    <div class="chart-body"><canvas id="chartFCR" height="240"></canvas></div>
+  </div>
+
+  <!-- Waterfall Fees vs IL -->
+  <div class="chart-panel">
+    <div class="chart-panel-hdr">
+      <div class="chart-panel-title">Composição do Resultado — Taxas vs IL</div>
+      <div style="font-size:8px;color:var(--muted);letter-spacing:1px;">Barras verdes = taxas · Barras vermelhas = impermanent loss</div>
+    </div>
+    <div class="chart-body"><canvas id="chartWaterfall" height="240"></canvas></div>
+  </div>
+
+</div>
+
+<!-- Net by pool — horizontal ranking -->
+<div class="chart-panel" style="margin-bottom:14px;">
+  <div class="chart-panel-hdr">
+    <div class="chart-panel-title">Resultado Líquido por Pool (Taxas − IL)</div>
+    <div style="font-size:8px;color:var(--muted);letter-spacing:1px;">Ordenado por retorno líquido</div>
+  </div>
+  <div class="chart-body"><canvas id="chartNetRanking" height="180"></canvas></div>
+</div>
+
+<!-- ══ MÉTRICAS DE TOKENS ACUMULADOS ══ -->
+<div class="section-label" style="margin-top:48px;">Tokens Acumulados — Pools & Empréstimos</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;" id="tokenMetricsGrid">
+
+ <!-- Fees por token (Pools) -->
+ <div class="chart-panel" style="margin-bottom:0;">
+ <div class="chart-panel-hdr" style="padding-bottom:10px;">
+ <div>
+ <div class="chart-panel-title">Taxas Coletadas por Token</div>
+ <div class="chart-panel-sub">FEES ACUMULADAS NAS POOLS · ESTIMATIVA</div>
+ </div>
+ </div>
+ <div style="padding:0 18px 18px;">
+ <table style="width:100%;border-collapse:collapse;font-size:11px;">
+ <thead>
+ <tr style="border-bottom:1px solid var(--border);">
+ <th style="text-align:left;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">TOKEN</th>
+ <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">QTD FEES</th>
+ <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">USD (live)</th>
+ <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">DE</th>
+ </tr>
+ </thead>
+ <tbody id="feeTokenBody">
+ <!-- filled by JS -->
+ </tbody>
+ </table>
+ <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:9px;color:var(--muted);line-height:1.7;">
+ * Fees de pools fechadas foram coletadas e convertidas no momento do resgate. Valores USD calculados com preço atual para tokens ainda em carteira.
+ </div>
+ </div>
+ </div>
+
+ <!-- Colateral por protocolo -->
+ <div class="chart-panel" style="margin-bottom:0;">
+ <div class="chart-panel-hdr" style="padding-bottom:10px;">
+ <div>
+ <div class="chart-panel-title">Colateral em Empréstimos</div>
+ <div class="chart-panel-sub">TOKENS BLOQUEADOS AAVE &amp; KAMINO · LIVE</div>
+ </div>
+ </div>
+ <div style="padding:0 18px 18px;">
+ <table style="width:100%;border-collapse:collapse;font-size:11px;">
+ <thead>
+ <tr style="border-bottom:1px solid var(--border);">
+ <th style="text-align:left;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">TOKEN</th>
+ <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">QUANTIDADE</th>
+ <th style="text-align:right;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">USD (live)</th>
+ <th style="text-align:left;padding:5px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);font-weight:400;">PROTOCOLO</th>
+ </tr>
+ </thead>
+ <tbody id="collateralTokenBody">
+ <!-- filled by JS -->
+ </tbody>
+ </table>
+ <div style="margin-top:10px;padding:8px 10px;background:var(--surface2);border-radius:4px;font-size:9px;color:var(--muted);line-height:1.7;">
+ <span style="color:var(--accent);font-weight:600;">AAVE V4:</span> Colateral = 1.87 ETH + 1,652 USDT · Dívida = $746 USDC<br>
+ <span style="color:var(--accent);font-weight:600;">Kamino:</span> Colateral = 19.33 SOL + 300.42 USDS · Dívida = $804.22 USDC<br>
+ <span style="color:var(--muted);">Total bloqueado como colateral: </span><span id="totalCollateralUsd" style="color:var(--text);font-family:'JetBrains Mono',monospace;">$7,141</span>
+ </div>
+ </div>
+ </div>
+</div>
+
+
+<script>
+// ── TOKEN METRICS ──
+(function buildTokenMetrics() {
+ // Fee tokens from historical pools (estimated quantities at time of collection)
+ // USDC/USDT fees were cash, ETH/ARB/SOL fees converted to portfolio
+ const FEE_TOKENS = [
+ // token, qty_collected, cgId, note
+ { sym:'USDC/USDT', qty:null, usdVal:516, cgId:null, note:'Fees em stables — ARB/USDC $335, ARB/USDT $73, ETH pools $22+4+34+16+0.62' },
+ { sym:'SOL', qty:null, usdVal:1412, cgId:null, note:'SOL/GRIFT $1.389 + SOL/USDC $23 — valor USD no momento da coleta' },
+ { sym:'ETH/WETH', qty:null, usdVal:8.62, cgId:null, note:'Fees WETH/USDC ativa (uncollected) — valor estimado USD' },
+ { sym:'MSTR/ETH', qty:null, usdVal:36, cgId:null, note:'Fees MSTR/ETH 24 — tokens convertidos USD' },
+ { sym:'RDNT/ETH', qty:null, usdVal:180, cgId:null, note:'Fees RDNT/ETH 23a $90 + 23b $90 — dois ciclos' },
+ { sym:'USDC Kamino', qty:null, usdVal:23, cgId:null, note:'Repagos via taxas SOL/USDC pool K2' },
+ ];
+
+ // Collateral tokens — from prints 13/03/2026
+ const COLLATERAL = [
+ { sym:'ETH', qty:1.87, cgId:'ethereum', proto:'AAVE V4', color:'var(--accent)' },
+ { sym:'USDT', qty:1652.03, cgId:'tether', proto:'AAVE V4', color:'var(--accent)' },
+ { sym:'SOL', qty:20.31, cgId:'solana', proto:'Kamino', color:'#14F195' },
+ { sym:'USDS', qty:300.42, cgId:'usds',proto:'Kamino', color:'#1da1f2' },
+ ];
+
+ const fmt = (n,d=2) => '$'+n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+ const fmtN = (n,d=4) => n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:d});
+
+ function renderFeeTable(prices) {
+ const tbody = document.getElementById('feeTokenBody');
+ if (!tbody) return;
+ let html = '';
+ FEE_TOKENS.forEach(t => {
+ const price = t.cgId && prices?.[t.cgId]?.usd;
+ const usd = price && t.qty ? t.qty * price : t.usdVal;
+ const usdStr = usd ? fmt(usd) : '—';
+ const qtyStr = t.qty ? fmtN(t.qty, t.sym==='USDC/USDT'?0:4) : '—';
+ html += `<tr style="border-bottom:1px solid var(--border);">
+ <td style="padding:7px 4px;font-weight:500;color:var(--text);">${t.sym}</td>
+ <td style="padding:7px 4px;text-align:right;">${qtyStr}</td>
+ <td style="padding:7px 4px;text-align:right;color:var(--green);">${usdStr}</td>
+ <td style="padding:7px 4px;text-align:right;font-size:8.5px;color:var(--muted);">${t.note}</td>
+ </tr>`;
+ });
+ // Total
+ const total = FEE_TOKENS.reduce((s,t) => {
+ const price = t.cgId && prices?.[t.cgId]?.usd;
+ return s + (price && t.qty ? t.qty*price : (t.usdVal||0));
+ }, 0);
+ html += `<tr style="border-top:2px solid var(--border);">
+ <td colspan="2" style="padding:8px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);">TOTAL FEES</td>
+ <td style="padding:8px 4px;text-align:right;font-weight:700;color:var(--accent);">${fmt(total)}</td>
+ <td></td>
+ </tr>`;
+ tbody.innerHTML = html;
+ }
+
+ function renderCollateralTable(prices) {
+ const tbody = document.getElementById('collateralTokenBody');
+ if (!tbody) return;
+ let html = '';
+ let total = 0;
+ COLLATERAL.forEach(t => {
+ const price = t.cgId && prices?.[t.cgId]?.usd || (t.sym==='USDT'||t.sym==='USDS'?1:0);
+ const usd = t.qty * price;
+ total += usd;
+ html += `<tr style="border-bottom:1px solid var(--border);">
+ <td style="padding:7px 4px;font-weight:500;">
+ <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${t.color};margin-right:5px;vertical-align:middle;"></span>${t.sym}</td>
+ <td style="padding:7px 4px;text-align:right;">${fmtN(t.qty)}</td>
+ <td style="padding:7px 4px;text-align:right;color:var(--text);">${price ? fmt(usd) : '—'}</td>
+ <td style="padding:7px 4px;font-size:9px;color:var(--muted);">${t.proto}</td>
+ </tr>`;
+ });
+ html += `<tr style="border-top:2px solid var(--border);">
+ <td colspan="2" style="padding:8px 4px;font-size:9px;letter-spacing:1.5px;color:var(--muted);">TOTAL COLATERAL</td>
+ <td style="padding:8px 4px;text-align:right;font-weight:700;color:var(--accent);">${fmt(total)}</td>
+ <td></td>
+ </tr>`;
+ tbody.innerHTML = html;
+ const el = document.getElementById('totalCollateralUsd');
+ if (el) el.textContent = fmt(total);
+
+ // Update WETH qty live
+ const ethPrice = prices?.ethereum?.usd;
+ if (ethPrice) {
+ const wethUsd = 0.1185 * ethPrice;
+ const feeWethUsd = 0.002982 * ethPrice;
+ const el1 = document.getElementById('lp-weth-usd');
+ const el2 = document.getElementById('lp-fee-weth-usd');
+ if (el1) el1.textContent = '≈ ' + fmt(wethUsd);
+ if (el2) el2.textContent = '≈ ' + fmt(feeWethUsd);
+ }
+ }
+
+ // Fetch prices for all needed tokens
+ getLivePrice(['ethereum','solana','tether','usds-stablecoin'])
+ .then(prices => {
+ renderFeeTable(prices);
+ renderCollateralTable(prices);
+ })
+ .catch(() => {
+ renderFeeTable({});
+ renderCollateralTable({ ethereum:{usd:2074.75}, solana:{usd:86.84}, tether:{usd:1}, 'usds-stablecoin':{usd:1} });
+ });
+})();
+</script>
+
+
+<!-- ══ MARKET TICKER (fixed bottom) ══ -->
+<div class="market-ticker" id="marketTicker">
+ <div class="ticker-gas" title="Gas ETH (Gwei)">
+ <svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.5">
+ <path d="M2 13V3a1 1 0 011-1h6a1 1 0 011 1v3l1 1v3l-1 1v2"/>
+ <path d="M5 6h2"/>
+ </svg>
+ <span class="gas-val" id="gasVal">—</span>
+ <span class="gas-unit">gwei</span>
+ </div>
+ <div class="ticker-item">
+ <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" width="13" height="13" style="border-radius:50%;vertical-align:middle;" onerror="this.style.display='none'">
+ <span class="ticker-lbl">BTC</span>
+ <span class="ticker-price" id="tickBtcPrice">—</span>
+ <span class="ticker-chg" id="tickBtcChg">—</span>
+ </div>
+ <div class="ticker-item">
+ <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" width="13" height="13" style="border-radius:50%;vertical-align:middle;" onerror="this.style.display='none'">
+ <span class="ticker-lbl">ETH</span>
+ <span class="ticker-price" id="tickEthPrice">—</span>
+ <span class="ticker-chg" id="tickEthChg">—</span>
+ </div>
+ <div class="ticker-item">
+ <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" width="13" height="13" style="border-radius:50%;vertical-align:middle;" onerror="this.style.display='none'">
+ <span class="ticker-lbl">SOL</span>
+ <span class="ticker-price" id="tickSolPrice">—</span>
+ <span class="ticker-chg" id="tickSolChg">—</span>
+ </div>
+ <div class="ticker-ts" id="tickerTs"></div>
+</div>
+
+<script>
+// ── Market Ticker fetch ──────────────────────────────────────────────────
+(function tickerInit() {
+  function setEl(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  function setChg(id, pct) {
+    var el = document.getElementById(id); if (!el) return;
+    var v = parseFloat(pct);
+    el.textContent = (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+    el.className = 'ticker-chg ' + (v >= 0 ? 'up' : 'dn');
+  }
+  function fmtPrice(v) {
+    return v >= 1000 ? '$' + Math.round(v).toLocaleString() : '$' + v.toFixed(2);
+  }
+
+  async function fetchTicker() {
+    try {
+      const [priceRes, gasRes] = await Promise.all([
+        fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true').then(r => r.json()),
+        fetch('https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=YourApiKeyToken').then(r => r.json()).catch(() => null)
+      ]);
+
+      if (priceRes.bitcoin) {
+        setEl('tickBtcPrice', fmtPrice(priceRes.bitcoin.usd));
+        setChg('tickBtcChg', priceRes.bitcoin.usd_24h_change);
+      }
+      if (priceRes.ethereum) {
+        setEl('tickEthPrice', fmtPrice(priceRes.ethereum.usd));
+        setChg('tickEthChg', priceRes.ethereum.usd_24h_change);
+      }
+      if (priceRes.solana) {
+        setEl('tickSolPrice', fmtPrice(priceRes.solana.usd));
+        setChg('tickSolChg', priceRes.solana.usd_24h_change);
+      }
+
+      // Gas via Alchemy (sem chave Etherscan)
+      try {
+        const gasAlch = await fetch('https://eth-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc:'2.0', id:1, method:'eth_gasPrice', params:[] })
+        }).then(r => r.json());
+        if (gasAlch.result) {
+          var gwei = Math.round(parseInt(gasAlch.result, 16) / 1e9);
+          setEl('gasVal', gwei);
+        }
+      } catch(e) {}
+
+      setEl('tickerTs', new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }));
+    } catch(e) { console.warn('ticker fetch failed', e); }
+  }
+
+  fetchTicker();
+  setInterval(fetchTicker, 60000);
+})();
+</script>
+
+<script>
+var POOLS = [
+  // ── 2026 ──
+  { pair:'ETH/USDC 0.3%',  net:'Base',     open:'30/01/2026', close:'24/02/2026', days:25,  capital:453,  fees:16,   il:0,   result:16,   status:'closed', lvr:0,    fcr:52.8,  invGrowth:3.5  },
+  { pair:'SOL/USDT 0.01%', net:'Solana',   open:'29/01/2026', close:'07/02/2026', days:9,   capital:25,   fees:1,    il:0,   result:1,    status:'closed', lvr:0,    fcr:161.1, invGrowth:4.0  },
+  // ── 2025 ──
+  { pair:'ETH/USDT 0.05%', net:'Arbitrum', open:'17/10/2025', close:'30/01/2026', days:105, capital:277,  fees:34,   il:0,   result:34,   status:'closed', lvr:0,    fcr:42.7,  invGrowth:12.3 },
+  { pair:'SOL/USDC 0.04%', net:'Solana',   open:'19/10/2025', close:'20/01/2026', days:93,  capital:660,  fees:23,   il:0,   result:23,   status:'closed', lvr:0,    fcr:13.7,  invGrowth:3.5  },
+  { pair:'XAI/WETH 0.3%',  net:'Arbitrum', open:'01/07/2025', close:'29/08/2025', days:60,  capital:35,   fees:7,    il:21,  result:-14,  status:'closed', lvr:3.0,  fcr:121.9, invGrowth:-40  },
+  { pair:'SOL/GRIFT 2%',   net:'Solana',   open:'15/02/2025', close:'05/05/2025', days:80,  capital:780,  fees:1389, il:500, result:-1510,status:'closed', lvr:0.36, fcr:815.7, invGrowth:-193, obs:'Token GRIFT foi a zero. Início: 4 SOL (~$3k). Taxas $1389 mas IL -$2900. Erro: acumulou mais que deveria, ficou preso em tendência baixa.' },
+  { pair:'XAI/WETH 0.3%', net:'Ethereum', open:'10/01/2025', close:'28/01/2025', days:18,  capital:30,   fees:7,    il:10,  result:-3,   status:'closed', lvr:1.4,  fcr:473.1, invGrowth:-10, obs:'0.009 ETH entrada. Bom APR após queda. 24/01 saiu do range, remontagem com taxas XAI no compound. Token caiu demais, desmontada.' },
+  // ── 2024 ──
+  { pair:'MSTR/ETH 1%',    net:'Ethereum', open:'22/11/2024', close:'04/12/2024', days:13,  capital:260,  fees:36,   il:0,   result:36,   status:'closed', lvr:0,    fcr:390.1, invGrowth:13.8, obs:'Segunda posição MSTR. Resultado final +$36 em 13 dias.' },
+  { pair:'MSTR/ETH 1%',    net:'Ethereum', open:'24/10/2024', close:'22/11/2024', days:29,  capital:395,  fees:36,   il:0,   result:36,   status:'closed', lvr:0,    fcr:115.1, invGrowth:9.1,  obs:'0.152 ETH + 3.77 MSTR entrada. APR 1100%→800%. Saiu do range em 6 dias. Remontagem 30/10. Fora no FDS, remontagem 22/11.' },
+  { pair:'ARB/USDT 0.3%',  net:'Arbitrum', open:'01/10/2024', close:'18/11/2024', days:48,  capital:628,  fees:73,   il:0,   result:73,   status:'closed', lvr:0,    fcr:88.0,  invGrowth:11.6, obs:'Final: 307 USDT + 177 ARB. Taxas: $73 bruto. Gas $5.74. ARB/USDC tinha APR mais alto, migrou.' },
+  { pair:'PEANUT/ETH 1%',  net:'Ethereum', open:'10/11/2024', close:'20/11/2024', days:10,  capital:300,  fees:0,    il:243, result:-243, status:'closed', lvr:0,    fcr:0,     invGrowth:-81,  obs:'Projeto SCAM. Altas taxas de gas: $22 montagem + $72 desmontagem. Ficou doente após montar, não conseguiu acompanhar.' },
+  { pair:'PENG/ETH 1%',    net:'Ethereum', open:'08/06/2024', close:'20/07/2024', days:42,  capital:260,  fees:0,    il:72,  result:-72,  status:'closed', lvr:0,    fcr:0,     invGrowth:-27,  obs:'Token PENG caiu demais. Pool já em lucro mas mercado reverteu. IL consumiu resultado.' },
+  { pair:'XAI/ETH 0.3%',   net:'Ethereum', open:'17/06/2024', close:'30/07/2024', days:43,  capital:100,  fees:3,    il:0,   result:3,    status:'closed', lvr:0,    fcr:25.4,  invGrowth:3,    obs:'Mercado caindo muito, remontou para capitalizar taxas. IL em XAI, continuou remontando. Saiu 12% pra baixo 30/06.' },
+  { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'11/06/2024', close:'21/07/2024', days:40,  capital:1200, fees:42,   il:0,   result:42,   status:'closed', lvr:0,    fcr:32.0,  invGrowth:3.5,  obs:'Final: 7038.01 RDNT + 0.0016 ETH. Objetivo 7000 RDNT cumprido. 21/07 fechada após mercado cair.' },
+  { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'18/05/2024', close:'11/06/2024', days:24,  capital:1500, fees:55,   il:0,   result:55,   status:'closed', lvr:0,    fcr:55.9,  invGrowth:3.7,  obs:'Final: 6952.68 RDNT + 0.0074 ETH. Taxas: 137.27 RDNT + 0.0074 ETH. Saiu +8% do range, remontagem.' },
+  { pair:'PENG/SOL 2%',    net:'Solana',   open:'13/03/2024', close:'02/04/2024', days:20,  capital:50,   fees:3,    il:8,   result:-5,   status:'closed', lvr:2.7,  fcr:109.5, invGrowth:-10,  obs:'Token PENG (Solana) caiu 24%. $20 de taxas em 2 dias. Range 174% pra cima. Só caindo depois, fechada.' },
+  { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/02/2024', close:'01/03/2024', days:23,  capital:2035, fees:85,   il:0,   result:85,   status:'closed', lvr:0,    fcr:66.4,  invGrowth:4.2,  obs:'$85.25 de taxas (+3.48% vs hold). Compound: 114.23 RDNT + 0.0133 ETH. Saiu do range 5%, remontagem 06/03.' },
+  { pair:'ARB/USDT 0.3%',  net:'Arbitrum', open:'15/12/2023', close:'28/02/2024', days:75,  capital:628,  fees:22,   il:0,   result:22,   status:'closed', lvr:0,    fcr:17.1,  invGrowth:3.5,  obs:'Final: 307.49 USDT + 177.90 ARB. Taxas: 36.36 USDT + 12.89 ARB. Gas $5.74. APR 300%+.' },
+  { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'05/01/2024', close:'05/02/2024', days:31,  capital:2035, fees:30,   il:0,   result:30,   status:'closed', lvr:0,    fcr:17.4,  invGrowth:1.5,  obs:'6313 RDNT entrada (~$2035). Aprovação ETF BTC spot. Saiu do range após 11 dias. Dias normais $10-14 de taxas.' },
+  // ── 2023 ──
+  { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'19/06/2023', close:'27/06/2023', days:8,   capital:957,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:163.3, invGrowth:9.4,  obs:'Primeira pool RDNT. Mono ativo. Grandes taxas em período curto. APR excepcional.' },
+  { pair:'ARB/USDC 0.05%', net:'Arbitrum', open:'05/07/2023', close:'02/01/2024', days:181, capital:884,  fees:155,  il:0,   result:155,  status:'closed', lvr:0,    fcr:35.2,  invGrowth:17.5, obs:'25 dias iniciais: +11.55 ARB + 13.88 USDC = $27.51. Ampliada com 157 ARB + 237 USDC. Total fees $155. ROI ~20%.' },
+  { pair:'MATIC/USDC 0.05%',net:'Polygon', open:'05/07/2023', close:'03/10/2023', days:90,  capital:67,   fees:5,    il:0,   result:5,    status:'closed', lvr:0,    fcr:30.3,  invGrowth:7.5,  obs:'MATIC 70.42 + USDC $19.91. Range 0.6579~0.700. APY 50-60%/mês. Saiu range +1.98 MATIC + 0.95 USDC. Mudou estratégia em outubro.' },
+  { pair:'ARB/USDC 0.05%', net:'Arbitrum', open:'21/07/2023', close:'26/07/2023', days:5,   capital:900,  fees:180,  il:0,   result:180,  status:'closed', lvr:0,    fcr:1460,  invGrowth:20,   obs:'Melhor FCR de todas as pools. 5 dias altíssimo volume ARB. Saiu do range em FOMO.' },
+  { pair:'ETH/USDC 0.05%', net:'ZkSync',   open:'21/08/2023', close:'20/10/2023', days:60,  capital:159,  fees:12,   il:0,   result:12,   status:'closed', lvr:0,    fcr:46.0,  invGrowth:7.5,  obs:'APY 700%→1200%. 0.014 ETH + $33.58 USDC inicial, ampliado para $159 após $1 em 2 dias. Encerrada 20/10.' },
+  { pair:'ETH/USDC 0.05%', net:'Arbitrum', open:'01/08/2023', close:'26/03/2024', days:209, capital:1014, fees:22,   il:0,   result:22,   status:'closed', lvr:0,    fcr:3.8,   invGrowth:2.2,  obs:'Pool longa com pouco volume. ETH deu grande valorização, pool deslizou em ranges. Final: 0.148 ETH + 30.95 USDC.' },
+  { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
+  // ── ATIVA ──
+  { pair:'WETH/USDC 0.3%', net:'Ethereum', open:'18/03/2026', close:'—',          days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),  capital:365,  fees:9,    il:0,   result:1,    status:'active',  lvr:0,   fcr:59.7,  invGrowth:0.3  },
+];
+
+// ── Chart data derived from POOLS (single source of truth) ─────────────────
+var _netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff', Polygon:'#A855F7', ZkSync:'#8080ff' };
+var _poolLabel = function(p) {
+  var yr = p.open.slice(-2);
+  var base = p.pair.split(' ')[0];
+  var na = { Arbitrum:'ARB', Ethereum:'ETH', Solana:'SOL', Base:'BASE', Polygon:'POL', ZkSync:'ZKS' };
+  return base + '\n' + (na[p.net]||p.net.slice(0,3).toUpperCase()) + ' ' + yr;
+};
+var _chron = POOLS.slice().sort(function(a,b){
+  function d(s){var p=s.split('/');return new Date(+p[2],+p[1]-1,+p[0]);}
+  return d(a.open)-d(b.open);
+});
+var pnlLabels = _chron.map(_poolLabel);
+var pnlNet    = _chron.map(function(p){return p.result;});
+var pnlFees   = _chron.map(function(p){return p.fees;});
+var pnlIL     = _chron.map(function(p){return p.il||0;});
+var _withFees = POOLS.filter(function(p){return p.fees>0;}).slice().sort(function(a,b){return b.fcr-a.fcr;});
+var aprLabels = _withFees.map(_poolLabel);
+var aprData   = _withFees.map(function(p){return +p.fcr.toFixed(1);});
+var _grp = {};
+POOLS.forEach(function(p){ if(!_grp[p.net]) _grp[p.net]={count:0,fees:0}; _grp[p.net].count++; _grp[p.net].fees+=p.fees; });
+var netLabels = Object.keys(_grp);
+var netPools  = netLabels.map(function(n){return _grp[n].count;});
+var netFees   = netLabels.map(function(n){return _grp[n].fees;});
+
+// ── Chart infrastructure ──
+function loadChartJs(cb) {
+  if (window.Chart) { cb(); return; }
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+  s.onload = cb; s.onerror = cb;
+  document.head.appendChild(s);
+}
+var isDark    = () => document.documentElement.getAttribute('data-theme') === 'dark';
+var gc        = { green:'#4a7c3f', red:'#b94040', gold:'#8a6820', muted:'#888', blue:'#3a7ec8' };
+var gridColor = () => isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+var textColor = () => isDark() ? '#c9b99a' : '#4a3520';
+var charts    = {};
+var chartTypes = { pnl:'bar', fees:'bar', timeline:'bar', apr:'bar', net:'bar' };
+var font = { family: 'JetBrains Mono, monospace', size: 9 };
+
+function ttOpts() {
+  var dk = isDark();
+  return {
+    backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+    borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+    borderWidth:1, padding:10, bodyFont:font, titleFont:font,
+    titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50'
+  };
+}
+
+function buildPnl(type) {
+  var ctx = document.getElementById('chartPnl'); if (!ctx) return;
+  try {
+    if (charts.pnl) { charts.pnl.destroy(); charts.pnl = null; }
+    var isLine = type === 'line';
+    charts.pnl = new Chart(ctx, { type: isLine?'line':'bar', data: {
+      labels: pnlLabels.map(l=>l.split('\n')),
+      datasets: [
+        { label:'Taxas', data:pnlFees, backgroundColor:isLine?'rgba(74,124,63,0.15)':'rgba(74,124,63,0.65)', borderColor:gc.green, borderWidth:isLine?2:1, borderRadius:3, tension:0.35, fill:isLine, pointRadius:isLine?3:0 },
+        { label:'IL', data:pnlIL.map(v=>-v), backgroundColor:isLine?'rgba(185,64,64,0.12)':'rgba(185,64,64,0.55)', borderColor:gc.red, borderWidth:isLine?2:1, borderRadius:3, tension:0.35, fill:isLine, pointRadius:isLine?3:0 },
+        { label:'Net', data:pnlNet, type:'line', borderColor:pnlNet.map(v=>v>=0?gc.gold:gc.red), backgroundColor:'transparent', borderWidth:2, tension:0.3, pointRadius:isLine?4:0, pointBackgroundColor:pnlNet.map(v=>v>=0?gc.gold:gc.red) }
+      ]}, options:{ responsive:true, animation:{duration:400},
+        plugins:{ legend:{display:true,labels:{font,color:textColor(),usePointStyle:true}}, tooltip:{...ttOpts()} },
+        scales:{ x:{ticks:{font,color:gc.muted,maxRotation:35},grid:{color:gridColor()},border:{display:false}}, y:{ticks:{font,color:gc.muted,callback:v=>(v>=0?'+':'')+'$'+Math.abs(v).toLocaleString()},grid:{color:gridColor()},border:{display:false}} }
+      }
+    });
+  } catch(e) { console.error('buildPnl',e); }
+}
+
+function buildFees(type) {
+  var ctx = document.getElementById('chartFees'); if (!ctx) return;
+  try {
+    if (charts.fees) { charts.fees.destroy(); charts.fees = null; }
+    var dk = isDark(); var isLine = type === 'line';
+    var yearFees = [267, 109, 1453, 25]; var yearLabels = ['2023','2024','2025','2026 YTD'];
+    var col = dk?'rgba(201,160,80,0.72)':'rgba(138,104,32,0.68)';
+    charts.fees = new Chart(ctx, { type:isLine?'line':'bar', data:{
+      labels:yearLabels, datasets:[{ label:'Taxas Anuais', data:yearFees,
+        backgroundColor:isLine?'rgba(201,160,80,0.10)':yearFees.map(()=>col),
+        borderColor:dk?'#c9a050':'#8a6820', borderWidth:isLine?2:1.5, borderRadius:9,
+        tension:0.38, fill:isLine, pointRadius:isLine?5:0 }]},
+      options:{ responsive:true, animation:{duration:400},
+        plugins:{ legend:{display:true,labels:{font,color:textColor()}}, tooltip:{...ttOpts()} },
+        scales:{ x:{ticks:{font,color:gc.muted},grid:{color:gridColor()},border:{display:false}}, y:{ticks:{font,color:gc.muted,callback:v=>'$'+v.toLocaleString()},grid:{color:gridColor()},border:{display:false}} }
+      }
+    });
+  } catch(e) { console.error('buildFees',e); }
+}
+
+function buildTimeline(type) {
+  var ctx = document.getElementById('chartTimeline'); if (!ctx) return;
+  try {
+    if (charts.timeline) { charts.timeline.destroy(); charts.timeline = null; }
+    var dk = isDark(); var isLine = type === 'line';
+    var labels = ['2023 Q1','2023 Q2','2023 Q3','2023 Q4','2024 Q1','2024 Q2','2024 Q3','2024 Q4','2025 Q1','2025 Q2','2025 Q3','2025 Q4','2026 Q1'];
+    var feesQ  = [90, 335, 22, 0, 36, 73, 0, 0, 1389, 7, 57, 0, 25];
+    var col = feesQ.map(v=>v>0?(dk?'rgba(201,160,80,0.70)':'rgba(138,104,32,0.65)'):(dk?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.05)'));
+    charts.timeline = new Chart(ctx, { type:isLine?'line':'bar', data:{
+      labels, datasets:[{ label:'Taxas por Período', data:feesQ,
+        backgroundColor:isLine?'rgba(201,160,80,0.12)':col, borderColor:dk?'#c9a050':'#8a6820',
+        borderWidth:isLine?2:1, borderRadius:3, tension:0.35, fill:isLine, pointRadius:isLine?4:0 }]},
+      options:{ responsive:true, animation:{duration:400},
+        plugins:{ legend:{display:true,labels:{font,color:textColor()}}, tooltip:{...ttOpts()} },
+        scales:{ x:{ticks:{font,color:gc.muted,maxRotation:35},grid:{color:gridColor()},border:{display:false}}, y:{ticks:{font,color:gc.muted,callback:v=>'$'+v},grid:{color:gridColor()},border:{display:false}} }
+      }
+    });
+  } catch(e) { console.error('buildTimeline',e); }
+}
+
+function buildApr(type) {
+  var ctx = document.getElementById('chartApr'); if (!ctx) return;
+  try {
+    if (charts.apr) { charts.apr.destroy(); charts.apr = null; }
+    var dk = isDark(); var isLine = type === 'line';
+    var colors = aprData.map(v=>v>=100?(dk?'rgba(63,185,80,0.75)':'rgba(32,120,52,0.70)'):(dk?'rgba(201,160,80,0.70)':'rgba(138,104,32,0.65)'));
+    charts.apr = new Chart(ctx, { type:isLine?'line':'bar', data:{
+      labels:aprLabels.map(l=>l.split('\n')), datasets:[{ label:'FCR% Anualizado', data:aprData,
+        backgroundColor:isLine?'rgba(201,160,80,0.10)':colors, borderColor:dk?'#c9a050':'#8a6820',
+        borderWidth:isLine?2:1, borderRadius:3, tension:0.35, fill:isLine, pointRadius:isLine?4:0 }]},
+      options:{ responsive:true, animation:{duration:400},
+        plugins:{ legend:{display:true,labels:{font,color:textColor()}}, tooltip:{...ttOpts()} },
+        scales:{ x:{ticks:{font,color:gc.muted,maxRotation:35},grid:{color:gridColor()},border:{display:false}}, y:{ticks:{font,color:gc.muted,callback:v=>v+'%'},grid:{color:gridColor()},border:{display:false}} }
+      }
+    });
+  } catch(e) { console.error('buildApr',e); }
+}
+
+
+function buildNet(type) {
+  var ctx = document.getElementById('chartNet'); if (!ctx) return;
+  try {
+    if (charts.net) { charts.net.destroy(); charts.net = null; }
+    var dk = isDark(); var isLine = type === 'line';
+    var netClr = ['rgba(138,104,32,0.7)','rgba(74,124,63,0.7)','rgba(185,64,64,0.7)','rgba(58,126,200,0.7)'];
+    charts.net = new Chart(ctx, { type:isLine?'line':'bar', data:{
+      labels:netLabels, datasets:[
+        { label:'Pools', data:netPools, backgroundColor:isLine?'rgba(138,104,32,0.1)':netClr, borderColor:isLine?gc.gold:netClr, borderWidth:isLine?2:1, borderRadius:4, tension:0.3, fill:isLine, pointRadius:isLine?4:0, yAxisID:'y' },
+        { label:'Taxas ($)', data:netFees, type:'line', backgroundColor:'transparent', borderColor:gc.green, borderWidth:2, borderDash:[4,3], tension:0.3, pointRadius:4, pointBackgroundColor:gc.green, yAxisID:'y2' }
+      ]}, options:{ responsive:true, animation:{duration:400},
+        plugins:{ legend:{display:true,labels:{font,color:textColor(),usePointStyle:true}}, tooltip:{...ttOpts()} },
+        scales:{
+          x:{ticks:{font,color:gc.muted},grid:{color:gridColor()},border:{display:false}},
+          y:{position:'left',ticks:{font,color:gc.muted,stepSize:1,callback:v=>v+'×'},grid:{color:gridColor()},border:{display:false}},
+          y2:{position:'right',ticks:{font,color:gc.muted,callback:v=>'$'+v},grid:{display:false},border:{display:false}}
+        }
+      }
+    });
+  } catch(e) { console.error('buildNet',e); }
+}
+
+window.setChartType = function(chartId, type, btn) {
+  chartTypes[chartId] = type;
+  var parent = btn ? (btn.closest('.chart-type-row')||btn.parentElement) : null;
+  if (parent) parent.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if      (chartId==='pnl')      buildPnl(type);
+  else if (chartId==='fees')     buildFees(type);
+  else if (chartId==='timeline') buildTimeline(type);
+  else if (chartId==='apr')      buildApr(type);
+  else if (chartId==='net')      buildNet(type);
+};
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadChartJs(function() {
+    try { buildPnl('bar'); } catch(e){}
+    try { buildFees('bar'); } catch(e){}
+    try { buildTimeline('bar'); } catch(e){}
+    try { buildApr('bar'); } catch(e){}
+    try { buildNet('bar'); } catch(e){}
+    try { buildRanking('fcr'); } catch(e){}
+    try { buildWaterfallAdv(); } catch(e){}
+    try { buildFCR(); } catch(e){}
+    try { buildWaterfall(); } catch(e){}
+    try { buildNetRanking(); } catch(e){}
+  });
+});
+
+// ── MOEDA USD / BRL (pools) ──
+window.currentCurrency = localStorage.getItem('bc-currency') || 'USD';
+window.usdBrlRate = 5.33;
+(async function fetchRate(){
+ try{
+ const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+ const d = await r.json();
+ if(d.rates && d.rates.BRL) usdBrlRate = d.rates.BRL;
+ }catch(e){}
+})();
+function toggleCurrency(){
+ currentCurrency = currentCurrency==='USD'?'BRL':'USD';
+ localStorage.setItem('bc-currency', currentCurrency);
+ const btn = document.getElementById('currencyBtn');
+ if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
+ document.querySelectorAll('[data-usd]').forEach(el=>{
+ const v = parseFloat(el.getAttribute('data-usd'));
+ if(isNaN(v)) return;
+ if(currentCurrency==='BRL'){
+ el.textContent = 'R$ '+( v*usdBrlRate).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+ } else {
+ el.textContent = '$'+ v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ }
+ });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ const btn=document.getElementById('currencyBtn');
+ if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
+});
+
+
+// [Sharpe/Breakeven removed — replaced by FCR/Waterfall]
+
+// ══════════════════════════════════════════════════════════
+// CHART: SIMULADOR DE IMPERMANENT LOSS
+// ══════════════════════════════════════════════════════════
+(function initILSimulator() {
+ const canvas = document.getElementById('chartIL');
+ const slider = document.getElementById('ilSlider');
+ const capitalInput = document.getElementById('ilCapital');
+ if (!canvas || !slider) return;
+ const dk = isDark();
+
+ function ilPct(ratio) {
+ // ratio = newPrice/oldPrice
+ if (ratio <= 0) return -100;
+ return (2 * Math.sqrt(ratio) / (1 + ratio) - 1) * 100;
+ }
+
+ // Build curve data: price change from -90% to +900%
+ const curvePcts = [];
+ const curveIL = [];
+ for (let p = -90; p <= 900; p += 10) {
+ curvePcts.push(p);
+ const ratio = (100 + p) / 100;
+ curveIL.push(parseFloat(ilPct(ratio).toFixed(3)));
+ }
+
+ let ilChart = null;
+ let dotDataset = {
+ label: 'Ponto atual',
+ data: [{ x: 100, y: ilPct(2) }],
+ type: 'scatter',
+ pointRadius: 7,
+ pointBackgroundColor: dk ? '#c9a050' : '#8a6820',
+ pointBorderColor: dk ? '#0d1117' : '#fff',
+ pointBorderWidth: 2,
+ showLine: false,
+ yAxisID: 'y',
+ };
+
+ ilChart = new Chart(canvas, {
+ type: 'line',
+ data: {
+ labels: curvePcts,
+ datasets: [
+ {
+ label: 'Impermanent Loss %',
+ data: curvePcts.map((p, i) => ({ x: p, y: curveIL[i] })),
+ borderColor: dk ? '#f85149' : '#b92d2d',
+ backgroundColor: dk ? 'rgba(248,81,73,0.10)' : 'rgba(185,45,45,0.08)',
+ fill: true,
+ tension: 0.4,
+ borderWidth: 2,
+ pointRadius: 0,
+ yAxisID: 'y',
+ },
+ dotDataset
+ ]
+ },
+ options: {
+ responsive: true,
+ interaction: { mode: 'nearest', axis: 'x', intersect: false },
+ plugins: {
+ legend: { display: false },
+ tooltip: {
+ callbacks: {
+ label: ctx => ctx.datasetIndex === 0
+ ? ` IL: ${ctx.parsed.y.toFixed(2)}%`
+ : ` Selecionado: ${ctx.parsed.y.toFixed(2)}%`
+ }
+ }
+ },
+ scales: {
+ x: {
+ type: 'linear',
+ title: { display: true, text: 'Variação preço ativo B (%)', color: Chart.defaults.color, font: { size: 8 } },
+ ticks: { font: font, color: gc.muted, callback: v => v + '%' },
+ grid: { color: gridColor(), lineWidth: 0.5 }, border: { display: false }
+ },
+ y: {
+ title: { display: true, text: 'IL (%)', color: Chart.defaults.color, font: { size: 8 } },
+ ticks: { font: font, color: dk ? '#f85149' : '#b92d2d', callback: v => v.toFixed(1) + '%' },
+ grid: { color: gridColor(), lineWidth: 0.5 }, border: { display: false }
+ }
+ }
+ }
+ });
+
+ function updateIL() {
+ const pct = parseInt(slider.value);
+ const capital = parseFloat(capitalInput.value) || 1000;
+ const ratio = (100 + pct) / 100;
+ const il = ilPct(ratio);
+ const loss = Math.abs(capital * il / 100);
+
+ document.getElementById('ilPriceLabel').textContent = (pct >= 0 ? '+' : '') + pct + '%';
+ document.getElementById('ilPct').textContent = il.toFixed(2) + '%';
+ document.getElementById('ilDollar').textContent = '-$' + loss.toFixed(2);
+ document.getElementById('ilBreakeven').textContent = '$' + loss.toFixed(2);
+
+ // Update dot
+ ilChart.data.datasets[1].data = [{ x: pct, y: il }];
+ ilChart.update('none');
+ }
+
+ slider.addEventListener('input', updateIL);
+ capitalInput.addEventListener('input', updateIL);
+ updateIL();
+})();
+
+// ══════════════════════════════════════════════════════════
+// CHART: PROJEÇÃO DE RENDA PASSIVA
+// ══════════════════════════════════════════════════════════
+var projChartInst = null;
+var projView = 'monthly';
+
+function setProjView(mode, btn) {
+ projView = mode;
+ const par = btn.closest('.ct-toggle');
+ if (par) par.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+ buildProjChart();
+}
+
+function buildProjChart() {
+ const canvas = document.getElementById('chartProj');
+ if (!canvas) return;
+ if (projChartInst) { projChartInst.destroy(); projChartInst = null; }
+ const dk = isDark();
+
+ // Monthly income by source (current positions, based on APY)
+ // AAVE: ETH 1.88% APY on ~$3842 = $72/yr = $6/mo; USDT 2.31% on $1651 = $38/yr = $3.2/mo
+ // Kamino: SOL 4.94% on ~$1750 = $86/yr = $7.2/mo; USDS 3.03% on $300 = $9.09/yr = $0.76/mo
+ // Net after borrow (AAVE 3.54% on $746 = $26.4/yr, Kamino 3.07% on $803 = $24.7/yr)
+ // AAVE net: 6+3.2-2.2 = $7/mo; Kamino net: 6.9+0.04-2.06 = $4.88/mo
+ // Uniswap LP: ~$0.64/day = $19.5/mo
+ const sources = {
+ aave: 7.0,
+ kamino: 4.88,
+ unilp: 19.5,
+ };
+ const total = sources.aave + sources.kamino + sources.unilp;
+ const months = ['Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez','Jan','Fev','Mar'];
+
+ let cum = 0;
+ const cumData = months.map(() => { cum += total; return parseFloat(cum.toFixed(2)); });
+ const monthlyData = months.map(() => total);
+
+ const kpis = document.getElementById('projKpis');
+ if (kpis) {
+ const mk = (lbl, val, cls) => `<div style="background:var(--surface2);border-radius:5px;padding:7px 10px;"><div style="font-size:7px;color:var(--muted);letter-spacing:1.5px;margin-bottom:2px;">${lbl}</div><div style="font-size:14px;font-weight:700;color:${cls};">$${val}</div></div>`;
+ kpis.innerHTML =
+ mk('MENSAL', total.toFixed(0), dk ? '#c9a050' : '#8a6820') +
+ mk('ANUAL (12M)', (total*12).toFixed(0), dk ? '#3fb950' : '#2a7c3f') +
+ mk('AAVE (net/mês)', sources.aave.toFixed(1), 'var(--green)') +
+ mk('KAMINO (net/mês)', sources.kamino.toFixed(1), dk ? '#7ec8e3' : '#3a78a0');
+ }
+
+ if (projView === 'monthly') {
+ projChartInst = new Chart(canvas, {
+ type: 'bar',
+ data: {
+ labels: months,
+ datasets: [
+ { label: 'Uniswap LP', data: months.map(() => sources.unilp), backgroundColor: dk ? 'rgba(255,0,122,0.55)' : 'rgba(200,0,100,0.50)', borderRadius: 3, borderSkipped: false },
+ { label: 'AAVE (net)', data: months.map(() => sources.aave), backgroundColor: dk ? 'rgba(63,185,80,0.60)' : 'rgba(42,124,63,0.55)', borderRadius: 3, borderSkipped: false },
+ { label: 'Kamino (net)',data: months.map(() => sources.kamino), backgroundColor: dk ? 'rgba(126,200,227,0.60)': 'rgba(70,150,180,0.55)', borderRadius: 3, borderSkipped: false },
+ ]
+ },
+ options: {
+ responsive: true,
+ interaction: { mode: 'index', intersect: false },
+ plugins: {
+ legend: { labels: { font: font, color: textColor(), boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } },
+ tooltip: {
+ callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toFixed(1)}/mês` }
+ }
+ },
+ scales: {
+ x: { stacked: true, ticks: { font: font, color: gc.muted }, grid: { display: false }, border: { display: false } },
+ y: { stacked: true, ticks: { font: font, color: gc.muted, callback: v => '$' + v }, grid: { color: gridColor(), lineWidth: 0.5 }, border: { display: false } }
+ }
+ }
+ });
+ } else {
+ // Cumulative view
+ projChartInst = new Chart(canvas, {
+ type: 'line',
+ data: {
+ labels: months,
+ datasets: [{
+ label: 'Renda Acumulada (12M)',
+ data: cumData,
+ borderColor: dk ? '#c9a050' : '#8a6820',
+ backgroundColor: dk ? 'rgba(201,160,80,0.12)' : 'rgba(138,104,32,0.08)',
+ fill: true,
+ tension: 0.35,
+ borderWidth: 2.5,
+ pointRadius: 4,
+ pointBackgroundColor: dk ? '#c9a050' : '#8a6820',
+ pointBorderColor: dk ? '#0d1117' : '#fff',
+ pointBorderWidth: 2,
+ }]
+ },
+ options: {
+ responsive: true,
+ plugins: {
+ legend: { display: false },
+ tooltip: { callbacks: { label: ctx => ` Acumulado: $${ctx.raw.toFixed(0)}` } }
+ },
+ scales: {
+ x: { ticks: { font: font, color: gc.muted }, grid: { display: false }, border: { display: false } },
+ y: { ticks: { font: font, color: gc.muted, callback: v => '$' + v }, grid: { color: gridColor(), lineWidth: 0.5 }, border: { display: false } }
+ }
+ }
+ });
+ }
+}
+
+ buildProjChart();
+
+ // ── Expose global controls ──
+ window.setChartType = function(chartId, type, btn) {
+ chartTypes[chartId] = type;
+ // toggle button state within parent ct-toggle
+ const parent = btn.closest('.ct-toggle');
+ if (parent) parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+ if (chartId === 'pnl') buildPnl(type);
+ else if (chartId === 'fees') buildFees(type);
+ else if (chartId === 'timeline') buildTimeline(type);
+ else if (chartId === 'apr') buildApr(type);
+ else if (chartId === 'net') buildNet(type);
+ };
+
+
+ // ── Ticker ──
+ updateTicker();
+ updateGas();
+ setInterval(updateTicker, 60000);
+ setInterval(updateGas, 30000);
+
+
+
+
+
+
+// ── buildTable — fee breakdown table ──────────────────────────────────────
+function buildTable() {
+  var tbody = document.getElementById('feeTokenBody');
+  if (!tbody) return;
+  var tokens = [
+    { token:'ETH',  qty:'2.084', fees:'$122', de:'AAVE supply yield' },
+    { token:'USDT', qty:'1,652', fees:'$47',  de:'AAVE supply yield' },
+    { token:'ARB',  qty:'var',   fees:'$498', de:'Pools ARB/USDC + ARB/USDT' },
+    { token:'SOL',  qty:'20.31', fees:'$23',  de:'Pool SOL/USDC' },
+    { token:'RDNT', qty:'7,290', fees:'$90',  de:'Pool RDNT/ETH' },
+    { token:'USDC', qty:'borrow',fees:'-$34', de:'Custo de dívida' },
+  ];
+  tbody.innerHTML = tokens.map(function(t) {
+    var col = t.fees.startsWith('-') ? 'color:var(--red)' : 'color:var(--green)';
+    return '<tr style="border-top:1px solid var(--border);">' +
+      '<td style="padding:6px 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;">' + t.token + '</td>' +
+      '<td style="padding:6px 4px;font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--muted);text-align:right;">' + t.qty + '</td>' +
+      '<td style="padding:6px 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;font-weight:600;text-align:right;' + col + '">' + t.fees + '</td>' +
+      '<td style="padding:6px 4px;font-size:9px;color:var(--muted);">' + t.de + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+// ── buildLicoes — lessons learned list ────────────────────────────────────
+function buildLicoes() {
+  var container = document.getElementById('licoesContainer');
+  if (!container) return;
+  var lessons = [
+    { ok:false, text:'SOL/GRIFT: token de baixa liquidez com IL severo — evitar tokens sem profundidade de mercado' },
+    { ok:false, text:'RDNT: risco de protocolo (3 hacks) ≠ risco de mercado — verificar histórico de segurança antes' },
+    { ok:false, text:'PEANUT/ETH: pool de token suspeito — nunca alocar capital em tokens sem due diligence' },
+    { ok:true,  text:'ARB/USDC 5 dias: pool curta e agressiva gerou melhor FCR — operações curtas com convicção funcionam' },
+    { ok:true,  text:'AAVE + Kamino: lending disciplinado com HF saudável é a operação mais estável do portfólio' },
+    { ok:true,  text:'DCA mensal: aportes em bear market + holdings long prazo é a estratégia certa para o capital atual' },
+  ];
+  container.innerHTML = lessons.map(function(l) {
+    return '<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);">' +
+      '<span style="font-size:14px;flex-shrink:0;">' + (l.ok ? '✅' : '⚠️') + '</span>' +
+      '<span style="font-size:12px;color:var(--muted);font-family:\'Satoshi\',sans-serif;">' + l.text + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+// ── buildPoolTable — popula tabela histórica de pools ─────────────────────
+function buildPoolTable() {
+  var tbody = document.getElementById('poolTableBody');
+  if (!tbody || typeof POOLS === 'undefined') return;
+  var html = '';
+  POOLS.forEach(function(p, idx) {
+    var isActive = p.status === 'active';
+    var resCol = p.result >= 0 ? 'color:var(--green)' : 'color:var(--red)';
+    var lvrCol = p.lvr === 0 ? 'color:var(--green)' : (p.lvr > 1 ? 'color:var(--red)' : 'color:var(--yellow)');
+    var fcrCol = p.fcr > 100 ? 'color:var(--green)' : (p.fcr > 30 ? '' : 'color:var(--muted)');
+    var invCol = p.invGrowth >= 0 ? 'color:var(--green)' : 'color:var(--red)';
+    var rowStyle = isActive ? 'background:rgba(74,124,63,0.06);' : '';
+    var statusBadge = isActive
+      ? '<span style="background:rgba(74,124,63,0.15);color:var(--green);border:1px solid rgba(74,124,63,0.3);border-radius:3px;padding:1px 6px;font-size:7px;letter-spacing:.08em;">● ATIVA</span>'
+      : '<span style="color:var(--muted);font-size:8px;">encerrada</span>';
+    var obsId = 'obs-' + idx;
+    var obsToggle = p.obs
+      ? ' style="cursor:pointer;" onclick="var e=document.getElementById(\'' + obsId + '\');e.style.display=e.style.display===\'none\'?\'table-row\':\'none\';" title="Ver notas do diário"'
+      : '';
+    html += '<tr style="' + rowStyle + '"' + obsToggle + '>'
+      + '<td style="font-weight:600;">' + p.pair + (p.obs ? ' <span style="font-size:7px;color:var(--muted);vertical-align:middle;">▸</span>' : '') + '</td>'
+      + '<td>' + p.net + '</td>'
+      + '<td>' + p.open + '</td>'
+      + '<td>' + p.close + '</td>'
+      + '<td style="text-align:right;">' + p.days + 'd</td>'
+      + '<td style="text-align:right;">$' + p.capital.toLocaleString() + '</td>'
+      + '<td style="text-align:right;color:var(--green);">$' + p.fees.toLocaleString() + '</td>'
+      + '<td style="text-align:right;' + (p.il > 0 ? 'color:var(--red)' : 'color:var(--muted)') + ';">' + (p.il > 0 ? '-$' + p.il : '$0') + '</td>'
+      + '<td style="text-align:right;' + lvrCol + ';">' + (p.lvr > 0 ? p.lvr.toFixed(1) + 'x' : '—') + '</td>'
+      + '<td style="text-align:right;' + fcrCol + ';">' + p.fcr.toFixed(1) + '%</td>'
+      + '<td style="text-align:right;' + invCol + ';">' + (p.invGrowth >= 0 ? '+' : '') + p.invGrowth + '%</td>'
+      + '<td style="text-align:right;font-weight:700;' + resCol + ';">' + (p.result >= 0 ? '+' : '') + '$' + p.result + '</td>'
+      + '<td>' + statusBadge + '</td>'
+      + '</tr>';
+    if (p.obs) {
+      html += '<tr id="' + obsId + '" style="display:none;">'
+        + '<td colspan="13" style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--muted);padding:6px 14px 8px 28px;background:rgba(138,104,32,0.04);border-top:none;letter-spacing:.04em;">'
+        + '▸ ' + p.obs
+        + '</td></tr>';
+    }
+  });
+  tbody.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildTable();
+  buildLicoes();
+  buildPoolTable();
+});
+
+
+// ── buildRanking + setRankingMode ────────────────────────────────────────
+function buildRanking(mode) {
+  var canvas = document.getElementById('chartRanking');
+  if (!canvas || typeof Chart === 'undefined') return;
+  try {
+    if (window._rankChart) { window._rankChart.destroy(); window._rankChart = null; }
+    var dk = isDark();
+
+    var pools_r = POOLS.map(function(p){
+      return { label:_poolLabel(p), fcr:p.fcr, net:p.result, color:_netColors[p.net]||'#888' };
+    });
+
+    var isNet = mode === 'net';
+    var sorted = pools_r.slice().sort(function(a,b){ return isNet ? b.net - a.net : b.fcr - a.fcr; });
+    var data   = sorted.map(function(p){ return isNet ? p.net : p.fcr; });
+    var colors = sorted.map(function(p){
+      var v = isNet ? p.net : p.fcr;
+      return v < 0 ? (dk?'rgba(248,81,73,0.70)':'rgba(155,42,42,0.65)') : (p.color + (dk?'bb':'99'));
+    });
+
+    window._rankChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: sorted.map(function(p){ return p.label.split('\n'); }),
+        datasets: [{ 
+          label: isNet ? 'Resultado Líquido ($)' : 'FCR% Anualizado',
+          data: data,
+          backgroundColor: colors,
+          borderColor: colors.map(function(col){ return col.startsWith('#') ? col.substring(0,7) : col.replace(/,\s*[\d.]+\)$/, ',1)'); }),
+          borderWidth: 1, borderRadius: 3
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, animation: { duration: 400 },
+        plugins: {
+          legend: { display: false },
+          tooltip: { 
+            backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+            borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+            borderWidth: 1, padding: 10, bodyFont: font, titleFont: font,
+            titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50',
+            callbacks: { label: function(ctx){ return ' ' + (isNet ? '$' : '') + ctx.raw + (isNet ? '' : '%'); } }
+          }
+        },
+        scales: {
+          x: { ticks: { font: font, color: gc.muted, callback: function(v){ return isNet ? '$'+v : v+'%'; } }, grid: { color: gridColor() }, border: { display: false } },
+          y: { ticks: { font: font, color: gc.muted, padding: 4 }, grid: { display: false }, border: { display: false } }
+        }
+      }
+    });
+  } catch(e) { console.error('buildRanking', e); }
+}
+window.setRankingMode = function(mode, btn) {
+  var parent = btn ? (btn.closest('.ct-toggle') || btn.parentElement) : null;
+  if (parent) parent.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  buildRanking(mode);
+};
+
+// ── buildWaterfallAdv ──────────────────────────────────────────────────────
+function buildWaterfallAdv() {
+  var canvas = document.getElementById('chartWaterfallAdv');
+  if (!canvas || typeof Chart === 'undefined') return;
+  try {
+    if (window._wfAdvChart) { window._wfAdvChart.destroy(); window._wfAdvChart = null; }
+    var dk = isDark();
+    var pools_w = POOLS.filter(function(p){ return p.fees>0||p.il>0; })
+      .slice().sort(function(a,b){ return (b.fees+b.il)-(a.fees+a.il); })
+      .map(function(p){ return { label:p.pair.split(' ')[0], fees:p.fees, il:p.il||0 }; });
+    window._wfAdvChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: pools_w.map(function(p){ return p.label; }),
+        datasets: [
+          { label:'Taxas', data: pools_w.map(function(p){ return p.fees; }),
+            backgroundColor: dk?'rgba(74,124,63,0.75)':'rgba(42,92,42,0.70)',
+            borderColor: dk?'#4a7c3f':'#2a5c2a', borderWidth:1, borderRadius:3 },
+          { label:'IL', data: pools_w.map(function(p){ return -p.il; }),
+            backgroundColor: dk?'rgba(185,64,64,0.70)':'rgba(140,40,40,0.65)',
+            borderColor: dk?'#b94040':'#8c2828', borderWidth:1, borderRadius:3 }
+        ]
+      },
+      options: {
+        responsive: true, animation: { duration: 400 },
+        plugins: {
+          legend: { display: true, labels: { font: font, color: textColor(), usePointStyle: true } },
+          tooltip: {
+            backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+            borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+            borderWidth:1, padding:10, bodyFont:font, titleFont:font,
+            titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50',
+            callbacks: { label: function(ctx){ return ' ' + ctx.dataset.label + ': $' + Math.abs(ctx.raw); } }
+          }
+        },
+        scales: {
+          x: { ticks:{ font:font, color:gc.muted, maxRotation:35 }, grid:{display:false}, border:{display:false} },
+          y: { ticks:{ font:font, color:gc.muted, callback: function(v){ return '$'+Math.abs(v); } }, grid:{color:gridColor()}, border:{display:false} }
+        }
+      }
+    });
+  } catch(e) { console.error('buildWaterfallAdv', e); }
+}
+
+// ══ FCR RANKING — HORIZONTAL BAR ════════════════════════════════════════
+function buildFCR() {
+  const canvas = document.getElementById('chartFCR');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const dk = isDark();
+
+  // FCR = (fees / capital) * (365 / days) * 100  — derived from POOLS
+  const pools_fcr = POOLS.map(p => ({
+    label: _poolLabel(p), fees: p.fees, capital: p.capital, days: p.days, net: p.net, fcr: p.fcr
+  })).sort((a, b) => b.fcr - a.fcr);
+
+  const netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff' };
+  const colors = pools_fcr.map(p =>
+    p.fees === 0 ? (dk?'rgba(248,81,73,0.6)':'rgba(185,45,45,0.5)') :
+    (p.net === 'Solana' ? '#14F195' + 'bb' : (netColors[p.net]||'#888') + 'cc')
+  );
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: pools_fcr.map(p => p.label),
+      datasets: [{
+        label: 'FCR% Anualizado',
+        data: pools_fcr.map(p => +p.fcr.toFixed(1)),
+        backgroundColor: colors,
+        borderColor: colors.map(c => c.replace(/cc|bb$/,'ff')),
+        borderWidth: 1,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const p = pools_fcr[ctx.dataIndex];
+            return [
+              ` FCR: ${ctx.raw}% / ano`,
+              ` Taxas: $${p.fees}  Capital: $${p.capital}  Dias: ${p.days}`,
+              ` Rede: ${p.net}`
+            ];
+          }
+        }, backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+           borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+           borderWidth:1, padding:10,
+           titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50' }
+      },
+      scales: {
+        x: { ticks: { font, color: gc.muted, callback: v => v + '%' },
+             grid: { color: gridColor() }, border: { display: false } },
+        y: { ticks: { font, color: gc.muted, padding: 4 },
+             grid: { display: false }, border: { display: false } }
+      }
+    }
+  });
+}
+
+// ══ WATERFALL — FEES vs IL ═══════════════════════════════════════════════
+function buildWaterfall() {
+  const canvas = document.getElementById('chartWaterfall');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const dk = isDark();
+
+  const pools_w = POOLS.filter(p => p.fees > 0 || p.il > 0)
+    .slice().sort((a, b) => (b.fees + b.il) - (a.fees + a.il))
+    .map(p => ({ label: p.pair.split(' ')[0], fees: p.fees, il: p.il || 0 }));
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: pools_w.map(p => p.label),
+      datasets: [
+        {
+          label: 'Taxas',
+          data: pools_w.map(p => p.fees),
+          backgroundColor: dk ? 'rgba(74,124,63,0.75)' : 'rgba(42,92,42,0.70)',
+          borderColor: dk ? '#4a7c3f' : '#2a5c2a',
+          borderWidth: 1, borderRadius: 3,
+        },
+        {
+          label: 'Impermanent Loss',
+          data: pools_w.map(p => -p.il),
+          backgroundColor: dk ? 'rgba(185,64,64,0.70)' : 'rgba(140,40,40,0.65)',
+          borderColor: dk ? '#b94040' : '#8c2828',
+          borderWidth: 1, borderRadius: 3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: true, labels: { font, color: dk?'#c9b99a':'#4a3520', usePointStyle: true, pointStyleWidth: 10 } },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const v = ctx.raw;
+            return ` ${ctx.dataset.label}: $${Math.abs(v).toFixed(0)}`;
+          }
+        }, backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+           borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+           borderWidth:1, padding:10,
+           titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50' }
+      },
+      scales: {
+        x: { ticks: { font, color: gc.muted, maxRotation: 35 },
+             grid: { display: false }, border: { display: false } },
+        y: { ticks: { font, color: gc.muted, callback: v => '$' + Math.abs(v) },
+             grid: { color: gridColor() }, border: { display: false } }
+      }
+    }
+  });
+}
+
+// ══ NET RANKING — HORIZONTAL BAR ══════════════════════════════════════════
+function buildNetRanking() {
+  const canvas = document.getElementById('chartNetRanking');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const dk = isDark();
+
+  var _bestResult = Math.max.apply(null, POOLS.map(p => p.result));
+  const pools_net = POOLS.map(p => {
+    var note = p.status === 'active' ? 'Ativa' :
+               p.result <= -500 ? 'IL severo' :
+               p.fees === 0 && p.il > 0 ? 'Scam/rugpull' :
+               p.il > 0 && p.il > p.fees ? 'IL > fees' :
+               p.result === _bestResult ? 'Best trade' : '';
+    return { label: _poolLabel(p), net: p.result, note: note };
+  }).sort((a, b) => a.net - b.net);
+
+  const colors = pools_net.map(p =>
+    p.net < 0
+      ? (dk ? 'rgba(248,81,73,0.70)' : 'rgba(155,42,42,0.65)')
+      : (dk ? 'rgba(63,185,80,0.70)' : 'rgba(32,110,52,0.65)')
+  );
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: pools_net.map(p => p.label),
+      datasets: [{
+        label: 'Resultado Líquido',
+        data: pools_net.map(p => p.net),
+        backgroundColor: colors,
+        borderColor: colors.map(c => c.replace('0.70','1').replace('0.65','1')),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const p = pools_net[ctx.dataIndex];
+            return [
+              ` Resultado: ${ctx.raw >= 0 ? '+' : ''}$${ctx.raw}`,
+              p.note ? ` Nota: ${p.note}` : ''
+            ].filter(Boolean);
+          }
+        }, backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
+           borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
+           borderWidth:1, padding:10,
+           titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50' }
+      },
+      scales: {
+        x: { ticks: { font, color: gc.muted, callback: v => '$' + v },
+             grid: { color: gridColor() }, border: { display: false },
+             afterDataLimits: axis => { if(axis.min > -20) axis.min = -20; } },
+        y: { ticks: { font, color: gc.muted, padding: 4 },
+             grid: { display: false }, border: { display: false } }
+      }
+    }
+  });
+}
+
+
+// ══════════════════════════════════════════════════════
+// HEATMAP DE PERFORMANCE
+// ══════════════════════════════════════════════════════
+(function() {
+ // Dados mensais de fees e remontagens — extraídos do diário
+ // Formato: { year, month(1-12), fees($), remontagens(count) }
+ const heatData = [
+ // 2023
+ { y:2023, m:4, fees:2, remon:2 }, // ETH/USDC ARB início
+ { y:2023, m:5, fees:3, remon:1 },
+ { y:2023, m:6, fees:5, remon:3 },
+ { y:2023, m:7, fees:12, remon:4 }, // ARB/USDT peak
+ { y:2023, m:8, fees:8, remon:3 }, // zkSync
+ { y:2023, m:9, fees:4, remon:2 },
+ { y:2023, m:10, fees:6, remon:2 }, // zkSync fechou
+ { y:2023, m:11, fees:52, remon:3 }, // ARB/USDC voltou ao range
+ { y:2023, m:12, fees:200, remon:5 }, // RDNT/ETH ETF week + ARB/USDC compound
+ // 2024
+ { y:2024, m:1, fees:90, remon:4 }, // RDNT/ETH + ARB segunda
+ { y:2024, m:2, fees:8, remon:2 },
+ { y:2024, m:3, fees:3, remon:2 },
+ { y:2024, m:4, fees:2, remon:3 },
+ { y:2024, m:5, fees:1, remon:1 },
+ { y:2024, m:6, fees:0, remon:0 },
+ { y:2024, m:7, fees:0, remon:0 },
+ { y:2024, m:8, fees:0, remon:0 },
+ { y:2024, m:9, fees:0, remon:0 },
+ { y:2024, m:10, fees:36, remon:5 }, // MSTR/ETH
+ { y:2024, m:11, fees:5, remon:2 }, // PEANUT scam
+ { y:2024, m:12, fees:0, remon:0 },
+ // 2025
+ { y:2025, m:1, fees:700, remon:18 }, // SOL/GRIFT pico de fees + remontagens diárias
+ { y:2025, m:2, fees:400, remon:12 }, // SOL/GRIFT declinando
+ { y:2025, m:3, fees:150, remon:8 }, // SOL/GRIFT fim + XAI
+ { y:2025, m:4, fees:10, remon:2 },
+ { y:2025, m:5, fees:0, remon:0 },
+ { y:2025, m:6, fees:0, remon:0 },
+ { y:2025, m:7, fees:0, remon:0 },
+ { y:2025, m:8, fees:0, remon:0 },
+ { y:2025, m:9, fees:0, remon:0 },
+ { y:2025, m:10, fees:18, remon:5 }, // ETH/USDT + SOL/USDC início
+ { y:2025, m:11, fees:12, remon:6 },
+ { y:2025, m:12, fees:16, remon:4 },
+ // 2026
+ { y:2026, m:1, fees:12, remon:8 }, // ETH/USDC BASE + SOL/USDT + SOL/USDC finalizando
+ { y:2026, m:2, fees:8, remon:4 }, // WETH/USDC iniciou
+ { y:2026, m:3, fees:9, remon:1 }, // atual — WETH/USDC $8.62 fees
+ ];
+
+ const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+ const YEARS = [2023, 2024, 2025, 2026];
+ let heatMode = 'fees';
+
+ function getValue(y, m) {
+ const d = heatData.find(x => x.y===y && x.m===m);
+ return d || { fees:0, remon:0 };
+ }
+
+ function getColor(val, max, mode) {
+ if (val === 0) return isDark() ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+ const intensity = Math.pow(val / max, 0.55); // power scale for better contrast
+ if (mode === 'fees') {
+ // gold → green gradient
+ const r = Math.round(138 + (74-138)*intensity);
+ const g = Math.round(104 + (124-104)*intensity);
+ const b = Math.round(32 + (63-32)*intensity);
+ return `rgba(${r},${g},${b},${0.3 + intensity*0.65})`;
+ } else {
+ // muted → red for high remontagem activity
+ const r = Math.round(80 + (185-80)*intensity);
+ const g = Math.round(120 + (64-120)*intensity);
+ const b = Math.round(150 + (64-150)*intensity);
+ return `rgba(${r},${g},${b},${0.3 + intensity*0.65})`;
+ }
+ }
+
+ function renderHeatmap(mode) {
+ heatMode = mode;
+ const grid = document.getElementById('heatmapGrid');
+ const legend = document.getElementById('heatmapLegend');
+ if (!grid) return;
+
+ const allVals = heatData.map(d => mode==='fees' ? d.fees : d.remon);
+ const maxVal = Math.max(...allVals);
+
+ // Build table
+ let html = `<table style="border-collapse:separate;border-spacing:3px;min-width:600px;">`;
+ // header row
+ html += `<tr><td style="width:36px;"></td>`;
+ MONTHS.forEach(m => {
+ html += `<td style="text-align:center;font-size:8px;color:var(--muted);padding:0 1px;letter-spacing:.04em;">${m}</td>`;
+ });
+ html += `</tr>`;
+
+ YEARS.forEach(y => {
+ html += `<tr>`;
+ html += `<td style="font-size:8px;color:var(--muted);padding-right:6px;text-align:right;vertical-align:middle;">${y}</td>`;
+ for (let m = 1; m <= 12; m++) {
+ const d = getValue(y, m);
+ const val = mode === 'fees' ? d.fees : d.remon;
+ const bg = getColor(val, maxVal, mode);
+ const tip = mode === 'fees'
+ ? `$${val} em taxas · ${d.remon} remontagem${d.remon!==1?'s':''}`
+ : `${val} remontagem${val!==1?'s':''}${d.fees>0?' · $'+d.fees+' fees':''}`;
+ const label = val > 0 ? (mode==='fees' ? (val>=100?'$'+Math.round(val/100)+'c':'') : (val>=5?val:'')) : '';
+ html += `<td title="${MONTHS[m-1]}/${y} · ${tip}"
+ style="background:${bg};border-radius:3px;width:42px;height:28px;text-align:center;
+ vertical-align:middle;cursor:default;transition:filter .15s;
+ font-size:7.5px;
+ color:${isDark()?'rgba(255,255,255,0.7)':'rgba(0,0,0,0.6)'};
+ font-weight:500;"
+ onmouseover="this.style.filter='brightness(1.3)';showHeatTip(this,'${MONTHS[m-1]}/${y}','${tip}')"
+ onmouseout="this.style.filter='';hideHeatTip()">${label}</td>`;
+ }
+ html += `</tr>`;
+ });
+ html += `</table>`;
+ grid.innerHTML = html;
+
+ // Legend
+ const steps = 6;
+ let legHtml = '';
+ for (let i = 0; i <= steps; i++) {
+ const v = (i / steps) * maxVal;
+ legHtml += `<div style="width:22px;height:12px;border-radius:2px;background:${getColor(v,maxVal,mode)};"></div>`;
+ }
+ if (legend) legend.innerHTML = legHtml;
+ }
+
+ window.setHeatmapMode = function(mode, btn) {
+ document.querySelectorAll('#tglHeatmap button').forEach(b => b.classList.remove('active'));
+ if (btn) btn.classList.add('active');
+ renderHeatmap(mode);
+ };
+
+ // Tooltip flutuante
+ let tipEl = null;
+ window.showHeatTip = function(el, label, tip) {
+ if (!tipEl) {
+ tipEl = document.createElement('div');
+ tipEl.style.cssText = `position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border);
+ border-radius:5px;padding:6px 10px;font-size:9px;color:var(--text);pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.15);line-height:1.6;`;
+ document.body.appendChild(tipEl);
+ }
+ tipEl.innerHTML = `<b style="color:var(--accent)">${label}</b><br>${tip}`;
+ tipEl.style.display = 'block';
+ const r = el.getBoundingClientRect();
+ tipEl.style.left = (r.left + r.width/2 - 80) + 'px';
+ tipEl.style.top = (r.top - 54) + 'px';
+ };
+ window.hideHeatTip = function() {
+ if (tipEl) tipEl.style.display = 'none';
+ };
+
+ // Init after DOM
+ document.addEventListener('DOMContentLoaded', () => renderHeatmap('fees'));
+ // Also re-render on theme toggle
+ const origToggle = window.toggleTheme;
+ window.toggleTheme = function() {
+ if (origToggle) origToggle();
+ setTimeout(() => renderHeatmap(heatMode), 50);
+ };
+})();
+
+  
+</script>
+
+
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — AUTO-FETCH MULTI-WALLET MODULE
+// EVM (Alchemy) + Solana/Kamino (Helius)
+// ══════════════════════════════════════════════════════════════════
+(function initWalletFetch() {
+
+ const ALCHEMY_KEY = 'R_9y5DBqKNR2NapexG8n7';
+ const HELIUS_KEY = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
+
+ const ETH_RPC = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+ const BASE_RPC = `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+ const HELIUS_RPC= `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+ const HELIUS_API= `https://api.helius.xyz/v0`;
+
+ // ── Wallets ──────────────────────────────────────────────────────
+ const EVM_WALLETS = [
+ '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6',
+ '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396', // AAVE
+ '0x835a5F686c489023064Edb0EA3A0f4ee54BD77F6',
+ '0x8311038D68039f4C3e7237D64f4F2c598fBf4ea3',
+ ];
+ const AAVE_WALLET = '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396';
+ const SOL_WALLET = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
+
+ // ── Contracts ────────────────────────────────────────────────────
+ const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
+ const UNI_NFT = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
+ const LP_TOKEN_ID = 4694262;
+ const USDT_ADDR = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+ const USDC_ADDR = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+ const WETH_ADDR = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+
+ // Kamino program ID on Solana
+ const KAMINO_PROGRAM = 'KLend2g3cP87fffoy8q1mQqGKjrL9CGMcnvsoBrDgKzX';
+
+ // ── Helpers ──────────────────────────────────────────────────────
+ const padAddr = a => '000000000000000000000000' + a.slice(2).toLowerCase();
+ const padUint = n => BigInt(n).toString(16).padStart(64, '0');
+ const decUint = (hex, offset=0) => BigInt('0x' + (hex.slice(2)||'0').slice(offset*64, (offset+1)*64) || '0');
+ const decNum = (n, dec) => Number(n) / Math.pow(10, dec);
+ const fmt2 = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+ const fmtK = n => n >= 1000 ? '$' + (n/1000).toFixed(2) + 'K' : fmt2(n);
+ const setEl = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+ const setHtml = (id, v) => { const e = document.getElementById(id); if(e) e.innerHTML = v; };
+ const setColor= (id, c) => { const e = document.getElementById(id); if(e) e.style.color = c; };
+
+ async function rpc(url, method, params) {
+ const r = await fetch(url, {
+ method: 'POST',
+ headers: {'Content-Type':'application/json'},
+ body: JSON.stringify({id:1, jsonrpc:'2.0', method, params})
+ });
+ const d = await r.json();
+ if (d.error) throw new Error(d.error.message);
+ return d.result;
+ }
+
+ async function ethCall(rpcUrl, to, data) {
+ return rpc(rpcUrl, 'eth_call', [{to, data}, 'latest']);
+ }
+
+ // ── ETH balance for one address ──────────────────────────────────
+ async function getEthBalance(addr) {
+ const raw = await rpc(ETH_RPC, 'eth_getBalance', [addr, 'latest']);
+ return decNum(BigInt(raw), 18);
+ }
+
+ // ── ERC20 balance ────────────────────────────────────────────────
+ async function getERC20(rpcUrl, token, addr, decimals) {
+ const data = '0x70a08231' + padAddr(addr);
+ const raw = await ethCall(rpcUrl, token, data);
+ return decNum(decUint(raw, 0), decimals);
+ }
+
+ // ── All EVM wallet balances ──────────────────────────────────────
+ async function fetchAllEVM() {
+ const results = {};
+ await Promise.all(EVM_WALLETS.map(async wallet => {
+ try {
+ const [eth, usdt, usdc, weth] = await Promise.all([
+ getEthBalance(wallet).catch(()=>0),
+ getERC20(ETH_RPC, USDT_ADDR, wallet, 6).catch(()=>0),
+ getERC20(ETH_RPC, USDC_ADDR, wallet, 6).catch(()=>0),
+ getERC20(ETH_RPC, WETH_ADDR, wallet, 18).catch(()=>0),
+ ]);
+ results[wallet] = { eth, usdt, usdc, weth };
+ console.log(`[EVM] ${wallet.slice(0,8)}... ETH:${eth.toFixed(4)} USDT:${usdt.toFixed(2)} USDC:${usdc.toFixed(2)}`);
+ } catch(e) {
+ console.warn(`[EVM] ${wallet.slice(0,8)}... failed:`, e.message);
+ results[wallet] = { eth:0, usdt:0, usdc:0, weth:0 };
+ }
+ }));
+ return results;
+ }
+
+ // ── AAVE V4 ──────────────────────────────────────────────────────
+ async function fetchAave(ethPrice) {
+ try {
+ const data = '0xbf92857c' + padAddr(AAVE_WALLET);
+ const raw = await ethCall(ETH_RPC, AAVE_POOL, data);
+ // Returns 6 uint256: totalCollateralBase, totalDebtBase, availBorrows, liqThreshold, ltv, healthFactor
+ const collateral = decNum(decUint(raw, 0), 8); // USD 8 decimals
+ const debt = decNum(decUint(raw, 1), 8);
+ const liqThresh = decNum(decUint(raw, 3), 4);
+ const hf = decNum(decUint(raw, 5), 18);
+
+ console.log(`[AAVE] Collateral: $${collateral.toFixed(2)}, Debt: $${debt.toFixed(2)}, HF: ${hf.toFixed(2)}`);
+ // Sanity check — RPC pode retornar 0x vazio em rate-limit/falha silenciosa
+ if (collateral < 100) { console.warn('[AAVE] Sanity: collateral $' + collateral.toFixed(2) + ' < $100, descartando update'); return null; }
+
+ // Update AAVE card UI
+ setEl('aave-net-worth', fmtK(collateral - debt));
+ const hfEl = document.getElementById('aave-hf-metric');
+ if (hfEl) {
+ hfEl.textContent = hf.toFixed(2);
+ hfEl.style.color = hf > 2 ? 'var(--green)' : hf > 1.3 ? 'var(--yellow)' : 'var(--red)';
+ }
+
+ // Also update via existing updateAave function if available
+ if (typeof updateAave === 'function' && ethPrice) {
+ updateAave({ totalCollateral: collateral, totalDebt: debt, liqThreshold: liqThresh/100, healthFactor: hf }, ethPrice);
+ }
+
+ // Store globals for other calcs
+ window._liveAaveDebt = debt;
+ window._liveAaveCollateral = collateral;
+ window._liveAaveHF = hf;
+
+ return { collateral, debt, liqThresh, hf };
+ } catch(e) {
+ console.warn('[AAVE] failed:', e.message);
+ return null;
+ }
+ }
+
+ // ── Uniswap V3 position — composição real via RPC ───────────────
+ async function fetchUniswapLP() {
+ try {
+ const POOL_WETH_USDC = '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8'; // USDC/WETH 0.3% Ethereum
+ const Q96 = 2n ** 96n;
+ const CAPITAL = 365; // capital de abertura da posição
+
+ // 1. positions(tokenId) → ABI slot layout:
+ //  [0]=nonce [1]=operator [2]=token0 [3]=token1 [4]=fee
+ //  [5]=tickLower [6]=tickUpper [7]=liquidity
+ //  [8]=feeGrowth0 [9]=feeGrowth1 [10]=tokensOwed0 [11]=tokensOwed1
+ const rawPos = await ethCall(ETH_RPC, UNI_NFT, '0x99fbab88' + padUint(LP_TOKEN_ID));
+
+ const liquidity = decUint(rawPos, 7);
+ const tokensOwed0 = decUint(rawPos, 10); // USDC (token0, 6 dec)
+ const tokensOwed1 = decUint(rawPos, 11); // WETH (token1, 18 dec)
+
+ // int24 sign-extension (ticks can be negative)
+ const toInt = v => v >= 2n**255n ? Number(v - 2n**256n) : Number(v);
+ const tickLower = toInt(decUint(rawPos, 5));
+ const tickUpper = toInt(decUint(rawPos, 6));
+
+ // 2. slot0() → sqrtPriceX96 + currentTick
+ const rawSlot0 = await ethCall(ETH_RPC, POOL_WETH_USDC, '0x3850c7bd');
+ const sqrtPriceX96 = decUint(rawSlot0, 0);
+ const currentTick = toInt(decUint(rawSlot0, 1));
+
+ const isActive = liquidity > 0n;
+ const inRange = currentTick >= tickLower && currentTick < tickUpper;
+ console.log(`[UNI] liq=${liquidity} ticks=[${tickLower},${tickUpper}] cur=${currentTick} inRange=${inRange}`);
+
+ // 3. sqrtPrice Q96 para um tick (float → BigInt)
+ function tickToSqrtX96(tick) {
+  const sp = Math.sqrt(Math.pow(1.0001, tick));
+  return BigInt(Math.round(sp * (2 ** 32))) * (2n ** 64n);
+ }
+
+ const sqrtA = tickToSqrtX96(tickLower);
+ const sqrtB = tickToSqrtX96(tickUpper);
+ const sqrtP = sqrtPriceX96;
+
+ // 4. Calcular quantidades de token0 (USDC) e token1 (WETH)
+ let amount0 = 0n, amount1 = 0n;
+ if (currentTick < tickLower) {
+  // Abaixo do range: tudo em USDC
+  amount0 = liquidity * (sqrtB - sqrtA) * Q96 / sqrtA / sqrtB;
+ } else if (currentTick >= tickUpper) {
+  // Acima do range: tudo em WETH
+  amount1 = liquidity * (sqrtB - sqrtA) / Q96;
+ } else {
+  // In-range: mistura dos dois
+  amount0 = liquidity * (sqrtB - sqrtP) * Q96 / sqrtP / sqrtB;
+  amount1 = liquidity * (sqrtP - sqrtA) / Q96;
+ }
+
+ const usdc    = Number(amount0) / 1e6;
+ const weth    = Number(amount1) / 1e18;
+ const feeUsdc = Number(tokensOwed0) / 1e6;
+ const feeWeth = Number(tokensOwed1) / 1e18;
+
+ console.log(`[UNI] USDC:${usdc.toFixed(2)} WETH:${weth.toFixed(5)} fees: ${feeUsdc.toFixed(4)} USDC + ${feeWeth.toFixed(6)} WETH`);
+
+ // 5. Preço ETH para converter em USD
+ const prices = await getLivePrice(['ethereum']).catch(() => ({ ethereum: { usd: 2100 } }));
+ const ethPrice = prices?.ethereum?.usd || 2100;
+
+ const wethUsd      = weth * ethPrice;
+ const feeWethUsd   = feeWeth * ethPrice;
+ const totalPooled  = usdc + wethUsd;
+ const totalFees    = feeUsdc + feeWethUsd;
+
+ // 6. Atualizar card "Composição de Tokens"
+ setEl('lp-weth-qty',      weth.toFixed(5) + ' WETH');
+ setEl('lp-weth-usd',      '≈ $' + wethUsd.toFixed(2));
+ setEl('lp-usdc-qty',      usdc.toFixed(2) + ' USDC');
+ setEl('lp-usdc-usd',      '≈ $' + usdc.toFixed(2));
+ setEl('lp-fee-weth',      feeWeth.toFixed(6) + ' WETH');
+ setEl('lp-fee-weth-usd',  '≈ $' + feeWethUsd.toFixed(2));
+ setEl('lp-fee-usdc',      feeUsdc.toFixed(4) + ' USDC');
+ setEl('lp-fee-usdc-usd',  '≈ $' + feeUsdc.toFixed(2));
+
+ // 7. Atualizar badge IN-RANGE / OUT-OF-RANGE
+ const badge = document.querySelector('.badge-green, .badge-warn');
+ if (badge) {
+  badge.textContent = inRange ? '● IN-RANGE' : '○ OUT-OF-RANGE';
+  badge.className   = inRange ? 'badge-green' : 'badge-warn';
+ }
+
+ // Out-of-range notification
+ if (!inRange && isActive) {
+  const lastAlert = localStorage.getItem('bc-oor-alert');
+  const now = Date.now();
+  if (!lastAlert || now - parseInt(lastAlert) > 3600000) { // max 1 per hour
+   localStorage.setItem('bc-oor-alert', now.toString());
+   if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('⚠️ Barolo Capital — Pool OUT OF RANGE', {
+     body: 'WETH/USDC 0.3% saiu do range. Verificar remontagem.',
+     icon: '/favicon.ico'
+    });
+   }
+   // Visual pulse on badge
+   const b = document.querySelector('.badge-warn');
+   if (b) {
+    b.style.animation = 'pulse 1s ease-in-out infinite';
+   }
+  }
+ } else if (inRange) {
+  localStorage.removeItem('bc-oor-alert');
+ }
+
+ // 8. Atualizar LP bar (REFS.usd)
+ const openDate = new Date('2026-03-18');
+ const DAYS = Math.max(1, Math.floor((Date.now() - openDate.getTime()) / 86400000));
+ // PnL = position value + uncollected fees - initial capital
+ const pnl      = totalPooled + totalFees - CAPITAL;
+ const totalApr = DAYS > 0 ? (pnl / CAPITAL / DAYS * 365 * 100).toFixed(1) + '% / ano' : '—';
+ const feeAprPct = totalFees > 0 && DAYS > 0 ? (totalFees / CAPITAL / DAYS * 365 * 100).toFixed(1) + '% fee APR' : DAYS + 'd aberto';
+ const dailyFeeStr = totalFees > 0 && DAYS > 0 ? '~$' + (totalFees / DAYS).toFixed(2) + '/dia' : '—';
+ REFS.usd = {
+  pooled:    '$' + totalPooled.toFixed(2),
+  pnl:       (pnl >= 0 ? '+' : '-') + '$' + Math.abs(pnl).toFixed(2),
+  roi:       (pnl >= 0 ? '+' : '') + (pnl / CAPITAL * 100).toFixed(2) + '%',
+  apr:       totalApr,
+  feeApr:    feeAprPct,
+  fees:      '$' + totalFees.toFixed(2),
+  il:        '$0.00',
+  gas:       'gas ~$8',
+  dailyFees: dailyFeeStr,
+  pos:       pnl >= 0
+ };
+ setRef('usd');
+
+ window._liveUniActive  = isActive;
+ window._liveUniPooled  = totalPooled;
+
+ // ── Atualiza range visual no card de LP ──────────────────────────
+ const RANGE_MIN = 2450, RANGE_MAX = 3100;
+ const priceEl = document.getElementById('lp-current-price');
+ const indicator = document.getElementById('lp-price-indicator');
+ if (priceEl) priceEl.textContent = '$' + ethPrice.toLocaleString('en-US', {maximumFractionDigits:0});
+ if (indicator) {
+  const pct = Math.min(1, Math.max(0, (ethPrice - RANGE_MIN) / (RANGE_MAX - RANGE_MIN)));
+  indicator.style.left = (pct * 100) + '%';
+  indicator.style.background = inRange ? 'var(--green)' : 'var(--red)';
+  indicator.style.boxShadow = inRange ? '0 0 6px rgba(74,124,63,0.8)' : '0 0 6px rgba(248,81,73,0.8)';
+ }
+
+ return { liquidity: liquidity.toString(), isActive, usdc, weth, feeUsdc, feeWeth, ethPrice };
+
+ } catch(e) {
+ console.warn('[UNI] failed:', e.message);
+ // Fallback: usar dados do array POOLS (última pool ativa)
+ if (typeof POOLS !== 'undefined') {
+  const active = POOLS.find(p => p.status === 'active');
+  if (active) {
+   const days = Math.max(1, Math.floor((Date.now() - new Date('2026-03-18').getTime()) / 86400000));
+   const feeApr = active.fees > 0 ? (active.fees / active.capital / days * 365 * 100).toFixed(1) + '% fee APR' : days + 'd aberto';
+   const totalAprFallback = active.result > 0 ? (active.result / active.capital / days * 365 * 100).toFixed(1) + '% / ano' : '—';
+   REFS.usd = {
+    pooled:    '~$' + active.capital.toFixed(0),
+    pnl:       (active.result >= 0 ? '+' : '') + '$' + Math.abs(active.result).toFixed(0),
+    roi:       (active.result >= 0 ? '+' : '') + (active.result / active.capital * 100).toFixed(1) + '%',
+    apr:       totalAprFallback,
+    feeApr:    feeApr,
+    fees:      '$' + active.fees.toFixed(0),
+    il:        '$' + (active.il || 0).toFixed(0),
+    gas:       'dados locais',
+    dailyFees: active.fees > 0 && days > 0 ? '~$' + (active.fees/days).toFixed(2) + '/dia' : '—',
+    pos:       active.result >= 0
+   };
+   setRef('usd');
+  }
+ }
+ return null;
+ }
+ }
+
+ // ── Solana: native SOL balance ───────────────────────────────────
+ async function fetchSolBalance() {
+ try {
+ const result = await rpc(HELIUS_RPC, 'getBalance', [SOL_WALLET]);
+ const sol = result.value / 1e9;
+ console.log(`[SOL] Balance: ${sol.toFixed(4)} SOL`);
+ window._liveSolWallet = sol;
+ return sol;
+ } catch(e) {
+ console.warn('[SOL] balance failed:', e.message);
+ return null;
+ }
+ }
+
+ // ── Solana: all token accounts (for USDS, USDC on Solana) ───────
+ async function fetchSolTokens() {
+ try {
+ const result = await rpc(HELIUS_RPC, 'getTokenAccountsByOwner', [
+ SOL_WALLET,
+ { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' },
+ { encoding: 'jsonParsed' }
+ ]);
+ const tokens = {};
+ for (const acc of (result.value || [])) {
+ const info = acc.account?.data?.parsed?.info;
+ if (!info) continue;
+ const mint = info.mint;
+ const amt = parseFloat(info.tokenAmount?.uiAmountString || '0');
+ if (amt > 0.001) {
+ tokens[mint] = (tokens[mint] || 0) + amt;
+ }
+ }
+ // Known mints
+ const PYUSD_MINT = '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo';
+ const USDC_SOL = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+ console.log('[SOL Tokens] USDS:', tokens[PYUSD_MINT]||0, 'USDC:', tokens[USDC_SOL]||0);
+ window._livePyusd = tokens[PYUSD_MINT] || 0;
+ window._liveUsdcSol = tokens[USDC_SOL] || 0;
+ return tokens;
+ } catch(e) {
+ console.warn('[SOL Tokens] failed:', e.message);
+ return {};
+ }
+ }
+
+ // ── Kamino: fetch position via Helius DAS ────────────────────────
+ async function fetchKamino() {
+ try {
+ // Use Helius DAS to get parsed account data for Kamino
+ const r = await fetch(`${HELIUS_API}/addresses/${SOL_WALLET}/balances?api-key=${HELIUS_KEY}`);
+ if (!r.ok) throw new Error('Helius balances ' + r.status);
+ const data = await r.json();
+
+ // Also try Kamino API directly
+ const kaminoR = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
+ if (kaminoR.ok) {
+ const kData = await kaminoR.json();
+ if (kData && kData.length > 0) {
+ const obligation = kData[0];
+ const deposits = obligation.deposits || [];
+ const borrows = obligation.borrows || [];
+
+ let totalDepositUsd = 0;
+ let totalBorrowUsd = 0;
+ let solQty = 0;
+
+ deposits.forEach(d => {
+ totalDepositUsd += parseFloat(d.marketValueRefreshed || d.marketValue || 0);
+ if (d.mintAddress === 'So11111111111111111111111111111111111111112') {
+ solQty += parseFloat(d.amount || 0);
+ }
+ });
+ borrows.forEach(b => {
+ totalBorrowUsd += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
+ });
+
+ const netValue = totalDepositUsd - totalBorrowUsd;
+ const ltv = totalDepositUsd > 0 ? totalBorrowUsd / totalDepositUsd : 0;
+
+ console.log(`[Kamino] Deposits: $${totalDepositUsd.toFixed(2)}, Borrows: $${totalBorrowUsd.toFixed(2)}, SOL: ${solQty.toFixed(3)}, LTV: ${(ltv*100).toFixed(1)}%`);
+
+ window._liveKaminoDebt = totalBorrowUsd;
+ window._liveKaminoDeposit = totalDepositUsd;
+ window._liveKaminoNetVal = netValue;
+ window._liveKaminoSol = solQty;
+ window._liveKaminoLtv = ltv;
+
+ // Update Kamino UI
+ setEl('kamino-net-val', fmtK(netValue));
+ const ltvEl = document.getElementById('kamino-ltv-bar');
+ if (ltvEl) {
+ const fill = ltvEl.querySelector('.bar-fill');
+ if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
+ }
+
+ return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
+ }
+ }
+
+ // Fallback: use static values
+ console.warn('[Kamino] API returned no data, using static fallback');
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
+ window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
+ return null;
+ } catch(e) {
+ console.warn('[Kamino] failed:', e.message);
+ window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
+ return null;
+ }
+ }
+
+ // ── Compute & display Patrimônio Líquido ─────────────────────────
+ function updatePatrimonio(evmData, solBal, ethPrice, solPrice) {
+ // Apenas atualiza globals + re-dispara calcCapOp — sem escrever diretamente na UI
+ // Evita dupla contagem com saldos EVM que já estão no CoinGecko
+ try {
+ window._liveEthPrice = ethPrice || window._liveEthPrice || 2079.21;
+ window._liveSolPrice = solPrice || window._liveSolPrice || 87.28;
+ // Re-trigger via getLivePrice so calcCapOp recalculates with fresh debt values
+ if (typeof getLivePrice === 'function') {
+ const IDS = ['ethereum','solana','cardano','radiant-capital','eigenlayer',
+ 'matic-network','zksync','xai-blockchain','zetachain'];
+ const QTYS = {ethereum:2.084106,solana:20.31134268,cardano:375.245,
+ 'radiant-capital':7290.46,eigenlayer:153.363,'matic-network':218,
+ zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
+ getLivePrice(IDS).then(prices => {
+ let spot = 0;
+ IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
+ const STABLES = 1953.32; // USDT AAVE + USDS — atualizar com prints
+ const DEBT = (window._liveAaveDebt || 746.99) + (window._liveKaminoDebt || 804.22);
+ const solExtra = Math.max((window._liveKaminoSol||19.35) - 20.31134268, 0) * (solPrice||87.28);
+ const total = spot + STABLES + solExtra - DEBT;
+ window._livePatrimonio = total;
+ console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + solExtra $${solExtra.toFixed(2)} − debt $${DEBT.toFixed(0)}`);
+ if (typeof render === 'function') render(total);
+ }).catch(()=>{});
+ }
+ return null;
+ } catch(e) {
+ console.warn('[Patrimônio] calc failed:', e.message);
+ return null;
+ }
+ }
+ async function runAll() {
+  await Promise.all([fetchAllEVM(), fetchKamino(), fetchSolBalance(), fetchSolTokens(), fetchAave(), fetchUniswapLP()]);
+ // Re-trigger capital operacional chart if on pools page
+ if (typeof getLivePrice === 'function') {
+ getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'])
+ .then(prices => {
+ let total = window._livePatrimonio;
+ if (!total) return;
+ if (typeof render === 'function') render(total);
+ })
+ .catch(()=>{});
+ }
+
+ console.log('[BaroloFetch] Complete ');
+ }
+
+ // ── Run ───────────────────────────────────────────────────────────
+ const delay = document.readyState === 'loading' ? 2500 : 1500;
+ if (document.readyState === 'loading') {
+ document.addEventListener('DOMContentLoaded', () => setTimeout(runAll, delay));
+ } else {
+ setTimeout(runAll, delay);
+ }
+
+ // Auto-refresh a cada 5 minutos
+ setInterval(runAll, 5 * 60 * 1000);
+
+ // Expose for manual refresh
+ window.baroloRefresh = runAll;
+
+})();
+
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════════
+// BAROLO CAPITAL — CARDANO / ADA STAKE MODULE (Blockfrost)
+// ══════════════════════════════════════════════════════════════════
+(function initCardanoFetch() {
+
+ const BF_KEY = 'mainnetUUNZyRnZ6sg9uAvwnprB7vNIu8s7VPKm';
+ const BF_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
+ const ADA_ADDR= 'addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znuy0ctq737ruk7e72dqkm0a23';
+
+ const LOVELACE = 1_000_000; // 1 ADA = 1_000_000 lovelace
+
+ async function bf(path) {
+ const r = await fetch(`${BF_URL}${path}`, {
+ headers: { 'project_id': BF_KEY }
+ });
+ if (!r.ok) throw new Error(`Blockfrost ${r.status}: ${path}`);
+ return r.json();
+ }
+
+ // ── Fetch ADA wallet balance + stake info ─────────────────────────
+ async function fetchCardano() {
+ try {
+ // 1. Get address info (ADA balance + tokens)
+ const addrInfo = await bf(`/addresses/${ADA_ADDR}`);
+ const adaWallet = (addrInfo.amount?.find(a => a.unit === 'lovelace')?.quantity || 0) / LOVELACE;
+
+ // 2. Get stake address from the payment address
+ const stakeAddr = addrInfo.stake_address;
+ console.log(`[Cardano] Wallet ADA: ${adaWallet.toFixed(2)}, Stake addr: ${stakeAddr}`);
+
+ let stakedAda = 0, rewardsAda = 0, poolName = '—', poolTicker = '—', poolApy = null;
+
+ if (stakeAddr) {
+ // 3. Get stake account info
+ const stakeInfo = await bf(`/accounts/${stakeAddr}`);
+ stakedAda = parseInt(stakeInfo.controlled_amount || 0) / LOVELACE;
+ rewardsAda = parseInt(stakeInfo.withdrawable_amount || 0) / LOVELACE;
+ const poolId = stakeInfo.pool_id;
+
+ console.log(`[Cardano] Staked: ${stakedAda.toFixed(2)} ADA, Rewards pending: ${rewardsAda.toFixed(4)} ADA`);
+
+ // 4. Get pool info
+ if (poolId) {
+ try {
+ const poolInfo = await bf(`/pools/${poolId}/metadata`);
+ poolName = poolInfo.name || poolId.slice(0,12) + '...';
+ poolTicker = poolInfo.ticker || '—';
+ console.log(`[Cardano] Pool: ${poolTicker} — ${poolName}`);
+ } catch(e) { /* pool metadata optional */ }
+
+ // 5. Get pool APY from history
+ try {
+ const poolHistory = await bf(`/pools/${poolId}/history?count=5&order=desc`);
+ if (poolHistory?.length > 0) {
+ const latest = poolHistory[0];
+ // APY ≈ (blocks * avg_reward_per_block / active_stake) * epochs_per_year
+ // Simpler: annualize the epoch ROI
+ const epochRoi = parseFloat(latest.active_stake) > 0
+ ? (parseFloat(latest.rewards) / parseFloat(latest.active_stake)) * 100
+ : 0;
+ poolApy = (epochRoi * 73).toFixed(2); // ~73 epochs/year
+ }
+ } catch(e) { /* APY calc optional */ }
+ }
+
+ // 6. Get recent reward history
+ let totalRewardsEarned = 0;
+ try {
+ const rewardHistory = await bf(`/accounts/${stakeAddr}/rewards?count=20&order=desc`);
+ totalRewardsEarned = rewardHistory.reduce((s, r) => s + parseInt(r.amount||0)/LOVELACE, 0);
+ console.log(`[Cardano] Last 20 epochs rewards: ${totalRewardsEarned.toFixed(2)} ADA`);
+ } catch(e) {}
+
+ window._liveAdaStaked = stakedAda;
+ window._liveAdaRewards = rewardsAda;
+ window._liveAdaPool = { name: poolName, ticker: poolTicker, apy: poolApy };
+ window._liveAdaRewardsHistory = totalRewardsEarned;
+ }
+
+ window._liveAdaWallet = adaWallet;
+
+ // Get ADA price from already-fetched CoinGecko data
+ const adaPrice = window._livePrices?.cardano?.usd || null;
+
+ // Update UI elements
+ updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice });
+
+ return { adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy };
+
+ } catch(e) {
+ console.warn('[Cardano] fetch failed:', e.message);
+ return null;
+ }
+ }
+
+ // ── Update UI ────────────────────────────────────────────────────
+ function updateCardanoUI({ adaWallet, stakedAda, rewardsAda, poolName, poolTicker, poolApy, adaPrice }) {
+ const fmt2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+ const fmtA = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+ const setEl = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+
+ // Wallet ADA
+ setEl('ada-wallet-qty', fmtA(adaWallet) + ' ADA');
+ setEl('ada-staked-qty', fmtA(stakedAda) + ' ADA');
+ setEl('ada-rewards-qty', fmtA(rewardsAda) + ' ADA pendentes');
+ setEl('ada-pool-name', poolTicker ? `${poolTicker} — ${poolName}` : poolName);
+ setEl('ada-pool-apy', poolApy ? poolApy + '% APY (est.)' : '—');
+
+ if (adaPrice) {
+ setEl('ada-wallet-usd', '$' + fmt2(adaWallet * adaPrice));
+ setEl('ada-staked-usd', '$' + fmt2(stakedAda * adaPrice));
+ setEl('ada-rewards-usd', '$' + fmt2(rewardsAda * adaPrice));
+ }
+
+ // Update the portfolio_analytics ADA row
+ const adaRow = document.querySelector('[data-ticker="ADA"]');
+ if (adaRow && stakedAda > 0) {
+ const qtyEl = adaRow.querySelector('.asset-qty, .col-qty');
+ if (qtyEl) qtyEl.textContent = fmtA(stakedAda) + ' ADA';
+ }
+
+ // Update live indicator
+ const liveIndicator = document.getElementById('cardano-live-badge');
+ if (liveIndicator) {
+ liveIndicator.textContent = '● LIVE';
+ liveIndicator.style.color = 'var(--green)';
+ }
+
+ console.log(`[Cardano UI] Updated: wallet=${adaWallet.toFixed(2)}, staked=${stakedAda.toFixed(2)}, rewards=${rewardsAda.toFixed(4)}, pool=${poolTicker}`);
+ }
+
+ // ── Build Cardano section HTML (injected into portfolio page) ────
+ function buildCardanoSection() {
+ const existing = document.getElementById('cardano-stake-section');
+ if (existing) return; // already built
+
+ // Find where to insert — after ADA row in portfolio or at end of DeFi section
+ const target = document.getElementById('cardano-stake-target');
+ if (!target) return;
+
+ target.innerHTML = `
+ <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-top:12px;">
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+ <div style="display:flex;align-items:center;gap:8px;">
+ <img src="https://assets.coingecko.com/coins/images/975/small/cardano.png" width="18" height="18" style="border-radius:50%;">
+ <span style="font-family:'Satoshi',serif;font-size:14px;font-weight:600;">ADA Stake</span>
+ <span id="cardano-live-badge" style="font-size:8px;color:var(--muted);letter-spacing:1px;">● —</span>
+ </div>
+ <span style="font-size:9px;color:var(--muted);" id="ada-pool-apy">—</span>
+ </div>
+ <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+ <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">DELEGADO</div>
+ <div style="font-size:13px;font-weight:600;" id="ada-staked-qty">375.24 ADA</div>
+ <div style="font-size:9px;color:var(--muted);" id="ada-staked-usd">—</div>
+ </div>
+ <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">REWARDS PENDENTES</div>
+ <div style="font-size:13px;font-weight:600;color:var(--green);" id="ada-rewards-qty">— ADA</div>
+ <div style="font-size:9px;color:var(--muted);" id="ada-rewards-usd">—</div>
+ </div>
+ <div style="background:var(--surface2);border-radius:4px;padding:8px 10px;">
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;">POOL</div>
+ <div style="font-size:11px;word-break:break-all;" id="ada-pool-name">—</div>
+ </div>
+ </div>
+ </div>`;
+ }
+
+ // ── Run ───────────────────────────────────────────────────────────
+ async function run() {
+ buildCardanoSection();
+ await fetchCardano();
+ }
+
+ // Hook into baroloRefresh
+ const _prev = window.baroloRefresh;
+ window.baroloRefresh = async function() {
+ if (_prev) await _prev();
+ await run();
+ };
+
+ // Auto-run after 3s (after other fetches)
+ const delay = document.readyState === 'loading' ? 3500 : 2500;
+ if (document.readyState === 'loading') {
+ document.addEventListener('DOMContentLoaded', () => setTimeout(run, delay));
+ } else {
+ setTimeout(run, delay);
+ }
+
+})();
+
+
+// ── Language toggle ──────────────────────────────────────
+var LANG_STRINGS = {
+  // nav
+  'nav-home':        {pt:'Início',       en:'Home'},
+  'nav-portfolio':   {pt:'Portfolio',    en:'Portfolio'},
+  'nav-pools':       {pt:'Pools & DeFi', en:'Pools & DeFi'},
+  'nav-loans':       {pt:'Empréstimos',  en:'Loans'},
+  'nav-tools':       {pt:'Ferramentas',  en:'Tools'},
+  // section labels — will be found by data-i18n attribute
+};
+
+function applyLang(lang) {
+  document.documentElement.setAttribute('data-lang', lang);
+  var btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
+  // Apply to all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    var s = LANG_STRINGS[key];
+    if (s && s[lang]) el.textContent = s[lang];
+  });
+}
+
+function toggleLang() {
+  var current = document.documentElement.getAttribute('data-lang') || 'pt';
+  var next = current === 'pt' ? 'en' : 'pt';
+  localStorage.setItem('bc-lang', next);
+  applyLang(next);
+}
+
+(function initLang() {
+  var saved = localStorage.getItem('bc-lang') || 'pt';
+  applyLang(saved);
+})();
+
+// Update theme toggle icon on load
+(function(){
+  var t = localStorage.getItem('bc-theme') || 'light';
+  var btn = document.querySelector('button[onclick="toggleTheme()"]');
+  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
+})();
+
+// Show notification permission button if not yet granted
+document.addEventListener('DOMContentLoaded', function() {
+  if ('Notification' in window && Notification.permission !== 'granted') {
+    var btn = document.getElementById('btnNotif');
+    if (btn) btn.style.display = '';
+  }
+});
+
+
+</script>
+</div><!-- /container -->
+</body>
+</html>
