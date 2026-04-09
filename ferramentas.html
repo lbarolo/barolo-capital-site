@@ -522,19 +522,19 @@ body, input, button, select, textarea {
 <div class="container">
  <div class="page-header">
  <div style="font-size:10px;color:var(--accent);letter-spacing:3px;margin-bottom:4px;">⬡ BAROLO'S CAPITAL</div>
- <div class="page-title">FERRAMENTAS <span style="color:var(--accent);">PRO</span></div>
- <div class="page-sub">CALCULADORA DE LIQUIDAÇÃO · SIMULADOR DE CENÁRIOS · DIÁRIO DEFI · ALERTAS · EVOLUÇÃO</div>
+ <div class="page-title" data-i18n="page-title">FERRAMENTAS <span style="color:var(--accent);">PRO</span></div>
+ <div class="page-sub" data-i18n="page-sub">CALCULADORA DE LIQUIDAÇÃO · SIMULADOR DE CENÁRIOS · DIÁRIO DEFI · ALERTAS · EVOLUÇÃO</div>
  </div>
 
  <!-- TABS -->
  <div class="tabs">
- <button class="tab" onclick="switchTab('crencas')">Crenças</button>
- <button class="tab active" onclick="switchTab('liquidacao')">Liquidação</button>
- <button class="tab" onclick="switchTab('cenarios')">Cenários</button>
- <button class="tab" onclick="switchTab('diario')">Diário DeFi</button>
- <button class="tab" onclick="switchTab('alertas')">Alertas</button>
- <button class="tab" onclick="switchTab('evolucao')">Evolução</button>
- <button class="tab" onclick="switchTab('apyscanner')">Pools APY</button>
+ <button class="tab" onclick="switchTab('crencas')" data-i18n="tab-crencas">Crenças</button>
+ <button class="tab active" onclick="switchTab('liquidacao')" data-i18n="tab-liquidacao">Liquidação</button>
+ <button class="tab" onclick="switchTab('cenarios')" data-i18n="tab-cenarios">Cenários</button>
+ <button class="tab" onclick="switchTab('diario')" data-i18n="tab-diario">Diário DeFi</button>
+ <button class="tab" onclick="switchTab('alertas')" data-i18n="tab-alertas">Alertas</button>
+ <button class="tab" onclick="switchTab('evolucao')" data-i18n="tab-evolucao">Evolução</button>
+ <button class="tab" onclick="switchTab('apyscanner')" data-i18n="tab-apy">Pools APY</button>
  </div>
 
  <!-- ══════════════════════════════════════════════
@@ -615,27 +615,27 @@ body, input, button, select, textarea {
  <div class="section-title">Aave V4 — Ethereum <span>MAINNET</span></div>
  <div class="two-col">
  <div>
- <div class="field"><label>ETH colateral (ETH)</label><input type="number" id="aave-eth" value="1.88" step="0.001" oninput="calcAave()"></div>
- <div class="field"><label>USDT colateral ($)</label><input type="number" id="aave-usdt" value="1650.00" step="1" oninput="calcAave()"></div>
- <div class="field"><label>Dívida GHO ($)</label><input type="number" id="aave-debt" value="747.50" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-eth-col">ETH colateral (ETH)</label><input type="number" id="aave-eth" value="1.88" step="0.001" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-usdt-col">USDT colateral ($)</label><input type="number" id="aave-usdt" value="1650.00" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-gho-debt">Dívida GHO ($)</label><input type="number" id="aave-debt" value="747.50" step="1" oninput="calcAave()"></div>
  </div>
  <div>
- <div class="field"><label>Preço ETH atual ($)</label><input type="number" id="aave-ethprice" value="2070" step="1" oninput="calcAave()"></div>
- <div class="field"><label>LTV máximo Aave (%)</label><input type="number" id="aave-ltv-max" value="82.5" step=".5" oninput="calcAave()"></div>
- <div class="field"><label>Limiar liquidação (%)</label><input type="number" id="aave-liq-thresh" value="86" step=".5" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="aave-ethprice" value="2070" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-aave-ltv">LTV máximo Aave (%)</label><input type="number" id="aave-ltv-max" value="82.5" step=".5" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-liq-thresh">Limiar liquidação (%)</label><input type="number" id="aave-liq-thresh" value="86" step=".5" oninput="calcAave()"></div>
  </div>
  </div>
  <div class="result-grid" id="aave-results"></div>
  <div class="health-bar-wrap">
- <div class="hb-label"><span>SAÚDE DA POSIÇÃO</span><span id="aave-hf-label">—</span></div>
+ <div class="hb-label"><span data-i18n="lbl-pos-health">SAÚDE DA POSIÇÃO</span><span id="aave-hf-label">—</span></div>
  <div class="hb-track"><div class="hb-fill" id="aave-hf-bar" style="width:0%"></div></div>
  </div>
  <div id="aave-warning" class="liq-warning liq-ok" style="display:none;"></div>
 
  <div class="rule-divider"></div>
- <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">SIMULAÇÃO DE PREÇO ETH</div>
+ <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;" data-i18n="lbl-sim-eth">SIMULAÇÃO DE PREÇO ETH</div>
  <div class="field">
- <label>Arrastar: ETH = $<span id="aave-sim-val">2070</span></label>
+ <label><span data-i18n="lbl-drag">Arrastar</span>: ETH = $<span id="aave-sim-val">2070</span></label>
  <input type="range" id="aave-slider" min="300" max="5000" value="2070" oninput="syncSlider('aave')">
  </div>
  </div>
@@ -645,27 +645,27 @@ body, input, button, select, textarea {
  <div class="section-title">Kamino — Solana <span>MAIN MARKET</span></div>
  <div class="two-col">
  <div>
- <div class="field"><label>SOL colateral (SOL)</label><input type="number" id="kam-sol" value="19.37" step="0.1" oninput="calcKamino()"></div>
- <div class="field"><label>USDS colateral ($)</label><input type="number" id="kam-pyusd" value="300.55" step="1" oninput="calcKamino()"></div>
- <div class="field"><label>Dívida USDC ($)</label><input type="number" id="kam-debt" value="805.70" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-sol-col">SOL colateral (SOL)</label><input type="number" id="kam-sol" value="19.37" step="0.1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usds-col">USDS colateral ($)</label><input type="number" id="kam-pyusd" value="300.55" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-debt">Dívida USDC ($)</label><input type="number" id="kam-debt" value="805.70" step="1" oninput="calcKamino()"></div>
  </div>
  <div>
- <div class="field"><label>Preço SOL atual ($)</label><input type="number" id="kam-solprice" value="90.24" step="0.1" oninput="calcKamino()"></div>
- <div class="field"><label>LTV máximo Kamino (%)</label><input type="number" id="kam-ltv-max" value="75" step=".5" oninput="calcKamino()"></div>
- <div class="field"><label>Limiar liquidação (%)</label><input type="number" id="kam-liq-thresh" value="75.79" step=".5" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-sol-price">Preço SOL atual ($)</label><input type="number" id="kam-solprice" value="90.24" step="0.1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-kam-ltv">LTV máximo Kamino (%)</label><input type="number" id="kam-ltv-max" value="75" step=".5" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-liq-thresh">Limiar liquidação (%)</label><input type="number" id="kam-liq-thresh" value="75.79" step=".5" oninput="calcKamino()"></div>
  </div>
  </div>
  <div class="result-grid" id="kam-results"></div>
  <div class="health-bar-wrap">
- <div class="hb-label"><span>SAÚDE DA POSIÇÃO</span><span id="kam-hf-label">—</span></div>
+ <div class="hb-label"><span data-i18n="lbl-pos-health">SAÚDE DA POSIÇÃO</span><span id="kam-hf-label">—</span></div>
  <div class="hb-track"><div class="hb-fill" id="kam-hf-bar" style="width:0%"></div></div>
  </div>
  <div id="kam-warning" class="liq-warning liq-ok" style="display:none;"></div>
 
  <div class="rule-divider"></div>
- <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">SIMULAÇÃO DE PREÇO SOL</div>
+ <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;" data-i18n="lbl-sim-sol">SIMULAÇÃO DE PREÇO SOL</div>
  <div class="field">
- <label>Arrastar: SOL = $<span id="kam-sim-val">90.24</span></label>
+ <label><span data-i18n="lbl-drag">Arrastar</span>: SOL = $<span id="kam-sim-val">90.24</span></label>
  <input type="range" id="kam-slider" min="10" max="300" value="90.24" step="0.5" oninput="syncSlider('kam')">
  </div>
  </div>
@@ -676,14 +676,14 @@ body, input, button, select, textarea {
  <div class="section-title">Uniswap V3 — Pool WETH/USDC <span>0.30% · NFT #4694262</span></div>
  <div class="three-col">
  <div>
- <div class="field"><label>WETH na pool</label><input type="number" id="uni-weth" value="0.136" step="0.001" oninput="calcUni()"></div>
- <div class="field"><label>USDC na pool ($)</label><input type="number" id="uni-usdc" value="65.33" step="1" oninput="calcUni()"></div>
- <div class="field"><label>Fees não coletadas ($)</label><input type="number" id="uni-fees" value="3.69" step="0.01" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-weth-pool">WETH na pool</label><input type="number" id="uni-weth" value="0.136" step="0.001" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-pool">USDC na pool ($)</label><input type="number" id="uni-usdc" value="65.33" step="1" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-uncoll-fees">Fees não coletadas ($)</label><input type="number" id="uni-fees" value="3.69" step="0.01" oninput="calcUni()"></div>
  </div>
  <div>
- <div class="field"><label>Preço ETH atual ($)</label><input type="number" id="uni-ethprice" value="1936" step="1" oninput="calcUni()"></div>
- <div class="field"><label>Range mínimo ($)</label><input type="number" id="uni-rangemin" value="1855.72" step="1" oninput="calcUni()"></div>
- <div class="field"><label>Range máximo ($)</label><input type="number" id="uni-rangemax" value="3146.36" step="1" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="uni-ethprice" value="1936" step="1" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-range-min">Range mínimo ($)</label><input type="number" id="uni-rangemin" value="1855.72" step="1" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-range-max">Range máximo ($)</label><input type="number" id="uni-rangemax" value="3146.36" step="1" oninput="calcUni()"></div>
  </div>
  <div class="result-grid" style="grid-template-columns:1fr;" id="uni-results"></div>
  </div>
@@ -695,8 +695,8 @@ body, input, button, select, textarea {
  ══════════════════════════════════════════════ -->
  <div class="panel" id="panel-cenarios">
  <div class="section">
- <div class="section-title">Simulador de Cenários <span>IMPACTO NO PORTFOLIO</span></div>
- <div style="font-size:11px;color:var(--muted);margin-bottom:18px;">Ajuste os sliders para simular o impacto de variações de preço em toda sua carteira.</div>
+ <div class="section-title"><span data-i18n="scen-title">Simulador de Cenários</span> <span data-i18n="scen-badge">IMPACTO NO PORTFOLIO</span></div>
+ <div style="font-size:11px;color:var(--muted);margin-bottom:18px;" data-i18n="scen-desc">Ajuste os sliders para simular o impacto de variações de preço em toda sua carteira.</div>
 
  <div class="scenario-grid">
  <div>
@@ -719,7 +719,7 @@ body, input, button, select, textarea {
  </div>
  <div>
  <!-- Preset scenarios -->
- <div style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;">CENÁRIOS PRÉ-DEFINIDOS</div>
+ <div style="font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;" data-i18n="scen-presets">CENÁRIOS PRÉ-DEFINIDOS</div>
  <div style="display:flex;flex-direction:column;gap:8px;">
  <button class="btn btn-sm" style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.3);color:var(--red);justify-content:space-between;" onclick="setScenario(-40,-45,-35,-70)">Bear -40% ETH / -45% SOL</button>
  <button class="btn btn-sm" style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.3);color:var(--orange);justify-content:space-between;" onclick="setScenario(-20,-25,-15,-40)">Correção moderada -20%</button>
@@ -732,15 +732,15 @@ body, input, button, select, textarea {
  </div>
 
  <div class="scenario-output" id="scenario-output">
- <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:12px;">RESULTADO DO CENÁRIO</div>
- <div class="scenario-row"><span class="scenario-lbl">ETH atual → simulado</span><span id="sc-eth-price">$1.936 → $1.936</span></div>
- <div class="scenario-row"><span class="scenario-lbl">SOL atual → simulado</span><span id="sc-sol-price">$83.43 → $83.43</span></div>
- <div class="scenario-row"><span class="scenario-lbl">Portfolio total</span><span id="sc-total" class="c-accent">$5.525</span></div>
- <div class="scenario-row"><span class="scenario-lbl">Variação estimada</span><span id="sc-delta">—</span></div>
- <div class="scenario-row"><span class="scenario-lbl">Aave HF simulado</span><span id="sc-aave-hf">—</span></div>
- <div class="scenario-row"><span class="scenario-lbl">Kamino LTV simulado</span><span id="sc-kam-ltv">—</span></div>
- <div class="scenario-row"><span class="scenario-lbl">Uniswap pool status</span><span id="sc-uni-status">—</span></div>
- <div class="scenario-row" style="border:none;"><span class="scenario-lbl">Risco de liquidação</span><span id="sc-liq-risk">—</span></div>
+ <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:12px;" data-i18n="scen-result">RESULTADO DO CENÁRIO</div>
+ <div class="scenario-row"><span class="scenario-lbl" data-i18n="scen-eth-row">ETH atual → simulado</span><span id="sc-eth-price">$1.936 → $1.936</span></div>
+ <div class="scenario-row"><span class="scenario-lbl" data-i18n="scen-sol-row">SOL atual → simulado</span><span id="sc-sol-price">$83.43 → $83.43</span></div>
+ <div class="scenario-row"><span class="scenario-lbl" data-i18n="scen-total">Portfolio total</span><span id="sc-total" class="c-accent">$5.525</span></div>
+ <div class="scenario-row"><span class="scenario-lbl" data-i18n="scen-delta">Variação estimada</span><span id="sc-delta">—</span></div>
+ <div class="scenario-row"><span class="scenario-lbl" data-i18n="scen-aave-hf">Aave HF simulado</span><span id="sc-aave-hf">—</span></div>
+ <div class="scenario-row"><span class="scenario-lbl" data-i18n="scen-kam-ltv">Kamino LTV simulado</span><span id="sc-kam-ltv">—</span></div>
+ <div class="scenario-row"><span class="scenario-lbl" data-i18n="scen-uni">Uniswap pool status</span><span id="sc-uni-status">—</span></div>
+ <div class="scenario-row" style="border:none;"><span class="scenario-lbl" data-i18n="scen-liq-risk">Risco de liquidação</span><span id="sc-liq-risk">—</span></div>
  </div>
  </div>
  </div>
@@ -752,13 +752,13 @@ body, input, button, select, textarea {
  <div class="two-col">
  <!-- Form -->
  <div class="section">
- <div class="section-title">Nova Entrada</div>
+ <div class="section-title" data-i18n="diary-new">Nova Entrada</div>
  <div class="field">
- <label>Data</label>
+ <label data-i18n="lbl-date">Data</label>
  <input type="date" id="d-date">
  </div>
  <div class="field">
- <label>Tipo</label>
+ <label data-i18n="lbl-type">Tipo</label>
  <select id="d-type" onchange="toggleLendingFields(this.value)">
  <option value="pool">Pool de Liquidez</option>
  <option value="lending">Lending / Borrow</option>
@@ -768,11 +768,11 @@ body, input, button, select, textarea {
  </select>
  </div>
  <div class="field">
- <label>Título</label>
+ <label data-i18n="lbl-title">Título</label>
  <input type="text" id="d-title" placeholder="ex: Remontei pool ETH/USDC na BASE">
  </div>
  <div class="field">
- <label>Descrição</label>
+ <label data-i18n="lbl-desc">Descrição</label>
  <textarea id="d-body" placeholder="O que aconteceu? Qual foi sua estratégia e raciocínio?"></textarea>
  </div>
  <div class="two-col">
@@ -822,15 +822,15 @@ body, input, button, select, textarea {
  </div>
 
  <div style="display:flex;gap:8px;">
- <button class="btn btn-primary" onclick="saveEntry()">Salvar entrada</button>
-          <button class="btn" onclick="clearAllDiary()" style="color:var(--red);border-color:var(--red);" title="Apagar todas as entradas do diário">Limpar histórico</button>
- <button class="btn btn-sm" style="background:none;border:1px solid var(--border);color:var(--muted);" onclick="clearForm()">Limpar</button>
+ <button class="btn btn-primary" onclick="saveEntry()" data-i18n="btn-save-entry">Salvar entrada</button>
+          <button class="btn" onclick="clearAllDiary()" style="color:var(--red);border-color:var(--red);" title="Apagar todas as entradas do diário" data-i18n="btn-clear-history">Limpar histórico</button>
+ <button class="btn btn-sm" style="background:none;border:1px solid var(--border);color:var(--muted);" onclick="clearForm()" data-i18n="btn-clear">Limpar</button>
  </div>
  </div>
 
  <!-- Rules insight -->
  <div class="section">
- <div class="section-title">Insight DeFi do Dia <span>31 REGRAS</span></div>
+ <div class="section-title"><span data-i18n="diary-insight">Insight DeFi do Dia</span> <span>31 REGRAS</span></div>
  <div id="rule-insight" style="background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:16px;margin-bottom:14px;">
  <div style="font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">REGRA DO DIA</div>
  <div id="rule-text" style="font-size:13px;line-height:1.7;color:var(--text);"></div>
@@ -851,7 +851,7 @@ body, input, button, select, textarea {
 
  <!-- List -->
  <div class="section">
- <div class="section-title">Histórico de Operações</div>
+ <div class="section-title" data-i18n="diary-history">Histórico de Operações</div>
  <div class="diary-filters">
  <button class="filter-btn active" onclick="filterDiary('all',this)">TODAS</button>
  <button class="filter-btn" onclick="filterDiary('pool',this)">POOLS</button>
@@ -872,16 +872,16 @@ body, input, button, select, textarea {
  <div class="panel" id="panel-alertas">
  <div class="two-col">
  <div class="section">
- <div class="section-title">Configurar Alertas <span>POP-UP VISUAL</span></div>
- <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">Ative os alertas e defina os thresholds. A página verifica automaticamente ao carregar e a cada 5 minutos.</div>
+ <div class="section-title"><span data-i18n="alert-title">Configurar Alertas</span> <span>POP-UP VISUAL</span></div>
+ <div style="font-size:11px;color:var(--muted);margin-bottom:16px;" data-i18n="alert-desc">Ative os alertas e defina os thresholds. A página verifica automaticamente ao carregar e a cada 5 minutos.</div>
 
  <div class="alert-list">
 
  <div class="alert-item">
  <label class="alert-toggle"><input type="checkbox" id="al-aave-hf" checked><span class="toggle-slider"></span></label>
  <div class="alert-info">
- <div class="alert-name">Aave Health Factor baixo</div>
- <div class="alert-desc">Dispara quando o HF cair abaixo do threshold</div>
+ <div class="alert-name" data-i18n="al-aave-hf-name">Aave Health Factor baixo</div>
+ <div class="alert-desc" data-i18n="al-aave-hf-desc">Dispara quando o HF cair abaixo do threshold</div>
  </div>
  <div class="alert-threshold">
  <span>HF &lt;</span><input type="number" id="al-aave-hf-val" value="3.0" step="0.1" min="1" max="10">
@@ -891,8 +891,8 @@ body, input, button, select, textarea {
  <div class="alert-item">
  <label class="alert-toggle"><input type="checkbox" id="al-kam-ltv" checked><span class="toggle-slider"></span></label>
  <div class="alert-info">
- <div class="alert-name">Kamino LTV elevado</div>
- <div class="alert-desc">Dispara quando o LTV subir acima do threshold</div>
+ <div class="alert-name" data-i18n="al-kam-ltv-name">Kamino LTV elevado</div>
+ <div class="alert-desc" data-i18n="al-kam-ltv-desc">Dispara quando o LTV subir acima do threshold</div>
  </div>
  <div class="alert-threshold">
  <span>LTV &gt;</span><input type="number" id="al-kam-ltv-val" value="60" step="1" min="1" max="90">
@@ -903,8 +903,8 @@ body, input, button, select, textarea {
  <div class="alert-item">
  <label class="alert-toggle"><input type="checkbox" id="al-uni-range"><span class="toggle-slider"></span></label>
  <div class="alert-info">
- <div class="alert-name">Uniswap fora do range</div>
- <div class="alert-desc">Dispara quando o preço ETH sair do range da pool</div>
+ <div class="alert-name" data-i18n="al-uni-name">Uniswap fora do range</div>
+ <div class="alert-desc" data-i18n="al-uni-desc">Dispara quando o preço ETH sair do range da pool</div>
  </div>
  <div class="alert-threshold">
  <span style="font-size:10px;color:var(--muted);">AUTO</span>
@@ -914,8 +914,8 @@ body, input, button, select, textarea {
  <div class="alert-item">
  <label class="alert-toggle"><input type="checkbox" id="al-eth-drop"><span class="toggle-slider"></span></label>
  <div class="alert-info">
- <div class="alert-name">ETH queda brusca</div>
- <div class="alert-desc">Dispara quando ETH cair mais que X% em 24h</div>
+ <div class="alert-name" data-i18n="al-eth-name">ETH queda brusca</div>
+ <div class="alert-desc" data-i18n="al-eth-desc">Dispara quando ETH cair mais que X% em 24h</div>
  </div>
  <div class="alert-threshold">
  <span>ETH 24h &lt;</span><input type="number" id="al-eth-drop-val" value="-10" step="1" max="0">
@@ -926,8 +926,8 @@ body, input, button, select, textarea {
  <div class="alert-item">
  <label class="alert-toggle"><input type="checkbox" id="al-sol-drop"><span class="toggle-slider"></span></label>
  <div class="alert-info">
- <div class="alert-name">SOL queda brusca</div>
- <div class="alert-desc">Dispara quando SOL cair mais que X% em 24h</div>
+ <div class="alert-name" data-i18n="al-sol-name">SOL queda brusca</div>
+ <div class="alert-desc" data-i18n="al-sol-desc">Dispara quando SOL cair mais que X% em 24h</div>
  </div>
  <div class="alert-threshold">
  <span>SOL 24h &lt;</span><input type="number" id="al-sol-drop-val" value="-12" step="1" max="0">
@@ -938,8 +938,8 @@ body, input, button, select, textarea {
  <div class="alert-item">
  <label class="alert-toggle"><input type="checkbox" id="al-meta"><span class="toggle-slider"></span></label>
  <div class="alert-info">
- <div class="alert-name">Meta 2026 atingida</div>
- <div class="alert-desc">Dispara quando o portfolio atingir a meta</div>
+ <div class="alert-name" data-i18n="al-meta-name">Meta 2026 atingida</div>
+ <div class="alert-desc" data-i18n="al-meta-desc">Dispara quando o portfolio atingir a meta</div>
  </div>
  <div class="alert-threshold">
  <span>$</span><input type="number" id="al-meta-val" value="15000" step="500">
@@ -949,15 +949,15 @@ body, input, button, select, textarea {
  </div>
 
  <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;">
- <button class="btn btn-primary" onclick="checkAlerts(true)">VERIFICAR AGORA</button>
- <button class="btn btn-sm btn-gold" onclick="testAlert()">TESTAR POP-UP</button>
- <button class="btn btn-sm" style="border:1px solid var(--border);background:none;color:var(--muted);" onclick="saveAlertConfig()">SALVAR CONFIG</button>
+ <button class="btn btn-primary" onclick="checkAlerts(true)" data-i18n="btn-check-now">VERIFICAR AGORA</button>
+ <button class="btn btn-sm btn-gold" onclick="testAlert()" data-i18n="btn-test-popup">TESTAR POP-UP</button>
+ <button class="btn btn-sm" style="border:1px solid var(--border);background:none;color:var(--muted);" onclick="saveAlertConfig()" data-i18n="btn-save-config">SALVAR CONFIG</button>
  </div>
  </div>
 
  <!-- Alert log -->
  <div class="section">
- <div class="section-title">Log de Alertas <span>ÚLTIMOS 30 DIAS</span></div>
+ <div class="section-title"><span data-i18n="alert-log-title">Log de Alertas</span> <span data-i18n="alert-log-badge">ÚLTIMOS 30 DIAS</span></div>
  <div id="alert-log" style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;">
  <div style="text-align:center;padding:30px;color:var(--muted);font-size:11px;">Nenhum alerta disparado ainda.</div>
  </div>
@@ -973,7 +973,7 @@ body, input, button, select, textarea {
 
  <!-- Add snapshot form -->
  <div class="section">
- <div class="section-title">Adicionar Snapshot Semanal</div>
+ <div class="section-title" data-i18n="evo-add-snap">Adicionar Snapshot Semanal</div>
  <div class="snapshot-form">
  <div class="snap-grid">
  <div class="field"><label>Data</label><input type="date" id="snap-date"></div>
@@ -1000,7 +1000,7 @@ body, input, button, select, textarea {
 
  <!-- Chart -->
  <div class="section">
- <div class="section-title">Evolução do Portfolio <span>SEMANAL</span></div>
+ <div class="section-title"><span data-i18n="evo-chart-title">Evolução do Portfolio</span> <span data-i18n="evo-chart-badge">SEMANAL</span></div>
  <div class="evo-toolbar">
  <div class="chart-controls">
  <button class="tab active" id="evo-btn-all" onclick="switchEvoView('all',this)">Todo período</button>
@@ -1022,7 +1022,7 @@ body, input, button, select, textarea {
 
  <!-- History table -->
  <div class="section">
- <div class="section-title">Histórico de Snapshots</div>
+ <div class="section-title" data-i18n="evo-history">Histórico de Snapshots</div>
  <div style="overflow-x:auto;">
  <table class="hist-table" id="snap-table">
  <thead>
@@ -1043,7 +1043,7 @@ body, input, button, select, textarea {
  ══════════════════════════════════════════════ -->
  <div class="panel" id="panel-apyscanner">
  <div class="section" style="margin-bottom:16px;">
- <div class="section-title">Scanner de APY — Pools de Interesse</div>
+ <div class="section-title" data-i18n="apy-title">Scanner de APY — Pools de Interesse</div>
  <div style="font-size:9px;color:var(--muted);margin-bottom:14px;line-height:1.7;">
  Consulta os dados mais recentes das pools que você está montando ou monitorando. Selecione os pares, redes e protocolos e clique em Buscar.
  </div>
@@ -2001,23 +2001,117 @@ document.addEventListener('DOMContentLoaded',function(){
 // ── Language toggle ──────────────────────────────────────
 var LANG_STRINGS = {
   // nav
-  'nav-home':        {pt:'Início',       en:'Home'},
-  'nav-portfolio':   {pt:'Portfolio',    en:'Portfolio'},
-  'nav-pools':       {pt:'Pools & DeFi', en:'Pools & DeFi'},
-  'nav-loans':       {pt:'Empréstimos',  en:'Loans'},
-  'nav-tools':       {pt:'Ferramentas',  en:'Tools'},
-  // section labels — will be found by data-i18n attribute
+  'nav-home':      {pt:'Início',      en:'Home'},
+  'nav-portfolio': {pt:'Portfolio',   en:'Portfolio'},
+  'nav-pools':     {pt:'Pools & DeFi',en:'Pools & DeFi'},
+  'nav-loans':     {pt:'Empréstimos', en:'Loans'},
+  'nav-tools':     {pt:'Ferramentas', en:'Tools'},
+  // page header
+  'page-title':    {pt:'FERRAMENTAS <span style="color:var(--accent);">PRO</span>', en:'TOOLS <span style="color:var(--accent);">PRO</span>'},
+  'page-sub':      {pt:'CALCULADORA DE LIQUIDAÇÃO · SIMULADOR DE CENÁRIOS · DIÁRIO DEFI · ALERTAS · EVOLUÇÃO',
+                    en:'LIQUIDATION CALC · SCENARIO SIMULATOR · DEFI JOURNAL · ALERTS · EVOLUTION'},
+  // tabs
+  'tab-crencas':   {pt:'Crenças',     en:'Beliefs'},
+  'tab-liquidacao':{pt:'Liquidação',  en:'Liquidation'},
+  'tab-cenarios':  {pt:'Cenários',    en:'Scenarios'},
+  'tab-diario':    {pt:'Diário DeFi', en:'DeFi Journal'},
+  'tab-alertas':   {pt:'Alertas',     en:'Alerts'},
+  'tab-evolucao':  {pt:'Evolução',    en:'Evolution'},
+  'tab-apy':       {pt:'Pools APY',   en:'Pools APY'},
+  // liquidação — AAVE labels
+  'lbl-eth-col':   {pt:'ETH colateral (ETH)',  en:'ETH collateral (ETH)'},
+  'lbl-usdt-col':  {pt:'USDT colateral ($)',   en:'USDT collateral ($)'},
+  'lbl-gho-debt':  {pt:'Dívida GHO ($)',       en:'GHO Debt ($)'},
+  'lbl-eth-price': {pt:'Preço ETH atual ($)',  en:'Current ETH price ($)'},
+  'lbl-aave-ltv':  {pt:'LTV máximo Aave (%)', en:'Aave max LTV (%)'},
+  'lbl-liq-thresh':{pt:'Limiar liquidação (%)',en:'Liquidation threshold (%)'},
+  'lbl-pos-health':{pt:'SAÚDE DA POSIÇÃO',     en:'POSITION HEALTH'},
+  'lbl-sim-eth':   {pt:'SIMULAÇÃO DE PREÇO ETH',en:'ETH PRICE SIMULATION'},
+  'lbl-drag':      {pt:'Arrastar',             en:'Drag'},
+  // liquidação — Kamino labels
+  'lbl-sol-col':   {pt:'SOL colateral (SOL)',  en:'SOL collateral (SOL)'},
+  'lbl-usds-col':  {pt:'USDS colateral ($)',   en:'USDS collateral ($)'},
+  'lbl-usdc-debt': {pt:'Dívida USDC ($)',      en:'USDC Debt ($)'},
+  'lbl-sol-price': {pt:'Preço SOL atual ($)',  en:'Current SOL price ($)'},
+  'lbl-kam-ltv':   {pt:'LTV máximo Kamino (%)',en:'Kamino max LTV (%)'},
+  'lbl-sim-sol':   {pt:'SIMULAÇÃO DE PREÇO SOL',en:'SOL PRICE SIMULATION'},
+  // liquidação — Uniswap labels
+  'lbl-weth-pool': {pt:'WETH na pool',         en:'WETH in pool'},
+  'lbl-usdc-pool': {pt:'USDC na pool ($)',      en:'USDC in pool ($)'},
+  'lbl-uncoll-fees':{pt:'Fees não coletadas ($)',en:'Uncollected fees ($)'},
+  'lbl-range-min': {pt:'Range mínimo ($)',      en:'Range minimum ($)'},
+  'lbl-range-max': {pt:'Range máximo ($)',      en:'Range maximum ($)'},
+  // cenários
+  'scen-title':    {pt:'Simulador de Cenários',en:'Scenario Simulator'},
+  'scen-badge':    {pt:'IMPACTO NO PORTFOLIO', en:'PORTFOLIO IMPACT'},
+  'scen-desc':     {pt:'Ajuste os sliders para simular o impacto de variações de preço em toda sua carteira.',
+                    en:'Adjust the sliders to simulate the impact of price changes across your portfolio.'},
+  'scen-presets':  {pt:'CENÁRIOS PRÉ-DEFINIDOS',en:'PRE-DEFINED SCENARIOS'},
+  'scen-result':   {pt:'RESULTADO DO CENÁRIO', en:'SCENARIO RESULT'},
+  'scen-eth-row':  {pt:'ETH atual → simulado', en:'ETH current → simulated'},
+  'scen-sol-row':  {pt:'SOL atual → simulado', en:'SOL current → simulated'},
+  'scen-total':    {pt:'Portfolio total',       en:'Total portfolio'},
+  'scen-delta':    {pt:'Variação estimada',     en:'Estimated change'},
+  'scen-aave-hf':  {pt:'Aave HF simulado',     en:'Aave HF simulated'},
+  'scen-kam-ltv':  {pt:'Kamino LTV simulado',  en:'Kamino LTV simulated'},
+  'scen-uni':      {pt:'Uniswap pool status',  en:'Uniswap pool status'},
+  'scen-liq-risk': {pt:'Risco de liquidação',  en:'Liquidation risk'},
+  // diário
+  'diary-new':     {pt:'Nova Entrada',          en:'New Entry'},
+  'lbl-date':      {pt:'Data',                  en:'Date'},
+  'lbl-type':      {pt:'Tipo',                  en:'Type'},
+  'lbl-title':     {pt:'Título',                en:'Title'},
+  'lbl-desc':      {pt:'Descrição',             en:'Description'},
+  'btn-save-entry':{pt:'Salvar entrada',         en:'Save entry'},
+  'btn-clear-history':{pt:'Limpar histórico',   en:'Clear history'},
+  'btn-clear':     {pt:'Limpar',                en:'Clear'},
+  'diary-insight': {pt:'Insight DeFi do Dia',   en:'DeFi Insight of the Day'},
+  'diary-history': {pt:'Histórico de Operações',en:'Operations History'},
+  // alertas
+  'alert-title':   {pt:'Configurar Alertas',    en:'Configure Alerts'},
+  'alert-desc':    {pt:'Ative os alertas e defina os thresholds. A página verifica automaticamente ao carregar e a cada 5 minutos.',
+                    en:'Enable alerts and set thresholds. The page checks automatically on load and every 5 minutes.'},
+  'al-aave-hf-name':{pt:'Aave Health Factor baixo',  en:'Aave Health Factor low'},
+  'al-aave-hf-desc':{pt:'Dispara quando o HF cair abaixo do threshold',en:'Triggers when HF drops below threshold'},
+  'al-kam-ltv-name':{pt:'Kamino LTV elevado',        en:'Kamino LTV high'},
+  'al-kam-ltv-desc':{pt:'Dispara quando o LTV subir acima do threshold',en:'Triggers when LTV rises above threshold'},
+  'al-uni-name':   {pt:'Uniswap fora do range',      en:'Uniswap out of range'},
+  'al-uni-desc':   {pt:'Dispara quando o preço ETH sair do range da pool',en:'Triggers when ETH price exits the pool range'},
+  'al-eth-name':   {pt:'ETH queda brusca',            en:'ETH sharp drop'},
+  'al-eth-desc':   {pt:'Dispara quando ETH cair mais que X% em 24h',en:'Triggers when ETH drops more than X% in 24h'},
+  'al-sol-name':   {pt:'SOL queda brusca',            en:'SOL sharp drop'},
+  'al-sol-desc':   {pt:'Dispara quando SOL cair mais que X% em 24h',en:'Triggers when SOL drops more than X% in 24h'},
+  'al-meta-name':  {pt:'Meta 2026 atingida',          en:'2026 goal reached'},
+  'al-meta-desc':  {pt:'Dispara quando o portfolio atingir a meta',en:'Triggers when portfolio reaches the goal'},
+  'btn-check-now': {pt:'VERIFICAR AGORA',             en:'CHECK NOW'},
+  'btn-test-popup':{pt:'TESTAR POP-UP',               en:'TEST POP-UP'},
+  'btn-save-config':{pt:'SALVAR CONFIG',              en:'SAVE CONFIG'},
+  'alert-log-title':{pt:'Log de Alertas',             en:'Alert Log'},
+  'alert-log-badge':{pt:'ÚLTIMOS 30 DIAS',            en:'LAST 30 DAYS'},
+  // evolução
+  'evo-add-snap':  {pt:'Adicionar Snapshot Semanal',  en:'Add Weekly Snapshot'},
+  'evo-chart-title':{pt:'Evolução do Portfolio',      en:'Portfolio Evolution'},
+  'evo-chart-badge':{pt:'SEMANAL',                    en:'WEEKLY'},
+  'evo-history':   {pt:'Histórico de Snapshots',      en:'Snapshot History'},
+  // apy scanner
+  'apy-title':     {pt:'Scanner de APY — Pools de Interesse',en:'APY Scanner — Pools of Interest'},
 };
 
 function applyLang(lang) {
   document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang === 'pt' ? 'pt-BR' : 'en');
   var btn = document.getElementById('langBtn');
   if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
-  // Apply to all elements with data-i18n attribute
   document.querySelectorAll('[data-i18n]').forEach(function(el) {
     var key = el.getAttribute('data-i18n');
     var s = LANG_STRINGS[key];
-    if (s && s[lang]) el.textContent = s[lang];
+    if (!s || !s[lang]) return;
+    // Use innerHTML only for page-title which has an inner <span>
+    if (key === 'page-title') {
+      el.innerHTML = s[lang];
+    } else {
+      el.textContent = s[lang];
+    }
   });
 }
 
