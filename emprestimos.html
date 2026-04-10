@@ -454,8 +454,8 @@ body, input, button, select, textarea {
         <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:var(--red);margin-bottom:8px;">↓ BORROW</div>
         <div id="em-aave-borrow" data-usd="747.50" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">$747.50</div>
         <div style="font-size:9px;color:var(--muted);margin-top:7px;line-height:1.8;">
-          <span id="em-aave-borrow-qty">747.50</span> <span id="em-aave-borrow-token">GHO</span><br>
-          APY borrow: <span id="em-aave-borrow-apy">3.84%</span>
+          <span id="em-aave-borrow-qty">748.00</span> <span id="em-aave-borrow-token">USDC</span><br>
+          APY borrow: <span id="em-aave-borrow-apy">2.32%</span>
         </div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">Borrow power: <span id="em-aave-borrow-power">16.55%</span></div>
       </div>
@@ -712,7 +712,7 @@ body, input, button, select, textarea {
  <td class="td-mono pos">$1.383</td>
  <td class="td-mono neg">≈ $22</td>
  <td class="td-mono">+1.88 WETH + 1650 USDT supply · HF 6.24</td>
- <td><span class="badge badge-open">● ABERTO · $747</span></td>
+ <td><span class="badge badge-open">● ABERTO · $748 USDC</span></td>
  </tr>
  </tbody>
  </table>
@@ -975,6 +975,7 @@ function buildTimeline(){
  {date:'21/02/26',proto:'AAVE', a:'repay', amt:'$743',det:'742.76 USDC repagados imediatamente — refinanciamento'},
  {date:'29/01/26',proto:'Kamino',a:'repay', amt:'$8.65',det:'8.65 USDC — taxas coletadas na SOL/USDT pool'},
  {date:'Mar/26', proto:'Kamino',a:'supply',amt:'20.31 SOL',det:'Posição ativa · SOL supply em curso · USDC $804.22 em aberto · LTV 43.85%'},
+ {date:'10/04/26',proto:'AAVE', a:'repay', amt:'≈$748',det:'GHO→USDC refinanciamento: swap GHO→USDC, repago com USDT disponível, reborrow $748 USDC @ 2.32% a.a.'},
  ];
 
  const protoColors={AAVE:'#6272a4',Kamino:'#9945ff'};
@@ -1390,15 +1391,15 @@ function toggleLang() {
   const AAVE_WALLET  = '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396';
   const SOL_WALLET   = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
   const AAVE_POOL    = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
-  // aTokens e dívida GHO
+  // aTokens e dívida USDC
   const AWETH_TOKEN  = '0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8';
   const AUSDT_TOKEN  = '0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a';
-  const VDEBT_GHO    = '0x786dBff3f1292ae8F92ea68Cf93c30b34B1ed04B';
+  const VDEBT_USDC   = '0x72E95b8931767C79bA4EeE721354d6E99a61D004'; // AAVE V3 variable debt USDC
   // Assets para consulta de APY
   const AAVE_DATA_PROVIDER = '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3';
   const WETH_ADDR    = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
   const USDT_ADDR    = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
-  const GHO_ADDR     = '0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2d';
+  const USDC_ADDR    = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
 
   // ── Helpers ─────────────────────────────────────────────────────
   const padAddr = a => '000000000000000000000000' + a.slice(2).toLowerCase();
@@ -1452,10 +1453,10 @@ function toggleLang() {
         borrow: decNum(decUint(raw, 6), 27) * 100
       };
     }
-    const [weth, usdt, gho] = await Promise.all([
-      rateOf(WETH_ADDR), rateOf(USDT_ADDR), rateOf(GHO_ADDR)
+    const [weth, usdt, usdc] = await Promise.all([
+      rateOf(WETH_ADDR), rateOf(USDT_ADDR), rateOf(USDC_ADDR)
     ]);
-    return { weth, usdt, gho };
+    return { weth, usdt, usdc };
   }
 
   // ── AAVE V4 ─────────────────────────────────────────────────────
@@ -1465,11 +1466,11 @@ function toggleLang() {
       const balData = '0x70a08231' + padAddr(AAVE_WALLET);
 
       // Busca paralela: dados da conta + saldos dos aTokens + APYs
-      const [raw, wethRaw, usdtRaw, ghoRaw, apys] = await Promise.all([
+      const [raw, wethRaw, usdtRaw, usdcRaw, apys] = await Promise.all([
         rpc(ETH_RPC, 'eth_call', [{to: AAVE_POOL, data: accData}, 'latest']),
         rpc(ETH_RPC, 'eth_call', [{to: AWETH_TOKEN, data: balData}, 'latest']).catch(() => null),
         rpc(ETH_RPC, 'eth_call', [{to: AUSDT_TOKEN, data: balData}, 'latest']).catch(() => null),
-        rpc(ETH_RPC, 'eth_call', [{to: VDEBT_GHO,  data: balData}, 'latest']).catch(() => null),
+        rpc(ETH_RPC, 'eth_call', [{to: VDEBT_USDC,  data: balData}, 'latest']).catch(() => null),
         fetchAaveApys().catch(() => null)
       ]);
 
@@ -1484,12 +1485,12 @@ function toggleLang() {
       // Quantidades dinâmicas dos aTokens (fallback para valores conhecidos)
       const ethQty  = (wethRaw && decNum(decUint(wethRaw, 0), 18) > 0) ? decNum(decUint(wethRaw, 0), 18) : 1.88;
       const usdtQty = (usdtRaw && decNum(decUint(usdtRaw, 0), 6) > 0) ? decNum(decUint(usdtRaw, 0), 6) : 1650;
-      const ghoQty  = (ghoRaw  && decNum(decUint(ghoRaw,  0), 18) > 0) ? decNum(decUint(ghoRaw, 0), 18) : debt;
+      const usdcQty = (usdcRaw && decNum(decUint(usdcRaw, 0), 6) > 0) ? decNum(decUint(usdcRaw, 0), 6) : debt;
 
       // APYs (fallback para valores do usuário)
       const wethApy = (apys?.weth?.supply > 0) ? apys.weth.supply : 1.25;
       const usdtApy = (apys?.usdt?.supply > 0) ? apys.usdt.supply : 1.87;
-      const ghoApy  = (apys?.gho?.borrow > 0)  ? apys.gho.borrow  : 3.84;
+      const usdcApy = (apys?.usdc?.borrow > 0) ? apys.usdc.borrow : 2.32;
 
       const ethUsd  = ethQty * (ethPrice || liveEth || 2079);
       const usdt    = usdtQty; // USDT é estável, qty ≈ USD
@@ -1516,8 +1517,9 @@ function toggleLang() {
 
       // Borrow
       updateDataUsd('em-aave-borrow', debt);
-      set('em-aave-borrow-qty', ghoQty.toFixed(2));
-      set('em-aave-borrow-apy', ghoApy.toFixed(2) + '%');
+      set('em-aave-borrow-qty', usdcQty.toFixed(2));
+      set('em-aave-borrow-apy', usdcApy.toFixed(2) + '%');
+      set('em-aave-borrow-token', 'USDC');
 
       // Métricas
       updateDataUsd('em-aave-net', net);
