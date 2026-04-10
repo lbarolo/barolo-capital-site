@@ -580,7 +580,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="iframe-fallback" id="uniswapFallback">
  <div class="ifb-icon" style="color:#ff007a;">◈</div>
  <div class="ifb-title">Uniswap</div>
- <div class="ifb-sub">Uniswap bloqueia embed via <strong>X-Frame-Options</strong>.<br>Clique para abrir em nova aba.</div>
+ <div class="ifb-sub">Não foi possível carregar o embed.<br>Pode ser lentidão de conexão ou bloqueio de iframe.<br>Clique para abrir em nova aba.</div>
  <a href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir Uniswap Explore</a>
  <div class="ifb-addr">app.uniswap.org/explore/pools</div>
  </div>
@@ -738,6 +738,8 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  if (!frame) return;
 
  let done = false;
+ let blankTimer = null;
+ const startTime = Date.now();
 
  function hideSpinner() {
  if (!loading) return;
@@ -747,12 +749,14 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  function showFrame() {
  if (done) return; done = true;
  clearTimeout(timer);
+ clearTimeout(blankTimer);
  hideSpinner();
  frame.style.opacity = '1';
  }
  function showFallback() {
  if (done) return; done = true;
  clearTimeout(timer);
+ clearTimeout(blankTimer);
  hideSpinner();
  frame.style.display = 'none';
  if (fallback) fallback.style.display = 'flex';
@@ -762,27 +766,33 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  frame.addEventListener('load', function() {
  try {
  const loc = frame.contentWindow.location.href;
- // about:blank = X-Frame-Options blocked the page (Chrome behaviour)
- // Don't act here — let the timeout handle it after a short grace period
- if (!loc || loc === 'about:blank') return;
- // Same-origin URL = loaded fine
+ if (!loc || loc === 'about:blank') {
+ // about:blank dentro de 2s = X-Frame-Options bloqueou (comportamento Chrome)
+ // about:blank depois de 2s = estado pré-navegação; aguardar o timer principal
+ const elapsed = Date.now() - startTime;
+ if (elapsed < 2000) {
+ // Definitivamente bloqueado — fallback em 1s
+ blankTimer = setTimeout(showFallback, 1000);
+ }
+ return;
+ }
+ // Same-origin URL = carregou ok
  showFrame();
  } catch(e) {
- // SecurityError = cross-origin page loaded successfully
+ // SecurityError = página cross-origin carregou com sucesso
  showFrame();
  }
  });
 
- // Timeout: if not resolved in time, show fallback
- // Use a shorter timeout (6s) since blocked sites resolve near-instantly to about:blank
- const timer = setTimeout(showFallback, ms || 8000);
+ // Timeout principal: se não resolver a tempo, exibe fallback
+ const timer = setTimeout(showFallback, ms || 20000);
 }
 
-// Initialise Revert, Raydium, AAVE
-initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 8000);
-initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 8000);
-initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 8000);
-initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 8000);
+// Inicializar painéis — Uniswap recebe timeout maior (25s) pois pode ser lento
+initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 15000);
+initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 25000);
+initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 15000);
+initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
 // ── AAVE V4 LIVE DATA ──
 (async function fetchAaveData() {
@@ -1088,6 +1098,141 @@ function setRef(ref){
  document.getElementById('lp-pnl').className='lp-mv '+(r.pos?'pos':'neg');
 }
 
+// ── UNISWAP V3 LP LIVE DATA ──
+(async function fetchUniswapLPData() {
+  const NFT_MGR  = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
+  const POOL     = '0x88e6A0c2ddd26FEEb64F039a2c41296FcB3f5640';
+  const TOKEN_ID = 4694262;
+  const Q96  = 2n ** 96n;
+  const Q128 = 2n ** 128n;
+  const Q256 = 2n ** 256n;
+
+  function w(hex, i) { return BigInt('0x' + hex.slice(i*64,(i+1)*64)); }
+  function signed256(b) { return b >= (1n<<255n) ? Number(b-(1n<<256n)) : Number(b); }
+  function mod256(x) { return ((x%Q256)+Q256)%Q256; }
+  function encodeInt(n) { return (n<0?(BigInt(n)+Q256):BigInt(n)).toString(16).padStart(64,'0'); }
+  function sqrtTickX96(t) { return BigInt(Math.floor(Math.sqrt(Math.pow(1.0001,t))*2**96)); }
+
+  async function ethcall(to, data) {
+    for (const rpc of RPCS) {
+      try {
+        const r = await fetchTimeout(rpc,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({jsonrpc:'2.0',method:'eth_call',params:[{to,data},'latest'],id:1})
+        },7000);
+        if (!r.ok) continue;
+        const j = await r.json();
+        if (j.error||!j.result||j.result==='0x') continue;
+        return j.result.slice(2);
+      } catch(e){ console.debug('[LP]',rpc,'—',e.message); }
+    }
+    throw new Error('Todos os RPCs falharam');
+  }
+
+  // 1. Posição (NonfungiblePositionManager)
+  const pH = await ethcall(NFT_MGR,'0x99fbab88'+TOKEN_ID.toString(16).padStart(64,'0'));
+  const tickLow  = signed256(w(pH,5));
+  const tickHig  = signed256(w(pH,6));
+  const liq      = w(pH,7);
+  const fg0Last  = w(pH,8), fg1Last = w(pH,9);
+  const owed0    = w(pH,10), owed1  = w(pH,11);
+
+  // 2. Pool slot0 (sqrtPriceX96 + currentTick)
+  const s0H = await ethcall(POOL,'0x3850c7bd');
+  const sqrtPX96 = w(s0H,0);
+  const curTick  = signed256(w(s0H,1));
+
+  // 3. feeGrowthGlobal
+  const [fg0H,fg1H] = await Promise.all([ethcall(POOL,'0xf3058399'),ethcall(POOL,'0x46141319')]);
+  const fgG0 = w(fg0H,0), fgG1 = w(fg1H,0);
+
+  // 4. ticks (feeGrowthOutside)
+  const [tkLH,tkUH] = await Promise.all([
+    ethcall(POOL,'0xf30dba93'+encodeInt(tickLow)),
+    ethcall(POOL,'0xf30dba93'+encodeInt(tickHig))
+  ]);
+  const fgo0L=w(tkLH,2),fgo1L=w(tkLH,3),fgo0U=w(tkUH,2),fgo1U=w(tkUH,3);
+
+  // 5. Token amounts a partir da liquidez
+  const spL = sqrtTickX96(tickLow), spU = sqrtTickX96(tickHig);
+  let a0=0n, a1=0n;
+  if      (curTick < tickLow)  { a0 = liq*Q96*(spU-spL)/(spL*spU); }
+  else if (curTick >= tickHig) { a1 = liq*(spU-spL)/Q96; }
+  else { a0 = liq*Q96*(spU-sqrtPX96)/(sqrtPX96*spU); a1 = liq*(sqrtPX96-spL)/Q96; }
+  const wethAmt = Number(a0)/1e18, usdcAmt = Number(a1)/1e6;
+
+  // 6. Fees não coletadas
+  function fgi(fgG,fgoL,fgoU,tL,tU,tC) {
+    const below = tC>=tL ? fgoL : mod256(fgG-fgoL);
+    const above = tC< tU ? fgoU : mod256(fgG-fgoU);
+    return mod256(fgG-below-above);
+  }
+  const fi0 = fgi(fgG0,fgo0L,fgo0U,tickLow,tickHig,curTick);
+  const fi1 = fgi(fgG1,fgo1L,fgo1U,tickLow,tickHig,curTick);
+  const uf0 = owed0 + liq*mod256(fi0-fg0Last)/Q128;
+  const uf1 = owed1 + liq*mod256(fi1-fg1Last)/Q128;
+  const uncWeth = Number(uf0)/1e18, uncUsdc = Number(uf1)/1e6;
+
+  // 7. Preço ETH
+  const prices = await getLivePrice(['ethereum']);
+  const eth = prices?.ethereum?.usd || 1800;
+  const pooledUsd = wethAmt*eth + usdcAmt;
+  const uncFeeUsd = uncWeth*eth + uncUsdc;
+
+  // 8. P&L / IL / APR via The Graph (best-effort)
+  let pnl=null, il=null, apr=null, feeApr=null, dailyFees=null;
+  try {
+    const gR = await fetchTimeout('https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({query:`{position(id:"${TOKEN_ID}"){depositedToken0 depositedToken1 withdrawnToken0 withdrawnToken1 collectedFeesToken0 collectedFeesToken1 transaction{timestamp}}}`})
+    },8000);
+    const gj = await gR.json();
+    const gp = gj?.data?.position;
+    if (gp) {
+      const d0 = parseFloat(gp.depositedToken0)  - parseFloat(gp.withdrawnToken0||0);
+      const d1 = parseFloat(gp.depositedToken1)  - parseFloat(gp.withdrawnToken1||0);
+      const cf0= parseFloat(gp.collectedFeesToken0||0);
+      const cf1= parseFloat(gp.collectedFeesToken1||0);
+      const days = (Date.now()/1000 - parseInt(gp.transaction.timestamp))/86400;
+      const hodlUsd   = d0*eth + d1;
+      const totalFees = (cf0+uncWeth)*eth + (cf1+uncUsdc);
+      il  = pooledUsd - hodlUsd;
+      pnl = totalFees + il;
+      if (days>0 && hodlUsd>0) {
+        apr     = pnl/hodlUsd/days*365*100;
+        feeApr  = totalFees/hodlUsd/days*365*100;
+        dailyFees = totalFees/days;
+      }
+    }
+  } catch(e){ console.debug('[LP] The Graph falhou:',e.message); }
+
+  // 9. Atualiza REFS e UI
+  const fU = v => (v>=0?'+$':'-$')+Math.abs(v).toFixed(2);
+  const fA = v => (v>=0?'+':'')+v.toFixed(1)+'% APR';
+
+  REFS.usd = {
+    pooled:   '$'+pooledUsd.toFixed(2),
+    pnl:      pnl    !=null ? fU(pnl)   : '—',
+    roi:      apr    !=null ? fA(apr)   : '—',
+    apr:      apr    !=null ? fA(apr)   : '—',
+    feeApr:   feeApr !=null ? 'Fees: +'+feeApr.toFixed(1)+'% APR' : '—',
+    fees:     '$'+uncFeeUsd.toFixed(4),
+    il:       il     !=null ? fU(il)    : '—',
+    gas:      'vs HODL',
+    dailyFees: dailyFees!=null ? '$'+dailyFees.toFixed(4)+'/dia' : '—',
+    pos: pnl==null||pnl>=0
+  };
+
+  // Atualiza subtitle com quantidades ao vivo
+  const subEl = document.querySelector('.lp-bar .lp-m:first-child .lp-ms');
+  if (subEl) subEl.textContent = wethAmt.toFixed(4)+' WETH + '+usdcAmt.toFixed(2)+' USDC';
+
+  // Aplica view ativa atual
+  const activeBtn = document.querySelector('.ref-btn.active');
+  setRef(activeBtn ? activeBtn.textContent.trim().toLowerCase() : 'usd');
+
+})().catch(e => console.debug('[LP] dados LP falharam:',e.message));
+
 // Generic reload — used by all 4 panels
 function reloadPanel(frameId, loadingId, fallbackId) {
  const f = document.getElementById(frameId);
@@ -1097,7 +1242,9 @@ function reloadPanel(frameId, loadingId, fallbackId) {
  if (b) b.style.display='none';
  f.style.display=''; f.style.opacity='0';
  if (l) { l.style.display='flex'; l.style.opacity='1'; }
- initIframePanel(frameId, loadingId, fallbackId, 14000);
+ // Uniswap pode ser lento — timeout maior no reload também
+ const reloadMs = frameId === 'uniswapFrame' ? 25000 : 15000;
+ initIframePanel(frameId, loadingId, fallbackId, reloadMs);
  f.src = f.src;
 }
 // Legacy alias for Revert's existing "Recarregar" button
