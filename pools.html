@@ -484,29 +484,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <span class="badge-green">● IN-RANGE</span>
  </div>
  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
- <div class="ref-toggle">
- <button class="ref-btn active" onclick="setRef('usd')">USD</button>
- <button class="ref-btn" onclick="setRef('eth')">ETH</button>
- <button class="ref-btn" onclick="setRef('hold')">HOLD</button>
- </div>
  <a class="btn-open" href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" target="_blank" rel="noopener">
  ↗ Abrir Revert
  </a>
- <button class="btn-sm" onclick="Notification.requestPermission()" title="Ativar alertas de out-of-range" id="btnNotif" style="display:none;">🔔 Alertas</button>
  </div>
  </div>
 
- <!-- LP metrics bar -->
- <div class="lp-bar">
- <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms">0.1185 WETH + 102.76 USDC</div></div>
- <div class="lp-m"><div class="lp-ml">TOTAL P&L</div><div class="lp-mv pos" id="lp-pnl">—</div><div class="lp-ms" id="lp-roi">—</div></div>
- <div class="lp-m"><div class="lp-ml">TOTAL APR</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-fee-apr">—</div></div>
- <div class="lp-m"><div class="lp-ml">UNCOLLECTED FEES</div><div class="lp-mv warn" id="lp-fees">—</div><div class="lp-ms" id="lp-daily-fees">—/dia</div></div>
- <div class="lp-m"><div class="lp-ml">DIV. LOSS</div><div class="lp-mv neg" id="lp-il">—</div><div class="lp-ms" id="lp-gas">—</div></div>
+ <!-- LP metrics bar — APR líquido pós-AAVE -->
+ <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
+ <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms" id="lp-pooled-sub">0.1185 WETH + 102.76 USDC</div></div>
+ <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-apr-sub">fees / capital investido</div></div>
+ <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−3.28%</div><div class="lp-ms">USDC · taxa atual</div></div>
+ <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
 
  <!-- Iframe wrapper with loading overlay -->
- <div class="iframe-wrap" id="iframeWrap" style="height:480px;">
+ <div class="iframe-wrap" id="iframeWrap" style="height:860px;">
 
  <!-- Spinner overlay (fades out after load or timeout) -->
  <div id="revertLoading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--surface);z-index:3;pointer-events:none;transition:opacity .5s;">
@@ -1208,28 +1201,24 @@ function setRef(ref){
 
   // 9. Atualiza REFS e UI
   const fU = v => (v>=0?'+$':'-$')+Math.abs(v).toFixed(2);
-  const fA = v => (v>=0?'+':'')+v.toFixed(1)+'% APR';
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  const AAVE_BORROW_RATE = 3.28; // % a.a. — taxa USDC AAVE V4
 
-  REFS.usd = {
-    pooled:   '$'+pooledUsd.toFixed(2),
-    pnl:      pnl    !=null ? fU(pnl)   : '—',
-    roi:      apr    !=null ? fA(apr)   : '—',
-    apr:      apr    !=null ? fA(apr)   : '—',
-    feeApr:   feeApr !=null ? 'Fees: +'+feeApr.toFixed(1)+'% APR' : '—',
-    fees:     '$'+uncFeeUsd.toFixed(4),
-    il:       il     !=null ? fU(il)    : '—',
-    gas:      'vs HODL',
-    dailyFees: dailyFees!=null ? '$'+dailyFees.toFixed(4)+'/dia' : '—',
-    pos: pnl==null||pnl>=0
-  };
+  // POOLED
+  set('lp-pooled', '$'+pooledUsd.toFixed(2));
+  set('lp-pooled-sub', wethAmt.toFixed(4)+' WETH + '+usdcAmt.toFixed(2)+' USDC');
 
-  // Atualiza subtitle com quantidades ao vivo
-  const subEl = document.querySelector('.lp-bar .lp-m:first-child .lp-ms');
-  if (subEl) subEl.textContent = wethAmt.toFixed(4)+' WETH + '+usdcAmt.toFixed(2)+' USDC';
-
-  // Aplica view ativa atual
-  const activeBtn = document.querySelector('.ref-btn.active');
-  setRef(activeBtn ? activeBtn.textContent.trim().toLowerCase() : 'usd');
+  // APR BRUTO + APR LÍQUIDO
+  if (apr !== null) {
+    const aprNet = apr - AAVE_BORROW_RATE;
+    const fmtApr = v => (v>=0?'+':'')+v.toFixed(1)+'%';
+    set('lp-apr',     fmtApr(apr));
+    set('lp-apr-sub', feeApr!=null ? 'só fees: +'+feeApr.toFixed(1)+'%' : 'fees / capital');
+    set('lp-apr-net', fmtApr(aprNet));
+    set('lp-apr-net-sub', fmtApr(apr)+' − '+AAVE_BORROW_RATE+'%');
+    const netEl = document.getElementById('lp-apr-net');
+    if (netEl) netEl.className = 'lp-mv '+(aprNet>=0?'pos':'neg');
+  }
 
 })().catch(e => console.debug('[LP] dados LP falharam:',e.message));
 
