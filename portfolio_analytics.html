@@ -612,14 +612,18 @@ body, input, button, select, textarea {
     <div id="ev-hf-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">liq. LTV Kamino: 77.2%</div>
   </div>
   <div style="background:var(--surface);padding:14px 16px;">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Juros / Mês</div>
-    <div id="ev-interest" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;color:var(--red);">—</div>
-    <div id="ev-interest-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">AAVE 3.84% · Kamino 4.09%</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Resultado DeFi Total</div>
+    <div id="ev-defi-net" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;">—</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;display:flex;flex-direction:column;gap:2px;">
+      <span>Fees <span id="ev-defi-fees" style="color:var(--green);">—</span></span>
+      <span>IL <span id="ev-defi-il" style="color:var(--red);">—</span></span>
+      <span>Juros pagos <span id="ev-defi-juros" style="color:var(--red);">—</span></span>
+    </div>
   </div>
   <div style="background:var(--surface);padding:14px 16px;border-left:2px solid rgba(63,185,80,0.25);">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Yield DeFi / Mês</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Yield Líq. / Mês</div>
     <div id="ev-yield" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;">—</div>
-    <div id="ev-yield-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">supply yield est. − juros</div>
+    <div id="ev-yield-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">—</div>
   </div>
 </div>
 
@@ -1085,6 +1089,9 @@ var WEEKLY_UPDATE = {
  // Totais DeFi (pooled — não por ativo individual)
  totalFees: 1977, // taxas acumuladas em pools (−20 PEANUT: scam, sem taxas reais)
  totalIL: -2143, // IL acumulado em pools (GRIFT: cap. real $1.170 → IL $1.850; PEANUT scam: IL $243)
+ // Juros pagos acumulados (AAVE + Kamino borrow) — atualizar mensalmente
+ // Estimativa: AAVE $747 × 3.5% avg × meses + Kamino $804 × 4% avg × meses
+ jurosAcumulados: -58, // ~$58 desde abertura das posições (estimativa Abr/2026)
  },
 
  // ── Curva de patrimônio ($) — adicione o mês atual ──
@@ -1302,13 +1309,25 @@ function renderUI(enriched){
      kHfEl.style.color = ltv < 50 ? 'var(--green)' : ltv < 65 ? 'var(--yellow)' : 'var(--red)';
    }
 
-   set('ev-interest', '-'+fmtCurrency(monthlyInterest, 0));
-   set('ev-interest-sub', 'AAVE ' + aaveBorrowApy.toFixed(2) + '% · Kamino ' + kaminoBorrowApy.toFixed(2) + '%');
+   // ── Resultado DeFi acumulado ──
+   const po = WEEKLY_UPDATE.pnlOrigin;
+   const defiNet = po.totalFees + po.totalIL + (po.jurosAcumulados || 0);
+   const defiNetEl = document.getElementById('ev-defi-net');
+   if(defiNetEl){
+     defiNetEl.textContent = (defiNet>=0?'+':'')+fmtCurrency(Math.abs(defiNet),0);
+     defiNetEl.style.color = defiNet>=0 ? 'var(--green)' : 'var(--red)';
+   }
+   set('ev-defi-fees',  '+'+fmtCurrency(po.totalFees, 0));
+   set('ev-defi-il',    fmtCurrency(po.totalIL, 0));
+   set('ev-defi-juros', fmtCurrency(po.jurosAcumulados||0, 0));
+
+   // ── Yield líq./mês ──
    const yieldEl = document.getElementById('ev-yield');
    if(yieldEl){
      yieldEl.textContent = (netMonthly>=0?'+':'')+fmtCurrency(Math.abs(netMonthly), 0)+' líq.';
      yieldEl.style.color = netMonthly >= 0 ? 'var(--green)' : 'var(--red)';
    }
+   set('ev-yield-sub', 'Yield −$'+monthlyInterest.toFixed(0)+'/mês juros');
  })();
 
  // DeFi positions shown only on Pools & DeFi page
