@@ -40,7 +40,17 @@ body{
   font-family:'JetBrains Mono',monospace; font-size:11px;
   letter-spacing:.25em; text-transform:uppercase; color:var(--accent);
 }
-.screen-bar .actions{ display:flex; gap:8px; }
+.screen-bar .actions{ display:flex; gap:8px; align-items:center; }
+.period-toggle{ display:flex; gap:2px; }
+.btn-period{
+  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.12em;
+  text-transform:uppercase; padding:7px 12px; border-radius:3px; cursor:pointer;
+  border:1px solid var(--border); background:var(--surface2); color:var(--muted);
+  transition:all .15s;
+}
+.btn-period.active{ background:var(--accent); color:#0e0e12; border-color:var(--accent); font-weight:700; }
+.monthly-only{ transition:opacity .2s; }
+.monthly-only.hidden{ display:none; }
 .btn{
   font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.12em;
   text-transform:uppercase; padding:7px 14px; border-radius:3px; cursor:pointer;
@@ -185,8 +195,13 @@ tr:hover td{ background:var(--surface2); }
 <div class="screen-bar no-print">
   <h1>Barolo Capital · Relatório</h1>
   <div class="actions">
+    <div class="period-toggle">
+      <button class="btn-period active" id="btn-mensal" onclick="setPeriod('mensal')">Mensal</button>
+      <button class="btn-period" id="btn-semanal" onclick="setPeriod('semanal')">Semanal</button>
+    </div>
     <button class="btn" onclick="toggleTheme()">◑ Tema</button>
-    <a href="portfolio_analytics.html" class="btn">← Dashboard</a>
+    <a href="pools.html" class="btn">← Pools</a>
+    <a href="portfolio_analytics.html" class="btn">Analytics</a>
     <button class="btn btn-primary" onclick="window.print()">⬇ Exportar PDF</button>
   </div>
 </div>
@@ -200,8 +215,8 @@ tr:hover td{ background:var(--surface2); }
       <div class="report-logo">Barolo Capital<span>Gestão Ativa · DeFi & Cripto</span></div>
     </div>
     <div class="report-meta">
-      <div>Relatório Mensal</div>
-      <div><strong id="reportDate">Abril 2026</strong></div>
+      <div id="reportType">Relatório Mensal</div>
+      <div><strong id="reportDate">—</strong></div>
       <div>Gerado em <strong id="reportGenDate">—</strong></div>
       <div style="margin-top:6px;font-size:7px;">CONFIDENCIAL · USO INTERNO</div>
     </div>
@@ -316,22 +331,22 @@ tr:hover td{ background:var(--surface2); }
   </table>
 
   <!-- ══ 5. GRÁFICO EVOLUÇÃO ══ -->
-  <div class="r-section">Evolução Patrimonial · 2022–2026</div>
-  <div class="chart-wrap">
+  <div class="r-section monthly-only">Evolução Patrimonial · 2022–2026</div>
+  <div class="chart-wrap monthly-only">
     <div class="chart-title">Patrimônio vs Capital Aportado (USD)</div>
     <canvas id="r-evolution-chart" style="max-height:280px;"></canvas>
   </div>
 
   <!-- ══ 6. PERFORMANCE ANUAL ══ -->
-  <div class="r-section">Performance por Ano</div>
-  <div class="chart-wrap">
+  <div class="r-section monthly-only">Performance por Ano</div>
+  <div class="chart-wrap monthly-only">
     <div class="chart-title">Retorno Anual — Portfólio</div>
     <canvas id="r-annual-chart" style="max-height:180px;"></canvas>
   </div>
 
   <!-- ══ 7. HISTÓRICO DE RETORNOS ══ -->
-  <div class="r-section">Retornos Mensais — 2024/2025/2026</div>
-  <table id="r-returns-table" style="margin-bottom:24px;">
+  <div class="r-section monthly-only">Retornos Mensais — 2024/2025/2026</div>
+  <table id="r-returns-table" class="monthly-only" style="margin-bottom:24px;">
     <thead>
       <tr id="r-returns-head"></tr>
     </thead>
@@ -388,10 +403,50 @@ function toggleTheme(){
   localStorage.setItem('bc-theme', t);
 }
 
-// ── Data ──
+// ── Período ──
+var MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+function getMonday(d) { var day=d.getDay(), diff=d.getDate()-day+(day===0?-6:1); return new Date(d.setDate(diff)); }
+function fmtDate(d) { return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); }
+
+function setPeriod(mode) {
+  var now = new Date();
+  document.getElementById('btn-mensal').classList.toggle('active', mode==='mensal');
+  document.getElementById('btn-semanal').classList.toggle('active', mode==='semanal');
+  document.querySelectorAll('.monthly-only').forEach(function(el){
+    el.classList.toggle('hidden', mode==='semanal');
+  });
+  if (mode === 'semanal') {
+    var mon = getMonday(new Date());
+    var sun = new Date(mon); sun.setDate(mon.getDate()+6);
+    document.getElementById('reportType').textContent = 'Relatório Semanal';
+    document.getElementById('reportDate').textContent = fmtDate(mon) + ' – ' + fmtDate(sun);
+    document.getElementById('r-footer-date').textContent = 'Semana ' + fmtDate(mon);
+  } else {
+    document.getElementById('reportType').textContent = 'Relatório Mensal';
+    document.getElementById('reportDate').textContent = MONTHS_PT[now.getMonth()] + ' ' + now.getFullYear();
+    document.getElementById('r-footer-date').textContent = MONTHS_PT[now.getMonth()] + ' ' + now.getFullYear();
+  }
+}
+
+// ── Data de geração ──
 var now = new Date();
-var months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-document.getElementById('reportGenDate').textContent = now.getDate() + '/' + String(now.getMonth()+1).padStart(2,'0') + '/' + now.getFullYear();
+document.getElementById('reportGenDate').textContent = fmtDate(now);
+setPeriod('mensal'); // default: mensal
+
+// ── Preços ao vivo ──
+(function fetchLivePrices() {
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana,cardano&vs_currencies=usd')
+    .then(function(r){ return r.json(); })
+    .then(function(p) {
+      if (p.ethereum) PORTFOLIO_DATA[0].price = p.ethereum.usd;
+      if (p.solana)   PORTFOLIO_DATA[1].price = p.solana.usd;
+      if (p.cardano)  PORTFOLIO_DATA[2].price = p.cardano.usd;
+      // Re-render tabela com preços ao vivo
+      renderAssetTable();
+      renderKPIs();
+    })
+    .catch(function(){});
+})();
 
 // ─────────────────────────────────────────────
 // DADOS DO PORTFÓLIO — sincronizar com portfolio_analytics.html
@@ -444,44 +499,39 @@ var MONTHLY_RETURNS = {
 // ─────────────────────────────────────────────
 // RENDER
 // ─────────────────────────────────────────────
-(function render(){
+var fmt = function(v){ return '$' + Math.abs(v).toLocaleString('pt-BR',{maximumFractionDigits:0}); };
 
-  // ── Calcular totais spot ──
-  var spotTotal = 0, costTotal = 0, plTotal = 0;
-  PORTFOLIO_DATA.forEach(function(a){
-    var val = a.qty * a.price;
-    spotTotal += val;
-    costTotal += a.invested;
-    plTotal   += (val - a.invested);
-  });
-  var netTotal = spotTotal + STABLES_USD - DEBT_TOTAL;
+function calcTotals() {
+  var spotTotal=0, costTotal=0, plTotal=0;
+  PORTFOLIO_DATA.forEach(function(a){ var v=a.qty*a.price; spotTotal+=v; costTotal+=a.invested; plTotal+=(v-a.invested); });
+  return { spotTotal:spotTotal, costTotal:costTotal, plTotal:plTotal, netTotal:spotTotal+STABLES_USD-DEBT_TOTAL };
+}
 
-  // ── KPIs executivos ──
-  var fmt = function(v){ return '$' + Math.abs(v).toLocaleString('pt-BR',{maximumFractionDigits:0}); };
-  document.getElementById('r-net').textContent = fmt(netTotal);
-  document.getElementById('r-net').className = 'kpi-value ' + (netTotal >= 0 ? 'pos' : 'neg');
-  document.getElementById('r-net-sub').textContent = 'SPOT $' + Math.round(spotTotal).toLocaleString('pt-BR') + ' + Stables $' + Math.round(STABLES_USD).toLocaleString('pt-BR') + ' − Dívida';
-  document.getElementById('r-pnl').textContent = (plTotal >= 0 ? '+' : '−') + fmt(plTotal);
-  document.getElementById('r-pnl').className = 'kpi-value ' + (plTotal >= 0 ? 'pos' : 'neg');
-  var roi = (plTotal / costTotal * 100).toFixed(1);
-  document.getElementById('r-roi').textContent = 'ROI: ' + (roi >= 0 ? '+' : '') + roi + '%';
+function renderKPIs() {
+  var t = calcTotals();
+  document.getElementById('r-net').textContent = fmt(t.netTotal);
+  document.getElementById('r-net').className = 'kpi-value ' + (t.netTotal>=0?'pos':'neg');
+  document.getElementById('r-net-sub').textContent = 'SPOT $'+Math.round(t.spotTotal).toLocaleString('pt-BR')+' + Stables $'+Math.round(STABLES_USD).toLocaleString('pt-BR')+' − Dívida';
+  document.getElementById('r-pnl').textContent = (t.plTotal>=0?'+':'−') + fmt(t.plTotal);
+  document.getElementById('r-pnl').className = 'kpi-value ' + (t.plTotal>=0?'pos':'neg');
+  var roi = (t.plTotal/t.costTotal*100).toFixed(1);
+  document.getElementById('r-roi').textContent = 'ROI: '+(roi>=0?'+':'')+roi+'%';
+  var juros = (747*0.0328 + 804*0.0318)/12;
+  var yieldM = (1.87*PORTFOLIO_DATA[0].price*0.015 + 1652.90*0.032 + 19.33*PORTFOLIO_DATA[1].price*0.06 + 300.42*0.10)/12;
+  var netYield = yieldM - juros;
+  document.getElementById('r-yield').textContent = (netYield>=0?'+':'')+'$'+Math.abs(netYield).toFixed(0);
+  document.getElementById('r-yield').className = 'kpi-value '+(netYield>=0?'pos':'neg');
+}
 
-  // Juros mês estimado: AAVE $747 × 3.28%/12 + Kamino $804 × 3.18%/12
-  var juros = (747 * 0.0328 + 804 * 0.0318) / 12;
-  // Yield estimado: ETH 1.87 × preço × 1.5%/12 + USDT 1652 × 3.2%/12 + SOL 19.33 × preço × 6%/12 + USDS 300 × 10%/12
-  var yieldMonthly = (1.87 * PORTFOLIO_DATA[0].price * 0.015 + 1652.90 * 0.032 + 19.33 * PORTFOLIO_DATA[1].price * 0.06 + 300.42 * 0.10) / 12;
-  var netYield = yieldMonthly - juros;
-  document.getElementById('r-yield').textContent = (netYield >= 0 ? '+' : '') + '$' + Math.abs(netYield).toFixed(0);
-  document.getElementById('r-yield').className = 'kpi-value ' + (netYield >= 0 ? 'pos' : 'neg');
-
-  // ── Asset table ──
+function renderAssetTable() {
+  var t = calcTotals();
   var tbody = document.getElementById('r-asset-table');
   var rows = '';
   PORTFOLIO_DATA.forEach(function(a){
     var val = a.qty * a.price;
     var pl  = val - a.invested;
     var roi = a.invested > 0 ? (pl / a.invested * 100).toFixed(1) : '—';
-    var pct = (val / spotTotal * 100).toFixed(1);
+    var pct = (val / t.spotTotal * 100).toFixed(1);
     rows += '<tr>'
       + '<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+a.color+';margin-right:6px;vertical-align:middle;"></span>'+a.ticker+'</td>'
       + '<td>'+a.qty.toLocaleString('pt-BR',{maximumFractionDigits:4})+'</td>'
@@ -499,172 +549,111 @@ var MONTHLY_RETURNS = {
     + '<td class="r">$'+Math.round(STABLES_USD).toLocaleString('pt-BR')+'</td><td class="r">$'+Math.round(STABLES_USD).toLocaleString('pt-BR')+'</td>'
     + '<td class="r">$0</td><td class="r">0%</td><td class="r">—</td></tr>';
   tbody.innerHTML = rows;
-  document.getElementById('r-spot-total').textContent = '$' + Math.round(spotTotal + STABLES_USD).toLocaleString('pt-BR');
-  document.getElementById('r-pnl-total').textContent  = (plTotal>=0?'+':'−')+'$'+Math.abs(Math.round(plTotal)).toLocaleString('pt-BR');
-  document.getElementById('r-pnl-total').style.color  = plTotal>=0?'var(--green)':'var(--red)';
-  var roiT = (plTotal/costTotal*100).toFixed(1);
+  document.getElementById('r-spot-total').textContent = '$' + Math.round(t.spotTotal + STABLES_USD).toLocaleString('pt-BR');
+  document.getElementById('r-pnl-total').textContent  = (t.plTotal>=0?'+':'−')+'$'+Math.abs(Math.round(t.plTotal)).toLocaleString('pt-BR');
+  document.getElementById('r-pnl-total').style.color  = t.plTotal>=0?'var(--green)':'var(--red)';
+  var roiT = (t.plTotal/t.costTotal*100).toFixed(1);
   document.getElementById('r-roi-total').textContent  = (roiT>=0?'+':'')+roiT+'%';
   document.getElementById('r-roi-total').style.color  = roiT>=0?'var(--green)':'var(--red)';
+}
 
-  // ── Pool table (últimas 8 + totals) ──
+// ── Pool table ──
+(function renderPoolTable(){
   var ptbody = document.getElementById('r-pool-table');
-  var prows = '';
-  var totalFees=0, totalIL=0, totalNet=0;
+  var prows = '', totalFees=0, totalIL=0, totalNet=0;
   POOLS_DATA.forEach(function(p){
-    totalFees += p.fees; totalIL += p.il; totalNet += p.result;
-    var badge = p.status === 'active'
+    totalFees+=p.fees; totalIL+=p.il; totalNet+=p.result;
+    var badge = p.status==='active'
       ? '<span style="background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3);border-radius:3px;padding:1px 6px;font-size:7px;">● ATIVA</span>'
       : '<span style="color:var(--muted);font-size:8px;">encerrada</span>';
     prows += '<tr>'
-      + '<td style="font-weight:600;">'+p.pair+'</td>'
-      + '<td>'+p.net+'</td>'
-      + '<td>'+badge+'</td>'
-      + '<td class="r">—</td>'
-      + '<td class="r" style="color:var(--green);">$'+p.fees.toLocaleString('pt-BR')+'</td>'
-      + '<td class="r" style="color:'+(p.il>0?'var(--red)':'var(--muted)')+';">'+(p.il>0?'−$'+p.il:'$0')+'</td>'
-      + '<td class="r" style="font-weight:700;color:'+(p.result>=0?'var(--green)':'var(--red)')+';">'+(p.result>=0?'+':'−')+'$'+Math.abs(p.result).toLocaleString('pt-BR')+'</td>'
-      + '</tr>';
+      +'<td style="font-weight:600;">'+p.pair+'</td><td>'+p.net+'</td><td>'+badge+'</td>'
+      +'<td class="r">—</td>'
+      +'<td class="r" style="color:var(--green);">$'+p.fees.toLocaleString('pt-BR')+'</td>'
+      +'<td class="r" style="color:'+(p.il>0?'var(--red)':'var(--muted)')+';">'+(p.il>0?'−$'+p.il:'$0')+'</td>'
+      +'<td class="r" style="font-weight:700;color:'+(p.result>=0?'var(--green)':'var(--red)')+';">'+(p.result>=0?'+':'−')+'$'+Math.abs(p.result).toLocaleString('pt-BR')+'</td>'
+      +'</tr>';
   });
   ptbody.innerHTML = prows;
   document.getElementById('r-pool-fees-total').textContent = '+$'+totalFees.toLocaleString('pt-BR');
   document.getElementById('r-pool-il-total').textContent   = '−$'+totalIL.toLocaleString('pt-BR');
   document.getElementById('r-pool-net-total').textContent  = (totalNet>=0?'+':'−')+'$'+Math.abs(totalNet).toLocaleString('pt-BR');
   document.getElementById('r-pool-net-total').style.color  = totalNet>=0?'var(--green)':'var(--red)';
+})();
 
-  // ── Monthly returns table ──
-  var years = [2024, 2025, 2026];
+// ── Returns table + Charts (once on load) ──
+(function renderChartsAndReturns(){
+  var years  = [2024,2025,2026];
   var mNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   var mKeys  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('r-returns-head').innerHTML = '<th>Ano</th>' + mNames.map(function(m){ return '<th class="r">'+m+'</th>'; }).join('') + '<th class="r">Ano</th>';
+
+  // Monthly returns table
+  document.getElementById('r-returns-head').innerHTML = '<th>Ano</th>'+mNames.map(function(m){ return '<th class="r">'+m+'</th>'; }).join('')+'<th class="r">Ano</th>';
   var rbody = '';
   years.forEach(function(yr){
-    var d = MONTHLY_RETURNS[yr] || {};
-    var annual = 1;
-    mKeys.forEach(function(k){ if(d[k]!=null) annual *= (1 + d[k]/100); });
-    annual = ((annual - 1)*100).toFixed(1);
-    rbody += '<tr><td style="font-weight:600;">'+yr+'</td>';
+    var d=MONTHLY_RETURNS[yr]||{}, annual=1;
+    mKeys.forEach(function(k){ if(d[k]!=null) annual*=(1+d[k]/100); });
+    annual=((annual-1)*100).toFixed(1);
+    rbody+='<tr><td style="font-weight:600;">'+yr+'</td>';
     mKeys.forEach(function(k){
-      var v = d[k];
-      if(v==null){ rbody += '<td class="r" style="color:var(--muted);">—</td>'; return; }
-      rbody += '<td class="r" style="color:'+(v>=0?'var(--green)':'var(--red)')+';">'+(v>=0?'+':'')+v+'%</td>';
+      var v=d[k];
+      if(v==null){ rbody+='<td class="r" style="color:var(--muted);">—</td>'; return; }
+      rbody+='<td class="r" style="color:'+(v>=0?'var(--green)':'var(--red)')+';">'+(v>=0?'+':'')+v+'%</td>';
     });
-    rbody += '<td class="r" style="font-weight:700;color:'+(+annual>=0?'var(--green)':'var(--red)')+';">'+(+annual>=0?'+':'')+annual+'%</td>';
-    rbody += '</tr>';
+    rbody+='<td class="r" style="font-weight:700;color:'+(+annual>=0?'var(--green)':'var(--red)')+';">'+(+annual>=0?'+':'')+annual+'%</td></tr>';
   });
   document.getElementById('r-returns-body').innerHTML = rbody;
 
-  // ─────────────────
-  // CHARTS
-  // ─────────────────
-  var dk = document.documentElement.getAttribute('data-theme') === 'dark';
-  var textCol = dk ? '#c9b99a' : '#444';
-  var gridCol = dk ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
-  var font9 = { family:'JetBrains Mono,monospace', size:9 };
+  // Charts
+  var dk = document.documentElement.getAttribute('data-theme')==='dark';
+  var textCol = dk?'#c9b99a':'#444';
+  var gridCol = dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+  var font9 = {family:'JetBrains Mono,monospace',size:9};
 
-  // Evolution chart
   var ectx = document.getElementById('r-evolution-chart');
   if(ectx){
-    new Chart(ectx, {
+    new Chart(ectx,{
       type:'line',
       data:{
-        labels: WEALTH_CURVE.labels,
+        labels:WEALTH_CURVE.labels,
         datasets:[
-          {
-            label:'Patrimônio', data:WEALTH_CURVE.values,
-            borderColor:'#c9a050',
-            backgroundColor: function(ctx){
-              var chart=ctx.chart, ca=chart.chartArea;
-              if(!ca) return 'rgba(201,160,80,0.15)';
-              var g=chart.ctx.createLinearGradient(0,ca.top,0,ca.bottom);
-              g.addColorStop(0,'rgba(201,160,80,0.35)'); g.addColorStop(1,'rgba(201,160,80,0.00)');
-              return g;
-            },
-            fill:true, tension:0.35, borderWidth:2.5, pointRadius:0, pointHoverRadius:4,
-          },
-          {
-            label:'Capital Aportado', data:WEALTH_CURVE.invested,
-            borderColor:'#6b7280', borderDash:[6,4],
-            backgroundColor:'transparent', fill:false, tension:0.2, borderWidth:1.5, pointRadius:0,
-          },
+          {label:'Patrimônio',data:WEALTH_CURVE.values,borderColor:'#c9a050',
+           backgroundColor:function(ctx){ var ch=ctx.chart,ca=ch.chartArea; if(!ca) return 'rgba(201,160,80,0.15)'; var g=ch.ctx.createLinearGradient(0,ca.top,0,ca.bottom); g.addColorStop(0,'rgba(201,160,80,0.35)'); g.addColorStop(1,'rgba(201,160,80,0)'); return g; },
+           fill:true,tension:0.35,borderWidth:2.5,pointRadius:0,pointHoverRadius:4},
+          {label:'Capital Aportado',data:WEALTH_CURVE.invested,borderColor:'#6b7280',borderDash:[6,4],backgroundColor:'transparent',fill:false,tension:0.2,borderWidth:1.5,pointRadius:0},
         ]
       },
-      options:{
-        responsive:true, animation:{duration:0},
-        interaction:{mode:'index',intersect:false},
-        plugins:{
-          legend:{display:true,labels:{color:textCol,font:font9,usePointStyle:true,pointStyleWidth:6}},
-          tooltip:{
-            callbacks:{
-              label:function(i){ return '  '+i.dataset.label+': $'+i.raw.toLocaleString('pt-BR'); },
-              afterBody:function(items){
-                var p=0,inv=0;
-                items.forEach(function(i){ if(i.dataset.label==='Patrimônio') p=i.raw; else inv=i.raw; });
-                return ['  P&L: '+(p-inv>=0?'+':'−')+'$'+Math.abs(p-inv).toLocaleString('pt-BR')];
-              }
-            }
-          }
-        },
-        scales:{
-          x:{ticks:{font:font9,color:textCol,maxRotation:45,maxTicksLimit:16},grid:{color:gridCol},border:{display:false}},
-          y:{ticks:{font:font9,color:textCol,callback:function(v){return '$'+v.toLocaleString('pt-BR');}},grid:{color:gridCol},border:{display:false}}
-        }
-      }
+      options:{responsive:true,animation:{duration:0},interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:true,labels:{color:textCol,font:font9,usePointStyle:true,pointStyleWidth:6}},
+          tooltip:{callbacks:{label:function(i){ return '  '+i.dataset.label+': $'+i.raw.toLocaleString('pt-BR'); },
+            afterBody:function(items){ var p=0,inv=0; items.forEach(function(i){ if(i.dataset.label==='Patrimônio') p=i.raw; else inv=i.raw; }); return ['  P&L: '+(p-inv>=0?'+':'−')+'$'+Math.abs(p-inv).toLocaleString('pt-BR')]; }}}},
+        scales:{x:{ticks:{font:font9,color:textCol,maxRotation:45,maxTicksLimit:16},grid:{color:gridCol},border:{display:false}},
+                y:{ticks:{font:font9,color:textCol,callback:function(v){ return '$'+v.toLocaleString('pt-BR'); }},grid:{color:gridCol},border:{display:false}}}}
     });
   }
 
-  // Annual returns chart
-  var ANNUAL_RETURNS = {};
-  years.forEach(function(yr){
-    var d = MONTHLY_RETURNS[yr] || {};
-    var a = 1;
-    mKeys.forEach(function(k){ if(d[k]!=null) a *= (1+d[k]/100); });
-    ANNUAL_RETURNS[yr] = +((a-1)*100).toFixed(1);
-  });
-  var allYears = [2022,2023,2024,2025,2026];
-  var annualVals = [
-    -2.4, // 2022 estimate
-    null, // placeholder
-    null,
-    null,
-    null,
-  ];
-  // recalculate all
-  allYears.forEach(function(yr,i){
-    var d = MONTHLY_RETURNS[yr] || {};
-    var a = 1, hasData = false;
-    mKeys.forEach(function(k){ if(d[k]!=null){ a *= (1+d[k]/100); hasData=true; } });
-    annualVals[i] = hasData ? +((a-1)*100).toFixed(1) : null;
-  });
+  var allYears=[2022,2023,2024,2025,2026];
+  var annualVals=[-2.4,null,null,null,null];
+  allYears.forEach(function(yr,i){ var d=MONTHLY_RETURNS[yr]||{},a=1,has=false; mKeys.forEach(function(k){ if(d[k]!=null){a*=(1+d[k]/100);has=true;} }); annualVals[i]=has?+((a-1)*100).toFixed(1):null; });
 
   var actx = document.getElementById('r-annual-chart');
   if(actx){
-    new Chart(actx, {
+    new Chart(actx,{
       type:'bar',
-      data:{
-        labels: allYears.map(String),
-        datasets:[{
-          label:'Retorno Anual (%)',
-          data: annualVals,
-          backgroundColor: annualVals.map(function(v){ return v==null?'transparent':v>=0?'rgba(63,185,80,0.65)':'rgba(248,81,73,0.65)'; }),
-          borderColor: annualVals.map(function(v){ return v==null?'transparent':v>=0?'#3fb950':'#f85149'; }),
-          borderWidth:1, borderRadius:3,
-        }]
-      },
-      options:{
-        responsive:true, animation:{duration:0},
-        plugins:{
-          legend:{display:false},
-          tooltip:{callbacks:{label:function(i){ return (i.raw>=0?'+':'')+i.raw+'%'; }}}
-        },
-        scales:{
-          x:{ticks:{font:font9,color:textCol},grid:{display:false},border:{display:false}},
-          y:{ticks:{font:font9,color:textCol,callback:function(v){return v+'%';}},grid:{color:gridCol},border:{display:false}}
-        }
-      }
+      data:{labels:allYears.map(String),datasets:[{label:'Retorno Anual (%)',data:annualVals,
+        backgroundColor:annualVals.map(function(v){ return v==null?'transparent':v>=0?'rgba(63,185,80,0.65)':'rgba(248,81,73,0.65)'; }),
+        borderColor:annualVals.map(function(v){ return v==null?'transparent':v>=0?'#3fb950':'#f85149'; }),
+        borderWidth:1,borderRadius:3}]},
+      options:{responsive:true,animation:{duration:0},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(i){ return (i.raw>=0?'+':'')+i.raw+'%'; }}}},
+        scales:{x:{ticks:{font:font9,color:textCol},grid:{display:false},border:{display:false}},
+                y:{ticks:{font:font9,color:textCol,callback:function(v){ return v+'%'; }},grid:{color:gridCol},border:{display:false}}}}
     });
   }
-
 })();
+
+// ── Render inicial ──
+renderKPIs();
+renderAssetTable();
 </script>
 </body>
 </html>
