@@ -1189,11 +1189,12 @@ function setRef(ref){
       const days = (Date.now()/1000 - parseInt(gp.transaction.timestamp))/86400;
       const hodlUsd   = d0*eth + d1;
       const totalFees = (cf0+uncWeth)*eth + (cf1+uncUsdc);
+      const ENTRY_CAPITAL = 365; // capital real depositado em 18/03/2026 — não re-marca ao preço atual do ETH
       il  = pooledUsd - hodlUsd;
       pnl = totalFees + il;
-      if (days>0 && hodlUsd>0) {
-        apr     = pnl/hodlUsd/days*365*100;
-        feeApr  = totalFees/hodlUsd/days*365*100;
+      if (days>0 && ENTRY_CAPITAL>0) {
+        apr     = pnl/ENTRY_CAPITAL/days*365*100;
+        feeApr  = totalFees/ENTRY_CAPITAL/days*365*100;
         dailyFees = totalFees/days;
       }
     }
@@ -1209,13 +1210,13 @@ function setRef(ref){
   set('lp-pooled-sub', wethAmt.toFixed(4)+' WETH + '+usdcAmt.toFixed(2)+' USDC');
 
   // APR BRUTO + APR LÍQUIDO
-  if (apr !== null) {
-    const aprNet = apr - AAVE_BORROW_RATE;
+  if (feeApr !== null) {
+    const aprNet = feeApr - AAVE_BORROW_RATE;
     const fmtApr = v => (v>=0?'+':'')+v.toFixed(1)+'%';
-    set('lp-apr',     fmtApr(apr));
-    set('lp-apr-sub', feeApr!=null ? 'só fees: +'+feeApr.toFixed(1)+'%' : 'fees / capital');
+    set('lp-apr',     fmtApr(feeApr));
+    set('lp-apr-sub', apr!=null ? 'c/ IL: '+fmtApr(apr) : 'fees / capital investido');
     set('lp-apr-net', fmtApr(aprNet));
-    set('lp-apr-net-sub', fmtApr(apr)+' − '+AAVE_BORROW_RATE+'%');
+    set('lp-apr-net-sub', fmtApr(feeApr)+' − '+AAVE_BORROW_RATE+'%');
     const netEl = document.getElementById('lp-apr-net');
     if (netEl) netEl.className = 'lp-mv '+(aprNet>=0?'pos':'neg');
   }
