@@ -617,7 +617,7 @@ body, input, button, select, textarea {
  <div>
  <div class="field"><label data-i18n="lbl-eth-col">ETH colateral (ETH)</label><input type="number" id="aave-eth" value="1.88" step="0.001" oninput="calcAave()"></div>
  <div class="field"><label data-i18n="lbl-usdt-col">USDT colateral ($)</label><input type="number" id="aave-usdt" value="1650.00" step="1" oninput="calcAave()"></div>
- <div class="field"><label data-i18n="lbl-gho-debt">Dívida GHO ($)</label><input type="number" id="aave-debt" value="747.50" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-gho-debt">Dívida USDC ($)</label><input type="number" id="aave-debt" value="748.00" step="1" oninput="calcAave()"></div>
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="aave-ethprice" value="2070" step="1" oninput="calcAave()"></div>
@@ -1325,7 +1325,7 @@ var BASE = {
  ethQty:2.084106, solQty:19.37+0.13059,
  ethPrice:1936.22, solPrice:83.43,
  altVal:150, // ADA+RDNT+ZK+etc rough
- aaveDebt:747.50, aaveUSDT:1650.00, aaveETH:1.88,
+ aaveDebt:748.00, aaveUSDT:1650.00, aaveETH:1.88,
  kamDebt:805.70, kamPYUSD:300.55, kamSOL:19.37,
  kamLiqThresh:0.7579, aaveLiqThresh:0.86,
  uniRangeMin:1855.72, uniRangeMax:3146.36,
@@ -1603,7 +1603,7 @@ function checkAlerts(verbose){
  const ethPrice=parseFloat(document.getElementById('aave-ethprice')?.value||liveETH);
  const solPrice=parseFloat(document.getElementById('kam-solprice')?.value||liveSOL);
  const ethCol=1.88*ethPrice+1650.00;
- const aaveHF=(ethCol*0.86)/747.50;
+ const aaveHF=(ethCol*0.86)/748.00;
  const kamCol=19.37*solPrice+300.55;
  const kamLTV=(805.70/kamCol*100);
  const uniIn=ethPrice>=1855.72&&ethPrice<=3146.36;
@@ -2021,7 +2021,7 @@ var LANG_STRINGS = {
   // liquidação — AAVE labels
   'lbl-eth-col':   {pt:'ETH colateral (ETH)',  en:'ETH collateral (ETH)'},
   'lbl-usdt-col':  {pt:'USDT colateral ($)',   en:'USDT collateral ($)'},
-  'lbl-gho-debt':  {pt:'Dívida GHO ($)',       en:'GHO Debt ($)'},
+  'lbl-gho-debt':  {pt:'Dívida USDC ($)',       en:'USDC Debt ($)'},
   'lbl-eth-price': {pt:'Preço ETH atual ($)',  en:'Current ETH price ($)'},
   'lbl-aave-ltv':  {pt:'LTV máximo Aave (%)', en:'Aave max LTV (%)'},
   'lbl-liq-thresh':{pt:'Limiar liquidação (%)',en:'Liquidation threshold (%)'},
