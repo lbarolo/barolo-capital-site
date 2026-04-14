@@ -449,9 +449,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
     POOLS.forEach(function(p) {
       var is2026 = (p.open && p.open.indexOf('2026') !== -1) || p.status === 'active';
       if (!is2026) return;
-      fees2026 += p.fees || 0;
-      pnl2026  += p.result || 0;
-      if (p.status === 'active') activePools++;
+      if (p.status === 'active') {
+        // Usa dados live da Uniswap se disponíveis, senão cai no array estático
+        fees2026 += (window._liveYTDFees != null ? window._liveYTDFees : p.fees) || 0;
+        pnl2026  += (window._liveYTDPnl  != null ? window._liveYTDPnl  : p.result) || 0;
+        activePools++;
+      } else {
+        fees2026 += p.fees || 0;
+        pnl2026  += p.result || 0;
+      }
       dias2026 += p.days || 0;
     });
     var feesEl = document.getElementById('ytd-fees');
@@ -466,6 +472,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
     if (actEl)  actEl.textContent = activePools;
     if (diasEl) diasEl.textContent = dias2026 + ' dias';
   }
+  window.calcYTD = calcYTD;
   document.addEventListener('DOMContentLoaded', calcYTD);
   // Also try after POOLS may be defined if DOMContentLoaded already fired
   if (document.readyState !== 'loading') calcYTD();
@@ -2001,7 +2008,8 @@ function buildFees(type) {
   try {
     if (charts.fees) { charts.fees.destroy(); charts.fees = null; }
     var dk = isDark(); var isLine = type === 'line';
-    var yearFees = [267, 109, 1453, 25]; var yearLabels = ['2023','2024','2025','2026 YTD'];
+    var ytd2026 = window._liveYTDFees != null ? Math.round(window._liveYTDFees) : 25;
+    var yearFees = [267, 109, 1453, ytd2026]; var yearLabels = ['2023','2024','2025','2026 YTD'];
     var col = dk?'rgba(201,160,80,0.72)':'rgba(138,104,32,0.68)';
     charts.fees = new Chart(ctx, { type:isLine?'line':'bar', data:{
       labels:yearLabels, datasets:[{ label:'Taxas Anuais', data:yearFees,
@@ -3201,6 +3209,10 @@ function buildNetRanking() {
 
  window._liveUniActive  = isActive;
  window._liveUniPooled  = totalPooled;
+ window._liveYTDFees    = totalFees;
+ window._liveYTDPnl     = pnl;
+ if (typeof window.calcYTD === 'function') window.calcYTD();
+ if (typeof buildFees === 'function') buildFees(chartTypes.fees || 'bar');
 
  // ── Atualiza range visual no card de LP ──────────────────────────
  const RANGE_MIN = 2450, RANGE_MAX = 3100;
