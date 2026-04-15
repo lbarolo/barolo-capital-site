@@ -545,46 +545,220 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </div>
 
 
-<!-- ══ GECKOTERMINAL — UNISWAP V3 POOLS ══ -->
-<div class="section-label" style="margin-top:32px;">Uniswap V3 — Explore Pools</div>
+<!-- ══ UNISWAP V3 — ETH/STABLES EXPLORER ══ -->
+<div class="section-label" style="margin-top:32px;">Uniswap V3 — Melhores APRs ETH/Stables</div>
 <div class="revert-panel">
  <div class="revert-toolbar">
  <div class="revert-title">
  <span style="font-size:15px;font-weight:800;font-family:'Satoshi',serif;">
  <span style="color:#ff007a;">◈</span> UNISWAP V3
  </span>
- <span style="font-size:9px;color:var(--muted);">via GeckoTerminal · Ethereum</span>
+ <span style="font-size:9px;color:var(--muted);" id="uni-status">carregando…</span>
  </div>
- <a class="btn-open" href="https://www.geckoterminal.com/eth/pools" target="_blank" rel="noopener">↗ Abrir GeckoTerminal</a>
- </div>
- <div class="iframe-wrap" id="uniswapWrap">
- <div class="iframe-spinner" id="uniswapLoading">
- <div class="spinner-ring" style="border-top-color:#ff007a;"></div>
- <div class="spinner-label">CARREGANDO…</div>
- </div>
- <iframe id="uniswapFrame"
- src="https://www.geckoterminal.com/eth/pools?embed=1&info=0&swaps=0"
- title="GeckoTerminal — Uniswap V3 Pools"
- allow="clipboard-write"
- referrerpolicy="no-referrer-when-downgrade"
- style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
- </iframe>
- <div class="iframe-fallback" id="uniswapFallback">
- <div class="ifb-icon" style="color:#ff007a;">◈</div>
- <div class="ifb-title">GeckoTerminal</div>
- <div class="ifb-sub">Não foi possível carregar o embed.<br>Clique para abrir em nova aba.</div>
- <a href="https://www.geckoterminal.com/eth/pools" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir GeckoTerminal</a>
+ <div style="display:flex;gap:6px;align-items:center;">
+ <button class="btn-sm" onclick="loadAllUniPools()">↺ Atualizar</button>
+ <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener">↗ Uniswap</a>
  </div>
  </div>
+
+ <!-- Abas de rede -->
+ <div style="display:flex;gap:0;border-bottom:1px solid var(--border);">
+ <button class="uni-tab active" onclick="switchUniTab('eth',this)" style="padding:8px 18px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;border:none;background:none;cursor:pointer;color:var(--text);border-bottom:2px solid #627EEA;opacity:1;">
+ ◆ ETHEREUM
+ </button>
+ <button class="uni-tab" onclick="switchUniTab('base',this)" style="padding:8px 18px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;">
+ ◆ BASE
+ </button>
+ <button class="uni-tab" onclick="switchUniTab('arbitrum',this)" style="padding:8px 18px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;">
+ ◆ ARBITRUM
+ </button>
+ </div>
+
+ <!-- Tabela -->
+ <div style="overflow-x:auto;">
+ <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11px;">
+ <thead>
+ <tr style="border-bottom:1px solid var(--border);color:var(--muted);">
+ <th style="padding:9px 16px;text-align:left;font-weight:500;letter-spacing:.05em;">PAR</th>
+ <th style="padding:9px 10px;text-align:center;font-weight:500;letter-spacing:.05em;">FEE</th>
+ <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">APR EST.</th>
+ <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">TVL</th>
+ <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">VOL 24H</th>
+ <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">VAR 24H</th>
+ </tr>
+ </thead>
+ <tbody id="uniPoolsBody">
+ <tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);">
+ <div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>
+ Carregando pools…
+ </td></tr>
+ </tbody>
+ </table>
+ </div>
+
  <div class="panel-footer">
- <span style="font-size:9px;color:var(--muted);">GeckoTerminal · Uniswap V3 Ethereum</span>
- <div style="display:flex;gap:6px;">
- <button class="btn-sm" onclick="togglePanel('uniswapWrap',this)">⤢ Expandir</button>
- <button class="btn-sm" onclick="reloadPanel('uniswapFrame','uniswapLoading','uniswapFallback')">↺ Recarregar</button>
- <a class="btn-open" href="https://www.geckoterminal.com/eth/pools" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
- </div>
+ <span style="font-size:9px;color:var(--muted);">Fonte: GeckoTerminal API · Uniswap V3 · APR = Vol24h × fee ÷ TVL × 365</span>
+ <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
  </div>
 </div>
+
+<script>
+(function() {
+ // Endereços WETH por rede
+ const WETH = {
+ eth:      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+ base:     '0x4200000000000000000000000000000000000006',
+ arbitrum: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1'
+ };
+ // Stables conhecidas (lowercase)
+ const STABLES = new Set([
+ 'usdc','usdt','dai','usds','usdbc','usdc.e','frax','lusd','crvusd','pyusd','usde','susde','rlusd'
+ ]);
+ // Cores por rede
+ const NET_COLOR = { eth:'#627EEA', base:'#4fa8ff', arbitrum:'#5882d2' };
+ // Links Uniswap por rede
+ const UNI_LINK = {
+ eth:      'https://app.uniswap.org/explore/pools/ethereum/',
+ base:     'https://app.uniswap.org/explore/pools/base/',
+ arbitrum: 'https://app.uniswap.org/explore/pools/arbitrum/'
+ };
+
+ let _cache = {}; // { eth: [...], base: [...], arbitrum: [...] }
+ let _activeNet = 'eth';
+
+ function fmtM(n) {
+ n = parseFloat(n); if (isNaN(n)||n===0) return '—';
+ if (n>=1e9) return '$'+(n/1e9).toFixed(2)+'B';
+ if (n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+ if (n>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
+ return '$'+n.toFixed(0);
+ }
+
+ function extractFee(name) {
+ // extrai "0.05%" ou "0.3%" do nome da pool
+ const m = (name||'').match(/([\d.]+)%/);
+ return m ? parseFloat(m[1]) : null;
+ }
+
+ function isEthStable(name, baseToken, quoteToken) {
+ // checa se um dos tokens é WETH/ETH e o outro é stable
+ const toks = [baseToken, quoteToken].map(t => (t||'').toLowerCase());
+ const hasEth = toks.some(t => t.includes('weth') || t === 'eth');
+ const hasStable = toks.some(t => STABLES.has(t) || STABLES.has(t.replace('.e','').replace('bc','')));
+ return hasEth && hasStable;
+ }
+
+ async function fetchNet(net) {
+ if (_cache[net]) return _cache[net];
+ const url = `https://api.geckoterminal.com/api/v2/networks/${net}/tokens/${WETH[net]}/pools?page=1&sort=h24_volume_usd_liquidity_desc`;
+ const r = await fetch(url, {headers:{Accept:'application/json'}});
+ if (!r.ok) throw new Error('HTTP '+r.status);
+ const j = await r.json();
+ const pools = (j.data||[]).filter(p => {
+ const a = p.attributes||{};
+ const name = a.name||'';
+ // filtra Uniswap V3
+ const rel = p.relationships||{};
+ const dexId = (rel.dex&&rel.dex.data&&rel.dex.data.id)||'';
+ if (!dexId.includes('uniswap') && !name.toLowerCase().includes('uniswap')) return false;
+ if (!dexId.includes('v3') && !dexId.includes('v4') && !name.toLowerCase().includes('v3') && !name.toLowerCase().includes('v4')) return false;
+ // extrai tokens do nome (ex: "WETH / USDC 0.05%")
+ const parts = name.split('/').map(s=>s.trim().replace(/[\d.]+%/,'').trim());
+ return isEthStable(name, parts[0], parts[1]);
+ }).map(p => {
+ const a = p.attributes||{};
+ const name = a.name||'—';
+ const tvl = parseFloat(a.reserve_in_usd)||0;
+ const vol = parseFloat(a.volume_usd&&a.volume_usd.h24)||0;
+ const fee = extractFee(name);
+ const apr = (fee && tvl > 0) ? (vol * fee/100 / tvl * 365 * 100) : null;
+ const chg = parseFloat(a.price_change_percentage&&a.price_change_percentage.h24);
+ const addr = p.id.replace(net+'_','');
+ return { name, tvl, vol, fee, apr, chg, addr };
+ }).filter(p => p.tvl > 10000) // TVL mínimo $10k
+ .sort((a,b) => (b.apr||0)-(a.apr||0))
+ .slice(0, 20);
+ _cache[net] = pools;
+ return pools;
+ }
+
+ function renderTable(pools, net) {
+ const body = document.getElementById('uniPoolsBody');
+ if (!pools.length) {
+ body.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool ETH/stable encontrada.</td></tr>';
+ return;
+ }
+ body.innerHTML = pools.map(p => {
+ const aprStr = p.apr!=null ? (p.apr>999?'>999':p.apr.toFixed(1))+'%' : '—';
+ const aprColor = p.apr==null?'var(--muted)':p.apr>=50?'var(--gold)':p.apr>=20?'var(--green)':'var(--text)';
+ const chgColor = isNaN(p.chg)?'var(--muted)':p.chg>=0?'var(--green)':'var(--red)';
+ const chgStr = isNaN(p.chg)?'—':(p.chg>=0?'+':'')+p.chg.toFixed(2)+'%';
+ const feeStr = p.fee!=null ? p.fee+'%' : '—';
+ const link = UNI_LINK[net]+p.addr;
+ // limpa o nome removendo a fee do final (já temos coluna)
+ const cleanName = p.name.replace(/\s*[\d.]+%\s*$/,'').trim();
+ return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;"
+ onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"
+ onclick="window.open('${link}','_blank')">
+ <td style="padding:9px 16px;font-weight:600;color:var(--text);">${cleanName}</td>
+ <td style="padding:9px 10px;text-align:center;">
+ <span style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;">${feeStr}</span>
+ </td>
+ <td style="padding:9px 16px;text-align:right;font-weight:700;color:${aprColor};">${aprStr}</td>
+ <td style="padding:9px 16px;text-align:right;color:var(--muted);">${fmtM(p.tvl)}</td>
+ <td style="padding:9px 16px;text-align:right;">${fmtM(p.vol)}</td>
+ <td style="padding:9px 16px;text-align:right;color:${chgColor};">${chgStr}</td>
+ </tr>`;
+ }).join('');
+ }
+
+ window.switchUniTab = function(net, btn) {
+ _activeNet = net;
+ document.querySelectorAll('.uni-tab').forEach(b => {
+ b.style.color = 'var(--muted)';
+ b.style.borderBottom = '2px solid transparent';
+ });
+ btn.style.color = 'var(--text)';
+ btn.style.borderBottom = '2px solid '+NET_COLOR[net];
+
+ const body = document.getElementById('uniPoolsBody');
+ if (_cache[net]) {
+ renderTable(_cache[net], net);
+ } else {
+ body.innerHTML = '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);"><div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>Carregando…</td></tr>';
+ loadNet(net);
+ }
+ };
+
+ async function loadNet(net) {
+ const status = document.getElementById('uni-status');
+ try {
+ const pools = await fetchNet(net);
+ if (_activeNet === net) renderTable(pools, net);
+ if (status) status.textContent = 'atualizado '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+ } catch(e) {
+ if (_activeNet === net) {
+ const body = document.getElementById('uniPoolsBody');
+ body.innerHTML = `<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Erro ao carregar. <button class="btn-sm" onclick="loadNet('${net}')" style="margin-left:8px;">↺ Tentar novamente</button></td></tr>`;
+ }
+ }
+ }
+
+ window.loadAllUniPools = function() {
+ _cache = {};
+ loadNet(_activeNet);
+ // pré-carrega as outras em background
+ Object.keys(WETH).forEach(n => { if(n!==_activeNet) loadNet(n); });
+ };
+
+ document.addEventListener('DOMContentLoaded', function() {
+ loadNet('eth');
+ // pré-carrega Base e Arbitrum em background
+ setTimeout(()=>loadNet('base'), 1500);
+ setTimeout(()=>loadNet('arbitrum'), 3000);
+ });
+})();
+</script>
 
 
 
