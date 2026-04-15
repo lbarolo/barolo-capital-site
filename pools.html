@@ -546,98 +546,47 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 
 <!-- ══ UNISWAP EXPLORE ══ -->
-<div class="section-label" style="margin-top:32px;">Uniswap — Top Pools</div>
+<div class="section-label" style="margin-top:32px;">Uniswap — Explore Pools</div>
 <div class="revert-panel">
  <div class="revert-toolbar">
  <div class="revert-title">
  <span style="font-size:15px;font-weight:800;font-family:'Satoshi',serif;">
- <span style="color:#ff007a;">◈</span> UNISWAP V3
+ <span style="color:#ff007a;">◈</span> UNISWAP
  </span>
- <span style="font-size:9px;color:var(--muted);" id="uni-updated">carregando…</span>
+ <span style="font-size:9px;color:var(--muted);">app.uniswap.org · Explore Pools</span>
  </div>
- <a class="btn-open" href="https://app.uniswap.org/explore" target="_blank" rel="noopener">↗ Abrir Uniswap</a>
+ <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener">↗ Abrir Uniswap</a>
  </div>
- <div style="overflow-x:auto;">
- <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11px;">
- <thead>
- <tr style="border-bottom:1px solid var(--border);color:var(--muted);">
- <th style="padding:10px 16px;text-align:left;font-weight:500;letter-spacing:.05em;">#</th>
- <th style="padding:10px 16px;text-align:left;font-weight:500;letter-spacing:.05em;">POOL</th>
- <th style="padding:10px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">PREÇO</th>
- <th style="padding:10px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">VOL 24H</th>
- <th style="padding:10px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">TVL</th>
- <th style="padding:10px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">VAR 24H</th>
- </tr>
- </thead>
- <tbody id="uniPoolsBody">
- <tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);">
- <div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;"></div>
- Carregando pools…
- </td></tr>
- </tbody>
- </table>
+ <div class="iframe-wrap" id="uniswapWrap">
+ <div class="iframe-spinner" id="uniswapLoading">
+ <div class="spinner-ring" style="border-top-color:#ff007a;"></div>
+ <div class="spinner-label">CARREGANDO UNISWAP…</div>
+ </div>
+ <iframe id="uniswapFrame"
+ src="https://app.uniswap.org/explore/pools"
+ title="Uniswap Explore Pools"
+ sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation"
+ allow="clipboard-write; clipboard-read; web-share"
+ referrerpolicy="no-referrer-when-downgrade"
+ style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
+ </iframe>
+ <div class="iframe-fallback" id="uniswapFallback">
+ <div class="ifb-icon" style="color:#ff007a;">◈</div>
+ <div class="ifb-title">Uniswap</div>
+ <div class="ifb-sub">Não foi possível carregar o embed.<br>Pode ser lentidão de conexão ou bloqueio de iframe.<br>Clique para abrir em nova aba.</div>
+ <a href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir Uniswap Explore</a>
+ <div class="ifb-addr">app.uniswap.org/explore/pools</div>
+ </div>
  </div>
  <div class="panel-footer">
- <span style="font-size:9px;color:var(--muted);">Fonte: GeckoTerminal · Uniswap V3 Ethereum</span>
+ <span style="font-size:9px;color:var(--muted);">Uniswap V3/V4 · Explore Pools</span>
  <div style="display:flex;gap:6px;">
- <button class="btn-sm" onclick="loadUniPools()">↺ Atualizar</button>
- <a class="btn-open" href="https://app.uniswap.org/explore" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
+ <button class="btn-sm" onclick="togglePanel('uniswapWrap',this)">⤢ Expandir</button>
+ <button class="btn-sm" onclick="reloadPanel('uniswapFrame','uniswapLoading','uniswapFallback')">↺ Recarregar</button>
+ <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
  </div>
  </div>
 </div>
-
-<script>
-async function loadUniPools() {
- const body = document.getElementById('uniPoolsBody');
- const upd = document.getElementById('uni-updated');
- body.innerHTML = '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);">Carregando…</td></tr>';
- try {
- const r = await fetch('https://api.geckoterminal.com/api/v2/networks/eth/dexes/uniswap_v3/pools?page=1&sort=h24_volume_usd_liquidity_desc', {headers:{Accept:'application/json'}});
- const j = await r.json();
- const pools = (j.data || []).slice(0, 15);
- if (!pools.length) throw new Error('sem dados');
- const fmt = n => {
- n = parseFloat(n);
- if (isNaN(n)) return '—';
- if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
- if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
- if (n >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
- return '$' + n.toFixed(2);
- };
- const fmtP = n => {
- n = parseFloat(n);
- if (isNaN(n)) return '—';
- if (n >= 1e6) return '$' + (n/1e6).toFixed(4) + 'M';
- if (n >= 1e3) return '$' + (n/1e3).toFixed(2) + 'K';
- if (n >= 1) return '$' + n.toFixed(4);
- return '$' + n.toFixed(6);
- };
- body.innerHTML = pools.map((p, i) => {
- const a = p.attributes || {};
- const chg = parseFloat(a.price_change_percentage && a.price_change_percentage.h24);
- const chgColor = isNaN(chg) ? 'var(--muted)' : chg >= 0 ? 'var(--green)' : 'var(--red)';
- const chgStr = isNaN(chg) ? '—' : (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
- const addr = p.relationships && p.relationships.base_token && p.relationships.base_token.data && p.relationships.base_token.data.id ? p.id.replace('eth_','') : '';
- const uniUrl = 'https://app.uniswap.org/explore/pools/ethereum/' + addr;
- return `<tr style="border-bottom:1px solid var(--border);transition:background .15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
- <td style="padding:10px 16px;color:var(--muted);">${i+1}</td>
- <td style="padding:10px 16px;">
- <a href="${uniUrl}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;font-weight:600;">${a.name || '—'}</a>
- <div style="font-size:9px;color:var(--muted);margin-top:2px;">${(a.pool_type||'').toUpperCase() || 'V3'}</div>
- </td>
- <td style="padding:10px 16px;text-align:right;">${fmtP(a.base_token_price_usd)}</td>
- <td style="padding:10px 16px;text-align:right;">${fmt(a.volume_usd && a.volume_usd.h24)}</td>
- <td style="padding:10px 16px;text-align:right;">${fmt(a.reserve_in_usd)}</td>
- <td style="padding:10px 16px;text-align:right;color:${chgColor};">${chgStr}</td>
- </tr>`;
- }).join('');
- if (upd) upd.textContent = 'atualizado ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
- } catch(e) {
- body.innerHTML = `<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Erro ao carregar dados. <button class="btn-sm" onclick="loadUniPools()" style="margin-left:8px;">↺ Tentar novamente</button></td></tr>`;
- }
-}
-document.addEventListener('DOMContentLoaded', loadUniPools);
-</script>
 
 
 
@@ -806,27 +755,21 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  if (fallback) fallback.style.display = 'flex';
  }
 
- // Load event — fires when page loads, when X-Frame-Options blocks, or on network error
+ // Load event — fires when page loads OR when X-Frame-Options blocks it
  frame.addEventListener('load', function() {
- const elapsed = Date.now() - startTime;
  try {
  const loc = frame.contentWindow.location.href;
  if (!loc || loc === 'about:blank') {
- // about:blank rápido (<2s) = bloqueado por X-Frame-Options
- if (elapsed < 2000) blankTimer = setTimeout(showFallback, 1000);
- return;
- }
- // Same-origin URL = carregou ok
- showFrame();
- } catch(e) {
- // SecurityError pode ser:
- // (a) página cross-origin real — load demorado (>2s) → showFrame
- // (b) página de erro do browser (ERR_CONNECTION_REFUSED) — load rápido (<2s) → fallback
- if (elapsed > 2000) {
- showFrame();
- } else {
+ const elapsed = Date.now() - startTime;
+ if (elapsed < 2000) {
  blankTimer = setTimeout(showFallback, 1000);
  }
+ return;
+ }
+ showFrame();
+ } catch(e) {
+ // SecurityError = página cross-origin carregou com sucesso
+ showFrame();
  }
  });
 
@@ -834,8 +777,9 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  const timer = setTimeout(showFallback, ms || 20000);
 }
 
-// Inicializar painéis
+// Inicializar painéis — Uniswap recebe timeout maior (25s) pois pode ser lento
 initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 15000);
+initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 25000);
 initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 15000);
 initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
