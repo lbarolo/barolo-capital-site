@@ -1175,9 +1175,7 @@ function setRef(ref){
   const GQL_QUERY = JSON.stringify({query:`{position(id:"${TOKEN_ID}"){depositedToken0 depositedToken1 withdrawnToken0 withdrawnToken1 collectedFeesToken0 collectedFeesToken1 transaction{timestamp}}}`});
   const ENDPOINTS = [
     { url:'https://interface.gateway.uniswap.org/v1/graphql',
-      headers:{'Content-Type':'application/json','origin':'https://app.uniswap.org'} },
-    { url:'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
-      headers:{'Content-Type':'application/json'} }
+      headers:{'Content-Type':'application/json','origin':'https://app.uniswap.org','x-request-source':'uniswap-web'} }
   ];
 
   for (const ep of ENDPOINTS) {
