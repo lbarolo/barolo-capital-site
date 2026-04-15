@@ -557,20 +557,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </div>
  <a class="btn-open" href="https://app.uniswap.org/explore" target="_blank" rel="noopener">↗ Abrir Uniswap</a>
  </div>
- <!-- Uniswap bloqueia embedding via X-Frame-Options/CSP — link direto -->
- <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:48px 32px;text-align:center;">
- <div style="font-size:38px;color:#ff007a;opacity:.5;">◈</div>
- <div style="font-family:'Satoshi',serif;font-size:17px;color:var(--text);font-weight:600;">Uniswap Explore</div>
- <div style="font-size:11px;color:var(--muted);max-width:380px;line-height:1.8;">
- O Uniswap não permite carregamento em iframe.<br>
- Clique abaixo para explorar pools diretamente no site.
+ <div class="iframe-wrap" id="uniswapWrap">
+ <div class="iframe-spinner" id="uniswapLoading">
+ <div class="spinner-ring" style="border-top-color:#ff007a;"></div>
+ <div class="spinner-label">CARREGANDO UNISWAP…</div>
  </div>
+ <iframe id="uniswapFrame"
+ src="https://app.uniswap.org/explore"
+ title="Uniswap Explore Pools"
+ allow="clipboard-write; clipboard-read; web-share"
+ referrerpolicy="no-referrer-when-downgrade"
+ style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
+ </iframe>
+ <div class="iframe-fallback" id="uniswapFallback">
+ <div class="ifb-icon" style="color:#ff007a;">◈</div>
+ <div class="ifb-title">Uniswap</div>
+ <div class="ifb-sub">Não foi possível carregar o embed nesta sessão.<br>Tente recarregar ou abra em nova aba.</div>
  <a href="https://app.uniswap.org/explore" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir Uniswap Explore</a>
- <div style="font-size:9px;color:var(--muted);margin-top:-6px;">app.uniswap.org/explore</div>
+ <div class="ifb-addr">app.uniswap.org/explore</div>
+ </div>
  </div>
  <div class="panel-footer">
  <span style="font-size:9px;color:var(--muted);">Uniswap V3/V4 · Explore Pools</span>
+ <div style="display:flex;gap:6px;">
+ <button class="btn-sm" onclick="togglePanel('uniswapWrap',this)">⤢ Expandir</button>
+ <button class="btn-sm" onclick="reloadPanel('uniswapFrame','uniswapLoading','uniswapFallback')">↺ Recarregar</button>
  <a class="btn-open" href="https://app.uniswap.org/explore" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
+ </div>
  </div>
 </div>
 
@@ -767,8 +780,9 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  const timer = setTimeout(showFallback, ms || 20000);
 }
 
-// Inicializar painéis (Uniswap não suporta iframe — removido)
+// Inicializar painéis
 initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 15000);
+initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 25000);
 initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 15000);
 initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
