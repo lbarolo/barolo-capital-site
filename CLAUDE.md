@@ -1317,3 +1317,72 @@ The Graph hosted service (`api.thegraph.com/subgraphs/name/uniswap/uniswap-v3`) 
 - **CSVs das CEX** — Lucas traz na próxima semana para custo de aquisição em BRL e base para IR
 - **`HOLDINGS` em `index.html`** — atualizar array quando Lucas comprar mais tokens
 - **The Graph endpoint** — considerar migrar para endpoint ativo (decentralized network requer API key) ou alternativa on-chain para fees históricas coletadas
+
+---
+
+## Sessão 15/04/2026 — iframe Uniswap substituído por GeckoTerminal + endpoint APR corrigido
+
+### Implementado
+
+#### `pools.html` — Painel Uniswap Explore: iframe → GeckoTerminal embed
+
+**Problema:** O iframe de `app.uniswap.org/explore/pools` estava dando "connection refused" / ERR_CONNECTION_REFUSED. O servidor do Uniswap retorna `X-Frame-Options: SAMEORIGIN` e `Content-Security-Policy: frame-ancestors 'self' https://app.safe.global`, bloqueando embedding de qualquer domínio externo. O comportamento intermitente (às vezes funcionava, às vezes não) é explicado por inconsistência de edge servers na CDN do Uniswap — alguns nós mandam o header, outros não.
+
+**Fix definitivo:** Substituído o iframe do Uniswap pelo embed do **GeckoTerminal**, que tem suporte explícito a iframe:
+- URL: `https://www.geckoterminal.com/eth/pools?embed=1&info=0&swaps=0`
+- Toolbar atualizada: título "UNISWAP V3", sub "via GeckoTerminal · Ethereum"
+- Link "↗ Abrir GeckoTerminal" aponta para `geckoterminal.com/eth/pools`
+- Fallback mantido (caso GeckoTerminal também bloqueie em algum ambiente)
+- Botões "Expandir" e "Recarregar" mantidos
+
+**IDs mantidos:** `uniswapWrap`, `uniswapLoading`, `uniswapFrame`, `uniswapFallback` — sem quebrar `initIframePanel`.
+
+#### `pools.html` — APR BRUTO LP: endpoint The Graph substituído
+
+**Problema:** O endpoint depreciado `api.thegraph.com/subgraphs/name/uniswap/uniswap-v3` falhava silenciosamente, deixando `feeApr = null` e o card APR BRUTO LP exibindo "—".
+
+**Fix — bloco 8 de `fetchUniswapLPData()` reescrito:**
+
+1. **Endpoint principal:** `https://interface.gateway.uniswap.org/v1/graphql` (gateway atual do Uniswap Labs, sem API key)
+   - Headers: `Content-Type: application/json`, `origin: https://app.uniswap.org`, `x-request-source: uniswap-web`
+   - Mesmo query GraphQL de antes: `position(id)` com `depositedToken*`, `withdrawnToken*`, `collectedFeesToken*`, `transaction.timestamp`
+
+2. **Fallback on-chain:** se o gateway falhar, usa `uncFeeUsd` (fees não coletadas, já calculado no bloco 7 via RPC) com label `"parcial · só fees não coletadas"` no sub-label do card APR BRUTO
+
+3. **Fallback total:** se nenhuma fonte tiver dados, sub-label exibe `"dados indisponíveis — subgraph offline"` (sem "—" silencioso)
+
+4. **Log de diagnóstico:** `console.debug('[LP] subgraph OK via <url>')` indica qual endpoint funcionou
+
+**Constantes adicionadas:**
+```js
+const ENTRY_CAPITAL = 365;      // capital real — já existia, movido para escopo externo
+const OPEN_TS = new Date('2026-03-18').getTime() / 1000; // para calcular dias no fallback
+const aprSource = 'histórico';  // label dinâmico da fonte
+```
+
+**Lógica de atualização do card APR BRUTO LP:**
+- Fonte subgraph: sub-label = `"c/ IL: +X.X%"` (PnL total)
+- Fonte on-chain fallback: sub-label = `"parcial · só fees não coletadas"`
+- Sem dados: sub-label = `"dados indisponíveis — subgraph offline"`
+
+### Dados atualizados
+
+Nenhum dado numérico de posição alterado nesta sessão.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Uniswap iframe dava "connection refused" | `app.uniswap.org` usa `X-Frame-Options: SAMEORIGIN` + CSP `frame-ancestors 'self'` — bloqueia qualquer origem externa. CDN inconsistente explicava o comportamento intermitente. | Substituído por GeckoTerminal embed que suporta iframe explicitamente |
+| APR BRUTO LP mostrava "—" | Endpoint The Graph (`api.thegraph.com/subgraphs/name/uniswap/uniswap-v3`) depreciado — falhava silenciosamente, `feeApr` ficava `null` | Substituído por `interface.gateway.uniswap.org/v1/graphql` com fallback on-chain e labels claros |
+| Fallback do iframe não detectava ERR_CONNECTION_REFUSED | Catch do `load` event chamava `showFrame()` incondicionalmente para qualquer SecurityError — incluindo página de erro do browser (chrome-error://) | Identificado mas não corrigido via código — problema resolvido pela troca de embed (GeckoTerminal) |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
+- **`ferramentas.html`** — calculadora de liquidação ainda usa "GHO" nos inputs HTML (deve ser USDC)
+- **CSVs das CEX** — Lucas traz na próxima semana para custo de aquisição em BRL e base para IR
+- **`HOLDINGS` em `index.html`** — atualizar array quando Lucas comprar mais tokens
+- **Testar gateway Uniswap Labs** — confirmar se `interface.gateway.uniswap.org/v1/graphql` retorna dados da posição #4694262 em produção (pode exigir CORS ou auth adicional; se falhar, cai no fallback on-chain)
