@@ -469,6 +469,52 @@ body, input, button, select, textarea {
   font-family: 'Satoshi', sans-serif !important;
 }
 
+
+/* ══ DIÁRIO SEMANAL ══ */
+.sw-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.sw-week-label{font-family:var(--font-mono);font-size:13px;color:var(--text);letter-spacing:1px;}
+.sw-week-sub{font-size:10px;color:var(--muted);letter-spacing:1px;}
+.sw-status{font-size:9px;letter-spacing:2px;padding:3px 8px;border-radius:4px;font-family:var(--font-mono);}
+.sw-status.saved{background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.3);}
+.sw-status.unsaved{background:rgba(201,160,80,.12);color:var(--accent);border:1px solid rgba(201,160,80,.3);}
+.sw-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}
+.sw-nav{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.sw-nav button{background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.sw-nav button:hover{color:var(--text);border-color:var(--accent);}
+.sw-section-hd{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:20px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.sw-section-hd .sw-icon{font-size:14px;}
+.sw-question{margin-bottom:16px;}
+.sw-question label{display:block;font-size:11px;color:var(--text);margin-bottom:6px;line-height:1.5;}
+.sw-question label span{color:var(--muted);font-size:10px;font-family:var(--font-mono);}
+.sw-question textarea{width:100%;box-sizing:border-box;background:var(--s2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:12px;line-height:1.7;padding:10px 12px;resize:vertical;min-height:72px;transition:border-color .2s;}
+.sw-question textarea:focus{outline:none;border-color:var(--accent);}
+.sw-question textarea::placeholder{color:var(--muted);opacity:.6;}
+.sw-history-item{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;}
+.sw-history-hd{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;background:var(--s2);user-select:none;}
+.sw-history-hd:hover{background:var(--s1);}
+.sw-history-hd .sw-hw{font-family:var(--font-mono);font-size:11px;color:var(--text);}
+.sw-history-hd .sw-hdate{font-size:10px;color:var(--muted);}
+.sw-history-hd .sw-htoggle{margin-left:auto;color:var(--muted);font-size:12px;transition:transform .2s;}
+.sw-history-hd.open .sw-htoggle{transform:rotate(180deg);}
+.sw-history-body{display:none;padding:16px;border-top:1px solid var(--border);}
+.sw-history-body.open{display:block;}
+.sw-history-q{margin-bottom:12px;}
+.sw-history-q .sw-hq-label{font-size:9px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:var(--font-mono);}
+.sw-history-q .sw-hq-text{font-size:12px;color:var(--text);line-height:1.6;white-space:pre-wrap;}
+.sw-history-q .sw-hq-empty{font-size:11px;color:var(--muted);font-style:italic;}
+.sw-copy-notice{font-size:10px;color:var(--green);display:none;margin-left:8px;}
+@media print {
+  body > *:not(#print-semanal){display:none !important;}
+  #print-semanal{display:block !important;padding:20px;font-family:Georgia,serif;color:#111;}
+  #print-semanal h1{font-size:18px;margin-bottom:4px;}
+  #print-semanal .sw-ph2{font-size:12px;color:#666;margin-bottom:20px;}
+  #print-semanal .sw-ps{font-size:11px;font-weight:700;letter-spacing:2px;color:#888;text-transform:uppercase;margin:18px 0 10px;border-bottom:1px solid #ddd;padding-bottom:6px;}
+  #print-semanal .sw-pq{margin-bottom:12px;}
+  #print-semanal .sw-pq-label{font-size:9px;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+  #print-semanal .sw-pq-text{font-size:12px;line-height:1.6;color:#222;white-space:pre-wrap;}
+  #print-semanal .sw-pq-empty{color:#aaa;font-style:italic;font-size:11px;}
+  #print-semanal .sw-pfooter{margin-top:30px;font-size:9px;color:#aaa;border-top:1px solid #ddd;padding-top:8px;}
+}
 </style>
 </head>
 <body>
@@ -535,6 +581,7 @@ body, input, button, select, textarea {
  <button class="tab" onclick="switchTab('alertas')" data-i18n="tab-alertas">Alertas</button>
  <button class="tab" onclick="switchTab('evolucao')" data-i18n="tab-evolucao">Evolução</button>
  <button class="tab" onclick="switchTab('apyscanner')" data-i18n="tab-apy">Pools APY</button>
+ <button class="tab" onclick="switchTab('semanal')" data-i18n="tab-semanal">Semanal</button>
  </div>
 
  <!-- ══════════════════════════════════════════════
@@ -1129,6 +1176,107 @@ body, input, button, select, textarea {
  </div>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     TAB 8 — DIÁRIO SEMANAL DE GESTÃO
+     ══════════════════════════════════════════════ -->
+<div class="panel" id="panel-semanal">
+
+  <!-- Área oculta para PDF print -->
+  <div id="print-semanal" style="display:none;"></div>
+
+  <!-- Header: semana atual + ações -->
+  <div class="sw-header">
+    <div>
+      <div class="sw-week-label" id="sw-week-label">Semana — / —</div>
+      <div class="sw-week-sub" id="sw-week-range">— — — —</div>
+    </div>
+    <span class="sw-status unsaved" id="sw-status">NÃO SALVO</span>
+    <div class="sw-actions">
+      <button class="btn btn-primary" onclick="swSave()" style="font-size:10px;padding:7px 14px;">SALVAR SEMANA</button>
+      <button class="btn" onclick="swExportPDF()" style="font-size:10px;padding:7px 14px;">EXPORTAR PDF</button>
+      <button class="btn" onclick="swCopyForClaude()" id="sw-copy-btn" style="font-size:10px;padding:7px 14px;" title="Copia a entrada formatada para colar no chat com Claude">COPIAR P/ CLAUDE</button>
+      <span class="sw-copy-notice" id="sw-copy-notice">✓ copiado!</span>
+    </div>
+  </div>
+
+  <!-- Navegação de semana -->
+  <div class="sw-nav">
+    <button onclick="swNavWeek(-1)" title="Semana anterior">‹</button>
+    <span style="font-size:11px;color:var(--muted);font-family:var(--font-mono);" id="sw-nav-label">semana atual</span>
+    <button onclick="swNavWeek(+1)" title="Próxima semana" id="sw-nav-fwd">›</button>
+  </div>
+
+  <div class="two-col">
+    <!-- Coluna esquerda: formulário -->
+    <div>
+
+      <!-- REFLEXÃO DA SEMANA -->
+      <div class="sw-section-hd"><span class="sw-icon">🧠</span> REFLEXÃO DA SEMANA</div>
+
+      <div class="sw-question">
+        <label><span>01 ·</span> Como me senti em relação ao mercado essa semana?</label>
+        <textarea id="sw-q1" placeholder="Descreva o sentimento — euforia, medo, indiferença, confiança..."></textarea>
+      </div>
+      <div class="sw-question">
+        <label><span>02 ·</span> O mercado já precificou o cenário atual?</label>
+        <textarea id="sw-q2" placeholder="Reflexão sobre o que o mercado está antecipando ou ignorando..."></textarea>
+      </div>
+      <div class="sw-question">
+        <label><span>03 ·</span> O consenso está otimista demais? O cenário ruim já está no preço?</label>
+        <textarea id="sw-q3" placeholder="Análise de sentimento coletivo vs. fundamentos..."></textarea>
+      </div>
+
+      <!-- REVISÃO DE ESTRATÉGIA -->
+      <div class="sw-section-hd"><span class="sw-icon">📊</span> REVISÃO DE ESTRATÉGIA</div>
+
+      <div class="sw-question">
+        <label><span>04 ·</span> Minha tese principal continua válida?</label>
+        <textarea id="sw-q4" placeholder="ETH/SOL longo prazo, yield DeFi, estrutura da carteira — está de pé?"></textarea>
+      </div>
+      <div class="sw-question">
+        <label><span>05 ·</span> Alguma mudança significativa no mercado exige revisão?</label>
+        <textarea id="sw-q5" placeholder="Macro, regulação, eventos de protocolo, concorrentes..."></textarea>
+      </div>
+      <div class="sw-question">
+        <label><span>06 ·</span> Adicionei novas ideias ou projetos para estudo?</label>
+        <textarea id="sw-q6" placeholder="Protocolos novos, estratégias, narrativas emergentes..."></textarea>
+      </div>
+
+      <!-- RISCOS ATUAIS -->
+      <div class="sw-section-hd"><span class="sw-icon">🔍</span> RISCOS ATUAIS</div>
+
+      <div class="sw-question">
+        <label><span>07 ·</span> Estamos em extremo risco?</label>
+        <textarea id="sw-q7" placeholder="Alavancagem do mercado, eventos binários, exposição pessoal..."></textarea>
+      </div>
+      <div class="sw-question">
+        <label><span>08 ·</span> O risco está alto ou baixo? Qual o meu nível de exposição?</label>
+        <textarea id="sw-q8" placeholder="Posições abertas, dívidas, liquidez, HF..."></textarea>
+      </div>
+      <div class="sw-question">
+        <label><span>09 ·</span> O mercado está complacente? Estou me sentindo desconfortável?</label>
+        <textarea id="sw-q9" placeholder="Quando todo mundo está confortável, o risco é maior..."></textarea>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn btn-primary" onclick="swSave()" style="font-size:10px;">SALVAR SEMANA</button>
+        <button class="btn" onclick="swClear()" style="font-size:10px;color:var(--muted);">LIMPAR</button>
+      </div>
+    </div>
+
+    <!-- Coluna direita: histórico -->
+    <div class="section" style="padding:18px 20px;">
+      <div class="section-title">Histórico Semanal <span id="sw-hist-count">0 SEMANAS</span></div>
+      <div id="sw-history-list">
+        <div style="text-align:center;padding:30px 0;color:var(--muted);font-size:11px;">
+          Nenhuma entrada ainda.<br>Salve a primeira semana para começar o histórico.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <script>
 // ══════════════════════════════════════════════
 // STATE & STORAGE
@@ -1174,6 +1322,7 @@ function switchTab(id){
  document.getElementById('panel-'+id).classList.add('active');
  event.target.classList.add('active');
  if(id==='evolucao') setTimeout(renderEvoChart,100);
+ if(id==='semanal') swInitWeek();
 }
 
 // ══════════════════════════════════════════════
@@ -1998,6 +2147,302 @@ document.addEventListener('DOMContentLoaded',function(){
  });
 });
 
+// ══════════════════════════════════════════════
+// DIÁRIO SEMANAL DE GESTÃO
+// ══════════════════════════════════════════════
+var STORAGE_WEEKLY = 'bc-weekly-diary-v1';
+var swEntries = JSON.parse(localStorage.getItem(STORAGE_WEEKLY) || '[]');
+var swCurrentOffset = 0; // 0 = semana atual, -1 = semana passada, etc.
+
+var SW_QUESTIONS = [
+  { id:'q1', section:'reflexao', label:'Como me senti em relação ao mercado essa semana?' },
+  { id:'q2', section:'reflexao', label:'O mercado já precificou o cenário atual?' },
+  { id:'q3', section:'reflexao', label:'O consenso está otimista demais? O cenário ruim já está no preço?' },
+  { id:'q4', section:'estrategia', label:'Minha tese principal continua válida?' },
+  { id:'q5', section:'estrategia', label:'Alguma mudança significativa no mercado exige revisão?' },
+  { id:'q6', section:'estrategia', label:'Adicionei novas ideias ou projetos para estudo?' },
+  { id:'q7', section:'riscos', label:'Estamos em extremo risco?' },
+  { id:'q8', section:'riscos', label:'O risco está alto ou baixo? Qual o meu nível de exposição?' },
+  { id:'q9', section:'riscos', label:'O mercado está complacente? Estou me sentindo desconfortável?' }
+];
+
+function swGetISOWeek(date) {
+  var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  var dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return { year: d.getUTCFullYear(), week: Math.ceil((((d - yearStart) / 86400000) + 1) / 7) };
+}
+
+function swGetWeekBounds(year, week) {
+  // Monday of ISO week
+  var jan4 = new Date(Date.UTC(year, 0, 4));
+  var dayOfJan4 = jan4.getUTCDay() || 7;
+  var monday = new Date(jan4);
+  monday.setUTCDate(jan4.getUTCDate() - dayOfJan4 + 1 + (week - 1) * 7);
+  var sunday = new Date(monday);
+  sunday.setUTCDate(monday.getUTCDate() + 6);
+  return { start: monday, end: sunday };
+}
+
+function swFmtDate(d) {
+  var months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  return d.getUTCDate() + ' ' + months[d.getUTCMonth()];
+}
+
+function swWeekKey(year, week) {
+  return year + '-W' + String(week).padStart(2, '0');
+}
+
+function swGetCurrentWeekInfo() {
+  var base = new Date();
+  base.setDate(base.getDate() + swCurrentOffset * 7);
+  var iw = swGetISOWeek(base);
+  var bounds = swGetWeekBounds(iw.year, iw.week);
+  return {
+    key: swWeekKey(iw.year, iw.week),
+    year: iw.year,
+    week: iw.week,
+    start: bounds.start,
+    end: bounds.end,
+    label: 'Semana ' + iw.week + ' · ' + iw.year,
+    range: swFmtDate(bounds.start) + ' – ' + swFmtDate(bounds.end) + ' ' + iw.year
+  };
+}
+
+function swInitWeek() {
+  var info = swGetCurrentWeekInfo();
+  document.getElementById('sw-week-label').textContent = info.label;
+  document.getElementById('sw-week-range').textContent = info.range;
+
+  var today = new Date();
+  var todayIW = swGetISOWeek(today);
+  var isCurrentWeek = (info.year === todayIW.year && info.week === todayIW.week);
+  document.getElementById('sw-nav-label').textContent = isCurrentWeek ? 'semana atual' : info.label;
+  document.getElementById('sw-nav-fwd').disabled = isCurrentWeek;
+  document.getElementById('sw-nav-fwd').style.opacity = isCurrentWeek ? '0.3' : '1';
+
+  // Load saved entry if exists
+  var entry = swEntries.find(function(e) { return e.key === info.key; });
+  SW_QUESTIONS.forEach(function(q) {
+    var el = document.getElementById('sw-' + q.id);
+    if (el) el.value = entry ? (entry[q.id] || '') : '';
+  });
+
+  // Update status badge
+  swUpdateStatus(info.key);
+  swRenderHistory();
+}
+
+function swUpdateStatus(key) {
+  var entry = swEntries.find(function(e) { return e.key === key; });
+  var el = document.getElementById('sw-status');
+  if (entry && entry.savedAt) {
+    var d = new Date(entry.savedAt);
+    var months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    el.textContent = 'SALVO ' + d.getDate() + '/' + months[d.getMonth()];
+    el.className = 'sw-status saved';
+  } else {
+    el.textContent = 'NÃO SALVO';
+    el.className = 'sw-status unsaved';
+  }
+}
+
+function swSave() {
+  var info = swGetCurrentWeekInfo();
+  var entry = { key: info.key, year: info.year, week: info.week, range: info.range, savedAt: new Date().toISOString() };
+  SW_QUESTIONS.forEach(function(q) {
+    var el = document.getElementById('sw-' + q.id);
+    entry[q.id] = el ? el.value.trim() : '';
+  });
+  // Replace or add
+  var idx = swEntries.findIndex(function(e) { return e.key === info.key; });
+  if (idx >= 0) swEntries[idx] = entry; else swEntries.push(entry);
+  // Sort by key desc
+  swEntries.sort(function(a,b){ return b.key.localeCompare(a.key); });
+  localStorage.setItem(STORAGE_WEEKLY, JSON.stringify(swEntries));
+  swUpdateStatus(info.key);
+  swRenderHistory();
+  // Flash button feedback
+  var btn = document.querySelector('#panel-semanal .btn-primary');
+  if (btn) { var orig = btn.textContent; btn.textContent = '✓ SALVO'; setTimeout(function(){ btn.textContent = orig; }, 1500); }
+}
+
+function swClear() {
+  if (!confirm('Limpar os campos desta semana? (o histórico não é apagado)')) return;
+  SW_QUESTIONS.forEach(function(q) {
+    var el = document.getElementById('sw-' + q.id);
+    if (el) el.value = '';
+  });
+}
+
+function swNavWeek(delta) {
+  var newOffset = swCurrentOffset + delta;
+  // Don't go into future
+  if (newOffset > 0) return;
+  swCurrentOffset = newOffset;
+  swInitWeek();
+}
+
+function swRenderHistory() {
+  var list = document.getElementById('sw-history-list');
+  var countEl = document.getElementById('sw-hist-count');
+  if (!swEntries.length) {
+    list.innerHTML = '<div style="text-align:center;padding:30px 0;color:var(--muted);font-size:11px;">Nenhuma entrada ainda.<br>Salve a primeira semana para começar o histórico.</div>';
+    countEl.textContent = '0 SEMANAS';
+    return;
+  }
+  countEl.textContent = swEntries.length + ' SEMANA' + (swEntries.length > 1 ? 'S' : '');
+  var sectionLabels = { reflexao: '🧠 Reflexão', estrategia: '📊 Estratégia', riscos: '🔍 Riscos' };
+  var html = swEntries.map(function(entry, i) {
+    var hasContent = SW_QUESTIONS.some(function(q){ return entry[q.id] && entry[q.id].length > 0; });
+    var questionsHtml = ['reflexao','estrategia','riscos'].map(function(sec) {
+      var qs = SW_QUESTIONS.filter(function(q){ return q.section === sec; });
+      var qHtml = qs.map(function(q, qi) {
+        var text = entry[q.id] || '';
+        var num = SW_QUESTIONS.indexOf(q) + 1;
+        return '<div class="sw-history-q">' +
+          '<div class="sw-hq-label">0' + num + ' · ' + q.label.substring(0,50) + (q.label.length>50?'…':'') + '</div>' +
+          (text ? '<div class="sw-hq-text">' + escHtml(text) + '</div>'
+                : '<div class="sw-hq-empty">—</div>') +
+        '</div>';
+      }).join('');
+      return '<div style="margin-bottom:12px;"><div style="font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;font-family:var(--font-mono);">' + sectionLabels[sec] + '</div>' + qHtml + '</div>';
+    }).join('');
+
+    return '<div class="sw-history-item">' +
+      '<div class="sw-history-hd" onclick="swToggleHist(this,' + i + ')">' +
+        '<span class="sw-hw">Semana ' + entry.week + ' · ' + entry.year + '</span>' +
+        '<span class="sw-hdate">' + entry.range + '</span>' +
+        (hasContent ? '' : '<span style="font-size:9px;color:var(--muted);font-family:var(--font-mono);">VAZIO</span>') +
+        '<span class="sw-htoggle">▾</span>' +
+      '</div>' +
+      '<div class="sw-history-body" id="sw-hb-' + i + '">' + questionsHtml +
+        '<div style="display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">' +
+          '<button class="btn btn-sm btn-primary" onclick="swLoadEntry(\'' + entry.key + '\')" style="font-size:9px;">EDITAR</button>' +
+          '<button class="btn btn-sm" onclick="swDeleteEntry(\'' + entry.key + '\')" style="font-size:9px;color:var(--red);border-color:var(--red);">EXCLUIR</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  list.innerHTML = html;
+}
+
+function swToggleHist(hd, i) {
+  var body = document.getElementById('sw-hb-' + i);
+  hd.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function swLoadEntry(key) {
+  // Navigate to the week of this entry
+  var entry = swEntries.find(function(e){ return e.key === key; });
+  if (!entry) return;
+  // Calculate offset from current week
+  var today = new Date();
+  var todayIW = swGetISOWeek(today);
+  var todayKey = swWeekKey(todayIW.year, todayIW.week);
+  // Simple approach: calculate diff in weeks
+  var todayMonday = swGetWeekBounds(todayIW.year, todayIW.week).start;
+  var entryBounds = swGetWeekBounds(entry.year, entry.week);
+  var diff = Math.round((entryBounds.start - todayMonday) / (7 * 86400000));
+  swCurrentOffset = diff;
+  swInitWeek();
+  // Scroll to top of panel
+  document.getElementById('panel-semanal').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function swDeleteEntry(key) {
+  if (!confirm('Excluir a entrada desta semana? Esta ação não pode ser desfeita.')) return;
+  swEntries = swEntries.filter(function(e){ return e.key !== key; });
+  localStorage.setItem(STORAGE_WEEKLY, JSON.stringify(swEntries));
+  var info = swGetCurrentWeekInfo();
+  swUpdateStatus(info.key);
+  // Reload form if we deleted the current week
+  if (info.key === key) {
+    SW_QUESTIONS.forEach(function(q) {
+      var el = document.getElementById('sw-' + q.id);
+      if (el) el.value = '';
+    });
+  }
+  swRenderHistory();
+}
+
+function swExportPDF() {
+  var info = swGetCurrentWeekInfo();
+  // Build print area content
+  var entry = {};
+  SW_QUESTIONS.forEach(function(q) {
+    var el = document.getElementById('sw-' + q.id);
+    entry[q.id] = el ? el.value.trim() : '';
+  });
+  var sections = [
+    { label: '🧠 Reflexão da Semana', qs: ['q1','q2','q3'] },
+    { label: '📊 Revisão de Estratégia', qs: ['q4','q5','q6'] },
+    { label: '🔍 Riscos Atuais', qs: ['q7','q8','q9'] }
+  ];
+  var html = '<h1>Diário Semanal de Gestão</h1>' +
+    '<div class="sw-ph2">Barolo Capital · ' + info.label + ' · ' + info.range + '</div>';
+  sections.forEach(function(sec) {
+    html += '<div class="sw-ps">' + sec.label + '</div>';
+    sec.qs.forEach(function(qid) {
+      var q = SW_QUESTIONS.find(function(x){ return x.id === qid; });
+      var text = entry[qid];
+      html += '<div class="sw-pq"><div class="sw-pq-label">' + q.label + '</div>' +
+        (text ? '<div class="sw-pq-text">' + escHtml(text) + '</div>'
+              : '<div class="sw-pq-empty">—</div>') +
+        '</div>';
+    });
+  });
+  html += '<div class="sw-pfooter">Barolo Capital · ' + info.range + ' · Exportado em ' + new Date().toLocaleDateString('pt-BR') + '</div>';
+  document.getElementById('print-semanal').innerHTML = html;
+  window.print();
+}
+
+function swCopyForClaude() {
+  var info = swGetCurrentWeekInfo();
+  var lines = ['# Diário Semanal — ' + info.label + ' (' + info.range + ')\n'];
+  var sections = [
+    { label: '## 🧠 Reflexão da Semana', qs: ['q1','q2','q3'] },
+    { label: '## 📊 Revisão de Estratégia', qs: ['q4','q5','q6'] },
+    { label: '## 🔍 Riscos Atuais', qs: ['q7','q8','q9'] }
+  ];
+  sections.forEach(function(sec) {
+    lines.push(sec.label);
+    sec.qs.forEach(function(qid) {
+      var q = SW_QUESTIONS.find(function(x){ return x.id === qid; });
+      var el = document.getElementById('sw-' + q.id);
+      var text = el ? el.value.trim() : '';
+      lines.push('**' + q.label + '**');
+      lines.push(text || '_(sem resposta)_');
+      lines.push('');
+    });
+  });
+  var text = lines.join('\n');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { swShowCopied(); });
+  } else {
+    // fallback
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    swShowCopied();
+  }
+}
+
+function swShowCopied() {
+  var n = document.getElementById('sw-copy-notice');
+  n.style.display = 'inline';
+  setTimeout(function(){ n.style.display = 'none'; }, 2500);
+}
+
+// Initialize on DOMContentLoaded (only if panel is already active — unlikely, handled by switchTab)
 // ── Language toggle ──────────────────────────────────────
 var LANG_STRINGS = {
   // nav
@@ -2095,6 +2540,8 @@ var LANG_STRINGS = {
   'evo-history':   {pt:'Histórico de Snapshots',      en:'Snapshot History'},
   // apy scanner
   'apy-title':     {pt:'Scanner de APY — Pools de Interesse',en:'APY Scanner — Pools of Interest'},
+  // semanal
+  'tab-semanal':   {pt:'Semanal',                             en:'Weekly'},
 };
 
 function applyLang(lang) {
