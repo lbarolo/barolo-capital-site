@@ -806,7 +806,7 @@ body, input, button, select, textarea {
  </div>
  <div class="field">
  <label data-i18n="lbl-type">Tipo</label>
- <select id="d-type" onchange="toggleLendingFields(this.value)">
+ <select id="d-type" onchange="toggleExtraFields(this.value)">
  <option value="pool">Pool de Liquidez</option>
  <option value="lending">Lending / Borrow</option>
  <option value="trade">Trade / Swap</option>
@@ -831,6 +831,45 @@ body, input, button, select, textarea {
  <label>Tags (vírgula)</label>
  <input type="text" id="d-tags" placeholder="ETH, Uniswap, pool">
  </div>
+ </div>
+
+ <!-- Campos extras para Trade/Compra — aparecem só quando type=trade -->
+ <div id="trade-fields" style="display:none;background:var(--s2);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;border:1px solid var(--border);">
+ <div style="font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">Dados da Compra / Venda</div>
+ <div class="two-col">
+   <div class="field">
+     <label>Token</label>
+     <select id="d-trade-token">
+       <option value="ETH">ETH — Ethereum</option>
+       <option value="SOL">SOL — Solana</option>
+       <option value="ADA">ADA — Cardano</option>
+       <option value="EIGEN">EIGEN — EigenLayer</option>
+       <option value="RDNT">RDNT — Radiant</option>
+       <option value="POL">POL — Polygon</option>
+       <option value="ZK">ZK — ZKsync</option>
+       <option value="XAI">XAI — Xai</option>
+       <option value="ZETA">ZETA — ZetaChain</option>
+     </select>
+   </div>
+   <div class="field">
+     <label>Operação</label>
+     <select id="d-trade-side">
+       <option value="buy">Compra</option>
+       <option value="sell">Venda</option>
+     </select>
+   </div>
+ </div>
+ <div class="two-col">
+   <div class="field">
+     <label>Quantidade</label>
+     <input type="number" id="d-trade-qty" placeholder="ex: 0.5" step="any" min="0">
+   </div>
+   <div class="field">
+     <label>Custo total ($)</label>
+     <input type="number" id="d-trade-cost" placeholder="ex: 187.50" step="0.01" min="0">
+   </div>
+ </div>
+ <div style="font-size:9px;color:var(--green);margin-top:6px;letter-spacing:.04em;">↺ Sincroniza automaticamente com Portfolio e Index</div>
  </div>
 
  <!-- Campos extras para Lending/Borrow — aparecem só quando type=lending -->
@@ -1597,9 +1636,11 @@ showRule();
 // ══════════════════════════════════════════════
 // DIARY
 // ══════════════════════════════════════════════
-function toggleLendingFields(type) {
+function toggleExtraFields(type) {
  const lf = document.getElementById('lending-fields');
+ const tf = document.getElementById('trade-fields');
  if (lf) lf.style.display = type === 'lending' ? 'block' : 'none';
+ if (tf) tf.style.display = type === 'trade'   ? 'block' : 'none';
 }
 
 function clearAllDiary(){
@@ -1639,6 +1680,20 @@ function saveEntry(){
  };
  }
 
+ // If trade entry, attach structured data for portfolio sync
+ if (type === 'trade') {
+ const qty  = parseFloat(document.getElementById('d-trade-qty').value)  || null;
+ const cost = parseFloat(document.getElementById('d-trade-cost').value) || null;
+ if (qty) {
+   entry.trade = {
+   token:     document.getElementById('d-trade-token').value,
+   side:      document.getElementById('d-trade-side').value,
+   qty:       qty,
+   totalCost: cost,
+   };
+ }
+ }
+
  diaryEntries.unshift(entry);
  localStorage.setItem(STORAGE_DIARY, JSON.stringify(diaryEntries));
 
@@ -1666,7 +1721,8 @@ function clearForm(){
  });
  document.getElementById('d-date').value=new Date().toISOString().split('T')[0];
  document.getElementById('d-type').value='pool';
- toggleLendingFields('pool');
+ ['d-trade-qty','d-trade-cost'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+ toggleExtraFields('pool');
 }
 
 function deleteEntry(id){
@@ -1685,7 +1741,7 @@ function filterDiary(f, btn){
 
 function renderDiary(){
  const list=document.getElementById('diary-list');
- let items=diaryEntries;
+ let items=diaryEntries.slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
  if(currentDiaryFilter!=='all') items=items.filter(e=>e.type===currentDiaryFilter);
  if(!items.length){
  list.innerHTML='<div class="empty-diary"><div class="empty-icon"></div><div>Nenhuma entrada para este filtro.</div></div>';

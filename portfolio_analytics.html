@@ -1498,9 +1498,9 @@ function buildAllocationChart(enriched, totalVal){
 
   // Build items sorted by value DESCENDING — tokens + stables together
   const stables = [
-    { ticker:'USDT', name:'Tether',    currentValue:1652.90, color:'#26A17B' },
-    { ticker:'USDS', name:'USDS',      currentValue:300.42,  color:'#5B8EF0' },
-    { ticker:'USDC', name:'USDC debt', currentValue:-1551.21,color:'#2775CA', isDebt:true },
+    { ticker:'USDT', name:'Tether',    currentValue:1652.90, qty:1652.90, color:'#26A17B' },
+    { ticker:'USDS', name:'USDS',      currentValue:300.42,  qty:300.42,  color:'#5B8EF0' },
+    { ticker:'USDC', name:'USDC debt', currentValue:-1551.21,qty:1551.21,  color:'#2775CA', isDebt:true },
   ];
   const allItems = [
     ...enriched.filter(a=>!a.isStable),
@@ -1531,8 +1531,14 @@ function buildAllocationChart(enriched, totalVal){
         tooltip:{
           callbacks:{
             label: ctx => {
+              const item = items[ctx.dataIndex];
               const pct = (ctx.raw/total*100).toFixed(1);
-              return ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
+              const usdLine = ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
+              if (!item || item.qty == null) return usdLine;
+              const q = item.qty;
+              const dec = q < 1 ? 6 : q < 100 ? 4 : q < 10000 ? 2 : 0;
+              const qFmt = q.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+              return [usdLine, `  ${qFmt} ${ctx.label}`];
             }
           },
           backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
@@ -2122,6 +2128,26 @@ function applyUpdate() {
  });
 }
 applyUpdate();
+
+// ── Aplica trades do Diário DeFi (ferramentas.html → localStorage) ──
+(function(){
+  try {
+    var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
+    var tickerMap = {};
+    PORTFOLIO.forEach(function(a){ tickerMap[a.ticker] = a; });
+    diary.filter(function(e){ return e.type==='trade' && e.trade && e.trade.qty>0; })
+         .forEach(function(e){
+           var t = e.trade;
+           var a = tickerMap[t.token];
+           if (!a) return;
+           var mul = t.side === 'buy' ? 1 : -1;
+           a.qty += mul * t.qty;
+           if (t.totalCost) a.invested += mul * t.totalCost;
+         });
+  } catch(e) {}
+})();
+// Recomputa TOTAL_INVESTED com os ajustes do diário + WEEKLY_UPDATE
+TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
 function buildPerfChart(period){
  setupChartDefaults();
