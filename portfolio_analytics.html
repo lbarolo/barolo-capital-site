@@ -1089,7 +1089,7 @@ var WEEKLY_UPDATE = {
  XAI: 692.86,
  ZETA: 51.1434,
  SCR: 0.0018,
- USDT: 1652.90,
+ USDT: 2069.46,
  USDS: 300.42,
  },
 
@@ -1129,7 +1129,7 @@ var WEEKLY_UPDATE = {
  XAI: 164.52,
  ZETA: 0,
  SCR: 0,
- USDT: 1652.90,
+ USDT: 2069.46,  // custo = qty (stablecoin 1:1)
  USDS: 300.42,
  },
 
@@ -1192,8 +1192,8 @@ var PORTFOLIO_DATA = [
  { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
  { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
- // USDT e USDS removidos do PORTFOLIO_DATA — somados via STABLES_USD para evitar dupla contagem
- // USDT $1.652,03 (supply AAVE) + USDS $300,40 (supply Kamino) = $1.742,07 em STABLES_USD
+ { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:2069.46,       invested:2069.46, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
+ { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300.42,        invested:300.42,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/33613/small/usds.png',     isStable:true },
 ];
 var PORTFOLIO = PORTFOLIO_DATA; // alias
 
@@ -1201,7 +1201,7 @@ var FALLBACK_PRICES = {
  // Preços dos prints (Mar/2026) — atualizados ao vivo pelo CoinGecko
  'ethereum':2079.21,'solana':87.28,'cardano':0.2617,'eigenlayer':0.1870,
  'matic-network':0.09693,'xai-blockchain':0.01102,'zksync':0.01914,
- 'radiant-capital':0.005543,'zetachain':0.05045,// tether e usds-stablecoin removidos — contabilizados em STABLES_USD
+ 'radiant-capital':0.005543,'zetachain':0.05045,'tether':1,'usds-stablecoin':1,
 };
 var FALLBACK_24H = {
  'ethereum':6.9,'solana':4.5,'cardano':6.9,'eigenlayer':3.8,
@@ -1210,7 +1210,7 @@ var FALLBACK_24H = {
 };
 
 var LP_POOLED = 365; // Pool WETH/USDC ativa (Abr/2026) — atualizar semanalmente
-var STABLES_USD = 1953.32; // USDT AAVE $1.652,90 + USDS Kamino $300,42 = $1.953,32
+var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 747.50; // atualizar semanalmente
 var KAMINO_DEBT = 805.70; // atualizar semanalmente
 var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $747.50 + $805.70 = $1,553.20
@@ -1496,16 +1496,10 @@ function buildAllocationChart(enriched, totalVal){
 
   const dk = isDark();
 
-  // Build items sorted by value DESCENDING — tokens + stables together
-  const stables = [
-    { ticker:'USDT', name:'Tether',    currentValue:1652.90, qty:1652.90, color:'#26A17B' },
-    { ticker:'USDS', name:'USDS',      currentValue:300.42,  qty:300.42,  color:'#5B8EF0' },
-    { ticker:'USDC', name:'USDC debt', currentValue:-1551.21,qty:1551.21,  color:'#2775CA', isDebt:true },
-  ];
-  const allItems = [
-    ...enriched.filter(a=>!a.isStable),
-    ...stables.filter(s=>!s.isDebt),
-  ].sort((a,b)=>b.currentValue-a.currentValue);
+  // Build items sorted by value DESCENDING — stables já vêm em enriched via PORTFOLIO_DATA
+  const allItems = enriched
+    .filter(a=>a.currentValue > 0)
+    .sort((a,b)=>b.currentValue-a.currentValue);
   const total = allItems.reduce((s,a)=>s+a.currentValue, 0);
   const items = allItems;
 
@@ -1584,8 +1578,9 @@ var tt=()=>{
 // ──────────────────────────────────────────────────
 function buildLiveCharts(enriched, totalVal){
  setupChartDefaults();
- const withInv = enriched.filter(a=>a.invested>0&&!a.isStable).sort((a,b)=>a.pnl-b.pnl);
- const withROI = enriched.filter(a=>a.invested>0&&!a.isStable).sort((a,b)=>(a.pnl/a.invested)-(b.pnl/b.invested));
+ // Inclui stables: P&L = 0 por definição (1:1), ROI = 0%
+ const withInv = enriched.filter(a=>a.invested>0).sort((a,b)=>a.pnl-b.pnl);
+ const withROI = enriched.filter(a=>a.invested>0).sort((a,b)=>(a.pnl/a.invested)-(b.pnl/b.invested));
 
  if(pnlChartInst) pnlChartInst.destroy();
  try{
