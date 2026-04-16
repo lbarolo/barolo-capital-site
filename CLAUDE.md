@@ -1386,3 +1386,156 @@ Nenhum dado numérico de posição alterado nesta sessão.
 - **CSVs das CEX** — Lucas traz na próxima semana para custo de aquisição em BRL e base para IR
 - **`HOLDINGS` em `index.html`** — atualizar array quando Lucas comprar mais tokens
 - **Testar gateway Uniswap Labs** — confirmar se `interface.gateway.uniswap.org/v1/graphql` retorna dados da posição #4694262 em produção (pode exigir CORS ou auth adicional; se falhar, cai no fallback on-chain)
+
+---
+
+## Sessão 16/04/2026 — Sync diário→portfolio, tooltip donut, USDT 2069, stables nos gráficos
+
+### Implementado
+
+#### `ferramentas.html` — Diário DeFi: tipo Trade com campos estruturados
+
+Quando o usuário seleciona tipo **"Trade / Swap"** no Diário DeFi, agora aparece um bloco extra com campos:
+- **Token** (select: ETH, SOL, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA)
+- **Operação** (Compra / Venda)
+- **Quantidade**
+- **Custo total ($)**
+
+Ao salvar, `entry.trade = { token, side, qty, totalCost }` é persistido em `localStorage['bc-diary-v2']`.
+
+Nota informativa verde abaixo do bloco: *"↺ Sincroniza automaticamente com Portfolio e Index"*
+
+**Funções alteradas:**
+- `toggleLendingFields` renomeada para `toggleExtraFields` — agora controla tanto `#lending-fields` quanto `#trade-fields`
+- `saveEntry()` — bloco `if (type === 'trade')` adicionado para capturar e salvar dados estruturados
+- `clearForm()` — limpa `d-trade-qty` e `d-trade-cost` ao resetar o form
+
+#### `ferramentas.html` — Diário DeFi: ordenação por data
+
+`renderDiary()` agora faz `.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))` antes de renderizar — exibe mais recente primeiro, mais antigo por último.
+
+**Por quê:** `diaryEntries.unshift()` (inserção no topo) não garante ordem cronológica quando o usuário registra entradas com datas retroativas.
+
+#### `index.html` — Sync automático com trades do Diário DeFi
+
+IIFE adicionado antes de `TOTAL_INVESTED`:
+```js
+(function(){
+  var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
+  var idMap = { ETH:'ethereum', SOL:'solana', ... };
+  diary.filter(e => e.type==='trade' && e.trade && e.trade.qty>0)
+       .forEach(e => {
+         var h = HOLDINGS.find(h => h.id === idMap[e.trade.token]);
+         if (!h) return;
+         var mul = e.trade.side === 'buy' ? 1 : -1;
+         h.qty += mul * e.trade.qty;
+         if (e.trade.totalCost) h.invested += mul * e.trade.totalCost;
+       });
+})();
+```
+
+Os trades do diário são **incrementais** sobre a base hardcoded — não registrar no diário compras que já estão na base.
+
+#### `portfolio_analytics.html` — Sync automático com trades do Diário DeFi
+
+Mesmo padrão do `index.html`, aplicado após `applyUpdate()`:
+```js
+(function(){
+  var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
+  var tickerMap = {}; PORTFOLIO.forEach(a => tickerMap[a.ticker] = a);
+  diary.filter(e => e.type==='trade' && e.trade && e.trade.qty>0)
+       .forEach(e => { ... a.qty += mul*t.qty; a.invested += mul*t.totalCost; });
+})();
+TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0); // recomputa
+```
+
+#### `index.html` — Hero stat de retorno fixado
+
+`heroReturn` hardcoded em **+649.9%** (track record histórico).
+
+`updateHeroReturn()` esvaziada — não sobrescreve mais o valor com cálculo ao vivo. Justificativa: na landing page pública, o retorno deve ser o track record, não oscilar com o mercado e aparecer como "0%" em dias de queda.
+
+#### `portfolio_analytics.html` — Tooltip do donut com qty + USD
+
+`buildAllocationChart` — callback do tooltip atualizado:
+```js
+label: ctx => {
+  const item = items[ctx.dataIndex];
+  const pct = (ctx.raw/total*100).toFixed(1);
+  const usdLine = ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
+  if (!item || item.qty == null) return usdLine;
+  const dec = q < 1 ? 6 : q < 100 ? 4 : q < 10000 ? 2 : 0;
+  return [usdLine, `  ${qFmt} ${ctx.label}`];
+}
+```
+Agora ao passar o mouse: linha 1 = valor USD + %, linha 2 = quantidade em tokens.
+
+#### `portfolio_analytics.html` — USDT e USDS movidos para PORTFOLIO_DATA
+
+Anteriormente hardcoded no `buildAllocationChart` e somados via `STABLES_USD`. Agora são entradas do array `PORTFOLIO_DATA` com `isStable:true`:
+```js
+{ cgId:'tether',         ticker:'USDT', qty:2069.46, invested:2069.46, color:'#26A17B', isStable:true },
+{ cgId:'usds-stablecoin',ticker:'USDS', qty:300.42,  invested:300.42,  color:'#5B8EF0', isStable:true },
+```
+
+`STABLES_USD = 0` — evita dupla contagem.
+
+`buildAllocationChart` simplificado: `enriched.filter(a=>a.currentValue>0).sort(...)` — sem stables hardcoded.
+
+#### `portfolio_analytics.html` — Stables nos gráficos P&L e ROI (Análise por Ativo)
+
+`buildLiveCharts` antes filtrava `!a.isStable`. Agora inclui todos os ativos com `invested > 0`:
+```js
+const withInv = enriched.filter(a=>a.invested>0).sort((a,b)=>a.pnl-b.pnl);
+const withROI = enriched.filter(a=>a.invested>0).sort(...);
+```
+USDT e USDS aparecem com P&L = $0 e ROI = 0% (correto para stablecoins 1:1).
+
+`FALLBACK_PRICES` atualizado: `'tether':1,'usds-stablecoin':1` adicionados.
+
+### Dados atualizados
+
+**USDT — print CoinGecko 16/04/2026:**
+
+| Campo | Antes | Depois |
+|---|---|---|
+| USDT qty (WEEKLY_UPDATE.holdings) | 1652.90 | **2069.46** |
+| USDT invested (WEEKLY_UPDATE.invested) | 1652.90 | **2069.46** |
+| USDT qty (PORTFOLIO_DATA) | n/a (era STABLES_USD) | **2069.46** |
+| STABLES_USD | 1953.32 | **0** (movido para PORTFOLIO_DATA) |
+| index.html STABLES_USD | 1950.55 | **2369.88** (USDT 2069.46 + USDS 300.42) |
+
+**Compras USDT detectadas no print:**
+| Data | Qty | Custo |
+|------|-----|-------|
+| 16/Abr/2026 | +69.76 | $69.86 |
+| 09/Abr/2026 | +94.39 | $94.00 |
+| 09/Abr/2026 | +101.69 | $101.83 |
+| 28/Mar/2026 | +151.51 | $152.26 |
+
+**SOL invested** em `index.html`: `$2201.68` → `$2280.39` (DCA +0.99 SOL @ $78.78 de Abr/2026 estava faltando)
+
+**TOTAL_DEBT** em `index.html`: `$1553.20` → `$1553.70` (AAVE $748 USDC pós-refinanciamento)
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Hero stat mostrando "+0%" | `updateHeroReturn()` recalculava com preços ao vivo; com ETH ~$1470 o portfólio ficava no break-even | Função esvaziada; `heroReturn` hardcoded em `+649.9%` |
+| SOL invested desatualizado | Último DCA (+0.99 SOL @ $78.78) estava no `WEEKLY_UPDATE.invested` mas não no `HOLDINGS` do index | `invested` corrigido de `$2201.68` para `$2280.39` |
+| USDT desatualizado (1652.90) | Três compras de Mar–Abr/2026 não registradas | Atualizado para 2069.46 via print CoinGecko |
+| USDT/USDS não apareciam em P&L e ROI por ativo | `buildLiveCharts` filtrava `!a.isStable` | Filtro removido; stables incluídas com P&L=0, ROI=0% |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **`ferramentas.html` calculadora de liquidação** — ainda usa "GHO" nos inputs HTML (deve ser USDC)
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
+- **Testar gateway Uniswap Labs** — confirmar `interface.gateway.uniswap.org/v1/graphql` em produção
+
+### Nota sobre sync diário→portfolio
+
+O sync via localStorage funciona apenas quando as páginas são abertas **no mesmo browser e origem** (file:// ou mesmo servidor local). Compras registradas no diário de `ferramentas.html` são **incrementais** sobre a base hardcoded em `PORTFOLIO_DATA` e `HOLDINGS`. Não registrar no diário o que já está na base — seria dupla contagem.
+
