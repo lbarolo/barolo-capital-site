@@ -109,7 +109,7 @@ addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znu
 
 | Par | Rede | Dias | Capital | Taxas | IL | Resultado | Status |
 |-----|------|------|---------|-------|-----|-----------|--------|
-| WETH/USDC 0.3% | Ethereum | 17 | $365 | $9 | $0 | $1 | **ATIVA** |
+| WETH/USDC 0.3% | **Base** | 17 | $365 | $9 | $0 | $1 | **ATIVA** |
 | ETH/USDC BASE | Base | 25 | $453 | $16 | $0 | $16 | fechada |
 | ETH/USDT 0.05% | Arbitrum | 105 | $277 | $34 | $0 | $34 | fechada |
 | SOL/USDC 0.04% | Solana | 93 | $660 | $23 | $0 | $23 | fechada |
@@ -124,6 +124,36 @@ addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znu
 | ETH/USDC 0.05% | Arbitrum | 209 | $1,014 | $22 | $0 | $22 | fechada |
 
 **Totais**: Taxas brutas $2,128 | P&L líquido -$1,021
+
+### Pool ATIVA — Dados completos (verificados via Revert Finance em 17/04/2026)
+
+**NUNCA assumir Ethereum — esta pool está na Base.**
+
+| Campo | Valor |
+|---|---|
+| Par | WETH/USDC 0.30% |
+| Protocolo | Uniswap V3 |
+| **Rede** | **Base** (chain_id=8453) |
+| Carteira | `0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6` |
+| Abertura | 18/03/2026 |
+| Capital entrada | 0.17 WETH ($365 na época) — **100% WETH, zero USDC** |
+| Range mínimo | **$1,855.72** |
+| Range máximo | **$3,146.36** |
+| Preço médio efetivo de saída | **$2,416** (√(1855.72 × 3146.36)) |
+| Estratégia | Saída gradual ETH→USDC: entra 100% WETH, sai 100% USDC ao atingir $3,146 |
+| Monitorar em | https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6 |
+
+**Dados de 17/04/2026 (Revert Finance):**
+- Pooled: $384.56 (0.07741 WETH + 196.67 USDC)
+- Total fees: $18.62 (0.004 WETH + 8.89 USDC)
+- Divergence loss: -$28.20
+- Total PnL: -$9.58 | Fee APR: 32% | Total APR: -16.34%
+- Preço atual ETH: $2,431 (IN-RANGE ✅)
+- % vendido: ~44.6% do ETH convertido em USDC
+
+**Referência: sempre em USD** — não usar HOLD nem ETH como referência de performance.
+
+**Para buscar dados on-chain:** usar Base RPC (`https://base-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7`), não Ethereum.
 
 ### Evento especial — Hack Radiant Capital (2025)
 - 1,079.17 ARB em stake desde 25/03/2024 — perdidos no hack
