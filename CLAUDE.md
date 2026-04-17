@@ -1629,7 +1629,7 @@ Nenhum dado de posição alterado nesta sessão.
 | Logo USDS não aparecia em "Análise por Ativo" | URL da imagem no CoinGecko CDN com ID errado (33613 → 403) | Atualizado para ID 39926, formato `.webp` |
 | Variação 24h subestimada vs CoinGecko | LP pool ($365 em WETH/USDC) não incluído no cálculo `ch24` | Adicionado `LP_POOLED × 0.5 × ETH_change24h` |
 
-### O que ainda falta
+### O que ainda falta (após parte 1 de 17/04)
 
 - **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
 - **`monthlyReturns[2026].Abr`** — preencher ao final do mês
@@ -1637,4 +1637,98 @@ Nenhum dado de posição alterado nesta sessão.
 - **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
 - **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
 - **Testar gateway Uniswap Labs** — confirmar `interface.gateway.uniswap.org/v1/graphql` em produção
+
+---
+
+## Sessão 17/04/2026 (continuação) — Pool Base corrigida + AAVE iframe + Meta ao vivo + APR portfolio tokens
+
+### Contexto
+Sessão continuou de context esgotado. A parte inicial (logo USDS, stat "Melhor 24h", variação 24h com LP) está logada acima. Esta parte cobre as implementações após o context reset.
+
+### Feedback crítico recebido (IMPORTANTE — não repetir)
+
+Lucas ficou frustrado quando Claude assumiu que a pool WETH/USDC estava na Ethereum mainnet, quando já está documentado no site que está na Base. Feedback literal:
+> "É logico que ta na base vc ja deveria saber isso, esta no site... vc esta me fazendo gastar mais tokens do que o necessário, garanta que isso não ocorra novamente"
+
+**Regra:** SEMPRE ler a seção "Pool ATIVA — Dados completos" no CLAUDE.md antes de qualquer chamada on-chain relacionada à pool. A pool está na **Base** (chain_id=8453), nunca na Ethereum mainnet.
+
+Sobre referência de performance:
+> "essa pool é da estratégia de venda, entrei full ETH e to saindo Full USDT, deve ser vista e monitorada com a referencia em USD não em HOLD nem em ETH"
+
+**Regra:** Performance da pool WETH/USDC sempre em USD. Nunca usar HOLD (benchmark ETH) nem ETH absoluto como referência.
+
+### Implementado
+
+#### `CLAUDE.md` — Seção "Pool ATIVA — Dados completos" adicionada
+
+Seção detalhada com dados verificados via Revert Finance em 17/04/2026:
+- Rede: **Base** (chain_id=8453) — warning "NUNCA assumir Ethereum"
+- Range real: **$1,855.72 – $3,146.36**
+- Preço médio efetivo de saída: **$2,416** (√(1855.72 × 3146.36))
+- Estratégia: entra 100% WETH, sai 100% USDC ao atingir $3,146
+- Estado em 17/04/2026: pooled $384.56, fees $18.62, PnL -$9.58, Fee APR 32%
+
+#### `portfolio_analytics.html` — LP range visual: tentado e removido a pedido
+
+Recurso para exibir range da pool foi implementado mas Lucas pediu remoção: "Ficou ruim isso". Removido sem rastros.
+
+#### `pools.html` — Meta de Alocação 5%: auto-atualização com patrimônio ao vivo
+
+**Root cause do bug:** `updatePatrimonio()` (chamada pelo `runAll`) tinha:
+1. `STABLES = 1953.32` (desatualizado — correto é 2369.88)
+2. Debt fallbacks antigos (746.99 e 804.22)
+3. `solExtra` incorreto (linha CLAUDE.md confirma remoção prévia)
+4. **Não atualizava DOM** dos elementos `capop-patrimonio` e `capop-rec`
+
+**Fix em `updatePatrimonio()` (~linha 3550 de `pools.html`):**
+```js
+const STABLES = 2369.88;          // USDT 2069.46 + USDS 300.42
+const LP_POOLED = window._liveLP || 365;
+const DEBT = (window._liveAaveDebt || 748) + (window._liveKaminoDebt || 805.70);
+const total = spot + STABLES + LP_POOLED - DEBT;
+window._livePatrimonio = total;
+// Atualiza Meta DOM:
+const pEl = document.getElementById('capop-patrimonio');
+const rEl = document.getElementById('capop-rec');
+if (pEl) pEl.textContent = '$' + Math.round(total).toLocaleString('en-US');
+if (rEl) rEl.textContent = '$' + Math.round(total * 0.05).toLocaleString('en-US');
+```
+
+Fallback do META setTimeout: `6640` → `7900`.
+
+#### `pools.html` — AAVE iframe: pro.aave.com → app.aave.com
+
+`pro.aave.com` descontinuado. Corrigido em 5 lugares (sub-label, link toolbar, src iframe, link fallback, link footer "Nova aba"). Commit: `6b7d16c`.
+
+#### `pools.html` — Uniswap APR: tokens do portfolio adicionados por aba
+
+Nova constante `PORTFOLIO_ADDRS` com endereços por rede:
+- **ETH:** EIGEN, POL, ZK, ZETA
+- **Arbitrum:** RDNT, XAI
+- **Base:** vazio (nenhum token do portfolio lá)
+
+Nova função `fetchPortfolioTokens(net)` — GeckoTerminal API, top 3 pools por token, TVL > $5K, ordena APR desc. Cache em `_cachePort`.
+
+`renderTable` refatorada com `rowHtml()` helper e seção separada "TOKENS DO PORTFOLIO" com badge dourado do símbolo.
+
+`loadNet` atualizado: `Promise.all([fetchNet, fetchPortfolioTokens])`.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Meta 5% mostrando "$6,640" estático | `updatePatrimonio()` com STABLES stale e sem update DOM | STABLES=2369.88, LP_POOLED, DOM atualizado |
+| AAVE iframe quebrado | `pro.aave.com` descontinuado | Trocado para `app.aave.com` |
+| Uniswap APR sem tokens do portfolio | Código filtrava só WETH/stable | `fetchPortfolioTokens()` + seção separada |
+| Pool network errada assumida como Ethereum | CLAUDE.md desatualizado + Claude não releu antes de agir | Seção "Pool ATIVA — Dados completos" + warning explícito adicionados |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **`ferramentas.html` calculadora de liquidação** — ainda usa "GHO" nos inputs HTML (deve ser USDC)
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
+- **`app.aave.com` iframe** — pode igualmente bloquear embed; link "↗ Nova aba" já está correto como fallback
+- **`window._liveLP` no Meta** — fallback $365; quando pool fechar ou capital mudar, atualizar `ENTRY_CAPITAL` e o fallback
 
