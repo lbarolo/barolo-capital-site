@@ -624,7 +624,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  };
 
  let _cache = {}; // { eth: [...], base: [...], arbitrum: [...] }
+ let _cachePort = {};
  let _activeNet = 'eth';
+
+ // Portfolio token addresses per network
+ const PORTFOLIO_ADDRS = {
+   eth: [
+     { sym:'EIGEN', addr:'0xec53bf9167f50cdeb3ae105f56099aaab9061f83' },
+     { sym:'POL',   addr:'0x455e53cbb86018ac2b8092fdcd39d8444affc3f6' },
+     { sym:'ZK',    addr:'0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e' },
+     { sym:'ZETA',  addr:'0x21eac69b9a52548682cad16a1e1aa65c7a5d7b93' },
+   ],
+   base: [],
+   arbitrum: [
+     { sym:'RDNT', addr:'0x3082cc23568ea640225c2467653db90e9250aaa0' },
+     { sym:'XAI',  addr:'0x4cb9a7ae498cedcbb5eae9f25736ae7d428c9d66' },
+   ]
+ };
 
  function fmtM(n) {
  n = parseFloat(n); if (isNaN(n)||n===0) return '—';
@@ -682,25 +698,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  return pools;
  }
 
- function renderTable(pools, net) {
- const body = document.getElementById('uniPoolsBody');
- if (!pools.length) {
- body.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool ETH/stable encontrada.</td></tr>';
- return;
- }
- body.innerHTML = pools.map(p => {
+ function rowHtml(p, net) {
  const aprStr = p.apr!=null ? (p.apr>999?'>999':p.apr.toFixed(1))+'%' : '—';
  const aprColor = p.apr==null?'var(--muted)':p.apr>=50?'var(--gold)':p.apr>=20?'var(--green)':'var(--text)';
  const chgColor = isNaN(p.chg)?'var(--muted)':p.chg>=0?'var(--green)':'var(--red)';
  const chgStr = isNaN(p.chg)?'—':(p.chg>=0?'+':'')+p.chg.toFixed(2)+'%';
  const feeStr = p.fee!=null ? p.fee+'%' : '—';
  const link = UNI_LINK[net]+p.addr;
- // limpa o nome removendo a fee do final (já temos coluna)
  const cleanName = p.name.replace(/\s*[\d.]+%\s*$/,'').trim();
+ const symBadge = p.sym ? `<span style="font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-right:4px;color:var(--gold);">${p.sym}</span>` : '';
  return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;"
  onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"
  onclick="window.open('${link}','_blank')">
- <td style="padding:9px 16px;font-weight:600;color:var(--text);">${cleanName}</td>
+ <td style="padding:9px 16px;font-weight:600;color:var(--text);">${symBadge}${cleanName}</td>
  <td style="padding:9px 10px;text-align:center;">
  <span style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;">${feeStr}</span>
  </td>
@@ -709,7 +719,59 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <td style="padding:9px 16px;text-align:right;">${fmtM(p.vol)}</td>
  <td style="padding:9px 16px;text-align:right;color:${chgColor};">${chgStr}</td>
  </tr>`;
- }).join('');
+ }
+
+ function renderTable(pools, net, portPools) {
+ const body = document.getElementById('uniPoolsBody');
+ const noEth = !pools || !pools.length;
+ const noPort = !portPools || !portPools.length;
+ if (noEth && noPort) {
+ body.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool encontrada.</td></tr>';
+ return;
+ }
+ let html = (pools||[]).map(p => rowHtml(p, net)).join('');
+ if (!noPort) {
+ html += `<tr><td colspan="6" style="padding:6px 16px 4px;font-size:9px;letter-spacing:.08em;color:var(--muted);background:var(--surface2);font-family:'Satoshi',sans-serif;font-weight:700;">TOKENS DO PORTFOLIO</td></tr>`;
+ html += portPools.map(p => rowHtml(p, net)).join('');
+ }
+ body.innerHTML = html;
+ }
+
+ async function fetchPortfolioTokens(net) {
+ if (_cachePort[net]) return _cachePort[net];
+ const tokens = PORTFOLIO_ADDRS[net] || [];
+ if (!tokens.length) { _cachePort[net] = []; return []; }
+ const results = [];
+ await Promise.all(tokens.map(async ({ sym, addr }) => {
+ try {
+ const url = `https://api.geckoterminal.com/api/v2/networks/${net}/tokens/${addr}/pools?page=1&sort=h24_volume_usd_liquidity_desc`;
+ const r = await fetch(url, {headers:{Accept:'application/json'}});
+ if (!r.ok) return;
+ const j = await r.json();
+ const pools = (j.data||[]).filter(p => {
+ const name = (p.attributes?.name||'').toLowerCase();
+ const dexId = (p.relationships?.dex?.data?.id)||'';
+ return (dexId.includes('uniswap')||name.includes('uniswap')) &&
+ (dexId.includes('v3')||dexId.includes('v4')||name.includes('v3')||name.includes('v4'));
+ }).map(p => {
+ const a = p.attributes||{};
+ const name = a.name||'—';
+ const tvl = parseFloat(a.reserve_in_usd)||0;
+ const vol = parseFloat(a.volume_usd?.h24)||0;
+ const fee = extractFee(name);
+ const apr = (fee && tvl > 0) ? (vol * fee/100 / tvl * 365 * 100) : null;
+ const chg = parseFloat(a.price_change_percentage?.h24);
+ const poolAddr = p.id.replace(net+'_','');
+ return { name, tvl, vol, fee, apr, chg, addr: poolAddr, sym };
+ }).filter(p => p.tvl > 5000)
+ .sort((a,b) => (b.apr||0)-(a.apr||0))
+ .slice(0,3);
+ results.push(...pools);
+ } catch(e) { /* silencioso */ }
+ }));
+ results.sort((a,b) => (b.apr||0)-(a.apr||0));
+ _cachePort[net] = results;
+ return results;
  }
 
  window.switchUniTab = function(net, btn) {
@@ -723,7 +785,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
  const body = document.getElementById('uniPoolsBody');
  if (_cache[net]) {
- renderTable(_cache[net], net);
+ renderTable(_cache[net], net, _cachePort[net]);
  } else {
  body.innerHTML = '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);"><div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>Carregando…</td></tr>';
  loadNet(net);
@@ -733,8 +795,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  async function loadNet(net) {
  const status = document.getElementById('uni-status');
  try {
- const pools = await fetchNet(net);
- if (_activeNet === net) renderTable(pools, net);
+ const [pools, portPools] = await Promise.all([fetchNet(net), fetchPortfolioTokens(net)]);
+ if (_activeNet === net) renderTable(pools, net, portPools);
  if (status) status.textContent = 'atualizado '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
  } catch(e) {
  if (_activeNet === net) {
@@ -746,14 +808,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
  window.loadAllUniPools = function() {
  _cache = {};
+ _cachePort = {};
  loadNet(_activeNet);
- // pré-carrega as outras em background
  Object.keys(WETH).forEach(n => { if(n!==_activeNet) loadNet(n); });
  };
 
  document.addEventListener('DOMContentLoaded', function() {
  loadNet('eth');
- // pré-carrega Base e Arbitrum em background
  setTimeout(()=>loadNet('base'), 1500);
  setTimeout(()=>loadNet('arbitrum'), 3000);
  });
@@ -810,9 +871,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="revert-toolbar">
  <div class="revert-title">
  <span style="font-size:15px;color:#b6509e;font-weight:800;font-family:'Satoshi',serif;">⬡ AAVE V4</span>
- <span style="font-size:9px;color:var(--muted);">pro.aave.com · Ethereum</span>
+ <span style="font-size:9px;color:var(--muted);">app.aave.com · Ethereum</span>
  </div>
- <a class="btn-open" href="https://pro.aave.com/" target="_blank" rel="noopener">↗ Abrir AAVE</a>
+ <a class="btn-open" href="https://app.aave.com/" target="_blank" rel="noopener">↗ Abrir AAVE</a>
  </div>
  <div class="iframe-wrap" id="aaveWrap">
  <div class="iframe-spinner" id="aaveAppLoading">
@@ -820,7 +881,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="spinner-label">CARREGANDO AAVE…</div>
  </div>
  <iframe id="aaveFrame"
- src="https://pro.aave.com/"
+ src="https://app.aave.com/"
  title="AAVE V4 Dashboard"
  sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation allow-downloads"
  allow="clipboard-write; clipboard-read; web-share"
@@ -831,8 +892,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="ifb-icon" style="color:#b6509e;">⬡</div>
  <div class="ifb-title">AAVE V4</div>
  <div class="ifb-sub">O site bloqueia embed via <strong>X-Frame-Options</strong>.<br>Clique para abrir em nova aba e conectar sua carteira.</div>
- <a href="https://pro.aave.com/" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir no AAVE</a>
- <div class="ifb-addr">pro.aave.com</div>
+ <a href="https://app.aave.com/" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir no AAVE</a>
+ <div class="ifb-addr">app.aave.com</div>
  </div>
  </div>
  <div class="panel-footer">
@@ -840,7 +901,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div style="display:flex;gap:6px;">
  <button class="btn-sm" onclick="togglePanel('aaveWrap',this)">⤢ Expandir</button>
  <button class="btn-sm" onclick="reloadPanel('aaveFrame','aaveAppLoading','aaveAppFallback')">↺ Recarregar</button>
- <a class="btn-open" href="https://pro.aave.com/" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
+ <a class="btn-open" href="https://app.aave.com/" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
  </div>
  </div>
 </div>
@@ -1220,14 +1281,14 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
 // ── META 5% ──
 setTimeout(function() {
- var STABLES = 1953.32;
+ var STABLES = 2369.88; // USDT 2069.46 + USDS 300.42
  var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
  var QTYS = {ethereum:2.084106,solana:20.31134268,cardano:375.245,'radiant-capital':7290.46,
  eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 746.99) + (window._liveKaminoDebt || 804.22);
+ var debt = (window._liveAaveDebt || 748) + (window._liveKaminoDebt || 805.70);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -1236,10 +1297,11 @@ setTimeout(function() {
  if(pEl) pEl.textContent = '$' + Math.round(net).toLocaleString('en-US');
  if(rEl) rEl.textContent = '$' + Math.round(meta).toLocaleString('en-US');
  }).catch(function() {
- var fallbackNet = 6430;
+ // fallback: usa window._livePatrimonio se disponível (calculado em outra fetch)
+ var fallbackNet = window._livePatrimonio || 7900;
  var pEl = document.getElementById('capop-patrimonio');
  var rEl = document.getElementById('capop-rec');
- if(pEl) pEl.textContent = '$' + fallbackNet.toLocaleString('en-US');
+ if(pEl) pEl.textContent = '$' + Math.round(fallbackNet).toLocaleString('en-US');
  if(rEl) rEl.textContent = '$' + Math.round(fallbackNet*0.05).toLocaleString('en-US');
  });
 }, 1500);
@@ -3549,13 +3611,18 @@ function buildNetRanking() {
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
- const STABLES = 1953.32; // USDT AAVE + USDS — atualizar com prints
- const DEBT = (window._liveAaveDebt || 746.99) + (window._liveKaminoDebt || 804.22);
- const solExtra = Math.max((window._liveKaminoSol||19.35) - 20.31134268, 0) * (solPrice||87.28);
- const total = spot + STABLES + solExtra - DEBT;
+ const STABLES = 2369.88; // USDT 2069.46 + USDS 300.42
+ const LP_POOLED = window._liveLP || 365;
+ const DEBT = (window._liveAaveDebt || 748) + (window._liveKaminoDebt || 805.70);
+ const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;
- console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + solExtra $${solExtra.toFixed(2)} − debt $${DEBT.toFixed(0)}`);
+ console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + lp $${LP_POOLED.toFixed(0)} − debt $${DEBT.toFixed(0)}`);
  if (typeof render === 'function') render(total);
+ // Atualiza Meta 5% display
+ const pEl = document.getElementById('capop-patrimonio');
+ const rEl = document.getElementById('capop-rec');
+ if (pEl) pEl.textContent = '$' + Math.round(total).toLocaleString('en-US');
+ if (rEl) rEl.textContent = '$' + Math.round(total * 0.05).toLocaleString('en-US');
  }).catch(()=>{});
  }
  return null;
