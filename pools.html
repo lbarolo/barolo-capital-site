@@ -498,53 +498,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
 
- <!-- ── Range visual + preço médio efetivo ── -->
- <div style="padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--surface2);">
-
-  <!-- Labels do range -->
-  <div style="display:flex;justify-content:space-between;align-items:center;font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:5px;">
-   <span>◂ $2,450 MIN</span>
-   <span style="color:var(--gold);letter-spacing:.05em;">◆ PREÇO MÉDIO EFETIVO $2,757</span>
-   <span>MAX $3,100 ▸</span>
-  </div>
-
-  <!-- Barra do range -->
-  <div style="position:relative;height:8px;background:rgba(255,255,255,0.04);border-radius:4px;border:1px solid var(--border);margin-bottom:5px;">
-   <!-- Zona ativa (todo o range = verde) -->
-   <div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(63,185,80,0.12);border-radius:4px;"></div>
-   <!-- Marcador do preço médio efetivo (47.2% = (2757-2450)/(3100-2450)) -->
-   <div style="position:absolute;left:47.2%;top:-3px;width:2px;height:14px;background:var(--gold);opacity:0.75;border-radius:1px;" title="Preço médio efetivo de venda ETH"></div>
-   <!-- Marcador do preço atual (atualizado por JS) -->
-   <div id="lp-price-indicator" style="position:absolute;left:0%;top:-4px;width:3px;height:16px;background:var(--red);border-radius:2px;transform:translateX(-50%);transition:left .6s;box-shadow:0 0 7px rgba(248,81,73,0.8);"></div>
-  </div>
-
-  <!-- Labels inferiores -->
-  <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:10px;">
-   <span style="color:var(--green);font-size:7.5px;">▸ IN RANGE acima de $2,450</span>
-   <span id="lp-current-price" style="color:var(--text);">ETH $—</span>
-   <span style="color:var(--green);font-size:7.5px;">◂ IN RANGE abaixo de $3,100</span>
-  </div>
-
-  <!-- Chips de métricas -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:5px;overflow:hidden;">
-   <div style="padding:9px 12px;border-right:1px solid var(--border);">
-    <div style="font-size:7.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">Preço Médio Efetivo</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--gold);font-weight:700;">$2,757</div>
-    <div style="font-size:7px;color:var(--muted);margin-top:3px;">√(2450×3100) · venda média do ETH</div>
-   </div>
-   <div style="padding:9px 12px;border-right:1px solid var(--border);">
-    <div style="font-size:7.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">Posição no Range</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;" id="lp-range-pct">—</div>
-    <div style="font-size:7px;color:var(--muted);margin-top:3px;" id="lp-range-status">—</div>
-   </div>
-   <div style="padding:9px 12px;">
-    <div style="font-size:7.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">Distância p/ Ativar</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;" id="lp-range-dist">—</div>
-    <div style="font-size:7px;color:var(--muted);margin-top:3px;" id="lp-range-dist-sub">—</div>
-   </div>
-  </div>
- </div>
-
  <!-- Iframe wrapper with loading overlay -->
  <div class="iframe-wrap" id="iframeWrap" style="height:860px;">
 
@@ -2159,7 +2112,7 @@ var POOLS = [
   { pair:'ETH/USDC 0.05%', net:'Arbitrum', open:'01/08/2023', close:'26/03/2024', days:209, capital:1014, fees:22,   il:0,   result:22,   status:'closed', lvr:0,    fcr:3.8,   invGrowth:2.2,  obs:'Pool longa com pouco volume. ETH deu grande valorização, pool deslizou em ranges. Final: 0.148 ETH + 30.95 USDC.' },
   { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
   // ── ATIVA ──
-  { pair:'WETH/USDC 0.3%', net:'Ethereum', open:'18/03/2026', close:'—',          days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),  capital:365,  fees:9,    il:0,   result:1,    status:'active',  lvr:0,   fcr:59.7,  invGrowth:0.3  },
+  { pair:'WETH/USDC 0.3%', net:'Base', open:'18/03/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),  capital:365,  fees:9,    il:0,   result:1,    status:'active',  lvr:0,   fcr:59.7,  invGrowth:0.3  },
 ];
 
 // ── Chart data derived from POOLS (single source of truth) ─────────────────
@@ -3437,44 +3390,6 @@ function buildNetRanking() {
 
  window._liveUniActive  = isActive;
  window._liveUniPooled  = totalPooled;
-
- // ── Atualiza range visual + métricas de preço médio ──────────────
- const RANGE_MIN = 2450, RANGE_MAX = 3100;
- const GEO_MEAN  = Math.sqrt(RANGE_MIN * RANGE_MAX); // $2,757 — preço médio efetivo de venda
-
- const priceEl = document.getElementById('lp-current-price');
- const indicator = document.getElementById('lp-price-indicator');
- if (priceEl) priceEl.textContent = 'ETH $' + ethPrice.toLocaleString('en-US', {maximumFractionDigits:0});
- if (indicator) {
-  // Indicador pode sair do range (clamped visualmente a -5%..105% para mostrar posição)
-  const pct = Math.min(1.05, Math.max(-0.05, (ethPrice - RANGE_MIN) / (RANGE_MAX - RANGE_MIN)));
-  indicator.style.left = (pct * 100) + '%';
-  indicator.style.background = inRange ? 'var(--green)' : 'var(--red)';
-  indicator.style.boxShadow = inRange ? '0 0 7px rgba(63,185,80,0.8)' : '0 0 7px rgba(248,81,73,0.8)';
- }
-
- // Posição no range e distância para ativar
- const setPriceChip = (id, val, color) => { const el=document.getElementById(id); if(el){el.textContent=val; if(color)el.style.color=color;} };
- if (inRange) {
-  const pctInRange = ((ethPrice - RANGE_MIN) / (RANGE_MAX - RANGE_MIN) * 100).toFixed(1);
-  setPriceChip('lp-range-pct',    pctInRange + '%', 'var(--green)');
-  setPriceChip('lp-range-status', '● ativo · ' + pctInRange + '% percorrido', null);
-  setPriceChip('lp-range-dist',   'IN RANGE', 'var(--green)');
-  setPriceChip('lp-range-dist-sub','posição gerando taxas agora', null);
- } else if (ethPrice < RANGE_MIN) {
-  const distUsd = (RANGE_MIN - ethPrice).toFixed(0);
-  const distPct = ((RANGE_MIN - ethPrice) / ethPrice * 100).toFixed(2);
-  setPriceChip('lp-range-pct',    '0%', 'var(--muted)');
-  setPriceChip('lp-range-status', '○ fora · 100% WETH acumulado', null);
-  setPriceChip('lp-range-dist',   '+$' + distUsd, 'var(--gold)');
-  setPriceChip('lp-range-dist-sub','+' + distPct + '% p/ ativar ($' + RANGE_MIN.toLocaleString() + ')', null);
- } else {
-  const distUsd = (ethPrice - RANGE_MAX).toFixed(0);
-  setPriceChip('lp-range-pct',    '100%', 'var(--muted)');
-  setPriceChip('lp-range-status', '○ fora · 100% USDC acumulado', null);
-  setPriceChip('lp-range-dist',   '-$' + distUsd, 'var(--muted)');
-  setPriceChip('lp-range-dist-sub','acima do range — sem taxas', null);
- }
 
  return { liquidity: liquidity.toString(), isActive, usdc, weth, feeUsdc, feeWeth, ethPrice };
 
