@@ -670,9 +670,9 @@ body, input, button, select, textarea {
   <div class="stat-sub">Aave USDC + Kamino USDC</div>
  </div>
  <div class="stat-card" style="border-color:rgba(58,126,200,0.3);background:linear-gradient(135deg,var(--surface),rgba(58,126,200,0.04));">
-  <div class="stat-label" style="color:var(--blue,#3a7ec8);">CAIXA</div>
-  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$1,953</div>
-  <div class="stat-sub">USDT $1,653 · USDS $300</div>
+  <div class="stat-label" style="color:var(--blue,#3a7ec8);">STABLES</div>
+  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$2,370</div>
+  <div class="stat-sub" id="s-stables-sub">USDT $2,069 · USDS $300</div>
  </div>
 </div>
 
@@ -1218,6 +1218,7 @@ var KAMINO_SOL_EXTRA_QTY = 19.35 - 20.31134268; // ~0.038 SOL restante // SOL no
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
 var liveData = {};
+var _livePortfolioGross = 0; // atualizado em renderUI a cada fetch
 var ethPrice = 2074.75;
 var solPrice = 86.84;
 
@@ -1253,13 +1254,19 @@ async function fetchPrices(){
  // Try CoinGecko /coins/markets first (richer data)
  try {
  const ids = PORTFOLIO.map(a=>a.cgId).join(',');
- const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h`;
+ const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h,7d,30d,1y`;
  const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
  if(!r.ok) throw new Error('HTTP ' + r.status);
  const arr = await r.json();
  if(!arr?.length || !arr[0].current_price) throw new Error('empty');
  arr.forEach(coin => {
- liveData[coin.id] = { usd: coin.current_price, usd_24h_change: coin.price_change_percentage_24h || 0 };
+ liveData[coin.id] = {
+   usd: coin.current_price,
+   usd_24h_change: coin.price_change_percentage_24h || 0,
+   change7d:  coin.price_change_percentage_7d_in_currency  || 0,
+   change30d: coin.price_change_percentage_30d_in_currency || 0,
+   change1y:  coin.price_change_percentage_1y_in_currency  || 0,
+ };
  const asset = PORTFOLIO_DATA.find(a => a.cgId === coin.id);
  if (asset && coin.image) asset.logo = coin.image;
  });
@@ -1303,7 +1310,8 @@ function renderUI(enriched){
  ethPrice = getPrice('ethereum');
  solPrice = getPrice('solana');
 
- const cgTotal = enriched.reduce((s,a)=>s+a.currentValue, 0);
+ _livePortfolioGross = enriched.reduce((s,a)=>s+a.currentValue, 0);
+ const cgTotal = _livePortfolioGross;
  const aaveDebtLive = window._liveAaveDebt || AAVE_DEBT;
  const kaminoDebtLive = window._liveKaminoDebt || KAMINO_DEBT;
  // Patrimônio Líquido = SPOT (ativos voláteis ao vivo) + STABLECOINS − Dívida total
@@ -1315,9 +1323,11 @@ function renderUI(enriched){
 
  set('s-net-total', fmtCurrency(netTotal, 0));
  set('s-net-card', fmtCurrency(netTotal, 0));
-  // Update CAIXA card with stables
-  var stablesTotal = STABLES_USD;
+  // Update STABLES card — soma todos os isStable do enriched
+  var stablesTotal = enriched.filter(a=>a.isStable).reduce((s,a)=>s+(a.currentValue||a.qty),0);
   set('s-stables', fmtCurrency(stablesTotal, 0));
+  var stablesSub = enriched.filter(a=>a.isStable).map(a=>a.ticker+' '+fmtCurrency(a.currentValue||a.qty,0)).join(' · ');
+  if(stablesSub) set('s-stables-sub', stablesSub);
  set('s-spot', fmtCurrency(cgTotal, 0));
  set('s-spot-sub', enriched.length+' ativos');
  set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
@@ -1987,9 +1997,19 @@ function setWealthCurrency(c, btn) {
 
 function buildWealthEvolution() {
   var W = WEEKLY_UPDATE;
-  var labels   = W.wealthCurve.labels;
-  var values   = W.wealthCurve.values;
-  var invested = W.wealthCurve.invested;
+  var labels   = W.wealthCurve.labels.slice();
+  var values   = W.wealthCurve.values.slice();
+  var invested = W.wealthCurve.invested.slice();
+
+  // Injeta ponto ao vivo (mês corrente) se preços já foram buscados
+  if (_livePortfolioGross > 0) {
+    var now = new Date();
+    var liveLabel = (now.getMonth()+1).toString().padStart(2,'0') + '/' + String(now.getFullYear()).slice(2);
+    labels.push(liveLabel);
+    values.push(Math.round(_livePortfolioGross));
+    invested.push(Math.round(TOTAL_INVESTED));
+  }
+
   var rate = wealthCurrency === 'brl' ? (window._brlRate || 5.8) : 1;
   var sym  = wealthCurrency === 'brl' ? 'R$' : '$';
   var fmt  = function(v){ return sym + Math.round(v*rate).toLocaleString('pt-BR'); };
@@ -2123,6 +2143,88 @@ function applyUpdate() {
  });
 }
 applyUpdate();
+
+// ── Reconstrói perfPeriodsData com dados ao vivo do CoinGecko ──────────────
+function updateLivePerfPeriods(enriched) {
+  const volatile = enriched.filter(a => !a.isStable);
+  const volVal   = volatile.reduce((s,a) => s + a.currentValue, 0);
+  const curVal   = enriched.reduce((s,a) => s + a.currentValue, 0);
+  const invNow   = TOTAL_INVESTED;
+
+  // Variação ponderada do portfólio para um campo de período (só ativos voláteis)
+  function wChange(field) {
+    if (!volVal) return 0;
+    return volatile.reduce((s,a) => s + (a.currentValue / volVal) * (liveData[a.cgId]?.[field] || 0), 0);
+  }
+
+  // Interpola n pontos entre startVal e curVal (progressão linear)
+  function interp(startVal, n) {
+    return Array.from({length: n}, (_, i) =>
+      Math.round(startVal + (curVal - startVal) * (i / (n - 1)))
+    );
+  }
+
+  // Valor do portfólio no início do período
+  function startVal(changePct) {
+    return changePct ? curVal / (1 + changePct / 100) : curVal;
+  }
+
+  // Labels de data para últimos N dias
+  function dateLabels(days) {
+    return Array.from({length: days + 1}, (_, i) => {
+      if (i === days) return 'Agr';
+      const d = new Date();
+      d.setDate(d.getDate() - (days - i));
+      return d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'}).slice(0,5);
+    });
+  }
+
+  const wc  = WEEKLY_UPDATE.wealthCurve;
+  const wcN = wc.values.length;
+
+  // Mês corrente para o ponto ao vivo
+  const now = new Date();
+  const liveLabel = (now.getMonth()+1).toString().padStart(2,'0') + '/' + String(now.getFullYear()).slice(2);
+
+  // 24h — 13 pontos (a cada 2h)
+  const s24 = startVal(wChange('usd_24h_change'));
+  perfPeriodsData['24h'] = {
+    labels: ['−24h','−22h','−20h','−18h','−16h','−14h','−12h','−10h','−8h','−6h','−4h','−2h','Agr'],
+    p: interp(s24, 13),
+    i: Array(13).fill(Math.round(invNow))
+  };
+
+  // 7d — 8 pontos (diário)
+  const s7d = startVal(wChange('change7d'));
+  perfPeriodsData['7d'] = {
+    labels: dateLabels(7),
+    p: interp(s7d, 8),
+    i: Array(8).fill(Math.round(invNow))
+  };
+
+  // 3m — últimos 3 meses da wealthCurve + ponto ao vivo
+  const n3 = Math.min(3, wcN);
+  perfPeriodsData['3m'] = {
+    labels:   wc.labels.slice(wcN - n3).concat([liveLabel]),
+    p:        wc.values.slice(wcN - n3).concat([Math.round(curVal)]),
+    i:        wc.invested.slice(wcN - n3).concat([Math.round(invNow)])
+  };
+
+  // 1a — últimos 12 meses da wealthCurve + ponto ao vivo
+  const n12 = Math.min(12, wcN);
+  perfPeriodsData['1a'] = {
+    labels:   wc.labels.slice(wcN - n12).concat([liveLabel]),
+    p:        wc.values.slice(wcN - n12).concat([Math.round(curVal)]),
+    i:        wc.invested.slice(wcN - n12).concat([Math.round(invNow)])
+  };
+
+  // TOTAL — série completa + ponto ao vivo como mês corrente
+  perfPeriodsData['all'] = {
+    labels:   wc.labels.concat([liveLabel]),
+    p:        wc.values.concat([Math.round(curVal)]),
+    i:        wc.invested.concat([Math.round(invNow)])
+  };
+}
 
 // ── Aplica trades do Diário DeFi (ferramentas.html → localStorage) ──
 (function(){
@@ -2331,6 +2433,9 @@ async function init(){
  if(ok){
  const e2=buildEnriched();
  try{ renderUI(e2); }catch(e){}
+ updateLivePerfPeriods(e2);
+ buildPerfChart(activePeriod);
+ buildWealthEvolution();
  }
 
  // Auto-refresh prices every 60 seconds
@@ -2339,6 +2444,9 @@ async function init(){
  if (refreshed) {
  const e3 = buildEnriched();
  try { renderUI(e3); } catch(e) {}
+ updateLivePerfPeriods(e3);
+ buildPerfChart(activePeriod);
+ buildWealthEvolution();
  }
  }, 60000);
 }
