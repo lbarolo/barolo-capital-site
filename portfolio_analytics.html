@@ -650,6 +650,11 @@ body, input, button, select, textarea {
  <div class="hero-meta-label">TOTAL INVESTIDO</div>
  <div class="hero-meta-val acc sensitive" id="s-invested">—</div>
  </div>
+ <div class="hero-meta-item">
+ <div class="hero-meta-label">MELHOR 24h</div>
+ <div class="hero-meta-val pos" id="s-best24h">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-best24h-sub">—</div>
+ </div>
  </div>
 </div>
 
@@ -1193,7 +1198,7 @@ var PORTFOLIO_DATA = [
  { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
  { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:2069.46,       invested:2069.46, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
- { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300.42,        invested:300.42,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/33613/small/usds.png',     isStable:true },
+ { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300.42,        invested:300.42,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
 ];
 var PORTFOLIO = PORTFOLIO_DATA; // alias
 
@@ -1319,7 +1324,10 @@ function renderUI(enriched){
  const totalPnL = cgTotal + STABLES_USD + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
  const realPnL = netTotal - TOTAL_INVESTED;
  const roi = (realPnL / TOTAL_INVESTED)*100;
- const ch24 = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0);
+ // 24h: só ativos voláteis (stables ~0% mas incluídas) + estimativa LP (50% WETH)
+ const ethChange24 = get24h('ethereum');
+ const lpCh24 = LP_POOLED * 0.5 * (ethChange24 / 100);
+ const ch24 = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0) + lpCh24;
 
  set('s-net-total', fmtCurrency(netTotal, 0));
  set('s-net-card', fmtCurrency(netTotal, 0));
@@ -1340,7 +1348,18 @@ function renderUI(enriched){
  const ch24El = document.getElementById('s-24h');
  if(ch24El){ const c24abs=Math.abs(ch24); ch24El.textContent=(ch24>=0?'+':'-')+fmtCurrency(c24abs,0); ch24El.className='hero-meta-val sensitive '+(ch24>=0?'pos':'neg'); }
  set('s-24h-sub', (ch24>=0?'+':'')+((ch24/cgTotal)*100).toFixed(2)+'% 24h');
- set('s-24h-sub', (ch24>=0?'+':'')+((ch24/cgTotal)*100).toFixed(2)+'% 24h');
+
+ // Melhor ativo em 24h (maior ganho absoluto em $, excluindo stables)
+ const best24 = enriched.filter(a=>!a.isStable).reduce((best,a)=>{
+   const gain = a.currentValue*(a.change24h/100);
+   return gain > (best ? best.gain : -Infinity) ? {a, gain} : best;
+ }, null);
+ if(best24){
+   const b24El = document.getElementById('s-best24h');
+   const gainSign = best24.gain >= 0 ? '+' : '';
+   if(b24El){ b24El.textContent = gainSign+fmtCurrency(Math.abs(best24.gain),2); b24El.className='hero-meta-val '+(best24.gain>=0?'pos':'neg'); }
+   set('s-best24h-sub', best24.a.ticker+' '+gainSign+(best24.a.change24h||0).toFixed(2)+'%');
+ }
 
  // ── EXEC BAR ──
  (function(){
