@@ -1539,3 +1539,72 @@ USDT e USDS aparecem com P&L = $0 e ROI = 0% (correto para stablecoins 1:1).
 
 O sync via localStorage funciona apenas quando as páginas são abertas **no mesmo browser e origem** (file:// ou mesmo servidor local). Compras registradas no diário de `ferramentas.html` são **incrementais** sobre a base hardcoded em `PORTFOLIO_DATA` e `HOLDINGS`. Não registrar no diário o que já está na base — seria dupla contagem.
 
+---
+
+## Sessão 17/04/2026 — Logo USDS corrigido + stat "Melhor 24h" + variação 24h com LP
+
+### Implementado
+
+#### `portfolio_analytics.html` — Stat "MELHOR 24h" no hero
+
+Novo `hero-meta-item` adicionado ao lado de "TOTAL INVESTIDO" no bloco hero:
+```html
+<div class="hero-meta-item">
+  <div class="hero-meta-label">MELHOR 24h</div>
+  <div class="hero-meta-val pos" id="s-best24h">—</div>
+  <div style="font-size:8px;color:var(--muted);" id="s-best24h-sub">—</div>
+</div>
+```
+
+**JS em `renderUI()`:** calcula o ativo com maior ganho absoluto em $ nas últimas 24h (excluindo stables):
+```js
+const best24 = enriched.filter(a=>!a.isStable).reduce((best,a)=>{
+  const gain = a.currentValue*(a.change24h/100);
+  return gain > (best ? best.gain : -Infinity) ? {a, gain} : best;
+}, null);
+```
+- `s-best24h` → valor em $, colorido verde/vermelho
+- `s-best24h-sub` → ticker + % de variação (ex: `SOL +2.43%`)
+
+#### `portfolio_analytics.html` — Variação 24h inclui LP pool
+
+**Antes:** `ch24` calculava apenas ativos em `PORTFOLIO_DATA`, ignorando o LP pool.
+
+**Depois:** LP pool ($365, ~50% WETH) contribui proporcionalmente ao ETH 24h:
+```js
+const ethChange24 = get24h('ethereum');
+const lpCh24 = LP_POOLED * 0.5 * (ethChange24 / 100);
+const ch24 = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0) + lpCh24;
+```
+
+**Por quê:** CoinGecko mostrava $131.89 e o site $105. Parte da diferença era o LP ignorado. A outra parte pode ser timing de fetch (preços capturados em momentos diferentes).
+
+#### `portfolio_analytics.html` — Logo USDS corrigido
+
+URL da imagem estava com ID errado (33613) — retornava 403:
+| Campo | Antes | Depois |
+|---|---|---|
+| Logo URL | `coins/images/33613/small/usds.png` | `coins/images/39926/small/usds.webp` |
+
+Causa: CoinGecko tem dois coins com nome similar. O ID correto do USDS (Sky/Maker) é 39926, não 33613. Verificado via `curl -s -o /dev/null -w "%{http_code}"` retornando 200.
+
+### Dados atualizados
+
+Nenhum dado de posição alterado nesta sessão.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Logo USDS não aparecia em "Análise por Ativo" | URL da imagem no CoinGecko CDN com ID errado (33613 → 403) | Atualizado para ID 39926, formato `.webp` |
+| Variação 24h subestimada vs CoinGecko | LP pool ($365 em WETH/USDC) não incluído no cálculo `ch24` | Adicionado `LP_POOLED × 0.5 × ETH_change24h` |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **`ferramentas.html` calculadora de liquidação** — ainda usa "GHO" nos inputs HTML (deve ser USDC)
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
+- **Testar gateway Uniswap Labs** — confirmar `interface.gateway.uniswap.org/v1/graphql` em produção
+
