@@ -1732,3 +1732,151 @@ Nova função `fetchPortfolioTokens(net)` — GeckoTerminal API, top 3 pools por
 - **`app.aave.com` iframe** — pode igualmente bloquear embed; link "↗ Nova aba" já está correto como fallback
 - **`window._liveLP` no Meta** — fallback $365; quando pool fechar ou capital mudar, atualizar `ENTRY_CAPITAL` e o fallback
 
+---
+
+## Sessão 18/04/2026 — LP Base corrigida + APR backoff + gráficos portfolio melhorados + footers 2021
+
+### Implementado
+
+#### `pools.html` — LP card: contratos e RPCs corrigidos para Base
+
+**Root cause:** `fetchUniswapLPData()` usava endereços da Ethereum mainnet (`NFT_MGR = 0xC364...`, `POOL = 0x88e6...`) mas a pool ativa está na **Base** (chain_id=8453). Qualquer chamada RPC retornava dados de outra posição ou erro silencioso.
+
+**Fix:**
+```js
+const NFT_MGR = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base NonfungiblePositionManager
+const POOL    = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
+const BASE_RPCS = [
+  'https://mainnet.base.org',
+  'https://base.llamarpc.com',
+  'https://base.drpc.org',
+  'https://base.publicnode.com'
+];
+```
+
+`ethcall()` agora itera `BASE_RPCS` em vez de `RPCS` (lista de RPCs Ethereum).
+
+**Subgraph ETH removido:** O endpoint `interface.gateway.uniswap.org/v1/graphql` só indexa posições da Ethereum mainnet — retornava dados de outro usuário para o token ID 4694262. Removido o bloco de fetch do subgraph. APR calculado diretamente via fees não coletadas (on-chain Base) como fonte única:
+```js
+// Antes: tentava subgraph ETH, caía em fallback on-chain se falhar
+// Depois: usa só on-chain Base (correto), label = 'parcial · só fees não coletadas'
+if (uncFeeUsd > 0) {
+  feeApr    = uncFeeUsd / ENTRY_CAPITAL / days * 365 * 100;
+  dailyFees = uncFeeUsd / days;
+}
+```
+
+#### `pools.html` — Uniswap APR: fetchWithRetry + ZK removido + stagger aumentado
+
+**`fetchWithRetry(url, tries=3)`** adicionada — retry com backoff exponencial em HTTP 429 (rate limit do GeckoTerminal):
+```js
+async function fetchWithRetry(url, tries=3) {
+  for (let i=0; i<tries; i++) {
+    const r = await fetch(url, {headers:{Accept:'application/json'}});
+    if (r.ok) return r;
+    if (r.status === 429 && i < tries-1) {
+      await new Promise(res => setTimeout(res, 1500 * (i+1)));
+      continue;
+    }
+    throw new Error('HTTP '+r.status);
+  }
+}
+```
+
+`fetchNet` e `fetchPortfolioTokens` trocados para usar `fetchWithRetry`.
+
+**ZK removido de `PORTFOLIO_ADDRS.eth`:** token `0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e` retornava 404 na GeckoTerminal (ZK não existe em ETH mainnet como ERC-20 liquid; é token da rede ZKsync).
+
+**Stagger de carregamento aumentado:** `1.5s→4s` (Base) e `3s→8s` (Arbitrum) para evitar burst de requisições e HTTP 429.
+
+#### `pools.html` — AAVE iframe: revertido app.aave.com → pro.aave.com
+
+`app.aave.com` também bloqueia iframe via `X-Frame-Options`. Revertido `pro.aave.com` em 5 lugares (sub-label, link toolbar, src iframe, link fallback, link "Nova aba"). Esta é a URL que funciona como embed (ou mostra fallback graciosamente).
+
+#### `portfolio_analytics.html` — P&L por ativo: airdrops incluídos
+
+`buildLiveCharts` — filtro do gráfico P&L por ativo alterado:
+```js
+// Antes: invested > 0 (excluía RDNT/ZK/ZETA que têm qty mas invested=0)
+// Depois: qty > 0 (inclui airdrops — P&L = currentValue, sem cost basis)
+const withInv = enriched.filter(a=>a.qty>0).sort((a,b)=>a.pnl-b.pnl);
+// ROI ainda filtra por invested>0 (ROI de cost zero = indefinido)
+const withROI = enriched.filter(a=>a.invested>0).sort(...);
+```
+
+RDNT, ZK e ZETA agora aparecem no gráfico P&L com P&L = valor atual (já que custo é zero — airdrops).
+
+#### `portfolio_analytics.html` — DCA Tracking: gráfico dinâmico com wealthCurve
+
+Substituídos 13 pontos trimestrais hardcoded por leitura dinâmica do `WEEKLY_UPDATE.wealthCurve` (51 meses, Jan/22→Mar/26) + ponto ao vivo de Abr/26 quando `_livePortfolioGross` disponível:
+```js
+var wc = WEEKLY_UPDATE.wealthCurve;
+var labels = wc.labels.slice();
+var vals   = wc.values.slice();
+var inv    = wc.invested.slice();
+if (typeof _livePortfolioGross !== 'undefined' && _livePortfolioGross > 0) {
+  labels.push('04/26'); vals.push(Math.round(_livePortfolioGross));
+  inv.push(Math.round(TOTAL_INVESTED));
+}
+```
+
+**Tooltip melhorado:** título do mês + P&L + ROI no hover:
+```js
+afterBody: items => {
+  const pnl = v - c, roi = (pnl/c*100).toFixed(1);
+  return ['──────────', ' P&L: +$X,XXX', ' ROI: +XX%'];
+}
+```
+
+Eixo X agora com `maxTicksLimit:13, autoSkip:true` para não sobrecarregar labels.
+
+#### `portfolio_analytics.html` — perfChart: tooltip contextual + halo nos pontos
+
+`buildPerfChart` melhorado:
+- Tooltip title: `"Hora "`, `"Dia "` ou `"Mês "` conforme o período selecionado (24h/7d/all)
+- Tooltip after-body: P&L + ROI no hover (igual ao DCA)
+- Pontos em hover com halo branco 5px: `pointHoverBackgroundColor:'#b8963a', pointHoverBorderColor:'#fff', pointHoverBorderWidth:2`
+
+#### `portfolio_analytics.html` — riskBubble: ZETA adicionado
+
+ZETA adicionado ao `buildRiskBubble` (era 10 ativos, agora 11):
+```js
+{ x:1.90, y: 9999, r: 2, label:'ZETA', color:'#00C896' }, // airdrop → posicionado em +85%
+```
+
+#### `index.html`, `portfolio_analytics.html`, `relatorio.html` — Footers "Since 2021"
+
+Três arquivos atualizados:
+- `index.html`: hero stat "Since" — `2022` → `2021`
+- `portfolio_analytics.html`: footer — `"GESTÃO ATIVA · ABR 2026"` → `"SINCE 2021"`
+- `relatorio.html`: footer — `"Gestão Ativa"` → `"Since 2021"`
+
+**Por quê:** Barolo Capital opera desde 2021, não 2022. Corrige o track record exibido publicamente.
+
+### Dados atualizados
+
+Nenhum dado de posição alterado nesta sessão.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix aplicado |
+|-----|-----------|--------------|
+| LP card (POOLED/APR/CUSTO/LIQUIDO) com dados errados | `NFT_MGR` e `POOL` eram endereços da Ethereum mainnet; pool está na Base | Substituídos pelos endereços corretos da Base + `BASE_RPCS` |
+| APR card mostrando dados de outro usuário | Subgraph ETH indexa por `tokenId` global — `#4694262` pode pertencer a outra posição na ETH | Subgraph removido; APR calculado 100% on-chain via Base RPC |
+| GeckoTerminal retornava HTTP 429 (rate limit) | Três redes carregavam em burst com stagger curto (1.5s/3s) | `fetchWithRetry` com backoff + stagger 4s/8s |
+| ZK retornava 404 no GeckoTerminal | Token ZK não existe em ETH mainnet como ERC-20 liquide | ZK removido de `PORTFOLIO_ADDRS.eth` |
+| DCA chart com só 13 pontos trimestrais hardcoded | Array estático desatualizado | Dinâmico via `wealthCurve` (51 pts) + ponto ao vivo |
+| RDNT/ZK/ZETA ausentes do gráfico P&L | Filtro `invested>0` excluía airdrops com `invested=0` | Filtro trocado para `qty>0` no P&L (ROI mantém `invested>0`) |
+| AAVE iframe quebrado | `app.aave.com` bloqueia `X-Frame-Options` igual ao Uniswap | Revertido para `pro.aave.com` |
+| Hero/footer mostrando "2022" | Ano de início errado (Lucas opera desde 2021) | Corrigido para 2021 nos 3 arquivos |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **`ferramentas.html` calculadora de liquidação** — ainda usa "GHO" nos inputs HTML (deve ser USDC)
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
+- **APR pool Base** — calculado só via fees não coletadas (uncollected); fees já coletadas (Collect events) não são contabilizadas. Para APR histórico completo precisaria de scan de logs Base — complexidade alta, pendente.
+- **`pro.aave.com` iframe** — também pode bloquear embed em alguns browsers; fallback com link "Nova aba" está correto
+
