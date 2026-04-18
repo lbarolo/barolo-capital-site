@@ -1332,9 +1332,16 @@ function setRef(ref){
 
 // ── UNISWAP V3 LP LIVE DATA ──
 (async function fetchUniswapLPData() {
-  const NFT_MGR  = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
-  const POOL     = '0x88e6A0c2ddd26FEEb64F039a2c41296FcB3f5640';
+  // Pool ATIVA: WETH/USDC 0.30% na BASE (chain_id=8453) — NFT #4694262
+  const NFT_MGR  = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base Uniswap V3 NonfungiblePositionManager
+  const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
   const TOKEN_ID = 4694262;
+  const BASE_RPCS = [
+    'https://mainnet.base.org',
+    'https://base.llamarpc.com',
+    'https://base.drpc.org',
+    'https://base.publicnode.com'
+  ];
   const Q96  = 2n ** 96n;
   const Q128 = 2n ** 128n;
   const Q256 = 2n ** 256n;
@@ -1346,7 +1353,7 @@ function setRef(ref){
   function sqrtTickX96(t) { return BigInt(Math.floor(Math.sqrt(Math.pow(1.0001,t))*2**96)); }
 
   async function ethcall(to, data) {
-    for (const rpc of RPCS) {
+    for (const rpc of BASE_RPCS) {
       try {
         const r = await fetchTimeout(rpc,{
           method:'POST',headers:{'Content-Type':'application/json'},
@@ -1411,51 +1418,19 @@ function setRef(ref){
   const pooledUsd = wethAmt*eth + usdcAmt;
   const uncFeeUsd = uncWeth*eth + uncUsdc;
 
-  // 8. P&L / IL / APR — tenta dois endpoints, fallback on-chain
-  const ENTRY_CAPITAL = 365; // capital real depositado em 18/03/2026
+  // 8. APR via on-chain (fees não coletadas + período desde abertura)
+  // Subgraph hosted ETH não serve aqui (pool é Base); cálculo histórico full
+  // exigiria scan de logs (Collect events) — usar só uncollected fees como proxy
+  const ENTRY_CAPITAL = 365;
   const OPEN_TS = new Date('2026-03-18').getTime() / 1000;
   let pnl=null, il=null, apr=null, feeApr=null, dailyFees=null;
-  let aprSource = 'histórico'; // label da fonte
+  let aprSource = 'parcial · só fees não coletadas';
 
-  const GQL_QUERY = JSON.stringify({query:`{position(id:"${TOKEN_ID}"){depositedToken0 depositedToken1 withdrawnToken0 withdrawnToken1 collectedFeesToken0 collectedFeesToken1 transaction{timestamp}}}`});
-  const ENDPOINTS = [
-    { url:'https://interface.gateway.uniswap.org/v1/graphql',
-      headers:{'Content-Type':'application/json','origin':'https://app.uniswap.org','x-request-source':'uniswap-web'} }
-  ];
-
-  for (const ep of ENDPOINTS) {
-    try {
-      const gR = await fetchTimeout(ep.url,{method:'POST',headers:ep.headers,body:GQL_QUERY},8000);
-      if (!gR.ok) continue;
-      const gj = await gR.json();
-      const gp = gj?.data?.position;
-      if (!gp) continue;
-      const d0  = parseFloat(gp.depositedToken0)  - parseFloat(gp.withdrawnToken0||0);
-      const d1  = parseFloat(gp.depositedToken1)  - parseFloat(gp.withdrawnToken1||0);
-      const cf0 = parseFloat(gp.collectedFeesToken0||0);
-      const cf1 = parseFloat(gp.collectedFeesToken1||0);
-      const days = (Date.now()/1000 - parseInt(gp.transaction.timestamp))/86400;
-      const hodlUsd   = d0*eth + d1;
-      const totalFees = (cf0+uncWeth)*eth + (cf1+uncUsdc);
-      il  = pooledUsd - hodlUsd;
-      pnl = totalFees + il;
-      if (days>0 && ENTRY_CAPITAL>0) {
-        apr       = pnl/ENTRY_CAPITAL/days*365*100;
-        feeApr    = totalFees/ENTRY_CAPITAL/days*365*100;
-        dailyFees = totalFees/days;
-      }
-      console.debug('[LP] subgraph OK via', ep.url);
-      break;
-    } catch(e) { console.debug('[LP] endpoint falhou:', ep.url, e.message); }
-  }
-
-  // Fallback on-chain: usa só fees não coletadas (parcial)
-  if (feeApr === null && uncFeeUsd > 0) {
+  if (uncFeeUsd > 0) {
     const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
     feeApr    = uncFeeUsd/ENTRY_CAPITAL/days*365*100;
     dailyFees = uncFeeUsd/days;
-    aprSource = 'parcial · só fees não coletadas';
-    console.debug('[LP] APR calculado via on-chain fallback:', feeApr.toFixed(1)+'%');
+    console.debug('[LP] APR via on-chain Base:', feeApr.toFixed(1)+'%');
   }
 
   // 9. Atualiza REFS e UI

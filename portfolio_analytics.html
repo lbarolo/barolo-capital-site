@@ -1607,8 +1607,9 @@ var tt=()=>{
 // ──────────────────────────────────────────────────
 function buildLiveCharts(enriched, totalVal){
  setupChartDefaults();
- // Inclui stables: P&L = 0 por definição (1:1), ROI = 0%
- const withInv = enriched.filter(a=>a.invested>0).sort((a,b)=>a.pnl-b.pnl);
+ // P&L: inclui airdrops (qty>0, invested=0 → P&L = currentValue puro)
+ // ROI: só ativos com cost basis (invested>0) — ROI de cost zero é indefinido
+ const withInv = enriched.filter(a=>a.qty>0).sort((a,b)=>a.pnl-b.pnl);
  const withROI = enriched.filter(a=>a.invested>0).sort((a,b)=>(a.pnl/a.invested)-(b.pnl/b.invested));
 
  if(pnlChartInst) pnlChartInst.destroy();
@@ -1981,26 +1982,52 @@ function buildBenchmarkChart(){
 // ── DCA TRACKING ──
 function buildDcaChart(){
  try{
+ // Usa wealthCurve completa (51 meses) + ponto Abr/26 ao vivo se disponível
+ var wc = WEEKLY_UPDATE.wealthCurve;
+ var labels = wc.labels.slice();
+ var vals   = wc.values.slice();
+ var inv    = wc.invested.slice();
+ if (typeof _livePortfolioGross !== 'undefined' && _livePortfolioGross > 0) {
+   var now = new Date();
+   labels.push((now.getMonth()+1).toString().padStart(2,'0')+'/'+String(now.getFullYear()).slice(2));
+   vals.push(Math.round(_livePortfolioGross));
+   inv.push(Math.round(TOTAL_INVESTED));
+ }
  dcaChartInst = new Chart(document.getElementById('dcaTracking'),{
  type:'line',
  data:{
- labels:['01/2022', '05/2022', '09/2022', '01/2023', '05/2023', '09/2023', '01/2024', '05/2024', '09/2024', '01/2025', '05/2025', '09/2025', '01/2026'],
+ labels: labels,
  datasets:[
- {label:'Investido', data:[1061, 1771, 2198, 2431, 2658, 2802, 2977, 3056, 3310, 4127, 5121, 5121, 6230], borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[5,3],pointRadius:0},
- {label:'Valor Mercado',data:[853, 1037, 742, 1119, 1570, 1639, 2959, 5471, 5170, 8570, 8069, 8545, 9511], borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0,pointHoverRadius:4},
- {label:'Meta $15.000', data:Array(13).fill(15000), borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
+ {label:'Aportado (custo)', data:inv,  borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.25,borderWidth:1.5,borderDash:[5,3],pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#8b5cf6'},
+ {label:'Valor de mercado', data:vals, borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.08)',fill:true,tension:0.35,borderWidth:2,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#b8963a'},
+ {label:'Meta $15.000', data:Array(labels.length).fill(15000), borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
  ]
  },
  options:{
  responsive:true,
- plugins:{tooltip:tt(),legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}},
+ interaction:{mode:'index',intersect:false},
+ plugins:{
+   tooltip:{...tt(),callbacks:{
+     title: items => items[0]?.label ? 'Mês ' + items[0].label : '',
+     label: ctx => ' ' + ctx.dataset.label + ': $' + Math.round(ctx.raw).toLocaleString('en-US'),
+     afterBody: items => {
+       const v = items.find(i=>i.datasetIndex===1)?.raw || 0;
+       const c = items.find(i=>i.datasetIndex===0)?.raw || 0;
+       if (!v || !c) return [];
+       const pnl = v - c, roi = (pnl/c*100).toFixed(1);
+       return ['──────────', ' P&L: ' + (pnl>=0?'+':'') + '$' + Math.round(pnl).toLocaleString('en-US'),
+               ' ROI: ' + (pnl>=0?'+':'') + roi + '%'];
+     }
+   }},
+   legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}
+ },
  scales:{
- x:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}},
+ x:{ticks:{color:Chart.defaults.color,font:{size:9},maxTicksLimit:13,maxRotation:0,autoSkip:true},grid:{display:false},border:{display:false}},
  y:{ticks:{color:Chart.defaults.color,callback:v=>'$'+v.toLocaleString(),font:{size:10}},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
  }
  }
  });
- }catch(e){}
+ }catch(e){ console.warn('dcaChart error:',e); }
 }
 
 // ── EVOLUÇÃO PATRIMONIAL ──
@@ -2274,8 +2301,8 @@ function buildPerfChart(period){
  perfChartInst = new Chart(document.getElementById('perfChart'),{
  type:'line',
  data:{labels:d.labels, datasets:[
- {label:'Portfólio',data:d.p,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0},
- {label:'Investido', data:d.i,borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[6,3],pointRadius:0},
+ {label:'Portfólio',data:d.p,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#b8963a',pointHoverBorderColor:'#fff',pointHoverBorderWidth:2},
+ {label:'Investido', data:d.i,borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#8b5cf6'},
  {label:'Meta $15K', data:d.p.map(()=>15000),borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
  ]},
  options:{
@@ -2283,8 +2310,17 @@ function buildPerfChart(period){
  interaction:{mode:'index',intersect:false},
  plugins:{
  tooltip:{...tt(),callbacks:{
- label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString('en-US',{maximumFractionDigits:0})}`,
- afterBody:items=>{const p=items.find(i=>i.datasetIndex===0)?.raw||0,inv=items.find(i=>i.datasetIndex===1)?.raw||0;return p&&inv?['──────────',` P&L: ${p>=inv?'+':''}$${(p-inv).toLocaleString()}`]:[];}
+ title: items => items[0]?.label ? (period==='24h'?'Hora ':period==='7d'?'Dia ':'Mês ') + items[0].label : '',
+ label: ctx=>` ${ctx.dataset.label}: $${Math.round(ctx.raw).toLocaleString('en-US')}`,
+ afterBody: items => {
+   const p = items.find(i=>i.datasetIndex===0)?.raw || 0;
+   const inv = items.find(i=>i.datasetIndex===1)?.raw || 0;
+   if (!p || !inv) return [];
+   const pnl = p - inv, roi = (pnl/inv*100).toFixed(1);
+   return ['──────────',
+           ` P&L: ${pnl>=0?'+':''}$${Math.round(pnl).toLocaleString('en-US')}`,
+           ` ROI: ${pnl>=0?'+':''}${roi}%`];
+ }
  }},
  legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}
  },
@@ -2719,6 +2755,7 @@ function buildRiskBubble() {
  { x:1.50, y: -83.5, r: 2, label:'POL', color:'#8247E5' },
  { x:2.20, y: 9999, r: 2, label:'ZK', color:'#1B55F5' }, // airdrop
  { x:2.50, y: -95.9, r: 2, label:'XAI', color:'#FF6B35' },
+ { x:1.90, y: 9999, r: 2, label:'ZETA',color:'#00C896' }, // airdrop
  { x:0.00, y: 0.1, r:15, label:'USDT',color:'#26A17B' },
  { x:0.00, y: 0.1, r: 1, label:'USDS',color:'#1DA1F2' },
  ].map(b => ({ ...b, y: b.y === 9999 ? 85 : b.y }));
