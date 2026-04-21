@@ -243,8 +243,8 @@ tr:hover td{ background:var(--surface2); }
     </div>
     <div class="kpi-cell">
       <div class="kpi-label">Dívida Total</div>
-      <div class="kpi-value neg">$1.551</div>
-      <div class="kpi-sub">AAVE $747 · Kamino $804</div>
+      <div class="kpi-value neg">$1.554</div>
+      <div class="kpi-sub">AAVE $748 · Kamino $806</div>
     </div>
     <div class="kpi-cell" style="border-left:2px solid rgba(63,185,80,0.25);">
       <div class="kpi-label">Yield Líq./Mês</div>
@@ -270,7 +270,7 @@ tr:hover td{ background:var(--surface2); }
       <tr>
         <td colspan="3" style="padding-top:12px;color:var(--muted);font-size:8px;letter-spacing:.12em;">TOTAL SPOT</td>
         <td class="r" style="padding-top:12px;font-weight:700;" id="r-spot-total">—</td>
-        <td class="r" style="padding-top:12px;font-weight:700;">$6.418</td>
+        <td class="r" style="padding-top:12px;font-weight:700;" id="r-cost-total">—</td>
         <td class="r" style="padding-top:12px;font-weight:700;" id="r-pnl-total">—</td>
         <td class="r" style="padding-top:12px;font-weight:700;" id="r-roi-total">—</td>
         <td></td>
@@ -285,25 +285,25 @@ tr:hover td{ background:var(--surface2); }
     <div class="col-card">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">AAVE V4 · Ethereum</div>
       <table>
-        <tr><td style="color:var(--muted);">Supply ETH</td><td class="r">1.87 ETH</td><td class="r">~$4.066</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r">1.652,90 USDT</td><td class="r">$1.653</td></tr>
-        <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;">~$5.719</td></tr>
-        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">746,99 USDC</td><td class="r" style="color:var(--red);">−$747</td></tr>
+        <tr><td style="color:var(--muted);">Supply WETH</td><td class="r">1.88 WETH</td><td class="r" id="r-aave-eth-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r">1.650 USDT</td><td class="r">$1.650</td></tr>
+        <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-aave-supply">—</td></tr>
+        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">748 USDC</td><td class="r" style="color:var(--red);">−$748</td></tr>
         <tr><td style="color:var(--muted);">Health Factor</td><td></td><td class="r" style="color:var(--green);font-weight:700;">6.24</td></tr>
-        <tr><td style="color:var(--muted);">Taxa Borrow</td><td></td><td class="r">3,28% a.a.</td></tr>
-        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$2,04</td></tr>
+        <tr><td style="color:var(--muted);">Taxa Borrow</td><td></td><td class="r">2,32% a.a.</td></tr>
+        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$1,45</td></tr>
       </table>
     </div>
     <div class="col-card">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">Kamino Finance · Solana</div>
       <table>
-        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r">19,33 SOL</td><td class="r">~$1.750</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r">300,42 USDS</td><td class="r">$300</td></tr>
-        <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;">~$2.050</td></tr>
-        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">804,22 USDC</td><td class="r" style="color:var(--red);">−$804</td></tr>
+        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r">19,37 SOL</td><td class="r" id="r-kam-sol-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r">300,55 USDS</td><td class="r">$301</td></tr>
+        <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-kam-supply">—</td></tr>
+        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">805,70 USDC</td><td class="r" style="color:var(--red);">−$806</td></tr>
         <tr><td style="color:var(--muted);">LTV Atual</td><td></td><td class="r" style="color:var(--green);font-weight:700;">39,22%</td></tr>
         <tr><td style="color:var(--muted);">LTV Liquidação</td><td></td><td class="r">77,20%</td></tr>
-        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$2,13</td></tr>
+        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$2,75</td></tr>
       </table>
     </div>
   </div>
@@ -435,13 +435,11 @@ setPeriod('mensal'); // default: mensal
 
 // ── Preços ao vivo ──
 (function fetchLivePrices() {
-  fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana,cardano&vs_currencies=usd')
+  var allIds = PORTFOLIO_DATA.map(function(a){ return a.cgId; }).join(',');
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + allIds + '&vs_currencies=usd')
     .then(function(r){ return r.json(); })
     .then(function(p) {
-      if (p.ethereum) PORTFOLIO_DATA[0].price = p.ethereum.usd;
-      if (p.solana)   PORTFOLIO_DATA[1].price = p.solana.usd;
-      if (p.cardano)  PORTFOLIO_DATA[2].price = p.cardano.usd;
-      // Re-render tabela com preços ao vivo
+      PORTFOLIO_DATA.forEach(function(a){ if (p[a.cgId]) a.price = p[a.cgId].usd; });
       renderAssetTable();
       renderKPIs();
     })
@@ -452,23 +450,30 @@ setPeriod('mensal'); // default: mensal
 // DADOS DO PORTFÓLIO — sincronizar com portfolio_analytics.html
 // ─────────────────────────────────────────────
 var PORTFOLIO_DATA = [
-  { ticker:'ETH',  name:'Ethereum',   qty:2.084106,       invested:4433.16, avgCost:1915.83, color:'#E8773D', price:1620 },
-  { ticker:'SOL',  name:'Solana',     qty:20.31134268,    invested:2201.68, avgCost:146.97,  color:'#14F195', price:110  },
-  { ticker:'ADA',  name:'Cardano',    qty:375.245,        invested:530.95,  avgCost:1.31,    color:'#3773F5', price:0.62 },
-  { ticker:'RDNT', name:'Radiant',    qty:7290.46,        invested:0,       avgCost:null,    color:'#00D4FF', price:0.006},
-  { ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,   invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', price:0.32 },
-  { ticker:'POL',  name:'POL',        qty:218,            invested:143.88,  avgCost:0.66,    color:'#A855F7', price:0.21 },
-  { ticker:'ZK',   name:'ZKsync',     qty:876,            invested:0,       avgCost:null,    color:'#1E90FF', price:0.065},
-  { ticker:'XAI',  name:'Xai',        qty:692.86,         invested:164.52,  avgCost:0.2375,  color:'#F59E0B', price:0.028},
-  { ticker:'ZETA', name:'ZetaChain',  qty:51.1434,        invested:0,       avgCost:null,    color:'#00C896', price:0.055},
+  { cgId:'ethereum',       ticker:'ETH',  name:'Ethereum',   qty:2.084106,       invested:4433.16, avgCost:1915.83, color:'#E8773D', price:1620  },
+  { cgId:'solana',         ticker:'SOL',  name:'Solana',     qty:20.31134268,    invested:2280.39, avgCost:146.97,  color:'#14F195', price:110   },
+  { cgId:'cardano',        ticker:'ADA',  name:'Cardano',    qty:375.245,        invested:530.95,  avgCost:1.31,    color:'#3773F5', price:0.62  },
+  { cgId:'radiant-capital',ticker:'RDNT', name:'Radiant',    qty:7290.46,        invested:0,       avgCost:null,    color:'#00D4FF', price:0.006 },
+  { cgId:'eigenlayer',     ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,   invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', price:0.32  },
+  { cgId:'matic-network',  ticker:'POL',  name:'POL',        qty:218,            invested:143.88,  avgCost:0.66,    color:'#A855F7', price:0.21  },
+  { cgId:'zksync',         ticker:'ZK',   name:'ZKsync',     qty:876,            invested:0,       avgCost:null,    color:'#1E90FF', price:0.065 },
+  { cgId:'xai-blockchain', ticker:'XAI',  name:'Xai',        qty:692.86,         invested:164.52,  avgCost:0.2375,  color:'#F59E0B', price:0.028 },
+  { cgId:'zetachain',      ticker:'ZETA', name:'ZetaChain',  qty:51.1434,        invested:0,       avgCost:null,    color:'#00C896', price:0.055 },
 ];
 
-var STABLES_USD   = 1953.32;
-var DEBT_TOTAL    = 1551.21;  // AAVE + Kamino
-var TOTAL_INVESTED_PORTFOLIO = 6418; // capital aportado total
+var STABLES_USD   = 2369.88;  // USDT 2069.46 + USDS 300.42
+var DEBT_TOTAL    = 1553.70;  // AAVE 748 + Kamino 805.70
+
+// Posições DeFi — constantes para yield calc
+var AAVE_ETH_QTY=1.88, AAVE_ETH_APY=0.0125;
+var AAVE_USDT_QTY=1650, AAVE_USDT_APY=0.0187;
+var AAVE_BORROW=748, AAVE_BORROW_APY=0.0232;
+var KAM_SOL_QTY=19.37, KAM_SOL_APY=0.0319;
+var KAM_USDS_QTY=300.55, KAM_USDS_APY=0.0369;
+var KAM_BORROW=805.70, KAM_BORROW_APY=0.0409;
 
 var POOLS_DATA = [
-  { pair:'WETH/USDC 0.3%', net:'Ethereum', status:'active',  fees:9,   il:0,  result:1    },
+  { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:9,   il:0,  result:1    },
   { pair:'ETH/USDC 0.3%',  net:'Base',     status:'closed',  fees:16,  il:0,  result:16   },
   { pair:'ETH/USDT 0.05%', net:'Arbitrum', status:'closed',  fees:34,  il:0,  result:34   },
   { pair:'SOL/USDC 0.04%', net:'Solana',   status:'closed',  fees:23,  il:0,  result:23   },
@@ -509,18 +514,39 @@ function calcTotals() {
 
 function renderKPIs() {
   var t = calcTotals();
+  var ethPrice = PORTFOLIO_DATA[0].price, solPrice = PORTFOLIO_DATA[1].price;
+
+  // Patrimônio líquido
   document.getElementById('r-net').textContent = fmt(t.netTotal);
   document.getElementById('r-net').className = 'kpi-value ' + (t.netTotal>=0?'pos':'neg');
   document.getElementById('r-net-sub').textContent = 'SPOT $'+Math.round(t.spotTotal).toLocaleString('pt-BR')+' + Stables $'+Math.round(STABLES_USD).toLocaleString('pt-BR')+' − Dívida';
+
+  // Total investido (dinâmico)
+  document.getElementById('r-invested').textContent = fmt(t.costTotal);
+
+  // P&L + ROI
   document.getElementById('r-pnl').textContent = (t.plTotal>=0?'+':'−') + fmt(t.plTotal);
   document.getElementById('r-pnl').className = 'kpi-value ' + (t.plTotal>=0?'pos':'neg');
   var roi = (t.plTotal/t.costTotal*100).toFixed(1);
   document.getElementById('r-roi').textContent = 'ROI: '+(roi>=0?'+':'')+roi+'%';
-  var juros = (747*0.0328 + 804*0.0318)/12;
-  var yieldM = (1.87*PORTFOLIO_DATA[0].price*0.015 + 1652.90*0.032 + 19.33*PORTFOLIO_DATA[1].price*0.06 + 300.42*0.10)/12;
+
+  // Yield líquido/mês
+  var juros = (AAVE_BORROW*AAVE_BORROW_APY + KAM_BORROW*KAM_BORROW_APY)/12;
+  var yieldM = (AAVE_ETH_QTY*ethPrice*AAVE_ETH_APY + AAVE_USDT_QTY*AAVE_USDT_APY + KAM_SOL_QTY*solPrice*KAM_SOL_APY + KAM_USDS_QTY*KAM_USDS_APY)/12;
   var netYield = yieldM - juros;
   document.getElementById('r-yield').textContent = (netYield>=0?'+':'')+'$'+Math.abs(netYield).toFixed(0);
   document.getElementById('r-yield').className = 'kpi-value '+(netYield>=0?'pos':'neg');
+
+  // DeFi position USD values (live)
+  var aaveEthUsd = AAVE_ETH_QTY * ethPrice;
+  var aaveSupply = aaveEthUsd + AAVE_USDT_QTY;
+  var kamSolUsd  = KAM_SOL_QTY * solPrice;
+  var kamSupply  = kamSolUsd + KAM_USDS_QTY;
+  var s = function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+  s('r-aave-eth-usd', '~$'+Math.round(aaveEthUsd).toLocaleString('pt-BR'));
+  s('r-aave-supply',  '~$'+Math.round(aaveSupply).toLocaleString('pt-BR'));
+  s('r-kam-sol-usd',  '~$'+Math.round(kamSolUsd).toLocaleString('pt-BR'));
+  s('r-kam-supply',   '~$'+Math.round(kamSupply).toLocaleString('pt-BR'));
 }
 
 function renderAssetTable() {
@@ -550,6 +576,7 @@ function renderAssetTable() {
     + '<td class="r">$0</td><td class="r">0%</td><td class="r">—</td></tr>';
   tbody.innerHTML = rows;
   document.getElementById('r-spot-total').textContent = '$' + Math.round(t.spotTotal + STABLES_USD).toLocaleString('pt-BR');
+  document.getElementById('r-cost-total').textContent = '$' + Math.round(t.costTotal).toLocaleString('pt-BR');
   document.getElementById('r-pnl-total').textContent  = (t.plTotal>=0?'+':'−')+'$'+Math.abs(Math.round(t.plTotal)).toLocaleString('pt-BR');
   document.getElementById('r-pnl-total').style.color  = t.plTotal>=0?'var(--green)':'var(--red)';
   var roiT = (t.plTotal/t.costTotal*100).toFixed(1);
