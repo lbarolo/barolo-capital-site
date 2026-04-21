@@ -433,17 +433,42 @@ var now = new Date();
 document.getElementById('reportGenDate').textContent = fmtDate(now);
 setPeriod('mensal'); // default: mensal
 
-// ── Preços ao vivo ──
+// ── Preços ao vivo (com cache 30 min) ──
 (function fetchLivePrices() {
+  var CACHE_KEY = 'bc-prices-cache'; // compartilha com portfolio_analytics
+  var CACHE_TTL = 30 * 60 * 1000;
+  function loadCache() { try { var r=localStorage.getItem(CACHE_KEY); return r?JSON.parse(r):null; } catch(e){return null;} }
+  function saveCache(data) { try { localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data:data})); } catch(e){} }
+
+  function applyPrices(cacheData) {
+    PORTFOLIO_DATA.forEach(function(a){
+      if (cacheData[a.cgId] && cacheData[a.cgId].usd) a.price = cacheData[a.cgId].usd;
+    });
+    renderAssetTable();
+    renderKPIs();
+  }
+
+  // Serve cache se < 30 min
+  var cached = loadCache();
+  if (cached && (Date.now() - cached.ts < CACHE_TTL)) {
+    applyPrices(cached.data);
+    return;
+  }
+
   var allIds = PORTFOLIO_DATA.map(function(a){ return a.cgId; }).join(',');
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + allIds + '&vs_currencies=usd')
     .then(function(r){ return r.json(); })
     .then(function(p) {
-      PORTFOLIO_DATA.forEach(function(a){ if (p[a.cgId]) a.price = p[a.cgId].usd; });
+      var cacheData = {};
+      PORTFOLIO_DATA.forEach(function(a){ if (p[a.cgId]) { a.price = p[a.cgId].usd; cacheData[a.cgId] = {usd: p[a.cgId].usd}; } });
+      saveCache(cacheData);
       renderAssetTable();
       renderKPIs();
     })
-    .catch(function(){});
+    .catch(function(){
+      // Fallback: cache desatualizado (melhor que preços de mar/2026)
+      if (cached) applyPrices(cached.data);
+    });
 })();
 
 // ─────────────────────────────────────────────

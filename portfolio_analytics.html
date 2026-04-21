@@ -1244,6 +1244,21 @@ function buildEnriched(){
 }
 
 // ──────────────────────────────────────────────────
+// PRICE CACHE (localStorage, TTL 5 min)
+// ──────────────────────────────────────────────────
+const PRICE_CACHE_KEY = 'bc-prices-cache';
+const PRICE_CACHE_TTL = 5 * 60 * 1000;
+
+function loadPriceCache() {
+ try { var raw = localStorage.getItem(PRICE_CACHE_KEY); return raw ? JSON.parse(raw) : null; }
+ catch(e) { return null; }
+}
+function savePriceCache(data) {
+ try { localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data })); }
+ catch(e) {}
+}
+
+// ──────────────────────────────────────────────────
 // FETCH COINGECKO
 // ──────────────────────────────────────────────────
 async function fetchPrices(){
@@ -1255,6 +1270,16 @@ async function fetchPrices(){
  el.title = msg + ' — ' + new Date().toLocaleTimeString('pt-BR');
  }
  };
+
+ // Serve cache se < 5 min (evita rate-limit do CoinGecko em reloads seguidos)
+ const cached = loadPriceCache();
+ if (cached && (Date.now() - cached.ts < PRICE_CACHE_TTL)) {
+ Object.assign(liveData, cached.data);
+ ethPrice = getPrice('ethereum');
+ solPrice = getPrice('solana');
+ setPriceStatus(true, 'cache');
+ return true;
+ }
 
  // Try CoinGecko /coins/markets first (richer data)
  try {
@@ -1277,6 +1302,7 @@ async function fetchPrices(){
  });
  ethPrice = getPrice('ethereum');
  solPrice = getPrice('solana');
+ savePriceCache(liveData);
  setPriceStatus(true, 'CoinGecko');
  return true;
  } catch(e1) {
@@ -1292,10 +1318,19 @@ async function fetchPrices(){
  });
  ethPrice = getPrice('ethereum');
  solPrice = getPrice('solana');
+ savePriceCache(liveData);
  setPriceStatus(true, 'CoinGecko simple');
  return true;
  } catch(e2) {
- // Last resort: use fallback prices
+ // Último recurso: cache desatualizado (melhor que fallback de mar/2026)
+ if (cached) {
+   Object.assign(liveData, cached.data);
+   ethPrice = getPrice('ethereum');
+   solPrice = getPrice('solana');
+   const age = Math.round((Date.now() - cached.ts) / 60000);
+   setPriceStatus(false, `cache ${age}min atrás`);
+   return false;
+ }
  PORTFOLIO.forEach(a=>{ liveData[a.cgId]={usd:FALLBACK_PRICES[a.cgId]||1, usd_24h_change:FALLBACK_24H[a.cgId]||0}; });
  ethPrice = getPrice('ethereum');
  solPrice = getPrice('solana');

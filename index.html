@@ -1183,6 +1183,11 @@ function toggleMobile() {
     TICKER_ASSETS.map(function(a){ return a.id; }).concat(HOLDINGS.map(function(h){ return h.id; }))
   )).join(',');
 
+  var INDEX_CACHE_KEY = 'bc-index-prices-cache';
+  var INDEX_CACHE_TTL = 2 * 60 * 1000; // 2 min
+  function loadIndexCache() { try { var r=localStorage.getItem(INDEX_CACHE_KEY); return r?JSON.parse(r):null; } catch(e){return null;} }
+  function saveIndexCache(p) { try { localStorage.setItem(INDEX_CACHE_KEY, JSON.stringify({ts:Date.now(),data:p})); } catch(e){} }
+
   async function fetchTicker() {
     try {
       var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + allIds + '&vs_currencies=usd&include_24hr_change=true', { signal: AbortSignal.timeout(8000) });
@@ -1192,14 +1197,24 @@ function toggleMobile() {
         prices[id] = d[id].usd;
         prices[id + '_change'] = d[id].usd_24h_change || 0;
       });
+      saveIndexCache(prices);
       renderTicker(prices);
       updateHeroReturn(prices);
     } catch(e) {
-      renderTicker({});
+      var cached = loadIndexCache();
+      if (cached) { renderTicker(cached.data); updateHeroReturn(cached.data); }
+      else renderTicker({});
     }
   }
 
-  renderTicker({});
+  // Serve cache imediato se < 2 min (carregamento instantâneo do ticker)
+  var _ic = loadIndexCache();
+  if (_ic && (Date.now() - _ic.ts < INDEX_CACHE_TTL)) {
+    renderTicker(_ic.data);
+    updateHeroReturn(_ic.data);
+  } else {
+    renderTicker({});
+  }
   fetchTicker();
   setInterval(fetchTicker, 60000);
 })();
