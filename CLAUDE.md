@@ -1880,3 +1880,136 @@ Nenhum dado de posição alterado nesta sessão.
 - **APR pool Base** — calculado só via fees não coletadas (uncollected); fees já coletadas (Collect events) não são contabilizadas. Para APR histórico completo precisaria de scan de logs Base — complexidade alta, pendente.
 - **`pro.aave.com` iframe** — também pode bloquear embed em alguns browsers; fallback com link "Nova aba" está correto
 
+---
+
+## Sessão 21/04/2026 — Code review geral + relatorio.html corrigido + cache CoinGecko
+
+### Contexto
+Sessão iniciada com revisão proativa de qualidade de código em todos os arquivos HTML. Nenhum dado de posição novo nesta sessão.
+
+### Implementado
+
+#### Code review — achados por arquivo
+
+Foi feita uma análise completa de todos os arquivos. Principais achados confirmados como bugs reais (não falsos positivos):
+
+| Arquivo | Problema | Severidade |
+|---------|----------|------------|
+| `relatorio.html` | Fetch CoinGecko buscava só ETH/SOL/ADA — 6 tokens com preços estáticos de fev/2025 | Alta |
+| `relatorio.html` | Yield calc (`renderKPIs`) usava APYs hardcoded desatualizados (3.28%, 3.18%) | Alta |
+| `relatorio.html` | `STABLES_USD=1953.32`, `DEBT_TOTAL=1551.21`, SOL invested stale, pool net "Ethereum" | Média |
+| Todos | Sem cache de preços CoinGecko — rate limit em múltiplas abas ou reloads rápidos | Média |
+
+Falsos positivos identificados (não corrigidos):
+- `emprestimos.html` fallback ETH qty 1.88 → **correto** (supply AAVE, não total do portfólio)
+- `portfolio_analytics.html` ZETA `y:9999` → **correto** (sentinel mapeado para 85 via `.map()`, tooltip mostra "Airdrop")
+
+#### `relatorio.html` — Fetch CoinGecko: 3 → 9 tokens
+
+**Antes:** URL hardcoded `?ids=ethereum,solana,cardano` — RDNT, EIGEN, POL, ZK, XAI, ZETA sempre usavam preços estáticos de meses atrás.
+
+**Fix:** `cgId` adicionado a cada entrada do `PORTFOLIO_DATA`; fetch usa `PORTFOLIO_DATA.map(a=>a.cgId).join(',')` automaticamente. Se um token novo for adicionado ao array, o fetch atualiza sem código extra.
+
+```js
+// Antes
+fetch('...?ids=ethereum,solana,cardano')
+  .then(p => {
+    PORTFOLIO_DATA[0].price = p.ethereum.usd;
+    PORTFOLIO_DATA[1].price = p.solana.usd;
+    ...
+
+// Depois
+var allIds = PORTFOLIO_DATA.map(function(a){ return a.cgId; }).join(',');
+fetch('...?ids=' + allIds)
+  .then(p => {
+    PORTFOLIO_DATA.forEach(function(a){ if (p[a.cgId]) a.price = p[a.cgId].usd; });
+```
+
+#### `relatorio.html` — Yield calc dinâmico
+
+**Antes:** `renderKPIs()` calculava juros e yield com valores e APYs hardcoded:
+```js
+var juros = (747*0.0328 + 804*0.0318)/12;
+var yieldM = (1.87*PORTFOLIO_DATA[0].price*0.015 + 1652.90*0.032 + 19.33*PORTFOLIO_DATA[1].price*0.06 + 300.42*0.10)/12;
+```
+
+**Fix:** Constantes explícitas adicionadas logo após `DEBT_TOTAL`:
+```js
+var AAVE_ETH_QTY=1.88,  AAVE_ETH_APY=0.0125;
+var AAVE_USDT_QTY=1650, AAVE_USDT_APY=0.0187;
+var AAVE_BORROW=748,    AAVE_BORROW_APY=0.0232;
+var KAM_SOL_QTY=19.37,  KAM_SOL_APY=0.0319;
+var KAM_USDS_QTY=300.55,KAM_USDS_APY=0.0369;
+var KAM_BORROW=805.70,  KAM_BORROW_APY=0.0409;
+```
+`renderKPIs()` agora usa essas constantes. Para atualizar APYs ou quantidades, basta editar as constantes.
+
+`renderKPIs()` também ganhou:
+- `r-invested` atualizado dinamicamente (era `$6.418` hardcoded)
+- `r-aave-eth-usd`, `r-aave-supply`, `r-kam-sol-usd`, `r-kam-supply` preenchidos com valores USD ao vivo
+- `r-cost-total` no tfoot da tabela calculado de `calcTotals().costTotal`
+
+#### `relatorio.html` — Dados stale atualizados
+
+| Campo | Antes | Depois |
+|-------|-------|--------|
+| `STABLES_USD` | 1953.32 | **2369.88** (USDT 2069.46 + USDS 300.42) |
+| `DEBT_TOTAL` | 1551.21 | **1553.70** (AAVE 748 + Kamino 805.70) |
+| `PORTFOLIO_DATA[1].invested` (SOL) | 2201.68 | **2280.39** |
+| Pool WETH/USDC `net` | `'Ethereum'` | **`'Base'`** |
+| KPI Dívida Total HTML | `$1.551` | **`$1.554`** |
+| AAVE Supply ETH HTML | `1.87 ETH` | **`1.88 WETH`** |
+| AAVE Supply USDT HTML | `1.652,90 USDT` | **`1.650 USDT`** |
+| AAVE Borrow HTML | `746,99 USDC · 3,28%` | **`748 USDC · 2,32%`** |
+| AAVE Juros/Mês HTML | `~$2,04` | **`~$1,45`** |
+| Kamino Supply SOL HTML | `19,33 SOL` | **`19,37 SOL`** |
+| Kamino Supply USDS HTML | `300,42 USDS` | **`300,55 USDS`** |
+| Kamino Borrow HTML | `804,22 USDC` | **`805,70 USDC`** |
+| Kamino Juros/Mês HTML | `~$2,13` | **`~$2,75`** |
+
+#### Cache localStorage para preços CoinGecko (3 arquivos)
+
+Implementado sistema de cache com TTL diferente por página:
+
+| Arquivo | Chave localStorage | TTL | Comportamento se API falhar |
+|---------|-------------------|-----|----------------------------|
+| `portfolio_analytics.html` | `bc-prices-cache` | **5 min** | Usa cache + mostra "cache Xmin atrás" no status |
+| `index.html` | `bc-index-prices-cache` | **2 min** | Renderiza ticker com dados do cache |
+| `relatorio.html` | `bc-prices-cache` (compartilhada) | **30 min** | Aplica preços sem nenhum fetch extra |
+
+**Lógica:**
+1. Na abertura: se cache < TTL → usa diretamente (zero requests para CoinGecko)
+2. Se cache expirado: tenta API → salva no cache em caso de sucesso
+3. Se API falhar: usa cache desatualizado (muito melhor que fallbacks de mar/2025 hardcoded)
+4. `relatorio.html` compartilha a chave `bc-prices-cache` com `portfolio_analytics.html` → se o analytics foi aberto antes, o relatório já tem preços prontos
+
+**Funções adicionadas em `portfolio_analytics.html`:**
+```js
+function loadPriceCache() { ... }  // retorna null se sem cache ou erro de parse
+function savePriceCache(data) { ... }  // salva liveData com timestamp
+```
+
+### Dados atualizados
+
+Nenhum dado de posição novo. Todos os updates foram de dados stale já existentes no código.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix aplicado |
+|-----|-----------|--------------|
+| `relatorio.html` — RDNT, EIGEN, POL, ZK, XAI, ZETA com preços de fev/2025 | Fetch `?ids=ethereum,solana,cardano` não incluía os outros tokens | `cgId` adicionado ao `PORTFOLIO_DATA`; fetch usa todos os IDs dinamicamente |
+| `relatorio.html` — Yield líq./mês calculado com APYs de jan/2026 (3.28%/3.18%) | Valores hardcoded nunca atualizados após refinanciamento AAVE | Constantes explícitas `AAVE_BORROW_APY=0.0232`, `KAM_BORROW_APY=0.0409`, etc. |
+| `relatorio.html` — `STABLES_USD`, `DEBT_TOTAL`, quantidades stale | Dados de março/2026 nunca atualizados | Todos atualizados para valores de abril/2026 |
+| `relatorio.html` — pool WETH/USDC listada como "Ethereum" | `POOLS_DATA` copiada antes da correção de rede | `net:'Ethereum'` → `net:'Base'` |
+| CoinGecko rate limit em múltiplas abas | Sem cache — cada abertura de página fazia requests imediatos | Cache localStorage com TTL por página |
+| `portfolio_analytics.html` — fallback de preços usa valores de mar/2025 quando API falha | `FALLBACK_PRICES` hardcoded nunca atualizado | Cache desatualizado usado antes do fallback estático |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **`ferramentas.html` calculadora de liquidação** — inputs AAVE ainda usam "GHO" (deve ser USDC) e quantidades antigas
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
+- **APR pool Base** — calculado só via uncollected fees; Collect events históricos não contabilizados
+
