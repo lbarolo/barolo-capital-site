@@ -577,6 +577,7 @@ body, input, button, select, textarea {
  <button class="tab" onclick="switchTab('crencas')" data-i18n="tab-crencas">Crenças</button>
  <button class="tab active" onclick="switchTab('liquidacao')" data-i18n="tab-liquidacao">Liquidação</button>
  <button class="tab" onclick="switchTab('cenarios')" data-i18n="tab-cenarios">Cenários</button>
+ <button class="tab" onclick="switchTab('sizing')" data-i18n="tab-sizing">Sizing &amp; Risk</button>
  <button class="tab" onclick="switchTab('diario')" data-i18n="tab-diario">Diário DeFi</button>
  <button class="tab" onclick="switchTab('alertas')" data-i18n="tab-alertas">Alertas</button>
  <button class="tab" onclick="switchTab('evolucao')" data-i18n="tab-evolucao">Evolução</button>
@@ -790,6 +791,284 @@ body, input, button, select, textarea {
  <div class="scenario-row" style="border:none;"><span class="scenario-lbl" data-i18n="scen-liq-risk">Risco de liquidação</span><span id="sc-liq-risk">—</span></div>
  </div>
  </div>
+ </div>
+
+ <!-- ══════════════════════════════════════════════
+ TAB — SIZING & RISK (Kelly + Hedge LP)
+ ══════════════════════════════════════════════ -->
+ <div class="panel" id="panel-sizing">
+
+   <!-- Header explicativo -->
+   <div class="section" style="background:linear-gradient(180deg,var(--s2),var(--s1));">
+     <div class="section-title">Sizing &amp; Risk <span>KELLY · MERTON · HEDGE LP</span></div>
+     <div style="font-size:11px;color:var(--muted);line-height:1.7;">
+       Três calculadoras integradas para decisões de alocação:
+       <strong style="color:var(--accent);">Kelly Pool</strong> (quanto alocar por pool baseado em prob. de sucesso),
+       <strong style="color:var(--accent);">Kelly Leverage</strong> (LTV ótimo via Merton para empréstimos),
+       <strong style="color:var(--accent);">Hedge LP</strong> (delta-neutro com short em perp/borrow).
+       Padrão: <strong>Half Kelly</strong> — full Kelly tem drawdowns insustentáveis.
+     </div>
+   </div>
+
+   <!-- ── KELLY POOL (binário) ── -->
+   <div class="section">
+     <div class="section-title">Kelly Pool — Sizing Binário <span>POR POOL</span></div>
+     <div class="two-col">
+       <div>
+         <div class="field">
+           <label>Categoria da pool (preset)</label>
+           <select id="kp-preset" onchange="applyKpPreset()">
+             <option value="custom">— Custom —</option>
+             <option value="bluechip">Blue-chip (ETH/USDC, SOL/USDC)</option>
+             <option value="altcoin">Altcoin estabelecida (RDNT, ARB)</option>
+             <option value="exotic">Exótica/scam-risk (GRIFT, PEANUT)</option>
+           </select>
+         </div>
+         <div class="field">
+           <label>Probabilidade de sucesso p (%)</label>
+           <input type="number" id="kp-p" value="85" min="0" max="100" step="1" oninput="calcKellyPool()">
+         </div>
+         <div class="field">
+           <label>Ganho esperado se ganhar ($)</label>
+           <input type="number" id="kp-win" value="60" min="0" step="1" oninput="calcKellyPool()">
+         </div>
+         <div class="field">
+           <label>Perda esperada se perder ($)</label>
+           <input type="number" id="kp-loss" value="100" min="0" step="1" oninput="calcKellyPool()">
+         </div>
+         <div class="field">
+           <label>Capital total disponível ($)</label>
+           <input type="number" id="kp-capital" value="7900" min="0" step="100" oninput="calcKellyPool()">
+         </div>
+         <div class="field">
+           <label>Fração Kelly</label>
+           <select id="kp-frac" onchange="calcKellyPool()">
+             <option value="0.25">Quarter Kelly (1/4) — conservador</option>
+             <option value="0.5" selected>Half Kelly (1/2) — recomendado</option>
+             <option value="1">Full Kelly — agressivo</option>
+           </select>
+         </div>
+       </div>
+       <div>
+         <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">RESULTADO KELLY</div>
+
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Edge esperado</span>
+             <span id="kp-edge" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Kelly cru (f*)</span>
+             <span id="kp-fstar" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Kelly aplicado (com fração)</span>
+             <span id="kp-applied" style="font-family:var(--font-mono);font-weight:500;color:var(--accent);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">$ a alocar nesta pool</span>
+             <span id="kp-allocate" style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--accent);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;">
+             <span style="color:var(--muted);font-size:11px;">Crescimento esperado/trade</span>
+             <span id="kp-growth" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+
+           <div id="kp-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
+           <div id="kp-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">—</div>
+         </div>
+       </div>
+     </div>
+   </div>
+
+   <!-- ── KELLY LEVERAGE (Merton contínuo) ── -->
+   <div class="section">
+     <div class="section-title">Kelly Leverage — Merton Contínuo <span>LTV ÓTIMO</span></div>
+     <div class="two-col">
+       <div>
+         <div class="field">
+           <label>APR esperado da estratégia (%) — fees − IL esperado</label>
+           <input type="number" id="km-apr" value="27" step="1" oninput="calcKellyMerton()">
+         </div>
+         <div class="field">
+           <label>Custo do empréstimo (%) — AAVE USDC atual</label>
+           <input type="number" id="km-borrow" value="2.32" step="0.1" oninput="calcKellyMerton()">
+         </div>
+         <div class="field">
+           <label>Volatilidade anualizada do colateral (%) — ETH ≈ 60</label>
+           <input type="number" id="km-vol" value="60" step="5" oninput="calcKellyMerton()">
+         </div>
+         <div class="field">
+           <label>LTV atual da posição (%)</label>
+           <input type="number" id="km-ltv" value="13" step="1" oninput="calcKellyMerton()">
+         </div>
+         <div class="field">
+           <label>Fração Kelly</label>
+           <select id="km-frac" onchange="calcKellyMerton()">
+             <option value="0.25">Quarter Kelly (1/4)</option>
+             <option value="0.5" selected>Half Kelly (1/2)</option>
+             <option value="1">Full Kelly</option>
+           </select>
+         </div>
+       </div>
+       <div>
+         <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">RESULTADO MERTON</div>
+
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Excesso de retorno (μ − r)</span>
+             <span id="km-excess" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Variância (σ²)</span>
+             <span id="km-var" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Leverage Kelly cru</span>
+             <span id="km-lev" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">LTV ótimo (com fração)</span>
+             <span id="km-ltv-opt" style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--accent);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;">
+             <span style="color:var(--muted);font-size:11px;">Comparação vs LTV atual</span>
+             <span id="km-diff" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+
+           <div id="km-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
+           <div id="km-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">f* = (μ − r) / σ². Half Kelly recomendado quando há erro de estimativa em μ ou σ.</div>
+         </div>
+       </div>
+     </div>
+   </div>
+
+   <!-- ── HEDGE LP (delta-neutro) ── -->
+   <div class="section">
+     <div class="section-title">Hedge LP — Delta-Neutro <span>UNI V3 + SHORT/BORROW</span></div>
+     <div class="two-col">
+       <div>
+         <div class="field">
+           <label>Capital pool ($) — pre-fill: WETH/USDC Base</label>
+           <input type="number" id="hd-capital" value="365" step="10" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>Range mínimo ($)</label>
+           <input type="number" id="hd-pmin" value="1855.72" step="10" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>Range máximo ($)</label>
+           <input type="number" id="hd-pmax" value="3146.36" step="10" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>Preço atual ETH ($) <span style="color:var(--green);font-size:9px;">· LIVE</span></label>
+           <input type="number" id="hd-pnow" value="2431" step="1" oninput="this.dataset.userTouched='1';calcHedge()">
+         </div>
+         <div class="field">
+           <label>Fee APR esperado (%) — Revert/histórico</label>
+           <input type="number" id="hd-feeapr" value="32" step="1" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>Funding rate perp ETH (% APR) — positivo = recebe</label>
+           <input type="number" id="hd-funding" value="5" step="1" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>Custo borrow ETH AAVE (% APR) — alternativa ao perp</label>
+           <input type="number" id="hd-borrow" value="3" step="0.5" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>Volatilidade ETH anualizada (%)</label>
+           <input type="number" id="hd-vol" value="60" step="5" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>% do delta a hedgear: <span id="hd-pct-val" style="color:var(--accent);">100%</span></label>
+           <input type="range" id="hd-pct" min="0" max="100" value="100" step="5" oninput="calcHedge()">
+         </div>
+         <div class="field">
+           <label>Instrumento de hedge</label>
+           <select id="hd-instr" onchange="calcHedge()">
+             <option value="perp" selected>Perp short (Hyperliquid/Drift) — usa funding</option>
+             <option value="borrow">Borrow + sell (AAVE) — usa custo borrow</option>
+           </select>
+         </div>
+       </div>
+       <div>
+         <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">POSIÇÃO E HEDGE</div>
+
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">In-range?</span>
+             <span id="hd-inrange" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Delta atual (% em ETH)</span>
+             <span id="hd-delta" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Valor ETH na pool</span>
+             <span id="hd-ethval" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Tamanho do short ideal</span>
+             <span id="hd-short" style="font-family:var(--font-mono);font-weight:500;color:var(--accent);">—</span>
+           </div>
+
+           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin:18px 0 10px;">PERFORMANCE ANUALIZADA</div>
+
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Fee APR pool</span>
+             <span id="hd-fee-line" style="font-family:var(--font-mono);font-weight:500;color:var(--green);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">IL esperado (anualizado)</span>
+             <span id="hd-il" style="font-family:var(--font-mono);font-weight:500;color:var(--red);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span style="color:var(--muted);font-size:11px;">Custo/Receita do hedge</span>
+             <span id="hd-hedge-cost" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+
+           <div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--border);margin-top:6px;">
+             <span style="color:var(--muted);font-size:11px;">APR líq. SEM hedge</span>
+             <span id="hd-apr-naked" style="font-family:var(--font-mono);font-weight:600;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;">
+             <span style="color:var(--muted);font-size:11px;">APR líq. COM hedge</span>
+             <span id="hd-apr-hedged" style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--accent);">—</span>
+           </div>
+
+           <div id="hd-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
+           <div id="hd-warning" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">—</div>
+         </div>
+       </div>
+     </div>
+   </div>
+
+   <!-- ── Notas conceituais ── -->
+   <div class="section" style="background:var(--s2);">
+     <div class="section-title">Notas <span>FUNDAMENTOS</span></div>
+     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;font-size:11px;color:var(--muted);line-height:1.65;">
+       <div>
+         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">KELLY (binário)</div>
+         f* = (b·p − q) / b<br>
+         Onde b = ganho/perda, p = prob. ganhar, q = 1−p.<br>
+         Maximiza crescimento geométrico de longo prazo. Errar p em 10% causa erro de 30%+ em f* — daí Half Kelly.
+       </div>
+       <div>
+         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">MERTON (contínuo)</div>
+         f* = (μ − r) / σ²<br>
+         Onde μ = retorno esperado, r = custo borrow, σ² = variância.<br>
+         Resultado é leverage ótima. f* = 1.5 → pode alavancar 1.5x. Sempre aplicar fração para margem de erro.
+       </div>
+       <div>
+         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">HEDGE LP</div>
+         Anula direção: short = δ × valor_pool.<br>
+         APR_neutro = fee_apr − IL + funding (ou − borrow).<br>
+         Atenção: hedge total anula estratégias de saída gradual (ex: WETH→USDC).
+       </div>
+     </div>
+   </div>
+
  </div>
 
  <!-- ══════════════════════════════════════════════
@@ -1384,6 +1663,7 @@ async function fetchLivePrices(){
  document.getElementById('kam-sim-val').textContent=liveSOL.toFixed(2);
  document.getElementById('prices-status').textContent=`ETH $${liveETH.toFixed(0)} · SOL $${liveSOL.toFixed(2)} · LIVE`;
  calcAave(); calcKamino(); calcUni(); calcScenario();
+ if (typeof syncHedgeLivePrice === 'function') syncHedgeLivePrice();
  checkAlerts(false);
  }
  }catch(e){document.getElementById('prices-status').textContent='Preços offline — usando fallback';}
@@ -1587,6 +1867,282 @@ function calcScenario(){
  if(risks.length){liqRisk.textContent=''+risks.join(' · ');liqRisk.className='c-red';}
  else{liqRisk.textContent='Nenhum risco de liquidação';liqRisk.className='c-green';}
 }
+
+// ══════════════════════════════════════════════
+// SIZING & RISK — Kelly Pool, Kelly Merton, Hedge LP
+// ══════════════════════════════════════════════
+
+// ── Presets para Kelly Pool ──
+function applyKpPreset(){
+ var k = document.getElementById('kp-preset').value;
+ if(k==='custom') return;
+ var presets = {
+   bluechip: {p:95, win:60,  loss:30},   // ETH/USDC, SOL/USDC — perdas mínimas
+   altcoin:  {p:80, win:80,  loss:200},  // RDNT, ARB — IL real possível
+   exotic:   {p:30, win:1400,loss:1500}  // GRIFT, PEANUT — pode zerar
+ };
+ var p = presets[k];
+ document.getElementById('kp-p').value    = p.p;
+ document.getElementById('kp-win').value  = p.win;
+ document.getElementById('kp-loss').value = p.loss;
+ calcKellyPool();
+}
+
+// ── Kelly Pool (binário) ──
+function calcKellyPool(){
+ var p     = (parseFloat(document.getElementById('kp-p').value)||0)/100;
+ var win   = parseFloat(document.getElementById('kp-win').value)||0;
+ var loss  = parseFloat(document.getElementById('kp-loss').value)||0;
+ var cap   = parseFloat(document.getElementById('kp-capital').value)||0;
+ var frac  = parseFloat(document.getElementById('kp-frac').value)||0.5;
+ var q = 1 - p;
+
+ // f* = (b·p − q) / b  onde b = win/loss
+ var b = (loss>0) ? (win/loss) : 0;
+ var fstar = (b>0) ? (b*p - q) / b : (p>0?p:0);  // se loss=0, edge ilimitado
+ var edge  = p*win - q*loss;       // valor esperado por trade
+ var applied = Math.max(0, fstar) * frac;
+ var alloc = applied * cap;
+ // crescimento esperado log: g = p·ln(1+f·b) + q·ln(1−f) — para o "applied"
+ var growth = (applied>0 && applied<1)
+   ? (p*Math.log(1 + applied*b) + q*Math.log(1 - applied))
+   : 0;
+
+ var fmt$  = function(n){ return '$'+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0}); };
+ var fmtP  = function(n){ return (n*100).toFixed(2)+'%'; };
+
+ var eEl = document.getElementById('kp-edge');
+ eEl.textContent = (edge>=0?'+':'')+fmt$(edge)+' / trade';
+ eEl.style.color = edge>0 ? 'var(--green)' : 'var(--red)';
+
+ var fEl = document.getElementById('kp-fstar');
+ fEl.textContent = fmtP(fstar);
+ fEl.style.color = fstar>0 ? 'var(--green)' : 'var(--red)';
+
+ document.getElementById('kp-applied').textContent = fmtP(applied);
+ document.getElementById('kp-allocate').textContent = fmt$(alloc);
+ document.getElementById('kp-growth').textContent = (growth*100).toFixed(3)+'%';
+
+ var v = document.getElementById('kp-verdict');
+ var note = document.getElementById('kp-note');
+ if (fstar <= 0) {
+   v.textContent = 'NÃO ALOCAR — Kelly negativo';
+   v.style.background = 'rgba(248,81,73,.15)'; v.style.color = 'var(--red)';
+   v.style.border = '1px solid var(--red)';
+   note.textContent = 'Edge negativo: a expectativa matemática é perder dinheiro. Independente do tamanho da aposta, longo prazo é prejuízo.';
+ } else if (fstar > 0.5) {
+   v.textContent = 'OPORTUNIDADE FORTE — alocar máximo prudente';
+   v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
+   v.style.border = '1px solid var(--green)';
+   note.textContent = 'Kelly cru > 50%. Edge muito alto. Limitar pelo seu critério de concentração (raramente >20% do patrimônio numa pool só).';
+ } else if (fstar > 0.1) {
+   v.textContent = 'ALOCAR — dentro de Kelly';
+   v.style.background = 'rgba(63,185,80,.10)'; v.style.color = 'var(--green)';
+   v.style.border = '1px solid var(--green)';
+   note.textContent = 'Edge positivo razoável. Half Kelly recomendado para absorver erro na estimativa de p.';
+ } else {
+   v.textContent = 'EDGE BAIXO — pondere';
+   v.style.background = 'rgba(184,134,11,.12)'; v.style.color = 'var(--yellow)';
+   v.style.border = '1px solid var(--yellow)';
+   note.textContent = 'Kelly > 0 mas pequeno. Risco de erro na estimativa pode anular o edge. Considere oportunidades melhores.';
+ }
+}
+
+// ── Kelly Leverage (Merton contínuo) ──
+function calcKellyMerton(){
+ var apr    = (parseFloat(document.getElementById('km-apr').value)||0)/100;
+ var borrow = (parseFloat(document.getElementById('km-borrow').value)||0)/100;
+ var vol    = (parseFloat(document.getElementById('km-vol').value)||0)/100;
+ var ltvNow = parseFloat(document.getElementById('km-ltv').value)||0;
+ var frac   = parseFloat(document.getElementById('km-frac').value)||0.5;
+
+ var excess = apr - borrow;
+ var variance = vol*vol;
+ // Merton: f* = (μ − r) / σ²  → leverage ótima
+ var fstar = (variance>0) ? excess/variance : 0;
+ var fApplied = Math.max(0, fstar) * frac;
+ // LTV ótimo: leverage f → LTV = f / (1 + f) × 100  (assumindo colateral 1x)
+ // Mas para empréstimo simples: LTV = borrow / collateral, leverage L = 1 + LTV/(1−LTV)
+ // Inversão: LTV = (L−1) / L  para L > 1; ou LTV = f para alocação direta
+ // Aqui usamos LTV = min(80%, fApplied×100) como proxy seguro
+ var ltvOpt = Math.min(80, fApplied*100);
+
+ var fmtP = function(n){ return (n*100).toFixed(2)+'%'; };
+
+ var exEl = document.getElementById('km-excess');
+ exEl.textContent = fmtP(excess);
+ exEl.style.color = excess>0 ? 'var(--green)' : 'var(--red)';
+
+ document.getElementById('km-var').textContent = variance.toFixed(4);
+ document.getElementById('km-lev').textContent = fstar.toFixed(2)+'x';
+ document.getElementById('km-ltv-opt').textContent = ltvOpt.toFixed(1)+'%';
+
+ var diff = ltvOpt - ltvNow;
+ var dEl = document.getElementById('km-diff');
+ dEl.textContent = (diff>=0?'+':'')+diff.toFixed(1)+' p.p.';
+ dEl.style.color = Math.abs(diff)<5 ? 'var(--green)' : (diff>0 ? 'var(--yellow)' : 'var(--accent)');
+
+ var v = document.getElementById('km-verdict');
+ var note = document.getElementById('km-note');
+ if (excess <= 0) {
+   v.textContent = 'NÃO ALAVANCAR — custo > retorno';
+   v.style.background = 'rgba(248,81,73,.15)'; v.style.color = 'var(--red)';
+   v.style.border = '1px solid var(--red)';
+   note.textContent = 'APR esperado ≤ custo do empréstimo. Alavancar destrói valor independente do sizing.';
+ } else if (diff > 20) {
+   v.textContent = 'SUBALAVANCADO — espaço para crescer';
+   v.style.background = 'rgba(63,185,80,.10)'; v.style.color = 'var(--green)';
+   v.style.border = '1px solid var(--green)';
+   note.textContent = 'LTV atual bem abaixo do ótimo Kelly. Estratégia conservadora, sem riscos de margem mas deixando retorno na mesa.';
+ } else if (diff < -10) {
+   v.textContent = 'SOBREALAVANCADO — reduzir LTV';
+   v.style.background = 'rgba(248,81,73,.12)'; v.style.color = 'var(--red)';
+   v.style.border = '1px solid var(--red)';
+   note.textContent = 'LTV atual acima do ótimo Kelly. Drawdown esperado é maior que a recompensa marginal. Reduzir antes da próxima volatilidade.';
+ } else {
+   v.textContent = 'ALOCAÇÃO CALIBRADA — dentro do range';
+   v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
+   v.style.border = '1px solid var(--green)';
+   note.textContent = 'LTV atual próximo do ótimo Half-Kelly. Boa relação risco/retorno.';
+ }
+}
+
+// ── Hedge LP (delta-neutro) ──
+function calcHedge(){
+ var capital = parseFloat(document.getElementById('hd-capital').value)||0;
+ var pmin    = parseFloat(document.getElementById('hd-pmin').value)||1;
+ var pmax    = parseFloat(document.getElementById('hd-pmax').value)||1;
+ var pnow    = parseFloat(document.getElementById('hd-pnow').value)||1;
+ var feeApr  = (parseFloat(document.getElementById('hd-feeapr').value)||0)/100;
+ var funding = (parseFloat(document.getElementById('hd-funding').value)||0)/100;
+ var borrow  = (parseFloat(document.getElementById('hd-borrow').value)||0)/100;
+ var vol     = (parseFloat(document.getElementById('hd-vol').value)||0)/100;
+ var pct     = (parseFloat(document.getElementById('hd-pct').value)||0)/100;
+ var instr   = document.getElementById('hd-instr').value;
+
+ document.getElementById('hd-pct-val').textContent = (pct*100).toFixed(0)+'%';
+
+ // In-range?
+ var inRange = (pnow >= pmin && pnow <= pmax);
+
+ // Uni V3 delta (% em ETH) com clamps fora do range
+ // amount0_value = L * (sqrt(pb) - sqrt(p)) * sqrt(p) / sqrt(pb)
+ // amount1       = L * (sqrt(p) - sqrt(pa))
+ var s  = Math.sqrt(Math.min(Math.max(pnow, pmin), pmax));
+ var sa = Math.sqrt(pmin);
+ var sb = Math.sqrt(pmax);
+ var ethValShare;
+ if (pnow <= pmin) ethValShare = 1;        // 100% ETH
+ else if (pnow >= pmax) ethValShare = 0;   // 100% USDC
+ else {
+   var ethVal = (sb - s) * s / sb;
+   var usdc   = (s - sa);
+   var totL   = ethVal + usdc;
+   ethValShare = totL>0 ? ethVal/totL : 0.5;
+ }
+ var ethUsd  = capital * ethValShare;
+ var shortUsd = ethUsd * pct;
+
+ // IL anualizado estimado: para Uni V3, IL é proporcional a vol²/range_width
+ // range_width relativo = (sqrt(pmax) - sqrt(pmin)) / sqrt(pcenter)
+ var pcenter = Math.sqrt(pmin*pmax);
+ var rangeW  = (sb - sa) / Math.sqrt(pcenter);
+ // aproximação: IL anualizado ≈ -(vol² / (8 × rangeW)) × 100  (cap em 30% para sanity)
+ var ilAnnual = -Math.min(0.3, (vol*vol) / (8 * Math.max(0.05, rangeW)));
+
+ // Custo/receita do hedge anualizado
+ // Perp: paga funding se positivo (longs pagam shorts ⇒ short recebe)
+ //       o sinal é: hedge ganha se funding > 0
+ // Borrow: short = borrow ETH + sell, custo = borrow APY
+ var hedgeRateOnShort;
+ if (instr === 'perp') {
+   hedgeRateOnShort = funding;  // positivo = receita
+ } else {
+   hedgeRateOnShort = -borrow;  // negativo = custo
+ }
+ // efeito anualizado em $ → como % do capital pool
+ var hedgePnL_pctCapital = (shortUsd / Math.max(1, capital)) * hedgeRateOnShort;
+
+ // APRs anualizados
+ var aprNaked  = feeApr + ilAnnual;
+ // Com hedge, o IL é parcialmente neutralizado proporcional ao pct hedgeado
+ // (simplificação: hedge perfeito remove IL × pct na faixa coberta)
+ var ilHedged = ilAnnual * (1 - pct);
+ var aprHedged = feeApr + ilHedged + hedgePnL_pctCapital;
+
+ var fmtP = function(n){ var s=(n*100).toFixed(2)+'%'; return n>0?'+'+s:s; };
+ var fmt$ = function(n){ return '$'+n.toLocaleString('en-US',{maximumFractionDigits:0}); };
+
+ // Outputs
+ var irEl = document.getElementById('hd-inrange');
+ irEl.textContent = inRange ? 'IN-RANGE' : 'FORA DO RANGE';
+ irEl.style.color = inRange ? 'var(--green)' : 'var(--red)';
+
+ document.getElementById('hd-delta').textContent = (ethValShare*100).toFixed(1)+'% ETH';
+ document.getElementById('hd-ethval').textContent = fmt$(ethUsd);
+ document.getElementById('hd-short').textContent = fmt$(shortUsd) + ' ('+(shortUsd/Math.max(1,pnow)).toFixed(4)+' ETH)';
+ document.getElementById('hd-fee-line').textContent = fmtP(feeApr);
+ document.getElementById('hd-il').textContent = fmtP(ilAnnual);
+
+ var hcEl = document.getElementById('hd-hedge-cost');
+ hcEl.textContent = fmtP(hedgePnL_pctCapital);
+ hcEl.style.color = hedgePnL_pctCapital >= 0 ? 'var(--green)' : 'var(--red)';
+
+ var nakedEl = document.getElementById('hd-apr-naked');
+ nakedEl.textContent = fmtP(aprNaked);
+ nakedEl.style.color = aprNaked >= 0 ? 'var(--green)' : 'var(--red)';
+
+ var hedgedEl = document.getElementById('hd-apr-hedged');
+ hedgedEl.textContent = fmtP(aprHedged);
+ hedgedEl.style.color = aprHedged >= 0 ? 'var(--green)' : 'var(--red)';
+
+ // Veredito
+ var v = document.getElementById('hd-verdict');
+ var w = document.getElementById('hd-warning');
+ var diff = aprHedged - aprNaked;
+ if (pct === 0) {
+   v.textContent = 'SEM HEDGE — exposição direcional total';
+   v.style.background = 'rgba(184,134,11,.10)'; v.style.color = 'var(--yellow)';
+   v.style.border = '1px solid var(--yellow)';
+   w.textContent = 'Você captura toda valorização do ETH mas absorve todo IL e drawdown. Apropriado se a pool faz parte de estratégia de saída gradual.';
+ } else if (diff > 0.03) {
+   v.textContent = 'HEDGE VANTAJOSO — APR melhora '+fmtP(diff);
+   v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
+   v.style.border = '1px solid var(--green)';
+   w.textContent = 'Hedge melhora APR esperado. Atenção: anula valorização direcional do ETH. Vale para captura pura de fees.';
+ } else if (diff < -0.02) {
+   v.textContent = 'HEDGE DESVANTAJOSO — custo maior que IL evitado';
+   v.style.background = 'rgba(248,81,73,.10)'; v.style.color = 'var(--red)';
+   v.style.border = '1px solid var(--red)';
+   w.textContent = 'Custo do hedge supera o IL que você está evitando. Sem hedge é melhor estatisticamente.';
+ } else {
+   v.textContent = 'HEDGE NEUTRO — diferença pequena';
+   v.style.background = 'rgba(184,134,11,.10)'; v.style.color = 'var(--yellow)';
+   v.style.border = '1px solid var(--yellow)';
+   w.textContent = 'Hedge não muda APR significativamente. Decisão depende de preferência por menor volatilidade vs simplicidade operacional.';
+ }
+
+ // Aviso específico Barolo (estratégia de saída gradual)
+ if (pct > 0.7 && pnow < (pmax * 0.9)) {
+   w.textContent += ' ⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC.';
+ }
+}
+
+// Sync live ETH price into hedge calculator
+function syncHedgeLivePrice(){
+ if (typeof liveETH !== 'undefined' && liveETH > 0) {
+   var el = document.getElementById('hd-pnow');
+   if (el && !el.dataset.userTouched) el.value = liveETH.toFixed(0);
+ }
+ if (typeof calcHedge === 'function') calcHedge();
+}
+
+// First render
+setTimeout(function(){
+  if (document.getElementById('kp-p')) calcKellyPool();
+  if (document.getElementById('km-apr')) calcKellyMerton();
+  if (document.getElementById('hd-capital')) syncHedgeLivePrice();
+}, 200);
 
 // ══════════════════════════════════════════════
 // DEFI RULES
@@ -2515,6 +3071,7 @@ var LANG_STRINGS = {
   'tab-crencas':   {pt:'Crenças',     en:'Beliefs'},
   'tab-liquidacao':{pt:'Liquidação',  en:'Liquidation'},
   'tab-cenarios':  {pt:'Cenários',    en:'Scenarios'},
+  'tab-sizing':    {pt:'Sizing & Risk', en:'Sizing & Risk'},
   'tab-diario':    {pt:'Diário DeFi', en:'DeFi Journal'},
   'tab-alertas':   {pt:'Alertas',     en:'Alerts'},
   'tab-evolucao':  {pt:'Evolução',    en:'Evolution'},
