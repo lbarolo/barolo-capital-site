@@ -574,6 +574,32 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </button>
  </div>
 
+ <!-- Barra de filtros -->
+ <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;">
+   <div style="display:flex;align-items:center;gap:8px;">
+     <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);">TVL MÍN</span>
+     <input type="number" id="uniFilterTvl" value="0" min="0" step="10000" placeholder="$0"
+            oninput="applyFilters()"
+            style="width:90px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-family:inherit;font-size:11px;border-radius:3px;">
+   </div>
+   <div style="display:flex;align-items:center;gap:8px;">
+     <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);">APR MÍN</span>
+     <input type="number" id="uniFilterApr" value="0" min="0" step="5" placeholder="0%"
+            oninput="applyFilters()"
+            style="width:60px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-family:inherit;font-size:11px;border-radius:3px;">
+     <span style="font-size:10px;color:var(--muted);">%</span>
+   </div>
+   <button id="uniFavToggle" onclick="toggleFavOnly()"
+           style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;font-family:inherit;font-size:10px;letter-spacing:.08em;cursor:pointer;border-radius:3px;transition:all .15s;">
+     ⭐ SÓ FAVORITAS
+   </button>
+   <button onclick="clearFilters()"
+           style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;font-family:inherit;font-size:10px;letter-spacing:.08em;cursor:pointer;border-radius:3px;">
+     ↺ LIMPAR
+   </button>
+   <span id="uniFilterStatus" style="margin-left:auto;font-size:9px;color:var(--muted);"></span>
+ </div>
+
  <!-- Summary row -->
  <div id="uniSummary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;">
    <div style="background:var(--surface);padding:10px 14px;">
@@ -648,6 +674,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  let _activeNet = 'eth';
  let _sortKey = 'apr';       // 'name' | 'fee' | 'apr' | 'tvl' | 'vol' | 'chg'
  let _sortDir = 'desc';      // 'asc' | 'desc'
+ let _showOnlyFavs = false;
+ // Favoritos persistidos em localStorage — chave formato `${net}:${addr}`
+ let _favs = new Set(JSON.parse(localStorage.getItem('bc-fav-pools') || '[]'));
+ function saveFavs() { localStorage.setItem('bc-fav-pools', JSON.stringify([..._favs])); }
+ function isFav(net, addr) { return _favs.has(net+':'+addr); }
 
  // Portfolio token addresses per network
  const PORTFOLIO_ADDRS = {
@@ -744,10 +775,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  if (p.apr!=null && p.apr > 30) sigBadges += '<span title="APR alto (>30%)" style="margin-left:4px;">🚀</span>';
  if (volTvl > 0.5) sigBadges += '<span title="Volume alto vs TVL (churn forte)" style="margin-left:4px;">🔥</span>';
  if (p.tvl > 10_000_000) sigBadges += '<span title="TVL blue-chip (>$10M)" style="margin-left:4px;">💎</span>';
+ const fav = isFav(net, p.addr);
+ const starIcon = fav ? '★' : '☆';
+ const starColor = fav ? 'var(--gold)' : 'var(--muted)';
  return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;"
  onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"
  onclick="window.open('${link}','_blank')">
- <td style="padding:9px 16px;font-weight:600;color:var(--text);">${symBadge}${cleanName}${sigBadges}</td>
+ <td style="padding:9px 16px;font-weight:600;color:var(--text);">
+   <span onclick="event.stopPropagation();toggleFav('${net}','${p.addr}')" title="Favoritar pool" style="color:${starColor};margin-right:6px;cursor:pointer;font-size:13px;user-select:none;">${starIcon}</span>${symBadge}${cleanName}${sigBadges}</td>
  <td style="padding:9px 10px;text-align:center;">
  <span style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;">${feeStr}</span>
  </td>
@@ -803,26 +838,80 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
    if (pools || portPools) renderTable(pools, _activeNet, portPools);
  };
 
+ // Filtra um array de pools usando os inputs do usuário (TVL mín, APR mín, só favoritas)
+ function filterArr(arr, net) {
+   if (!arr || !arr.length) return arr;
+   const tvlMin = parseFloat(document.getElementById('uniFilterTvl')?.value) || 0;
+   const aprMin = parseFloat(document.getElementById('uniFilterApr')?.value) || 0;
+   return arr.filter(p => {
+     if (_showOnlyFavs && !isFav(net, p.addr)) return false;
+     if (tvlMin > 0 && (p.tvl||0) < tvlMin) return false;
+     if (aprMin > 0 && (p.apr==null || p.apr < aprMin)) return false;
+     return true;
+   });
+ }
+
  function renderTable(pools, net, portPools) {
  const body = document.getElementById('uniPoolsBody');
- const noEth = !pools || !pools.length;
- const noPort = !portPools || !portPools.length;
- if (noEth && noPort) {
- body.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool encontrada.</td></tr>';
+ const status = document.getElementById('uniFilterStatus');
+ const fullPools = pools || [];
+ const fullPort  = portPools || [];
+ const filteredPools = filterArr(fullPools, net);
+ const filteredPort  = filterArr(fullPort, net);
+ const totalRaw = fullPools.length + fullPort.length;
+ const totalShown = filteredPools.length + filteredPort.length;
+ if (status) {
+   if (totalShown < totalRaw) status.textContent = `${totalShown} / ${totalRaw} pools · filtros ativos`;
+   else status.textContent = '';
+ }
+ if (!totalShown) {
+ body.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool após filtros. <button class="btn-sm" onclick="clearFilters()" style="margin-left:8px;">↺ Limpar</button></td></tr>';
  updateSummary([]);
+ updateSortIndicators();
  return;
  }
- const sortedPools = sortArr(pools||[]);
- const sortedPort  = sortArr(portPools||[]);
+ const sortedPools = sortArr(filteredPools);
+ const sortedPort  = sortArr(filteredPort);
  let html = sortedPools.map(p => rowHtml(p, net)).join('');
- if (!noPort) {
+ if (sortedPort.length) {
  html += `<tr><td colspan="6" style="padding:6px 16px 4px;font-size:9px;letter-spacing:.08em;color:var(--muted);background:var(--surface2);font-family:'Satoshi',sans-serif;font-weight:700;">TOKENS DO PORTFOLIO</td></tr>`;
  html += sortedPort.map(p => rowHtml(p, net)).join('');
  }
  body.innerHTML = html;
- updateSummary([...(pools||[]), ...(portPools||[])]);
+ updateSummary([...filteredPools, ...filteredPort]);
  updateSortIndicators();
  }
+
+ // Handlers dos filtros
+ window.applyFilters = function() {
+   const pools = _cache[_activeNet];
+   const portPools = _cachePort[_activeNet];
+   if (pools || portPools) renderTable(pools, _activeNet, portPools);
+ };
+
+ window.toggleFavOnly = function() {
+   _showOnlyFavs = !_showOnlyFavs;
+   const btn = document.getElementById('uniFavToggle');
+   if (btn) {
+     btn.style.background = _showOnlyFavs ? 'var(--gold)' : 'none';
+     btn.style.color = _showOnlyFavs ? 'var(--bg)' : 'var(--muted)';
+     btn.style.borderColor = _showOnlyFavs ? 'var(--gold)' : 'var(--border)';
+   }
+   applyFilters();
+ };
+
+ window.clearFilters = function() {
+   const t = document.getElementById('uniFilterTvl'); if (t) t.value = 0;
+   const a = document.getElementById('uniFilterApr'); if (a) a.value = 0;
+   if (_showOnlyFavs) toggleFavOnly(); else applyFilters();
+ };
+
+ window.toggleFav = function(net, addr) {
+   const key = net+':'+addr;
+   if (_favs.has(key)) _favs.delete(key); else _favs.add(key);
+   saveFavs();
+   applyFilters();
+ };
 
  // Atualiza a barra de resumo no topo (contagem, TVL total, APR médio ponderado, volume 24h)
  function updateSummary(all) {
