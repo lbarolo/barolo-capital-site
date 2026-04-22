@@ -1044,10 +1044,123 @@ body, input, button, select, textarea {
      </div>
    </div>
 
+   <!-- ── LEVERAGE + HEDGE COMBINADO (comparação 3-vias) ── -->
+   <div class="section">
+     <div class="section-title">Leverage + Hedge Combinado <span>COMPARAÇÃO 3-VIAS</span></div>
+     <div class="two-col">
+       <div>
+         <div class="field">
+           <label>Capital próprio total ($) — colateral</label>
+           <input type="number" id="lh-capital" value="6000" step="100" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>Tamanho do LP alvo ($)</label>
+           <input type="number" id="lh-lp" value="2000" step="100" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>% do LP financiado por borrow: <span id="lh-brwpct-val" style="color:var(--accent);">50%</span></label>
+           <input type="range" id="lh-brwpct" min="0" max="100" value="50" step="5" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>Supply APY colateral (%) — aETH/aUSDT</label>
+           <input type="number" id="lh-supapy" value="1.5" step="0.1" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>Fee APR da pool (%)</label>
+           <input type="number" id="lh-feeapr" value="32" step="1" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>IL esperado anualizado (%) — negativo</label>
+           <input type="number" id="lh-il" value="-12" step="1" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>Custo borrow AAVE (%)</label>
+           <input type="number" id="lh-brw" value="2.32" step="0.1" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>Funding perp ETH (% APR) — positivo = recebe</label>
+           <input type="number" id="lh-fund" value="5" step="1" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>Delta LP (% em ETH)</label>
+           <input type="number" id="lh-delta" value="50" step="5" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>% do delta a hedgear: <span id="lh-hpct-val" style="color:var(--accent);">100%</span></label>
+           <input type="range" id="lh-hpct" min="0" max="100" value="100" step="5" oninput="calcLevHedge()">
+         </div>
+         <div class="field">
+           <label>Volatilidade ETH anualizada (%)</label>
+           <input type="number" id="lh-vol" value="60" step="5" oninput="calcLevHedge()">
+         </div>
+       </div>
+       <div>
+         <!-- Tabela comparação 3-vias -->
+         <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">COMPARAÇÃO 3 ESTRATÉGIAS</div>
+
+           <table style="width:100%;border-collapse:collapse;font-size:11px;">
+             <thead>
+               <tr style="border-bottom:1px solid var(--border);">
+                 <th style="text-align:left;padding:6px 4px;font-weight:500;color:var(--muted);">Estratégia</th>
+                 <th style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">APR s/ cap.</th>
+                 <th style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">DD 1σ</th>
+                 <th style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">Sharpe</th>
+               </tr>
+             </thead>
+             <tbody style="font-family:var(--font-mono);">
+               <tr style="border-bottom:1px solid var(--border);">
+                 <td style="padding:10px 4px;"><strong>A) LP puro</strong><br><span style="font-size:9px;color:var(--muted);">sem leverage</span></td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-a-apr">—</td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-a-dd">—</td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-a-sh">—</td>
+               </tr>
+               <tr style="border-bottom:1px solid var(--border);">
+                 <td style="padding:10px 4px;"><strong>B) Leverage produtiva</strong><br><span style="font-size:9px;color:var(--muted);">Barolo style — sem hedge</span></td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-b-apr">—</td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-b-dd">—</td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-b-sh">—</td>
+               </tr>
+               <tr>
+                 <td style="padding:10px 4px;"><strong>C) Leverage + Hedge</strong><br><span style="font-size:9px;color:var(--muted);">delta-neutro</span></td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-c-apr">—</td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-c-dd">—</td>
+                 <td style="text-align:right;padding:10px 4px;" id="lh-c-sh">—</td>
+               </tr>
+             </tbody>
+           </table>
+
+           <div style="font-size:10px;color:var(--muted);letter-spacing:2px;margin:18px 0 10px;">DECOMPOSIÇÃO DA ESTRATÉGIA C</div>
+           <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
+             <span style="color:var(--muted);">Receita fees</span><span id="lh-c-fee" style="font-family:var(--font-mono);color:var(--green);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
+             <span style="color:var(--muted);">Supply APY colateral</span><span id="lh-c-sup" style="font-family:var(--font-mono);color:var(--green);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
+             <span style="color:var(--muted);">IL residual (pós-hedge)</span><span id="lh-c-ilr" style="font-family:var(--font-mono);color:var(--red);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
+             <span style="color:var(--muted);">Custo borrow</span><span id="lh-c-brw" style="font-family:var(--font-mono);color:var(--red);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
+             <span style="color:var(--muted);">Funding hedge</span><span id="lh-c-fund" style="font-family:var(--font-mono);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px;font-weight:600;">
+             <span>$ líquido/ano</span><span id="lh-c-net" style="font-family:var(--font-mono);color:var(--accent);">—</span>
+           </div>
+
+           <div id="lh-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
+           <div id="lh-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.</div>
+         </div>
+       </div>
+     </div>
+   </div>
+
    <!-- ── Notas conceituais ── -->
    <div class="section" style="background:var(--s2);">
      <div class="section-title">Notas <span>FUNDAMENTOS</span></div>
-     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;font-size:11px;color:var(--muted);line-height:1.65;">
+     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px;font-size:11px;color:var(--muted);line-height:1.65;">
        <div>
          <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">KELLY (binário)</div>
          f* = (b·p − q) / b<br>
@@ -1065,6 +1178,12 @@ body, input, button, select, textarea {
          Anula direção: short = δ × valor_pool.<br>
          APR_neutro = fee_apr − IL + funding (ou − borrow).<br>
          Atenção: hedge total anula estratégias de saída gradual (ex: WETH→USDC).
+       </div>
+       <div>
+         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">LEV + HEDGE</div>
+         Captura alavancagem mas neutraliza direção.<br>
+         APR = fees×(1+L) + supply + funding − borrow×L − IL×(1−h).<br>
+         Risco: funding flip, range break, 3 smart contracts.
        </div>
      </div>
    </div>
@@ -2137,11 +2256,119 @@ function syncHedgeLivePrice(){
  if (typeof calcHedge === 'function') calcHedge();
 }
 
+// ── Leverage + Hedge Combinado (comparação 3-vias) ──
+function calcLevHedge(){
+ var capital = parseFloat(document.getElementById('lh-capital').value)||1;
+ var lp      = parseFloat(document.getElementById('lh-lp').value)||0;
+ var brwPct  = (parseFloat(document.getElementById('lh-brwpct').value)||0)/100;
+ var supApy  = (parseFloat(document.getElementById('lh-supapy').value)||0)/100;
+ var feeApr  = (parseFloat(document.getElementById('lh-feeapr').value)||0)/100;
+ var il      = (parseFloat(document.getElementById('lh-il').value)||0)/100;
+ var brw     = (parseFloat(document.getElementById('lh-brw').value)||0)/100;
+ var fund    = (parseFloat(document.getElementById('lh-fund').value)||0)/100;
+ var delta   = (parseFloat(document.getElementById('lh-delta').value)||0)/100;
+ var hPct    = (parseFloat(document.getElementById('lh-hpct').value)||0)/100;
+ var vol     = (parseFloat(document.getElementById('lh-vol').value)||0)/100;
+
+ document.getElementById('lh-brwpct-val').textContent = (brwPct*100).toFixed(0)+'%';
+ document.getElementById('lh-hpct-val').textContent  = (hPct*100).toFixed(0)+'%';
+
+ var fmtP = function(n){ var s=(n*100).toFixed(2)+'%'; return n>0?'+'+s:s; };
+ var fmt$ = function(n){ var s=Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0}); return (n>=0?'+$':'−$')+s; };
+
+ // Borrowed slice (added to LP, financed by borrow)
+ var borrowed = lp * brwPct;
+
+ // ───── ESTRATÉGIA A — LP puro (sem leverage) ─────
+ // Capital próprio usado = lp. Resto (capital - lp) fica em cash (não rende).
+ var A_net   = lp * feeApr + lp * il;
+ var A_apr   = A_net / capital;
+ var A_dd    = (lp * delta * vol) / capital;
+ var A_sh    = A_dd > 0 ? A_apr / A_dd : 0;
+
+ // ───── ESTRATÉGIA B — Leverage produtiva (sem hedge) ─────
+ // Capital como colateral rende supApy. LP completo ganha fees+IL. Borrow paga taxa.
+ var B_net   = lp * feeApr + lp * il + capital * supApy - borrowed * brw;
+ var B_apr   = B_net / capital;
+ var B_dd    = (lp * delta * vol) / capital;
+ var B_sh    = B_dd > 0 ? B_apr / B_dd : 0;
+
+ // ───── ESTRATÉGIA C — Leverage + Hedge (delta-neutro) ─────
+ // Hedge proporcional ao delta do LP. Funding positivo = receita.
+ var hedgeNotional = lp * delta * hPct;
+ var C_fees  = lp * feeApr;
+ var C_sup   = capital * supApy;
+ var C_ilres = lp * il * (1 - hPct);      // IL reduzido proporcionalmente
+ var C_brw   = -borrowed * brw;
+ var C_fund  = hedgeNotional * fund;
+ var C_net   = C_fees + C_sup + C_ilres + C_brw + C_fund;
+ var C_apr   = C_net / capital;
+ var C_dd    = (lp * delta * (1 - hPct) * vol) / capital;
+ var C_sh    = C_dd > 0.001 ? C_apr / C_dd : (C_apr > 0 ? 999 : 0);
+
+ // Render comparação
+ var set = function(id, v, colored){
+   var el = document.getElementById(id);
+   if (!el) return;
+   el.textContent = v;
+   if (colored) el.style.color = colored;
+ };
+ set('lh-a-apr', fmtP(A_apr), A_apr>=0?'var(--green)':'var(--red)');
+ set('lh-a-dd',  fmtP(-A_dd), 'var(--red)');
+ set('lh-a-sh',  A_sh.toFixed(2), A_sh>=1?'var(--green)':(A_sh>=0?'var(--yellow)':'var(--red)'));
+
+ set('lh-b-apr', fmtP(B_apr), B_apr>=0?'var(--green)':'var(--red)');
+ set('lh-b-dd',  fmtP(-B_dd), 'var(--red)');
+ set('lh-b-sh',  B_sh.toFixed(2), B_sh>=1?'var(--green)':(B_sh>=0?'var(--yellow)':'var(--red)'));
+
+ set('lh-c-apr', fmtP(C_apr), C_apr>=0?'var(--green)':'var(--red)');
+ set('lh-c-dd',  fmtP(-C_dd), 'var(--red)');
+ set('lh-c-sh',  C_sh>=999 ? '∞' : C_sh.toFixed(2), C_sh>=1?'var(--green)':(C_sh>=0?'var(--yellow)':'var(--red)'));
+
+ // Decomposição C
+ set('lh-c-fee',  fmt$(C_fees));
+ set('lh-c-sup',  fmt$(C_sup));
+ set('lh-c-ilr',  fmt$(C_ilres), C_ilres>=0?'var(--green)':'var(--red)');
+ set('lh-c-brw',  fmt$(C_brw));
+ set('lh-c-fund', fmt$(C_fund), C_fund>=0?'var(--green)':'var(--red)');
+ set('lh-c-net',  fmt$(C_net),  C_net>=0?'var(--accent)':'var(--red)');
+
+ // Veredito — maior Sharpe vence
+ var v = document.getElementById('lh-verdict');
+ var scores = [
+   {name:'A — LP puro', sh:A_sh, apr:A_apr},
+   {name:'B — Leverage produtiva', sh:B_sh, apr:B_apr},
+   {name:'C — Leverage + Hedge', sh:C_sh, apr:C_apr}
+ ];
+ var best = scores.reduce(function(a,b){ return b.sh > a.sh ? b : a; });
+ if (best.apr <= 0) {
+   v.textContent = 'NENHUMA ESTRATÉGIA POSITIVA — revisar premissas';
+   v.style.background = 'rgba(248,81,73,.10)'; v.style.color = 'var(--red)';
+   v.style.border = '1px solid var(--red)';
+ } else {
+   v.textContent = 'MELHOR SHARPE: ' + best.name + ' (APR '+fmtP(best.apr)+' · Sharpe '+(best.sh>=999?'∞':best.sh.toFixed(2))+')';
+   v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
+   v.style.border = '1px solid var(--green)';
+ }
+
+ // Aviso Barolo — hedge anula estratégia de saída
+ var note = document.getElementById('lh-note');
+ var baseNote = 'Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.';
+ if (hPct > 0.7 && best.name.charAt(0) === 'C') {
+   note.innerHTML = baseNote + '<br><span style="color:var(--yellow);">⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC. Use só para pools de captura pura de fees.</span>';
+ } else if (brwPct > 0.8) {
+   note.innerHTML = baseNote + '<br><span style="color:var(--yellow);">⚠ Borrow >80% do LP: próximo do limite de liquidação. Monitorar HF.</span>';
+ } else {
+   note.textContent = baseNote;
+ }
+}
+
 // First render
 setTimeout(function(){
   if (document.getElementById('kp-p')) calcKellyPool();
   if (document.getElementById('km-apr')) calcKellyMerton();
   if (document.getElementById('hd-capital')) syncHedgeLivePrice();
+  if (document.getElementById('lh-capital')) calcLevHedge();
 }, 200);
 
 // ══════════════════════════════════════════════
