@@ -574,17 +574,37 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </button>
  </div>
 
+ <!-- Summary row -->
+ <div id="uniSummary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;">
+   <div style="background:var(--surface);padding:10px 14px;">
+     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">POOLS</div>
+     <div id="uniSumCount" style="font-size:13px;font-weight:700;color:var(--text);">—</div>
+   </div>
+   <div style="background:var(--surface);padding:10px 14px;">
+     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">TVL TOTAL</div>
+     <div id="uniSumTvl" style="font-size:13px;font-weight:700;color:var(--text);">—</div>
+   </div>
+   <div style="background:var(--surface);padding:10px 14px;">
+     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">APR MÉDIO (pond.)</div>
+     <div id="uniSumApr" style="font-size:13px;font-weight:700;color:var(--gold);">—</div>
+   </div>
+   <div style="background:var(--surface);padding:10px 14px;">
+     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">VOL 24H</div>
+     <div id="uniSumVol" style="font-size:13px;font-weight:700;color:var(--text);">—</div>
+   </div>
+ </div>
+
  <!-- Tabela -->
  <div style="overflow-x:auto;">
  <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11px;">
  <thead>
  <tr style="border-bottom:1px solid var(--border);color:var(--muted);">
- <th style="padding:9px 16px;text-align:left;font-weight:500;letter-spacing:.05em;">PAR</th>
- <th style="padding:9px 10px;text-align:center;font-weight:500;letter-spacing:.05em;">FEE</th>
- <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">APR EST.</th>
- <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">TVL</th>
- <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">VOL 24H</th>
- <th style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;">VAR 24H</th>
+ <th data-sort="name" onclick="sortPools('name')" style="padding:9px 16px;text-align:left;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">PAR <span class="sort-ind" style="color:var(--gold);"></span></th>
+ <th data-sort="fee" onclick="sortPools('fee')" style="padding:9px 10px;text-align:center;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">FEE <span class="sort-ind" style="color:var(--gold);"></span></th>
+ <th data-sort="apr" onclick="sortPools('apr')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">APR EST. <span class="sort-ind" style="color:var(--gold);">▼</span></th>
+ <th data-sort="tvl" onclick="sortPools('tvl')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">TVL <span class="sort-ind" style="color:var(--gold);"></span></th>
+ <th data-sort="vol" onclick="sortPools('vol')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">VOL 24H <span class="sort-ind" style="color:var(--gold);"></span></th>
+ <th data-sort="chg" onclick="sortPools('chg')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">VAR 24H <span class="sort-ind" style="color:var(--gold);"></span></th>
  </tr>
  </thead>
  <tbody id="uniPoolsBody">
@@ -626,6 +646,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  let _cache = {}; // { eth: [...], base: [...], arbitrum: [...] }
  let _cachePort = {};
  let _activeNet = 'eth';
+ let _sortKey = 'apr';       // 'name' | 'fee' | 'apr' | 'tvl' | 'vol' | 'chg'
+ let _sortDir = 'desc';      // 'asc' | 'desc'
 
  // Portfolio token addresses per network
  const PORTFOLIO_ADDRS = {
@@ -716,10 +738,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const link = UNI_LINK[net]+p.addr;
  const cleanName = p.name.replace(/\s*[\d.]+%\s*$/,'').trim();
  const symBadge = p.sym ? `<span style="font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-right:4px;color:var(--gold);">${p.sym}</span>` : '';
+ // Signal badges: 🔥 vol/TVL > 0.5 (churn alto), 🚀 APR > 30%, 💎 TVL > $10M (blue-chip)
+ const volTvl = p.tvl>0 ? p.vol/p.tvl : 0;
+ let sigBadges = '';
+ if (p.apr!=null && p.apr > 30) sigBadges += '<span title="APR alto (>30%)" style="margin-left:4px;">🚀</span>';
+ if (volTvl > 0.5) sigBadges += '<span title="Volume alto vs TVL (churn forte)" style="margin-left:4px;">🔥</span>';
+ if (p.tvl > 10_000_000) sigBadges += '<span title="TVL blue-chip (>$10M)" style="margin-left:4px;">💎</span>';
  return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;"
  onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"
  onclick="window.open('${link}','_blank')">
- <td style="padding:9px 16px;font-weight:600;color:var(--text);">${symBadge}${cleanName}</td>
+ <td style="padding:9px 16px;font-weight:600;color:var(--text);">${symBadge}${cleanName}${sigBadges}</td>
  <td style="padding:9px 10px;text-align:center;">
  <span style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;">${feeStr}</span>
  </td>
@@ -730,20 +758,90 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </tr>`;
  }
 
+ // Ordena um array de pools conforme _sortKey / _sortDir
+ function sortArr(arr) {
+   if (!arr || !arr.length) return arr;
+   const k = _sortKey, dir = _sortDir === 'asc' ? 1 : -1;
+   return arr.slice().sort((a,b) => {
+     if (k === 'name') {
+       const an = (a.name||'').toLowerCase();
+       const bn = (b.name||'').toLowerCase();
+       return an < bn ? -1*dir : an > bn ? 1*dir : 0;
+     }
+     // Numéricas — null/NaN vão pro fim independente da direção
+     const av = a[k], bv = b[k];
+     const aNull = av == null || isNaN(av);
+     const bNull = bv == null || isNaN(bv);
+     if (aNull && bNull) return 0;
+     if (aNull) return 1;
+     if (bNull) return -1;
+     return (av - bv) * dir;
+   });
+ }
+
+ // Atualiza setas ▲/▼ nos headers
+ function updateSortIndicators() {
+   document.querySelectorAll('th[data-sort] .sort-ind').forEach(span => {
+     const th = span.closest('th');
+     span.textContent = (th.dataset.sort === _sortKey) ? (_sortDir === 'asc' ? '▲' : '▼') : '';
+   });
+ }
+
+ // Handler de clique no header — alterna direção ou muda coluna
+ window.sortPools = function(key) {
+   if (_sortKey === key) {
+     _sortDir = _sortDir === 'asc' ? 'desc' : 'asc';
+   } else {
+     _sortKey = key;
+     // Default: nome asc, resto desc (maior em cima)
+     _sortDir = (key === 'name') ? 'asc' : 'desc';
+   }
+   updateSortIndicators();
+   // Re-render usando cache do net ativo
+   const pools = _cache[_activeNet];
+   const portPools = _cachePort[_activeNet];
+   if (pools || portPools) renderTable(pools, _activeNet, portPools);
+ };
+
  function renderTable(pools, net, portPools) {
  const body = document.getElementById('uniPoolsBody');
  const noEth = !pools || !pools.length;
  const noPort = !portPools || !portPools.length;
  if (noEth && noPort) {
  body.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool encontrada.</td></tr>';
+ updateSummary([]);
  return;
  }
- let html = (pools||[]).map(p => rowHtml(p, net)).join('');
+ const sortedPools = sortArr(pools||[]);
+ const sortedPort  = sortArr(portPools||[]);
+ let html = sortedPools.map(p => rowHtml(p, net)).join('');
  if (!noPort) {
  html += `<tr><td colspan="6" style="padding:6px 16px 4px;font-size:9px;letter-spacing:.08em;color:var(--muted);background:var(--surface2);font-family:'Satoshi',sans-serif;font-weight:700;">TOKENS DO PORTFOLIO</td></tr>`;
- html += portPools.map(p => rowHtml(p, net)).join('');
+ html += sortedPort.map(p => rowHtml(p, net)).join('');
  }
  body.innerHTML = html;
+ updateSummary([...(pools||[]), ...(portPools||[])]);
+ updateSortIndicators();
+ }
+
+ // Atualiza a barra de resumo no topo (contagem, TVL total, APR médio ponderado, volume 24h)
+ function updateSummary(all) {
+   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+   if (!all || !all.length) {
+     set('uniSumCount','—'); set('uniSumTvl','—'); set('uniSumApr','—'); set('uniSumVol','—');
+     return;
+   }
+   const tvlTotal = all.reduce((s,p)=>s+(p.tvl||0),0);
+   const volTotal = all.reduce((s,p)=>s+(p.vol||0),0);
+   // APR ponderado por TVL (pools maiores pesam mais — mais representativo que média simples)
+   const withApr = all.filter(p => p.apr!=null && p.tvl>0);
+   const aprNum  = withApr.reduce((s,p)=>s+p.apr*p.tvl,0);
+   const aprDen  = withApr.reduce((s,p)=>s+p.tvl,0);
+   const aprWeighted = aprDen>0 ? aprNum/aprDen : 0;
+   set('uniSumCount', all.length);
+   set('uniSumTvl',   fmtM(tvlTotal));
+   set('uniSumApr',   aprWeighted>0 ? aprWeighted.toFixed(1)+'%' : '—');
+   set('uniSumVol',   fmtM(volTotal));
  }
 
  async function fetchPortfolioTokens(net) {
@@ -797,6 +895,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  renderTable(_cache[net], net, _cachePort[net]);
  } else {
  body.innerHTML = '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);"><div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>Carregando…</td></tr>';
+ updateSummary([]);
  loadNet(net);
  }
  };
