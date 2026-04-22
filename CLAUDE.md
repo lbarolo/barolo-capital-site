@@ -2013,3 +2013,131 @@ Nenhum dado de posição novo. Todos os updates foram de dados stale já existen
 - **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
 - **APR pool Base** — calculado só via uncollected fees; Collect events históricos não contabilizados
 
+---
+
+## Sessão 22/04/2026 — Painel Sizing & Risk em ferramentas.html (Kelly + Merton + Hedge + Lev+Hedge) + GHO→USDC no calculador
+
+### Contexto
+
+Sessão focada em mentoria sobre regra de Kelly e hedge de pools com leverage, seguida da implementação prática no `ferramentas.html`. Lucas pediu inspiração no [defibuddy.io/hedging-calculator](https://www.defibuddy.io/hedging-calculator) (SPA com JS — WebFetch retornou vazio, concepção veio de conhecimento geral). Lucas escolheu a opção 3: painel combinado "Sizing & Risk" com Kelly + Hedge integrados.
+
+### Implementado
+
+#### `ferramentas.html` — Novo painel "Sizing & Risk" (4ª aba)
+
+**Nova aba** inserida entre "Cenários" e "Diário DeFi":
+- Botão tab com `data-i18n="tab-sizing"` (EN/PT: "Sizing & Risk")
+- Panel `#panel-sizing` com 4 calculadoras sequenciais
+
+**Calculadora 1 — Kelly Pool (binário)**
+- Fórmula: `f* = (b·p − q) / b` onde b = odds (ganho/perda), p = prob. ganhar, q = 1−p
+- Inputs (IDs): `kp-preset` (select: Safe/Moderate/Aggressive/Custom), `kp-p` (prob %), `kp-win` (ganho $), `kp-loss` (perda $), `kp-capital` ($), `kp-frac` (Full/Half/Quarter)
+- Outputs: `kp-edge` (edge %), `kp-fstar` (Kelly %), `kp-applied` (aplicado %), `kp-allocate` ($ a alocar), `kp-growth` (crescimento geométrico esperado), `kp-verdict` (veredito colorido), `kp-note` (recomendação)
+- Presets: Safe (50/50, b=1.5), Moderate (60/40, b=2), Aggressive (70/30, b=3)
+- Função: `calcKellyPool()` + `applyKpPreset(name)`
+
+**Calculadora 2 — Kelly Leverage (Merton, contínuo)**
+- Fórmula: `f* = (μ − r) / σ²` onde μ = APR esperado, r = custo borrow, σ² = variância
+- Aplicação: LTV ótima ajustada por fração de segurança (Half/Quarter Kelly)
+- Inputs (IDs): `km-apr` (APR esperado %), `km-borrow` (custo %), `km-vol` (vol anualizada %), `km-ltv` (LTV atual %), `km-frac` (fração)
+- Outputs: `km-excess` (APR excess), `km-var` (variância), `km-lev` (leverage ótima), `km-ltv-opt` (LTV ótima %), `km-diff` (vs atual), `km-verdict`
+- Função: `calcKellyMerton()`
+
+**Calculadora 3 — Hedge LP (delta-neutro)**
+- Delta Uniswap V3: `ETH_share = (sb-s)·s/sb / [(sb-s)·s/sb + (s-sa)]`
+- IL anualizado: `−min(0.3, vol²/(8·rangeW))` com `rangeW = (√pmax - √pmin) / √pcenter`
+- Hedge cost: perp = funding × short_usd; borrow-short = −borrow × short_usd
+- Inputs (IDs): `hd-capital` (padrão $365 — pool atual), `hd-pmin=1855.72`, `hd-pmax=3146.36`, `hd-pnow=2431` (ETH ao vivo via `syncHedgeLivePrice`), `hd-feeapr=32`, `hd-funding=5`, `hd-borrow=3`, `hd-vol=60`, `hd-pct` (range 0–100%), `hd-instr` (perp/borrow-short)
+- Outputs: `hd-inrange`, `hd-delta`, `hd-ethval`, `hd-short` (notional + ETH), `hd-fee-line`, `hd-il`, `hd-hedge-cost`, `hd-apr-naked`, `hd-apr-hedged`, `hd-verdict`, `hd-warning`
+- Avisos específicos: `hd-pct > 0.7` + preço ainda abaixo de 90% do pmax → alerta sobre anular estratégia de saída gradual
+- Funções: `calcHedge()`, `syncHedgeLivePrice()` (sincroniza com `liveETH` via fetchLivePrices, respeita `dataset.userTouched`)
+
+**Calculadora 4 — Leverage + Hedge Combinado (3-vias)** ← adicionado nesta sessão
+- Compara 3 estratégias com mesmo capital próprio:
+  - **A) LP puro** — sem leverage; APR = (fees + IL) × lp/capital; DD = lp × delta × vol / capital
+  - **B) Leverage produtiva (Barolo style)** — fees+IL sobre LP completo + supply colateral − borrow; DD amplificado pela razão lp/capital
+  - **C) Leverage + Hedge (delta-neutro)** — B + funding × hedge_notional; IL residual = IL × (1−hpct); DD reduzido por (1−hpct)
+- Inputs (IDs): `lh-capital=6000`, `lh-lp=2000`, `lh-brwpct` (slider 0–100%), `lh-supapy=1.5`, `lh-feeapr=32`, `lh-il=-12`, `lh-brw=2.32`, `lh-fund=5`, `lh-delta=50`, `lh-hpct` (slider 0–100%), `lh-vol=60`
+- Outputs: Tabela 3×3 com APR/DD/Sharpe (IDs `lh-{a,b,c}-{apr,dd,sh}`) + decomposição da C (`lh-c-fee`, `lh-c-sup`, `lh-c-ilr`, `lh-c-brw`, `lh-c-fund`, `lh-c-net`) + veredito (maior Sharpe vence)
+- Range sliders com display inline: `lh-brwpct-val`, `lh-hpct-val`
+- Avisos: hedge >70% anula saída gradual; borrow >80% risco de liquidação
+- Função: `calcLevHedge()` — adicionada após `syncHedgeLivePrice()`, inicializada no `setTimeout` de primeira renderização
+
+**Seção "Notas / Fundamentos"** ao final do painel: 4 colunas (grid 1fr×4) explicando Kelly binário, Merton, Hedge LP, Lev+Hedge com fórmulas resumidas.
+
+#### `ferramentas.html` — Fix refinanciamento GHO → USDC (10/04/2026)
+
+A calculadora de liquidação AAVE ainda tinha dados antigos. Atualizado para refletir o refinanciamento:
+
+| Campo | Antes | Depois |
+|-------|-------|--------|
+| Label dívida AAVE (HTML + i18n key) | `lbl-gho-debt` "Dívida GHO" | `lbl-usdc-debt-aave` "Dívida USDC" |
+| Valor dívida AAVE (input) | 747.50 | **748** |
+| `BASE.aaveDebt` (JS simulador) | 747.50 | **748** |
+| `BASE.aaveUSDT` | 1651.30 | **1650** |
+| `BASE.aaveETH` | 1.87 | **1.88** |
+| `BASE.kamPYUSD` | 90 | **300.55** |
+| `BASE.kamSOL` | 19.3 | **19.37** |
+| `BASE.kamDebt` | 802.76 | **805.70** |
+| `checkAlerts()` — divisão LTV | `/747.50` | `/748` |
+| `checkAlerts()` — bloco Kamino | `19.3`, `90`, `802.76` | `19.37`, `300.55`, `805.70` |
+
+Commits: `9a9e79f` (Sizing & Risk panel) e `b6c798a` (GHO→USDC fix).
+
+### Conteúdo da mentoria (registrado em memória)
+
+Sessão incluiu discussão extensiva sobre:
+
+**Regra de Kelly aplicada a DeFi:**
+- Binário (pools com range): `f* = (b·p − q)/b`
+- Contínuo/Merton (lending alavancado): `f* = (μ − r)/σ²`
+- Half/Quarter Kelly recomendado — errar `p` em 10% causa erro de 30%+ em `f*`
+- Kelly não considera frequência de rebalance nem liquidity slippage — base para decisão, não resposta final
+
+**Hedge delta-neutro em pools:**
+- Uniswap V3: delta varia dentro do range (100% ETH em pmin, 0% em pmax)
+- Hedge perfeito: short notional = delta × valor_pool
+- Economia: anula IL, captura fees "puras"
+- Trade-offs: funding pode flipar (bear agressivo), range break anula hedge, complexidade operacional (3 smart contracts)
+- **Incompatível com estratégia de saída gradual** — hedge >70% anula o propósito da pool como exit strategy
+
+**Combo Leverage + Hedge (tese "delta-neutral farming"):**
+- Estratégia atual do Lucas: colateral AAVE + borrow USDC → LP ETH/USDC → pool paga borrow com fees
+- Com hedge: adiciona short ETH perpétuo proporcional ao delta, captura fees sem exposição direcional
+- Funciona bem em lateralização; performa pior em bull acelerado (perde valorização do ETH)
+- Red flags: funding flip, bridge risk (WBTC/cbBTC premium), liquidation cascade em smart contracts encadeados
+
+**State-of-the-art 2026 (pendente discussão detalhada):**
+- Euler V2 — modular lending com borrow fixed-term
+- Morpho Blue — isolated markets com custom LTV
+- Gearbox V3 — credit accounts nativo com estratégias pré-aprovadas
+- Drift BTC-PERP — basis trade em Solana com funding estável
+- Hyperliquid HLP — vault maker-taker com yield ~15% APR
+- Pendle PT — trade de rendimento fixo (separar yield de principal)
+
+### Dados atualizados
+
+Nenhum dado de posição alterado. Apenas calculadora de ferramentas.html refletindo refinanciamento AAVE (GHO→USDC @ 2.32%) que já estava documentado em outras páginas desde 10/04/2026.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| `ferramentas.html` calculadora de liquidação com "GHO" como dívida AAVE | HTML e JS `BASE` nunca atualizados após refinanciamento de 10/04/2026 | Label, value, `BASE.aaveDebt`, `checkAlerts()` todos atualizados para USDC @ $748 |
+| `ferramentas.html` usando quantidades antigas (1.87 WETH, 1651 USDT, 19.3 SOL, 90 USDS, 802 USDC) | Hardcoded no `BASE` do simulador de cenários | Atualizados para valores de abril/2026 (1.88, 1650, 19.37, 300.55, 805.70) |
+| `ferramentas.html` sem ferramenta de sizing/Kelly | Nunca existiu — nova feature | Painel `#panel-sizing` com 4 calculadoras |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
+- **APR pool Base** — calculado só via uncollected fees; Collect events históricos não contabilizados
+- **Continuação mentoria** — aprofundar em Euler V2, Morpho Blue, Gearbox, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **Validar calcLevHedge() com dados reais** — rodar cenários com pool atual ($365) e pool hipotética ($2000) para sanity check
+- **i18n do painel Sizing & Risk** — labels dos 4 calculadores só em PT; adicionar `data-i18n` e strings EN se for traduzir
+- **Presets Hedge LP** — inputs default são da pool atual (hd-capital=365, pmin=1855.72, pmax=3146.36); considerar botão "carregar pool ativa" que lê do array POOLS em pools.html
+
+---
+
