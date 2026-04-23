@@ -515,6 +515,121 @@ body, input, button, select, textarea {
   #print-semanal .sw-pq-empty{color:#aaa;font-style:italic;font-size:11px;}
   #print-semanal .sw-pfooter{margin-top:30px;font-size:9px;color:#aaa;border-top:1px solid #ddd;padding-top:8px;}
 }
+
+/* ── FEEDBACK VISUAL: Highlight + Toast ── */
+@keyframes highlightFlash{
+  0%{background-color:transparent;}
+  50%{background-color:rgba(201,160,80,.25);}
+  100%{background-color:transparent;}
+}
+.preset-highlight{animation:highlightFlash .8s ease-out;}
+
+@keyframes toastSlideIn{
+  from{transform:translateY(-20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+@keyframes toastSlideOut{
+  from{transform:translateY(0);opacity:1;}
+  to{transform:translateY(-20px);opacity:0;}
+}
+.toast-notification{
+  position:fixed;top:70px;right:20px;z-index:1000;
+  background:rgba(63,185,80,.95);border:1px solid rgba(63,185,80,.6);
+  color:white;padding:12px 18px;border-radius:6px;
+  font-size:12px;font-family:var(--font-mono);letter-spacing:.5px;
+  display:flex;align-items:center;gap:8px;
+  animation:toastSlideIn .3s ease-out;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+}
+.toast-notification.hide{animation:toastSlideOut .3s ease-out forwards;}
+.toast-icon{font-size:14px;font-weight:700;}
+
+/* ── FEEDBACK VISUAL: Highlight + Toast ── */
+@keyframes highlightFlash{
+  0%{background-color:transparent;}
+  50%{background-color:rgba(201,160,80,.25);}
+  100%{background-color:transparent;}
+}
+.preset-highlight{animation:highlightFlash .8s ease-out;}
+
+@keyframes toastSlideIn{
+  from{transform:translateY(-20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+@keyframes toastSlideOut{
+  from{transform:translateY(0);opacity:1;}
+  to{transform:translateY(-20px);opacity:0;}
+}
+.toast-notification{
+  position:fixed;top:70px;right:20px;z-index:1000;
+  background:rgba(63,185,80,.95);border:1px solid rgba(63,185,80,.6);
+  color:white;padding:12px 18px;border-radius:6px;
+  font-size:12px;font-family:var(--font-mono);letter-spacing:.5px;
+  display:flex;align-items:center;gap:8px;
+  animation:toastSlideIn .3s ease-out;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+}
+.toast-notification.hide{animation:toastSlideOut .3s ease-out forwards;}
+.toast-icon{font-size:14px;font-weight:700;}
+
+
+/* ── FEEDBACK VISUAL: Highlight + Toast ── */
+@keyframes highlightFlash{
+  0%{background-color:transparent;}
+  50%{background-color:rgba(201,160,80,.25);}
+  100%{background-color:transparent;}
+}
+.preset-highlight{animation:highlightFlash .8s ease-out;}
+
+@keyframes toastSlideIn{
+  from{transform:translateY(-20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+@keyframes toastSlideOut{
+  from{transform:translateY(0);opacity:1;}
+  to{transform:translateY(-20px);opacity:0;}
+}
+.toast-notification{
+  position:fixed;top:70px;right:20px;z-index:1000;
+  background:rgba(63,185,80,.95);border:1px solid rgba(63,185,80,.6);
+  color:white;padding:12px 18px;border-radius:6px;
+  font-size:12px;font-family:var(--font-mono);letter-spacing:.5px;
+  display:flex;align-items:center;gap:8px;
+  animation:toastSlideIn .3s ease-out;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+}
+.toast-notification.hide{animation:toastSlideOut .3s ease-out forwards;}
+.toast-icon{font-size:14px;font-weight:700;}
+
+
+/* ── FEEDBACK VISUAL: Highlight + Toast ── */
+@keyframes highlightFlash{
+  0%{background-color:transparent;}
+  50%{background-color:rgba(201,160,80,.25);}
+  100%{background-color:transparent;}
+}
+.preset-highlight{animation:highlightFlash .8s ease-out;}
+
+@keyframes toastSlideIn{
+  from{transform:translateY(-20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+@keyframes toastSlideOut{
+  from{transform:translateY(0);opacity:1;}
+  to{transform:translateY(-20px);opacity:0;}
+}
+.toast-notification{
+  position:fixed;top:70px;right:20px;z-index:1000;
+  background:rgba(63,185,80,.95);border:1px solid rgba(63,185,80,.6);
+  color:white;padding:12px 18px;border-radius:6px;
+  font-size:12px;font-family:var(--font-mono);letter-spacing:.5px;
+  display:flex;align-items:center;gap:8px;
+  animation:toastSlideIn .3s ease-out;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+}
+.toast-notification.hide{animation:toastSlideOut .3s ease-out forwards;}
+.toast-icon{font-size:14px;font-weight:700;}
+
 </style>
 </head>
 <body>
@@ -2378,7 +2493,102 @@ function calcLevHedge(){
    : baseNote;
 }
 
+// ── Helper: Feedback Visual ──
+function flashHighlight(elementIds, duration){
+  duration = duration || 800;
+  elementIds.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.add('preset-highlight');
+    setTimeout(function(){ el.classList.remove('preset-highlight'); }, duration);
+  });
+}
+
+function showToast(message, duration){
+  duration = duration || 2500;
+  var toast = document.createElement('div');
+  toast.className = 'toast-notification';
+  toast.innerHTML = '<span class="toast-icon">✓</span><span>'+message+'</span>';
+  document.body.appendChild(toast);
+  setTimeout(function(){
+    toast.classList.add('hide');
+    setTimeout(function(){ document.body.removeChild(toast); }, 300);
+  }, duration);
+}
+
+
+// ── Helper: Feedback Visual ──
+function flashHighlight(elementIds, duration){
+  duration = duration || 800;
+  elementIds.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.add('preset-highlight');
+    setTimeout(function(){ el.classList.remove('preset-highlight'); }, duration);
+  });
+}
+
+function showToast(message, duration){
+  duration = duration || 2500;
+  var toast = document.createElement('div');
+  toast.className = 'toast-notification';
+  toast.innerHTML = '<span class="toast-icon">✓</span><span>'+message+'</span>';
+  document.body.appendChild(toast);
+  setTimeout(function(){
+    toast.classList.add('hide');
+    setTimeout(function(){ document.body.removeChild(toast); }, 300);
+  }, duration);
+}
+
+
+// ── Helper: Feedback Visual ──
+function flashHighlight(elementIds, duration){
+  duration = duration || 800;
+  elementIds.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.add('preset-highlight');
+    setTimeout(function(){ el.classList.remove('preset-highlight'); }, duration);
+  });
+}
+
+function showToast(message, duration){
+  duration = duration || 2500;
+  var toast = document.createElement('div');
+  toast.className = 'toast-notification';
+  toast.innerHTML = '<span class="toast-icon">✓</span><span>'+message+'</span>';
+  document.body.appendChild(toast);
+  setTimeout(function(){
+    toast.classList.add('hide');
+    setTimeout(function(){ document.body.removeChild(toast); }, 300);
+  }, duration);
+}
+
 // ── Presets: carregar pool ativa / cenário Barolo ──
+
+// ── Helper: Feedback Visual ──
+function flashHighlight(elementIds, duration){
+  duration = duration || 800;
+  elementIds.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.add('preset-highlight');
+    setTimeout(function(){ el.classList.remove('preset-highlight'); }, duration);
+  });
+}
+
+function showToast(message, duration){
+  duration = duration || 2500;
+  var toast = document.createElement('div');
+  toast.className = 'toast-notification';
+  toast.innerHTML = '<span class="toast-icon">�u2713</span><span>'+message+'</span>';
+  document.body.appendChild(toast);
+  setTimeout(function(){
+    toast.classList.add('hide');
+    setTimeout(function(){ document.body.removeChild(toast); }, 300);
+  }, duration);
+}
+
 // Fonte de verdade: CLAUDE.md "Pool ATIVA — Dados completos" (WETH/USDC 0.30% Base).
 // Dados verificados via Revert Finance em 17/04/2026.
 function loadActivePoolHedge(){
@@ -2399,6 +2609,15 @@ function loadActivePoolHedge(){
  var pnowEl = document.getElementById('hd-pnow');
  if (pnowEl) pnowEl.dataset.userTouched = '1';
  calcHedge();
+ // Feedback visual
+ flashHighlight([\'hd-capital\',\'hd-pmin\',\'hd-pmax\',\'hd-pnow\',\'hd-feeapr\',\'hd-funding\',\'hd-borrow\',\'hd-vol\',\'hd-pct\']);
+ showToast(\'Pool ativa carregada (WETH/USDC Base)\');
+ // Feedback visual
+ flashHighlight([\'hd-capital\',\'hd-pmin\',\'hd-pmax\',\'hd-pnow\',\'hd-feeapr\',\'hd-funding\',\'hd-borrow\',\'hd-vol\',\'hd-pct\']);
+ showToast(\'Pool ativa carregada (WETH/USDC Base)\');
+ // Feedback visual
+ flashHighlight(['hd-capital','hd-pmin','hd-pmax','hd-pnow','hd-feeapr','hd-funding','hd-borrow','hd-vol','hd-pct']);
+ showToast('Pool ativa carregada (WETH/USDC Base)');
 }
 
 function loadBaroloScenario(){
@@ -2414,6 +2633,9 @@ function loadBaroloScenario(){
  set('lh-feeapr',  32);
  set('lh-il',      -12);
  set('lh-brw',     2.32);
+ // Feedback visual
+ flashHighlight(["hd-capital","hd-pmin","hd-pmax","hd-pnow","hd-feeapr","hd-funding","hd-borrow","hd-vol","hd-pct"]);
+ showToast("Pool ativa carregada (WETH/USDC Base)");
  set('lh-fund',    5);
  set('lh-delta',   50);        // in-range ≈ 50/50 no centro
  set('lh-hpct',    0);         // Barolo não hedgeia — saída gradual
@@ -2423,6 +2645,15 @@ function loadBaroloScenario(){
  var hpctVal = document.getElementById('lh-hpct-val');
  if (hpctVal) hpctVal.textContent = '0%';
  calcLevHedge();
+ // Feedback visual
+ flashHighlight([\'lh-capital\',\'lh-lp\',\'lh-brwpct\',\'lh-supapy\',\'lh-feeapr\',\'lh-il\',\'lh-brw\',\'lh-fund\',\'lh-delta\',\'lh-hpct\',\'lh-vol\']);
+ showToast(\'Cenário Barolo carregado (leverage + no hedge)\');
+ // Feedback visual
+ flashHighlight([\'lh-capital\',\'lh-lp\',\'lh-brwpct\',\'lh-supapy\',\'lh-feeapr\',\'lh-il\',\'lh-brw\',\'lh-fund\',\'lh-delta\',\'lh-hpct\',\'lh-vol\']);
+ showToast(\'Cenário Barolo carregado (leverage + no hedge)\');
+ // Feedback visual
+ flashHighlight(['lh-capital','lh-lp','lh-brwpct','lh-supapy','lh-feeapr','lh-il','lh-brw','lh-fund','lh-delta','lh-hpct','lh-vol']);
+ showToast('Cenário Barolo carregado (leverage + no hedge)');
 }
 
 // First render
@@ -2437,6 +2668,9 @@ setTimeout(function(){
 // DEFI RULES
 // ══════════════════════════════════════════════
 var DEFI_RULES = [
+ // Feedback visual
+ flashHighlight(["lh-capital","lh-lp","lh-brwpct","lh-supapy","lh-feeapr","lh-il","lh-brw","lh-fund","lh-delta","lh-hpct","lh-vol"]);
+ showToast("Cenario Barolo carregado (leverage + no hedge)");
  "Projetos com cultos podem ser extremamente lucrativos. Basta sair do foguete antes que ele inevitavelmente caia.",
  "Não vale a pena bloquear tokens para obter rendimento adicional. Nada pior do que estar amarrado a uma pia que está afundando.",
  "Proteja sua atenção a todo custo. Você já tem tempo e energia limitados, não os desperdice acompanhando o último drama da criptografia.",
