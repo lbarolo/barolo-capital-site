@@ -1627,13 +1627,13 @@ function setRef(ref){
   const pooledUsd = wethAmt*eth + usdcAmt;
   const uncFeeUsd = uncWeth*eth + uncUsdc;
 
-  // 8. APR via on-chain (fees não coletadas + período desde abertura)
-  // Subgraph hosted ETH não serve aqui (pool é Base); cálculo histórico full
-  // exigiria scan de logs (Collect events) — usar só uncollected fees como proxy
+  // 8. APR via on-chain (fees acumuladas desde abertura, sem coletas manuais)
+  // Se ocorrer um Collect event, o contador de uncollected reseta — APR ficaria subestimado.
+  // Por enquanto a posição não teve coletas, então uncollected = total acumulado desde 18/03/2026.
   const ENTRY_CAPITAL = 365;
   const OPEN_TS = new Date('2026-03-18').getTime() / 1000;
   let pnl=null, il=null, apr=null, feeApr=null, dailyFees=null;
-  let aprSource = 'parcial · só fees não coletadas';
+  let aprSource = 'acumulado desde abertura';
 
   if (uncFeeUsd > 0) {
     const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
@@ -2343,7 +2343,7 @@ var POOLS = [
   { pair:'ETH/USDT 0.05%', net:'Arbitrum', open:'17/10/2025', close:'30/01/2026', days:105, capital:277,  fees:34,   il:0,   result:34,   status:'closed', lvr:0,    fcr:42.7,  invGrowth:12.3 },
   { pair:'SOL/USDC 0.04%', net:'Solana',   open:'19/10/2025', close:'20/01/2026', days:93,  capital:660,  fees:23,   il:0,   result:23,   status:'closed', lvr:0,    fcr:13.7,  invGrowth:3.5  },
   { pair:'XAI/WETH 0.3%',  net:'Arbitrum', open:'01/07/2025', close:'29/08/2025', days:60,  capital:35,   fees:7,    il:21,  result:-14,  status:'closed', lvr:3.0,  fcr:121.9, invGrowth:-40  },
-  { pair:'SOL/GRIFT 2%',   net:'Solana',   open:'15/02/2025', close:'05/05/2025', days:80,  capital:780,  fees:1389, il:500, result:-1510,status:'closed', lvr:0.36, fcr:815.7, invGrowth:-193, obs:'Token GRIFT foi a zero. Início: 4 SOL (~$3k). Taxas $1389 mas IL -$2900. Erro: acumulou mais que deveria, ficou preso em tendência baixa.' },
+  { pair:'SOL/GRIFT 2%',   net:'Solana',   open:'15/02/2025', close:'05/05/2025', days:80,  capital:780,  fees:1389, il:2899, result:-1510,status:'closed', lvr:0.36, fcr:815.7, invGrowth:-193, obs:'Token GRIFT foi a zero. Início: 4 SOL (~$3k). Taxas $1389 mas IL -$2900. Erro: acumulou mais que deveria, ficou preso em tendência baixa.' },
   { pair:'XAI/WETH 0.3%', net:'Ethereum', open:'10/01/2025', close:'28/01/2025', days:18,  capital:30,   fees:7,    il:10,  result:-3,   status:'closed', lvr:1.4,  fcr:473.1, invGrowth:-10, obs:'0.009 ETH entrada. Bom APR após queda. 24/01 saiu do range, remontagem com taxas XAI no compound. Token caiu demais, desmontada.' },
   // ── 2024 ──
   { pair:'MSTR/ETH 1%',    net:'Ethereum', open:'22/11/2024', close:'04/12/2024', days:13,  capital:260,  fees:36,   il:0,   result:36,   status:'closed', lvr:0,    fcr:390.1, invGrowth:13.8, obs:'Segunda posição MSTR. Resultado final +$36 em 13 dias.' },
