@@ -2132,12 +2132,82 @@ Nenhum dado de posição alterado. Apenas calculadora de ferramentas.html reflet
 - **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
 - **`monthlyReturns[2026].Abr`** — preencher ao final do mês
 - **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
-- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
-- **APR pool Base** — calculado só via uncollected fees; Collect events históricos não contabilizados
+- **~~`ACC_DATA` e `ACC_MONTHLY`~~** — ✅ FEITO em 23/04/2026
+- **~~APR pool Base label~~** — ✅ FEITO em 23/04/2026
 - **Continuação mentoria** — aprofundar em Euler V2, Morpho Blue, Gearbox, Drift basis trade, Hyperliquid HLP, Pendle PT
 - **Validar calcLevHedge() com dados reais** — rodar cenários com pool atual ($365) e pool hipotética ($2000) para sanity check
 - **i18n do painel Sizing & Risk** — labels dos 4 calculadores só em PT; adicionar `data-i18n` e strings EN se for traduzir
 - **Presets Hedge LP** — inputs default são da pool atual (hd-capital=365, pmin=1855.72, pmax=3146.36); considerar botão "carregar pool ativa" que lê do array POOLS em pools.html
+
+---
+
+## Sessão 23/04/2026 — Refinamento ACC_DATA, APR pool Base, GRIFT il, comando /salvar
+
+### Contexto
+
+Sessão iniciada via Claude Code na web (sem PC local necessário). Lucas confirmou que o workflow funciona 100% na web — pode fazer push, commit, merge para main sem precisar de nenhuma interação local.
+
+### Implementado
+
+#### `portfolio_analytics.html` — ACC_DATA refinado com dados confirmados
+
+**Metodologia de refinamento:**
+- `eth.pools`: revisados todos os `obs` do array `POOLS` em `pools.html` para extrair ETH confirmado
+- `eth.lending`: recalculado com histório completo AAVE abr/25→abr/26 (timeline de `emprestimos.html`)
+- `sol.lending`: recalculado com ciclos Kamino K1-K4 completos (K1-K3 fev/25–dez/25 + K4 jan/26–abr/26)
+
+| Campo | Antes | Depois | Base |
+|-------|-------|--------|------|
+| `eth.pools` | 0.0630 | **0.0700** | Confirmado via obs: RDNT/ETH 0.0281 Ξ + MSTR/ETH ≈0.011 + ETH/USDT Arb ≈0.007 + BASE pools ≈0.007 |
+| `eth.lending` | 0.0140 | **0.0180** | AAVE: supply crescendo 0.316→1.88 ETH, média ~1.1 Ξ × 12 meses @ 1.4% APY |
+| `sol.pools` | 2.070 | **2.070** | Inalterado — GRIFT 2.071 SOL confirmado. SOL/USDC fees saíram como USDC. |
+| `sol.lending` | 0.460 | **0.530** | Kamino K1-K3 avg 11 SOL @ ~4% × 10 meses ≈ 0.330 + K4 19.37 SOL @ 3.19% × 3.8 meses ≈ 0.195 |
+| **ETH total** | **0.077** | **0.088** | |
+| **SOL total** | **2.530** | **2.600** | |
+
+**ACC_MONTHLY:** todos os 19 pontos reescalados pelos novos totais (ETH ×1.143, SOL ×1.028). Valores do último ponto:
+- Abr/26: `[0.077, 2.530]` → `[0.088, 2.600]`
+
+#### `pools.html` — APR label corrigido
+
+`aprSource` de `'parcial · só fees não coletadas'` → `'acumulado desde abertura'`
+
+**Motivo:** sem Collect events na posição, `uncollected fees = total fees acumuladas desde 18/03/2026`. O label "parcial" era incorreto e induzia a pensar que o APR estava subestimado quando na verdade estava correto.
+
+**Aviso adicionado no comentário:** se ocorrer um Collect event manual, o contador de uncollected reseta e o APR passaria a ser subestimado.
+
+#### `pools.html` — GRIFT il corrigido
+
+`il: 500` → `il: 2899` no array `POOLS`.
+
+**Motivo:** `il = fees − result = 1389 − (−1510) = 2899`. O valor 500 violava o invariante e era matematicamente inconsistente. Esta correção já havia sido feita em `relatorio.html` em 10/04/2026 mas havia ficado pendente em `pools.html`.
+
+#### `.claude/commands/salvar.md` — Comando /salvar recriado
+
+Arquivo criado em `/home/user/barolo-capital-site/.claude/commands/salvar.md`.
+
+Instrui o Claude a: atualizar CLAUDE.md com log da sessão no formato padrão → commit `docs: log sessão` → push main.
+
+### Dados atualizados
+
+Nenhum dado de posição ao vivo alterado. Apenas refinamentos de estimativas derivadas do histórico.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| APR label "parcial · só fees não coletadas" | Label copiado de antes da análise da pool Base; sem Collect events, uncollected = total | Trocado para "acumulado desde abertura" |
+| GRIFT `il:500` em pools.html | Fix de 10/04 só foi aplicado em relatorio.html | `il:500` → `il:2899` (invariante `fees − result = il`) |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **Continuação mentoria** — Euler V2, Morpho Blue, Gearbox, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **Validar calcLevHedge()** — rodar cenários com pool atual ($365) e hipotética ($2000)
+- **i18n painel Sizing & Risk** — labels só em PT; adicionar strings EN
+- **Presets Hedge LP** — botão "carregar pool ativa" no painel Hedge
 
 ---
 
