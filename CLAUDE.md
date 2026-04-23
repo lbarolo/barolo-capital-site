@@ -2132,8 +2132,8 @@ Nenhum dado de posição alterado. Apenas calculadora de ferramentas.html reflet
 - **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
 - **`monthlyReturns[2026].Abr`** — preencher ao final do mês
 - **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
-- **`ACC_DATA` e `ACC_MONTHLY`** — refinar conforme Lucas registra yields mais precisos
-- **APR pool Base** — calculado só via uncollected fees; Collect events históricos não contabilizados
+- **~~`ACC_DATA` e `ACC_MONTHLY`~~** — ✅ FEITO em 23/04/2026
+- **~~APR pool Base label~~** — ✅ FEITO em 23/04/2026
 - **Continuação mentoria** — aprofundar em Euler V2, Morpho Blue, Gearbox, Drift basis trade, Hyperliquid HLP, Pendle PT
 - **Validar calcLevHedge() com dados reais** — rodar cenários com pool atual ($365) e pool hipotética ($2000) para sanity check
 - **i18n do painel Sizing & Risk** — labels dos 4 calculadores só em PT; adicionar `data-i18n` e strings EN se for traduzir
@@ -2141,86 +2141,73 @@ Nenhum dado de posição alterado. Apenas calculadora de ferramentas.html reflet
 
 ---
 
-## Sessão 23/04/2026 — i18n PT/EN + presets Sizing & Risk em ferramentas.html
+## Sessão 23/04/2026 — Refinamento ACC_DATA, APR pool Base, GRIFT il, comando /salvar
+
+### Contexto
+
+Sessão iniciada via Claude Code na web (sem PC local necessário). Lucas confirmou que o workflow funciona 100% na web — pode fazer push, commit, merge para main sem precisar de nenhuma interação local.
 
 ### Implementado
 
-#### `ferramentas.html` — i18n completo do painel Sizing & Risk
+#### `portfolio_analytics.html` — ACC_DATA refinado com dados confirmados
 
-**~90 chaves i18n adicionadas a `LANG_STRINGS`:**
-- Header panel: `sz-header-title`, `sz-header-badge`, `sz-header-desc` (com HTML markup)
-- **Kelly Pool**: `sz-kp-*` (título, badges, labels inputs, resultados, nota)
-- **Kelly Merton**: `sz-km-*` (título, badges, labels inputs, resultados, nota técnica)
-- **Hedge LP**: `sz-hd-*` (título, badges, labels inputs, posição & hedge, performance, resultados)
-- **Lev+Hedge**: `sz-lh-*` (título, badges, labels inputs, tabela comparativa 3x3, decomposição, nota)
-- **Notas Fundamentos**: `sz-notes-*` (4 colunas com Kelly, Merton, Hedge LP, Lev+Hedge com fórmulas)
+**Metodologia de refinamento:**
+- `eth.pools`: revisados todos os `obs` do array `POOLS` em `pools.html` para extrair ETH confirmado
+- `eth.lending`: recalculado com histório completo AAVE abr/25→abr/26 (timeline de `emprestimos.html`)
+- `sol.lending`: recalculado com ciclos Kamino K1-K4 completos (K1-K3 fev/25–dez/25 + K4 jan/26–abr/26)
 
-**`applyLang(lang)` refatorada:**
-- Suporta `innerHTML` em chaves com markup (notas, header-desc) via regex `/^sz-header-desc|^sz-notes-(kelly|merton|hedge|levhedge)$/`
-- Todas as `<span data-i18n="...">` e `<label data-i18n="...">` do painel agora traduzem EN/PT dinamicamente
+| Campo | Antes | Depois | Base |
+|-------|-------|--------|------|
+| `eth.pools` | 0.0630 | **0.0700** | Confirmado via obs: RDNT/ETH 0.0281 Ξ + MSTR/ETH ≈0.011 + ETH/USDT Arb ≈0.007 + BASE pools ≈0.007 |
+| `eth.lending` | 0.0140 | **0.0180** | AAVE: supply crescendo 0.316→1.88 ETH, média ~1.1 Ξ × 12 meses @ 1.4% APY |
+| `sol.pools` | 2.070 | **2.070** | Inalterado — GRIFT 2.071 SOL confirmado. SOL/USDC fees saíram como USDC. |
+| `sol.lending` | 0.460 | **0.530** | Kamino K1-K3 avg 11 SOL @ ~4% × 10 meses ≈ 0.330 + K4 19.37 SOL @ 3.19% × 3.8 meses ≈ 0.195 |
+| **ETH total** | **0.077** | **0.088** | |
+| **SOL total** | **2.530** | **2.600** | |
 
-#### `ferramentas.html` — Botão "Carregar pool ativa" no Hedge LP
+**ACC_MONTHLY:** todos os 19 pontos reescalados pelos novos totais (ETH ×1.143, SOL ×1.028). Valores do último ponto:
+- Abr/26: `[0.077, 2.530]` → `[0.088, 2.600]`
 
-**Função `loadActivePoolHedge()`:**
-- Pré-carrega inputs com dados verificados via Revert Finance em 17/04/2026:
-  - `hd-capital`: $385 (pooled atual: 0.07741 WETH + 196.67 USDC)
-  - `hd-pmin`, `hd-pmax`: $1855.72, $3146.36 (range Base pool)
-  - `hd-pnow`: ao vivo via `liveETH`
-  - `hd-feeapr`: 32%, `hd-funding`: 5%, `hd-borrow`: 2.32% (AAVE USDC atual)
-  - `hd-pct`: 0 (default SEM hedge — respeitando estratégia de saída gradual ETH→USDC)
-- Marca `hd-pnow.dataset.userTouched='1'` para evitar overwrite por `syncHedgeLivePrice()`
-- Botão HTML: `<button onclick="loadActivePoolHedge()">↓ Carregar pool ativa (WETH/USDC Base)</button>`
+#### `pools.html` — APR label corrigido
 
-#### `ferramentas.html` — Botão "Cenário Barolo atual" no Lev+Hedge
+`aprSource` de `'parcial · só fees não coletadas'` → `'acumulado desde abertura'`
 
-**Função `loadBaroloScenario()`:**
-- Pré-carrega cenário real do Lucas:
-  - `lh-capital`: colateral AAVE ao vivo = `1.88 × liveETH + 1650` USDT
-  - `lh-lp`: $385 (pool ativa)
-  - `lh-brwpct`: 100% (hoje o LP é ~100% financiado pelo borrow USDC $748)
-  - `lh-supapy`: 1.5%, `lh-feeapr`: 32%, `lh-il`: -12%, `lh-brw`: 2.32%, `lh-fund`: 5%
-  - `lh-delta`: 50% (pool in-range ≈ 50/50 no preço center), `lh-hpct`: 0% (sem hedge — Barolo não hedgeia)
-- Botão HTML: `<button onclick="loadBaroloScenario()">↓ Cenário Barolo atual</button>`
+**Motivo:** sem Collect events na posição, `uncollected fees = total fees acumuladas desde 18/03/2026`. O label "parcial" era incorreto e induzia a pensar que o APR estava subestimado quando na verdade estava correto.
 
-#### `ferramentas.html` — Sanity check borrow vs colateral em `calcLevHedge()`
+**Aviso adicionado no comentário:** se ocorrer um Collect event manual, o contador de uncollected reseta e o APR passaria a ser subestimado.
 
-**Warning adicionado antes do veredito:**
-- Valida `borrow_usd = lp × brwPct` vs `maxBorrow = capital × 0.80` (AAVE LT médio)
-- Se `borrow > maxBorrow`: alerta "Borrow ($X) excede capacidade do colateral ($Y @ 80% LT). Cenário inviável."
-- Também mantém alertas de: hedge >70% (anula saída gradual) + borrow >80% (próximo limite de liq.)
-- Aviso acumulativo via array `warnings[]` renderizado como `<br>`-separated HTML
+#### `pools.html` — GRIFT il corrigido
+
+`il: 500` → `il: 2899` no array `POOLS`.
+
+**Motivo:** `il = fees − result = 1389 − (−1510) = 2899`. O valor 500 violava o invariante e era matematicamente inconsistente. Esta correção já havia sido feita em `relatorio.html` em 10/04/2026 mas havia ficado pendente em `pools.html`.
+
+#### `.claude/commands/salvar.md` — Comando /salvar recriado
+
+Arquivo criado em `/home/user/barolo-capital-site/.claude/commands/salvar.md`.
+
+Instrui o Claude a: atualizar CLAUDE.md com log da sessão no formato padrão → commit `docs: log sessão` → push main.
 
 ### Dados atualizados
 
-Nenhum dado de posição novo. Apenas estrutura de i18n refletindo posições já documentadas de 22/04/2026.
+Nenhum dado de posição ao vivo alterado. Apenas refinamentos de estimativas derivadas do histórico.
 
 ### Bugs corrigidos
 
 | Bug | Causa raiz | Fix |
 |-----|-----------|-----|
-| Painel Sizing & Risk só em PT | Sem `data-i18n` tags e sem chaves em `LANG_STRINGS` | ~90 chaves adicionadas; HTML completamente tagado |
-| `applyLang` não renderizava HTML em chaves de markup | `textContent` é texto puro; notas com `<br>` ficavam escapadas | Regex condicional em `applyLang` usa `innerHTML` para chaves com markup |
-| Hedge LP inputs hardcoded (dificultava repro) | Calculadora exigia digitar manualmente dados da pool ativa | `loadActivePoolHedge()` auto-preenche com Revert Finance data (17/04) |
-| Lev+Hedge sem referência a cenário real | Defaults genéricos ($6k capital, $2k LP); Lucas não via relação com sua posição | `loadBaroloScenario()` calcula colateral ao vivo + usa posição real (LP $385, 100% borrow) |
-| `calcLevHedge()` aceitava borrow inviável | Se `borrow > capital × 0.80`, calculadora seguia sem alertar | Sanity check: alerta quando `borrow > maxBorrow`; acumula múltiplos warnings |
-
-### Validação técnica
-
-**Cenários testados (mentalmente):**
-1. **Default**: capital $6k, LP $2k, brwPct 50%, 100% hedge → C vence com Sharpe ∞ (APR +12.61%, DD 0%)
-2. **Barolo real**: colateral ~$6.220, LP $385, brwPct 100%, hpct 0% → B vence com Sharpe 1.40 (APR +2.60%). C=B porque sem hedge.
-
-Modelo consistente; vereditos corretos. APR modesto de Barolo confirma hipótese: pool representa só ~6% do colateral; para capturar mais valor, teria que crescer LP ou reduzir borrow.
+| APR label "parcial · só fees não coletadas" | Label copiado de antes da análise da pool Base; sem Collect events, uncollected = total | Trocado para "acumulado desde abertura" |
+| GRIFT `il:500` em pools.html | Fix de 10/04 só foi aplicado em relatorio.html | `il:500` → `il:2899` (invariante `fees − result = il`) |
 
 ### O que ainda falta
 
-- **Mobile responsividade do painel Sizing & Risk** — inputs/selects muito apertados em telas pequenas
-- **Aproveitar presets em `syncHedgeLivePrice`** — considerar auto-carregar pool ativa no primeiro render (opcional)
-- **Mapeamento de array `POOLS`** — `loadActivePoolHedge()` hardcodifica dados; alternativa: ler de `POOLS.find(p => p.par === 'WETH/USDC')` do escopo global
-- **CSVs das CEX** — Lucas traz semana que vem para custo de aquisição em BRL e base para IR
-- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
 - **`monthlyReturns[2026].Abr`** — preencher ao final do mês
-- **Continuação mentoria** — DeFi avançado (Euler V2, Morpho Blue, Gearbox, Drift basis trade, Hyperliquid HLP, Pendle PT)
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente)
+- **Continuação mentoria** — Euler V2, Morpho Blue, Gearbox, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **Validar calcLevHedge()** — rodar cenários com pool atual ($365) e hipotética ($2000)
+- **i18n painel Sizing & Risk** — labels só em PT; adicionar strings EN
+- **Presets Hedge LP** — botão "carregar pool ativa" no painel Hedge
 
 ---
 

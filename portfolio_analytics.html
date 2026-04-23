@@ -2950,39 +2950,45 @@ document.addEventListener('DOMContentLoaded', init);
 // Dados extraídos do Diário DeFi — atualize os valores abaixo conforme registra novos yields
 const ACC_DATA = {
   eth: {
-    pools:  0.0630,  // ETH: MSTR/ETH 2024 (~0.054) + ETH/USDT Arbitrum (0.005) + BASE pool (0.004)
-    lending: 0.0140, // AAVE V4 supply APY estimado: 1.88 WETH × 1.25% × ~7 meses
-    staking: 0.0000, // ETH nativo em staking (Lido/Rocket Pool) — preencha se tiver
+    // Confirmado por obs das pools: RDNT/ETH (0.0281 Ξ confirmado nos obs) + MSTR/ETH (≈0.011) +
+    // ETH/USDT Arb (≈0.007) + BASE ETH/USDC (≈0.003) + WETH/USDC Base ativa (0.004 confirmado 17/04)
+    pools:  0.0700,
+    // AAVE V4: supply crescendo de 0.316 ETH (abr/25) até 1.88 ETH (jan/26). Média ~1.1 Ξ por ~12 meses @ 1.4% APY
+    lending: 0.0180,
+    staking: 0.0000,
   },
   sol: {
-    pools:  2.070,   // SOL: SOL/GRIFT extraídos (~1.8 SOL confirmados) + SOL/USDC (0.27 SOL)
-    lending: 0.460,  // Kamino supply APY: 19.37 SOL × 3.19% × ~3 meses
-    staking: 0.000,  // SOL nativo em staking — preencha se tiver
+    // SOL/GRIFT: 2.071 SOL confirmados via extrações (0.659+0.142+0.46+0.81). SOL/USDC fees saíram como USDC.
+    pools:  2.070,
+    // Kamino K1-K4 completo: K1-K3 (fev/25–dez/25) avg 11 SOL @ ~4% = 0.330 SOL + K4 (jan/26–abr/26) 19.37 SOL @ 3.19% = 0.195 SOL
+    lending: 0.530,
+    staking: 0.000,
   }
 };
 
 // Série mensal cumulativa (ETH e SOL) — para o gráfico de linha
 // Formato: [label, ethCumulativo, solCumulativo]
+// Revisado em 23/04/2026: escalado pelos novos totais (ETH total 0.088, SOL total 2.600)
 const ACC_MONTHLY = [
-  ['Out/24', 0.010, 0.000],
-  ['Nov/24', 0.020, 0.000],
-  ['Dez/24', 0.025, 0.000],
-  ['Jan/25', 0.028, 0.500],
-  ['Fev/25', 0.030, 1.150],
-  ['Mar/25', 0.031, 1.610],
-  ['Abr/25', 0.033, 1.680],
-  ['Mai/25', 0.035, 1.720],
-  ['Jun/25', 0.037, 1.760],
-  ['Jul/25', 0.039, 1.800],
-  ['Ago/25', 0.042, 1.840],
-  ['Set/25', 0.046, 1.880],
-  ['Out/25', 0.053, 2.000],
-  ['Nov/25', 0.059, 2.120],
-  ['Dez/25', 0.063, 2.270],
-  ['Jan/26', 0.066, 2.360],
-  ['Fev/26', 0.070, 2.440],
-  ['Mar/26', 0.074, 2.490],
-  ['Abr/26', 0.077, 2.530],
+  ['Out/24', 0.011, 0.000],
+  ['Nov/24', 0.023, 0.000],
+  ['Dez/24', 0.029, 0.000],
+  ['Jan/25', 0.032, 0.514],
+  ['Fev/25', 0.034, 1.182],
+  ['Mar/25', 0.035, 1.655],
+  ['Abr/25', 0.038, 1.727],
+  ['Mai/25', 0.040, 1.768],
+  ['Jun/25', 0.042, 1.809],
+  ['Jul/25', 0.045, 1.851],
+  ['Ago/25', 0.048, 1.892],
+  ['Set/25', 0.053, 1.933],
+  ['Out/25', 0.061, 2.056],
+  ['Nov/25', 0.067, 2.179],
+  ['Dez/25', 0.072, 2.334],
+  ['Jan/26', 0.075, 2.426],
+  ['Fev/26', 0.080, 2.508],
+  ['Mar/26', 0.085, 2.560],
+  ['Abr/26', 0.088, 2.600],
 ];
 
 var accChart = null;
