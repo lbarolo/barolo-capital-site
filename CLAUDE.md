@@ -2211,3 +2211,63 @@ Nenhum dado de posição ao vivo alterado. Apenas refinamentos de estimativas de
 
 ---
 
+## Sessão 23/04/2026 (continuação tarde) — Feedback visual presets + Daily Standup agendado
+
+### Implementado
+
+#### `ferramentas.html` — Feedback visual nos botões de preset
+
+**Feature:** Quando clica "Carregar pool ativa" ou "Cenário Barolo", os inputs preenchidos piscam em ouro + toast verde com confirmação.
+
+**CSS adicionado:**
+- `@keyframes highlightFlash` — pisca 0.8s com fundo rgba(201,160,80,.25)
+- `@keyframes toastSlideIn/toastSlideOut` — notificação desliza de cima
+- `.toast-notification` — posição fixed top-right, background verde #63b950, duração 2.5s
+
+**JS adicionado:**
+- `flashHighlight(elementIds, duration)` — aplica classe `.preset-highlight`
+- `showToast(message, duration)` — cria elemento toast, anima, remove após duração
+
+**Chamadas nos presets:**
+- `loadActivePoolHedge()` — flash 9 inputs + toast "Pool ativa carregada (WETH/USDC Base)"
+- `loadBaroloScenario()` — flash 11 inputs + toast "Cenario Barolo carregado (leverage + no hedge)"
+
+**Commit:** `aab6a40`
+
+#### Daily Standup para CEO — Tarefa agendada
+
+**Novo processo diário:** Scheduled task recorrente `daily-standup-barolo` via `mcp__scheduled-tasks`.
+
+**Schedule:** 08:30 BRT todos os dias (cron `30 8 * * *`)
+
+**Fluxo (15 min):**
+1. CHECK-IN VIVO — preços, portfolio, P&L 24h, HF, LTV
+2. RISK DASHBOARD — liq prices, funding rates, depeg alerts, gas
+3. YIELD TRACKING — APY AAVE/Kamino, fee APR, yield do dia
+4. REGISTRO — trades, decisões alocação, observações mercado
+5. REFLEXÃO — melhor decisão, arrependimentos, meta do dia
+
+**Next run:** 24/04/2026 08:37 (com jitter)
+**Notificações:** Enabled
+
+### Dados atualizados
+
+Nenhum.
+
+### Bugs corrigidos
+
+Nenhum nesta sessão.
+
+### O que ainda falta
+
+- **Avisos visuais melhorados** — warnings com fundo + ícone ⚠️
+- **Mobile responsividade Sizing & Risk** — layout 1 coluna em mobile
+- **Tooltips informativos** — inputs técnicos com `?` explicativo
+- **Cards de resultado** — APR/DD/Sharpe em cards coloridos
+- **`wealthCurve` Abr/2026** — após 30/04
+- **`monthlyReturns[2026].Abr`** — fim do mês
+- **CSVs CEX** — custo BRL + IR (Lucas traz)
+- **Mentoria DeFi avançado** — Euler V2, Morpho, Gearbox, Drift, Hyperliquid, Pendle
+
+---
+
