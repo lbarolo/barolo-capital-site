@@ -561,17 +561,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </div>
  </div>
 
- <!-- Abas de rede -->
- <div style="display:flex;gap:0;border-bottom:1px solid var(--border);">
- <button class="uni-tab active" onclick="switchUniTab('eth',this)" style="padding:8px 18px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;border:none;background:none;cursor:pointer;color:var(--text);border-bottom:2px solid #627EEA;opacity:1;">
- ◆ ETHEREUM
- </button>
- <button class="uni-tab" onclick="switchUniTab('base',this)" style="padding:8px 18px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;">
- ◆ BASE
- </button>
- <button class="uni-tab" onclick="switchUniTab('arbitrum',this)" style="padding:8px 18px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;">
- ◆ ARBITRUM
- </button>
+ <!-- Filtro de redes (chips) -->
+ <div style="display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap;">
+   <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;">REDE</span>
+   <button class="uni-chip active" data-net="all" onclick="switchChainFilter('all',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:var(--gold);color:var(--bg);border:1px solid var(--gold);cursor:pointer;border-radius:3px;">
+     TUDO
+   </button>
+   <button class="uni-chip" data-net="eth" onclick="switchChainFilter('eth',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
+     <span style="color:#627EEA;">◆</span> ETH
+   </button>
+   <button class="uni-chip" data-net="base" onclick="switchChainFilter('base',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
+     <span style="color:#4fa8ff;">◆</span> BASE
+   </button>
+   <button class="uni-chip" data-net="arbitrum" onclick="switchChainFilter('arbitrum',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
+     <span style="color:#5882d2;">◆</span> ARB
+   </button>
  </div>
 
  <!-- Barra de filtros -->
@@ -626,6 +630,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <thead>
  <tr style="border-bottom:1px solid var(--border);color:var(--muted);">
  <th data-sort="name" onclick="sortPools('name')" style="padding:9px 16px;text-align:left;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">PAR <span class="sort-ind" style="color:var(--gold);"></span></th>
+ <th style="padding:9px 8px;text-align:center;font-weight:500;letter-spacing:.05em;">REDE</th>
  <th data-sort="fee" onclick="sortPools('fee')" style="padding:9px 10px;text-align:center;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">FEE <span class="sort-ind" style="color:var(--gold);"></span></th>
  <th data-sort="apr" onclick="sortPools('apr')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">APR EST. <span class="sort-ind" style="color:var(--gold);">▼</span></th>
  <th data-sort="tvl" onclick="sortPools('tvl')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">TVL <span class="sort-ind" style="color:var(--gold);"></span></th>
@@ -634,7 +639,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </tr>
  </thead>
  <tbody id="uniPoolsBody">
- <tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);">
+ <tr><td colspan="7" style="padding:32px;text-align:center;color:var(--muted);">
  <div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>
  Carregando pools…
  </td></tr>
@@ -669,9 +674,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  arbitrum: 'https://app.uniswap.org/explore/pools/arbitrum/'
  };
 
- let _cache = {}; // { eth: [...], base: [...], arbitrum: [...] }
+ let _cache = {}; // { eth: [...], base: [...], arbitrum: [...] } — pools já com p.net atribuído
  let _cachePort = {};
- let _activeNet = 'eth';
+ let _chainFilter = 'all';   // 'all' | 'eth' | 'base' | 'arbitrum'
  let _sortKey = 'apr';       // 'name' | 'fee' | 'apr' | 'tvl' | 'vol' | 'chg'
  let _sortDir = 'desc';      // 'asc' | 'desc'
  let _showOnlyFavs = false;
@@ -679,6 +684,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  let _favs = new Set(JSON.parse(localStorage.getItem('bc-fav-pools') || '[]'));
  function saveFavs() { localStorage.setItem('bc-fav-pools', JSON.stringify([..._favs])); }
  function isFav(net, addr) { return _favs.has(net+':'+addr); }
+ // Labels e cores curtos por rede
+ const NET_SHORT = { eth:'ETH', base:'BASE', arbitrum:'ARB' };
 
  // Portfolio token addresses per network
  const PORTFOLIO_ADDRS = {
@@ -752,7 +759,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const apr = (fee && tvl > 0) ? (vol * fee/100 / tvl * 365 * 100) : null;
  const chg = parseFloat(a.price_change_percentage&&a.price_change_percentage.h24);
  const addr = p.id.replace(net+'_','');
- return { name, tvl, vol, fee, apr, chg, addr };
+ return { name, tvl, vol, fee, apr, chg, addr, net };
  }).filter(p => p.tvl > 10000) // TVL mínimo $10k
  .sort((a,b) => (b.apr||0)-(a.apr||0))
  .slice(0, 20);
@@ -760,7 +767,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  return pools;
  }
 
- function rowHtml(p, net) {
+ function rowHtml(p, opts) {
+ opts = opts || {};
+ const net = p.net || opts.net;
+ const isTop = !!opts.isTop;
  const aprStr = p.apr!=null ? (p.apr>999?'>999':p.apr.toFixed(1))+'%' : '—';
  const aprColor = p.apr==null?'var(--muted)':p.apr>=50?'var(--gold)':p.apr>=20?'var(--green)':'var(--text)';
  const chgColor = isNaN(p.chg)?'var(--muted)':p.chg>=0?'var(--green)':'var(--red)';
@@ -769,20 +779,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const link = UNI_LINK[net]+p.addr;
  const cleanName = p.name.replace(/\s*[\d.]+%\s*$/,'').trim();
  const symBadge = p.sym ? `<span style="font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-right:4px;color:var(--gold);">${p.sym}</span>` : '';
- // Signal badges: 🔥 vol/TVL > 0.5 (churn alto), 🚀 APR > 30%, 💎 TVL > $10M (blue-chip)
+ // Signal badges
  const volTvl = p.tvl>0 ? p.vol/p.tvl : 0;
  let sigBadges = '';
+ if (isTop) sigBadges += '<span title="Top oportunidade" style="margin-left:6px;background:var(--gold);color:var(--bg);font-size:8px;font-weight:700;padding:1px 5px;border-radius:2px;letter-spacing:.08em;">TOP</span>';
  if (p.apr!=null && p.apr > 30) sigBadges += '<span title="APR alto (>30%)" style="margin-left:4px;">🚀</span>';
  if (volTvl > 0.5) sigBadges += '<span title="Volume alto vs TVL (churn forte)" style="margin-left:4px;">🔥</span>';
  if (p.tvl > 10_000_000) sigBadges += '<span title="TVL blue-chip (>$10M)" style="margin-left:4px;">💎</span>';
  const fav = isFav(net, p.addr);
  const starIcon = fav ? '★' : '☆';
  const starColor = fav ? 'var(--gold)' : 'var(--muted)';
- return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;"
- onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"
+ const netColor = NET_COLOR[net] || 'var(--muted)';
+ const netShort = NET_SHORT[net] || (net||'').toUpperCase();
+ // Linha TOP ganha borda esquerda dourada e bg sutil
+ const rowBg = isTop ? 'background:rgba(201,160,80,.05);' : '';
+ const leftBorder = isTop ? 'box-shadow:inset 3px 0 0 var(--gold);' : '';
+ return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;${rowBg}${leftBorder}"
+ onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='${isTop?'rgba(201,160,80,.05)':''}'"
  onclick="window.open('${link}','_blank')">
  <td style="padding:9px 16px;font-weight:600;color:var(--text);">
    <span onclick="event.stopPropagation();toggleFav('${net}','${p.addr}')" title="Favoritar pool" style="color:${starColor};margin-right:6px;cursor:pointer;font-size:13px;user-select:none;">${starIcon}</span>${symBadge}${cleanName}${sigBadges}</td>
+ <td style="padding:9px 8px;text-align:center;">
+   <span style="background:var(--surface2);border:1px solid ${netColor}33;border-radius:3px;padding:2px 6px;font-size:9px;font-weight:600;color:${netColor};letter-spacing:.05em;">◆ ${netShort}</span>
+ </td>
  <td style="padding:9px 10px;text-align:center;">
  <span style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;">${feeStr}</span>
  </td>
@@ -832,50 +851,65 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
      _sortDir = (key === 'name') ? 'asc' : 'desc';
    }
    updateSortIndicators();
-   // Re-render usando cache do net ativo
-   const pools = _cache[_activeNet];
-   const portPools = _cachePort[_activeNet];
-   if (pools || portPools) renderTable(pools, _activeNet, portPools);
+   renderUnified();
  };
 
- // Filtra um array de pools usando os inputs do usuário (TVL mín, APR mín, só favoritas)
- function filterArr(arr, net) {
+ // Combina caches de todas as redes em um único array (cada pool tem .net)
+ function getAllPools()    { return Object.values(_cache).flat(); }
+ function getAllPortPools(){ return Object.values(_cachePort).flat(); }
+
+ // Filtra: rede + TVL mín + APR mín + favoritos
+ function filterArr(arr) {
    if (!arr || !arr.length) return arr;
    const tvlMin = parseFloat(document.getElementById('uniFilterTvl')?.value) || 0;
    const aprMin = parseFloat(document.getElementById('uniFilterApr')?.value) || 0;
    return arr.filter(p => {
-     if (_showOnlyFavs && !isFav(net, p.addr)) return false;
+     if (_chainFilter !== 'all' && p.net !== _chainFilter) return false;
+     if (_showOnlyFavs && !isFav(p.net, p.addr)) return false;
      if (tvlMin > 0 && (p.tvl||0) < tvlMin) return false;
      if (aprMin > 0 && (p.apr==null || p.apr < aprMin)) return false;
      return true;
    });
  }
 
- function renderTable(pools, net, portPools) {
+ // Render unificado: combina redes, aplica filtro+sort, destaca top 3
+ function renderUnified() {
  const body = document.getElementById('uniPoolsBody');
  const status = document.getElementById('uniFilterStatus');
- const fullPools = pools || [];
- const fullPort  = portPools || [];
- const filteredPools = filterArr(fullPools, net);
- const filteredPort  = filterArr(fullPort, net);
+ const fullPools = getAllPools();
+ const fullPort  = getAllPortPools();
+ // Loading: nenhuma rede carregou ainda
+ if (!fullPools.length && !fullPort.length) {
+   body.innerHTML = '<tr><td colspan="7" style="padding:32px;text-align:center;color:var(--muted);"><div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>Carregando pools…</td></tr>';
+   updateSummary([]);
+   if (status) status.textContent = '';
+   return;
+ }
+ const filteredPools = filterArr(fullPools);
+ const filteredPort  = filterArr(fullPort);
  const totalRaw = fullPools.length + fullPort.length;
  const totalShown = filteredPools.length + filteredPort.length;
  if (status) {
    if (totalShown < totalRaw) status.textContent = `${totalShown} / ${totalRaw} pools · filtros ativos`;
-   else status.textContent = '';
+   else status.textContent = `${totalShown} pools`;
  }
  if (!totalShown) {
- body.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool após filtros. <button class="btn-sm" onclick="clearFilters()" style="margin-left:8px;">↺ Limpar</button></td></tr>';
+ body.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool após filtros. <button class="btn-sm" onclick="clearFilters()" style="margin-left:8px;">↺ Limpar</button></td></tr>';
  updateSummary([]);
  updateSortIndicators();
  return;
  }
  const sortedPools = sortArr(filteredPools);
  const sortedPort  = sortArr(filteredPort);
- let html = sortedPools.map(p => rowHtml(p, net)).join('');
+ // Top 3 = primeiras 3 linhas da tabela principal (ignora portfolio) — só destaca se há 3+ pools
+ const topAddrs = new Set();
+ if (sortedPools.length >= 3) {
+   sortedPools.slice(0, 3).forEach(p => topAddrs.add(p.net+':'+p.addr));
+ }
+ let html = sortedPools.map(p => rowHtml(p, { isTop: topAddrs.has(p.net+':'+p.addr) })).join('');
  if (sortedPort.length) {
- html += `<tr><td colspan="6" style="padding:6px 16px 4px;font-size:9px;letter-spacing:.08em;color:var(--muted);background:var(--surface2);font-family:'Satoshi',sans-serif;font-weight:700;">TOKENS DO PORTFOLIO</td></tr>`;
- html += sortedPort.map(p => rowHtml(p, net)).join('');
+ html += `<tr><td colspan="7" style="padding:6px 16px 4px;font-size:9px;letter-spacing:.08em;color:var(--muted);background:var(--surface2);font-family:'Satoshi',sans-serif;font-weight:700;">TOKENS DO PORTFOLIO</td></tr>`;
+ html += sortedPort.map(p => rowHtml(p)).join('');
  }
  body.innerHTML = html;
  updateSummary([...filteredPools, ...filteredPort]);
@@ -883,10 +917,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  }
 
  // Handlers dos filtros
- window.applyFilters = function() {
-   const pools = _cache[_activeNet];
-   const portPools = _cachePort[_activeNet];
-   if (pools || portPools) renderTable(pools, _activeNet, portPools);
+ window.applyFilters = function() { renderUnified(); };
+
+ // Troca o filtro de rede (chip)
+ window.switchChainFilter = function(net, btn) {
+   _chainFilter = net;
+   document.querySelectorAll('.uni-chip').forEach(b => {
+     const isActive = b.dataset.net === net;
+     b.style.background = isActive ? 'var(--gold)' : 'none';
+     b.style.color = isActive ? 'var(--bg)' : 'var(--muted)';
+     b.style.borderColor = isActive ? 'var(--gold)' : 'var(--border)';
+   });
+   renderUnified();
  };
 
  window.toggleFavOnly = function() {
@@ -958,7 +1000,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const apr = (fee && tvl > 0) ? (vol * fee/100 / tvl * 365 * 100) : null;
  const chg = parseFloat(a.price_change_percentage?.h24);
  const poolAddr = p.id.replace(net+'_','');
- return { name, tvl, vol, fee, apr, chg, addr: poolAddr, sym };
+ return { name, tvl, vol, fee, apr, chg, addr: poolAddr, sym, net };
  }).filter(p => p.tvl > 5000)
  .sort((a,b) => (b.apr||0)-(a.apr||0))
  .slice(0,3);
@@ -970,44 +1012,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  return results;
  }
 
- window.switchUniTab = function(net, btn) {
- _activeNet = net;
- document.querySelectorAll('.uni-tab').forEach(b => {
- b.style.color = 'var(--muted)';
- b.style.borderBottom = '2px solid transparent';
- });
- btn.style.color = 'var(--text)';
- btn.style.borderBottom = '2px solid '+NET_COLOR[net];
-
- const body = document.getElementById('uniPoolsBody');
- if (_cache[net]) {
- renderTable(_cache[net], net, _cachePort[net]);
- } else {
- body.innerHTML = '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--muted);"><div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>Carregando…</td></tr>';
- updateSummary([]);
- loadNet(net);
- }
- };
-
  async function loadNet(net) {
  const status = document.getElementById('uni-status');
  try {
  const [pools, portPools] = await Promise.all([fetchNet(net), fetchPortfolioTokens(net)]);
- if (_activeNet === net) renderTable(pools, net, portPools);
+ renderUnified();
  if (status) status.textContent = 'atualizado '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
  } catch(e) {
- if (_activeNet === net) {
- const body = document.getElementById('uniPoolsBody');
- body.innerHTML = `<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Erro ao carregar. <button class="btn-sm" onclick="loadNet('${net}')" style="margin-left:8px;">↺ Tentar novamente</button></td></tr>`;
- }
+ // Em caso de erro numa rede, ainda re-renderiza com o que tiver no cache
+ renderUnified();
  }
  }
 
  window.loadAllUniPools = function() {
  _cache = {};
  _cachePort = {};
- loadNet(_activeNet);
- Object.keys(WETH).forEach(n => { if(n!==_activeNet) loadNet(n); });
+ renderUnified(); // mostra loading
+ Object.keys(WETH).forEach(n => loadNet(n));
  };
 
  document.addEventListener('DOMContentLoaded', function() {
