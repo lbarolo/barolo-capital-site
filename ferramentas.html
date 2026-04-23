@@ -800,8 +800,8 @@ body, input, button, select, textarea {
 
    <!-- Header explicativo -->
    <div class="section" style="background:linear-gradient(180deg,var(--s2),var(--s1));">
-     <div class="section-title">Sizing &amp; Risk <span>KELLY · MERTON · HEDGE LP</span></div>
-     <div style="font-size:11px;color:var(--muted);line-height:1.7;">
+     <div class="section-title"><span data-i18n="sz-header-title">Sizing &amp; Risk</span> <span data-i18n="sz-header-badge">KELLY · MERTON · HEDGE LP</span></div>
+     <div data-i18n="sz-header-desc" style="font-size:11px;color:var(--muted);line-height:1.7;">
        Três calculadoras integradas para decisões de alocação:
        <strong style="color:var(--accent);">Kelly Pool</strong> (quanto alocar por pool baseado em prob. de sucesso),
        <strong style="color:var(--accent);">Kelly Leverage</strong> (LTV ótimo via Merton para empréstimos),
@@ -812,65 +812,65 @@ body, input, button, select, textarea {
 
    <!-- ── KELLY POOL (binário) ── -->
    <div class="section">
-     <div class="section-title">Kelly Pool — Sizing Binário <span>POR POOL</span></div>
+     <div class="section-title"><span data-i18n="sz-kp-title">Kelly Pool — Sizing Binário</span> <span data-i18n="sz-kp-badge">POR POOL</span></div>
      <div class="two-col">
        <div>
          <div class="field">
-           <label>Categoria da pool (preset)</label>
+           <label data-i18n="sz-kp-preset">Categoria da pool (preset)</label>
            <select id="kp-preset" onchange="applyKpPreset()">
-             <option value="custom">— Custom —</option>
-             <option value="bluechip">Blue-chip (ETH/USDC, SOL/USDC)</option>
-             <option value="altcoin">Altcoin estabelecida (RDNT, ARB)</option>
-             <option value="exotic">Exótica/scam-risk (GRIFT, PEANUT)</option>
+             <option value="custom" data-i18n="sz-kp-preset-custom">— Custom —</option>
+             <option value="bluechip" data-i18n="sz-kp-preset-blue">Blue-chip (ETH/USDC, SOL/USDC)</option>
+             <option value="altcoin" data-i18n="sz-kp-preset-alt">Altcoin estabelecida (RDNT, ARB)</option>
+             <option value="exotic" data-i18n="sz-kp-preset-exo">Exótica/scam-risk (GRIFT, PEANUT)</option>
            </select>
          </div>
          <div class="field">
-           <label>Probabilidade de sucesso p (%)</label>
+           <label data-i18n="sz-kp-p">Probabilidade de sucesso p (%)</label>
            <input type="number" id="kp-p" value="85" min="0" max="100" step="1" oninput="calcKellyPool()">
          </div>
          <div class="field">
-           <label>Ganho esperado se ganhar ($)</label>
+           <label data-i18n="sz-kp-win">Ganho esperado se ganhar ($)</label>
            <input type="number" id="kp-win" value="60" min="0" step="1" oninput="calcKellyPool()">
          </div>
          <div class="field">
-           <label>Perda esperada se perder ($)</label>
+           <label data-i18n="sz-kp-loss">Perda esperada se perder ($)</label>
            <input type="number" id="kp-loss" value="100" min="0" step="1" oninput="calcKellyPool()">
          </div>
          <div class="field">
-           <label>Capital total disponível ($)</label>
+           <label data-i18n="sz-kp-capital">Capital total disponível ($)</label>
            <input type="number" id="kp-capital" value="7900" min="0" step="100" oninput="calcKellyPool()">
          </div>
          <div class="field">
-           <label>Fração Kelly</label>
+           <label data-i18n="sz-kp-frac">Fração Kelly</label>
            <select id="kp-frac" onchange="calcKellyPool()">
-             <option value="0.25">Quarter Kelly (1/4) — conservador</option>
-             <option value="0.5" selected>Half Kelly (1/2) — recomendado</option>
-             <option value="1">Full Kelly — agressivo</option>
+             <option value="0.25" data-i18n="sz-frac-quarter">Quarter Kelly (1/4) — conservador</option>
+             <option value="0.5" selected data-i18n="sz-frac-half">Half Kelly (1/2) — recomendado</option>
+             <option value="1" data-i18n="sz-frac-full">Full Kelly — agressivo</option>
            </select>
          </div>
        </div>
        <div>
          <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
-           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">RESULTADO KELLY</div>
+           <div data-i18n="sz-kp-result" style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">RESULTADO KELLY</div>
 
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Edge esperado</span>
+             <span data-i18n="sz-kp-edge" style="color:var(--muted);font-size:11px;">Edge esperado</span>
              <span id="kp-edge" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Kelly cru (f*)</span>
+             <span data-i18n="sz-kp-raw" style="color:var(--muted);font-size:11px;">Kelly cru (f*)</span>
              <span id="kp-fstar" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Kelly aplicado (com fração)</span>
+             <span data-i18n="sz-kp-applied" style="color:var(--muted);font-size:11px;">Kelly aplicado (com fração)</span>
              <span id="kp-applied" style="font-family:var(--font-mono);font-weight:500;color:var(--accent);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">$ a alocar nesta pool</span>
+             <span data-i18n="sz-kp-alloc" style="color:var(--muted);font-size:11px;">$ a alocar nesta pool</span>
              <span id="kp-allocate" style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--accent);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;">
-             <span style="color:var(--muted);font-size:11px;">Crescimento esperado/trade</span>
+             <span data-i18n="sz-kp-growth" style="color:var(--muted);font-size:11px;">Crescimento esperado/trade</span>
              <span id="kp-growth" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
 
@@ -883,61 +883,61 @@ body, input, button, select, textarea {
 
    <!-- ── KELLY LEVERAGE (Merton contínuo) ── -->
    <div class="section">
-     <div class="section-title">Kelly Leverage — Merton Contínuo <span>LTV ÓTIMO</span></div>
+     <div class="section-title"><span data-i18n="sz-km-title">Kelly Leverage — Merton Contínuo</span> <span data-i18n="sz-km-badge">LTV ÓTIMO</span></div>
      <div class="two-col">
        <div>
          <div class="field">
-           <label>APR esperado da estratégia (%) — fees − IL esperado</label>
+           <label data-i18n="sz-km-apr">APR esperado da estratégia (%) — fees − IL esperado</label>
            <input type="number" id="km-apr" value="27" step="1" oninput="calcKellyMerton()">
          </div>
          <div class="field">
-           <label>Custo do empréstimo (%) — AAVE USDC atual</label>
+           <label data-i18n="sz-km-borrow">Custo do empréstimo (%) — AAVE USDC atual</label>
            <input type="number" id="km-borrow" value="2.32" step="0.1" oninput="calcKellyMerton()">
          </div>
          <div class="field">
-           <label>Volatilidade anualizada do colateral (%) — ETH ≈ 60</label>
+           <label data-i18n="sz-km-vol">Volatilidade anualizada do colateral (%) — ETH ≈ 60</label>
            <input type="number" id="km-vol" value="60" step="5" oninput="calcKellyMerton()">
          </div>
          <div class="field">
-           <label>LTV atual da posição (%)</label>
+           <label data-i18n="sz-km-ltv">LTV atual da posição (%)</label>
            <input type="number" id="km-ltv" value="13" step="1" oninput="calcKellyMerton()">
          </div>
          <div class="field">
-           <label>Fração Kelly</label>
+           <label data-i18n="sz-km-frac">Fração Kelly</label>
            <select id="km-frac" onchange="calcKellyMerton()">
-             <option value="0.25">Quarter Kelly (1/4)</option>
-             <option value="0.5" selected>Half Kelly (1/2)</option>
-             <option value="1">Full Kelly</option>
+             <option value="0.25" data-i18n="sz-frac-quarter-short">Quarter Kelly (1/4)</option>
+             <option value="0.5" selected data-i18n="sz-frac-half-short">Half Kelly (1/2)</option>
+             <option value="1" data-i18n="sz-frac-full-short">Full Kelly</option>
            </select>
          </div>
        </div>
        <div>
          <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
-           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">RESULTADO MERTON</div>
+           <div data-i18n="sz-km-result" style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">RESULTADO MERTON</div>
 
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Excesso de retorno (μ − r)</span>
+             <span data-i18n="sz-km-excess" style="color:var(--muted);font-size:11px;">Excesso de retorno (μ − r)</span>
              <span id="km-excess" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Variância (σ²)</span>
+             <span data-i18n="sz-km-var" style="color:var(--muted);font-size:11px;">Variância (σ²)</span>
              <span id="km-var" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Leverage Kelly cru</span>
+             <span data-i18n="sz-km-lev" style="color:var(--muted);font-size:11px;">Leverage Kelly cru</span>
              <span id="km-lev" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">LTV ótimo (com fração)</span>
+             <span data-i18n="sz-km-ltv-opt" style="color:var(--muted);font-size:11px;">LTV ótimo (com fração)</span>
              <span id="km-ltv-opt" style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--accent);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;">
-             <span style="color:var(--muted);font-size:11px;">Comparação vs LTV atual</span>
+             <span data-i18n="sz-km-diff" style="color:var(--muted);font-size:11px;">Comparação vs LTV atual</span>
              <span id="km-diff" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
 
            <div id="km-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
-           <div id="km-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">f* = (μ − r) / σ². Half Kelly recomendado quando há erro de estimativa em μ ou σ.</div>
+           <div id="km-note" data-i18n="sz-km-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">f* = (μ − r) / σ². Half Kelly recomendado quando há erro de estimativa em μ ou σ.</div>
          </div>
        </div>
      </div>
@@ -945,95 +945,98 @@ body, input, button, select, textarea {
 
    <!-- ── HEDGE LP (delta-neutro) ── -->
    <div class="section">
-     <div class="section-title">Hedge LP — Delta-Neutro <span>UNI V3 + SHORT/BORROW</span></div>
+     <div class="section-title"><span data-i18n="sz-hd-title">Hedge LP — Delta-Neutro</span> <span data-i18n="sz-hd-badge">UNI V3 + SHORT/BORROW</span></div>
+     <div style="margin-bottom:14px;">
+       <button type="button" class="btn btn-sm" onclick="loadActivePoolHedge()" data-i18n="sz-hd-preset-btn" style="background:rgba(201,160,80,.10);border:1px solid var(--accent);color:var(--accent);font-size:10px;letter-spacing:1px;padding:8px 14px;">↓ Carregar pool ativa (WETH/USDC Base)</button>
+     </div>
      <div class="two-col">
        <div>
          <div class="field">
-           <label>Capital pool ($) — pre-fill: WETH/USDC Base</label>
+           <label data-i18n="sz-hd-capital">Capital pool ($) — pre-fill: WETH/USDC Base</label>
            <input type="number" id="hd-capital" value="365" step="10" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>Range mínimo ($)</label>
+           <label data-i18n="sz-hd-pmin">Range mínimo ($)</label>
            <input type="number" id="hd-pmin" value="1855.72" step="10" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>Range máximo ($)</label>
+           <label data-i18n="sz-hd-pmax">Range máximo ($)</label>
            <input type="number" id="hd-pmax" value="3146.36" step="10" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>Preço atual ETH ($) <span style="color:var(--green);font-size:9px;">· LIVE</span></label>
+           <label><span data-i18n="sz-hd-pnow">Preço atual ETH ($)</span> <span data-i18n="sz-hd-live" style="color:var(--green);font-size:9px;">· LIVE</span></label>
            <input type="number" id="hd-pnow" value="2431" step="1" oninput="this.dataset.userTouched='1';calcHedge()">
          </div>
          <div class="field">
-           <label>Fee APR esperado (%) — Revert/histórico</label>
+           <label data-i18n="sz-hd-feeapr">Fee APR esperado (%) — Revert/histórico</label>
            <input type="number" id="hd-feeapr" value="32" step="1" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>Funding rate perp ETH (% APR) — positivo = recebe</label>
+           <label data-i18n="sz-hd-funding">Funding rate perp ETH (% APR) — positivo = recebe</label>
            <input type="number" id="hd-funding" value="5" step="1" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>Custo borrow ETH AAVE (% APR) — alternativa ao perp</label>
+           <label data-i18n="sz-hd-borrow">Custo borrow ETH AAVE (% APR) — alternativa ao perp</label>
            <input type="number" id="hd-borrow" value="3" step="0.5" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>Volatilidade ETH anualizada (%)</label>
+           <label data-i18n="sz-hd-vol">Volatilidade ETH anualizada (%)</label>
            <input type="number" id="hd-vol" value="60" step="5" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>% do delta a hedgear: <span id="hd-pct-val" style="color:var(--accent);">100%</span></label>
+           <label><span data-i18n="sz-hd-pct">% do delta a hedgear</span>: <span id="hd-pct-val" style="color:var(--accent);">100%</span></label>
            <input type="range" id="hd-pct" min="0" max="100" value="100" step="5" oninput="calcHedge()">
          </div>
          <div class="field">
-           <label>Instrumento de hedge</label>
+           <label data-i18n="sz-hd-instr">Instrumento de hedge</label>
            <select id="hd-instr" onchange="calcHedge()">
-             <option value="perp" selected>Perp short (Hyperliquid/Drift) — usa funding</option>
-             <option value="borrow">Borrow + sell (AAVE) — usa custo borrow</option>
+             <option value="perp" selected data-i18n="sz-hd-instr-perp">Perp short (Hyperliquid/Drift) — usa funding</option>
+             <option value="borrow" data-i18n="sz-hd-instr-borrow">Borrow + sell (AAVE) — usa custo borrow</option>
            </select>
          </div>
        </div>
        <div>
          <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
-           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">POSIÇÃO E HEDGE</div>
+           <div data-i18n="sz-hd-pos" style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">POSIÇÃO E HEDGE</div>
 
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">In-range?</span>
+             <span data-i18n="sz-hd-inrange" style="color:var(--muted);font-size:11px;">In-range?</span>
              <span id="hd-inrange" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Delta atual (% em ETH)</span>
+             <span data-i18n="sz-hd-delta" style="color:var(--muted);font-size:11px;">Delta atual (% em ETH)</span>
              <span id="hd-delta" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Valor ETH na pool</span>
+             <span data-i18n="sz-hd-ethval" style="color:var(--muted);font-size:11px;">Valor ETH na pool</span>
              <span id="hd-ethval" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Tamanho do short ideal</span>
+             <span data-i18n="sz-hd-short" style="color:var(--muted);font-size:11px;">Tamanho do short ideal</span>
              <span id="hd-short" style="font-family:var(--font-mono);font-weight:500;color:var(--accent);">—</span>
            </div>
 
-           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin:18px 0 10px;">PERFORMANCE ANUALIZADA</div>
+           <div data-i18n="sz-hd-perf" style="font-size:10px;color:var(--accent);letter-spacing:2px;margin:18px 0 10px;">PERFORMANCE ANUALIZADA</div>
 
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Fee APR pool</span>
+             <span data-i18n="sz-hd-fee" style="color:var(--muted);font-size:11px;">Fee APR pool</span>
              <span id="hd-fee-line" style="font-family:var(--font-mono);font-weight:500;color:var(--green);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">IL esperado (anualizado)</span>
+             <span data-i18n="sz-hd-il" style="color:var(--muted);font-size:11px;">IL esperado (anualizado)</span>
              <span id="hd-il" style="font-family:var(--font-mono);font-weight:500;color:var(--red);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-             <span style="color:var(--muted);font-size:11px;">Custo/Receita do hedge</span>
+             <span data-i18n="sz-hd-hcost" style="color:var(--muted);font-size:11px;">Custo/Receita do hedge</span>
              <span id="hd-hedge-cost" style="font-family:var(--font-mono);font-weight:500;">—</span>
            </div>
 
            <div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--border);margin-top:6px;">
-             <span style="color:var(--muted);font-size:11px;">APR líq. SEM hedge</span>
+             <span data-i18n="sz-hd-naked" style="color:var(--muted);font-size:11px;">APR líq. SEM hedge</span>
              <span id="hd-apr-naked" style="font-family:var(--font-mono);font-weight:600;">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:8px 0;">
-             <span style="color:var(--muted);font-size:11px;">APR líq. COM hedge</span>
+             <span data-i18n="sz-hd-hedged" style="color:var(--muted);font-size:11px;">APR líq. COM hedge</span>
              <span id="hd-apr-hedged" style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--accent);">—</span>
            </div>
 
@@ -1046,83 +1049,86 @@ body, input, button, select, textarea {
 
    <!-- ── LEVERAGE + HEDGE COMBINADO (comparação 3-vias) ── -->
    <div class="section">
-     <div class="section-title">Leverage + Hedge Combinado <span>COMPARAÇÃO 3-VIAS</span></div>
+     <div class="section-title"><span data-i18n="sz-lh-title">Leverage + Hedge Combinado</span> <span data-i18n="sz-lh-badge">COMPARAÇÃO 3-VIAS</span></div>
+     <div style="margin-bottom:14px;">
+       <button type="button" class="btn btn-sm" onclick="loadBaroloScenario()" data-i18n="sz-lh-preset-btn" style="background:rgba(201,160,80,.10);border:1px solid var(--accent);color:var(--accent);font-size:10px;letter-spacing:1px;padding:8px 14px;">↓ Cenário Barolo atual</button>
+     </div>
      <div class="two-col">
        <div>
          <div class="field">
-           <label>Capital próprio total ($) — colateral</label>
+           <label data-i18n="sz-lh-capital">Capital próprio total ($) — colateral</label>
            <input type="number" id="lh-capital" value="6000" step="100" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>Tamanho do LP alvo ($)</label>
+           <label data-i18n="sz-lh-lp">Tamanho do LP alvo ($)</label>
            <input type="number" id="lh-lp" value="2000" step="100" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>% do LP financiado por borrow: <span id="lh-brwpct-val" style="color:var(--accent);">50%</span></label>
+           <label><span data-i18n="sz-lh-brwpct">% do LP financiado por borrow</span>: <span id="lh-brwpct-val" style="color:var(--accent);">50%</span></label>
            <input type="range" id="lh-brwpct" min="0" max="100" value="50" step="5" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>Supply APY colateral (%) — aETH/aUSDT</label>
+           <label data-i18n="sz-lh-supapy">Supply APY colateral (%) — aETH/aUSDT</label>
            <input type="number" id="lh-supapy" value="1.5" step="0.1" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>Fee APR da pool (%)</label>
+           <label data-i18n="sz-lh-feeapr">Fee APR da pool (%)</label>
            <input type="number" id="lh-feeapr" value="32" step="1" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>IL esperado anualizado (%) — negativo</label>
+           <label data-i18n="sz-lh-il">IL esperado anualizado (%) — negativo</label>
            <input type="number" id="lh-il" value="-12" step="1" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>Custo borrow AAVE (%)</label>
+           <label data-i18n="sz-lh-brw">Custo borrow AAVE (%)</label>
            <input type="number" id="lh-brw" value="2.32" step="0.1" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>Funding perp ETH (% APR) — positivo = recebe</label>
+           <label data-i18n="sz-lh-fund">Funding perp ETH (% APR) — positivo = recebe</label>
            <input type="number" id="lh-fund" value="5" step="1" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>Delta LP (% em ETH)</label>
+           <label data-i18n="sz-lh-delta">Delta LP (% em ETH)</label>
            <input type="number" id="lh-delta" value="50" step="5" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>% do delta a hedgear: <span id="lh-hpct-val" style="color:var(--accent);">100%</span></label>
+           <label><span data-i18n="sz-lh-hpct">% do delta a hedgear</span>: <span id="lh-hpct-val" style="color:var(--accent);">100%</span></label>
            <input type="range" id="lh-hpct" min="0" max="100" value="100" step="5" oninput="calcLevHedge()">
          </div>
          <div class="field">
-           <label>Volatilidade ETH anualizada (%)</label>
+           <label data-i18n="sz-lh-vol">Volatilidade ETH anualizada (%)</label>
            <input type="number" id="lh-vol" value="60" step="5" oninput="calcLevHedge()">
          </div>
        </div>
        <div>
          <!-- Tabela comparação 3-vias -->
          <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
-           <div style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">COMPARAÇÃO 3 ESTRATÉGIAS</div>
+           <div data-i18n="sz-lh-compare" style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">COMPARAÇÃO 3 ESTRATÉGIAS</div>
 
            <table style="width:100%;border-collapse:collapse;font-size:11px;">
              <thead>
                <tr style="border-bottom:1px solid var(--border);">
-                 <th style="text-align:left;padding:6px 4px;font-weight:500;color:var(--muted);">Estratégia</th>
-                 <th style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">APR s/ cap.</th>
-                 <th style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">DD 1σ</th>
-                 <th style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">Sharpe</th>
+                 <th data-i18n="sz-lh-strat" style="text-align:left;padding:6px 4px;font-weight:500;color:var(--muted);">Estratégia</th>
+                 <th data-i18n="sz-lh-aprcap" style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">APR s/ cap.</th>
+                 <th data-i18n="sz-lh-dd" style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">DD 1σ</th>
+                 <th data-i18n="sz-lh-sh" style="text-align:right;padding:6px 4px;font-weight:500;color:var(--muted);">Sharpe</th>
                </tr>
              </thead>
              <tbody style="font-family:var(--font-mono);">
                <tr style="border-bottom:1px solid var(--border);">
-                 <td style="padding:10px 4px;"><strong>A) LP puro</strong><br><span style="font-size:9px;color:var(--muted);">sem leverage</span></td>
+                 <td style="padding:10px 4px;"><strong data-i18n="sz-lh-a">A) LP puro</strong><br><span data-i18n="sz-lh-a-sub" style="font-size:9px;color:var(--muted);">sem leverage</span></td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-a-apr">—</td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-a-dd">—</td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-a-sh">—</td>
                </tr>
                <tr style="border-bottom:1px solid var(--border);">
-                 <td style="padding:10px 4px;"><strong>B) Leverage produtiva</strong><br><span style="font-size:9px;color:var(--muted);">Barolo style — sem hedge</span></td>
+                 <td style="padding:10px 4px;"><strong data-i18n="sz-lh-b">B) Leverage produtiva</strong><br><span data-i18n="sz-lh-b-sub" style="font-size:9px;color:var(--muted);">Barolo style — sem hedge</span></td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-b-apr">—</td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-b-dd">—</td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-b-sh">—</td>
                </tr>
                <tr>
-                 <td style="padding:10px 4px;"><strong>C) Leverage + Hedge</strong><br><span style="font-size:9px;color:var(--muted);">delta-neutro</span></td>
+                 <td style="padding:10px 4px;"><strong data-i18n="sz-lh-c">C) Leverage + Hedge</strong><br><span data-i18n="sz-lh-c-sub" style="font-size:9px;color:var(--muted);">delta-neutro</span></td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-c-apr">—</td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-c-dd">—</td>
                  <td style="text-align:right;padding:10px 4px;" id="lh-c-sh">—</td>
@@ -1130,28 +1136,28 @@ body, input, button, select, textarea {
              </tbody>
            </table>
 
-           <div style="font-size:10px;color:var(--muted);letter-spacing:2px;margin:18px 0 10px;">DECOMPOSIÇÃO DA ESTRATÉGIA C</div>
+           <div data-i18n="sz-lh-decomp" style="font-size:10px;color:var(--muted);letter-spacing:2px;margin:18px 0 10px;">DECOMPOSIÇÃO DA ESTRATÉGIA C</div>
            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
-             <span style="color:var(--muted);">Receita fees</span><span id="lh-c-fee" style="font-family:var(--font-mono);color:var(--green);">—</span>
+             <span data-i18n="sz-lh-c-fee" style="color:var(--muted);">Receita fees</span><span id="lh-c-fee" style="font-family:var(--font-mono);color:var(--green);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
-             <span style="color:var(--muted);">Supply APY colateral</span><span id="lh-c-sup" style="font-family:var(--font-mono);color:var(--green);">—</span>
+             <span data-i18n="sz-lh-c-sup" style="color:var(--muted);">Supply APY colateral</span><span id="lh-c-sup" style="font-family:var(--font-mono);color:var(--green);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
-             <span style="color:var(--muted);">IL residual (pós-hedge)</span><span id="lh-c-ilr" style="font-family:var(--font-mono);color:var(--red);">—</span>
+             <span data-i18n="sz-lh-c-ilr" style="color:var(--muted);">IL residual (pós-hedge)</span><span id="lh-c-ilr" style="font-family:var(--font-mono);color:var(--red);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
-             <span style="color:var(--muted);">Custo borrow</span><span id="lh-c-brw" style="font-family:var(--font-mono);color:var(--red);">—</span>
+             <span data-i18n="sz-lh-c-brw" style="color:var(--muted);">Custo borrow</span><span id="lh-c-brw" style="font-family:var(--font-mono);color:var(--red);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
-             <span style="color:var(--muted);">Funding hedge</span><span id="lh-c-fund" style="font-family:var(--font-mono);">—</span>
+             <span data-i18n="sz-lh-c-fund" style="color:var(--muted);">Funding hedge</span><span id="lh-c-fund" style="font-family:var(--font-mono);">—</span>
            </div>
            <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px;font-weight:600;">
-             <span>$ líquido/ano</span><span id="lh-c-net" style="font-family:var(--font-mono);color:var(--accent);">—</span>
+             <span data-i18n="sz-lh-c-net">$ líquido/ano</span><span id="lh-c-net" style="font-family:var(--font-mono);color:var(--accent);">—</span>
            </div>
 
            <div id="lh-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
-           <div id="lh-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.</div>
+           <div id="lh-note" data-i18n="sz-lh-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.</div>
          </div>
        </div>
      </div>
@@ -1159,31 +1165,31 @@ body, input, button, select, textarea {
 
    <!-- ── Notas conceituais ── -->
    <div class="section" style="background:var(--s2);">
-     <div class="section-title">Notas <span>FUNDAMENTOS</span></div>
+     <div class="section-title"><span data-i18n="sz-notes-title">Notas</span> <span data-i18n="sz-notes-badge">FUNDAMENTOS</span></div>
      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px;font-size:11px;color:var(--muted);line-height:1.65;">
        <div>
-         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">KELLY (binário)</div>
-         f* = (b·p − q) / b<br>
+         <div data-i18n="sz-notes-kelly-title" style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">KELLY (binário)</div>
+         <div data-i18n="sz-notes-kelly">f* = (b·p − q) / b<br>
          Onde b = ganho/perda, p = prob. ganhar, q = 1−p.<br>
-         Maximiza crescimento geométrico de longo prazo. Errar p em 10% causa erro de 30%+ em f* — daí Half Kelly.
+         Maximiza crescimento geométrico de longo prazo. Errar p em 10% causa erro de 30%+ em f* — daí Half Kelly.</div>
        </div>
        <div>
-         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">MERTON (contínuo)</div>
-         f* = (μ − r) / σ²<br>
+         <div data-i18n="sz-notes-merton-title" style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">MERTON (contínuo)</div>
+         <div data-i18n="sz-notes-merton">f* = (μ − r) / σ²<br>
          Onde μ = retorno esperado, r = custo borrow, σ² = variância.<br>
-         Resultado é leverage ótima. f* = 1.5 → pode alavancar 1.5x. Sempre aplicar fração para margem de erro.
+         Resultado é leverage ótima. f* = 1.5 → pode alavancar 1.5x. Sempre aplicar fração para margem de erro.</div>
        </div>
        <div>
-         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">HEDGE LP</div>
-         Anula direção: short = δ × valor_pool.<br>
+         <div data-i18n="sz-notes-hedge-title" style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">HEDGE LP</div>
+         <div data-i18n="sz-notes-hedge">Anula direção: short = δ × valor_pool.<br>
          APR_neutro = fee_apr − IL + funding (ou − borrow).<br>
-         Atenção: hedge total anula estratégias de saída gradual (ex: WETH→USDC).
+         Atenção: hedge total anula estratégias de saída gradual (ex: WETH→USDC).</div>
        </div>
        <div>
-         <div style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">LEV + HEDGE</div>
-         Captura alavancagem mas neutraliza direção.<br>
+         <div data-i18n="sz-notes-levhedge-title" style="color:var(--accent);font-weight:600;font-size:11px;margin-bottom:6px;">LEV + HEDGE</div>
+         <div data-i18n="sz-notes-levhedge">Captura alavancagem mas neutraliza direção.<br>
          APR = fees×(1+L) + supply + funding − borrow×L − IL×(1−h).<br>
-         Risco: funding flip, range break, 3 smart contracts.
+         Risco: funding flip, range break, 3 smart contracts.</div>
        </div>
      </div>
    </div>
@@ -2354,13 +2360,69 @@ function calcLevHedge(){
  // Aviso Barolo — hedge anula estratégia de saída
  var note = document.getElementById('lh-note');
  var baseNote = 'Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.';
- if (hPct > 0.7 && best.name.charAt(0) === 'C') {
-   note.innerHTML = baseNote + '<br><span style="color:var(--yellow);">⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC. Use só para pools de captura pura de fees.</span>';
- } else if (brwPct > 0.8) {
-   note.innerHTML = baseNote + '<br><span style="color:var(--yellow);">⚠ Borrow >80% do LP: próximo do limite de liquidação. Monitorar HF.</span>';
- } else {
-   note.textContent = baseNote;
+ // Sanity check: colateral vs borrow. AAVE LT médio ~80%.
+ var borrowedUsd = lp * brwPct;
+ var maxBorrow = capital * 0.80;
+ var warnings = [];
+ if (borrowedUsd > maxBorrow) {
+   warnings.push('⚠ Borrow ('+Math.round(borrowedUsd)+') excede capacidade do colateral ('+Math.round(maxBorrow)+' @ 80% LT). Cenário inviável.');
  }
+ if (hPct > 0.7 && best.name.charAt(0) === 'C') {
+   warnings.push('⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC. Use só para pools de captura pura de fees.');
+ }
+ if (brwPct > 0.8 && borrowedUsd <= maxBorrow) {
+   warnings.push('⚠ Borrow >80% do LP: próximo do limite de liquidação. Monitorar HF.');
+ }
+ note.innerHTML = warnings.length
+   ? baseNote + '<br><span style="color:var(--yellow);">' + warnings.join('<br>') + '</span>'
+   : baseNote;
+}
+
+// ── Presets: carregar pool ativa / cenário Barolo ──
+// Fonte de verdade: CLAUDE.md "Pool ATIVA — Dados completos" (WETH/USDC 0.30% Base).
+// Dados verificados via Revert Finance em 17/04/2026.
+function loadActivePoolHedge(){
+ var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 2431;
+ var set = function(id, v){ var el = document.getElementById(id); if (el) el.value = v; };
+ set('hd-capital', 385);       // pooled atual (0.07741 WETH + 196.67 USDC)
+ set('hd-pmin',    1855.72);
+ set('hd-pmax',    3146.36);
+ set('hd-pnow',    live.toFixed(0));
+ set('hd-feeapr',  32);        // Fee APR do Revert em 17/04/2026
+ set('hd-funding', 5);
+ set('hd-borrow',  2.32);      // AAVE USDC atual (refinanciamento 10/04)
+ set('hd-vol',     60);
+ set('hd-pct',     0);         // default: SEM hedge (estratégia saída gradual ETH→USDC)
+ var pctVal = document.getElementById('hd-pct-val');
+ if (pctVal) pctVal.textContent = '0%';
+ // Marca pnow como user-touched para evitar sync sobrescrever
+ var pnowEl = document.getElementById('hd-pnow');
+ if (pnowEl) pnowEl.dataset.userTouched = '1';
+ calcHedge();
+}
+
+function loadBaroloScenario(){
+ // Barolo real: colateral AAVE (1.88 WETH + 1650 USDT @ ETH=2431 ≈ $6220)
+ // + pool ativa $385 financiada ~100% pelo borrow USDC ($748)
+ var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 2431;
+ var aaveCollateral = Math.round(1.88 * live + 1650);
+ var set = function(id, v){ var el = document.getElementById(id); if (el) el.value = v; };
+ set('lh-capital', aaveCollateral);
+ set('lh-lp',      385);
+ set('lh-brwpct',  100);       // hoje o LP é ~100% financiado pelo borrow
+ set('lh-supapy',  1.5);       // blended WETH 1.25% + USDT 1.87% ≈ 1.5%
+ set('lh-feeapr',  32);
+ set('lh-il',      -12);
+ set('lh-brw',     2.32);
+ set('lh-fund',    5);
+ set('lh-delta',   50);        // in-range ≈ 50/50 no centro
+ set('lh-hpct',    0);         // Barolo não hedgeia — saída gradual
+ set('lh-vol',     60);
+ var brwVal = document.getElementById('lh-brwpct-val');
+ if (brwVal) brwVal.textContent = '100%';
+ var hpctVal = document.getElementById('lh-hpct-val');
+ if (hpctVal) hpctVal.textContent = '0%';
+ calcLevHedge();
 }
 
 // First render
@@ -3382,6 +3444,130 @@ var LANG_STRINGS = {
   'apy-title':     {pt:'Scanner de APY — Pools de Interesse',en:'APY Scanner — Pools of Interest'},
   // semanal
   'tab-semanal':   {pt:'Semanal',                             en:'Weekly'},
+  // ── SIZING & RISK ──
+  'sz-header-title':{pt:'Sizing & Risk',                      en:'Sizing & Risk'},
+  'sz-header-badge':{pt:'KELLY · MERTON · HEDGE LP',          en:'KELLY · MERTON · HEDGE LP'},
+  'sz-header-desc': {pt:'Três calculadoras integradas para decisões de alocação: <strong style="color:var(--accent);">Kelly Pool</strong> (quanto alocar por pool baseado em prob. de sucesso), <strong style="color:var(--accent);">Kelly Leverage</strong> (LTV ótimo via Merton para empréstimos), <strong style="color:var(--accent);">Hedge LP</strong> (delta-neutro com short em perp/borrow). Padrão: <strong>Half Kelly</strong> — full Kelly tem drawdowns insustentáveis.',
+                    en:'Three integrated calculators for allocation decisions: <strong style="color:var(--accent);">Kelly Pool</strong> (how much to allocate per pool based on win prob.), <strong style="color:var(--accent);">Kelly Leverage</strong> (optimal LTV via Merton for loans), <strong style="color:var(--accent);">Hedge LP</strong> (delta-neutral with perp/borrow short). Default: <strong>Half Kelly</strong> — full Kelly has unsustainable drawdowns.'},
+  // Kelly Pool
+  'sz-kp-title':   {pt:'Kelly Pool — Sizing Binário',         en:'Kelly Pool — Binary Sizing'},
+  'sz-kp-badge':   {pt:'POR POOL',                            en:'PER POOL'},
+  'sz-kp-preset':  {pt:'Categoria da pool (preset)',          en:'Pool category (preset)'},
+  'sz-kp-preset-custom':{pt:'— Custom —',                     en:'— Custom —'},
+  'sz-kp-preset-blue': {pt:'Blue-chip (ETH/USDC, SOL/USDC)',  en:'Blue-chip (ETH/USDC, SOL/USDC)'},
+  'sz-kp-preset-alt':  {pt:'Altcoin estabelecida (RDNT, ARB)',en:'Established altcoin (RDNT, ARB)'},
+  'sz-kp-preset-exo':  {pt:'Exótica/scam-risk (GRIFT, PEANUT)',en:'Exotic/scam-risk (GRIFT, PEANUT)'},
+  'sz-kp-p':       {pt:'Probabilidade de sucesso p (%)',      en:'Win probability p (%)'},
+  'sz-kp-win':     {pt:'Ganho esperado se ganhar ($)',        en:'Expected gain if win ($)'},
+  'sz-kp-loss':    {pt:'Perda esperada se perder ($)',        en:'Expected loss if lose ($)'},
+  'sz-kp-capital': {pt:'Capital total disponível ($)',        en:'Total available capital ($)'},
+  'sz-kp-frac':    {pt:'Fração Kelly',                        en:'Kelly fraction'},
+  'sz-frac-quarter':{pt:'Quarter Kelly (1/4) — conservador',  en:'Quarter Kelly (1/4) — conservative'},
+  'sz-frac-half':  {pt:'Half Kelly (1/2) — recomendado',      en:'Half Kelly (1/2) — recommended'},
+  'sz-frac-full':  {pt:'Full Kelly — agressivo',              en:'Full Kelly — aggressive'},
+  'sz-kp-result':  {pt:'RESULTADO KELLY',                     en:'KELLY RESULT'},
+  'sz-kp-edge':    {pt:'Edge esperado',                       en:'Expected edge'},
+  'sz-kp-raw':     {pt:'Kelly cru (f*)',                      en:'Raw Kelly (f*)'},
+  'sz-kp-applied': {pt:'Kelly aplicado (com fração)',         en:'Applied Kelly (with fraction)'},
+  'sz-kp-alloc':   {pt:'$ a alocar nesta pool',               en:'$ to allocate in this pool'},
+  'sz-kp-growth':  {pt:'Crescimento esperado/trade',          en:'Expected growth/trade'},
+  // Kelly Merton
+  'sz-km-title':   {pt:'Kelly Leverage — Merton Contínuo',    en:'Kelly Leverage — Continuous Merton'},
+  'sz-km-badge':   {pt:'LTV ÓTIMO',                           en:'OPTIMAL LTV'},
+  'sz-km-apr':     {pt:'APR esperado da estratégia (%) — fees − IL esperado', en:'Expected strategy APR (%) — fees − expected IL'},
+  'sz-km-borrow':  {pt:'Custo do empréstimo (%) — AAVE USDC atual', en:'Borrow cost (%) — current AAVE USDC'},
+  'sz-km-vol':     {pt:'Volatilidade anualizada do colateral (%) — ETH ≈ 60', en:'Annualized collateral vol (%) — ETH ≈ 60'},
+  'sz-km-ltv':     {pt:'LTV atual da posição (%)',            en:'Current position LTV (%)'},
+  'sz-km-frac':    {pt:'Fração Kelly',                        en:'Kelly fraction'},
+  'sz-frac-quarter-short':{pt:'Quarter Kelly (1/4)',          en:'Quarter Kelly (1/4)'},
+  'sz-frac-half-short':   {pt:'Half Kelly (1/2)',             en:'Half Kelly (1/2)'},
+  'sz-frac-full-short':   {pt:'Full Kelly',                   en:'Full Kelly'},
+  'sz-km-result':  {pt:'RESULTADO MERTON',                    en:'MERTON RESULT'},
+  'sz-km-excess':  {pt:'Excesso de retorno (μ − r)',          en:'Return excess (μ − r)'},
+  'sz-km-var':     {pt:'Variância (σ²)',                      en:'Variance (σ²)'},
+  'sz-km-lev':     {pt:'Leverage Kelly cru',                  en:'Raw Kelly leverage'},
+  'sz-km-ltv-opt': {pt:'LTV ótimo (com fração)',              en:'Optimal LTV (with fraction)'},
+  'sz-km-diff':    {pt:'Comparação vs LTV atual',             en:'Comparison vs current LTV'},
+  'sz-km-note':    {pt:'f* = (μ − r) / σ². Half Kelly recomendado quando há erro de estimativa em μ ou σ.',
+                    en:'f* = (μ − r) / σ². Half Kelly recommended when there is estimation error in μ or σ.'},
+  // Hedge LP
+  'sz-hd-title':   {pt:'Hedge LP — Delta-Neutro',             en:'LP Hedge — Delta-Neutral'},
+  'sz-hd-badge':   {pt:'UNI V3 + SHORT/BORROW',               en:'UNI V3 + SHORT/BORROW'},
+  'sz-hd-preset-btn':{pt:'↓ Carregar pool ativa (WETH/USDC Base)', en:'↓ Load active pool (WETH/USDC Base)'},
+  'sz-hd-capital': {pt:'Capital pool ($) — pre-fill: WETH/USDC Base', en:'Pool capital ($) — pre-fill: WETH/USDC Base'},
+  'sz-hd-pmin':    {pt:'Range mínimo ($)',                    en:'Minimum range ($)'},
+  'sz-hd-pmax':    {pt:'Range máximo ($)',                    en:'Maximum range ($)'},
+  'sz-hd-pnow':    {pt:'Preço atual ETH ($)',                 en:'Current ETH price ($)'},
+  'sz-hd-live':    {pt:'· LIVE',                              en:'· LIVE'},
+  'sz-hd-feeapr':  {pt:'Fee APR esperado (%) — Revert/histórico', en:'Expected fee APR (%) — Revert/historic'},
+  'sz-hd-funding': {pt:'Funding rate perp ETH (% APR) — positivo = recebe', en:'ETH perp funding rate (% APR) — positive = receive'},
+  'sz-hd-borrow':  {pt:'Custo borrow ETH AAVE (% APR) — alternativa ao perp', en:'ETH borrow cost AAVE (% APR) — alternative to perp'},
+  'sz-hd-vol':     {pt:'Volatilidade ETH anualizada (%)',     en:'Annualized ETH volatility (%)'},
+  'sz-hd-pct':     {pt:'% do delta a hedgear',                en:'% of delta to hedge'},
+  'sz-hd-instr':   {pt:'Instrumento de hedge',                en:'Hedge instrument'},
+  'sz-hd-instr-perp':{pt:'Perp short (Hyperliquid/Drift) — usa funding', en:'Perp short (Hyperliquid/Drift) — uses funding'},
+  'sz-hd-instr-borrow':{pt:'Borrow + sell (AAVE) — usa custo borrow', en:'Borrow + sell (AAVE) — uses borrow cost'},
+  'sz-hd-pos':     {pt:'POSIÇÃO E HEDGE',                     en:'POSITION AND HEDGE'},
+  'sz-hd-inrange': {pt:'In-range?',                           en:'In-range?'},
+  'sz-hd-delta':   {pt:'Delta atual (% em ETH)',              en:'Current delta (% in ETH)'},
+  'sz-hd-ethval':  {pt:'Valor ETH na pool',                   en:'ETH value in pool'},
+  'sz-hd-short':   {pt:'Tamanho do short ideal',              en:'Ideal short size'},
+  'sz-hd-perf':    {pt:'PERFORMANCE ANUALIZADA',              en:'ANNUALIZED PERFORMANCE'},
+  'sz-hd-fee':     {pt:'Fee APR pool',                        en:'Pool fee APR'},
+  'sz-hd-il':      {pt:'IL esperado (anualizado)',            en:'Expected IL (annualized)'},
+  'sz-hd-hcost':   {pt:'Custo/Receita do hedge',              en:'Hedge cost/income'},
+  'sz-hd-naked':   {pt:'APR líq. SEM hedge',                  en:'Net APR WITHOUT hedge'},
+  'sz-hd-hedged':  {pt:'APR líq. COM hedge',                  en:'Net APR WITH hedge'},
+  // Lev + Hedge
+  'sz-lh-title':   {pt:'Leverage + Hedge Combinado',          en:'Leverage + Hedge Combined'},
+  'sz-lh-badge':   {pt:'COMPARAÇÃO 3-VIAS',                   en:'3-WAY COMPARISON'},
+  'sz-lh-preset-btn':{pt:'↓ Cenário Barolo atual',            en:'↓ Current Barolo scenario'},
+  'sz-lh-capital': {pt:'Capital próprio total ($) — colateral', en:'Total own capital ($) — collateral'},
+  'sz-lh-lp':      {pt:'Tamanho do LP alvo ($)',              en:'Target LP size ($)'},
+  'sz-lh-brwpct':  {pt:'% do LP financiado por borrow',       en:'% of LP financed by borrow'},
+  'sz-lh-supapy':  {pt:'Supply APY colateral (%) — aETH/aUSDT', en:'Collateral supply APY (%) — aETH/aUSDT'},
+  'sz-lh-feeapr':  {pt:'Fee APR da pool (%)',                 en:'Pool fee APR (%)'},
+  'sz-lh-il':      {pt:'IL esperado anualizado (%) — negativo', en:'Expected annualized IL (%) — negative'},
+  'sz-lh-brw':     {pt:'Custo borrow AAVE (%)',               en:'AAVE borrow cost (%)'},
+  'sz-lh-fund':    {pt:'Funding perp ETH (% APR) — positivo = recebe', en:'ETH perp funding (% APR) — positive = receive'},
+  'sz-lh-delta':   {pt:'Delta LP (% em ETH)',                 en:'LP delta (% in ETH)'},
+  'sz-lh-hpct':    {pt:'% do delta a hedgear',                en:'% of delta to hedge'},
+  'sz-lh-vol':     {pt:'Volatilidade ETH anualizada (%)',     en:'Annualized ETH volatility (%)'},
+  'sz-lh-compare': {pt:'COMPARAÇÃO 3 ESTRATÉGIAS',            en:'3 STRATEGIES COMPARISON'},
+  'sz-lh-strat':   {pt:'Estratégia',                          en:'Strategy'},
+  'sz-lh-aprcap':  {pt:'APR s/ cap.',                         en:'APR on cap.'},
+  'sz-lh-dd':      {pt:'DD 1σ',                               en:'DD 1σ'},
+  'sz-lh-sh':      {pt:'Sharpe',                              en:'Sharpe'},
+  'sz-lh-a':       {pt:'A) LP puro',                          en:'A) Pure LP'},
+  'sz-lh-a-sub':   {pt:'sem leverage',                        en:'no leverage'},
+  'sz-lh-b':       {pt:'B) Leverage produtiva',               en:'B) Productive leverage'},
+  'sz-lh-b-sub':   {pt:'Barolo style — sem hedge',            en:'Barolo style — no hedge'},
+  'sz-lh-c':       {pt:'C) Leverage + Hedge',                 en:'C) Leverage + Hedge'},
+  'sz-lh-c-sub':   {pt:'delta-neutro',                        en:'delta-neutral'},
+  'sz-lh-decomp':  {pt:'DECOMPOSIÇÃO DA ESTRATÉGIA C',        en:'STRATEGY C DECOMPOSITION'},
+  'sz-lh-c-fee':   {pt:'Receita fees',                        en:'Fee income'},
+  'sz-lh-c-sup':   {pt:'Supply APY colateral',                en:'Collateral supply APY'},
+  'sz-lh-c-ilr':   {pt:'IL residual (pós-hedge)',             en:'Residual IL (post-hedge)'},
+  'sz-lh-c-brw':   {pt:'Custo borrow',                        en:'Borrow cost'},
+  'sz-lh-c-fund':  {pt:'Funding hedge',                       en:'Hedge funding'},
+  'sz-lh-c-net':   {pt:'$ líquido/ano',                       en:'$ net/year'},
+  'sz-lh-note':    {pt:'Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.',
+                    en:'Sharpe = APR / strategy_vol. Annual 1σ drawdown = 1 expected standard deviation. Higher Sharpe = better risk-return ratio.'},
+  // Notas/fundamentos
+  'sz-notes-title':{pt:'Notas',                               en:'Notes'},
+  'sz-notes-badge':{pt:'FUNDAMENTOS',                         en:'FUNDAMENTALS'},
+  'sz-notes-kelly-title':{pt:'KELLY (binário)',               en:'KELLY (binary)'},
+  'sz-notes-kelly':{pt:'f* = (b·p − q) / b<br>Onde b = ganho/perda, p = prob. ganhar, q = 1−p.<br>Maximiza crescimento geométrico de longo prazo. Errar p em 10% causa erro de 30%+ em f* — daí Half Kelly.',
+                    en:'f* = (b·p − q) / b<br>Where b = gain/loss, p = win prob., q = 1−p.<br>Maximizes long-term geometric growth. A 10% error in p causes 30%+ error in f* — hence Half Kelly.'},
+  'sz-notes-merton-title':{pt:'MERTON (contínuo)',            en:'MERTON (continuous)'},
+  'sz-notes-merton':{pt:'f* = (μ − r) / σ²<br>Onde μ = retorno esperado, r = custo borrow, σ² = variância.<br>Resultado é leverage ótima. f* = 1.5 → pode alavancar 1.5x. Sempre aplicar fração para margem de erro.',
+                     en:'f* = (μ − r) / σ²<br>Where μ = expected return, r = borrow cost, σ² = variance.<br>Result is optimal leverage. f* = 1.5 → can leverage 1.5x. Always apply fraction for error margin.'},
+  'sz-notes-hedge-title':{pt:'HEDGE LP',                      en:'LP HEDGE'},
+  'sz-notes-hedge':{pt:'Anula direção: short = δ × valor_pool.<br>APR_neutro = fee_apr − IL + funding (ou − borrow).<br>Atenção: hedge total anula estratégias de saída gradual (ex: WETH→USDC).',
+                    en:'Neutralizes direction: short = δ × pool_value.<br>Neutral APR = fee_apr − IL + funding (or − borrow).<br>Warning: full hedge nullifies gradual exit strategies (e.g., WETH→USDC).'},
+  'sz-notes-levhedge-title':{pt:'LEV + HEDGE',                en:'LEV + HEDGE'},
+  'sz-notes-levhedge':{pt:'Captura alavancagem mas neutraliza direção.<br>APR = fees×(1+L) + supply + funding − borrow×L − IL×(1−h).<br>Risco: funding flip, range break, 3 smart contracts.',
+                       en:'Captures leverage but neutralizes direction.<br>APR = fees×(1+L) + supply + funding − borrow×L − IL×(1−h).<br>Risk: funding flip, range break, 3 smart contracts.'},
 };
 
 function applyLang(lang) {
@@ -3393,8 +3579,8 @@ function applyLang(lang) {
     var key = el.getAttribute('data-i18n');
     var s = LANG_STRINGS[key];
     if (!s || !s[lang]) return;
-    // Use innerHTML only for page-title which has an inner <span>
-    if (key === 'page-title') {
+    // Use innerHTML for keys containing HTML markup
+    if (key === 'page-title' || /^sz-header-desc|^sz-notes-(kelly|merton|hedge|levhedge)$/.test(key)) {
       el.innerHTML = s[lang];
     } else {
       el.textContent = s[lang];
