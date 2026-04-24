@@ -676,8 +676,8 @@ body, input, button, select, textarea {
  </div>
  <div class="stat-card" style="border-color:rgba(58,126,200,0.3);background:linear-gradient(135deg,var(--surface),rgba(58,126,200,0.04));">
   <div class="stat-label" style="color:var(--blue,#3a7ec8);">STABLES</div>
-  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$2,370</div>
-  <div class="stat-sub" id="s-stables-sub">USDT $2,069 · USDS $300</div>
+  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$2,441</div>
+  <div class="stat-sub" id="s-stables-sub">USDT $2,140 · USDS $301</div>
  </div>
 </div>
 
@@ -1876,15 +1876,13 @@ function buildBenchmarkChart(){
  'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
  'Jan/26','Fev/26','Mar/26'];
 
- // Monthly % returns — calibrated to match real endpoint prices
- // Portfolio: $853 (Jan/22) → $6.430 (Mar/26) = +654%
- // BTC: $47.7k → $82.4k = +72.8% | ETH: $3.8k → $2.08k = -45.3%
- // Source: CoinGecko, statusinvest.com.br, bcb.gov.br
- const portM=[-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,
- 11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,
- 9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,
- 6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,
- -11.68,-11.68,-11.68];
+ // portM derivado do wealthCurve real — reflete picos e quedas mensais reais
+ // portM[0]=0 (Jan/22 = base); portM[i] = retorno mensal real mês i
+ var _wc = WEEKLY_UPDATE.wealthCurve.values;
+ var portM = [0];
+ for (var _pi = 1; _pi < _wc.length; _pi++) {
+   portM.push(_wc[_pi-1]>0 ? parseFloat(((_wc[_pi]/_wc[_pi-1]-1)*100).toFixed(4)) : 0);
+ }
  const btcM =[-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,
  8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,
  7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,
