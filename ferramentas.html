@@ -689,15 +689,15 @@ body, input, button, select, textarea {
 
  <!-- TABS -->
  <div class="tabs">
- <button class="tab" onclick="switchTab('crencas')" data-i18n="tab-crencas">Crenças</button>
- <button class="tab active" onclick="switchTab('liquidacao')" data-i18n="tab-liquidacao">Liquidação</button>
- <button class="tab" onclick="switchTab('cenarios')" data-i18n="tab-cenarios">Cenários</button>
- <button class="tab" onclick="switchTab('sizing')" data-i18n="tab-sizing">Sizing &amp; Risk</button>
- <button class="tab" onclick="switchTab('diario')" data-i18n="tab-diario">Diário DeFi</button>
- <button class="tab" onclick="switchTab('alertas')" data-i18n="tab-alertas">Alertas</button>
- <button class="tab" onclick="switchTab('evolucao')" data-i18n="tab-evolucao">Evolução</button>
- <button class="tab" onclick="switchTab('apyscanner')" data-i18n="tab-apy">Pools APY</button>
- <button class="tab" onclick="switchTab('semanal')" data-i18n="tab-semanal">Semanal</button>
+ <button class="tab" onclick="switchTab('crencas',this)" data-i18n="tab-crencas">Crenças</button>
+ <button class="tab active" onclick="switchTab('liquidacao',this)" data-i18n="tab-liquidacao">Liquidação</button>
+ <button class="tab" onclick="switchTab('cenarios',this)" data-i18n="tab-cenarios">Cenários</button>
+ <button class="tab" onclick="switchTab('sizing',this)" data-i18n="tab-sizing">Sizing &amp; Risk</button>
+ <button class="tab" onclick="switchTab('diario',this)" data-i18n="tab-diario">Diário DeFi</button>
+ <button class="tab" onclick="switchTab('alertas',this)" data-i18n="tab-alertas">Alertas</button>
+ <button class="tab" onclick="switchTab('evolucao',this)" data-i18n="tab-evolucao">Evolução</button>
+ <button class="tab" onclick="switchTab('apyscanner',this)" data-i18n="tab-apy">Pools APY</button>
+ <button class="tab" onclick="switchTab('semanal',this)" data-i18n="tab-semanal">Semanal</button>
  </div>
 
  <!-- ══════════════════════════════════════════════
@@ -1874,11 +1874,11 @@ document.getElementById('snap-date').value = new Date().toISOString().split('T')
 // ══════════════════════════════════════════════
 // TABS
 // ══════════════════════════════════════════════
-function switchTab(id){
+function switchTab(id, btn){
  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
  document.getElementById('panel-'+id).classList.add('active');
- event.target.classList.add('active');
+ if(btn) btn.classList.add('active');
  if(id==='evolucao') setTimeout(renderEvoChart,100);
  if(id==='semanal') swInitWeek();
 }
