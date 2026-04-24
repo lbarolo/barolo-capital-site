@@ -2610,12 +2610,6 @@ function loadActivePoolHedge(){
  if (pnowEl) pnowEl.dataset.userTouched = '1';
  calcHedge();
  // Feedback visual
- flashHighlight([\'hd-capital\',\'hd-pmin\',\'hd-pmax\',\'hd-pnow\',\'hd-feeapr\',\'hd-funding\',\'hd-borrow\',\'hd-vol\',\'hd-pct\']);
- showToast(\'Pool ativa carregada (WETH/USDC Base)\');
- // Feedback visual
- flashHighlight([\'hd-capital\',\'hd-pmin\',\'hd-pmax\',\'hd-pnow\',\'hd-feeapr\',\'hd-funding\',\'hd-borrow\',\'hd-vol\',\'hd-pct\']);
- showToast(\'Pool ativa carregada (WETH/USDC Base)\');
- // Feedback visual
  flashHighlight(['hd-capital','hd-pmin','hd-pmax','hd-pnow','hd-feeapr','hd-funding','hd-borrow','hd-vol','hd-pct']);
  showToast('Pool ativa carregada (WETH/USDC Base)');
 }
@@ -2646,12 +2640,6 @@ function loadBaroloScenario(){
  if (hpctVal) hpctVal.textContent = '0%';
  calcLevHedge();
  // Feedback visual
- flashHighlight([\'lh-capital\',\'lh-lp\',\'lh-brwpct\',\'lh-supapy\',\'lh-feeapr\',\'lh-il\',\'lh-brw\',\'lh-fund\',\'lh-delta\',\'lh-hpct\',\'lh-vol\']);
- showToast(\'Cenário Barolo carregado (leverage + no hedge)\');
- // Feedback visual
- flashHighlight([\'lh-capital\',\'lh-lp\',\'lh-brwpct\',\'lh-supapy\',\'lh-feeapr\',\'lh-il\',\'lh-brw\',\'lh-fund\',\'lh-delta\',\'lh-hpct\',\'lh-vol\']);
- showToast(\'Cenário Barolo carregado (leverage + no hedge)\');
- // Feedback visual
  flashHighlight(['lh-capital','lh-lp','lh-brwpct','lh-supapy','lh-feeapr','lh-il','lh-brw','lh-fund','lh-delta','lh-hpct','lh-vol']);
  showToast('Cenário Barolo carregado (leverage + no hedge)');
 }
@@ -2668,9 +2656,6 @@ setTimeout(function(){
 // DEFI RULES
 // ══════════════════════════════════════════════
 var DEFI_RULES = [
- // Feedback visual
- flashHighlight(["lh-capital","lh-lp","lh-brwpct","lh-supapy","lh-feeapr","lh-il","lh-brw","lh-fund","lh-delta","lh-hpct","lh-vol"]);
- showToast("Cenario Barolo carregado (leverage + no hedge)");
  "Projetos com cultos podem ser extremamente lucrativos. Basta sair do foguete antes que ele inevitavelmente caia.",
  "Não vale a pena bloquear tokens para obter rendimento adicional. Nada pior do que estar amarrado a uma pia que está afundando.",
  "Proteja sua atenção a todo custo. Você já tem tempo e energia limitados, não os desperdice acompanhando o último drama da criptografia.",
