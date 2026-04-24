@@ -1121,7 +1121,7 @@ function toggleMobile() {
   // Portfólio interno para cálculo de retorno (quantidades não exibidas)
   var HOLDINGS = [
     { id: 'ethereum',       qty: 2.084106,      invested: 4433.16 },
-    { id: 'solana',         qty: 20.31134268,   invested: 2280.39 },
+    { id: 'solana',         qty: 20.39,          invested: 2280.39 },
     { id: 'cardano',        qty: 375.245,        invested: 530.95  },
     { id: 'eigenlayer',     qty: 153.363,        invested: 45.87   },
     { id: 'radiant-capital',qty: 7290.46,        invested: 0       },
@@ -1149,9 +1149,9 @@ function toggleMobile() {
     } catch(e) {}
   })();
   var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
-  var STABLES_USD    = 2369.88;  // USDT 2069.46 + USDS 300.42
+  var STABLES_USD    = 2440.90;  // USDT 2140.12 + USDS 300.78
   var LP_POOLED      = 365;
-  var TOTAL_DEBT     = 1553.70;  // AAVE 748.00 USDC + Kamino 805.70 USDC
+  var TOTAL_DEBT     = 1555.49;  // AAVE 748.00 USDC + Kamino 807.49 USDC
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
 

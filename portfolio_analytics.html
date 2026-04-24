@@ -1085,7 +1085,7 @@ var WEEKLY_UPDATE = {
  // ── Saldos de carteira (quantidades) ──
  holdings: {
  ETH: 2.084106,
- SOL: 20.31134268,
+ SOL: 20.39,
  ADA: 375.245,
  RDNT: 7290.46,
  EIGEN: 153.363,
@@ -1094,22 +1094,22 @@ var WEEKLY_UPDATE = {
  XAI: 692.86,
  ZETA: 51.1434,
  SCR: 0.0018,
- USDT: 2069.46,
- USDS: 300.42,
+ USDT: 2140.12,
+ USDS: 300.78,
  },
 
  // ── DeFi: posições abertas ──
  defi: {
  aave: {
- ethSupplied: 1.87,
- usdtSupplied: 1652.90,
- usdcBorrowed: 746.99,
+ ethSupplied: 1.88,
+ usdtSupplied: 1985.68,
+ usdcBorrowed: 748,
  healthFactor: 6.24,
  },
  kamino: {
- solSupplied: 19.33,
- pyusdSupplied: 300.42,
- usdcBorrowed: 804.22,
+ solSupplied: 20.39,
+ pyusdSupplied: 300.78,
+ usdcBorrowed: 807.49,
  ltv: 39.22,
  },
  uniswapLP: {
@@ -1134,8 +1134,8 @@ var WEEKLY_UPDATE = {
  XAI: 164.52,
  ZETA: 0,
  SCR: 0,
- USDT: 2069.46,  // custo = qty (stablecoin 1:1)
- USDS: 300.42,
+ USDT: 2140.12,  // custo = qty (stablecoin 1:1)
+ USDS: 300.78,
  },
 
  // ── Retornos mensais do portfólio (%) — adicione o mês atual ──
@@ -1189,7 +1189,7 @@ var WEEKLY_UPDATE = {
 
 var PORTFOLIO_DATA = [
  { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.084106,      invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
- { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:20.31134268,   invested:2201.68, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
+ { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:20.39,         invested:2280.39, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
  { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
  { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
  { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
@@ -1197,8 +1197,8 @@ var PORTFOLIO_DATA = [
  { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
  { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
- { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:2069.46,       invested:2069.46, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
- { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300.42,        invested:300.42,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
+ { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:2140.12,       invested:2140.12, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
+ { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300.78,        invested:300.78,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
 ];
 var PORTFOLIO = PORTFOLIO_DATA; // alias
 
@@ -1217,8 +1217,8 @@ var FALLBACK_24H = {
 var LP_POOLED = 365; // Pool WETH/USDC ativa (Abr/2026) — atualizar semanalmente
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 747.50; // atualizar semanalmente
-var KAMINO_DEBT = 805.70; // atualizar semanalmente
-var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $747.50 + $805.70 = $1,553.20
+var KAMINO_DEBT = 807.49; // atualizar semanalmente
+var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $748 + $807.49 = $1,555.49
 var KAMINO_SOL_EXTRA_QTY = 19.35 - 20.31134268; // ~0.038 SOL restante // SOL no Kamino não rastreado pelo CG
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
@@ -1408,10 +1408,10 @@ function renderUI(enriched){
    const kaminoLTV = (kaminoDebtLive2 / kaminoSupplyUsd * 100).toFixed(1);
    // Monthly interest cost — live APYs via AAVE DataProvider + Kamino API (fallback to current rates)
    const aaveBorrowApy  = window._liveAaveBorrowApy  || 3.84;
-   const kaminoBorrowApy= window._liveKaminoBorrowApy || 4.09;
-   const aaveUsdtApy    = window._liveAaveUsdtApy    || 1.87;
-   const kaminoSolApy   = window._liveKaminoSolApy   || 3.19;
-   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || 3.69;
+   const kaminoBorrowApy= window._liveKaminoBorrowApy || 6.90;
+   const aaveUsdtApy    = window._liveAaveUsdtApy    || 9.26;
+   const kaminoSolApy   = window._liveKaminoSolApy   || 4.22;
+   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || 5.00;
    const monthlyInterest = (aaveDebtLive2 * (aaveBorrowApy/100) + kaminoDebtLive2 * (kaminoBorrowApy/100)) / 12;
    // Monthly yield from lending positions
    const aaveSupplyYield = WEEKLY_UPDATE.defi.aave.usdtSupplied * (aaveUsdtApy/100) / 12;
@@ -3380,12 +3380,12 @@ document.addEventListener('DOMContentLoaded',function(){
 
  // Fallback: use static values
  console.warn('[Kamino] API returned no data, using static fallback');
- window._liveKaminoDebt = window._liveKaminoDebt || 805.70;
+ window._liveKaminoDebt = window._liveKaminoDebt || 807.49;
  window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
  return null;
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 805.70;
+ window._liveKaminoDebt = window._liveKaminoDebt || 807.49;
  return null;
  }
  }

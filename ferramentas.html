@@ -1915,11 +1915,11 @@ function calcUni(){
 // ══════════════════════════════════════════════
 // Portfolio base values
 var BASE = {
- ethQty:2.084106, solQty:19.37+0.13059,
+ ethQty:2.084106, solQty:20.39+0.13059,
  ethPrice:1936.22, solPrice:83.43,
  altVal:150, // ADA+RDNT+ZK+etc rough
- aaveDebt:748, aaveUSDT:1650.00, aaveETH:1.88,
- kamDebt:805.70, kamPYUSD:300.55, kamSOL:19.37,
+ aaveDebt:748, aaveUSDT:1985.68, aaveETH:1.88,
+ kamDebt:807.49, kamPYUSD:300.78, kamSOL:20.39,
  kamLiqThresh:0.7579, aaveLiqThresh:0.86,
  uniRangeMin:1855.72, uniRangeMax:3146.36,
  totalBase:5525
@@ -1957,7 +1957,7 @@ function calcScenario(){
  const aaveHF = BASE.aaveDebt>0?(totalCol_aave*BASE.aaveLiqThresh)/BASE.aaveDebt:99;
  const kamTotalCol = BASE.kamSOL*newSOL+BASE.kamPYUSD;
  const kamLTV = kamTotalCol>0?(BASE.kamDebt/kamTotalCol*100):0;
- const netPortfolio = ethHolding+solHolding+newAlt+1650+300.55-(BASE.aaveDebt+BASE.kamDebt);
+ const netPortfolio = ethHolding+solHolding+newAlt+BASE.aaveUSDT+BASE.kamPYUSD-(BASE.aaveDebt+BASE.kamDebt);
  const delta = netPortfolio-BASE.totalBase;
  const uniIn = newETH>=BASE.uniRangeMin && newETH<=BASE.uniRangeMax;
 
@@ -2402,10 +2402,10 @@ function loadActivePoolHedge(){
 }
 
 function loadBaroloScenario(){
- // Barolo real: colateral AAVE (1.88 WETH + 1650 USDT @ ETH=2431 ≈ $6220)
+ // Barolo real: colateral AAVE (1.88 WETH + 1986 USDT @ ETH atual ≈ $5,620)
  // + pool ativa $385 financiada ~100% pelo borrow USDC ($748)
- var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 2431;
- var aaveCollateral = Math.round(1.88 * live + 1650);
+ var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 1936;
+ var aaveCollateral = Math.round(1.88 * live + 1985.68);
  var set = function(id, v){ var el = document.getElementById(id); if (el) el.value = v; };
  set('lh-capital', aaveCollateral);
  set('lh-lp',      385);
@@ -2652,10 +2652,10 @@ function checkAlerts(verbose){
  // Recalc HF quickly
  const ethPrice=parseFloat(document.getElementById('aave-ethprice')?.value||liveETH);
  const solPrice=parseFloat(document.getElementById('kam-solprice')?.value||liveSOL);
- const ethCol=1.88*ethPrice+1650.00;
+ const ethCol=1.88*ethPrice+1985.68;
  const aaveHF=(ethCol*0.86)/748;
- const kamCol=19.37*solPrice+300.55;
- const kamLTV=(805.70/kamCol*100);
+ const kamCol=20.39*solPrice+300.78;
+ const kamLTV=(807.49/kamCol*100);
  const uniIn=ethPrice>=1855.72&&ethPrice<=3146.36;
 
  let fired=0;
