@@ -2180,3 +2180,28 @@ Nenhum dado de posição alterado. Apenas calculadora de ferramentas.html reflet
 
 ---
 
+## Sessão 24/04/2026 (continuação) — Pico patrimonial + Diário melhorado
+
+### Implementado
+
+- **`portfolio_analytics.html`**: `wealthCurve` Oct/25 corrigido: `10395` → `12312`. O "Pico Histórico" agora exibe `$12.312` (valor real do CoinGecko em 06/10/2025).
+- **`ferramentas.html` — Lending form**: adicionado seletor de **Token** (SOL/ETH/WETH/USDT/USDC/USDS/GHO) + campo **Quantidade (tokens)**. Dados salvos em `entry.lending.token` e `entry.lending.tokenQty`. Protocolo corrigido de "AAVE V3" → "AAVE V4".
+- **`ferramentas.html` — Trade form**: **USDT** e **USDC** adicionados como opções de token no select de compra/venda.
+- **`ferramentas.html` — renderDiary()**: entradas de lending e trade agora mostram badges inline com token, quantidade e valor USD (ex: `KAMINO · Supply | 1.020 SOL · $85.00`).
+
+### Bugs corrigidos
+
+| Bug | Fix |
+|-----|-----|
+| Pico histórico mostrava `$11.610` | `wealthCurve[45]` (Oct/25) era `10.395`; real peak foi `$12.312,02` em 06/10/2025 — atualizado |
+| Lending form sem campo de token/qty | Formulário só tinha Valor ($) e Dívida restante; adicionado token selector + qty |
+| Trade form sem USDT/USDC | Select de token não listava stablecoins; USDT e USDC adicionados |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — após 30/04/2026
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — custo de aquisição em BRL + base para IR
+
+---
+
