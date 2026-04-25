@@ -1174,8 +1174,19 @@ function toggleMobile() {
     if (track) track.innerHTML = html;
   }
 
+  var INITIAL_CAPITAL = 1061; // primeiro capital registrado (Jan/2022, wealthCurve.invested[0])
+
   function updateHeroReturn(prices) {
-    // Retorno fixo no index — track record histórico (variação ao vivo está no dashboard)
+    var spotVal = 0;
+    HOLDINGS.forEach(function(h) {
+      var p = prices[h.id];
+      if (p) spotVal += h.qty * p;
+    });
+    if (spotVal === 0) return;
+    var netWorth = spotVal + STABLES_USD + LP_POOLED - TOTAL_DEBT;
+    var roi = (netWorth / INITIAL_CAPITAL - 1) * 100;
+    var el = document.getElementById('heroReturn');
+    if (el) el.textContent = (roi >= 0 ? '+' : '') + roi.toFixed(1) + '%';
   }
 
   // IDs de todos os tokens para fetch (ticker + portfolio)

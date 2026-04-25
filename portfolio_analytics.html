@@ -2214,6 +2214,19 @@ var activePeriod = 'all';
 function applyUpdate() {
  const W = WEEKLY_UPDATE;
  Object.assign(MONTHLY_RETURNS_DATA, W.monthlyReturns);
+ // Sync monthly returns from wealthCurve — ensures heatmap and annual chart stay consistent
+ // with the tracked portfolio values. Jan of each year requires previous Dec, so starts at index 1.
+ (function syncFromWealthCurve() {
+   var wc = W.wealthCurve;
+   for (var i = 1; i < wc.labels.length; i++) {
+     var parts = wc.labels[i].split('/');
+     var month = parseInt(parts[0], 10) - 1;
+     var year  = 2000 + parseInt(parts[1], 10);
+     if (!MONTHLY_RETURNS_DATA[year]) continue;
+     if (!wc.values[i-1] || wc.values[i-1] <= 0) continue;
+     MONTHLY_RETURNS_DATA[year][month] = parseFloat(((wc.values[i] - wc.values[i-1]) / wc.values[i-1] * 100).toFixed(1));
+   }
+ })();
  perfPeriodsData.all.labels = W.wealthCurve.labels;
  perfPeriodsData.all.p = W.wealthCurve.values;
  perfPeriodsData.all.i = W.wealthCurve.invested;

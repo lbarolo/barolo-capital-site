@@ -484,7 +484,7 @@ body, input, button, select, textarea {
       </div>
       <div style="padding:14px 18px;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:var(--red);margin-bottom:8px;">↓ BORROW</div>
-        <div id="em-aave-borrow" data-usd="747.50" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">$747.50</div>
+        <div id="em-aave-borrow" data-usd="748" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">$748.00</div>
         <div style="font-size:9px;color:var(--muted);margin-top:7px;line-height:1.8;">
           <span id="em-aave-borrow-qty">748.00</span> <span id="em-aave-borrow-token">USDC</span><br>
           APY borrow: <span id="em-aave-borrow-apy">2.32%</span>
@@ -701,8 +701,8 @@ body, input, button, select, textarea {
  </div>
  <div class="kpi-card">
  <div class="kpi-lbl">Dívida em Aberto</div>
- <div id="em-kpi-debt" class="kpi-val" data-usd="1553" style="color:var(--accent);">$1,553</div>
- <div class="kpi-sub">AAVE $748 · Kamino $806</div>
+ <div id="em-kpi-debt" class="kpi-val" data-usd="1556" style="color:var(--accent);">$1,556</div>
+ <div class="kpi-sub">AAVE $748 · Kamino $807</div>
  </div>
  <div class="kpi-card">
  <div class="kpi-lbl">Juros Pagos (est.)</div>
@@ -1813,7 +1813,7 @@ function toggleLang() {
       });
       // Fallback para valores informados pelo usuário se API não retornar APY
       if (solApy === 0)    solApy    = 4.22;
-      if (usdsApy === 0)   usdsApy   = 5.00;
+      if (usdsApy === 0)   usdsApy   = 3.69;
       if (borrowApy === 0) borrowApy = 6.90;
 
       const net    = totalDeposit - totalBorrow;
@@ -1856,7 +1856,7 @@ function toggleLang() {
       if (fill) { fill.style.width = fillPct + '%'; fill.style.background = ltvColor; }
 
       // KPI dívida total (atualiza depois do AAVE)
-      const aaveDebt = window._liveAaveDebt || 747.50;
+      const aaveDebt = window._liveAaveDebt || 748;
       updateDataUsd('em-kpi-debt', aaveDebt + totalBorrow);
       const kpiDebtSub = $('em-kpi-debt')?.nextElementSibling;
       if (kpiDebtSub) kpiDebtSub.textContent = `AAVE $${aaveDebt.toFixed(0)} · Kamino $${totalBorrow.toFixed(0)}`;
