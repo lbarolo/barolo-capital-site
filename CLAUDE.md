@@ -2271,3 +2271,67 @@ Nenhum nesta sessão.
 
 ---
 
+## Sessão 24/04/2026 — Layout pools + fix tabs ferramentas + atualização posições
+
+### Implementado
+
+- **`pools.html`**: Seções reordenadas via CSS `order` (flex container): Melhores APRs topo → Pool Ativa → Meta+P&L YTD lado a lado em grid `1fr 1fr`. POL removido de `PORTFOLIO_ADDRS.eth`. Stagger Arbitrum aumentado para 12s.
+- **`ferramentas.html`**: `netPortfolio` agora usa `BASE.aaveUSDT + BASE.kamPYUSD` dinamicamente (era `1650+300.55` hardcoded). `loadBaroloScenario` ETH default corrigido para 1936.
+- **`portfolio_analytics.html`**: SOL 20.31134268→20.39, USDT 2069.46→2140.12, USDS 300.42→300.78, Kamino debt 805.70→807.49, fallback APYs atualizados (kaminoBorrowApy 4.09→6.90, aaveUsdtApy 1.87→9.26, kaminoSolApy 3.19→4.22).
+- **`emprestimos.html`**: Textos de display atualizados (SOL 19.33→20.39, USDT 1,650→1,986, Kamino borrow 804.22→807.49, APY borrow 3.18→6.90%). `aaveBorrow` fallback 747.50→748.
+- **`index.html`**: SOL 20.31134268→20.39, STABLES_USD 2369.88→2440.90, TOTAL_DEBT 1553.70→1555.49.
+- **`relatorio.html`**: SOL 20.31→20.39, STABLES_USD 2369.88→2440.90, DEBT_TOTAL 1553.70→1555.49, AAVE_USDT_QTY 1650→1985.68, KAM_SOL_QTY 19.37→20.39, KAM_USDS_QTY 300.55→300.78, KAM_BORROW 805.70→807.49, APYs atualizados.
+
+### Dados atualizados (prints de 24/04/2026)
+
+| Campo | Antes | Depois |
+|-------|-------|--------|
+| AAVE USDT supply | 1,650 | **1,985.68** (+335.68 deposit) |
+| Kamino SOL supply | 19.37 | **20.39** (+1.02 SOL) |
+| USDT total portfolio | 2,069.46 | **2,140.12** (+70.66 compra) |
+| USDS | 300.42 | **300.78** |
+| Kamino borrow | 805.70 | **807.49** |
+
+### Bugs corrigidos
+
+| Bug | Fix |
+|-----|-----|
+| `ferramentas.html` todas as abas quebradas | SyntaxError: `\'` (backslash-escaped quotes) em literais de array dentro de `flashHighlight`/`showToast` — duas cópias duplicadas e corrompidas removidas de `loadActivePoolHedge()`, `loadBaroloScenario()` e dentro do array `DEFI_RULES` |
+| `netPortfolio` em ferramentas.html com stables hardcoded | `1650+300.55` substituído por `BASE.aaveUSDT+BASE.kamPYUSD` |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — custo de aquisição em BRL + base para IR
+- **i18n painel Sizing & Risk** — só em PT; falta strings EN
+- **Validar calcLevHedge()** com dados reais da pool atual ($365) e hipotética ($2000)
+- **Mentoria DeFi avançado** — Euler V2, Morpho Blue, Gearbox, Drift, Hyperliquid HLP, Pendle PT
+
+---
+
+## Sessão 24/04/2026 (continuação) — Pico patrimonial + Diário melhorado
+
+### Implementado
+
+- **`portfolio_analytics.html`**: `wealthCurve` Oct/25 corrigido: `10395` → `12312`. O "Pico Histórico" agora exibe `$12.312` (valor real do CoinGecko em 06/10/2025).
+- **`ferramentas.html` — Lending form**: adicionado seletor de **Token** (SOL/ETH/WETH/USDT/USDC/USDS/GHO) + campo **Quantidade (tokens)**. Dados salvos em `entry.lending.token` e `entry.lending.tokenQty`. Protocolo corrigido de "AAVE V3" → "AAVE V4".
+- **`ferramentas.html` — Trade form**: **USDT** e **USDC** adicionados como opções de token no select de compra/venda.
+- **`ferramentas.html` — renderDiary()**: entradas de lending e trade agora mostram badges inline com token, quantidade e valor USD (ex: `KAMINO · Supply | 1.020 SOL · $85.00`).
+
+### Bugs corrigidos
+
+| Bug | Fix |
+|-----|-----|
+| Pico histórico mostrava `$11.610` | `wealthCurve[45]` (Oct/25) era `10.395`; real peak foi `$12.312,02` em 06/10/2025 — atualizado |
+| Lending form sem campo de token/qty | Formulário só tinha Valor ($) e Dívida restante; adicionado token selector + qty |
+| Trade form sem USDT/USDC | Select de token não listava stablecoins; USDT e USDC adicionados |
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — após 30/04/2026
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — custo de aquisição em BRL + base para IR
+
+---
+

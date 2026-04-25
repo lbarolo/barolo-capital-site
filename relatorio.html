@@ -286,7 +286,7 @@ tr:hover td{ background:var(--surface2); }
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">AAVE V4 · Ethereum</div>
       <table>
         <tr><td style="color:var(--muted);">Supply WETH</td><td class="r">1.88 WETH</td><td class="r" id="r-aave-eth-usd">—</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r">1.650 USDT</td><td class="r">$1.650</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r">1.986 USDT</td><td class="r">$1.986</td></tr>
         <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-aave-supply">—</td></tr>
         <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">748 USDC</td><td class="r" style="color:var(--red);">−$748</td></tr>
         <tr><td style="color:var(--muted);">Health Factor</td><td></td><td class="r" style="color:var(--green);font-weight:700;">6.24</td></tr>
@@ -297,10 +297,10 @@ tr:hover td{ background:var(--surface2); }
     <div class="col-card">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">Kamino Finance · Solana</div>
       <table>
-        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r">19,37 SOL</td><td class="r" id="r-kam-sol-usd">—</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r">300,55 USDS</td><td class="r">$301</td></tr>
+        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r">20,39 SOL</td><td class="r" id="r-kam-sol-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r">300,78 USDS</td><td class="r">$301</td></tr>
         <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-kam-supply">—</td></tr>
-        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">805,70 USDC</td><td class="r" style="color:var(--red);">−$806</td></tr>
+        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">807,49 USDC</td><td class="r" style="color:var(--red);">−$807</td></tr>
         <tr><td style="color:var(--muted);">LTV Atual</td><td></td><td class="r" style="color:var(--green);font-weight:700;">39,22%</td></tr>
         <tr><td style="color:var(--muted);">LTV Liquidação</td><td></td><td class="r">77,20%</td></tr>
         <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$2,75</td></tr>
@@ -371,7 +371,7 @@ tr:hover td{ background:var(--surface2); }
       </tr>
       <tr>
         <td style="color:var(--muted);padding-bottom:12px;">Capital em Caixa</td>
-        <td style="padding-bottom:12px;">USDT $1.652,90 + USDS $300,42 = $1.953,32</td>
+        <td style="padding-bottom:12px;">USDT $2.140,12 + USDS $300,78 = $2.440,90</td>
       </tr>
       <tr>
         <td style="color:var(--muted);">Estratégia</td>
@@ -476,7 +476,7 @@ setPeriod('mensal'); // default: mensal
 // ─────────────────────────────────────────────
 var PORTFOLIO_DATA = [
   { cgId:'ethereum',       ticker:'ETH',  name:'Ethereum',   qty:2.084106,       invested:4433.16, avgCost:1915.83, color:'#E8773D', price:1620  },
-  { cgId:'solana',         ticker:'SOL',  name:'Solana',     qty:20.31134268,    invested:2280.39, avgCost:146.97,  color:'#14F195', price:110   },
+  { cgId:'solana',         ticker:'SOL',  name:'Solana',     qty:20.39,          invested:2280.39, avgCost:146.97,  color:'#14F195', price:110   },
   { cgId:'cardano',        ticker:'ADA',  name:'Cardano',    qty:375.245,        invested:530.95,  avgCost:1.31,    color:'#3773F5', price:0.62  },
   { cgId:'radiant-capital',ticker:'RDNT', name:'Radiant',    qty:7290.46,        invested:0,       avgCost:null,    color:'#00D4FF', price:0.006 },
   { cgId:'eigenlayer',     ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,   invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', price:0.32  },
@@ -486,16 +486,16 @@ var PORTFOLIO_DATA = [
   { cgId:'zetachain',      ticker:'ZETA', name:'ZetaChain',  qty:51.1434,        invested:0,       avgCost:null,    color:'#00C896', price:0.055 },
 ];
 
-var STABLES_USD   = 2369.88;  // USDT 2069.46 + USDS 300.42
-var DEBT_TOTAL    = 1553.70;  // AAVE 748 + Kamino 805.70
+var STABLES_USD   = 2440.90;  // USDT 2140.12 + USDS 300.78
+var DEBT_TOTAL    = 1555.49;  // AAVE 748 + Kamino 807.49
 
 // Posições DeFi — constantes para yield calc
-var AAVE_ETH_QTY=1.88, AAVE_ETH_APY=0.0125;
-var AAVE_USDT_QTY=1650, AAVE_USDT_APY=0.0187;
-var AAVE_BORROW=748, AAVE_BORROW_APY=0.0232;
-var KAM_SOL_QTY=19.37, KAM_SOL_APY=0.0319;
-var KAM_USDS_QTY=300.55, KAM_USDS_APY=0.0369;
-var KAM_BORROW=805.70, KAM_BORROW_APY=0.0409;
+var AAVE_ETH_QTY=1.88,   AAVE_ETH_APY=0.0125;
+var AAVE_USDT_QTY=1985.68, AAVE_USDT_APY=0.0926;
+var AAVE_BORROW=748,     AAVE_BORROW_APY=0.0232;
+var KAM_SOL_QTY=20.39,  KAM_SOL_APY=0.0422;
+var KAM_USDS_QTY=300.78, KAM_USDS_APY=0.0500;
+var KAM_BORROW=807.49,   KAM_BORROW_APY=0.0690;
 
 var POOLS_DATA = [
   { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:9,   il:0,  result:1    },

@@ -676,8 +676,8 @@ body, input, button, select, textarea {
  </div>
  <div class="stat-card" style="border-color:rgba(58,126,200,0.3);background:linear-gradient(135deg,var(--surface),rgba(58,126,200,0.04));">
   <div class="stat-label" style="color:var(--blue,#3a7ec8);">STABLES</div>
-  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$2,370</div>
-  <div class="stat-sub" id="s-stables-sub">USDT $2,069 · USDS $300</div>
+  <div class="stat-value sensitive" style="color:var(--blue,#3a7ec8);" id="s-stables">$2,441</div>
+  <div class="stat-sub" id="s-stables-sub">USDT $2,140 · USDS $301</div>
  </div>
 </div>
 
@@ -1085,7 +1085,7 @@ var WEEKLY_UPDATE = {
  // ── Saldos de carteira (quantidades) ──
  holdings: {
  ETH: 2.084106,
- SOL: 20.31134268,
+ SOL: 20.39,
  ADA: 375.245,
  RDNT: 7290.46,
  EIGEN: 153.363,
@@ -1094,22 +1094,22 @@ var WEEKLY_UPDATE = {
  XAI: 692.86,
  ZETA: 51.1434,
  SCR: 0.0018,
- USDT: 2069.46,
- USDS: 300.42,
+ USDT: 2140.12,
+ USDS: 300.78,
  },
 
  // ── DeFi: posições abertas ──
  defi: {
  aave: {
- ethSupplied: 1.87,
- usdtSupplied: 1652.90,
- usdcBorrowed: 746.99,
+ ethSupplied: 1.88,
+ usdtSupplied: 1985.68,
+ usdcBorrowed: 748,
  healthFactor: 6.24,
  },
  kamino: {
- solSupplied: 19.33,
- pyusdSupplied: 300.42,
- usdcBorrowed: 804.22,
+ solSupplied: 20.39,
+ pyusdSupplied: 300.78,
+ usdcBorrowed: 807.49,
  ltv: 39.22,
  },
  uniswapLP: {
@@ -1134,8 +1134,8 @@ var WEEKLY_UPDATE = {
  XAI: 164.52,
  ZETA: 0,
  SCR: 0,
- USDT: 2069.46,  // custo = qty (stablecoin 1:1)
- USDS: 300.42,
+ USDT: 2140.12,  // custo = qty (stablecoin 1:1)
+ USDS: 300.78,
  },
 
  // ── Retornos mensais do portfólio (%) — adicione o mês atual ──
@@ -1168,7 +1168,7 @@ var WEEKLY_UPDATE = {
  // Formato: [valor do portfólio total em USD]
  wealthCurve: {
  labels: ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26'],
- values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,10395,11610,10857,9511,7376,6371],
+ values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371],
  invested:[1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418],
  },
 
@@ -1189,7 +1189,7 @@ var WEEKLY_UPDATE = {
 
 var PORTFOLIO_DATA = [
  { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.084106,      invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
- { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:20.31134268,   invested:2201.68, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
+ { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:20.39,         invested:2280.39, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
  { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
  { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
  { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
@@ -1197,8 +1197,8 @@ var PORTFOLIO_DATA = [
  { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
  { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
- { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:2069.46,       invested:2069.46, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
- { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300.42,        invested:300.42,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
+ { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:2140.12,       invested:2140.12, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
+ { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300.78,        invested:300.78,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
 ];
 var PORTFOLIO = PORTFOLIO_DATA; // alias
 
@@ -1217,8 +1217,8 @@ var FALLBACK_24H = {
 var LP_POOLED = 365; // Pool WETH/USDC ativa (Abr/2026) — atualizar semanalmente
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 747.50; // atualizar semanalmente
-var KAMINO_DEBT = 805.70; // atualizar semanalmente
-var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $747.50 + $805.70 = $1,553.20
+var KAMINO_DEBT = 807.49; // atualizar semanalmente
+var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $748 + $807.49 = $1,555.49
 var KAMINO_SOL_EXTRA_QTY = 19.35 - 20.31134268; // ~0.038 SOL restante // SOL no Kamino não rastreado pelo CG
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
@@ -1354,9 +1354,9 @@ function renderUI(enriched){
  const cgTotal = _livePortfolioGross;
  const aaveDebtLive = window._liveAaveDebt || AAVE_DEBT;
  const kaminoDebtLive = window._liveKaminoDebt || KAMINO_DEBT;
- // Patrimônio Líquido = SPOT (ativos voláteis ao vivo) + STABLECOINS − Dívida total
- const netTotal = cgTotal + STABLES_USD - (aaveDebtLive + kaminoDebtLive);
- const totalPnL = cgTotal + STABLES_USD + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
+ // Patrimônio Líquido = SPOT (ativos ao vivo, inclui stables) + POOLS LP − Dívida total
+ const netTotal = cgTotal + LP_POOLED - (aaveDebtLive + kaminoDebtLive);
+ const totalPnL = cgTotal + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
  const realPnL = netTotal - TOTAL_INVESTED;
  const roi = (realPnL / TOTAL_INVESTED)*100;
  // 24h: só ativos voláteis (stables ~0% mas incluídas) + estimativa LP (50% WETH)
@@ -1371,8 +1371,9 @@ function renderUI(enriched){
   set('s-stables', fmtCurrency(stablesTotal, 0));
   var stablesSub = enriched.filter(a=>a.isStable).map(a=>a.ticker+' '+fmtCurrency(a.currentValue||a.qty,0)).join(' · ');
   if(stablesSub) set('s-stables-sub', stablesSub);
- set('s-spot', fmtCurrency(cgTotal, 0));
- set('s-spot-sub', enriched.length+' ativos');
+ var volatileTotal = enriched.filter(a=>!a.isStable).reduce((s,a)=>s+a.currentValue,0);
+ set('s-spot', fmtCurrency(volatileTotal, 0));
+ set('s-spot-sub', enriched.filter(a=>!a.isStable).length+' ativos');
  set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
 
@@ -1408,10 +1409,10 @@ function renderUI(enriched){
    const kaminoLTV = (kaminoDebtLive2 / kaminoSupplyUsd * 100).toFixed(1);
    // Monthly interest cost — live APYs via AAVE DataProvider + Kamino API (fallback to current rates)
    const aaveBorrowApy  = window._liveAaveBorrowApy  || 3.84;
-   const kaminoBorrowApy= window._liveKaminoBorrowApy || 4.09;
-   const aaveUsdtApy    = window._liveAaveUsdtApy    || 1.87;
-   const kaminoSolApy   = window._liveKaminoSolApy   || 3.19;
-   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || 3.69;
+   const kaminoBorrowApy= window._liveKaminoBorrowApy || 6.90;
+   const aaveUsdtApy    = window._liveAaveUsdtApy    || 9.26;
+   const kaminoSolApy   = window._liveKaminoSolApy   || 4.22;
+   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || 5.00;
    const monthlyInterest = (aaveDebtLive2 * (aaveBorrowApy/100) + kaminoDebtLive2 * (kaminoBorrowApy/100)) / 12;
    // Monthly yield from lending positions
    const aaveSupplyYield = WEEKLY_UPDATE.defi.aave.usdtSupplied * (aaveUsdtApy/100) / 12;
@@ -1876,15 +1877,13 @@ function buildBenchmarkChart(){
  'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
  'Jan/26','Fev/26','Mar/26'];
 
- // Monthly % returns — calibrated to match real endpoint prices
- // Portfolio: $853 (Jan/22) → $6.430 (Mar/26) = +654%
- // BTC: $47.7k → $82.4k = +72.8% | ETH: $3.8k → $2.08k = -45.3%
- // Source: CoinGecko, statusinvest.com.br, bcb.gov.br
- const portM=[-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,-6.08,
- 11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,11.62,
- 9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,9.24,
- 6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,6.58,
- -11.68,-11.68,-11.68];
+ // portM derivado do wealthCurve real — reflete picos e quedas mensais reais
+ // portM[0]=0 (Jan/22 = base); portM[i] = retorno mensal real mês i
+ var _wc = WEEKLY_UPDATE.wealthCurve.values;
+ var portM = [0];
+ for (var _pi = 1; _pi < _wc.length; _pi++) {
+   portM.push(_wc[_pi-1]>0 ? parseFloat(((_wc[_pi]/_wc[_pi-1]-1)*100).toFixed(4)) : 0);
+ }
  const btcM =[-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,
  8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,
  7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,
@@ -2205,7 +2204,7 @@ var perfPeriodsData = {
  '1a': { labels:['Mar/25','Mai/25','Jul/25','Set/25','Nov/25','Jan/26','Mar/26'],
  p:[5400,6100,5600,4900,5300,5200,5823], i:[8800,8900,9000,9000,9040,9050,9445] },
  'all':{ labels:['01/2022', '02/2022', '03/2022', '04/2022', '05/2022', '06/2022', '07/2022', '08/2022', '09/2022', '10/2022', '11/2022', '12/2022', '01/2023', '02/2023', '03/2023', '04/2023', '05/2023', '06/2023', '07/2023', '08/2023', '09/2023', '10/2023', '11/2023', '12/2023', '01/2024', '02/2024', '03/2024', '04/2024', '05/2024', '06/2024', '07/2024', '08/2024', '09/2024', '10/2024', '11/2024', '12/2024', '01/2025', '02/2025', '03/2025', '04/2025', '05/2025', '06/2025', '07/2025', '08/2025', '09/2025', '10/2025', '11/2025', '12/2025', '01/2026', '02/2026', '03/2026'],
- p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 10395, 11610, 10857, 9511, 7376, 6371], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
+ p:[853, 860, 1037, 1108, 1037, 544, 772, 896, 742, 923, 754, 777, 1119, 1224, 1388, 1542, 1570, 1667, 1780, 1624, 1639, 1922, 2226, 2605, 2959, 3604, 4636, 4524, 5471, 5112, 5955, 5226, 5170, 6020, 8153, 8634, 8570, 7907, 6760, 6263, 8069, 8386, 9424, 8365, 8545, 12312, 11610, 10857, 9511, 7376, 6371], i:[1061, 1276, 1276, 1681, 1771, 1810, 1886, 1904, 2198, 2274, 2367, 2367, 2431, 2480, 2499, 2567, 2658, 2721, 2721, 2762, 2802, 2842, 2870, 2977, 2977, 2977, 2977, 3056, 3056, 3098, 3098, 3195, 3310, 3592, 3677, 3952, 4127, 4527, 4598, 4948, 5121, 5121, 5121, 5121, 5121, 6098, 6098, 6108, 6230, 6418, 6418] }
 };
 var perfPeriods = perfPeriodsData; // alias
 var activePeriod = 'all';
@@ -3380,12 +3379,12 @@ document.addEventListener('DOMContentLoaded',function(){
 
  // Fallback: use static values
  console.warn('[Kamino] API returned no data, using static fallback');
- window._liveKaminoDebt = window._liveKaminoDebt || 805.70;
+ window._liveKaminoDebt = window._liveKaminoDebt || 807.49;
  window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
  return null;
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 805.70;
+ window._liveKaminoDebt = window._liveKaminoDebt || 807.49;
  return null;
  }
  }

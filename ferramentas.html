@@ -1362,6 +1362,8 @@ body, input, button, select, textarea {
        <option value="ETH">ETH — Ethereum</option>
        <option value="SOL">SOL — Solana</option>
        <option value="ADA">ADA — Cardano</option>
+       <option value="USDT">USDT — Tether</option>
+       <option value="USDC">USDC — USD Coin</option>
        <option value="EIGEN">EIGEN — EigenLayer</option>
        <option value="RDNT">RDNT — Radiant</option>
        <option value="POL">POL — Polygon</option>
@@ -1399,7 +1401,7 @@ body, input, button, select, textarea {
  <label>Protocolo</label>
  <select id="d-proto">
  <option value="kamino">Kamino Finance</option>
- <option value="aave">AAVE V3</option>
+ <option value="aave">AAVE V4</option>
  </select>
  </div>
  <div class="field">
@@ -1412,6 +1414,26 @@ body, input, button, select, textarea {
  <option value="open">Abriu ciclo</option>
  <option value="close">Fechou ciclo</option>
  </select>
+ </div>
+ </div>
+ <div class="two-col">
+ <div class="field">
+ <label>Token</label>
+ <select id="d-lend-token">
+   <option value="">— selecione —</option>
+   <option value="SOL">SOL — Solana</option>
+   <option value="ETH">ETH — Ethereum</option>
+   <option value="WETH">WETH — Wrapped ETH</option>
+   <option value="USDT">USDT — Tether</option>
+   <option value="USDC">USDC — USD Coin</option>
+   <option value="USDS">USDS — Sky</option>
+   <option value="GHO">GHO — Aave</option>
+   <option value="ADA">ADA — Cardano</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Quantidade (tokens)</label>
+ <input type="number" id="d-lend-qty" placeholder="ex: 1.02" step="any" min="0">
  </div>
  </div>
  <div class="two-col">
@@ -2030,11 +2052,11 @@ function calcUni(){
 // ══════════════════════════════════════════════
 // Portfolio base values
 var BASE = {
- ethQty:2.084106, solQty:19.37+0.13059,
+ ethQty:2.084106, solQty:20.39+0.13059,
  ethPrice:1936.22, solPrice:83.43,
  altVal:150, // ADA+RDNT+ZK+etc rough
- aaveDebt:748, aaveUSDT:1650.00, aaveETH:1.88,
- kamDebt:805.70, kamPYUSD:300.55, kamSOL:19.37,
+ aaveDebt:748, aaveUSDT:1985.68, aaveETH:1.88,
+ kamDebt:807.49, kamPYUSD:300.78, kamSOL:20.39,
  kamLiqThresh:0.7579, aaveLiqThresh:0.86,
  uniRangeMin:1855.72, uniRangeMax:3146.36,
  totalBase:5525
@@ -2072,7 +2094,7 @@ function calcScenario(){
  const aaveHF = BASE.aaveDebt>0?(totalCol_aave*BASE.aaveLiqThresh)/BASE.aaveDebt:99;
  const kamTotalCol = BASE.kamSOL*newSOL+BASE.kamPYUSD;
  const kamLTV = kamTotalCol>0?(BASE.kamDebt/kamTotalCol*100):0;
- const netPortfolio = ethHolding+solHolding+newAlt+1650+300.55-(BASE.aaveDebt+BASE.kamDebt);
+ const netPortfolio = ethHolding+solHolding+newAlt+BASE.aaveUSDT+BASE.kamPYUSD-(BASE.aaveDebt+BASE.kamDebt);
  const delta = netPortfolio-BASE.totalBase;
  const uniIn = newETH>=BASE.uniRangeMin && newETH<=BASE.uniRangeMax;
 
@@ -2615,10 +2637,10 @@ function loadActivePoolHedge(){
 }
 
 function loadBaroloScenario(){
- // Barolo real: colateral AAVE (1.88 WETH + 1650 USDT @ ETH=2431 ≈ $6220)
+ // Barolo real: colateral AAVE (1.88 WETH + 1986 USDT @ ETH atual ≈ $5,620)
  // + pool ativa $385 financiada ~100% pelo borrow USDC ($748)
- var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 2431;
- var aaveCollateral = Math.round(1.88 * live + 1650);
+ var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 1936;
+ var aaveCollateral = Math.round(1.88 * live + 1985.68);
  var set = function(id, v){ var el = document.getElementById(id); if (el) el.value = v; };
  set('lh-capital', aaveCollateral);
  set('lh-lp',      385);
@@ -2736,10 +2758,14 @@ function saveEntry(){
 
  // If lending entry, attach structured data
  if (type === 'lending') {
+ const lendToken = document.getElementById('d-lend-token').value;
+ const lendQty   = parseFloat(document.getElementById('d-lend-qty').value) || null;
  entry.lending = {
- proto: document.getElementById('d-proto').value,
- event: document.getElementById('d-event').value,
- amount: parseFloat(document.getElementById('d-amount').value) || null,
+ proto:     document.getElementById('d-proto').value,
+ event:     document.getElementById('d-event').value,
+ token:     lendToken || null,
+ tokenQty:  lendQty,
+ amount:    parseFloat(document.getElementById('d-amount').value) || null,
  debtAfter: parseFloat(document.getElementById('d-debt-after').value) || null,
  };
  }
@@ -2780,9 +2806,10 @@ function showSyncBadge() {
 }
 
 function clearForm(){
- ['d-title','d-body','d-pnl','d-tags','d-amount','d-debt-after'].forEach(id=>{
+ ['d-title','d-body','d-pnl','d-tags','d-amount','d-debt-after','d-lend-qty'].forEach(id=>{
  const el=document.getElementById(id);if(el)el.value='';
  });
+ const lt=document.getElementById('d-lend-token');if(lt)lt.value='';
  document.getElementById('d-date').value=new Date().toISOString().split('T')[0];
  document.getElementById('d-type').value='pool';
  ['d-trade-qty','d-trade-cost'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -2812,8 +2839,38 @@ function renderDiary(){
  return;
  }
  const typeLabel={'pool':'POOL','lending':'LENDING','trade':'TRADE','insight':'INSIGHT','risk':'RISCO'};
- list.innerHTML=items.map(e=>`
- <div class="diary-entry ${e.type}">
+ const fmtQty = (n,tok) => {
+   if (!n) return '';
+   const d = ['ETH','WETH'].includes(tok) ? 4 : ['SOL'].includes(tok) ? 3 : 2;
+   return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})+' '+tok;
+ };
+ list.innerHTML=items.map(e=>{
+   // Build structured data badge for lending and trade
+   let structBadge = '';
+   if (e.lending) {
+     const L = e.lending;
+     const eventLabel = {borrow:'Borrow',repay:'Repay','add-collateral':'Supply','remove-collateral':'Retirada',open:'Abriu ciclo',close:'Fechou ciclo'}[L.event]||L.event;
+     const tokStr = (L.token && L.tokenQty) ? `${fmtQty(L.tokenQty, L.token)}` : '';
+     const usdStr = L.amount ? `$${L.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '';
+     const parts = [tokStr, usdStr].filter(Boolean).join(' · ');
+     structBadge = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+       <span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;">${L.proto?.toUpperCase()||''} · ${eventLabel}</span>
+       ${parts?`<span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;">${parts}</span>`:''}
+       ${L.debtAfter!=null?`<span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;">Dívida → $${L.debtAfter.toLocaleString('en-US',{minimumFractionDigits:2})}</span>`:''}
+     </div>`;
+   }
+   if (e.trade) {
+     const T = e.trade;
+     const sideLabel = T.side==='buy'?'Compra':'Venda';
+     const qtyStr = fmtQty(T.qty, T.token);
+     const costStr = T.totalCost ? `$${T.totalCost.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '';
+     structBadge = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+       <span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:${T.side==='buy'?'var(--green)':'var(--red)'};font-family:'JetBrains Mono',monospace;letter-spacing:.08em;">${sideLabel}</span>
+       ${qtyStr?`<span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;">${qtyStr}</span>`:''}
+       ${costStr?`<span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;">${costStr}</span>`:''}
+     </div>`;
+   }
+   return `<div class="diary-entry ${e.type}">
  <div class="entry-header">
  <div style="display:flex;align-items:center;gap:8px;">
  <span class="entry-type-badge badge-${e.type}">${typeLabel[e.type]||e.type}</span>
@@ -2825,10 +2882,11 @@ function renderDiary(){
  </div>
  </div>
  <div class="entry-title">${e.title}</div>
+ ${structBadge}
  ${e.body?`<div class="entry-body">${e.body}</div>`:''}
  ${e.tags.length?`<div class="entry-meta">${e.tags.map(t=>`<span class="entry-tag">${t}</span>`).join('')}</div>`:''}
- </div>
- `).join('');
+ </div>`;
+ }).join('');
 }
 
 function updateDiaryStats(){
@@ -2871,10 +2929,10 @@ function checkAlerts(verbose){
  // Recalc HF quickly
  const ethPrice=parseFloat(document.getElementById('aave-ethprice')?.value||liveETH);
  const solPrice=parseFloat(document.getElementById('kam-solprice')?.value||liveSOL);
- const ethCol=1.88*ethPrice+1650.00;
+ const ethCol=1.88*ethPrice+1985.68;
  const aaveHF=(ethCol*0.86)/748;
- const kamCol=19.37*solPrice+300.55;
- const kamLTV=(805.70/kamCol*100);
+ const kamCol=20.39*solPrice+300.78;
+ const kamLTV=(807.49/kamCol*100);
  const uniIn=ethPrice>=1855.72&&ethPrice<=3146.36;
 
  let fired=0;
