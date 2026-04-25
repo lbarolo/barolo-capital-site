@@ -1354,9 +1354,9 @@ function renderUI(enriched){
  const cgTotal = _livePortfolioGross;
  const aaveDebtLive = window._liveAaveDebt || AAVE_DEBT;
  const kaminoDebtLive = window._liveKaminoDebt || KAMINO_DEBT;
- // Patrimônio Líquido = SPOT (ativos voláteis ao vivo) + STABLECOINS − Dívida total
- const netTotal = cgTotal + STABLES_USD - (aaveDebtLive + kaminoDebtLive);
- const totalPnL = cgTotal + STABLES_USD + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
+ // Patrimônio Líquido = SPOT (ativos ao vivo, inclui stables) + POOLS LP − Dívida total
+ const netTotal = cgTotal + LP_POOLED - (aaveDebtLive + kaminoDebtLive);
+ const totalPnL = cgTotal + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
  const realPnL = netTotal - TOTAL_INVESTED;
  const roi = (realPnL / TOTAL_INVESTED)*100;
  // 24h: só ativos voláteis (stables ~0% mas incluídas) + estimativa LP (50% WETH)
@@ -1371,8 +1371,9 @@ function renderUI(enriched){
   set('s-stables', fmtCurrency(stablesTotal, 0));
   var stablesSub = enriched.filter(a=>a.isStable).map(a=>a.ticker+' '+fmtCurrency(a.currentValue||a.qty,0)).join(' · ');
   if(stablesSub) set('s-stables-sub', stablesSub);
- set('s-spot', fmtCurrency(cgTotal, 0));
- set('s-spot-sub', enriched.length+' ativos');
+ var volatileTotal = enriched.filter(a=>!a.isStable).reduce((s,a)=>s+a.currentValue,0);
+ set('s-spot', fmtCurrency(volatileTotal, 0));
+ set('s-spot-sub', enriched.filter(a=>!a.isStable).length+' ativos');
  set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
 
