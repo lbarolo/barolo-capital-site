@@ -2335,3 +2335,23 @@ Nenhum nesta sessão.
 
 ---
 
+## Sessão 25/04/2026 — netTotal inclui LP + SPOT só voláteis + merge para main
+
+### Implementado
+- `portfolio_analytics.html` — `netTotal` agora inclui `LP_POOLED` ($365) que estava faltando: fórmula `cgTotal + LP_POOLED − debt` (era `cgTotal + STABLES_USD − debt` com STABLES_USD=0). Afeta `s-net-total`, `ev-net`, `realPnL` e ROI — todos estavam ~$365 abaixo do real.
+- `portfolio_analytics.html` — `s-spot` agora mostra só ativos voláteis (filter `!isStable`); contador também só voláteis. Antes mostrava volatile+stables, criando double-count visual com o card STABLES separado. Agora os 4 cards são aditivos: SPOT + POOLS LP + STABLES − DÍVIDAS = Patrimônio Líquido.
+- Branch `claude/setup-code-execution-omZ99` mergeada em `main` e pushada (resolveu conflito em CLAUDE.md mantendo logs das sessões 23 e 24/04 em ordem cronológica).
+
+### Bugs corrigidos
+| Bug | Fix |
+|-----|-----|
+| Patrimônio Líquido subestimado em ~$365 | `netTotal` faltava `LP_POOLED` na fórmula |
+| SPOT card mostrando volatile+stables (double-count com STABLES card) | Filtro `!isStable` adicionado em `s-spot` e contador |
+
+### O que ainda falta
+- **`wealthCurve` Abr/2026** — após 30/04/2026
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — custo BRL + IR (Lucas traz)
+
+---
+
