@@ -3132,14 +3132,16 @@ document.addEventListener('DOMContentLoaded',function(){
  const SOL_WALLET = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
 
  // ── Contracts ────────────────────────────────────────────────────
- const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
+ // AAVE V4 — Hub-and-Spoke (replaces single AAVE_POOL from V3)
+ const MAIN_SPOKE     = '0x94e7A5dCbE816e498b89aB752661904E2F56c485'; // WETH + USDT supply + USDC borrow
+ const BLUECHIP_SPOKE = '0x973a023A77420ba610f06b3858aD991Df6d85A08'; // extra WETH tier (if any)
+ const V4_SEL         = '0x91b89fba'; // getUserAccountData V4
  const AAVE_DATA_PROVIDER = '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3';
  const UNI_NFT = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
  const LP_TOKEN_ID = 4694262;
  const USDT_ADDR = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
  const USDC_ADDR = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
  const WETH_ADDR = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
- const GHO_ADDR  = '0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2d';
 
  // Kamino program ID on Solana
  const KAMINO_PROGRAM = 'KLend2g3cP87fffoy8q1mQqGKjrL9CGMcnvsoBrDgKzX';
@@ -3205,39 +3207,58 @@ document.addEventListener('DOMContentLoaded',function(){
  }
 
  // ── AAVE V4 ──────────────────────────────────────────────────────
+ // V4 struct: [0]=riskPremium(BPS), [1]=avgCF(WAD), [2]=HF(WAD=1e18),
+ //            [3]=totalCollateral(8dec USD), [4]=totalDebtRay(RAY=1e27), [5..6]=counts
  async function fetchAave(ethPrice) {
  try {
- const data = '0xbf92857c' + padAddr(AAVE_WALLET);
- const raw = await ethCall(ETH_RPC, AAVE_POOL, data);
- // Returns 6 uint256: totalCollateralBase, totalDebtBase, availBorrows, liqThreshold, ltv, healthFactor
- const collateral = decNum(decUint(raw, 0), 8); // USD 8 decimals
- const debt = decNum(decUint(raw, 1), 8);
- const liqThresh = decNum(decUint(raw, 3), 4);
- const hf = decNum(decUint(raw, 5), 18);
+ const walletData = V4_SEL + padAddr(AAVE_WALLET);
+ // Query MAIN_SPOKE (has all positions) + optional BLUECHIP_SPOKE (premium WETH tier)
+ const [mainRaw, bcRaw] = await Promise.all([
+   ethCall(ETH_RPC, MAIN_SPOKE, walletData),
+   ethCall(ETH_RPC, BLUECHIP_SPOKE, walletData).catch(() => null)
+ ]);
 
- console.log(`[AAVE] Collateral: $${collateral.toFixed(2)}, Debt: $${debt.toFixed(2)}, HF: ${hf.toFixed(2)}`);
+ const mainColl = decNum(decUint(mainRaw, 3), 8);  // 8-dec USD
+ const mainDebt = decNum(decUint(mainRaw, 4), 27); // RAY = 1e27
+ const hf       = decNum(decUint(mainRaw, 2), 18); // WAD = 1e18
+
+ let bcColl = 0;
+ if (bcRaw && bcRaw.length > 10 && bcRaw !== '0x') {
+   const bc = decNum(decUint(bcRaw, 3), 8);
+   if (isFinite(bc) && bc > 50) bcColl = bc;
+ }
+ const collateral = mainColl + bcColl;
+ const debt       = mainDebt;
+
+ console.log(`[AAVE V4] coll=$${collateral.toFixed(0)} debt=$${debt.toFixed(2)} HF=${hf.toFixed(2)}`);
+
+ // Sanity checks
+ if (!isFinite(collateral) || !isFinite(debt) || !isFinite(hf)) {
+   console.warn('[AAVE V4] Sanity: non-finite value, discarding'); return null;
+ }
+ if (collateral < 100) {
+   console.warn('[AAVE V4] Sanity: collateral $' + collateral.toFixed(2) + ' < $100, discarding'); return null;
+ }
+ if (hf > 1e15) {
+   console.warn('[AAVE V4] Sanity: HF impossible (' + hf.toExponential(2) + '), discarding'); return null;
+ }
 
  // Update AAVE card UI
  setEl('aave-net-worth', fmtK(collateral - debt));
  const hfEl = document.getElementById('aave-hf-metric');
  if (hfEl) {
- hfEl.textContent = hf.toFixed(2);
- hfEl.style.color = hf > 2 ? 'var(--green)' : hf > 1.3 ? 'var(--yellow)' : 'var(--red)';
+   hfEl.textContent = hf.toFixed(2);
+   hfEl.style.color = hf > 2 ? 'var(--green)' : hf > 1.3 ? 'var(--yellow)' : 'var(--red)';
  }
 
- // Also update via existing updateAave function if available
- if (typeof updateAave === 'function' && ethPrice) {
- updateAave({ totalCollateral: collateral, totalDebt: debt, liqThreshold: liqThresh/100, healthFactor: hf }, ethPrice);
- }
-
- // Store globals for other calcs
- window._liveAaveDebt = debt;
+ // Store globals for exec bar and other calcs
+ window._liveAaveDebt       = debt;
  window._liveAaveCollateral = collateral;
- window._liveAaveHF = hf;
+ window._liveAaveHF         = hf;
 
- return { collateral, debt, liqThresh, hf };
+ return { collateral, debt, hf };
  } catch(e) {
- console.warn('[AAVE] failed:', e.message);
+ console.warn('[AAVE V4] failed:', e.message);
  return null;
  }
  }
@@ -3247,19 +3268,19 @@ document.addEventListener('DOMContentLoaded',function(){
    try {
      const sel = '0x35ea6a75'; // getReserveData(address)
      const RAY = 1e27;
-     const [usdtRaw, ghoRaw] = await Promise.all([
+     const [usdtRaw, usdcRaw] = await Promise.all([
        ethCall(ETH_RPC, AAVE_DATA_PROVIDER, sel + padAddr(USDT_ADDR)).catch(() => null),
-       ethCall(ETH_RPC, AAVE_DATA_PROVIDER, sel + padAddr(GHO_ADDR)).catch(() => null),
+       ethCall(ETH_RPC, AAVE_DATA_PROVIDER, sel + padAddr(USDC_ADDR)).catch(() => null),
      ]);
      if (usdtRaw) {
        const supplyRate = Number(decUint(usdtRaw, 5)) / RAY * 100;
        if (supplyRate > 0 && supplyRate < 50) window._liveAaveUsdtApy = supplyRate;
      }
-     if (ghoRaw) {
-       const borrowRate = Number(decUint(ghoRaw, 6)) / RAY * 100;
+     if (usdcRaw) {
+       const borrowRate = Number(decUint(usdcRaw, 6)) / RAY * 100;
        if (borrowRate > 0 && borrowRate < 50) window._liveAaveBorrowApy = borrowRate;
      }
-     console.log(`[AAVE APY] USDT supply: ${(window._liveAaveUsdtApy||0).toFixed(2)}%, GHO borrow: ${(window._liveAaveBorrowApy||0).toFixed(2)}%`);
+     console.log(`[AAVE APY] USDT supply: ${(window._liveAaveUsdtApy||0).toFixed(2)}%, USDC borrow: ${(window._liveAaveBorrowApy||0).toFixed(2)}%`);
    } catch(e) {
      console.warn('[AAVE APY] failed:', e.message);
    }

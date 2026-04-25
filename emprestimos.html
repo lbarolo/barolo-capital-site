@@ -1614,12 +1614,16 @@ function toggleLang() {
   const HELIUS_API   = `https://api.helius.xyz/v0`;
   const AAVE_WALLET  = '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396';
   const SOL_WALLET   = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
-  const AAVE_POOL    = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
-  // aTokens e dívida USDC
-  const AWETH_TOKEN  = '0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8';
-  const AUSDT_TOKEN  = '0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a';
-  const VDEBT_USDC   = '0x72E95b8931767C79bA4EeE721354d6E99a61D004'; // AAVE V3 variable debt USDC
-  // Assets para consulta de APY
+  // AAVE V4 — Hub-and-Spoke architecture
+  // MAIN_SPOKE: handles WETH + USDT supply + USDC borrow (hub for main markets)
+  // BLUECHIP_SPOKE: handles additional collateral if any (WBTC/WETH premium tier)
+  const MAIN_SPOKE     = '0x94e7A5dCbE816e498b89aB752661904E2F56c485';
+  const BLUECHIP_SPOKE = '0x973a023A77420ba610f06b3858aD991Df6d85A08';
+  // V4 getUserAccountData selector (different ABI from V3's 0xbf92857c)
+  // Returns struct: riskPremium[0,BPS], avgCF[1,WAD], HF[2,WAD=1e18],
+  //                 totalCollateral[3,8dec USD], totalDebtRay[4,RAY=1e27], collCount[5], borrowCount[6]
+  const V4_SEL         = '0x91b89fba';
+  // V3 DataProvider — still usable for underlying asset APYs (WETH/USDT/USDC market rates)
   const AAVE_DATA_PROVIDER = '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3';
   const WETH_ADDR    = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
   const USDT_ADDR    = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
@@ -1684,63 +1688,93 @@ function toggleLang() {
   }
 
   // ── AAVE V4 ─────────────────────────────────────────────────────
+  // V4 struct at each spoke: [0]=riskPremium(BPS), [1]=avgCF(WAD), [2]=HF(WAD),
+  //                          [3]=totalCollateral(8dec USD), [4]=totalDebtRay(RAY=1e27),
+  //                          [5]=activeCollateralCount, [6]=borrowCount
   async function fetchAave(ethPrice) {
     try {
-      const accData = '0xbf92857c' + padAddr(AAVE_WALLET);
-      const balData = '0x70a08231' + padAddr(AAVE_WALLET);
+      const walletData = V4_SEL + padAddr(AAVE_WALLET);
 
-      // Busca paralela: dados da conta + saldos dos aTokens + APYs
-      const [raw, wethRaw, usdtRaw, usdcRaw, apys] = await Promise.all([
-        rpc(ETH_RPC, 'eth_call', [{to: AAVE_POOL, data: accData}, 'latest']),
-        rpc(ETH_RPC, 'eth_call', [{to: AWETH_TOKEN, data: balData}, 'latest']).catch(() => null),
-        rpc(ETH_RPC, 'eth_call', [{to: AUSDT_TOKEN, data: balData}, 'latest']).catch(() => null),
-        rpc(ETH_RPC, 'eth_call', [{to: VDEBT_USDC,  data: balData}, 'latest']).catch(() => null),
+      // Query MAIN_SPOKE (primary market — WETH + USDT supply + USDC borrow)
+      // Query BLUECHIP_SPOKE in parallel (premium tier — may have additional WETH collateral)
+      const [mainRaw, bcRaw, apys] = await Promise.all([
+        rpc(ETH_RPC, 'eth_call', [{to: MAIN_SPOKE, data: walletData}, 'latest']),
+        rpc(ETH_RPC, 'eth_call', [{to: BLUECHIP_SPOKE, data: walletData}, 'latest']).catch(() => null),
         fetchAaveApys().catch(() => null)
       ]);
 
-      const collateral = decNum(decUint(raw, 0), 8);
-      const debt       = decNum(decUint(raw, 1), 8);
-      const liqThresh  = decNum(decUint(raw, 3), 4);
-      const hf         = decNum(decUint(raw, 5), 18);
-      const net        = collateral - debt;
-      const ltv        = collateral > 0 ? (debt / collateral * 100) : 0;
-      const borrowPwr  = collateral > 0 ? (debt / (collateral * liqThresh) * 100) : 0;
+      // Parse MAIN_SPOKE — has the borrow, so gives real HF
+      const mainColl = decNum(decUint(mainRaw, 3), 8);   // 8-dec USD (same as V3)
+      const mainDebt = decNum(decUint(mainRaw, 4), 27);  // RAY = 1e27
+      const mainHF   = decNum(decUint(mainRaw, 2), 18);  // WAD = 1e18
+      const mainAvgCF= decNum(decUint(mainRaw, 1), 18);  // avgCollateralFactor WAD
 
-      // Quantidades dinâmicas dos aTokens (fallback para valores conhecidos)
-      const ethQty  = (wethRaw && decNum(decUint(wethRaw, 0), 18) > 0) ? decNum(decUint(wethRaw, 0), 18) : 1.88;
-      const usdtQty = (usdtRaw && decNum(decUint(usdtRaw, 0), 6) > 0) ? decNum(decUint(usdtRaw, 0), 6) : 1985.68;
-      const usdcQty = (usdcRaw && decNum(decUint(usdcRaw, 0), 6) > 0) ? decNum(decUint(usdcRaw, 0), 6) : debt;
+      // BLUECHIP_SPOKE: extra collateral only — if Lucas has a separate WETH position there
+      let bcColl = 0;
+      if (bcRaw && bcRaw.length > 10 && bcRaw !== '0x') {
+        const bc = decNum(decUint(bcRaw, 3), 8);
+        if (isFinite(bc) && bc > 50) bcColl = bc; // ignore tiny/noise values
+      }
 
-      // APYs (fallback para valores do usuário)
+      const totalColl = mainColl + bcColl;
+      const totalDebt = mainDebt;
+      const hf = mainHF;
+      const net = totalColl - totalDebt;
+      const ltv = totalColl > 0 ? (totalDebt / totalColl * 100) : 0;
+      // borrowPwr using avgCF from V4 struct (avgCollateralFactor is the blended LT)
+      const effLT = (mainAvgCF > 0.5 && mainAvgCF <= 1) ? mainAvgCF : 0.825;
+      const borrowPwr = totalColl > 0 ? (totalDebt / (totalColl * effLT) * 100) : 0;
+
+      console.log(`[AAVE V4] MAIN coll=$${mainColl.toFixed(0)} BC coll=$${bcColl.toFixed(0)} debt=$${totalDebt.toFixed(2)} HF=${hf.toFixed(2)}`);
+
+      // ── Sanity checks ────────────────────────────────────────────
+      if (!isFinite(totalColl) || !isFinite(totalDebt) || !isFinite(hf)) {
+        console.warn('[AAVE V4] Sanity: valor não-finito, descartando'); return null;
+      }
+      if (totalColl < 100) {
+        console.warn('[AAVE V4] Sanity: colateral $' + totalColl.toFixed(2) + ' < $100, descartando'); return null;
+      }
+      if (hf > 1e15) {
+        console.warn('[AAVE V4] Sanity: HF impossível (' + hf.toExponential(2) + ') — debt=0 ou bloco vazio, descartando'); return null;
+      }
+
+      // ── Per-asset quantity derivation ────────────────────────────
+      const ep = ethPrice || liveEth || 2000;
+      // If BLUECHIP has collateral: WETH is there → derive qty; USDT ≈ mainColl
+      // If all in MAIN (bcColl=0): WETH portion ≈ totalColl - USDT; USDT from remainder
+      // Static fallbacks (known quantities) used when derivation is uncertain
+      let wethQty, usdtQty, usdcQty;
+      if (bcColl > 100) {
+        wethQty = bcColl / ep;
+        usdtQty = mainColl; // MAIN only has stables
+      } else {
+        // All in MAIN — estimate WETH portion as total minus known USDT balance
+        const estUsdt = Math.min(mainColl * 0.55, mainColl - 100); // at least some WETH
+        usdtQty = estUsdt > 1000 ? estUsdt : 1985.68;
+        wethQty = (mainColl - usdtQty) / ep;
+        if (wethQty < 0.1) wethQty = 1.88; // static fallback if derivation nonsensical
+      }
+      usdcQty = totalDebt > 0 ? totalDebt : 748;
+
+      // APYs (fallback para valores conhecidos)
       const wethApy = (apys?.weth?.supply > 0) ? apys.weth.supply : 1.25;
       const usdtApy = (apys?.usdt?.supply > 0) ? apys.usdt.supply : 9.26;
       const usdcApy = (apys?.usdc?.borrow > 0) ? apys.usdc.borrow : 2.32;
 
-      const ethUsd  = ethQty * (ethPrice || liveEth || 2079);
-      const usdt    = usdtQty; // USDT é estável, qty ≈ USD
+      const ethUsd = wethQty * ep;
 
-      console.log(`[AAVE] Supply $${collateral.toFixed(0)} Debt $${debt.toFixed(0)} HF ${hf.toFixed(2)} LTV ${ltv.toFixed(1)}%`);
-      // Sanity check — RPC pode retornar 0x vazio em rate-limit/falha silenciosa
-      if (!isFinite(collateral) || !isFinite(debt) || !isFinite(hf)) {
-        console.warn('[AAVE Emp] Sanity: valor não-finito detectado, descartando'); return null;
-      }
-      if (collateral < 100) { console.warn('[AAVE Emp] Sanity: colateral $' + collateral.toFixed(2) + ' < $100, descartando'); return null; }
-      // Se debt=0 com colateral alto, AAVE retorna HF = uint256.max (~1.16e77) — dados inválidos para esta posição
-      if (hf > 1e15) { console.warn('[AAVE Emp] Sanity: HF impossível (' + hf.toExponential(2) + ') — provavelmente debt=0 ou bloco vazio, descartando'); return null; }
-      // liqThresh inválido causaria borrowPwr=Infinity
-      if (liqThresh < 0.5 || liqThresh > 1) { console.warn('[AAVE Emp] Sanity: liqThresh inválido (' + liqThresh + '), descartando'); return null; }
-
+      // ── Update UI ────────────────────────────────────────────────
       // Supply
-      updateDataUsd('em-aave-supply', collateral);
-      set('em-aave-weth-qty', ethQty.toFixed(3));
+      updateDataUsd('em-aave-supply', totalColl);
+      set('em-aave-weth-qty', wethQty.toFixed(3));
       set('em-aave-usdt-qty', Math.round(usdtQty).toLocaleString('en-US'));
-      set('em-aave-eth-usd',  '$' + ethUsd.toFixed(0));
-      set('em-aave-usdt-usd', '$' + Math.round(usdt).toLocaleString('en-US'));
+      set('em-aave-eth-usd',  '$' + Math.round(ethUsd).toLocaleString('en-US'));
+      set('em-aave-usdt-usd', '$' + Math.round(usdtQty).toLocaleString('en-US'));
       set('em-aave-weth-apy', wethApy.toFixed(2) + '%');
       set('em-aave-usdt-apy', usdtApy.toFixed(2) + '%');
 
       // Borrow
-      updateDataUsd('em-aave-borrow', debt);
+      updateDataUsd('em-aave-borrow', totalDebt);
       set('em-aave-borrow-qty', usdcQty.toFixed(2));
       set('em-aave-borrow-apy', usdcApy.toFixed(2) + '%');
       set('em-aave-borrow-token', 'USDC');
@@ -1754,23 +1788,32 @@ function toggleLang() {
       set('em-aave-ltv-lbl', ltv.toFixed(1) + '%'); setCol('em-aave-ltv-lbl', ltvColor);
       set('em-aave-borrow-power', borrowPwr.toFixed(1) + '%');
 
-      // LTV bar (escala até liq 82.5%)
+      // LTV bar (escala até liq ~82.5%)
       const fillPct = Math.min(ltv / 82.5 * 100, 100).toFixed(1);
       const fill = $('em-aave-ltv-fill');
       if (fill) { fill.style.width = fillPct + '%'; fill.style.background = ltvColor; }
 
+      // Proportion bars (WETH vs USDT in supply)
+      if (totalColl > 0) {
+        const wethPct = (ethUsd / totalColl * 100).toFixed(1);
+        const usdtPct = (usdtQty / totalColl * 100).toFixed(1);
+        const wBar = $('em-aave-weth-bar'), uBar = $('em-aave-usdt-bar');
+        if (wBar) wBar.style.width = wethPct + '%';
+        if (uBar) uBar.style.width = usdtPct + '%';
+      }
+
       // KPI dívida total
       const kaminoDebt = window._liveKaminoDebt || 807.49;
-      updateDataUsd('em-kpi-debt', debt + kaminoDebt);
+      updateDataUsd('em-kpi-debt', totalDebt + kaminoDebt);
       const kpiDebtSub = $('em-kpi-debt')?.nextElementSibling;
-      if (kpiDebtSub) kpiDebtSub.textContent = `AAVE $${debt.toFixed(0)} · Kamino $${kaminoDebt.toFixed(0)}`;
+      if (kpiDebtSub) kpiDebtSub.textContent = `AAVE $${totalDebt.toFixed(0)} · Kamino $${kaminoDebt.toFixed(0)}`;
 
-      window._liveAaveHF   = hf;
-      window._liveAaveDebt = debt;
-      window._liveAaveCollateral = collateral;
-      return { collateral, debt, hf, ltv };
+      window._liveAaveHF          = hf;
+      window._liveAaveDebt        = totalDebt;
+      window._liveAaveCollateral  = totalColl;
+      return { collateral: totalColl, debt: totalDebt, hf, ltv };
     } catch(e) {
-      console.warn('[AAVE Emp] failed:', e.message);
+      console.warn('[AAVE V4] failed:', e.message);
       return null;
     }
   }
