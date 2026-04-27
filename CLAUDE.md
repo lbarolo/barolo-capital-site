@@ -2355,3 +2355,115 @@ Nenhum nesta sessão.
 
 ---
 
+## Sessão 27/04/2026 — track.html live on-chain + Solana APR + nav Track em todas as páginas
+
+### Implementado
+
+#### `track.html` — Fetch ao vivo da pool ativa (Base RPC, on-chain)
+
+**Função `fetchLiveActivePool()`** adicionada antes do bloco THEME:
+- Contratos: `NFT_MGR = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'` (Base NonfungiblePositionManager), `POOL = '0x6c561B446416E1A00E8E93E221854d6eA4171372'` (Base WETH/USDC 0.30%), `TOKEN_ID = 4694262`
+- Constantes: `ENTRY_CAPITAL = 365`, `OPEN_TS = new Date('2026-03-18').getTime() / 1000`
+- RPCs: `['https://base-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7', 'https://mainnet.base.org', 'https://base.llamarpc.com', 'https://base.drpc.org']`
+- Lógica completa com BigInt: `positions()`, `slot0()`, `feeGrowthGlobal0X128`/`feeGrowthGlobal1X128`, dados do tick inferior e superior, cálculo de liquidez `SqrtPriceMath`, fees não coletadas em wei → USD
+- Atualiza `POOLS[0].days`, `POOLS[0].fees`, `POOLS[0].il`, `POOLS[0].result` com dados ao vivo
+- Atualiza DOM: `kpi-liq` (valor pooled em $) e `kpi-apr` (Fee APR = `fees / ENTRY_CAPITAL / days * 365 * 100`)
+- Helper `fetchTimeout()` adicionado — `Promise.race` com timeout de 8s por RPC
+- Helper `getLivePrice(ids)` adicionado — CoinGecko com fallback Jupiter, cache 60s em `window._priceCache`
+- Chamada em `init()`: `fetchLiveActivePool().catch(e => console.debug(...))`
+
+**Resultado verificado via preview_eval:** `kpi-apr: "+43.0%"`, `kpi-liq: "$325"`, `POOLS[0].days: 41, fees: 17.54` — dados corretos conforme Base RPC.
+
+#### `pools.html` — Solana adicionado ao explorador de APR
+
+**Mapeamentos adicionados:**
+```js
+WETH = { solana: 'So11111111111111111111111111111111111111112' }
+NET_COLOR = { solana: '#14F195' }
+NET_SHORT  = { solana: 'SOL' }
+UNI_LINK   = { solana: 'https://www.geckoterminal.com/solana/pools/' }
+```
+
+**Chip "Solana" (verde)** adicionado à linha de filtros de rede.
+
+**`fetchNet()` — branch Solana:**
+```js
+if (net === 'solana') {
+  const url = `https://api.geckoterminal.com/api/v2/networks/solana/tokens/${WETH.solana}/pools?...`;
+  // filtra TVL >= $100K, detecta Orca/Raydium via relationships.dex.data.id
+  // top 25 por APR
+}
+```
+
+**`protoBadge`** adicionado em `rowHtml()` — exibe badge "ORCA" (verde) ou "RAYDIUM" (roxo) para pools Solana.
+
+**Stagger:** `loadNet('solana')` com delay de 20s em `loadAllUniPools` e `DOMContentLoaded` para evitar HTTP 429.
+
+**Seção atualizada:** label "DEX — Melhores APRs (ETH · Base · Arbitrum · Solana)"; footer menciona Orca + Raydium + filtro TVL mín $100K.
+
+**"↗ ABRIR TRACK" button** adicionado no Registro Histórico — link dourado para `track.html` com nota explicativa no rodapé.
+
+#### Nav "Track" adicionada em todas as páginas
+
+| Arquivo | Mudança |
+|---------|---------|
+| `pools.html` | `<a href="track.html" data-i18n="nav-track">Track</a>` + `LANG_STRINGS['nav-track']` |
+| `portfolio_analytics.html` | idem |
+| `emprestimos.html` | idem |
+| `ferramentas.html` | idem + fix: `data-i18n="nav-pools"` que estava faltando no link de pools |
+
+### Dados atualizados
+
+Nenhum dado de posição alterado. `track.html` passou a derivar `days`, `fees`, `result` da pool ativa diretamente do Base RPC em tempo real.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| APR card em track.html sempre "—" | Não havia fetch on-chain implementado; valores derivados do array estático `POOLS` | `fetchLiveActivePool()` implementado com Base RPC + BigInt math |
+| Nav sem "Track" em 4 páginas | Link nunca foi adicionado na sessão de criação do track.html | `<a href="track.html">` adicionado em todas as páginas |
+| `ferramentas.html` link "Pools" sem data-i18n | Esquecido na criação original | `data-i18n="nav-pools"` adicionado |
+
+### Discussão estratégica — Site como plataforma SaaS
+
+Lucas perguntou sobre viabilidade de transformar o site em multi-usuário (cadastro + wallet connect + CSV import).
+
+**3 opções avaliadas:**
+1. **Wallet Connect puro** — `ethers.js` + RainbowKit + Wagmi; detecta posições Uniswap V3, Aave, Kamino automaticamente; 2–4 semanas; sem backend
+2. **CSV Import** — upload de CSV Binance/CoinGecko/Aave; parser front-end; simples mas experiência pior
+3. **Backend SaaS** — auth, DB, billing; $15–30/mês infra; meses de dev; necessário para escala
+
+**Recomendação dada:** começar pelo Wallet Connect como proof-of-concept — sem backend, funciona 100% no browser, já resolve o problema de Lucas de não precisar hardcodar dados.
+
+**Barreira maior identificada:** não é técnica — é UX/onboarding. Usuário DeFi precisa entender o que o site faz antes de conectar a carteira. Sugestão: landing page clara + "demo mode" com dados de exemplo.
+
+### Conteúdo da mentoria — "How to Survive a Crypto Cycle" (Fred Ehrsam, Paradigm, 2021)
+
+PDF lido e analisado. 6 insights aplicados à realidade de Lucas:
+
+1. **"Tudo morre no bear exceto o que tem produto-market fit real"** — AAVE, Uniswap e Kamino sobreviveram; GRIFT e tokens de narrativa não. Lucas já está nos protocolos certos.
+2. **"Cash (stables) = optionalidade, não fraqueza"** — $2.4K em USDT/USDS não é posição perdida; é poder de compra esperando assimetria. O bear é quando os retornos são plantados.
+3. **"Yield sem entender o risco é o caminho mais rápido para zero"** — experiência do GRIFT/PEANUT válida. A separação atual (5% em pools, resto passivo) é exatamente o framework sugerido.
+4. **"Ciclos duram mais do que você espera — nos dois sentidos"** — bull mercados convencem que vai durar para sempre, bears convencem que nunca vai voltar. Calendário de DCA força disciplina mecânica.
+5. **"A virada de ciclo não é anunciada"** — indicadores a monitorar: BTC dominância caindo + altcoin season index + stablecoin supply crescendo. Lucas já tem Fear & Greed no dashboard.
+6. **"Sobreviver para o próximo ciclo é a estratégia"** — preservação de capital é alpha. Lucas já executa isso: lending conservador, sem alavancagem agressiva, pools como exit strategy.
+
+### Commits
+
+- `cb25616` — feat: track.html live on-chain fetch + Solana pools no APR explorer
+- `57065cd` — feat: aba Track adicionada ao nav de todas as páginas
+
+### O que ainda falta
+
+- **`wealthCurve` Abr/2026** — adicionar ponto após 30/04/2026 (Lucas avisa com print)
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — Binance/Bybit/OKX para custo de aquisição em BRL e base para IR
+- **`relatorio.html`** — ainda não tem link "Track" no nav (só tem "← Pools" e "Analytics")
+- **Continuação mentoria DeFi avançado** — Euler V2, Morpho Blue, Gearbox V3, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **Validar calcLevHedge()** — rodar cenários com pool atual ($365) e hipotética ($2000)
+- **i18n painel Sizing & Risk** — labels só em PT; adicionar strings EN
+- **APR pool Base** — só via uncollected fees; Collect events históricos não contabilizados
+- **Wallet Connect** — proof-of-concept para detectar posições automaticamente (avaliado mas não implementado)
+
+---
+
