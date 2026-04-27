@@ -376,8 +376,8 @@
     </div>
     <div class="kpi-card">
       <div class="kpi-label">APR Pool Ativa</div>
-      <div class="kpi-value pos">32%</div>
-      <div class="kpi-sub"><span class="live-dot"></span>fee APR via Revert Finance</div>
+      <div class="kpi-value pos" id="kpi-apr">32%</div>
+      <div class="kpi-sub" id="kpi-apr-sub"><span class="live-dot"></span>fee APR · on-chain Base</div>
     </div>
   </div>
 
@@ -761,6 +761,126 @@ function renderTable() {
   </tr>`;
 }
 
+// ─── LIVE FETCH — Active Pool (Base WETH/USDC 0.30% #4694262) ───────────────
+
+function fetchTimeout(url, opts, ms) {
+  opts = opts || {}; ms = ms || 7000;
+  const t = new Promise((_,rej) => setTimeout(() => rej(new Error('timeout')), ms));
+  return Promise.race([fetch(url, opts), t]);
+}
+
+const _priceCache = {};
+async function getLivePrice(ids) {
+  const key = ids.join(',');
+  if (_priceCache[key] && Date.now() - _priceCache[key].ts < 60000) return _priceCache[key].data;
+  try {
+    const r = await fetchTimeout('https://api.coingecko.com/api/v3/simple/price?ids='+ids.join(',')+'&vs_currencies=usd', {}, 8000);
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    const data = await r.json();
+    _priceCache[key] = { ts: Date.now(), data };
+    return data;
+  } catch(e) { return null; }
+}
+
+async function fetchLiveActivePool() {
+  const NFT_MGR  = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base NonfungiblePositionManager
+  const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
+  const TOKEN_ID = 4694262;
+  const ENTRY_CAPITAL = 365;
+  const OPEN_TS  = new Date('2026-03-18').getTime() / 1000;
+  const RPCS = [
+    'https://base-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7',
+    'https://mainnet.base.org',
+    'https://base.llamarpc.com',
+    'https://base.drpc.org'
+  ];
+  const Q96=2n**96n, Q128=2n**128n, Q256=2n**256n;
+  const w   = (h,i) => BigInt('0x'+h.slice(i*64,(i+1)*64));
+  const s256= b  => b>=(1n<<255n) ? Number(b-(1n<<256n)) : Number(b);
+  const m256= x  => ((x%Q256)+Q256)%Q256;
+  const enc = n  => (n<0?(BigInt(n)+Q256):BigInt(n)).toString(16).padStart(64,'0');
+  const sqX = t  => BigInt(Math.floor(Math.sqrt(Math.pow(1.0001,t))*2**96));
+
+  async function rpc(to, data) {
+    for (const url of RPCS) {
+      try {
+        const r = await fetchTimeout(url, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({jsonrpc:'2.0',method:'eth_call',params:[{to,data},'latest'],id:1})
+        }, 7000);
+        if (!r.ok) continue;
+        const j = await r.json();
+        if (j.error||!j.result||j.result==='0x') continue;
+        return j.result.slice(2);
+      } catch(e) { console.debug('[LP]', url, e.message); }
+    }
+    throw new Error('all RPCs failed');
+  }
+
+  // 1. Position (tickLower, tickUpper, liquidity, feeGrowthInsideLast, tokensOwed)
+  const pH = await rpc(NFT_MGR, '0x99fbab88'+TOKEN_ID.toString(16).padStart(64,'0'));
+  const tL=s256(w(pH,5)), tH=s256(w(pH,6)), liq=w(pH,7);
+  const fg0L=w(pH,8), fg1L=w(pH,9), ow0=w(pH,10), ow1=w(pH,11);
+
+  // 2. slot0 (sqrtPriceX96, currentTick)
+  const s0 = await rpc(POOL, '0x3850c7bd');
+  const sqP=w(s0,0), cT=s256(w(s0,1));
+
+  // 3. feeGrowthGlobal
+  const [f0h,f1h] = await Promise.all([rpc(POOL,'0xf3058399'), rpc(POOL,'0x46141319')]);
+  const fG0=w(f0h,0), fG1=w(f1h,0);
+
+  // 4. Tick feeGrowthOutside
+  const [tlH,tuH] = await Promise.all([rpc(POOL,'0xf30dba93'+enc(tL)), rpc(POOL,'0xf30dba93'+enc(tH))]);
+  const fo0l=w(tlH,2), fo1l=w(tlH,3), fo0u=w(tuH,2), fo1u=w(tuH,3);
+
+  // 5. Token amounts from liquidity math
+  const spL=sqX(tL), spU=sqX(tH);
+  let a0=0n, a1=0n;
+  if      (cT < tL)  { a0 = liq*Q96*(spU-spL)/(spL*spU); }
+  else if (cT >= tH) { a1 = liq*(spU-spL)/Q96; }
+  else               { a0 = liq*Q96*(spU-sqP)/(sqP*spU); a1 = liq*(sqP-spL)/Q96; }
+  const wethA = Number(a0)/1e18, usdcA = Number(a1)/1e6;
+
+  // 6. Uncollected fees (no Collect events — uncollected = total since 18/03/2026)
+  const fgi = (fgG,foL,foU,tLow,tUp,tCur) => {
+    const bl = tCur>=tLow ? foL : m256(fgG-foL);
+    const ab = tCur<tUp   ? foU : m256(fgG-foU);
+    return m256(fgG-bl-ab);
+  };
+  const fi0=fgi(fG0,fo0l,fo0u,tL,tH,cT), fi1=fgi(fG1,fo1l,fo1u,tL,tH,cT);
+  const uf0=ow0+liq*m256(fi0-fg0L)/Q128, uf1=ow1+liq*m256(fi1-fg1L)/Q128;
+  const uncW=Number(uf0)/1e18, uncU=Number(uf1)/1e6;
+
+  // 7. ETH price + USD values
+  const prices = await getLivePrice(['ethereum']);
+  const eth = prices?.ethereum?.usd || 1800;
+  const pooledUsd = wethA*eth + usdcA;
+  const uncFeeUsd = uncW*eth + uncU;
+  const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
+
+  // 8. Patch POOLS[0] with live numbers
+  POOLS[0].days   = Math.round(days);
+  POOLS[0].fees   = parseFloat(uncFeeUsd.toFixed(2));
+  POOLS[0].il     = parseFloat((pooledUsd - ENTRY_CAPITAL).toFixed(2));
+  POOLS[0].result = parseFloat((pooledUsd + uncFeeUsd - ENTRY_CAPITAL).toFixed(2));
+
+  // 9. Update KPI display
+  const liqEl = document.getElementById('kpi-liq');
+  if (liqEl) liqEl.textContent = '$' + Math.round(pooledUsd).toLocaleString('en-US');
+
+  if (uncFeeUsd > 0) {
+    const feeApr = uncFeeUsd / ENTRY_CAPITAL / days * 365 * 100;
+    const aprEl = document.getElementById('kpi-apr');
+    if (aprEl) { aprEl.textContent = '+'+feeApr.toFixed(1)+'%'; aprEl.className = 'kpi-value pos'; }
+    const subEl = document.getElementById('kpi-apr-sub');
+    if (subEl) subEl.innerHTML = '<span class="live-dot"></span>fee APR · on-chain · Base';
+  }
+
+  computeKPIs();
+  renderTable();
+}
+
 // ─── THEME ───────────────────────────────────────────────────────────────────
 
 function toggleTheme() {
@@ -785,6 +905,9 @@ function toggleTheme() {
   // default: newest first
   document.getElementById('sa-id') && (document.getElementById('sa-id').textContent = '▼');
   renderTable();
+
+  // live on-chain fetch — Base RPC (async, non-blocking)
+  fetchLiveActivePool().catch(e => console.debug('[Track] live pool fetch failed:', e.message));
 })();
 </script>
 </body>

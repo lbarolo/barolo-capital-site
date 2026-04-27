@@ -552,7 +552,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 <div id="bc-apr-section">
 <!-- ══ UNISWAP V3 — ETH/STABLES EXPLORER ══ -->
-<div class="section-label" style="margin-top:32px;">Uniswap V3 — Melhores APRs ETH/Stables</div>
+<div class="section-label" style="margin-top:32px;">DEX — Melhores APRs (ETH · Base · Arbitrum · Solana)</div>
 <div class="revert-panel">
  <div class="revert-toolbar">
  <div class="revert-title">
@@ -581,6 +581,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
    </button>
    <button class="uni-chip" data-net="arbitrum" onclick="switchChainFilter('arbitrum',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
      <span style="color:#5882d2;">◆</span> ARB
+   </button>
+   <button class="uni-chip" data-net="solana" onclick="switchChainFilter('solana',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
+     <span style="color:#14F195;">◆</span> SOL
    </button>
  </div>
 
@@ -654,7 +657,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </div>
 
  <div class="panel-footer">
- <span style="font-size:9px;color:var(--muted);">Fonte: GeckoTerminal API · Uniswap V3 · APR = Vol24h × fee ÷ TVL × 365</span>
+ <span style="font-size:9px;color:var(--muted);">Fonte: GeckoTerminal API · Uniswap V3 + Orca + Raydium · APR = Vol24h × fee ÷ TVL × 365 · SOL: TVL ≥ $100K</span>
  <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
  </div>
 </div>
@@ -665,19 +668,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const WETH = {
  eth:      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
  base:     '0x4200000000000000000000000000000000000006',
- arbitrum: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1'
+ arbitrum: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+ solana:   'So11111111111111111111111111111111111111112'
  };
  // Stables conhecidas (lowercase)
  const STABLES = new Set([
  'usdc','usdt','dai','usds','usdbc','usdc.e','frax','lusd','crvusd','pyusd','usde','susde','rlusd'
  ]);
  // Cores por rede
- const NET_COLOR = { eth:'#627EEA', base:'#4fa8ff', arbitrum:'#5882d2' };
+ const NET_COLOR = { eth:'#627EEA', base:'#4fa8ff', arbitrum:'#5882d2', solana:'#14F195' };
  // Links Uniswap por rede
  const UNI_LINK = {
  eth:      'https://app.uniswap.org/explore/pools/ethereum/',
  base:     'https://app.uniswap.org/explore/pools/base/',
- arbitrum: 'https://app.uniswap.org/explore/pools/arbitrum/'
+ arbitrum: 'https://app.uniswap.org/explore/pools/arbitrum/',
+ solana:   'https://www.geckoterminal.com/solana/pools/'
  };
 
  let _cache = {}; // { eth: [...], base: [...], arbitrum: [...] } — pools já com p.net atribuído
@@ -691,7 +696,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  function saveFavs() { localStorage.setItem('bc-fav-pools', JSON.stringify([..._favs])); }
  function isFav(net, addr) { return _favs.has(net+':'+addr); }
  // Labels e cores curtos por rede
- const NET_SHORT = { eth:'ETH', base:'BASE', arbitrum:'ARB' };
+ const NET_SHORT = { eth:'ETH', base:'BASE', arbitrum:'ARB', solana:'SOL' };
 
  // Portfolio token addresses per network
  const PORTFOLIO_ADDRS = {
@@ -741,6 +746,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  }
  async function fetchNet(net) {
  if (_cache[net]) return _cache[net];
+ // Solana: fetch SOL pools from Orca + Raydium, TVL > $100K, all pairs
+ if (net === 'solana') {
+   const url = `https://api.geckoterminal.com/api/v2/networks/solana/tokens/${WETH.solana}/pools?page=1&sort=h24_volume_usd_liquidity_desc`;
+   const r = await fetchWithRetry(url);
+   const j = await r.json();
+   const pools = (j.data||[]).map(p => {
+     const a = p.attributes||{};
+     const name = a.name||'—';
+     const tvl = parseFloat(a.reserve_in_usd)||0;
+     const vol = parseFloat(a.volume_usd?.h24)||0;
+     const fee = extractFee(name);
+     const apr = (fee && tvl > 0) ? (vol * fee/100 / tvl * 365 * 100) : null;
+     const chg = parseFloat(a.price_change_percentage?.h24);
+     const addr = p.id.replace('solana_','');
+     const dexId = (p.relationships?.dex?.data?.id)||'';
+     const proto = dexId.includes('orca') ? 'Orca' : dexId.includes('raydium') ? 'Raydium' : 'DEX';
+     return { name, tvl, vol, fee, apr, chg, addr, net: 'solana', proto };
+   }).filter(p => p.tvl >= 100000).sort((a,b)=>(b.apr||0)-(a.apr||0)).slice(0,25);
+   _cache[net] = pools;
+   return pools;
+ }
  const url = `https://api.geckoterminal.com/api/v2/networks/${net}/tokens/${WETH[net]}/pools?page=1&sort=h24_volume_usd_liquidity_desc`;
  const r = await fetchWithRetry(url);
  const j = await r.json();
@@ -784,6 +810,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const link = UNI_LINK[net]+p.addr;
  const cleanName = p.name.replace(/\s*[\d.]+%\s*$/,'').trim();
  const symBadge = p.sym ? `<span style="font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-right:4px;color:var(--gold);">${p.sym}</span>` : '';
+ const protoBadge = (p.net === 'solana' && p.proto && p.proto !== 'DEX') ? `<span style="font-size:9px;background:${p.proto==='Orca'?'rgba(20,241,149,0.08)':'rgba(200,80,200,0.08)'};border:1px solid ${p.proto==='Orca'?'rgba(20,241,149,0.25)':'rgba(200,80,200,0.25)'};border-radius:3px;padding:1px 5px;margin-right:4px;color:${p.proto==='Orca'?'#14F195':'#c841f5'};">${p.proto}</span>` : '';
  // Signal badges
  const volTvl = p.tvl>0 ? p.vol/p.tvl : 0;
  let sigBadges = '';
@@ -803,7 +830,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='${isTop?'rgba(201,160,80,.05)':''}'"
  onclick="window.open('${link}','_blank')">
  <td style="padding:9px 16px;font-weight:600;color:var(--text);">
-   <span onclick="event.stopPropagation();toggleFav('${net}','${p.addr}')" title="Favoritar pool" style="color:${starColor};margin-right:6px;cursor:pointer;font-size:13px;user-select:none;">${starIcon}</span>${symBadge}${cleanName}${sigBadges}</td>
+   <span onclick="event.stopPropagation();toggleFav('${net}','${p.addr}')" title="Favoritar pool" style="color:${starColor};margin-right:6px;cursor:pointer;font-size:13px;user-select:none;">${starIcon}</span>${symBadge}${protoBadge}${cleanName}${sigBadges}</td>
  <td style="padding:9px 8px;text-align:center;">
    <span style="background:var(--surface2);border:1px solid ${netColor}33;border-radius:3px;padding:2px 6px;font-size:9px;font-weight:600;color:${netColor};letter-spacing:.05em;">◆ ${netShort}</span>
  </td>
@@ -1036,12 +1063,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  loadNet('eth');
  setTimeout(()=>loadNet('base'), 4000);
  setTimeout(()=>loadNet('arbitrum'), 12000);
+ setTimeout(()=>loadNet('solana'), 20000);
  };
 
  document.addEventListener('DOMContentLoaded', function() {
  loadNet('eth');
  setTimeout(()=>loadNet('base'), 4000);
  setTimeout(()=>loadNet('arbitrum'), 12000);
+ setTimeout(()=>loadNet('solana'), 20000);
  });
 })();
 </script>
