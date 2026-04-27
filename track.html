@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track — Barolo Capital</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1830'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23c9a050' text-anchor='middle'>B</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0a18;
+      --surface: #13112b;
+      --surface2: #1a1730;
+      --border: rgba(200,190,255,0.08);
+      --text: #e2e0f0;
+      --muted: #8a7a9a;
+      --accent: #c9a050;
+      --green: #3fb950;
+      --red: #f85149;
+      --font: 'Satoshi', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    [data-theme="light"] {
+      --bg: #f5f3ff;
+      --surface: #ffffff;
+      --surface2: #ece9f8;
+      --border: rgba(0,0,0,0.08);
+      --text: #1a1830;
+      --muted: #7a6a8a;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 50px;
+      background: rgba(12,10,24,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    [data-theme="light"] nav { background: rgba(245,243,255,0.95); }
+
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-text {
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 2px; }
+    .nav-links a {
+      padding: 6px 12px; font-size: 12px; font-weight: 500;
+      color: var(--muted); text-decoration: none; border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-links a.active { color: var(--accent); background: rgba(201,160,80,0.1); }
+
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      padding: 6px 10px; font-size: 11px; font-weight: 600; font-family: var(--mono);
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); cursor: pointer; border-radius: 6px; transition: all 0.15s;
+    }
+    .nav-btn:hover { color: var(--text); border-color: rgba(201,160,80,0.4); }
+
+    /* ─── LAYOUT ─── */
+    .container {
+      max-width: 1320px; margin: 0 auto;
+      padding: 70px 24px 48px;
+    }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header { margin-bottom: 24px; }
+    .page-header-top {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+    }
+    .page-title {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--text);
+    }
+    .page-badge {
+      padding: 3px 10px; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; font-family: var(--mono); text-transform: uppercase;
+      background: rgba(201,160,80,0.1); color: var(--accent);
+      border: 1px solid rgba(201,160,80,0.25); border-radius: 20px;
+    }
+
+    /* ─── WALLET CHIPS ─── */
+    .wallet-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .wallet-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; font-family: var(--mono);
+      font-size: 11px; color: var(--muted); cursor: default;
+    }
+    .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .chip-net {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--accent); text-transform: uppercase;
+    }
+
+    /* ─── KPI GRID ─── */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; margin-bottom: 20px;
+    }
+    .kpi-card { background: var(--surface); padding: 18px 20px; }
+    .kpi-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-family: var(--mono); font-size: 24px; font-weight: 600;
+      color: var(--text); line-height: 1; margin-bottom: 5px;
+    }
+    .kpi-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+    .pos { color: var(--green) !important; }
+    .neg { color: var(--red) !important; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+    .live-dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); animation: pulse 2s infinite;
+      vertical-align: middle; margin-right: 4px;
+    }
+
+    /* ─── TOOLBAR ─── */
+    .toolbar {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .tab-group {
+      display: flex; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 3px; gap: 2px;
+    }
+    .tab-btn {
+      padding: 6px 16px; font-size: 12px; font-weight: 600;
+      border: none; background: transparent; cursor: pointer;
+      color: var(--muted); border-radius: 6px; transition: all 0.15s;
+      white-space: nowrap; font-family: var(--font);
+    }
+    .tab-btn.active { background: rgba(201,160,80,0.15); color: var(--accent); }
+    .tab-btn:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.04); }
+
+    .search-input {
+      flex: 1; min-width: 160px;
+      padding: 8px 12px; font-family: var(--font); font-size: 13px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); outline: none; transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: rgba(201,160,80,0.4); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .filter-select {
+      padding: 8px 28px 8px 10px; font-family: var(--font); font-size: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); outline: none; cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a7a9a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .filter-select:focus { border-color: rgba(201,160,80,0.4); }
+
+    .toolbar-spacer { flex: 1; }
+    .result-info { font-size: 11px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+
+    /* ─── TABLE ─── */
+    .table-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+      padding: 10px 14px; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      text-align: left; border-bottom: 1px solid var(--border);
+      white-space: nowrap; cursor: pointer; user-select: none;
+      transition: color 0.1s;
+    }
+    thead th:hover { color: var(--text); }
+    thead th.sorted { color: var(--accent); }
+    .sort-arrow { font-size: 8px; margin-left: 3px; opacity: 0.7; }
+    th.r { text-align: right; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border); cursor: pointer;
+      transition: background 0.1s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody tr.expanded { background: rgba(201,160,80,0.04); }
+    tbody tr.detail-row { cursor: default; }
+    tbody tr.detail-row:hover { background: transparent; }
+
+    td {
+      padding: 11px 14px; font-size: 13px; color: var(--text);
+      vertical-align: middle;
+    }
+
+    /* ─── CELLS ─── */
+    .pair-name {
+      font-family: var(--mono); font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pair-fee {
+      display: inline-block; padding: 1px 5px; font-size: 9px;
+      background: rgba(255,255,255,0.06); border-radius: 4px;
+      color: var(--muted); font-family: var(--mono);
+    }
+    .pair-proto { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .net-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 8px; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.05em; border-radius: 20px; font-family: var(--mono);
+      white-space: nowrap;
+    }
+    .net-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.06em; border-radius: 20px;
+      font-family: var(--mono); text-transform: uppercase;
+    }
+    .s-ativa { background: rgba(63,185,80,0.12); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+    .s-fechada { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+
+    .num { font-family: var(--mono); font-size: 12px; font-weight: 500; text-align: right; }
+    .expand-icon { font-size: 11px; color: var(--muted); transition: transform 0.2s, color 0.15s; display: inline-block; }
+    tr.expanded .expand-icon { transform: rotate(180deg); color: var(--accent); }
+
+    /* ─── DETAIL ROW ─── */
+    .detail-content {
+      padding: 16px 20px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+      background: rgba(0,0,0,0.18);
+      border-top: 1px solid var(--border);
+    }
+    .d-item { display: flex; flex-direction: column; gap: 4px; }
+    .d-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .d-value { font-family: var(--mono); font-size: 12px; color: var(--text); }
+    .d-note {
+      grid-column: 1 / -1;
+      font-size: 12px; color: var(--muted); font-style: italic;
+      padding-top: 10px; border-top: 1px solid var(--border);
+    }
+
+    /* ─── FOOTER ROW ─── */
+    tfoot td {
+      padding: 10px 14px; font-family: var(--mono); font-size: 12px;
+      font-weight: 700; border-top: 2px solid var(--border);
+      background: rgba(0,0,0,0.14);
+    }
+    .tfoot-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state { padding: 60px 20px; text-align: center; color: var(--muted); font-size: 13px; }
+
+    /* ─── HACK NOTICE ─── */
+    .notice {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 16px; margin-top: 16px;
+      background: rgba(248,81,73,0.06);
+      border: 1px solid rgba(248,81,73,0.15);
+      border-radius: 8px; font-size: 12px; color: var(--muted);
+    }
+    .notice strong { color: var(--red); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .hide-m { display: none; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      td, th { padding: 8px 10px; }
+      .hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6" fill="#1a1830"/>
+      <text x="16" y="23" font-family="Georgia,serif" font-size="18" font-weight="700" fill="#c9a050" text-anchor="middle">B</text>
+    </svg>
+    <span class="nav-logo-text">Barolo Capital</span>
+  </a>
+  <div class="nav-links">
+    <a href="portfolio_analytics.html">Portfolio</a>
+    <a href="pools.html">Pools</a>
+    <a href="track.html" class="active">Track</a>
+    <a href="emprestimos.html">Empréstimos</a>
+    <a href="ferramentas.html">Ferramentas</a>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="toggleTheme()" id="themeBtn">☾</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-top">
+      <h1 class="page-title">Track</h1>
+      <span class="page-badge">Pools de Liquidez</span>
+    </div>
+    <div class="wallet-chips">
+      <div class="wallet-chip">
+        <span class="chip-dot" style="background:#9945ff"></span>
+        <span class="chip-net">SOL</span>
+        Fq1F49V…VnrfW
+      </div>
+      <div class="wallet-chip">
+        <span class="chip-dot" style="background:#627EEA"></span>
+        <span class="chip-net">EVM</span>
+        0x5Ff957…4AE4B6
+      </div>
+      <div class="wallet-chip">
+        <span class="chip-dot" style="background:#4fa8ff"></span>
+        <span class="chip-net">BASE</span>
+        0x5Ff957…4AE4B6
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Liquidez Atual</div>
+      <div class="kpi-value" id="kpi-liq">$365</div>
+      <div class="kpi-sub"><span class="live-dot"></span>1 pool ativa · WETH/USDC</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Taxas Acumuladas</div>
+      <div class="kpi-value pos" id="kpi-fees">—</div>
+      <div class="kpi-sub" id="kpi-fees-sub">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Profit / Loss</div>
+      <div class="kpi-value" id="kpi-pnl">—</div>
+      <div class="kpi-sub" id="kpi-pnl-sub">fees − IL · todas as pools</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">APR Pool Ativa</div>
+      <div class="kpi-value pos">32%</div>
+      <div class="kpi-sub"><span class="live-dot"></span>fee APR via Revert Finance</div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="tab-group">
+      <button class="tab-btn active" onclick="setTab('all',this)">Todas<span id="c-all" style="opacity:0.5;margin-left:4px;font-size:10px"></span></button>
+      <button class="tab-btn" onclick="setTab('ativa',this)">Abertas<span id="c-ativa" style="opacity:0.5;margin-left:4px;font-size:10px"></span></button>
+      <button class="tab-btn" onclick="setTab('fechada',this)">Fechadas<span id="c-fechada" style="opacity:0.5;margin-left:4px;font-size:10px"></span></button>
+    </div>
+    <input class="search-input" type="text" placeholder="Buscar par, rede, protocolo…"
+           id="searchInput" oninput="renderTable()">
+    <select class="filter-select" id="netFilter" onchange="renderTable()">
+      <option value="">Todas as redes</option>
+      <option value="Arbitrum">Arbitrum</option>
+      <option value="Base">Base</option>
+      <option value="Ethereum">Ethereum</option>
+      <option value="Solana">Solana</option>
+    </select>
+    <select class="filter-select" id="protoFilter" onchange="renderTable()">
+      <option value="">Todos protocolos</option>
+      <option value="Uniswap V3">Uniswap V3</option>
+      <option value="Orca">Orca</option>
+      <option value="Raydium">Raydium</option>
+    </select>
+    <div class="toolbar-spacer"></div>
+    <span class="result-info" id="resultInfo">—</span>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy('pair')">Par / Protocolo <span class="sort-arrow" id="sa-pair"></span></th>
+          <th onclick="sortBy('net')" class="hide-sm">Rede <span class="sort-arrow" id="sa-net"></span></th>
+          <th onclick="sortBy('days')" class="hide-m">Período <span class="sort-arrow" id="sa-days"></span></th>
+          <th onclick="sortBy('capital')" class="r">Capital <span class="sort-arrow" id="sa-capital"></span></th>
+          <th onclick="sortBy('fees')" class="r">Taxas <span class="sort-arrow" id="sa-fees"></span></th>
+          <th onclick="sortBy('il')" class="r hide-m">IL <span class="sort-arrow" id="sa-il"></span></th>
+          <th onclick="sortBy('result')" class="r">P&L <span class="sort-arrow" id="sa-result"></span></th>
+          <th onclick="sortBy('fcr')" class="r hide-m">FCR% <span class="sort-arrow" id="sa-fcr"></span></th>
+          <th onclick="sortBy('status')" style="text-align:center">Status <span class="sort-arrow" id="sa-status"></span></th>
+          <th style="width:28px"></th>
+        </tr>
+      </thead>
+      <tbody id="poolBody"></tbody>
+      <tfoot id="poolFoot"></tfoot>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none">
+      Nenhuma pool encontrada.
+    </div>
+  </div>
+
+  <div class="notice">
+    <span>⚠</span>
+    <div>
+      <strong>Hack Radiant Capital (Out/2025):</strong> 1.079,17 ARB em stake desde 25/03/2024 perdidos.
+      Valor na época: ~$971 · Prejuízo efetivo: ~$671 (reembolso parcial prometido).
+      <strong>Não incluído no P&L operacional acima.</strong>
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const NET_C = {
+  Arbitrum:'#4a8cd6', Ethereum:'#E8773D', Base:'#4fa8ff',
+  Solana:'#14F195',  Polygon:'#A855F7',  ZkSync:'#8080ff'
+};
+
+const POOLS = [
+  // ── ATIVA ──
+  { id:1,  pair:'WETH/USDC', fee:'0.30%', proto:'Uniswap V3', net:'Base',
+    open:'18/03/2026', close:null,       days:40,  capital:365,  fees:18.62,  il:-28.20, result:-9.58,  status:'ativa',
+    wallet:'0x5Ff957…4AE4B6',
+    range:'$1,855 – $3,146 (saída gradual ETH→USDC)',
+    notes:'Estratégia de saída: entra 100% WETH, sai 100% USDC ao atingir $3.146. Fee APR 32% (Revert Finance, 17/04/2026).' },
+
+  // ── FECHADAS ──
+  { id:2,  pair:'ETH/USDC',  fee:'0.30%', proto:'Uniswap V3', net:'Base',
+    open:'15/02/2026', close:'12/03/2026', days:25,  capital:453,  fees:16,     il:0,      result:16,    status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
+
+  { id:3,  pair:'ETH/USDT',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'01/10/2025', close:'14/01/2026', days:105, capital:277,  fees:34,     il:0,      result:34,    status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
+
+  { id:4,  pair:'SOL/USDC',  fee:'0.04%', proto:'Orca',       net:'Solana',
+    open:'10/07/2025', close:'11/10/2025', days:93,  capital:660,  fees:23,     il:0,      result:23,    status:'fechada',
+    wallet:'Fq1F49V…VnrfW',  range:null, notes:null },
+
+  { id:5,  pair:'XAI/WETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'01/05/2025', close:'30/06/2025', days:60,  capital:35,   fees:7,      il:-21,    result:-14,   status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'XAI token perdeu valor significativo — IL resultante.' },
+
+  { id:6,  pair:'SOL/GRIFT', fee:'2%',    proto:'Raydium',    net:'Solana',
+    open:'01/01/2025', close:'22/03/2025', days:80,  capital:780,  fees:1389,   il:-2899,  result:-1510, status:'fechada',
+    wallet:'Fq1F49V…VnrfW',  range:null,
+    notes:'GRIFT token foi a zero — IL severo de $2.899. Fees altas ($1.389) não compensaram. SOL recuperado via Kamino.' },
+
+  { id:7,  pair:'MSTR/ETH',  fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
+    open:'01/10/2024', close:'14/10/2024', days:13,  capital:260,  fees:36,     il:0,      result:36,    status:'fechada',
+    wallet:'0x835a5F…77F6',  range:null, notes:null },
+
+  { id:8,  pair:'ARB/USDT',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'01/09/2024', close:'19/10/2024', days:48,  capital:628,  fees:73,     il:0,      result:73,    status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
+
+  { id:9,  pair:'PEANUT/ETH',fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
+    open:'20/09/2024', close:'30/09/2024', days:10,  capital:300,  fees:0,      il:-243,   result:-243,  status:'fechada',
+    wallet:'0x835a5F…77F6',  range:null,
+    notes:'Token scam — posição zerou por completo. IL = capital total.' },
+
+  { id:10, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'01/09/2024', close:'09/09/2024', days:8,   capital:957,  fees:90,     il:0,      result:90,    status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
+
+  { id:11, pair:'ARB/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'20/02/2024', close:'20/08/2024', days:181, capital:884,  fees:155,    il:0,      result:155,   status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
+
+  { id:12, pair:'ARB/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'15/02/2024', close:'20/02/2024', days:5,   capital:900,  fees:180,    il:0,      result:180,   status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Volume explosivo durante o período — melhor FCR% da história.' },
+
+  { id:13, pair:'ETH/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'25/07/2023', close:'21/02/2024', days:209, capital:1014, fees:22,     il:0,      result:22,    status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
+
+  { id:14, pair:'PENG/ETH',  fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
+    open:'08/06/2024', close:'20/07/2024', days:42,  capital:260,  fees:0,      il:-72,    result:-72,   status:'fechada',
+    wallet:'0x835a5F…77F6',  range:null,
+    notes:'Token scam. Custo = gas de saída ($72).' },
+
+  { id:15, pair:'XAI/ETH',   fee:'0.30%', proto:'Uniswap V3', net:'Ethereum',
+    open:'17/06/2024', close:'30/07/2024', days:43,  capital:100,  fees:3,      il:0,      result:3,     status:'fechada',
+    wallet:'0x835a5F…77F6',  range:null, notes:null },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let sortCol = 'id';
+let sortDir = 'desc';
+let activeTab = 'all';
+let expandedId = null;
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+function fmtUsd(v, dec) {
+  if (v == null || isNaN(v)) return '—';
+  dec = dec == null ? 0 : dec;
+  const s = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return (v < 0 ? '-$' : '$') + s;
+}
+function fmtPct(v, dec) {
+  if (v == null || isNaN(v)) return '—';
+  dec = dec == null ? 1 : dec;
+  return (v >= 0 ? '+' : '') + v.toFixed(dec) + '%';
+}
+function fmtDays(d) {
+  if (!d) return '—';
+  if (d >= 365) { const y = Math.floor(d/365); return y + 'a ' + (d - y*365) + 'd'; }
+  if (d >= 30)  { const m = Math.floor(d/30);  return m + 'm ' + (d - m*30)  + 'd'; }
+  return d + 'd';
+}
+function calcFCR(p) {
+  if (!p.fees || !p.capital || !p.days) return null;
+  return (p.fees / p.capital / p.days) * 365 * 100;
+}
+function cc(v) {
+  if (v == null || isNaN(v) || v === 0) return 'style="color:var(--muted)"';
+  return v > 0 ? 'class="pos"' : 'class="neg"';
+}
+function netBadge(net) {
+  const c = NET_C[net] || '#888';
+  return `<span class="net-badge" style="background:${c}18;color:${c};border:1px solid ${c}35">
+    <span class="net-dot" style="background:${c}"></span>${net}</span>`;
+}
+function statusBadge(s) {
+  if (s === 'ativa') return `<span class="status-badge s-ativa"><span class="live-dot" style="width:5px;height:5px;margin-right:0"></span>Ativa</span>`;
+  return `<span class="status-badge s-fechada">Fechada</span>`;
+}
+function parseDate(str) {
+  if (!str) return 0;
+  const p = str.split('/');
+  return new Date(+p[2], +p[1] - 1, +p[0]).getTime();
+}
+
+// ─── KPIs ────────────────────────────────────────────────────────────────────
+
+function computeKPIs() {
+  const totFees = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
+  const totPnL  = POOLS.reduce((s, p) => s + (p.result || 0), 0);
+  const totCap  = POOLS.reduce((s, p) => s + (p.capital || 0), 0);
+
+  document.getElementById('kpi-fees').textContent = fmtUsd(totFees);
+  document.getElementById('kpi-fees-sub').textContent =
+    POOLS.length + ' pools · $' + Math.round(totCap).toLocaleString('en-US') + ' capital total';
+
+  const el = document.getElementById('kpi-pnl');
+  el.textContent = fmtUsd(totPnL, 2);
+  el.className = 'kpi-value ' + (totPnL >= 0 ? 'pos' : 'neg');
+
+  // Tab counts
+  const na = POOLS.filter(p => p.status === 'ativa').length;
+  const nf = POOLS.filter(p => p.status === 'fechada').length;
+  document.getElementById('c-all').textContent    = POOLS.length;
+  document.getElementById('c-ativa').textContent  = na;
+  document.getElementById('c-fechada').textContent = nf;
+}
+
+// ─── FILTER / SORT ───────────────────────────────────────────────────────────
+
+function getFiltered() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const net    = document.getElementById('netFilter').value;
+  const proto  = document.getElementById('protoFilter').value;
+
+  let list = POOLS.filter(p => {
+    if (activeTab !== 'all' && p.status !== activeTab) return false;
+    if (net   && p.net   !== net)   return false;
+    if (proto && p.proto !== proto) return false;
+    if (search) {
+      if (!(p.pair + ' ' + p.net + ' ' + p.proto).toLowerCase().includes(search)) return false;
+    }
+    return true;
+  });
+
+  list.sort((a, b) => {
+    let va, vb;
+    switch (sortCol) {
+      case 'pair':    va = a.pair;    vb = b.pair;    break;
+      case 'net':     va = a.net;     vb = b.net;     break;
+      case 'days':    va = a.days;    vb = b.days;    break;
+      case 'capital': va = a.capital; vb = b.capital; break;
+      case 'fees':    va = a.fees;    vb = b.fees;    break;
+      case 'il':      va = a.il;      vb = b.il;      break;
+      case 'result':  va = a.result;  vb = b.result;  break;
+      case 'fcr':     va = calcFCR(a); vb = calcFCR(b); break;
+      case 'status':  va = a.status;  vb = b.status;  break;
+      default:        va = parseDate(a.open) || a.id; vb = parseDate(b.open) || b.id;
+    }
+    if (va == null) va = -Infinity;
+    if (vb == null) vb = -Infinity;
+    if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    return sortDir === 'asc' ? va - vb : vb - va;
+  });
+
+  return list;
+}
+
+function setTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  expandedId = null;
+  renderTable();
+}
+
+function sortBy(col) {
+  if (sortCol === col) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+  else { sortCol = col; sortDir = col === 'result' || col === 'fees' || col === 'fcr' ? 'desc' : 'desc'; }
+
+  document.querySelectorAll('.sort-arrow').forEach(el => el.textContent = '');
+  const arrow = document.getElementById('sa-' + col);
+  if (arrow) arrow.textContent = sortDir === 'asc' ? '▲' : '▼';
+
+  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
+  const th = document.querySelector(`th[onclick="sortBy('${col}')"]`);
+  if (th) th.classList.add('sorted');
+
+  renderTable();
+}
+
+function toggleExpand(id) {
+  expandedId = expandedId === id ? null : id;
+  renderTable();
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+function renderTable() {
+  const list   = getFiltered();
+  const tbody  = document.getElementById('poolBody');
+  const tfoot  = document.getElementById('poolFoot');
+  const empty  = document.getElementById('emptyState');
+  const info   = document.getElementById('resultInfo');
+
+  if (!list.length) {
+    tbody.innerHTML = '';
+    tfoot.innerHTML = '';
+    empty.style.display = '';
+    info.textContent = '0 resultados';
+    return;
+  }
+  empty.style.display = 'none';
+  info.textContent = list.length + (list.length < POOLS.length ? ' de ' + POOLS.length : '') + ' pools';
+
+  let html = '';
+  list.forEach(p => {
+    const fcr  = calcFCR(p);
+    const isEx = expandedId === p.id;
+    const fcrClass = fcr == null ? '' : fcr >= 25 ? 'pos' : fcr >= 8 ? '' : 'neg';
+
+    const periodLine = p.status === 'ativa'
+      ? `<span style="color:var(--muted);font-size:10px">${p.open} → <span style="color:var(--green)">hoje</span></span>`
+      : `<span style="color:var(--muted);font-size:10px">${p.open} → ${p.close}</span>`;
+
+    html += `
+    <tr onclick="toggleExpand(${p.id})" ${isEx ? 'class="expanded"' : ''}>
+      <td>
+        <div class="pair-name">${p.pair}<span class="pair-fee">${p.fee}</span></div>
+        <div class="pair-proto">${p.proto}</div>
+      </td>
+      <td class="hide-sm">${netBadge(p.net)}</td>
+      <td class="hide-m" style="color:var(--muted);font-family:var(--mono);font-size:11px">
+        ${fmtDays(p.days)}<br>${periodLine}
+      </td>
+      <td class="num">${fmtUsd(p.capital)}</td>
+      <td class="num ${p.fees > 0 ? 'pos' : ''}">${p.fees > 0 ? fmtUsd(p.fees, 2) : '<span style="color:var(--muted)">$0</span>'}</td>
+      <td class="num hide-m ${p.il < 0 ? 'neg' : ''}">${p.il ? fmtUsd(p.il, 2) : '<span style="color:var(--muted)">—</span>'}</td>
+      <td class="num" ${cc(p.result)} style="font-weight:700">${fmtUsd(p.result, 2)}</td>
+      <td class="num hide-m ${fcrClass}">${fcr != null ? fmtPct(fcr, 1) : '<span style="color:var(--muted)">—</span>'}</td>
+      <td style="text-align:center">${statusBadge(p.status)}</td>
+      <td style="text-align:center"><span class="expand-icon">▾</span></td>
+    </tr>`;
+
+    if (isEx) {
+      html += `
+    <tr class="detail-row">
+      <td colspan="10" style="padding:0">
+        <div class="detail-content">
+          <div class="d-item"><div class="d-label">Abertura</div><div class="d-value">${p.open}</div></div>
+          <div class="d-item"><div class="d-label">Encerramento</div><div class="d-value">${p.close || '<span style="color:var(--green)">Em andamento</span>'}</div></div>
+          <div class="d-item"><div class="d-label">Duração</div><div class="d-value">${fmtDays(p.days)}</div></div>
+          <div class="d-item"><div class="d-label">Capital</div><div class="d-value">${fmtUsd(p.capital)}</div></div>
+          <div class="d-item"><div class="d-label">Taxas Brutas</div><div class="d-value" style="color:var(--green)">${fmtUsd(p.fees, 2)}</div></div>
+          <div class="d-item"><div class="d-label">IL</div><div class="d-value" style="color:${p.il < 0 ? 'var(--red)' : 'var(--muted)'}">${p.il ? fmtUsd(p.il, 2) : '$0'}</div></div>
+          <div class="d-item"><div class="d-label">Resultado</div><div class="d-value" style="color:${p.result >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${fmtUsd(p.result, 2)}</div></div>
+          <div class="d-item"><div class="d-label">FCR%</div><div class="d-value">${fcr != null ? fmtPct(fcr, 2) : '—'}</div></div>
+          ${p.range ? `<div class="d-item"><div class="d-label">Range</div><div class="d-value">${p.range}</div></div>` : ''}
+          <div class="d-item"><div class="d-label">Rede</div><div class="d-value">${p.net}</div></div>
+          <div class="d-item"><div class="d-label">Carteira</div><div class="d-value" style="font-size:11px">${p.wallet}</div></div>
+          ${p.notes ? `<div class="d-note">📝 ${p.notes}</div>` : ''}
+        </div>
+      </td>
+    </tr>`;
+    }
+  });
+
+  tbody.innerHTML = html;
+
+  // totals footer
+  const tf = list.reduce((acc, p) => {
+    acc.cap  += p.capital || 0;
+    acc.fees += p.fees    || 0;
+    acc.il   += p.il      || 0;
+    acc.pnl  += p.result  || 0;
+    return acc;
+  }, { cap:0, fees:0, il:0, pnl:0 });
+
+  const pnlClass = tf.pnl >= 0 ? 'pos' : 'neg';
+  tfoot.innerHTML = `<tr>
+    <td class="tfoot-label">Total (${list.length})</td>
+    <td class="hide-sm"></td>
+    <td class="hide-m"></td>
+    <td class="num">${fmtUsd(tf.cap)}</td>
+    <td class="num pos">${fmtUsd(tf.fees, 2)}</td>
+    <td class="num neg hide-m">${fmtUsd(tf.il, 2)}</td>
+    <td class="num ${pnlClass}" style="font-size:13px;font-weight:700">${fmtUsd(tf.pnl, 2)}</td>
+    <td class="hide-m"></td>
+    <td></td>
+    <td></td>
+  </tr>`;
+}
+
+// ─── THEME ───────────────────────────────────────────────────────────────────
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = dark ? '☀' : '☾';
+  localStorage.setItem('bc-theme', dark ? 'light' : 'dark');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+(function init() {
+  const saved = localStorage.getItem('bc-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('themeBtn').textContent = saved === 'dark' ? '☾' : '☀';
+  }
+
+  computeKPIs();
+
+  // default: newest first
+  document.getElementById('sa-id') && (document.getElementById('sa-id').textContent = '▼');
+  renderTable();
+})();
+</script>
+</body>
+</html>
