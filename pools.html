@@ -389,6 +389,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <a href="index.html" data-i18n="nav-home">Início</a>
  <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
  <a href="pools.html" class="active" data-i18n="nav-pools">Pools &amp; DeFi</a>
+ <a href="track.html" data-i18n="nav-track">Track</a>
  <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
  <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
  </div>
@@ -2043,7 +2044,9 @@ body, input, button, select, textarea {
  <div class="chart-panel-title">Todas as Pools — Registro Histórico</div>
  <div class="chart-panel-sub">DADOS EXTRAÍDOS DO DIÁRIO · 2023–2026</div>
  </div>
- <div style="font-size:8px;color:var(--muted);">* IL estimado onde não documentado</div>
+ <a href="track.html" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(201,160,80,0.1);border:1px solid rgba(201,160,80,0.3);border-radius:4px;color:var(--accent);font-size:10px;letter-spacing:.1em;text-decoration:none;font-family:'JetBrains Mono',monospace;font-weight:600;transition:background .15s;" onmouseover="this.style.background='rgba(201,160,80,0.2)'" onmouseout="this.style.background='rgba(201,160,80,0.1)'">
+   ↗ ABRIR TRACK
+ </a>
  </div>
  <div style="overflow-x:auto;padding:0 18px 18px;">
  <table class="pool-tbl">
@@ -2055,6 +2058,9 @@ body, input, button, select, textarea {
  </thead>
  <tbody id="poolTableBody"></tbody>
  </table>
+ </div>
+ <div style="padding:10px 18px;border-top:1px solid var(--border);font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">
+   * IL estimado onde não documentado · Ver tabela interativa (sort, filtros, FCR%) em <a href="track.html" style="color:var(--accent);text-decoration:none;">Track →</a>
  </div>
 </div>
 
@@ -4131,6 +4137,7 @@ var LANG_STRINGS = {
   'nav-home':        {pt:'Início',       en:'Home'},
   'nav-portfolio':   {pt:'Portfolio',    en:'Portfolio'},
   'nav-pools':       {pt:'Pools & DeFi', en:'Pools & DeFi'},
+  'nav-track':       {pt:'Track',        en:'Track'},
   'nav-loans':       {pt:'Empréstimos',  en:'Loans'},
   'nav-tools':       {pt:'Ferramentas',  en:'Tools'},
   // section labels — will be found by data-i18n attribute
