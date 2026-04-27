@@ -2560,16 +2560,27 @@ function buildHeatmap() {
  const container = document.getElementById('heatmapGrid');
  if (!container) return;
 
- // Monthly returns (%) derived from perfPeriods['all'].p
- const data = {
- 2022: [-99, 0.8, 20.6, 6.8, -6.4,-47.5, 41.9, 16.1,-17.2, 24.4,-18.3, 3.0],
- 2023: [ 44.0, 9.4, 13.4, 11.1, 1.8, 6.2, 6.8, -8.8, 0.9, 17.3, 15.8, 17.0],
- 2024: [ 13.6,21.8, 28.7, -2.4, 20.9, -6.6, 16.5,-12.3, -1.1, 16.5, 35.4, 5.9],
- 2025: [ -0.7,-7.7,-14.5, -7.3, 28.8, 3.9, 12.4,-11.2, 2.2, 21.6, 11.7, -6.5],
- 2026: [-12.4,-2.4, 1.9, -99, -99, -99, -99, -99, -99, -99, -99, -99],
- };
+ // Deriva retornos mensais automaticamente da wealthCurve (ponto a ponto)
+ // Garante sincronização automática quando a wealthCurve é atualizada
+ const wc = WEEKLY_UPDATE.wealthCurve;
+ const data = {};
+ for (let i = 1; i < wc.labels.length; i++) {
+   const parts = wc.labels[i].split('/');
+   const yr = 2000 + parseInt(parts[1]);
+   const mo = parseInt(parts[0]) - 1;
+   if (!data[yr]) data[yr] = Array(12).fill(-99);
+   const prev = wc.values[i - 1];
+   if (prev > 0) data[yr][mo] = parseFloat(((wc.values[i] - prev) / prev * 100).toFixed(1));
+ }
+ // Mês ao vivo (Abr/26 em diante) via MONTHLY_RETURNS_DATA
+ if (MONTHLY_RETURNS_DATA[2026]) {
+   if (!data[2026]) data[2026] = Array(12).fill(-99);
+   MONTHLY_RETURNS_DATA[2026].forEach((v, i) => {
+     if (v !== null && v !== undefined && data[2026][i] === -99) data[2026][i] = v;
+   });
+ }
  const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
- const YEARS = [2022,2023,2024,2025,2026];
+ const YEARS = Object.keys(data).map(Number).sort();
 
  function heatColor(v) {
  if (v === -99) return 'transparent';
@@ -2600,14 +2611,14 @@ function buildHeatmap() {
  ? vals.reduce((acc, v) => acc * (1 + v/100), 1) * 100 - 100
  : null;
  html += `<tr><td style="${LABEL}">${yr}</td>`;
- row.forEach(v => {
+ row.forEach((v, mi) => {
  if (v === -99) {
  html += `<td style="${CELL}"></td>`;
  } else {
  const bg = heatColor(v);
  const tc = document.documentElement.getAttribute('data-theme') === 'dark' ? '#e6edf3' : '#16110c';
  const sign = v > 0 ? '+' : '';
- html += `<td style="${CELL}background:${bg};color:${Math.abs(v) > 8 ? tc : 'var(--muted)'};" title="${yr} ${MONTHS[row.indexOf(v)]}: ${sign}${v.toFixed(1)}%">${sign}${v.toFixed(1)}%</td>`;
+ html += `<td style="${CELL}background:${bg};color:${Math.abs(v) > 8 ? tc : 'var(--muted)'};" title="${yr} ${MONTHS[mi]}: ${sign}${v.toFixed(1)}%">${sign}${v.toFixed(1)}%</td>`;
  }
  });
  const annualBg = annual !== null ? heatColor(annual) : 'transparent';

@@ -1130,7 +1130,9 @@ function toggleMobile() {
     { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
     { id: 'zetachain',      qty: 51.1434,        invested: 0       },
   ];
-  // ── Aplica trades do Diário DeFi (ferramentas.html → localStorage) ──
+  // TOTAL_INVESTED fixado nas quantidades base (imune ao diary sync)
+  var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
+  // ── Aplica trades do Diário DeFi (só qty — cost basis não altera ROI display) ──
   (function(){
     try {
       var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
@@ -1142,13 +1144,10 @@ function toggleMobile() {
              var t = e.trade;
              var h = HOLDINGS.find(function(h){ return h.id === idMap[t.token]; });
              if (!h) return;
-             var mul = t.side === 'buy' ? 1 : -1;
-             h.qty += mul * t.qty;
-             if (t.totalCost) h.invested += mul * t.totalCost;
+             h.qty += (t.side === 'buy' ? 1 : -1) * t.qty;
            });
     } catch(e) {}
   })();
-  var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
   var STABLES_USD    = 2440.90;  // USDT 2140.12 + USDS 300.78
   var LP_POOLED      = 365;
   var TOTAL_DEBT     = 1555.49;  // AAVE 748.00 USDC + Kamino 807.49 USDC
