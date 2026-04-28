@@ -360,6 +360,42 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   line-height: 1 !important;
 }
 
+/* ── APR SECTION ── */
+.apr-section-header{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px;flex-wrap:wrap;gap:8px;}
+.apr-section-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.apr-section-badge{padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.1em;font-family:'JetBrains Mono',monospace;text-transform:uppercase;background:rgba(201,160,80,.1);color:var(--accent);border:1px solid rgba(201,160,80,.25);border-radius:20px;}
+.apr-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px;}
+.apr-kpi-card{background:var(--surface);padding:14px 18px;}
+.apr-kpi-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;}
+.apr-kpi-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;color:var(--text);line-height:1;}
+.apr-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.apr-tab-group{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;}
+.apr-tab-btn{padding:5px 14px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--muted);border-radius:6px;transition:all .15s;white-space:nowrap;font-family:'Satoshi',sans-serif;}
+.apr-tab-btn.active{background:rgba(201,160,80,.15);color:var(--accent);}
+.apr-tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.04);}
+.apr-search{flex:1;min-width:140px;padding:7px 10px;font-family:'Satoshi',sans-serif;font-size:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none;transition:border-color .15s;}
+.apr-search:focus{border-color:rgba(201,160,80,.4);}
+.apr-search::placeholder{color:var(--muted);}
+.apr-flt-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:5px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;border-radius:6px;outline:none;transition:border-color .15s;}
+.apr-flt-input:focus{border-color:rgba(201,160,80,.4);}
+.apr-flt-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;cursor:pointer;border-radius:6px;transition:all .15s;}
+.apr-flt-btn:hover{color:var(--text);border-color:rgba(201,160,80,.4);}
+.apr-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;}
+.apr-tbl{width:100%;border-collapse:collapse;}
+.apr-tbl thead th{padding:9px 14px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;transition:color .1s;}
+.apr-tbl thead th:hover{color:var(--text);}
+.apr-tbl thead th.apr-sorted{color:var(--accent);}
+.apr-tbl thead th.r{text-align:right;}
+.apr-tbl tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.apr-tbl tbody tr:last-child{border-bottom:none;}
+.apr-tbl tbody tr:hover{background:rgba(255,255,255,.02);}
+.apr-tbl td{padding:10px 14px;font-size:12px;color:var(--text);vertical-align:middle;}
+.apr-pair-name{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.apr-pair-fee{display:inline-block;padding:1px 5px;font-size:9px;background:rgba(255,255,255,.06);border-radius:4px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.apr-net-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;font-size:10px;font-weight:600;letter-spacing:.05em;border-radius:20px;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+.apr-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;text-align:right;}
+.apr-live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:aprPulse 2s infinite;vertical-align:middle;margin-right:4px;}
+@keyframes aprPulse{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -552,115 +588,90 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </div><!-- end bc-lp-active-section -->
 
 <div id="bc-apr-section">
-<!-- ══ UNISWAP V3 — ETH/STABLES EXPLORER ══ -->
-<div class="section-label" style="margin-top:32px;">DEX — Melhores APRs (ETH · Base · Arbitrum · Solana)</div>
-<div class="revert-panel">
- <div class="revert-toolbar">
- <div class="revert-title">
- <span style="font-size:15px;font-weight:800;font-family:'Satoshi',serif;">
- <span style="color:#ff007a;">◈</span> UNISWAP V3
- </span>
- <span style="font-size:9px;color:var(--muted);" id="uni-status">carregando…</span>
- </div>
- <div style="display:flex;gap:6px;align-items:center;">
- <button class="btn-sm" onclick="loadAllUniPools()">↺ Atualizar</button>
- <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener">↗ Uniswap</a>
- </div>
- </div>
+<!-- SECTION HEADER -->
+<div class="apr-section-header">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span class="apr-section-title">DEX — Melhores APRs</span>
+    <span class="apr-section-badge">ETH · Base · ARB · SOL</span>
+    <span style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;" id="uni-status">
+      <span class="apr-live-dot"></span>carregando…
+    </span>
+  </div>
+  <div style="display:flex;gap:6px;align-items:center;">
+    <button class="btn-sm" onclick="loadAllUniPools()">↺ Atualizar</button>
+    <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" style="padding:5px 12px;font-size:10px;">↗ Uniswap</a>
+  </div>
+</div>
 
- <!-- Filtro de redes (chips) -->
- <div style="display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap;">
-   <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;">REDE</span>
-   <button class="uni-chip active" data-net="all" onclick="switchChainFilter('all',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:var(--gold);color:var(--bg);border:1px solid var(--gold);cursor:pointer;border-radius:3px;">
-     TUDO
-   </button>
-   <button class="uni-chip" data-net="eth" onclick="switchChainFilter('eth',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
-     <span style="color:#627EEA;">◆</span> ETH
-   </button>
-   <button class="uni-chip" data-net="base" onclick="switchChainFilter('base',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
-     <span style="color:#4fa8ff;">◆</span> BASE
-   </button>
-   <button class="uni-chip" data-net="arbitrum" onclick="switchChainFilter('arbitrum',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
-     <span style="color:#5882d2;">◆</span> ARB
-   </button>
-   <button class="uni-chip" data-net="solana" onclick="switchChainFilter('solana',this)" style="padding:4px 12px;font-size:10px;font-family:'Satoshi',sans-serif;font-weight:600;letter-spacing:.06em;background:none;color:var(--muted);border:1px solid var(--border);cursor:pointer;border-radius:3px;">
-     <span style="color:#14F195;">◆</span> SOL
-   </button>
- </div>
+<!-- KPI GRID -->
+<div class="apr-kpi-grid">
+  <div class="apr-kpi-card">
+    <div class="apr-kpi-label">Pools</div>
+    <div class="apr-kpi-val" id="uniSumCount">—</div>
+  </div>
+  <div class="apr-kpi-card">
+    <div class="apr-kpi-label">TVL Total</div>
+    <div class="apr-kpi-val" id="uniSumTvl">—</div>
+  </div>
+  <div class="apr-kpi-card">
+    <div class="apr-kpi-label">APR Médio (pond.)</div>
+    <div class="apr-kpi-val pos" id="uniSumApr">—</div>
+  </div>
+  <div class="apr-kpi-card">
+    <div class="apr-kpi-label">Vol 24h</div>
+    <div class="apr-kpi-val" id="uniSumVol">—</div>
+  </div>
+</div>
 
- <!-- Barra de filtros -->
- <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;">
-   <div style="display:flex;align-items:center;gap:8px;">
-     <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);">TVL MÍN</span>
-     <input type="number" id="uniFilterTvl" value="0" min="0" step="10000" placeholder="$0"
-            oninput="applyFilters()"
-            style="width:90px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-family:inherit;font-size:11px;border-radius:3px;">
-   </div>
-   <div style="display:flex;align-items:center;gap:8px;">
-     <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);">APR MÍN</span>
-     <input type="number" id="uniFilterApr" value="0" min="0" step="5" placeholder="0%"
-            oninput="applyFilters()"
-            style="width:60px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-family:inherit;font-size:11px;border-radius:3px;">
-     <span style="font-size:10px;color:var(--muted);">%</span>
-   </div>
-   <button id="uniFavToggle" onclick="toggleFavOnly()"
-           style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;font-family:inherit;font-size:10px;letter-spacing:.08em;cursor:pointer;border-radius:3px;transition:all .15s;">
-     ⭐ SÓ FAVORITAS
-   </button>
-   <button onclick="clearFilters()"
-           style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;font-family:inherit;font-size:10px;letter-spacing:.08em;cursor:pointer;border-radius:3px;">
-     ↺ LIMPAR
-   </button>
-   <span id="uniFilterStatus" style="margin-left:auto;font-size:9px;color:var(--muted);"></span>
- </div>
+<!-- TOOLBAR -->
+<div class="apr-toolbar">
+  <div class="apr-tab-group">
+    <button class="apr-tab-btn active" data-net="all"      onclick="switchChainFilter('all',this)">Todas as redes</button>
+    <button class="apr-tab-btn"        data-net="eth"      onclick="switchChainFilter('eth',this)"><span style="color:#627EEA;">◆</span> ETH</button>
+    <button class="apr-tab-btn"        data-net="base"     onclick="switchChainFilter('base',this)"><span style="color:#4fa8ff;">◆</span> Base</button>
+    <button class="apr-tab-btn"        data-net="arbitrum" onclick="switchChainFilter('arbitrum',this)"><span style="color:#5882d2;">◆</span> Arbitrum</button>
+    <button class="apr-tab-btn"        data-net="solana"   onclick="switchChainFilter('solana',this)"><span style="color:#14F195;">◆</span> Solana</button>
+  </div>
+  <input class="apr-search" type="text" id="uniSearchInput" placeholder="Buscar par, protocolo…" oninput="applyFilters()">
+  <div style="display:flex;align-items:center;gap:5px;">
+    <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;">TVL</span>
+    <input type="number" id="uniFilterTvl" value="0" min="0" step="10000" placeholder="$0" oninput="applyFilters()" class="apr-flt-input" style="width:80px;">
+  </div>
+  <div style="display:flex;align-items:center;gap:5px;">
+    <span style="font-size:9px;letter-spacing:.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;">APR</span>
+    <input type="number" id="uniFilterApr" value="0" min="0" step="5" placeholder="0%" oninput="applyFilters()" class="apr-flt-input" style="width:58px;">
+    <span style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;">%</span>
+  </div>
+  <button id="uniFavToggle" onclick="toggleFavOnly()" class="apr-flt-btn">⭐ Favoritas</button>
+  <button onclick="clearFilters()" class="apr-flt-btn">↺ Limpar</button>
+  <span id="uniFilterStatus" style="margin-left:auto;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;"></span>
+</div>
 
- <!-- Summary row -->
- <div id="uniSummary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;">
-   <div style="background:var(--surface);padding:10px 14px;">
-     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">POOLS</div>
-     <div id="uniSumCount" style="font-size:13px;font-weight:700;color:var(--text);">—</div>
-   </div>
-   <div style="background:var(--surface);padding:10px 14px;">
-     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">TVL TOTAL</div>
-     <div id="uniSumTvl" style="font-size:13px;font-weight:700;color:var(--text);">—</div>
-   </div>
-   <div style="background:var(--surface);padding:10px 14px;">
-     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">APR MÉDIO (pond.)</div>
-     <div id="uniSumApr" style="font-size:13px;font-weight:700;color:var(--gold);">—</div>
-   </div>
-   <div style="background:var(--surface);padding:10px 14px;">
-     <div style="font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:3px;">VOL 24H</div>
-     <div id="uniSumVol" style="font-size:13px;font-weight:700;color:var(--text);">—</div>
-   </div>
- </div>
+<!-- TABLE -->
+<div class="apr-table-wrap">
+  <table class="apr-tbl">
+    <thead>
+      <tr>
+        <th data-sort="name" onclick="sortPools('name')">Par <span class="sort-ind"></span></th>
+        <th style="text-align:center;">Rede</th>
+        <th data-sort="apr" onclick="sortPools('apr')" class="r">APR Est. <span class="sort-ind">▼</span></th>
+        <th data-sort="tvl" onclick="sortPools('tvl')" class="r">TVL <span class="sort-ind"></span></th>
+        <th data-sort="vol" onclick="sortPools('vol')" class="r">Vol 24h <span class="sort-ind"></span></th>
+        <th data-sort="chg" onclick="sortPools('chg')" class="r">Var 24h <span class="sort-ind"></span></th>
+      </tr>
+    </thead>
+    <tbody id="uniPoolsBody">
+      <tr><td colspan="6" style="padding:40px;text-align:center;color:var(--muted);">
+        <div class="spinner-ring" style="display:inline-block;width:18px;height:18px;border-width:2px;border-top-color:#ff007a;margin-right:8px;vertical-align:middle;"></div>
+        Carregando pools…
+      </td></tr>
+    </tbody>
+  </table>
+</div>
 
- <!-- Tabela -->
- <div style="overflow-x:auto;">
- <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11px;">
- <thead>
- <tr style="border-bottom:1px solid var(--border);color:var(--muted);">
- <th data-sort="name" onclick="sortPools('name')" style="padding:9px 16px;text-align:left;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">PAR <span class="sort-ind" style="color:var(--gold);"></span></th>
- <th style="padding:9px 8px;text-align:center;font-weight:500;letter-spacing:.05em;">REDE</th>
- <th data-sort="fee" onclick="sortPools('fee')" style="padding:9px 10px;text-align:center;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">FEE <span class="sort-ind" style="color:var(--gold);"></span></th>
- <th data-sort="apr" onclick="sortPools('apr')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">APR EST. <span class="sort-ind" style="color:var(--gold);">▼</span></th>
- <th data-sort="tvl" onclick="sortPools('tvl')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">TVL <span class="sort-ind" style="color:var(--gold);"></span></th>
- <th data-sort="vol" onclick="sortPools('vol')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">VOL 24H <span class="sort-ind" style="color:var(--gold);"></span></th>
- <th data-sort="chg" onclick="sortPools('chg')" style="padding:9px 16px;text-align:right;font-weight:500;letter-spacing:.05em;cursor:pointer;user-select:none;">VAR 24H <span class="sort-ind" style="color:var(--gold);"></span></th>
- </tr>
- </thead>
- <tbody id="uniPoolsBody">
- <tr><td colspan="7" style="padding:32px;text-align:center;color:var(--muted);">
- <div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>
- Carregando pools…
- </td></tr>
- </tbody>
- </table>
- </div>
-
- <div class="panel-footer">
- <span style="font-size:9px;color:var(--muted);">Fonte: GeckoTerminal API · Uniswap V3 + Orca + Raydium · APR = Vol24h × fee ÷ TVL × 365 · SOL: TVL ≥ $100K</span>
- <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
- </div>
+<div style="padding:0 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+  <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">Fonte: GeckoTerminal API · Uniswap V3 + Orca + Raydium · APR = Vol24h × fee ÷ TVL × 365 · SOL: TVL ≥ $100K</span>
+  <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener" style="padding:4px 10px;font-size:9px;">↗ Nova aba</a>
 </div>
 
 <script>
@@ -804,44 +815,41 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const net = p.net || opts.net;
  const isTop = !!opts.isTop;
  const aprStr = p.apr!=null ? (p.apr>999?'>999':p.apr.toFixed(1))+'%' : '—';
- const aprColor = p.apr==null?'var(--muted)':p.apr>=50?'var(--gold)':p.apr>=20?'var(--green)':'var(--text)';
+ const aprColor = p.apr==null?'var(--muted)':p.apr>=50?'var(--accent)':p.apr>=20?'var(--green)':'var(--text)';
  const chgColor = isNaN(p.chg)?'var(--muted)':p.chg>=0?'var(--green)':'var(--red)';
  const chgStr = isNaN(p.chg)?'—':(p.chg>=0?'+':'')+p.chg.toFixed(2)+'%';
- const feeStr = p.fee!=null ? p.fee+'%' : '—';
+ const feeStr = p.fee!=null ? p.fee+'%' : '';
  const link = UNI_LINK[net]+p.addr;
  const cleanName = p.name.replace(/\s*[\d.]+%\s*$/,'').trim();
- const symBadge = p.sym ? `<span style="font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-right:4px;color:var(--gold);">${p.sym}</span>` : '';
- const protoBadge = (p.net === 'solana' && p.proto && p.proto !== 'DEX') ? `<span style="font-size:9px;background:${p.proto==='Orca'?'rgba(20,241,149,0.08)':'rgba(200,80,200,0.08)'};border:1px solid ${p.proto==='Orca'?'rgba(20,241,149,0.25)':'rgba(200,80,200,0.25)'};border-radius:3px;padding:1px 5px;margin-right:4px;color:${p.proto==='Orca'?'#14F195':'#c841f5'};">${p.proto}</span>` : '';
- // Signal badges
+ const symBadge = p.sym ? `<span style="font-size:9px;background:rgba(201,160,80,.1);border:1px solid rgba(201,160,80,.3);border-radius:4px;padding:1px 6px;color:var(--accent);font-family:'JetBrains Mono',monospace;">${p.sym}</span>` : '';
+ const protoBadge = (p.net === 'solana' && p.proto && p.proto !== 'DEX') ? `<span style="font-size:9px;background:${p.proto==='Orca'?'rgba(20,241,149,0.08)':'rgba(200,80,200,0.08)'};border:1px solid ${p.proto==='Orca'?'rgba(20,241,149,0.25)':'rgba(200,80,200,0.25)'};border-radius:4px;padding:1px 6px;color:${p.proto==='Orca'?'#14F195':'#c841f5'};font-family:'JetBrains Mono',monospace;">${p.proto}</span>` : '';
  const volTvl = p.tvl>0 ? p.vol/p.tvl : 0;
  let sigBadges = '';
- if (isTop) sigBadges += '<span title="Top oportunidade" style="margin-left:6px;background:var(--gold);color:var(--bg);font-size:8px;font-weight:700;padding:1px 5px;border-radius:2px;letter-spacing:.08em;">TOP</span>';
- if (p.apr!=null && p.apr > 30) sigBadges += '<span title="APR alto (>30%)" style="margin-left:4px;">🚀</span>';
- if (volTvl > 0.5) sigBadges += '<span title="Volume alto vs TVL (churn forte)" style="margin-left:4px;">🔥</span>';
- if (p.tvl > 10_000_000) sigBadges += '<span title="TVL blue-chip (>$10M)" style="margin-left:4px;">💎</span>';
+ if (isTop) sigBadges += '<span title="Top oportunidade" style="background:var(--accent);color:var(--bg);font-size:8px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:.08em;font-family:\'JetBrains Mono\',monospace;">TOP</span>';
+ if (volTvl > 0.5) sigBadges += '<span title="Volume alto vs TVL" style="font-size:11px;">🔥</span>';
+ if (p.tvl > 10_000_000) sigBadges += '<span title="TVL > $10M" style="font-size:11px;">💎</span>';
  const fav = isFav(net, p.addr);
- const starIcon = fav ? '★' : '☆';
- const starColor = fav ? 'var(--gold)' : 'var(--muted)';
- const netColor = NET_COLOR[net] || 'var(--muted)';
+ const netColor = NET_COLOR[net] || '#888';
  const netShort = NET_SHORT[net] || (net||'').toUpperCase();
- // Linha TOP ganha borda esquerda dourada e bg sutil
- const rowBg = isTop ? 'background:rgba(201,160,80,.05);' : '';
- const leftBorder = isTop ? 'box-shadow:inset 3px 0 0 var(--gold);' : '';
- return `<tr style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;${rowBg}${leftBorder}"
- onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='${isTop?'rgba(201,160,80,.05)':''}'"
- onclick="window.open('${link}','_blank')">
- <td style="padding:9px 16px;font-weight:600;color:var(--text);">
-   <span onclick="event.stopPropagation();toggleFav('${net}','${p.addr}')" title="Favoritar pool" style="color:${starColor};margin-right:6px;cursor:pointer;font-size:13px;user-select:none;">${starIcon}</span>${symBadge}${protoBadge}${cleanName}${sigBadges}</td>
- <td style="padding:9px 8px;text-align:center;">
-   <span style="background:var(--surface2);border:1px solid ${netColor}33;border-radius:3px;padding:2px 6px;font-size:9px;font-weight:600;color:${netColor};letter-spacing:.05em;">◆ ${netShort}</span>
+ const rowStyle = isTop ? 'background:rgba(201,160,80,.04);box-shadow:inset 3px 0 0 var(--accent);' : '';
+ return `<tr style="${rowStyle}cursor:pointer;" onclick="window.open('${link}','_blank')">
+ <td>
+   <div class="apr-pair-name">
+     <span onclick="event.stopPropagation();toggleFav('${net}','${p.addr}')" title="Favoritar" style="color:${fav?'var(--accent)':'var(--muted)'};cursor:pointer;font-size:14px;user-select:none;flex-shrink:0;">${fav?'★':'☆'}</span>
+     ${symBadge}${protoBadge}${cleanName}
+     ${feeStr ? `<span class="apr-pair-fee">${feeStr}</span>` : ''}
+     ${sigBadges}
+   </div>
  </td>
- <td style="padding:9px 10px;text-align:center;">
- <span style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;">${feeStr}</span>
+ <td style="text-align:center;">
+   <span class="apr-net-badge" style="background:${netColor}18;color:${netColor};border:1px solid ${netColor}35;">
+     <span style="width:5px;height:5px;border-radius:50%;background:${netColor};display:inline-block;flex-shrink:0;"></span>${netShort}
+   </span>
  </td>
- <td style="padding:9px 16px;text-align:right;font-weight:700;color:${aprColor};">${aprStr}</td>
- <td style="padding:9px 16px;text-align:right;color:var(--muted);">${fmtM(p.tvl)}</td>
- <td style="padding:9px 16px;text-align:right;">${fmtM(p.vol)}</td>
- <td style="padding:9px 16px;text-align:right;color:${chgColor};">${chgStr}</td>
+ <td class="apr-num" style="font-weight:700;font-size:13px;color:${aprColor};">${aprStr}</td>
+ <td class="apr-num" style="color:var(--muted);">${fmtM(p.tvl)}</td>
+ <td class="apr-num">${fmtM(p.vol)}</td>
+ <td class="apr-num" style="color:${chgColor};">${chgStr}</td>
  </tr>`;
  }
 
@@ -866,11 +874,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
    });
  }
 
- // Atualiza setas ▲/▼ nos headers
  function updateSortIndicators() {
-   document.querySelectorAll('th[data-sort] .sort-ind').forEach(span => {
-     const th = span.closest('th');
-     span.textContent = (th.dataset.sort === _sortKey) ? (_sortDir === 'asc' ? '▲' : '▼') : '';
+   document.querySelectorAll('.apr-tbl th[data-sort]').forEach(th => {
+     th.classList.toggle('apr-sorted', th.dataset.sort === _sortKey);
+     const span = th.querySelector('.sort-ind');
+     if (span) span.textContent = (th.dataset.sort === _sortKey) ? (_sortDir === 'asc' ? '▲' : '▼') : '';
    });
  }
 
@@ -891,16 +899,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  function getAllPools()    { return Object.values(_cache).flat(); }
  function getAllPortPools(){ return Object.values(_cachePort).flat(); }
 
- // Filtra: rede + TVL mín + APR mín + favoritos
  function filterArr(arr) {
    if (!arr || !arr.length) return arr;
    const tvlMin = parseFloat(document.getElementById('uniFilterTvl')?.value) || 0;
    const aprMin = parseFloat(document.getElementById('uniFilterApr')?.value) || 0;
+   const search = (document.getElementById('uniSearchInput')?.value || '').toLowerCase().trim();
    return arr.filter(p => {
      if (_chainFilter !== 'all' && p.net !== _chainFilter) return false;
      if (_showOnlyFavs && !isFav(p.net, p.addr)) return false;
      if (tvlMin > 0 && (p.tvl||0) < tvlMin) return false;
      if (aprMin > 0 && (p.apr==null || p.apr < aprMin)) return false;
+     if (search && !(p.name||'').toLowerCase().includes(search) && !(p.sym||'').toLowerCase().includes(search)) return false;
      return true;
    });
  }
@@ -913,7 +922,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  const fullPort  = getAllPortPools();
  // Loading: nenhuma rede carregou ainda
  if (!fullPools.length && !fullPort.length) {
-   body.innerHTML = '<tr><td colspan="7" style="padding:32px;text-align:center;color:var(--muted);"><div class="spinner-ring" style="display:inline-block;border-top-color:#ff007a;margin-right:10px;vertical-align:middle;width:20px;height:20px;border-width:2px;"></div>Carregando pools…</td></tr>';
+   body.innerHTML = '<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--muted);"><div class="spinner-ring" style="display:inline-block;width:18px;height:18px;border-width:2px;border-top-color:#ff007a;margin-right:8px;vertical-align:middle;"></div>Carregando pools…</td></tr>';
    updateSummary([]);
    if (status) status.textContent = '';
    return;
@@ -927,7 +936,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
    else status.textContent = `${totalShown} pools`;
  }
  if (!totalShown) {
- body.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma pool após filtros. <button class="btn-sm" onclick="clearFilters()" style="margin-left:8px;">↺ Limpar</button></td></tr>';
+ body.innerHTML = '<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--muted);">Nenhuma pool após filtros. <button class="apr-flt-btn" onclick="clearFilters()" style="margin-left:8px;">↺ Limpar</button></td></tr>';
  updateSummary([]);
  updateSortIndicators();
  return;
@@ -941,7 +950,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  }
  let html = sortedPools.map(p => rowHtml(p, { isTop: topAddrs.has(p.net+':'+p.addr) })).join('');
  if (sortedPort.length) {
- html += `<tr><td colspan="7" style="padding:6px 16px 4px;font-size:9px;letter-spacing:.08em;color:var(--muted);background:var(--surface2);font-family:'Satoshi',sans-serif;font-weight:700;">TOKENS DO PORTFOLIO</td></tr>`;
+ html += `<tr><td colspan="6" style="padding:6px 14px 4px;font-size:9px;letter-spacing:.1em;color:var(--muted);background:var(--surface2);font-family:'JetBrains Mono',monospace;font-weight:700;">TOKENS DO PORTFOLIO</td></tr>`;
  html += sortedPort.map(p => rowHtml(p)).join('');
  }
  body.innerHTML = html;
@@ -952,14 +961,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  // Handlers dos filtros
  window.applyFilters = function() { renderUnified(); };
 
- // Troca o filtro de rede (chip)
  window.switchChainFilter = function(net, btn) {
    _chainFilter = net;
-   document.querySelectorAll('.uni-chip').forEach(b => {
-     const isActive = b.dataset.net === net;
-     b.style.background = isActive ? 'var(--gold)' : 'none';
-     b.style.color = isActive ? 'var(--bg)' : 'var(--muted)';
-     b.style.borderColor = isActive ? 'var(--gold)' : 'var(--border)';
+   document.querySelectorAll('.apr-tab-btn').forEach(b => {
+     b.classList.toggle('active', b.dataset.net === net);
    });
    renderUnified();
  };

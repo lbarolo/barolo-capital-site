@@ -362,7 +362,7 @@
     <div class="kpi-card">
       <div class="kpi-label">Liquidez Atual</div>
       <div class="kpi-value" id="kpi-liq">$365</div>
-      <div class="kpi-sub"><span class="live-dot"></span>1 pool ativa · WETH/USDC</div>
+      <div class="kpi-sub" id="kpi-liq-sub"><span class="live-dot"></span>1 pool ativa · WETH/USDC</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Taxas Acumuladas</div>
@@ -703,7 +703,11 @@ function renderTable() {
       <td class="hide-m" style="color:var(--muted);font-family:var(--mono);font-size:11px">
         ${fmtDays(p.days)}<br>${periodLine}
       </td>
-      <td class="num">${fmtUsd(p.capital)}</td>
+      <td class="num">
+        ${p.status === 'ativa' && p.pooled != null
+          ? `${fmtUsd(p.pooled)}<div style="font-size:10px;color:var(--muted);margin-top:2px">entrada ${fmtUsd(p.capital)}</div>`
+          : fmtUsd(p.capital)}
+      </td>
       <td class="num ${p.fees > 0 ? 'pos' : ''}">${p.fees > 0 ? fmtUsd(p.fees, 2) : '<span style="color:var(--muted)">$0</span>'}</td>
       <td class="num hide-m ${p.il < 0 ? 'neg' : ''}">${p.il ? fmtUsd(p.il, 2) : '<span style="color:var(--muted)">—</span>'}</td>
       <td class="num" ${cc(p.result)} style="font-weight:700">${fmtUsd(p.result, 2)}</td>
@@ -720,7 +724,8 @@ function renderTable() {
           <div class="d-item"><div class="d-label">Abertura</div><div class="d-value">${p.open}</div></div>
           <div class="d-item"><div class="d-label">Encerramento</div><div class="d-value">${p.close || '<span style="color:var(--green)">Em andamento</span>'}</div></div>
           <div class="d-item"><div class="d-label">Duração</div><div class="d-value">${fmtDays(p.days)}</div></div>
-          <div class="d-item"><div class="d-label">Capital</div><div class="d-value">${fmtUsd(p.capital)}</div></div>
+          ${p.status === 'ativa' && p.pooled != null ? `<div class="d-item"><div class="d-label">Liquidez Atual</div><div class="d-value" style="color:var(--green)">${fmtUsd(p.pooled)}</div></div>` : ''}
+          <div class="d-item"><div class="d-label">Capital Entrada</div><div class="d-value">${fmtUsd(p.capital)}</div></div>
           <div class="d-item"><div class="d-label">Taxas Brutas</div><div class="d-value" style="color:var(--green)">${fmtUsd(p.fees, 2)}</div></div>
           <div class="d-item"><div class="d-label">IL</div><div class="d-value" style="color:${p.il < 0 ? 'var(--red)' : 'var(--muted)'}">${p.il ? fmtUsd(p.il, 2) : '$0'}</div></div>
           <div class="d-item"><div class="d-label">Resultado</div><div class="d-value" style="color:${p.result >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${fmtUsd(p.result, 2)}</div></div>
@@ -739,7 +744,7 @@ function renderTable() {
 
   // totals footer
   const tf = list.reduce((acc, p) => {
-    acc.cap  += p.capital || 0;
+    acc.cap  += (p.status === 'ativa' && p.pooled != null ? p.pooled : p.capital) || 0;
     acc.fees += p.fees    || 0;
     acc.il   += p.il      || 0;
     acc.pnl  += p.result  || 0;
@@ -860,6 +865,7 @@ async function fetchLiveActivePool() {
   const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
 
   // 8. Patch POOLS[0] with live numbers
+  POOLS[0].pooled = parseFloat(pooledUsd.toFixed(2));  // current pool value (live)
   POOLS[0].days   = Math.round(days);
   POOLS[0].fees   = parseFloat(uncFeeUsd.toFixed(2));
   POOLS[0].il     = parseFloat((pooledUsd - ENTRY_CAPITAL).toFixed(2));
@@ -868,6 +874,9 @@ async function fetchLiveActivePool() {
   // 9. Update KPI display
   const liqEl = document.getElementById('kpi-liq');
   if (liqEl) liqEl.textContent = '$' + Math.round(pooledUsd).toLocaleString('en-US');
+  const liqSubEl = document.getElementById('kpi-liq-sub');
+  if (liqSubEl) liqSubEl.innerHTML =
+    `<span class="live-dot"></span>${wethA.toFixed(4)} WETH + ${usdcA.toFixed(2)} USDC`;
 
   if (uncFeeUsd > 0) {
     const feeApr = uncFeeUsd / ENTRY_CAPITAL / days * 365 * 100;
@@ -908,6 +917,11 @@ function toggleTheme() {
 
   // live on-chain fetch — Base RPC (async, non-blocking)
   fetchLiveActivePool().catch(e => console.debug('[Track] live pool fetch failed:', e.message));
+
+  // auto-refresh a cada 2 minutos
+  setInterval(() => {
+    fetchLiveActivePool().catch(e => console.debug('[Track] refresh failed:', e.message));
+  }, 120000);
 })();
 </script>
 </body>
