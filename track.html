@@ -295,6 +295,76 @@
     }
     .notice strong { color: var(--red); }
 
+    /* ─── ACTIVE POOL PANEL ─── */
+    .ap-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; margin-bottom: 20px;
+    }
+    .ap-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      background: rgba(63,185,80,0.03);
+    }
+    .ap-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .ap-pair {
+      font-family: var(--mono); font-size: 13px; font-weight: 600;
+      color: var(--text); text-transform: none; letter-spacing: 0;
+    }
+    .ap-meta { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .ap-body {
+      display: grid; grid-template-columns: 3fr 2fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .ap-section { padding: 16px 20px; }
+    .ap-section + .ap-section { border-left: 1px solid var(--border); }
+    .ap-section-title {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .ap-tbl { width: 100%; border-collapse: collapse; font-family: var(--mono); }
+    .ap-tbl th {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 4px 10px 8px; text-align: right;
+      border-bottom: 1px solid var(--border);
+    }
+    .ap-tbl th:first-child { text-align: left; padding-left: 0; }
+    .ap-tbl td {
+      padding: 9px 10px; font-size: 12px; font-weight: 500;
+      text-align: right; vertical-align: middle;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      line-height: 1.35;
+    }
+    .ap-tbl td:first-child { text-align: left; padding-left: 0; }
+    .ap-tbl tr:last-child td { border-bottom: none; }
+    .ap-tok {
+      display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600;
+    }
+    .ap-tok img { width: 18px; height: 18px; border-radius: 50%; }
+    .ap-pct {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+      opacity: 0.55; margin-left: 3px;
+    }
+    .ap-usd { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .ap-strip {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 1px; background: var(--border);
+    }
+    .ap-strip-item { background: var(--surface); padding: 12px 16px; }
+    .ap-strip-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .ap-strip-val { font-family: var(--mono); font-size: 15px; font-weight: 600; }
+    .ap-total-row td {
+      border-top: 1px solid var(--border) !important;
+      padding-top: 10px !important;
+    }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -378,6 +448,107 @@
       <div class="kpi-label">APR Pool Ativa</div>
       <div class="kpi-value pos" id="kpi-apr">32%</div>
       <div class="kpi-sub" id="kpi-apr-sub"><span class="live-dot"></span>fee APR · on-chain Base</div>
+    </div>
+  </div>
+
+  <!-- ACTIVE POOL DETAIL PANEL -->
+  <div class="ap-panel" id="apPanel" style="display:none">
+    <div class="ap-header">
+      <div class="ap-title">
+        <span class="live-dot"></span>
+        Pool Ativa
+        <span class="ap-pair">WETH/USDC 0.30%</span>
+        <span class="net-badge" style="background:#4fa8ff18;color:#4fa8ff;border:1px solid #4fa8ff35">
+          <span class="net-dot" style="background:#4fa8ff"></span>Base
+        </span>
+      </div>
+      <div class="ap-meta" id="ap-opened">Aberta 18/03/2026 · atualizando…</div>
+    </div>
+
+    <div class="ap-body">
+      <!-- Position Composition -->
+      <div class="ap-section">
+        <div class="ap-section-title">Position Composition</div>
+        <table class="ap-tbl">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Current Assets</th>
+              <th>HODL Initial</th>
+              <th>Initial Assets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" onerror="this.style.display='none'">WETH</div></td>
+              <td id="ap-weth-curr">—</td>
+              <td id="ap-weth-hodl">—</td>
+              <td id="ap-weth-init">—</td>
+            </tr>
+            <tr>
+              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" onerror="this.style.display='none'">USDC</div></td>
+              <td id="ap-usdc-curr">—</td>
+              <td id="ap-usdc-hodl">—</td>
+              <td id="ap-usdc-init">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Earnings -->
+      <div class="ap-section">
+        <div class="ap-section-title">Earnings (Taxas Não Coletadas)</div>
+        <table class="ap-tbl">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Unclaimed</th>
+              <th>Claimed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" onerror="this.style.display='none'">WETH</div></td>
+              <td id="ap-fee-weth">—</td>
+              <td style="color:var(--muted)">—</td>
+            </tr>
+            <tr>
+              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" onerror="this.style.display='none'">USDC</div></td>
+              <td id="ap-fee-usdc">—</td>
+              <td style="color:var(--muted)">—</td>
+            </tr>
+            <tr class="ap-total-row">
+              <td style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Total</td>
+              <td id="ap-fee-total" style="font-weight:700">—</td>
+              <td style="color:var(--muted)">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="ap-strip">
+      <div class="ap-strip-item">
+        <div class="ap-strip-label">HODL Value</div>
+        <div class="ap-strip-val" id="ap-hodl-val">—</div>
+      </div>
+      <div class="ap-strip-item">
+        <div class="ap-strip-label">Divergence Loss</div>
+        <div class="ap-strip-val" id="ap-div-loss">—</div>
+      </div>
+      <div class="ap-strip-item">
+        <div class="ap-strip-label">VS HODL</div>
+        <div class="ap-strip-val" id="ap-vs-hodl">—</div>
+      </div>
+      <div class="ap-strip-item">
+        <div class="ap-strip-label">ROI</div>
+        <div class="ap-strip-val" id="ap-roi">—</div>
+      </div>
+      <div class="ap-strip-item">
+        <div class="ap-strip-label">24h Projection</div>
+        <div class="ap-strip-val" id="ap-proj-24h">—</div>
+      </div>
     </div>
   </div>
 
@@ -865,13 +1036,56 @@ async function fetchLiveActivePool() {
   const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
 
   // 8. Patch POOLS[0] with live numbers
-  POOLS[0].pooled = parseFloat(pooledUsd.toFixed(2));  // current pool value (live)
+  const ENTRY_WETH = 0.17; // entrada 100% WETH em 18/03/2026
+  const hodlValue  = ENTRY_WETH * eth;
+  const divLoss    = pooledUsd - hodlValue;   // negativo = IL
+  const vsHodl     = uncFeeUsd + divLoss;
+  const roi        = (pooledUsd + uncFeeUsd - ENTRY_CAPITAL) / ENTRY_CAPITAL * 100;
+  const proj24h    = uncFeeUsd / days;
+  const wethPct    = pooledUsd > 0 ? wethA * eth / pooledUsd * 100 : 0;
+  const usdcPct    = pooledUsd > 0 ? usdcA     / pooledUsd * 100 : 0;
+
+  POOLS[0].pooled = parseFloat(pooledUsd.toFixed(2));
   POOLS[0].days   = Math.round(days);
   POOLS[0].fees   = parseFloat(uncFeeUsd.toFixed(2));
-  POOLS[0].il     = parseFloat((pooledUsd - ENTRY_CAPITAL).toFixed(2));
+  POOLS[0].il     = parseFloat(divLoss.toFixed(2));
   POOLS[0].result = parseFloat((pooledUsd + uncFeeUsd - ENTRY_CAPITAL).toFixed(2));
 
-  // 9. Update KPI display
+  // 9. Active Pool Detail Panel
+  const panel = document.getElementById('apPanel');
+  if (panel) {
+    panel.style.display = '';
+    const s = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+    const q = v => `<span class="ap-pct">${v.toFixed(0)}%</span>`;
+    const u = v => `<div class="ap-usd">${fmtUsd(v, 2)}</div>`;
+
+    // opened line
+    s('ap-opened', `Aberta 18/03/2026 · ${Math.round(days)}d · <span class="live-dot" style="vertical-align:middle"></span> ao vivo`);
+
+    // Position Composition — Current
+    s('ap-weth-curr', `${wethA.toFixed(4)} ${q(wethPct)}${u(wethA * eth)}`);
+    s('ap-usdc-curr', `${usdcA.toFixed(2)} ${q(usdcPct)}${u(usdcA)}`);
+    // Position Composition — HODL Initial (se tivesse só segurado)
+    s('ap-weth-hodl', `${ENTRY_WETH.toFixed(4)} <span class="ap-pct">100%</span>${u(hodlValue)}`);
+    s('ap-usdc-hodl', `0.00 <span class="ap-pct">0%</span><div class="ap-usd">$0.00</div>`);
+    // Position Composition — Initial Assets (entrada)
+    s('ap-weth-init', `${ENTRY_WETH.toFixed(4)}${u(ENTRY_CAPITAL)}`);
+    s('ap-usdc-init', `0.00<div class="ap-usd">$0.00</div>`);
+
+    // Earnings
+    s('ap-fee-weth', `${uncW.toFixed(6)}<div class="ap-usd" style="color:var(--green)">${fmtUsd(uncW * eth, 2)}</div>`);
+    s('ap-fee-usdc', `${uncU.toFixed(2)}<div class="ap-usd" style="color:var(--green)">${fmtUsd(uncU, 2)}</div>`);
+    s('ap-fee-total', `<span style="color:var(--green)">${fmtUsd(uncFeeUsd, 2)}</span>`);
+
+    // Stats strip
+    s('ap-hodl-val',  fmtUsd(hodlValue, 2));
+    s('ap-div-loss',  `<span style="color:${divLoss < 0 ? 'var(--red)' : 'var(--green)'}">${fmtUsd(divLoss, 2)}</span>`);
+    s('ap-vs-hodl',   `<span style="color:${vsHodl >= 0 ? 'var(--green)' : 'var(--red)'}">${vsHodl >= 0 ? '+' : ''}${fmtUsd(vsHodl, 2)}</span>`);
+    s('ap-roi',       `<span style="color:${roi >= 0 ? 'var(--green)' : 'var(--red)'}">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</span>`);
+    s('ap-proj-24h',  `<span style="color:var(--green)">${fmtUsd(proj24h, 2)}/dia</span>`);
+  }
+
+  // 10. Update KPI display
   const liqEl = document.getElementById('kpi-liq');
   if (liqEl) liqEl.textContent = '$' + Math.round(pooledUsd).toLocaleString('en-US');
   const liqSubEl = document.getElementById('kpi-liq-sub');
