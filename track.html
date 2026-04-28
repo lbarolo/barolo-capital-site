@@ -295,10 +295,33 @@
     }
     .notice strong { color: var(--red); }
 
+    /* ─── TOOLTIPS ─── */
+    .tt-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: rgba(255,255,255,0.07); color: var(--muted);
+      font-size: 9px; font-weight: 700; cursor: help;
+      margin-left: 4px; flex-shrink: 0;
+      position: relative; vertical-align: middle; font-style: normal;
+    }
+    .tt-icon::after {
+      content: attr(data-tip);
+      position: absolute; bottom: calc(100% + 8px); left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface2); border: 1px solid rgba(180,140,240,0.2);
+      border-radius: 8px; padding: 8px 12px;
+      font-size: 11px; font-weight: 400; font-family: var(--font);
+      color: var(--text); width: 200px; text-align: left; line-height: 1.5;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      pointer-events: none; opacity: 0; transition: opacity 0.15s;
+      z-index: 9999; white-space: normal;
+    }
+    .tt-icon:hover::after { opacity: 1; }
+
     /* ─── ACTIVE POOL PANEL ─── */
     .ap-panel {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden; margin-bottom: 20px;
+      border-radius: 12px; overflow: visible; margin-bottom: 20px;
     }
     .ap-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -364,6 +387,44 @@
       border-top: 1px solid var(--border) !important;
       padding-top: 10px !important;
     }
+
+    /* ─── DIVERGENCE LOSS TABLE ─── */
+    .ap-div-section {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .ap-div-tbl { width: 100%; border-collapse: collapse; font-family: var(--mono); }
+    .ap-div-tbl th {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 4px 12px 8px; text-align: right;
+      border-bottom: 1px solid var(--border);
+    }
+    .ap-div-tbl th:first-child { text-align: left; padding-left: 0; }
+    .ap-div-tbl td {
+      padding: 9px 12px; font-size: 12px; font-weight: 500;
+      text-align: right; border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .ap-div-tbl td:first-child {
+      text-align: left; padding-left: 0;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .ap-div-tbl tr:last-child td { border-bottom: none; }
+    /* ─── KPI MINI ROW ─── */
+    .ap-kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border);
+      border-radius: 0 0 12px 12px; overflow: hidden;
+    }
+    .ap-kpi-mini { background: var(--surface2); padding: 12px 16px; }
+    .ap-kpi-mini-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+      display: flex; align-items: center;
+    }
+    .ap-kpi-mini-val { font-family: var(--mono); font-size: 15px; font-weight: 600; }
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
@@ -468,14 +529,14 @@
     <div class="ap-body">
       <!-- Position Composition -->
       <div class="ap-section">
-        <div class="ap-section-title">Position Composition</div>
+        <div class="ap-section-title">Position Composition <i class="tt-icon" data-tip="Ativos atuais na pool vs o que você teria se tivesse apenas segurado os tokens iniciais.">?</i></div>
         <table class="ap-tbl">
           <thead>
             <tr>
               <th></th>
-              <th>Current Assets</th>
-              <th>HODL Initial</th>
-              <th>Initial Assets</th>
+              <th>Current Assets <i class="tt-icon" data-tip="Quantidade e valor atual de cada token na sua posição LP.">?</i></th>
+              <th>HODL Initial <i class="tt-icon" data-tip="O que valeria se você tivesse segurado os tokens iniciais sem entrar na pool.">?</i></th>
+              <th>Initial Assets <i class="tt-icon" data-tip="Tokens e valores que você depositou na abertura da posição.">?</i></th>
             </tr>
           </thead>
           <tbody>
@@ -497,13 +558,13 @@
 
       <!-- Earnings -->
       <div class="ap-section">
-        <div class="ap-section-title">Earnings (Taxas Não Coletadas)</div>
+        <div class="ap-section-title">Earnings <i class="tt-icon" data-tip="Taxas geradas pela pool. Unclaimed = não coletadas (ainda na posição). Claimed = já sacadas.">?</i></div>
         <table class="ap-tbl">
           <thead>
             <tr>
               <th></th>
-              <th>Unclaimed</th>
-              <th>Claimed</th>
+              <th>Unclaimed <i class="tt-icon" data-tip="Taxas acumuladas que ainda não foram coletadas. Incluídas no cálculo de P&L.">?</i></th>
+              <th>Claimed <i class="tt-icon" data-tip="Taxas já sacadas da posição. Nenhuma coleta feita até agora.">?</i></th>
             </tr>
           </thead>
           <tbody>
@@ -527,27 +588,80 @@
       </div>
     </div>
 
-    <!-- Stats strip -->
-    <div class="ap-strip">
-      <div class="ap-strip-item">
-        <div class="ap-strip-label">HODL Value</div>
-        <div class="ap-strip-val" id="ap-hodl-val">—</div>
+    <!-- Divergence Loss Table -->
+    <div class="ap-div-section">
+      <div class="ap-section-title">
+        Divergence Loss
+        <i class="tt-icon" data-tip="Compara o valor atual da posição com diferentes estratégias de holding. Negativo = pool teve IL vs aquela estratégia.">?</i>
       </div>
-      <div class="ap-strip-item">
-        <div class="ap-strip-label">Divergence Loss</div>
-        <div class="ap-strip-val" id="ap-div-loss">—</div>
+      <table class="ap-div-tbl">
+        <thead>
+          <tr>
+            <th></th>
+            <th>100% WETH <i class="tt-icon" data-tip="Cenário: converteu todo o capital em WETH na entrada e segurou.">?</i></th>
+            <th>100% USDC <i class="tt-icon" data-tip="Cenário: ficou 100% em stablecoin desde a entrada ($365).">?</i></th>
+            <th>50 / 50 <i class="tt-icon" data-tip="Cenário: dividiu 50% WETH e 50% USDC na entrada e segurou.">?</i></th>
+            <th>Capital Entrada <i class="tt-icon" data-tip="Referência em USD: o valor exato depositado na abertura ($365).">?</i></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>HODL <i class="tt-icon" data-tip="Valor que cada estratégia teria hoje se você não tivesse entrado na pool.">?</i></td>
+            <td id="ap-dv-hodl-weth">—</td>
+            <td id="ap-dv-hodl-usdc">—</td>
+            <td id="ap-dv-hodl-5050">—</td>
+            <td id="ap-dv-hodl-init">—</td>
+          </tr>
+          <tr>
+            <td>DIV. LOSS <i class="tt-icon" data-tip="Valor atual da posição (sem taxas) menos o benchmark. Negativo = IL vs aquela estratégia.">?</i></td>
+            <td id="ap-dv-loss-weth">—</td>
+            <td id="ap-dv-loss-usdc">—</td>
+            <td id="ap-dv-loss-5050">—</td>
+            <td id="ap-dv-loss-init">—</td>
+          </tr>
+          <tr>
+            <td>VS HODL <i class="tt-icon" data-tip="Performance total vs benchmark = taxas acumuladas + Divergence Loss. Verde = você superou o holding.">?</i></td>
+            <td id="ap-dv-vs-weth">—</td>
+            <td id="ap-dv-vs-usdc">—</td>
+            <td id="ap-dv-vs-5050">—</td>
+            <td id="ap-dv-vs-init">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- KPI Mini Row -->
+    <div class="ap-kpi-row">
+      <div class="ap-kpi-mini">
+        <div class="ap-kpi-mini-label">
+          ROI
+          <i class="tt-icon" data-tip="Retorno total sobre o capital inicial em USD. (Liquidez atual + Taxas − $365) ÷ $365.">?</i>
+        </div>
+        <div class="ap-kpi-mini-val" id="ap-roi">—</div>
       </div>
-      <div class="ap-strip-item">
-        <div class="ap-strip-label">VS HODL</div>
-        <div class="ap-strip-val" id="ap-vs-hodl">—</div>
+      <div class="ap-kpi-mini">
+        <div class="ap-kpi-mini-label">
+          Asset Gain
+          <i class="tt-icon" data-tip="Variação de preço dos ativos na posição vs o capital de entrada — sem contar taxas.">?</i>
+        </div>
+        <div class="ap-kpi-mini-val" id="ap-asset-gain">—</div>
       </div>
-      <div class="ap-strip-item">
-        <div class="ap-strip-label">ROI</div>
-        <div class="ap-strip-val" id="ap-roi">—</div>
+      <div class="ap-kpi-mini">
+        <div class="ap-kpi-mini-label">
+          24h Projection
+          <i class="tt-icon" data-tip="Projeção de taxas diárias baseada no total acumulado desde 18/03/2026 ÷ dias abertos.">?</i>
+        </div>
+        <div class="ap-kpi-mini-val" id="ap-proj-24h">—</div>
       </div>
-      <div class="ap-strip-item">
-        <div class="ap-strip-label">24h Projection</div>
-        <div class="ap-strip-val" id="ap-proj-24h">—</div>
+      <div class="ap-kpi-mini">
+        <div class="ap-kpi-mini-label">
+          Deposits / Withdrawals
+          <i class="tt-icon" data-tip="Capital depositado na abertura. Nenhum saque realizado até agora.">?</i>
+        </div>
+        <div class="ap-kpi-mini-val" style="font-size:13px">
+          <span style="color:var(--green)">$365</span>
+          <span style="color:var(--muted);font-size:11px"> / $0.00</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1077,12 +1191,39 @@ async function fetchLiveActivePool() {
     s('ap-fee-usdc', `${uncU.toFixed(2)}<div class="ap-usd" style="color:var(--green)">${fmtUsd(uncU, 2)}</div>`);
     s('ap-fee-total', `<span style="color:var(--green)">${fmtUsd(uncFeeUsd, 2)}</span>`);
 
-    // Stats strip
-    s('ap-hodl-val',  fmtUsd(hodlValue, 2));
-    s('ap-div-loss',  `<span style="color:${divLoss < 0 ? 'var(--red)' : 'var(--green)'}">${fmtUsd(divLoss, 2)}</span>`);
-    s('ap-vs-hodl',   `<span style="color:${vsHodl >= 0 ? 'var(--green)' : 'var(--red)'}">${vsHodl >= 0 ? '+' : ''}${fmtUsd(vsHodl, 2)}</span>`);
-    s('ap-roi',       `<span style="color:${roi >= 0 ? 'var(--green)' : 'var(--red)'}">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</span>`);
-    s('ap-proj-24h',  `<span style="color:var(--green)">${fmtUsd(proj24h, 2)}/dia</span>`);
+    // Divergence Loss — 4 benchmark scenarios
+    const totalPosVal  = pooledUsd + uncFeeUsd;
+    const hodl100Weth  = ENTRY_WETH * eth;                              // HODL 100% WETH
+    const hodl100Usdc  = ENTRY_CAPITAL;                                 // HODL 100% USDC ($365)
+    const hodl5050     = 0.5 * (ENTRY_WETH * eth + ENTRY_CAPITAL);     // HODL 50/50
+    // entry was 100% WETH so hodlInit = hodl100Weth
+    const cc = v => v >= 0 ? 'var(--green)' : 'var(--red)';
+    const fh = v => `<span style="font-family:var(--mono)">${fmtUsd(v, 2)}</span>`;
+    const fd = v => `<span style="color:${cc(v)}">${v >= 0 ? '+' : ''}${fmtUsd(Math.abs(v), 2)}</span>`;
+
+    // HODL row
+    s('ap-dv-hodl-weth', fh(hodl100Weth));
+    s('ap-dv-hodl-usdc', fh(hodl100Usdc));
+    s('ap-dv-hodl-5050', fh(hodl5050));
+    s('ap-dv-hodl-init', fh(hodl100Weth)); // entry = 100% WETH
+
+    // Divergence Loss row (pooled only, no fees)
+    s('ap-dv-loss-weth', fd(pooledUsd - hodl100Weth));
+    s('ap-dv-loss-usdc', fd(pooledUsd - hodl100Usdc));
+    s('ap-dv-loss-5050', fd(pooledUsd - hodl5050));
+    s('ap-dv-loss-init', fd(pooledUsd - hodl100Weth));
+
+    // VS HODL row (fees + divergence)
+    s('ap-dv-vs-weth', fd(totalPosVal - hodl100Weth));
+    s('ap-dv-vs-usdc', fd(totalPosVal - hodl100Usdc));
+    s('ap-dv-vs-5050', fd(totalPosVal - hodl5050));
+    s('ap-dv-vs-init', fd(totalPosVal - hodl100Weth));
+
+    // KPI mini row
+    const assetGain = pooledUsd - ENTRY_CAPITAL;
+    s('ap-roi',        `<span style="color:${cc(roi)}">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</span>`);
+    s('ap-asset-gain', `<span style="color:${cc(assetGain)}">${assetGain >= 0 ? '+' : ''}${fmtUsd(Math.abs(assetGain), 2)}</span>`);
+    s('ap-proj-24h',   `<span style="color:var(--green)">${fmtUsd(proj24h, 2)}/dia</span>`);
   }
 
   // 10. Update KPI display
