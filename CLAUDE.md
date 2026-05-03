@@ -2467,3 +2467,27 @@ PDF lido e analisado. 6 insights aplicados à realidade de Lucas:
 
 ---
 
+## Sessão 03/05/2026 — Aave V4 Hub-and-Spoke live fetch (3 arquivos)
+
+### Implementado
+
+- **`emprestimos.html`** — `fetchAave()` reescrito para V4: queries MAIN_SPOKE (`0x94e7A5dCbE816e498b89aB752661904E2F56c485`) + BLUECHIP_SPOKE (`0x973a023A77420ba610f06b3858aD991Df6d85A08`) em paralelo. Selector V4: `0x91b89fba`. Offsets do struct: `[2]`=HF(WAD), `[3]`=collateral(8dec USD), `[4]`=debt(RAY). Per-asset qty derivada dos totais USD (sem aToken V4 calls). USDC borrow (não GHO). Sanity checks mantidos (collateral < 100, HF > 1e15, !isFinite).
+- **`portfolio_analytics.html`** — `fetchAave()` reescrito (versão simplificada — só HF + totais para exec bar). `fetchAaveApys()` corrigido: `GHO_ADDR` → `USDC_ADDR` (borrow token atual). Constantes V3 (`AAVE_POOL`, `GHO_ADDR`) removidas; V4 spokes adicionados.
+- **`pools.html`** — Dois lugares atualizados: (1) `fetchAaveData()` IIFE standalone: ETH_QTY 1.87→1.88, USDT_QTY 1651.49→1985.68, USDT_LT 0.75→0.775; `callAave()` reescrito com parseSpoke V4. (2) `fetchAave()` no `initWalletFetch`: mesmo padrão V4 do portfolio_analytics.
+
+### Bugs corrigidos
+
+| Bug | Fix |
+|-----|-----|
+| `fetchAave()` usava V3 `AAVE_POOL` (`0x87870...`) — depreciado na V4 | Substituído por MAIN_SPOKE + BLUECHIP_SPOKE com selector V4 `0x91b89fba` |
+| `fetchAaveApys()` em `portfolio_analytics.html` buscava APY do GHO (token trocado em 10/04) | `GHO_ADDR` → `USDC_ADDR` (`0xA0b8...`) |
+| Brace counter reportava depth=-1 em script[8] | Falso positivo — `{` dentro de template literals contados incorretamente; confirmado pré-existente via `git stash` |
+
+### O que ainda falta
+- **`wealthCurve` Abr/2026** — Lucas avisa com print após 30/04/2026
+- **`monthlyReturns[2026].Abr`** — preencher ao final do mês
+- **CSVs das CEX** — custo BRL + IR
+- **Verificar V4 fetch ao vivo** — sandbox bloqueou RPC durante desenvolvimento; confirmar selector `0x91b89fba` e offsets [2,3,4] funcionando em produção
+
+---
+
