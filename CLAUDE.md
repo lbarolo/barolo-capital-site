@@ -2543,3 +2543,102 @@ Ponto adicionado: `04/26 = $9,206` (saldo CoinGecko atual). `invested` Abr/26 = 
 
 ---
 
+## Sessão 04/05/2026 (continuação) — track.html: nav, KPIs, detalhe expandido, gráficos ap-panel, e dois novos gráficos (preço + liquidez)
+
+### Contexto
+Sessão continuada em worktree `agitated-faraday-439f56`. Todas as mudanças foram em `track.html`. Commit `499c376` → merge → push main.
+
+### Implementado
+
+#### `track.html` — Nav logo idêntica às outras páginas
+- SVG `BAROLO CAPITAL` com linhas de gradiente dourado (linear, transparent→gold→transparent) substituiu o `B` simples que estava no nav
+- CSS do nav reescrito para bater exatamente com `pools.html`: `font-size:10px`, `letter-spacing:0.1em`, `text-transform:uppercase`, fundo `rgba(242,236,224,0.97)` light / `rgba(13,9,23,0.96)` dark
+- Links nav: Início · Portfolio · Pools & DeFi · **Track** (active) · Empréstimos · Ferramentas
+- `.nav-links a.active` com borda dourada sutil; `.btn-sm` com `font-size:9px` e `letter-spacing:0.08em`
+
+#### `track.html` — KPI cards separados com bordas
+- `.kpi-grid`: `gap: 1px; background: var(--border)` → `gap: 12px`
+- Cada `.kpi-card` ganhou `border: 1px solid var(--border); border-radius: 12px` (antes era só background)
+- Resultado: 4 cards soltos com gap, ao invés de grid conectado
+
+#### `track.html` — Linha de detalhe expandida (`.detail-content`)
+- `.d-item` ganhou: `background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px`
+- Card **Range** movido para primeira posição no grid
+- Range split: `rangeMain = p.range.split(' (')[0]` → mostra só `$1,855 – $3,146`; sub-label separado com `regex.match(/\((.*?)\)/)` → `saída gradual ETH→USDC`
+- `.d-value` Range com `white-space:nowrap` para não quebrar linha
+
+#### `track.html` — Gráfico no detalhe expandido (`.detail-chart-wrap`)
+- Canvas `id="dc-{poolId}"` dentro do detalhe expandido
+- Abas: PnL · Assets value · APR · Fees · Div. loss
+- `buildDetailChart(p, metric)` — linha colorida com gradiente fill, 9 pontos sintéticos históricos, tooltip com valor e delta
+- `switchDetailChart(cid, metric, btn, poolId)` — troca aba e reconstrói chart
+- `setTimeout(() => buildDetailChart(ep, 'pnl'), 60)` — chamado após `tbody.innerHTML = html`
+
+#### `track.html` — Gráfico no ap-panel (estilo Revert Finance)
+- `.ap-chart-section` adicionado abaixo do `.ap-kpi-row`
+- Canvas `id="apChart"` com 5 abas: PnL · Assets value · APR · Fees APR · Div. loss
+- `buildApChart(metric, p)` com `fill: { target: 'origin', above: 'rgba(63,185,80,0.22)', below: 'rgba(248,81,73,0.2)' }` — verde acima do zero, vermelho abaixo
+- Header: valor atual + delta em tooltip lateral
+- `switchApChart(metric, btn)` — troca aba
+
+#### `track.html` — Cor da linha verde/vermelho (user request desta sessão)
+- `buildApChart`: `borderColor` era `'#d0d0d0'` fixo → agora `last >= 0 ? '#3fb950' : '#f85149'`
+- `buildDetailChart`: PnL usa `pnlNow >= 0 ? '#3fb950' : '#f85149'`; Div.loss usa `ilNow >= 0 ? '#3fb950' : '#f85149'`
+- Resultado: linha verde quando o valor atual é positivo, vermelha quando negativo
+
+#### `track.html` — Gráfico de preço WETH/USDC com range (novo)
+- `_priceChart` (Chart.js line chart) + `buildPriceChart(currentEth)` (async)
+- Fetch: `CoinGecko /coins/ethereum/market_chart?vs_currency=usd&days=75&interval=daily` → filtra a partir de 01/03/2026
+- Linha dourada `#c9a050`, sem fill, tension=0.2
+- Anotações via `chartjs-plugin-annotation@3.1.0`:
+  - `lineMin`: linha horizontal `yMin=yMax=1855.72`, roxa tracejada, label "MIN $1,856"
+  - `lineMax`: linha horizontal `yMin=yMax=3146.36`, roxa tracejada, label "MAX $3,146"
+  - `deposit`: linha vertical no label '18/Mar', dourada tracejada, label "D"
+- Fallback sintético se CoinGecko falhar (10 pontos mar→mai/2026)
+- Chamado em `fetchLiveActivePool()` após fetch bem-sucedido
+
+#### `track.html` — Gráfico de distribuição de liquidez (novo)
+- `_liqDistChart` (Chart.js bar chart) + `buildLiqDistChart(currentEth)`
+- Barra por faixa de $100, de $1,000 a $5,000 (41 barras)
+- Barras **verdes** dentro do range [$1,856, $3,146]; **acinzentadas** fora
+- Curva sintética: bell gaussiana centrada em $2,500 (meio do range) dentro; decaimento exponencial fora
+- Anotações:
+  - `minLine`: vertical no label mais próximo de MIN, roxo tracejado, label "MIN"
+  - `maxLine`: vertical no label mais próximo de MAX, roxo tracejado, label "MAX"
+  - `curPrice`: vertical no preço atual ETH, branco/escuro, label com valor "$X,XXX"
+- Eixo Y oculto; eixo X mostra só ticks múltiplos de $500 ('$1.0K', '$1.5K', etc.)
+- Chamado em `init()` com fallback `eth=1850` e atualizado em `fetchLiveActivePool()`
+
+#### `chartjs-plugin-annotation@3.1.0` adicionado ao `<head>`
+```html
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+```
+Plugin registra automaticamente com Chart.js quando carregado.
+
+### Dados atualizados
+Nenhum dado de posição alterado nesta sessão.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Nav de track.html diferente das outras páginas | CSS tinha font-size maior, sem uppercase, fundo errado no light | Reescrito para copiar exatamente o CSS do pools.html |
+| KPI cards colados (grid sem gap) | `gap: 1px; background: var(--border)` criava visual de tabela | `gap: 12px` + border individual em cada card |
+| Range do card expandido quebrava linha | `.d-value` sem `white-space:nowrap` | Adicionado `white-space:nowrap`; texto dividido em duas linhas (valor + nota) |
+| Linha do gráfico sempre cinza (#d0d0d0) | `borderColor` fixo no buildApChart | Dinâmico: verde se ≥0, vermelho se <0 |
+| PnL e Div.loss sempre vermelhos no detail chart | `color:'#f85149'` fixo mesmo quando positivo | Cor calculada do valor atual: `pnlNow >= 0 ? '#3fb950' : '#f85149'` |
+
+### O que ainda falta
+
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
+- **CSVs das CEX** — Lucas traz para custo BRL + IR
+- **Verificar V4 fetch ao vivo** — selector `0x91b89fba` + offsets [2,3,4] em produção
+- **i18n painel Sizing & Risk** — labels só em PT; falta strings EN
+- **Validar `calcLevHedge()`** com cenários reais
+- **Mentoria DeFi avançado** — Euler V2, Morpho, Gearbox, Drift, Hyperliquid HLP, Pendle PT
+- **APR pool Base** — só via uncollected fees; Collect events históricos não contabilizados
+- **`buildPriceChart`** — confirmar em produção que CoinGecko retorna dados filtrados corretamente a partir de 01/03/2026; verificar se label '18/Mar' existe no array para o marcador D
+- **Distribuição de liquidez real** — a atual é sintética (estimada); leitura real exigiria Uniswap V3 subgraph com scan de ticks
+
+---
+
