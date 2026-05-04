@@ -545,7 +545,9 @@
     <a href="ferramentas.html">Ferramentas</a>
   </div>
   <div class="nav-right">
+    <button class="btn-sm" id="currencyBtn" onclick="toggleTrackCurrency()" title="Alternar moeda">$ USD</button>
     <button class="btn-sm" onclick="toggleTheme()" id="themeBtn">☾</button>
+    <button class="btn-sm" id="liveBtn" onclick="liveRefresh()" title="Atualizar dados on-chain" style="color:var(--green)">⟳ Live</button>
   </div>
 </nav>
 
@@ -1808,6 +1810,51 @@ function switchDetailChart(cid, metric, btn, poolId) {
   btn.classList.add('active');
   const p = POOLS.find(pl => pl.id === poolId);
   if (p) buildDetailChart(p, metric);
+}
+
+// ─── CURRENCY TOGGLE ─────────────────────────────────────────────────────────
+
+let _trackCurrency = 'USD';
+let _trackBrlRate  = null;
+
+async function toggleTrackCurrency() {
+  _trackCurrency = _trackCurrency === 'USD' ? 'BRL' : 'USD';
+  const btn = document.getElementById('currencyBtn');
+  if (btn) btn.textContent = _trackCurrency === 'USD' ? '$ USD' : 'R$ BRL';
+
+  if (_trackCurrency === 'BRL' && !_trackBrlRate) {
+    try {
+      const r = await fetch('https://open.er-api.com/v6/latest/USD');
+      if (r.ok) { const d = await r.json(); _trackBrlRate = d.rates?.BRL || 5.7; }
+    } catch(e) { _trackBrlRate = 5.7; }
+  }
+
+  // re-render KPI cards with current currency
+  const rate = _trackCurrency === 'BRL' ? (_trackBrlRate || 5.7) : 1;
+  const sym  = _trackCurrency === 'BRL' ? 'R$' : '$';
+  const fmt  = v => sym + Math.round(v * rate).toLocaleString('pt-BR');
+
+  const p = POOLS[0];
+  const liqEl = document.getElementById('kpi-liq');
+  if (liqEl && p.pooled != null) liqEl.textContent = fmt(p.pooled);
+
+  const feesEl = document.getElementById('kpi-fees');
+  const totFees = POOLS.reduce((s, x) => s + (x.fees || 0), 0);
+  if (feesEl) feesEl.textContent = fmt(totFees);
+
+  const pnlEl = document.getElementById('kpi-pnl');
+  const totPnL = POOLS.reduce((s, x) => s + (x.result || 0), 0);
+  if (pnlEl) { pnlEl.textContent = (totPnL < 0 ? '-' : '') + sym + Math.round(Math.abs(totPnL) * rate).toLocaleString('pt-BR'); }
+}
+
+// ─── LIVE REFRESH ─────────────────────────────────────────────────────────────
+
+function liveRefresh() {
+  const btn = document.getElementById('liveBtn');
+  if (btn) { btn.textContent = '⟳ …'; btn.style.opacity = '0.5'; }
+  fetchLiveActivePool()
+    .then(() => { if (btn) { btn.textContent = '⟳ Live'; btn.style.opacity = '1'; } })
+    .catch(() => { if (btn) { btn.textContent = '⟳ Live'; btn.style.opacity = '1'; } });
 }
 
 // ─── THEME ───────────────────────────────────────────────────────────────────
