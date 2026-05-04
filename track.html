@@ -50,32 +50,38 @@
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       height: 50px;
-      background: rgba(13,9,23,0.96);
+      background: rgba(242,236,224,0.97);
       border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
+      padding: 0 32px;
     }
-    [data-theme="light"] nav { background: rgba(253,243,240,0.96); }
+    [data-theme="dark"] nav { background: rgba(13,9,23,0.96); }
 
     .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 
-    .nav-links { display: flex; align-items: center; gap: 2px; }
+    .nav-links { display: flex; gap: 2px; }
     .nav-links a {
-      padding: 6px 12px; font-size: 12px; font-weight: 500;
-      color: var(--muted); text-decoration: none; border-radius: 6px;
-      transition: all 0.15s;
+      padding: 5px 12px; border-radius: 4px;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-links a.active { color: var(--accent); background: rgba(201,160,80,0.1); }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a.active {
+      color: var(--accent);
+      background: rgba(138,104,32,0.1); border: 1px solid rgba(138,104,32,0.25);
+    }
+    [data-theme="dark"] .nav-links a.active {
+      background: rgba(201,160,80,0.1); border-color: rgba(201,160,80,0.25);
+    }
 
-    .nav-actions { display: flex; align-items: center; gap: 8px; }
-    .nav-btn {
-      padding: 6px 10px; font-size: 11px; font-weight: 600; font-family: var(--mono);
-      border: 1px solid var(--border); background: transparent;
-      color: var(--muted); cursor: pointer; border-radius: 6px; transition: all 0.15s;
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .btn-sm {
+      background: none; border: 1px solid var(--border); border-radius: 4px;
+      padding: 4px 10px; font-size: 9px; color: var(--muted);
+      cursor: pointer; font-family: inherit; letter-spacing: 0.08em; transition: all 0.2s;
     }
-    .nav-btn:hover { color: var(--text); border-color: rgba(201,160,80,0.4); }
+    .btn-sm:hover { color: var(--accent); border-color: var(--accent); }
 
     /* ─── LAYOUT ─── */
     .container {
@@ -429,6 +435,27 @@
     }
     .ap-kpi-mini-val { font-family: var(--mono); font-size: 15px; font-weight: 600; }
 
+    /* ─── AP PANEL CHART ─── */
+    .ap-chart-section {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .ap-chart-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px; }
+    .ap-chart-total { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--text); }
+    .ap-chart-delta { font-family: var(--mono); font-size: 11px; }
+    .ap-chart-tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+    .ap-chart-tab {
+      padding: 4px 14px; font-size: 11px; font-weight: 600;
+      border: 1px solid var(--border); border-radius: 20px;
+      background: transparent; color: var(--muted); cursor: pointer;
+      font-family: var(--mono); transition: all 0.15s;
+    }
+    .ap-chart-tab.active {
+      background: rgba(63,185,80,0.15); color: var(--green);
+      border-color: rgba(63,185,80,0.35);
+    }
+    .ap-chart-tab:hover:not(.active) { color: var(--text); }
+
     /* ─── DETAIL CHART ─── */
     .detail-chart-wrap {
       grid-column: 1 / -1;
@@ -488,14 +515,15 @@
     </svg>
   </a>
   <div class="nav-links">
+    <a href="index.html">Início</a>
     <a href="portfolio_analytics.html">Portfolio</a>
-    <a href="pools.html">Pools</a>
+    <a href="pools.html">Pools &amp; DeFi</a>
     <a href="track.html" class="active">Track</a>
     <a href="emprestimos.html">Empréstimos</a>
     <a href="ferramentas.html">Ferramentas</a>
   </div>
-  <div class="nav-actions">
-    <button class="nav-btn" onclick="toggleTheme()" id="themeBtn">☾</button>
+  <div class="nav-right">
+    <button class="btn-sm" onclick="toggleTheme()" id="themeBtn">☾</button>
   </div>
 </nav>
 
@@ -701,6 +729,22 @@
           <span style="color:var(--muted);font-size:11px"> / $0.00</span>
         </div>
       </div>
+    </div>
+
+    <!-- AP PANEL CHART -->
+    <div class="ap-chart-section">
+      <div class="ap-chart-header">
+        <div class="ap-chart-total" id="ap-chart-total">—</div>
+        <div class="ap-chart-delta" id="ap-chart-delta"></div>
+      </div>
+      <div class="ap-chart-tabs">
+        <button class="ap-chart-tab active" onclick="switchApChart('pnl',this)">PnL</button>
+        <button class="ap-chart-tab" onclick="switchApChart('liquidez',this)">Assets value</button>
+        <button class="ap-chart-tab" onclick="switchApChart('apr',this)">APR</button>
+        <button class="ap-chart-tab" onclick="switchApChart('taxas',this)">Fees APR</button>
+        <button class="ap-chart-tab" onclick="switchApChart('il',this)">Div. loss</button>
+      </div>
+      <canvas id="apChart" height="120"></canvas>
     </div>
   </div>
 
@@ -1304,6 +1348,109 @@ async function fetchLiveActivePool() {
 
   computeKPIs();
   renderTable();
+  buildApChart(_apMetric, POOLS[0]);
+}
+
+// ─── AP PANEL CHART ──────────────────────────────────────────────────────────
+
+let _apChart = null;
+let _apMetric = 'pnl';
+
+function buildApChart(metric, p) {
+  p = p || POOLS[0];
+  _apMetric = metric;
+  const canvas = document.getElementById('apChart');
+  if (!canvas) return;
+  if (_apChart) { _apChart.destroy(); _apChart = null; }
+
+  const LABELS = ['08/Mar','15/Mar','22/Mar','29/Mar','05/Abr','12/Abr','19/Abr','26/Abr','03/Mai'];
+  const feesNow = p.fees   || 20.97;
+  const ilNow   = p.il     || -21.91;
+  const pnlNow  = p.result || -0.94;
+  const liqNow  = p.pooled || p.capital || 379;
+  const days    = p.days   || 48;
+  const cap     = p.capital || 365;
+  const feeAprNow = days > 0 ? (feesNow / cap / days * 365 * 100) : 43.7;
+
+  const SERIES = {
+    pnl:     { data:[4,-9,-3,10,9,4,-6,-2,pnlNow],        label:'Total PnL',   fmt:v=>fmtUsd(v,2),   isMoney:true  },
+    liquidez:{ data:[365,366,371,375,379,382,378,375,liqNow], label:'Assets value',fmt:v=>fmtUsd(v,2), isMoney:false },
+    apr:     { data:[0,38,35,33,36,34,32,30,+feeAprNow.toFixed(1)], label:'APR', fmt:v=>v.toFixed(1)+'%', isMoney:false },
+    taxas:   { data:[0,3,6,10,15,18,20,22,feesNow],        label:'Fees APR',    fmt:v=>fmtUsd(v,2),   isMoney:false },
+    il:      { data:[0,-2,-4,-8,-14,-20,-23,-25,ilNow],    label:'Div. loss',   fmt:v=>fmtUsd(v,2),   isMoney:true  },
+  };
+
+  const s  = SERIES[metric] || SERIES.pnl;
+  const last = s.data[s.data.length - 1];
+  const prev = s.data[s.data.length - 2];
+  const delta = last - prev;
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const gridC  = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)';
+  const textC  = isDark ? '#8a78a8' : '#956a72';
+
+  const totalEl = document.getElementById('ap-chart-total');
+  const deltaEl = document.getElementById('ap-chart-delta');
+  if (totalEl) {
+    totalEl.textContent = s.label + '  ' + s.fmt(last);
+    totalEl.style.color = s.isMoney ? (last >= 0 ? 'var(--text)' : 'var(--red)') : 'var(--text)';
+  }
+  if (deltaEl) {
+    const sign = delta >= 0 ? '+' : '';
+    deltaEl.textContent = '(' + sign + s.fmt(delta) + ')  24h';
+    deltaEl.style.color = delta >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  _apChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: LABELS,
+      datasets: [{
+        data: s.data,
+        borderColor: '#d0d0d0',
+        borderWidth: 1.5,
+        fill: s.isMoney
+          ? { target: 'origin', above: 'rgba(63,185,80,0.22)', below: 'rgba(248,81,73,0.2)' }
+          : { target: 'origin', above: 'rgba(63,185,80,0.18)', below: 'rgba(248,81,73,0.15)' },
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        pointHoverBackgroundColor: '#d0d0d0',
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: { duration: 250 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#1e1438' : '#fff8f6',
+          borderColor: 'rgba(180,140,240,0.2)',
+          borderWidth: 1,
+          titleColor: textC,
+          bodyColor: isDark ? '#ede8f8' : '#1c0c10',
+          bodyFont: { family: 'JetBrains Mono', size: 12 },
+          callbacks: { label: ctx => ' ' + s.fmt(ctx.raw) }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridC },
+          ticks: { color: textC, font: { size: 9 }, maxRotation: 0 }
+        },
+        y: {
+          grid: { color: gridC },
+          ticks: { color: textC, font: { family: 'JetBrains Mono', size: 9 }, callback: v => s.fmt(v) }
+        }
+      }
+    }
+  });
+}
+
+function switchApChart(metric, btn) {
+  document.querySelectorAll('.ap-chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildApChart(metric);
 }
 
 // ─── DETAIL CHART ────────────────────────────────────────────────────────────
@@ -1421,6 +1568,7 @@ function toggleTheme() {
   }
 
   computeKPIs();
+  setTimeout(() => buildApChart('pnl'), 100);
 
   // default: newest first
   document.getElementById('sa-id') && (document.getElementById('sa-id').textContent = '▼');
