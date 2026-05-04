@@ -2491,3 +2491,55 @@ PDF lido e analisado. 6 insights aplicados à realidade de Lucas:
 
 ---
 
+## Sessão 04/05/2026 — Atualização de posições + wealthCurve Abr/26 + Standup semanal
+
+### Implementado
+
+#### Standup
+Cron `daily-standup-barolo` mudado de diário (`30 8 * * *`) para **semanal sextas** (`30 8 * * 5`). Description renomeada para "Weekly Standup para CEO - Barolo Capital (sextas)".
+
+#### Posições atualizadas (prints CoinGecko + AAVE V4 + Kamino, 04/05/2026)
+
+| Campo | Antes | Depois |
+|---|---|---|
+| AAVE USDT supply | 1985.68 | **1990** |
+| AAVE WETH APY | 1.25% | **2.50%** |
+| AAVE USDT APY | 1.87% (fallback 9.26%) | **1.77%** |
+| AAVE borrow | 748 USDC @ 2.32% | **750.16 USDC @ 3.79%** |
+| Kamino SOL supply | 20.39 | **20.42** |
+| Kamino USDS supply | 300.78 | **301.01** |
+| Kamino borrow | 807.49 USDC @ 6.90% | **808.77 USDC @ 4.64%** |
+| Kamino SOL APY | 4.22% | **5.26%** |
+| Kamino USDS APY | 3.69% | **4.61%** |
+| Kamino LTV | 39.22% | **40.07%** |
+| STABLES_USD | 2440.90 | **2441.13** (USDT 2140.12 + USDS 301.01) |
+| TOTAL_DEBT | 1555.49 | **1558.93** (750.16 + 808.77) |
+
+Arquivos atualizados: `portfolio_analytics.html`, `emprestimos.html`, `pools.html`, `index.html`, `relatorio.html`, `ferramentas.html`.
+
+Em `relatorio.html`: bloco `AAVE_*_APY` / `KAM_*_APY` totalmente revisado com APYs ao vivo dos prints.
+
+Em `ferramentas.html`: `BASE` do simulador de cenários (`aaveDebt`, `kamDebt`, `aaveUSDT`, `kamPYUSD`, `kamSOL`, `solQty`) + inputs HTML da calculadora de liquidação + `checkAlerts()` + `loadBaroloScenario()` (supapy 1.5→2.1, brw 2.32→3.79).
+
+Em `emprestimos.html`: card live + ciclo K4 + ciclo A3 badge + KPI dívida + ticker + timeline (entrada nova `04/05/26 AAVE borrow ≈$750`).
+
+Em `pools.html`: `AAVE_BORROW_RATE` 2.32→3.79, custo borrow card −2.32→−3.79, `STABLES` 2369.88→2441.13, `USDT_QTY` 1985.68→1990.
+
+#### `portfolio_analytics.html` — `wealthCurve` Abr/2026 adicionado
+
+Ponto adicionado: `04/26 = $9,206` (saldo CoinGecko atual). `invested` Abr/26 = `6684` (Mar 6418 + USDT compras Abr ~$266).
+
+`monthlyReturns[2026].Abr` deixado como `null` — metodologia de cálculo (TWR vs raw curve) não bate exatamente; aguardando confirmação para preencher.
+
+### O que ainda falta
+
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada (Mar não bate com cálculo direto da curva, sugerindo TWR com inflows removidos)
+- **CSVs das CEX** — Lucas traz para custo BRL + IR
+- **Verificar V4 fetch ao vivo** — confirmar em produção que selector `0x91b89fba` + offsets [2,3,4] retornam dados corretos
+- **i18n painel Sizing & Risk** — só em PT
+- **Validar `calcLevHedge()`** com cenários reais
+- **Mentoria DeFi avançado** — Euler V2, Morpho, Gearbox, Drift, Hyperliquid HLP, Pendle PT
+- **Wallet Connect PoC** — avaliado mas não implementado
+
+---
+

@@ -536,7 +536,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
  <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms" id="lp-pooled-sub">0.1185 WETH + 102.76 USDC</div></div>
  <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-apr-sub">fees / capital investido</div></div>
- <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−2.32%</div><div class="lp-ms">USDC · taxa atual</div></div>
+ <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−3.79%</div><div class="lp-ms">USDC · taxa atual</div></div>
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
 
@@ -1283,7 +1283,7 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
  const V4_SELECTOR     = '0x91b89fba'; // getUserAccountData V4
  // V4 struct: [2]=HF(WAD),[3]=totalCollateral(8dec),[4]=totalDebtRay(RAY=1e27)
  const ETH_QTY = 1.88;
- const USDT_QTY = 1985.68;
+ const USDT_QTY = 1990;
  const USDT_LT = 0.775;
  const ETH_LT = 0.825;
 
@@ -1561,14 +1561,14 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
 // ── META 5% ──
 setTimeout(function() {
- var STABLES = 2369.88; // USDT 2069.46 + USDS 300.42
+ var STABLES = 2441.13; // USDT 2140.12 + USDS 301.01
  var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
  var QTYS = {ethereum:2.084106,solana:20.31134268,cardano:375.245,'radiant-capital':7290.46,
  eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 748) + (window._liveKaminoDebt || 805.70);
+ var debt = (window._liveAaveDebt || 750.16) + (window._liveKaminoDebt || 808.77);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -1706,7 +1706,7 @@ function setRef(ref){
 
   // 9. Atualiza REFS e UI
   const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  const AAVE_BORROW_RATE = 2.32; // % a.a. — taxa USDC AAVE (refinanciado 10/04/26)
+  const AAVE_BORROW_RATE = 3.79; // % a.a. — taxa USDC AAVE V4 (atualizado 03/05/26)
 
   // POOLED
   set('lp-pooled', '$'+pooledUsd.toFixed(2));
@@ -3889,9 +3889,9 @@ function buildNetRanking() {
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
- const STABLES = 2369.88; // USDT 2069.46 + USDS 300.42
+ const STABLES = 2441.13; // USDT 2140.12 + USDS 301.01
  const LP_POOLED = window._liveLP || 365;
- const DEBT = (window._liveAaveDebt || 748) + (window._liveKaminoDebt || 805.70);
+ const DEBT = (window._liveAaveDebt || 750.16) + (window._liveKaminoDebt || 808.77);
  const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;
  console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + lp $${LP_POOLED.toFixed(0)} − debt $${DEBT.toFixed(0)}`);
