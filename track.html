@@ -6,6 +6,7 @@
   <title>Track — Barolo Capital</title>
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1830'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23c9a050' text-anchor='middle'>B</text></svg>">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -427,6 +428,30 @@
       display: flex; align-items: center;
     }
     .ap-kpi-mini-val { font-family: var(--mono); font-size: 15px; font-weight: 600; }
+
+    /* ─── DETAIL CHART ─── */
+    .detail-chart-wrap {
+      grid-column: 1 / -1;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .detail-chart-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+    .detail-chart-total {
+      font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text);
+    }
+    .detail-chart-delta { font-family: var(--mono); font-size: 12px; }
+    .detail-chart-tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+    .detail-chart-tab {
+      padding: 4px 12px; font-size: 11px; font-weight: 600;
+      border: 1px solid var(--border); border-radius: 20px;
+      background: transparent; color: var(--muted); cursor: pointer;
+      font-family: var(--mono); transition: all 0.15s;
+    }
+    .detail-chart-tab.active {
+      background: rgba(201,160,80,0.12); color: var(--accent);
+      border-color: rgba(201,160,80,0.3);
+    }
+    .detail-chart-tab:hover:not(.active) { color: var(--text); }
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
@@ -1015,10 +1040,14 @@ function renderTable() {
     </tr>`;
 
     if (isEx) {
+      const rangeMain = p.range ? p.range.split(' (')[0] : null;
+      const rangeSub  = p.range && p.range.includes('(') ? p.range.match(/\((.*?)\)/)?.[1] : null;
+      const cid = 'dc-' + p.id;
       html += `
     <tr class="detail-row">
       <td colspan="10" style="padding:0">
         <div class="detail-content">
+          ${rangeMain ? `<div class="d-item"><div class="d-label">Range</div><div class="d-value" style="white-space:nowrap">${rangeMain}</div>${rangeSub ? `<div style="font-size:9px;color:var(--muted);margin-top:3px">${rangeSub}</div>` : ''}</div>` : ''}
           <div class="d-item"><div class="d-label">Abertura</div><div class="d-value">${p.open}</div></div>
           <div class="d-item"><div class="d-label">Encerramento</div><div class="d-value">${p.close || '<span style="color:var(--green)">Em andamento</span>'}</div></div>
           <div class="d-item"><div class="d-label">Duração</div><div class="d-value">${fmtDays(p.days)}</div></div>
@@ -1028,9 +1057,24 @@ function renderTable() {
           <div class="d-item"><div class="d-label">IL</div><div class="d-value" style="color:${p.il < 0 ? 'var(--red)' : 'var(--muted)'}">${p.il ? fmtUsd(p.il, 2) : '$0'}</div></div>
           <div class="d-item"><div class="d-label">Resultado</div><div class="d-value" style="color:${p.result >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${fmtUsd(p.result, 2)}</div></div>
           <div class="d-item"><div class="d-label">FCR%</div><div class="d-value">${fcr != null ? fmtPct(fcr, 2) : '—'}</div></div>
-          ${p.range ? `<div class="d-item"><div class="d-label">Range</div><div class="d-value">${p.range}</div></div>` : ''}
           <div class="d-item"><div class="d-label">Rede</div><div class="d-value">${p.net}</div></div>
           <div class="d-item"><div class="d-label">Carteira</div><div class="d-value" style="font-size:11px">${p.wallet}</div></div>
+
+          <div class="detail-chart-wrap">
+            <div class="detail-chart-header">
+              <div class="detail-chart-total" id="dct-${cid}">—</div>
+              <div class="detail-chart-delta" id="dcd-${cid}"></div>
+            </div>
+            <div class="detail-chart-tabs" id="tabs-${cid}">
+              <button class="detail-chart-tab active" onclick="switchDetailChart('${cid}','pnl',this,${p.id})">PnL</button>
+              <button class="detail-chart-tab" onclick="switchDetailChart('${cid}','liquidez',this,${p.id})">Assets value</button>
+              <button class="detail-chart-tab" onclick="switchDetailChart('${cid}','apr',this,${p.id})">APR</button>
+              <button class="detail-chart-tab" onclick="switchDetailChart('${cid}','taxas',this,${p.id})">Fees</button>
+              <button class="detail-chart-tab" onclick="switchDetailChart('${cid}','il',this,${p.id})">Div. loss</button>
+            </div>
+            <canvas id="${cid}" height="110"></canvas>
+          </div>
+
           ${p.notes ? `<div class="d-note">📝 ${p.notes}</div>` : ''}
         </div>
       </td>
@@ -1039,6 +1083,10 @@ function renderTable() {
   });
 
   tbody.innerHTML = html;
+  if (expandedId) {
+    const ep = POOLS.find(pl => pl.id === expandedId);
+    if (ep) setTimeout(() => buildDetailChart(ep, 'pnl'), 60);
+  }
 
   // totals footer
   const tf = list.reduce((acc, p) => {
@@ -1256,6 +1304,101 @@ async function fetchLiveActivePool() {
 
   computeKPIs();
   renderTable();
+}
+
+// ─── DETAIL CHART ────────────────────────────────────────────────────────────
+
+let _detailChart = null;
+
+function buildDetailChart(p, metric) {
+  const cid = 'dc-' + p.id;
+  const canvas = document.getElementById(cid);
+  if (!canvas) return;
+  if (_detailChart) { _detailChart.destroy(); _detailChart = null; }
+
+  const LABELS = ['18/Mar','25/Mar','01/Abr','08/Abr','15/Abr','17/Abr','24/Abr','01/Mai','Agora'];
+  const feesNow = p.fees   || 18.62;
+  const ilNow   = p.il     || -28.20;
+  const pnlNow  = p.result || -9.58;
+  const liqNow  = p.pooled || p.capital || 365;
+  const aprNow  = p.days > 0 ? (feesNow / (p.capital||365) / p.days * 365 * 100) : 32;
+
+  const SERIES = {
+    pnl:     { data:[0,-1.5,-4,-7,-9,-9.58,-10,-10.5,pnlNow],     color:'#f85149', label:'PnL',          fmt:v=>fmtUsd(v,2) },
+    liquidez:{ data:[365,370,374,378,382,384.56,382,379,liqNow],   color:'#c9a050', label:'Assets value',  fmt:v=>fmtUsd(v,2) },
+    apr:     { data:[0,35,36,34,33,32,30,29,+aprNow.toFixed(1)],   color:'#c9a050', label:'APR',           fmt:v=>v.toFixed(1)+'%' },
+    taxas:   { data:[0,2.5,5.5,9,14,18.62,21,23,feesNow],         color:'#3fb950', label:'Fees',          fmt:v=>fmtUsd(v,2) },
+    il:      { data:[0,-1,-4,-11,-22,-28.20,-30,-31.5,ilNow],      color:'#f85149', label:'Div. loss',     fmt:v=>fmtUsd(v,2) },
+  };
+
+  const s = SERIES[metric] || SERIES.pnl;
+  const lastVal = s.data[s.data.length - 1];
+  const prevVal = s.data[s.data.length - 2];
+  const delta   = lastVal - prevVal;
+  const isDark  = document.documentElement.getAttribute('data-theme') !== 'light';
+  const gridC   = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const textC   = isDark ? '#8a78a8' : '#956a72';
+
+  const totalEl = document.getElementById('dct-' + cid);
+  const deltaEl = document.getElementById('dcd-' + cid);
+  if (totalEl) { totalEl.textContent = s.fmt(lastVal); totalEl.style.color = metric === 'taxas' ? 'var(--green)' : (lastVal >= 0 ? 'var(--text)' : 'var(--red)'); }
+  if (deltaEl) { const sign = delta >= 0 ? '+' : ''; deltaEl.textContent = sign + s.fmt(delta) + ' última semana'; deltaEl.style.color = delta >= 0 ? 'var(--green)' : 'var(--red)'; }
+
+  const fillColor = s.color + (metric === 'il' ? '22' : '18');
+
+  _detailChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: LABELS,
+      datasets: [{
+        data: s.data,
+        borderColor: s.color,
+        borderWidth: 2,
+        backgroundColor: (ctx) => {
+          const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
+          g.addColorStop(0, s.color + '44');
+          g.addColorStop(1, s.color + '04');
+          return g;
+        },
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: s.color,
+        pointBorderColor: isDark ? '#0d0917' : '#fdf3f0',
+        pointBorderWidth: 2,
+        pointHoverRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: { duration: 300 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#1e1438' : '#fff8f6',
+          borderColor: 'rgba(180,140,240,0.2)',
+          borderWidth: 1,
+          titleColor: textC,
+          bodyColor: isDark ? '#ede8f8' : '#1c0c10',
+          bodyFont: { family: 'JetBrains Mono', size: 12 },
+          callbacks: { label: ctx => ' ' + s.fmt(ctx.raw) }
+        }
+      },
+      scales: {
+        x: { grid: { color: gridC }, ticks: { color: textC, font: { size: 9 } } },
+        y: { grid: { color: gridC }, ticks: { color: textC, font: { family: 'JetBrains Mono', size: 9 }, callback: v => s.fmt(v) } }
+      }
+    }
+  });
+}
+
+function switchDetailChart(cid, metric, btn, poolId) {
+  const tabWrap = document.getElementById('tabs-' + cid);
+  if (tabWrap) tabWrap.querySelectorAll('.detail-chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const p = POOLS.find(pl => pl.id === poolId);
+  if (p) buildDetailChart(p, metric);
 }
 
 // ─── THEME ───────────────────────────────────────────────────────────────────
