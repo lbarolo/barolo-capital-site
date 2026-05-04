@@ -1215,7 +1215,17 @@ var FALLBACK_24H = {
  'radiant-capital':2.9,'zetachain':-0.7,'tether':0,'usds-stablecoin':0
 };
 
-var LP_POOLED = 365; // Pool WETH/USDC ativa (Abr/2026) — atualizar semanalmente
+// Pool WETH/USDC ativa — sincroniza com pools.html via localStorage (TTL 30min)
+var LP_POOLED = (function() {
+  try {
+    var cached = JSON.parse(localStorage.getItem('bc-lp-pooled') || 'null');
+    if (cached && cached.value > 0 && (Date.now() - cached.timestamp) < 30*60*1000) {
+      console.log('[LP] usando valor cacheado de pools.html: $'+cached.value.toFixed(2));
+      return cached.value;
+    }
+  } catch(e) {}
+  return 365; // fallback se nunca foi aberto pools.html ou cache expirou
+})();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 750.16; // atualizar semanalmente
 var KAMINO_DEBT = 808.77; // atualizar semanalmente

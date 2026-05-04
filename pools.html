@@ -1712,6 +1712,12 @@ function setRef(ref){
   set('lp-pooled', '$'+pooledUsd.toFixed(2));
   set('lp-pooled-sub', wethAmt.toFixed(4)+' WETH + '+usdcAmt.toFixed(2)+' USDC');
 
+  // Compartilha valor com portfolio_analytics.html via localStorage
+  window._liveLP = pooledUsd;
+  try {
+    localStorage.setItem('bc-lp-pooled', JSON.stringify({ value: pooledUsd, timestamp: Date.now() }));
+  } catch(e) {}
+
   // APR BRUTO + APR LÍQUIDO
   if (feeApr !== null) {
     const aprNet = feeApr - AAVE_BORROW_RATE;
@@ -3730,6 +3736,10 @@ function buildNetRanking() {
 
  window._liveUniActive  = isActive;
  window._liveUniPooled  = totalPooled;
+ window._liveLP         = totalPooled;
+ try {
+   localStorage.setItem('bc-lp-pooled', JSON.stringify({ value: totalPooled, timestamp: Date.now() }));
+ } catch(e) {}
 
  return { liquidity: liquidity.toString(), isActive, usdc, weth, feeUsdc, feeWeth, ethPrice };
 
