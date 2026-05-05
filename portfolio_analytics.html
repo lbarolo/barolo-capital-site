@@ -667,7 +667,7 @@ body, input, button, select, textarea {
  </div>
  <div class="stat-card">
   <div class="stat-label">POOLS LP</div>
-  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$365</div>
+  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$380</div>
   <div class="stat-sub">WETH/USDC · Uniswap V3</div>
  </div>
  <div class="stat-card">
@@ -1224,7 +1224,7 @@ var LP_POOLED = (function() {
       return cached.value;
     }
   } catch(e) {}
-  return 365; // fallback se nunca foi aberto pools.html ou cache expirou
+  return 380; // fallback se nunca foi aberto pools.html ou cache expirou (≈ valor atual da pool ativa)
 })();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 750.16; // atualizar semanalmente
@@ -1385,6 +1385,7 @@ function renderUI(enriched){
  var volatileTotal = enriched.filter(a=>!a.isStable).reduce((s,a)=>s+a.currentValue,0);
  set('s-spot', fmtCurrency(volatileTotal, 0));
  set('s-spot-sub', enriched.filter(a=>!a.isStable).length+' ativos');
+ set('s-pool', fmtCurrency(LP_POOLED, 0));
  set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
 

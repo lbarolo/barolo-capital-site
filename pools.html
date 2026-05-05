@@ -1691,9 +1691,9 @@ function setRef(ref){
 
   // 8. APR via on-chain (fees acumuladas desde abertura, sem coletas manuais)
   // Se ocorrer um Collect event, o contador de uncollected reseta — APR ficaria subestimado.
-  // Por enquanto a posição não teve coletas, então uncollected = total acumulado desde 18/03/2026.
-  const ENTRY_CAPITAL = 365;
-  const OPEN_TS = new Date('2026-03-18').getTime() / 1000;
+  // Por enquanto a posição não teve coletas, então uncollected = total acumulado desde 24/02/2026.
+  const ENTRY_CAPITAL = 315.88;
+  const OPEN_TS = new Date('2026-02-24T17:40:00').getTime() / 1000;
   let pnl=null, il=null, apr=null, feeApr=null, dailyFees=null;
   let aprSource = 'acumulado desde abertura';
 
@@ -2440,7 +2440,7 @@ var POOLS = [
   { pair:'ETH/USDC 0.05%', net:'Arbitrum', open:'01/08/2023', close:'26/03/2024', days:209, capital:1014, fees:22,   il:0,   result:22,   status:'closed', lvr:0,    fcr:3.8,   invGrowth:2.2,  obs:'Pool longa com pouco volume. ETH deu grande valorização, pool deslizou em ranges. Final: 0.148 ETH + 30.95 USDC.' },
   { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
   // ── ATIVA ──
-  { pair:'WETH/USDC 0.3%', net:'Base', open:'18/03/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),  capital:365,  fees:9,    il:0,   result:1,    status:'active',  lvr:0,   fcr:59.7,  invGrowth:0.3  },
+  { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-02-24');return Math.max(1,Math.floor(d/86400000));})(),  capital:315.88, fees:21.11, il:-23.50, result:85.61, status:'active',  lvr:0,   fcr:35.0,  invGrowth:0.27 },
 ];
 
 // ── Chart data derived from POOLS (single source of truth) ─────────────────
@@ -3607,7 +3607,7 @@ function buildNetRanking() {
  try {
  const POOL_WETH_USDC = '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8'; // USDC/WETH 0.3% Ethereum
  const Q96 = 2n ** 96n;
- const CAPITAL = 365; // capital de abertura da posição
+ const CAPITAL = 315.88; // capital de abertura da posição (0.17 WETH em 24/02/2026)
 
  // 1. positions(tokenId) → ABI slot layout:
  //  [0]=nonce [1]=operator [2]=token0 [3]=token1 [4]=fee
@@ -3900,7 +3900,7 @@ function buildNetRanking() {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
  const STABLES = 2441.13; // USDT 2140.12 + USDS 301.01
- const LP_POOLED = window._liveLP || 365;
+ const LP_POOLED = window._liveLP || 380;
  const DEBT = (window._liveAaveDebt || 750.16) + (window._liveKaminoDebt || 808.77);
  const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;

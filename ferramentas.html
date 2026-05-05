@@ -471,7 +471,9 @@ body, input, button, select, textarea {
 
 
 /* ══ DIÁRIO SEMANAL ══ */
-.sw-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+#panel-semanal{max-width:760px;margin-left:auto;margin-right:auto;}
+#panel-semanal .two-col{grid-template-columns:1fr;gap:14px;}
+.sw-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
 .sw-week-label{font-family:var(--font-mono);font-size:13px;color:var(--text);letter-spacing:1px;}
 .sw-week-sub{font-size:10px;color:var(--muted);letter-spacing:1px;}
 .sw-status{font-size:9px;letter-spacing:2px;padding:3px 8px;border-radius:4px;font-family:var(--font-mono);}
@@ -481,12 +483,12 @@ body, input, button, select, textarea {
 .sw-nav{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
 .sw-nav button{background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
 .sw-nav button:hover{color:var(--text);border-color:var(--accent);}
-.sw-section-hd{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:20px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
-.sw-section-hd .sw-icon{font-size:14px;}
-.sw-question{margin-bottom:16px;}
-.sw-question label{display:block;font-size:11px;color:var(--text);margin-bottom:6px;line-height:1.5;}
-.sw-question label span{color:var(--muted);font-size:10px;font-family:var(--font-mono);}
-.sw-question textarea{width:100%;box-sizing:border-box;background:var(--s2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:12px;line-height:1.7;padding:10px 12px;resize:vertical;min-height:72px;transition:border-color .2s;}
+.sw-section-hd{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:9px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.sw-section-hd .sw-icon{font-size:12px;}
+.sw-question{margin-bottom:8px;}
+.sw-question label{display:block;font-size:10.5px;color:var(--text);margin-bottom:3px;line-height:1.4;}
+.sw-question label span{color:var(--muted);font-size:9.5px;font-family:var(--font-mono);}
+.sw-question textarea{width:100%;box-sizing:border-box;background:var(--s2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:11.5px;line-height:1.55;padding:7px 10px;resize:vertical;min-height:48px;transition:border-color .2s;}
 .sw-question textarea:focus{outline:none;border-color:var(--accent);}
 .sw-question textarea::placeholder{color:var(--muted);opacity:.6;}
 .sw-history-item{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;}
