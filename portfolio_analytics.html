@@ -863,6 +863,22 @@ body, input, button, select, textarea {
  <canvas id="wealthEvolutionChart" style="max-height:340px;"></canvas>
 </div>
 
+<!-- ══ EVOLUÇÃO PERCENTUAL ══ -->
+<div class="section-label">Evolução Percentual — Crescimento Acumulado</div>
+<div class="card" style="margin-bottom:12px;">
+ <div class="chart-title" style="margin-bottom:14px;">% Crescimento desde Jan/2022 · vs Retorno Capital Atual</div>
+ <div style="height:280px;">
+  <canvas id="percentGrowthChart"></canvas>
+ </div>
+ <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+   <span style="font-size:12px;color:var(--muted);font-weight:500;">Retorno Capital Atual (Abr/2026)</span>
+   <span id="pct-current" class="pos" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;">—</span>
+  </div>
+  <div style="font-size:9px;color:var(--muted);" id="pct-current-sub">—</div>
+ </div>
+</div>
+
 </div><!-- end tab-performance -->
 
 <!-- ══ TAB: DeFi & MERCADO ══ -->
@@ -1703,6 +1719,7 @@ function buildStaticCharts(){
  buildBenchmarkChart();
  buildDcaChart();
  buildWealthEvolution();
+ buildPercentGrowthChart();
  buildPerfChart(activePeriod);
  buildDebtChart('stacked');
  // Rebuild inline-IIFE charts
@@ -2079,6 +2096,119 @@ function buildDcaChart(){
 // ── EVOLUÇÃO PATRIMONIAL ──
 var wealthEvolutionInst = null;
 var wealthCurrency = 'usd';
+var _percentChart = null;
+
+function buildPercentGrowthChart() {
+  var W = WEEKLY_UPDATE;
+  var labels = W.wealthCurve.labels.slice();
+  var values = W.wealthCurve.values.slice();
+  var invested = W.wealthCurve.invested.slice();
+
+  if (!values || values.length < 2) return;
+
+  var initialInvested = invested[0] || 1061;
+
+  // Calcular as duas séries percentuais
+  var pctHistorical = values.map(function(v, i) {
+    return (v - initialInvested) / initialInvested * 100;
+  });
+
+  var pctCurrent = values.map(function(v, i) {
+    var inv = invested[i] || 1061;
+    return (v - inv) / inv * 100;
+  });
+
+  var ctx = document.getElementById('percentGrowthChart');
+  if (!ctx) return;
+  if (_percentChart) { _percentChart.destroy(); _percentChart = null; }
+
+  var lastHistorical = pctHistorical[pctHistorical.length - 1] || 0;
+  var lastCurrent = pctCurrent[pctCurrent.length - 1] || 0;
+
+  // Atualizar KPI
+  var pctEl = document.getElementById('pct-current');
+  if (pctEl) pctEl.textContent = (lastCurrent >= 0 ? '+' : '') + lastCurrent.toFixed(1) + '%';
+  var pctSubEl = document.getElementById('pct-current-sub');
+  if (pctSubEl) pctSubEl.textContent = 'Série 2: Capital atual aportado · Série 1: Desde ' + labels[0];
+
+  _percentChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Crescimento desde Jan/2022',
+          data: pctHistorical,
+          borderColor: '#c9a050',
+          backgroundColor: 'rgba(201,160,80,0.12)',
+          borderWidth: 2.5,
+          tension: 0.3,
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#c9a050',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 1.5
+        },
+        {
+          label: 'Retorno capital atual',
+          data: pctCurrent,
+          borderColor: '#3fb950',
+          borderWidth: 2.5,
+          borderDash: [5, 5],
+          tension: 0.3,
+          fill: false,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#3fb950',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 1.5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: Chart.defaults.color, font: { size: 10 }, boxWidth: 10, usePointStyle: true, padding: 12 }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 10,
+          titleFont: { size: 11, weight: '600' },
+          bodyFont: { size: 10 },
+          callbacks: {
+            title: function(context) { return context[0].label; },
+            label: function(context) {
+              var val = context.parsed.y;
+              var sign = val >= 0 ? '+' : '';
+              var label = context.dataset.label + ': ' + sign + val.toFixed(2) + '%';
+              return label;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: Chart.defaults.color, font: { size: 9 }, maxTicksLimit: 13, maxRotation: 0, autoSkip: true },
+          grid: { display: false },
+          border: { display: false }
+        },
+        y: {
+          ticks: {
+            color: Chart.defaults.color,
+            callback: function(v) { return (v >= 0 ? '+' : '') + v.toFixed(0) + '%'; },
+            font: { size: 10 }
+          },
+          grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 },
+          border: { display: false }
+        }
+      }
+    }
+  });
+}
 
 function setWealthCurrency(c, btn) {
   wealthCurrency = c;
