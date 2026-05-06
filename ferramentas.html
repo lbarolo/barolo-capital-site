@@ -2191,25 +2191,25 @@ function calcKellyPool(){
  var v = document.getElementById('kp-verdict');
  var note = document.getElementById('kp-note');
  if (fstar <= 0) {
-   v.textContent = 'NÃO ALOCAR — Kelly negativo';
+   v.textContent = tStr('sz-kp-v-neg');
    v.style.background = 'rgba(248,81,73,.15)'; v.style.color = 'var(--red)';
    v.style.border = '1px solid var(--red)';
-   note.textContent = 'Edge negativo: a expectativa matemática é perder dinheiro. Independente do tamanho da aposta, longo prazo é prejuízo.';
+   note.textContent = tStr('sz-kp-n-neg');
  } else if (fstar > 0.5) {
-   v.textContent = 'OPORTUNIDADE FORTE — alocar máximo prudente';
+   v.textContent = tStr('sz-kp-v-strong');
    v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
    v.style.border = '1px solid var(--green)';
-   note.textContent = 'Kelly cru > 50%. Edge muito alto. Limitar pelo seu critério de concentração (raramente >20% do patrimônio numa pool só).';
+   note.textContent = tStr('sz-kp-n-strong');
  } else if (fstar > 0.1) {
-   v.textContent = 'ALOCAR — dentro de Kelly';
+   v.textContent = tStr('sz-kp-v-ok');
    v.style.background = 'rgba(63,185,80,.10)'; v.style.color = 'var(--green)';
    v.style.border = '1px solid var(--green)';
-   note.textContent = 'Edge positivo razoável. Half Kelly recomendado para absorver erro na estimativa de p.';
+   note.textContent = tStr('sz-kp-n-ok');
  } else {
-   v.textContent = 'EDGE BAIXO — pondere';
+   v.textContent = tStr('sz-kp-v-low');
    v.style.background = 'rgba(184,134,11,.12)'; v.style.color = 'var(--yellow)';
    v.style.border = '1px solid var(--yellow)';
-   note.textContent = 'Kelly > 0 mas pequeno. Risco de erro na estimativa pode anular o edge. Considere oportunidades melhores.';
+   note.textContent = tStr('sz-kp-n-low');
  }
 }
 
@@ -2250,25 +2250,25 @@ function calcKellyMerton(){
  var v = document.getElementById('km-verdict');
  var note = document.getElementById('km-note');
  if (excess <= 0) {
-   v.textContent = 'NÃO ALAVANCAR — custo > retorno';
+   v.textContent = tStr('sz-km-v-no');
    v.style.background = 'rgba(248,81,73,.15)'; v.style.color = 'var(--red)';
    v.style.border = '1px solid var(--red)';
-   note.textContent = 'APR esperado ≤ custo do empréstimo. Alavancar destrói valor independente do sizing.';
+   note.textContent = tStr('sz-km-n-no');
  } else if (diff > 20) {
-   v.textContent = 'SUBALAVANCADO — espaço para crescer';
+   v.textContent = tStr('sz-km-v-under');
    v.style.background = 'rgba(63,185,80,.10)'; v.style.color = 'var(--green)';
    v.style.border = '1px solid var(--green)';
-   note.textContent = 'LTV atual bem abaixo do ótimo Kelly. Estratégia conservadora, sem riscos de margem mas deixando retorno na mesa.';
+   note.textContent = tStr('sz-km-n-under');
  } else if (diff < -10) {
-   v.textContent = 'SOBREALAVANCADO — reduzir LTV';
+   v.textContent = tStr('sz-km-v-over');
    v.style.background = 'rgba(248,81,73,.12)'; v.style.color = 'var(--red)';
    v.style.border = '1px solid var(--red)';
-   note.textContent = 'LTV atual acima do ótimo Kelly. Drawdown esperado é maior que a recompensa marginal. Reduzir antes da próxima volatilidade.';
+   note.textContent = tStr('sz-km-n-over');
  } else {
-   v.textContent = 'ALOCAÇÃO CALIBRADA — dentro do range';
+   v.textContent = tStr('sz-km-v-cal');
    v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
    v.style.border = '1px solid var(--green)';
-   note.textContent = 'LTV atual próximo do ótimo Half-Kelly. Boa relação risco/retorno.';
+   note.textContent = tStr('sz-km-n-cal');
  }
 }
 
@@ -2366,30 +2366,29 @@ function calcHedge(){
  var w = document.getElementById('hd-warning');
  var diff = aprHedged - aprNaked;
  if (pct === 0) {
-   v.textContent = 'SEM HEDGE — exposição direcional total';
+   v.textContent = tStr('sz-hd-v-no');
    v.style.background = 'rgba(184,134,11,.10)'; v.style.color = 'var(--yellow)';
    v.style.border = '1px solid var(--yellow)';
-   w.textContent = 'Você captura toda valorização do ETH mas absorve todo IL e drawdown. Apropriado se a pool faz parte de estratégia de saída gradual.';
+   w.textContent = tStr('sz-hd-n-no');
  } else if (diff > 0.03) {
-   v.textContent = 'HEDGE VANTAJOSO — APR melhora '+fmtP(diff);
+   v.textContent = tStr('sz-hd-v-good').replace('{diff}', fmtP(diff));
    v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
    v.style.border = '1px solid var(--green)';
-   w.textContent = 'Hedge melhora APR esperado. Atenção: anula valorização direcional do ETH. Vale para captura pura de fees.';
+   w.textContent = tStr('sz-hd-n-good');
  } else if (diff < -0.02) {
-   v.textContent = 'HEDGE DESVANTAJOSO — custo maior que IL evitado';
+   v.textContent = tStr('sz-hd-v-bad');
    v.style.background = 'rgba(248,81,73,.10)'; v.style.color = 'var(--red)';
    v.style.border = '1px solid var(--red)';
-   w.textContent = 'Custo do hedge supera o IL que você está evitando. Sem hedge é melhor estatisticamente.';
+   w.textContent = tStr('sz-hd-n-bad');
  } else {
-   v.textContent = 'HEDGE NEUTRO — diferença pequena';
+   v.textContent = tStr('sz-hd-v-neut');
    v.style.background = 'rgba(184,134,11,.10)'; v.style.color = 'var(--yellow)';
    v.style.border = '1px solid var(--yellow)';
-   w.textContent = 'Hedge não muda APR significativamente. Decisão depende de preferência por menor volatilidade vs simplicidade operacional.';
+   w.textContent = tStr('sz-hd-n-neut');
  }
 
- // Aviso específico Barolo (estratégia de saída gradual)
  if (pct > 0.7 && pnow < (pmax * 0.9)) {
-   w.textContent += ' ⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC.';
+   w.textContent += ' ' + tStr('sz-hd-warn-exit');
  }
 }
 
@@ -2482,17 +2481,20 @@ function calcLevHedge(){
  // Veredito — maior Sharpe vence
  var v = document.getElementById('lh-verdict');
  var scores = [
-   {name:'A — LP puro', sh:A_sh, apr:A_apr},
-   {name:'B — Leverage produtiva', sh:B_sh, apr:B_apr},
-   {name:'C — Leverage + Hedge', sh:C_sh, apr:C_apr}
+   {name:tStr('sz-lh-name-a'), sh:A_sh, apr:A_apr},
+   {name:tStr('sz-lh-name-b'), sh:B_sh, apr:B_apr},
+   {name:tStr('sz-lh-name-c'), sh:C_sh, apr:C_apr}
  ];
  var best = scores.reduce(function(a,b){ return b.sh > a.sh ? b : a; });
  if (best.apr <= 0) {
-   v.textContent = 'NENHUMA ESTRATÉGIA POSITIVA — revisar premissas';
+   v.textContent = tStr('sz-lh-v-none');
    v.style.background = 'rgba(248,81,73,.10)'; v.style.color = 'var(--red)';
    v.style.border = '1px solid var(--red)';
  } else {
-   v.textContent = 'MELHOR SHARPE: ' + best.name + ' (APR '+fmtP(best.apr)+' · Sharpe '+(best.sh>=999?'∞':best.sh.toFixed(2))+')';
+   v.textContent = tStr('sz-lh-v-best')
+     .replace('{name}', best.name)
+     .replace('{apr}', fmtP(best.apr))
+     .replace('{sh}', best.sh>=999?'∞':best.sh.toFixed(2));
    v.style.background = 'rgba(63,185,80,.15)'; v.style.color = 'var(--green)';
    v.style.border = '1px solid var(--green)';
  }
@@ -3849,7 +3851,63 @@ var LANG_STRINGS = {
   'sz-notes-levhedge-title':{pt:'LEV + HEDGE',                en:'LEV + HEDGE'},
   'sz-notes-levhedge':{pt:'Captura alavancagem mas neutraliza direção.<br>APR = fees×(1+L) + supply + funding − borrow×L − IL×(1−h).<br>Risco: funding flip, range break, 3 smart contracts.',
                        en:'Captures leverage but neutralizes direction.<br>APR = fees×(1+L) + supply + funding − borrow×L − IL×(1−h).<br>Risk: funding flip, range break, 3 smart contracts.'},
+  // Vereditos dinâmicos — Kelly Pool
+  'sz-kp-v-neg':   {pt:'NÃO ALOCAR — Kelly negativo',           en:'DO NOT ALLOCATE — Kelly negative'},
+  'sz-kp-n-neg':   {pt:'Edge negativo: a expectativa matemática é perder dinheiro. Independente do tamanho da aposta, longo prazo é prejuízo.',
+                    en:'Negative edge: math expectation is losing money. Regardless of bet size, long-term is loss.'},
+  'sz-kp-v-strong':{pt:'OPORTUNIDADE FORTE — alocar máximo prudente', en:'STRONG OPPORTUNITY — allocate prudent max'},
+  'sz-kp-n-strong':{pt:'Kelly cru > 50%. Edge muito alto. Limitar pelo seu critério de concentração (raramente >20% do patrimônio numa pool só).',
+                    en:'Raw Kelly > 50%. Very high edge. Limit by your concentration criteria (rarely >20% of net worth in a single pool).'},
+  'sz-kp-v-ok':    {pt:'ALOCAR — dentro de Kelly',              en:'ALLOCATE — within Kelly'},
+  'sz-kp-n-ok':    {pt:'Edge positivo razoável. Half Kelly recomendado para absorver erro na estimativa de p.',
+                    en:'Reasonable positive edge. Half Kelly recommended to absorb error in p estimate.'},
+  'sz-kp-v-low':   {pt:'EDGE BAIXO — pondere',                  en:'LOW EDGE — reconsider'},
+  'sz-kp-n-low':   {pt:'Kelly > 0 mas pequeno. Risco de erro na estimativa pode anular o edge. Considere oportunidades melhores.',
+                    en:'Kelly > 0 but small. Estimation error risk can nullify edge. Consider better opportunities.'},
+  // Vereditos dinâmicos — Merton
+  'sz-km-v-no':    {pt:'NÃO ALAVANCAR — custo > retorno',       en:'DO NOT LEVERAGE — cost > return'},
+  'sz-km-n-no':    {pt:'APR esperado ≤ custo do empréstimo. Alavancar destrói valor independente do sizing.',
+                    en:'Expected APR ≤ borrow cost. Leveraging destroys value regardless of sizing.'},
+  'sz-km-v-under': {pt:'SUBALAVANCADO — espaço para crescer',   en:'UNDER-LEVERAGED — room to grow'},
+  'sz-km-n-under': {pt:'LTV atual bem abaixo do ótimo Kelly. Estratégia conservadora, sem riscos de margem mas deixando retorno na mesa.',
+                    en:'Current LTV well below Kelly optimum. Conservative strategy, no margin risk but leaving return on the table.'},
+  'sz-km-v-over':  {pt:'SOBREALAVANCADO — reduzir LTV',         en:'OVER-LEVERAGED — reduce LTV'},
+  'sz-km-n-over':  {pt:'LTV atual acima do ótimo Kelly. Drawdown esperado é maior que a recompensa marginal. Reduzir antes da próxima volatilidade.',
+                    en:'Current LTV above Kelly optimum. Expected drawdown exceeds marginal reward. Reduce before next volatility.'},
+  'sz-km-v-cal':   {pt:'ALOCAÇÃO CALIBRADA — dentro do range',  en:'CALIBRATED ALLOCATION — within range'},
+  'sz-km-n-cal':   {pt:'LTV atual próximo do ótimo Half-Kelly. Boa relação risco/retorno.',
+                    en:'Current LTV near Half-Kelly optimum. Good risk/reward ratio.'},
+  // Vereditos dinâmicos — Hedge LP
+  'sz-hd-v-no':    {pt:'SEM HEDGE — exposição direcional total', en:'NO HEDGE — full directional exposure'},
+  'sz-hd-n-no':    {pt:'Você captura toda valorização do ETH mas absorve todo IL e drawdown. Apropriado se a pool faz parte de estratégia de saída gradual.',
+                    en:'You capture all ETH upside but absorb all IL and drawdown. Appropriate if the pool is part of a gradual exit strategy.'},
+  'sz-hd-v-good':  {pt:'HEDGE VANTAJOSO — APR melhora {diff}',  en:'HEDGE FAVORABLE — APR improves {diff}'},
+  'sz-hd-n-good':  {pt:'Hedge melhora APR esperado. Atenção: anula valorização direcional do ETH. Vale para captura pura de fees.',
+                    en:'Hedge improves expected APR. Note: nullifies ETH directional upside. Worth it for pure fee capture.'},
+  'sz-hd-v-bad':   {pt:'HEDGE DESVANTAJOSO — custo maior que IL evitado', en:'HEDGE UNFAVORABLE — cost exceeds avoided IL'},
+  'sz-hd-n-bad':   {pt:'Custo do hedge supera o IL que você está evitando. Sem hedge é melhor estatisticamente.',
+                    en:'Hedge cost exceeds the IL you are avoiding. No hedge is statistically better.'},
+  'sz-hd-v-neut':  {pt:'HEDGE NEUTRO — diferença pequena',      en:'HEDGE NEUTRAL — small difference'},
+  'sz-hd-n-neut':  {pt:'Hedge não muda APR significativamente. Decisão depende de preferência por menor volatilidade vs simplicidade operacional.',
+                    en:'Hedge does not significantly change APR. Decision depends on preference for lower volatility vs operational simplicity.'},
+  'sz-hd-warn-exit':{pt:'⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC.',
+                     en:'⚠ Hedge >70% nullifies gradual ETH→USDC exit strategy.'},
+  // Vereditos dinâmicos — Lev+Hedge
+  'sz-lh-name-a':  {pt:'A — LP puro',                           en:'A — Pure LP'},
+  'sz-lh-name-b':  {pt:'B — Leverage produtiva',                en:'B — Productive leverage'},
+  'sz-lh-name-c':  {pt:'C — Leverage + Hedge',                  en:'C — Leverage + Hedge'},
+  'sz-lh-v-none':  {pt:'NENHUMA ESTRATÉGIA POSITIVA — revisar premissas',
+                    en:'NO POSITIVE STRATEGY — review assumptions'},
+  'sz-lh-v-best':  {pt:'MELHOR SHARPE: {name} (APR {apr} · Sharpe {sh})',
+                    en:'BEST SHARPE: {name} (APR {apr} · Sharpe {sh})'},
 };
+
+// Helper: retorna string i18n no idioma ativo. Usar em vereditos dinâmicos.
+function tStr(key, fallback) {
+  var lang = document.documentElement.getAttribute('data-lang') || 'pt';
+  var s = LANG_STRINGS[key];
+  return (s && s[lang]) || fallback || key;
+}
 
 function applyLang(lang) {
   document.documentElement.setAttribute('data-lang', lang);

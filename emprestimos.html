@@ -1622,10 +1622,12 @@ function toggleLang() {
   // BLUECHIP_SPOKE: handles additional collateral if any (WBTC/WETH premium tier)
   const MAIN_SPOKE     = '0x94e7A5dCbE816e498b89aB752661904E2F56c485';
   const BLUECHIP_SPOKE = '0x973a023A77420ba610f06b3858aD991Df6d85A08';
-  // V4 getUserAccountData selector (different ABI from V3's 0xbf92857c)
-  // Returns struct: riskPremium[0,BPS], avgCF[1,WAD], HF[2,WAD=1e18],
-  //                 totalCollateral[3,8dec USD], totalDebtRay[4,RAY=1e27], collCount[5], borrowCount[6]
-  const V4_SEL         = '0x91b89fba';
+  // V4 getUserAccountData selector — same signature as V3 (keccak("getUserAccountData(address)")[:4])
+  // mas o struct retornado é V4: 7 campos.
+  // Layout: riskPremium[0,BPS], avgCF[1,WAD=1e18], HF[2,WAD=1e18],
+  //         totalCollateral[3, 1e26 = USD-8dec × RAY/1e9],
+  //         totalDebt[4, 1e35 = USD-8dec × RAY], collCount[5], borrowCount[6]
+  const V4_SEL         = '0xbf92857c';
   // V3 DataProvider — still usable for underlying asset APYs (WETH/USDT/USDC market rates)
   const AAVE_DATA_PROVIDER = '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3';
   const WETH_ADDR    = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
@@ -1707,16 +1709,19 @@ function toggleLang() {
       ]);
 
       // Parse MAIN_SPOKE — has the borrow, so gives real HF
-      const mainColl = decNum(decUint(mainRaw, 3), 8);   // 8-dec USD (same as V3)
-      const mainDebt = decNum(decUint(mainRaw, 4), 27);  // RAY = 1e27
+      const mainColl = decNum(decUint(mainRaw, 3), 26);  // V4: USD-8dec × RAY/1e9 → 1e26
+      const mainDebt = decNum(decUint(mainRaw, 4), 35);  // V4: USD-8dec × RAY → 1e35
       const mainHF   = decNum(decUint(mainRaw, 2), 18);  // WAD = 1e18
       const mainAvgCF= decNum(decUint(mainRaw, 1), 18);  // avgCollateralFactor WAD
 
       // BLUECHIP_SPOKE: extra collateral only — if Lucas has a separate WETH position there
       let bcColl = 0;
       if (bcRaw && bcRaw.length > 10 && bcRaw !== '0x') {
-        const bc = decNum(decUint(bcRaw, 3), 8);
-        if (isFinite(bc) && bc > 50) bcColl = bc; // ignore tiny/noise values
+        const bcHF = decNum(decUint(bcRaw, 2), 18);
+        if (isFinite(bcHF) && bcHF < 1e15) { // skip empty spoke (HF = uint256.max)
+          const bc = decNum(decUint(bcRaw, 3), 26);
+          if (isFinite(bc) && bc > 50) bcColl = bc;
+        }
       }
 
       const totalColl = mainColl + bcColl;

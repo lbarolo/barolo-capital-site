@@ -1280,8 +1280,8 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
  // AAVE V4 — Hub-and-Spoke
  const MAIN_SPOKE_POOL = '0x94e7A5dCbE816e498b89aB752661904E2F56c485';
  const BC_SPOKE_POOL   = '0x973a023A77420ba610f06b3858aD991Df6d85A08';
- const V4_SELECTOR     = '0x91b89fba'; // getUserAccountData V4
- // V4 struct: [2]=HF(WAD),[3]=totalCollateral(8dec),[4]=totalDebtRay(RAY=1e27)
+ const V4_SELECTOR     = '0xbf92857c'; // getUserAccountData (V4 retorna struct novo)
+ // V4 struct: [2]=HF(WAD),[3]=totalCollateral(/1e26),[4]=totalDebt(/1e35)
  const ETH_QTY = 1.88;
  const USDT_QTY = 1990;
  const USDT_LT = 0.775;
@@ -1324,13 +1324,13 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
    if (!j.result || j.result === '0x') throw new Error('empty result');
    return j.result;
  };
- // V4 struct: [2]=HF(WAD=1e18), [3]=totalCollateral(8dec), [4]=totalDebtRay(RAY=1e27)
+ // V4 struct: [2]=HF(WAD=1e18), [3]=totalCollateral(/1e26), [4]=totalDebt(/1e35)
  const parseSpoke = hex => {
    const s = hex.slice(2);
    const u = i => BigInt('0x' + s.slice(i*64,(i+1)*64));
    return {
-     coll: Number(u(3)) / 1e8,
-     debt: Number(u(4)) / 1e27,
+     coll: Number(u(3)) / 1e26,
+     debt: Number(u(4)) / 1e35,
      hf:   Number(u(2)) / 1e18,
    };
  };
@@ -3477,7 +3477,7 @@ function buildNetRanking() {
  // AAVE V4 Hub-and-Spoke contracts
  const MAIN_SPOKE     = '0x94e7A5dCbE816e498b89aB752661904E2F56c485';
  const BLUECHIP_SPOKE = '0x973a023A77420ba610f06b3858aD991Df6d85A08';
- const V4_SEL         = '0x91b89fba'; // getUserAccountData V4
+ const V4_SEL         = '0xbf92857c'; // getUserAccountData (V4 retorna struct novo)
  const UNI_NFT = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
  const LP_TOKEN_ID = 4694262;
  const USDT_ADDR = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
@@ -3549,7 +3549,7 @@ function buildNetRanking() {
 
  // ── AAVE V4 ──────────────────────────────────────────────────────
  // V4 struct: [0]=riskPremium(BPS),[1]=avgCF(WAD),[2]=HF(WAD=1e18),
- //            [3]=totalCollateral(8dec USD),[4]=totalDebtRay(RAY=1e27)
+ //            [3]=totalCollateral(/1e26),[4]=totalDebt(/1e35)
  async function fetchAave(ethPrice) {
  try {
  const walletData = V4_SEL + padAddr(AAVE_WALLET);
@@ -3558,14 +3558,17 @@ function buildNetRanking() {
    ethCall(ETH_RPC, BLUECHIP_SPOKE, walletData).catch(() => null)
  ]);
 
- const mainColl = decNum(decUint(mainRaw, 3), 8);
- const mainDebt = decNum(decUint(mainRaw, 4), 27);
+ const mainColl = decNum(decUint(mainRaw, 3), 26);
+ const mainDebt = decNum(decUint(mainRaw, 4), 35);
  const hf       = decNum(decUint(mainRaw, 2), 18);
 
  let bcColl = 0;
  if (bcRaw && bcRaw.length > 10 && bcRaw !== '0x') {
-   const bc = decNum(decUint(bcRaw, 3), 8);
-   if (isFinite(bc) && bc > 50) bcColl = bc;
+   const bcHF = decNum(decUint(bcRaw, 2), 18);
+   if (isFinite(bcHF) && bcHF < 1e15) {
+     const bc = decNum(decUint(bcRaw, 3), 26);
+     if (isFinite(bc) && bc > 50) bcColl = bc;
+   }
  }
  const collateral = mainColl + bcColl;
  const debt       = mainDebt;

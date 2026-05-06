@@ -1147,7 +1147,7 @@ var WEEKLY_UPDATE = {
  2023: [+28.0, -2.5, +6.0, +2.8, +1.5, +4.2, -1.8, -9.0, +4.2, +11.2, +14.5, +18.0],
  2024: [+1.5, +42.0, +6.0, -14.0, -22.0, +6.2, +4.0, -18.0, +10.0, -3.0, +44.0, +8.5],
  2025: [+28.0,-12.0, +5.0, -9.0, -18.0, -6.0, +12.0, -8.0, +4.0, +6.0, +4.5, +6.0],
- 2026: [-18.0,-22.0, null, null, null, null, null, null, null, null, null, null],
+ 2026: [-18.0,-22.0, null, +40.3, null, null, null, null, null, null, null, null],
  },
 
  // ── P&L por origem (manual — baseado no diário) ──
@@ -2236,7 +2236,9 @@ function applyUpdate() {
      var year  = 2000 + parseInt(parts[1], 10);
      if (!MONTHLY_RETURNS_DATA[year]) continue;
      if (!wc.values[i-1] || wc.values[i-1] <= 0) continue;
-     MONTHLY_RETURNS_DATA[year][month] = parseFloat(((wc.values[i] - wc.values[i-1]) / wc.values[i-1] * 100).toFixed(1));
+     // TWR: subtrai inflow (delta de invested) para neutralizar aportes do período
+     var inflow = (wc.invested[i] || 0) - (wc.invested[i-1] || 0);
+     MONTHLY_RETURNS_DATA[year][month] = parseFloat(((wc.values[i] - inflow - wc.values[i-1]) / wc.values[i-1] * 100).toFixed(1));
    }
  })();
  perfPeriodsData.all.labels = W.wealthCurve.labels;
@@ -3158,7 +3160,7 @@ document.addEventListener('DOMContentLoaded',function(){
  // AAVE V4 — Hub-and-Spoke (replaces single AAVE_POOL from V3)
  const MAIN_SPOKE     = '0x94e7A5dCbE816e498b89aB752661904E2F56c485'; // WETH + USDT supply + USDC borrow
  const BLUECHIP_SPOKE = '0x973a023A77420ba610f06b3858aD991Df6d85A08'; // extra WETH tier (if any)
- const V4_SEL         = '0x91b89fba'; // getUserAccountData V4
+ const V4_SEL         = '0xbf92857c'; // getUserAccountData (V4 retorna struct novo)
  const AAVE_DATA_PROVIDER = '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3';
  const UNI_NFT = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
  const LP_TOKEN_ID = 4694262;
@@ -3231,7 +3233,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
  // ── AAVE V4 ──────────────────────────────────────────────────────
  // V4 struct: [0]=riskPremium(BPS), [1]=avgCF(WAD), [2]=HF(WAD=1e18),
- //            [3]=totalCollateral(8dec USD), [4]=totalDebtRay(RAY=1e27), [5..6]=counts
+ //            [3]=totalCollateral(/1e26), [4]=totalDebt(/1e35), [5..6]=counts
  async function fetchAave(ethPrice) {
  try {
  const walletData = V4_SEL + padAddr(AAVE_WALLET);
@@ -3241,14 +3243,17 @@ document.addEventListener('DOMContentLoaded',function(){
    ethCall(ETH_RPC, BLUECHIP_SPOKE, walletData).catch(() => null)
  ]);
 
- const mainColl = decNum(decUint(mainRaw, 3), 8);  // 8-dec USD
- const mainDebt = decNum(decUint(mainRaw, 4), 27); // RAY = 1e27
+ const mainColl = decNum(decUint(mainRaw, 3), 26); // V4: USD-8dec × RAY/1e9
+ const mainDebt = decNum(decUint(mainRaw, 4), 35); // V4: USD-8dec × RAY
  const hf       = decNum(decUint(mainRaw, 2), 18); // WAD = 1e18
 
  let bcColl = 0;
  if (bcRaw && bcRaw.length > 10 && bcRaw !== '0x') {
-   const bc = decNum(decUint(bcRaw, 3), 8);
-   if (isFinite(bc) && bc > 50) bcColl = bc;
+   const bcHF = decNum(decUint(bcRaw, 2), 18);
+   if (isFinite(bcHF) && bcHF < 1e15) {
+     const bc = decNum(decUint(bcRaw, 3), 26);
+     if (isFinite(bc) && bc > 50) bcColl = bc;
+   }
  }
  const collateral = mainColl + bcColl;
  const debt       = mainDebt;

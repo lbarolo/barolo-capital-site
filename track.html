@@ -1411,6 +1411,11 @@ async function fetchLiveActivePool() {
   buildApChart(_apMetric, POOLS[0]);
   buildLiqDistChart(eth);
   buildPriceChart(eth);
+
+  // Real on-chain liquidity distribution (async, non-blocking; rebuilds chart when ready)
+  fetchLiqDistOnchain()
+    .then(d => { _liqDistData = d; buildLiqDistChart(d.currentPriceUSD || eth); })
+    .catch(e => console.debug('[Track] liq dist fetch failed, using synthetic:', e.message));
 }
 
 // ─── AP PANEL CHART ──────────────────────────────────────────────────────────
@@ -1513,6 +1518,124 @@ function switchApChart(metric, btn) {
   document.querySelectorAll('.ap-chart-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   buildApChart(metric);
+}
+
+// ─── LIQUIDITY DISTRIBUTION — on-chain via Uniswap V3 TickLens (Base) ────────
+// Reads populated ticks from the WETH/USDC 0.30% pool and walks liquidityNet
+// to build a real liquidity-vs-price curve. Falls back to synthetic if RPC fails.
+
+let _liqDistData = null; // {values:[41 normalized 0-1], range:[lo,hi,step]}
+
+async function fetchLiqDistOnchain() {
+  const POOL = '0x6c561B446416E1A00E8E93E221854d6eA4171372';
+  const LENS = '0x0CdeE061c75D43c82520eD998C23ac2991c9ac6d'; // Uniswap V3 TickLens on Base
+  const RPCS = [
+    'https://base-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7',
+    'https://mainnet.base.org',
+    'https://base.llamarpc.com',
+    'https://base.drpc.org'
+  ];
+  const TICK_SPACING = 60;
+  const TOKEN0_DEC = 18, TOKEN1_DEC = 6; // WETH/USDC
+
+  async function call(to, data) {
+    for (const rpc of RPCS) {
+      try {
+        const r = await fetchTimeout(rpc, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({jsonrpc:'2.0',method:'eth_call',params:[{to,data},'latest'],id:1})
+        }, 8000);
+        if (!r.ok) continue;
+        const j = await r.json();
+        if (j.result) return j.result;
+      } catch(e) {}
+    }
+    throw new Error('all RPCs failed');
+  }
+
+  const tickToUsd = t => Math.pow(1.0001, t) * Math.pow(10, TOKEN0_DEC - TOKEN1_DEC);
+  const usdToTick = p => Math.log(p / Math.pow(10, TOKEN0_DEC - TOKEN1_DEC)) / Math.log(1.0001);
+  const toI24 = h => { let v = BigInt(h); return v >= (1n << 255n) ? v - (1n << 256n) : v; };
+  const toI128 = h => { let v = BigInt(h); return v >= (1n << 255n) ? v - (1n << 256n) : v; };
+
+  // 1. slot0 → currentTick
+  const slot0 = await call(POOL, '0x3850c7bd');
+  const currentTick = Number(toI24('0x' + slot0.slice(2).slice(64, 128)));
+
+  // 2. Active liquidity
+  const liqHex = await call(POOL, '0x1a686502');
+  const L0 = BigInt(liqHex);
+
+  // 3. Range $1000-$5000
+  const TICK_LO = Math.floor(usdToTick(1000));
+  const TICK_HI = Math.ceil(usdToTick(5000));
+
+  // 4. wordPos for each end (compressed = floor(tick/spacing); word = compressed >> 8)
+  const tickToWord = t => Math.floor(Math.floor(t / TICK_SPACING) / 256);
+  const wordLo = tickToWord(TICK_LO);
+  const wordHi = tickToWord(TICK_HI);
+
+  // 5. encode getPopulatedTicksInWord(pool, int16 wordPos)
+  const padAddr = a => a.slice(2).toLowerCase().padStart(64,'0');
+  const encInt16 = w => (w < 0 ? ((1n << 256n) + BigInt(w)) : BigInt(w)).toString(16).padStart(64,'0');
+  const wordsToFetch = [];
+  for (let w = wordLo; w <= wordHi; w++) wordsToFetch.push(w);
+
+  const wordsRaw = await Promise.all(wordsToFetch.map(w =>
+    call(LENS, '0x351fb478' + padAddr(POOL) + encInt16(w)).catch(() => null)
+  ));
+
+  // 6. Decode dynamic array of (int24,int128,uint128)
+  const populated = [];
+  wordsRaw.forEach(raw => {
+    if (!raw || raw.length < 130) return;
+    const data = raw.slice(2);
+    const len = parseInt(data.slice(64, 128), 16);
+    for (let i = 0; i < len; i++) {
+      const base = 128 + i * 192;
+      const tickVal = Number(toI24('0x' + data.slice(base, base + 64)));
+      const liqNet  = toI128('0x' + data.slice(base + 64, base + 128));
+      populated.push({ tick: tickVal, liquidityNet: liqNet });
+    }
+  });
+
+  if (!populated.length) throw new Error('no populated ticks');
+  populated.sort((a,b) => a.tick - b.tick);
+
+  // 7. Walk from currentTick to build (tickStart, tickEnd, liq) intervals
+  const intervals = [];
+  let liq = L0, prev = currentTick;
+  for (const pt of populated.filter(t => t.tick > currentTick)) {
+    intervals.push({ start: prev, end: pt.tick, liq });
+    liq += pt.liquidityNet;
+    prev = pt.tick;
+  }
+  intervals.push({ start: prev, end: TICK_HI + 600, liq });
+
+  liq = L0; prev = currentTick;
+  for (const pt of populated.filter(t => t.tick <= currentTick).reverse()) {
+    intervals.push({ start: pt.tick, end: prev, liq });
+    liq -= pt.liquidityNet;
+    prev = pt.tick;
+  }
+  intervals.push({ start: TICK_LO - 600, end: prev, liq });
+
+  // 8. Bucket by $100 USD; liquidity (BigInt) → Number for chart (relative scale)
+  const STEP = 100, START = 1000, END = 5000;
+  const values = [];
+  for (let p = START; p <= END; p += STEP) {
+    const tBucket = usdToTick(p);
+    let v = 0n;
+    for (const iv of intervals) {
+      if (tBucket >= iv.start && tBucket < iv.end) { v = iv.liq; break; }
+    }
+    if (v < 0n) v = 0n;
+    values.push(Number(v / 1000000000000n)); // scale down so it fits in Number
+  }
+
+  const max = Math.max(...values);
+  const norm = max > 0 ? values.map(v => v / max) : values.map(() => 0);
+  return { values: norm, currentPriceUSD: tickToUsd(currentTick), currentTick };
 }
 
 // ─── PRICE CHART (ETH history + range lines) ─────────────────────────────────
@@ -1642,15 +1765,20 @@ function buildLiqDistChart(currentEth) {
   const ticks = [];
   for (let p = START; p <= END; p += STEP) ticks.push(p);
 
-  const center = (MIN + MAX) / 2;
-  const liqData = ticks.map(p => {
-    if (p >= MIN && p <= MAX) {
-      const dist = Math.abs(p - center) / ((MAX - MIN) / 2);
-      return 0.55 + 0.45 * Math.exp(-dist * dist * 1.5);
-    }
-    const dist = p < MIN ? (MIN - p) / 500 : (p - MAX) / 500;
-    return Math.max(0.03, 0.12 * Math.exp(-dist * dist * 3));
-  });
+  // Real on-chain distribution if available; synthetic gaussian as fallback
+  const liqData = (_liqDistData && _liqDistData.values && _liqDistData.values.length === ticks.length)
+    ? _liqDistData.values
+    : (function(){
+        const center = (MIN + MAX) / 2;
+        return ticks.map(p => {
+          if (p >= MIN && p <= MAX) {
+            const dist = Math.abs(p - center) / ((MAX - MIN) / 2);
+            return 0.55 + 0.45 * Math.exp(-dist * dist * 1.5);
+          }
+          const dist = p < MIN ? (MIN - p) / 500 : (p - MAX) / 500;
+          return Math.max(0.03, 0.12 * Math.exp(-dist * dist * 3));
+        });
+      })();
 
   const barColors = ticks.map(p =>
     p >= MIN && p <= MAX
