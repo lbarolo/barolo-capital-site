@@ -2642,3 +2642,92 @@ Nenhum dado de posição alterado nesta sessão.
 
 ---
 
+## Sessão 06/05/2026 — track.html visual refinements + Unclaimed Fees KPI card + font size increase
+
+### Contexto
+Sessão iniciada retomando de context esgotado. O redesign visual de track.html estava em progresso (cards grid, gráficos side-by-side). Finalizadas as mudanças de UI e JS relacionadas ao novo card KPI "Unclaimed Fees".
+
+### Implementado
+
+#### `track.html` — Aumento de fontes nos cards de métricas
+**Objetivo:** match font sizes no ap-metrics-grid com a hierarquia visual do KPI section superior.
+
+| Classe CSS | Antes | Depois | Elemento |
+|-----------|-------|--------|----------|
+| `.ap-metric-label` | 9px | 10px | Label (ex: "Current Assets") |
+| `.ap-metric-item` | 11px | 13px | Nome do ativo (ex: "WETH") + espaçamento gap 6→8px |
+| `.ap-metric-tok` | 10px | 12px | Símbolo do token em monospace |
+| `.ap-metric-val` | 16px | 20px | Valor principal (ex: "0.0774") |
+| `.ap-metric-val-large` | 22px | 28px | Valor destacado em cards grandes |
+| `.ap-metric-box` | — | padding 10→12px, 12→14px | Aumentado padding interno dos boxes |
+
+**Mudança de cor:** `.ap-metric-item` color `var(--muted)` → `var(--text)` (mais legível nos nomes de ativos)
+
+#### `track.html` — Novo card KPI "Unclaimed Fees"
+**Estrutura HTML:** 5º card adicionado no `.kpi-grid`, logo após "Liquidez Atual":
+```html
+<div class="kpi-card">
+  <div class="kpi-label">Unclaimed Fees</div>
+  <div class="kpi-value pos" id="kpi-unclaimed">—</div>
+  <div class="kpi-sub" id="kpi-unclaimed-sub">—</div>
+</div>
+```
+
+**Ordem final dos KPIs:** Liquidez Atual · **Unclaimed Fees** (novo) · Taxas Acumuladas · APR Pool Ativa · Profit/Loss
+
+**Renomear card anterior:** "Unclaimed / Claimed Fees" → "Taxas Acumuladas" (reflete melhor que são fees já coletadas, não em análise)
+
+#### `track.html` — Código JavaScript para popular Unclaimed Fees KPI
+**Novo bloco adicionado em `fetchLiveActivePool()` (após o bloco `kpi-apr`, antes de `computeKPIs()`):**
+```js
+// Update Unclaimed Fees KPI
+const unclaimedEl = document.getElementById('kpi-unclaimed');
+if (unclaimedEl) {
+  unclaimedEl.textContent = fmtUsd(uncFeeUsd, 2);
+  unclaimedEl.className = 'kpi-value pos';
+}
+const unclaimedSubEl = document.getElementById('kpi-unclaimed-sub');
+if (unclaimedSubEl) unclaimedSubEl.innerHTML =
+  `<span class="live-dot"></span>${uncW.toFixed(6)} WETH + ${uncU.toFixed(2)} USDC`;
+```
+
+**Fonte de dados:**
+- `uncFeeUsd` — valor total em USD dos fees não coletados (calculado via BigInt math from on-chain)
+- `uncW` — WETH não coletado (wei → 1e18)
+- `uncU` — USDC não coletado (wei → 1e6)
+- Live dot indicator mostra que é atualizado em tempo real
+
+### Dados atualizados
+Nenhum dado de posição alterado nesta sessão. Apenas refinamentos visuais.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix aplicado |
+|-----|-----------|--------------|
+| Cards de métricas com fontes pequenas (11-16px) | Cópia de design de outra página, não otimizado para legibilidade | Aumentadas todas as fontes: label 9→10, item 11→13, val 16→20, val-large 22→28px |
+| Sem card específico para "Unclaimed Fees" | KPI anterior "Unclaimed / Claimed Fees" misturava dois conceitos | Separado em dois cards: novo "Unclaimed Fees" (ao vivo) + "Taxas Acumuladas" (total histórico) |
+| KPI card novo sem JavaScript | HTML inserido mas sem código para preencher os IDs | Adicionado bloco em `fetchLiveActivePool()` que popula `kpi-unclaimed` e `kpi-unclaimed-sub` |
+
+### Commits realizados
+1. **`26c4391`** — `feat: track.html visual + entry data fix + LP pooled live propagation`
+   - Aumentos de font-size em ap-metric-* classes
+   - Novo card KPI "Unclaimed Fees" no HTML
+   - Rename "Unclaimed / Claimed Fees" → "Taxas Acumuladas"
+
+2. **`e56a5f1`** — `feat: populate Unclaimed Fees KPI card with live data`
+   - Código JavaScript para preencher `kpi-unclaimed` e `kpi-unclaimed-sub`
+   - Display de valor USD total + breakdown WETH + USDC
+
+### O que ainda falta
+
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
+- **CSVs das CEX** — Lucas traz para custo BRL + IR
+- **Verificar V4 fetch ao vivo** — selector `0x91b89fba` + offsets [2,3,4] em produção
+- **i18n painel Sizing & Risk** — labels só em PT; falta strings EN
+- **Validar `calcLevHedge()`** com cenários reais
+- **Mentoria DeFi avançado** — Euler V2, Morpho, Gearbox, Drift, Hyperliquid HLP, Pendle PT
+- **Distribuição de liquidez real** — a atual é sintética; leitura real exigiria Uniswap V3 subgraph
+- **Track.html responsividade mobile** — charts podem sair do quadro em telas pequenas
+
+---
+
