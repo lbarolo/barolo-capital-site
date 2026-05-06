@@ -525,11 +525,11 @@
     }
     .ap-metric-card:hover { border-color: rgba(201,160,80,0.3); }
     .ap-metric-label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
     }
     .ap-metric-box, .ap-metric-box-center {
-      background: rgba(255,255,255,0.02); border-radius: 8px; padding: 10px 12px;
+      background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px 14px;
       border: 1px solid rgba(201,160,80,0.08); margin-bottom: 10px;
     }
     .ap-metric-box-center {
@@ -538,20 +538,20 @@
     }
     .ap-metric-box:last-child, .ap-metric-box-center { margin-bottom: 0; }
     .ap-metric-item {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;
     }
-    .ap-metric-tok { font-family: var(--mono); font-size: 10px; }
+    .ap-metric-tok { font-family: var(--mono); font-size: 12px; letter-spacing: 0.05em; }
     .ap-metric-val {
-      font-family: var(--mono); font-size: 16px; font-weight: 700;
+      font-family: var(--mono); font-size: 20px; font-weight: 700;
       color: var(--text); line-height: 1;
     }
     .ap-metric-val-large {
-      font-family: var(--mono); font-size: 22px; font-weight: 700;
-      color: var(--text); line-height: 1; margin-bottom: 4px;
+      font-family: var(--mono); font-size: 28px; font-weight: 700;
+      color: var(--text); line-height: 1; margin-bottom: 6px;
     }
     .ap-metric-sub {
-      font-size: 9px; color: var(--muted); font-weight: 500; margin-top: 4px;
+      font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 4px;
       letter-spacing: 0.05em;
     }
 
@@ -657,7 +657,12 @@
       <div class="kpi-sub" id="kpi-liq-sub"><span class="live-dot"></span>1 pool ativa · WETH/USDC</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Unclaimed / Claimed Fees</div>
+      <div class="kpi-label">Unclaimed Fees</div>
+      <div class="kpi-value pos" id="kpi-unclaimed">—</div>
+      <div class="kpi-sub" id="kpi-unclaimed-sub">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Taxas Acumuladas</div>
       <div class="kpi-value pos" id="kpi-fees">—</div>
       <div class="kpi-sub" id="kpi-fees-sub">—</div>
     </div>
