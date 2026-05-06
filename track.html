@@ -1435,6 +1435,16 @@ async function fetchLiveActivePool() {
     if (subEl) subEl.innerHTML = '<span class="live-dot"></span>fee APR · on-chain · Base';
   }
 
+  // Update Unclaimed Fees KPI
+  const unclaimedEl = document.getElementById('kpi-unclaimed');
+  if (unclaimedEl) {
+    unclaimedEl.textContent = fmtUsd(uncFeeUsd, 2);
+    unclaimedEl.className = 'kpi-value pos';
+  }
+  const unclaimedSubEl = document.getElementById('kpi-unclaimed-sub');
+  if (unclaimedSubEl) unclaimedSubEl.innerHTML =
+    `<span class="live-dot"></span>${uncW.toFixed(6)} WETH + ${uncU.toFixed(2)} USDC`;
+
   computeKPIs();
   renderTable();
   buildApChart(_apMetric, POOLS[0]);
