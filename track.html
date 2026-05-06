@@ -513,14 +513,74 @@
       border-radius: 20px; padding: 2px 8px;
     }
 
+    /* ─── METRICS GRID (6 CARDS) ─── */
+    .ap-metrics-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px; margin-bottom: 20px; padding: 0;
+    }
+    .ap-metric-card {
+      background: linear-gradient(180deg, var(--surface2) 0%, var(--surface) 100%);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 16px; transition: border-color 0.15s;
+    }
+    .ap-metric-card:hover { border-color: rgba(201,160,80,0.3); }
+    .ap-metric-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .ap-metric-box, .ap-metric-box-center {
+      background: rgba(255,255,255,0.02); border-radius: 8px; padding: 10px 12px;
+      border: 1px solid rgba(201,160,80,0.08); margin-bottom: 10px;
+    }
+    .ap-metric-box-center {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+    }
+    .ap-metric-box:last-child, .ap-metric-box-center { margin-bottom: 0; }
+    .ap-metric-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px;
+    }
+    .ap-metric-tok { font-family: var(--mono); font-size: 10px; }
+    .ap-metric-val {
+      font-family: var(--mono); font-size: 16px; font-weight: 700;
+      color: var(--text); line-height: 1;
+    }
+    .ap-metric-val-large {
+      font-family: var(--mono); font-size: 22px; font-weight: 700;
+      color: var(--text); line-height: 1; margin-bottom: 4px;
+    }
+    .ap-metric-sub {
+      font-size: 9px; color: var(--muted); font-weight: 500; margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── CHARTS IN 2 COLUMNS ─── */
+    .ap-charts-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 20px;
+    }
+    .ap-chart-col {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .ap-chart-col .ap-chart-header { margin-bottom: 10px; }
+    .ap-chart-col canvas { margin-top: 6px; }
+
     /* ─── RESPONSIVE ─── */
+    @media (max-width: 1100px) {
+      .ap-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .ap-charts-row { grid-template-columns: 1fr; }
+    }
     @media (max-width: 900px) {
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .ap-metrics-grid { grid-template-columns: repeat(2, 1fr); }
       .hide-m { display: none; }
     }
     @media (max-width: 600px) {
       .nav-links { display: none; }
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .ap-metrics-grid { grid-template-columns: 1fr; }
       td, th { padding: 8px 10px; }
       .hide-sm { display: none; }
     }
@@ -597,19 +657,19 @@
       <div class="kpi-sub" id="kpi-liq-sub"><span class="live-dot"></span>1 pool ativa · WETH/USDC</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Taxas Acumuladas</div>
+      <div class="kpi-label">Unclaimed / Claimed Fees</div>
       <div class="kpi-value pos" id="kpi-fees">—</div>
       <div class="kpi-sub" id="kpi-fees-sub">—</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Profit / Loss</div>
-      <div class="kpi-value" id="kpi-pnl">—</div>
-      <div class="kpi-sub" id="kpi-pnl-sub">fees − IL · todas as pools</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">APR Pool Ativa</div>
       <div class="kpi-value pos" id="kpi-apr">32%</div>
       <div class="kpi-sub" id="kpi-apr-sub"><span class="live-dot"></span>fee APR · on-chain Base</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Profit / Loss</div>
+      <div class="kpi-value" id="kpi-pnl">—</div>
+      <div class="kpi-sub" id="kpi-pnl-sub">fees − IL · todas as pools</div>
     </div>
   </div>
 
@@ -627,176 +687,148 @@
       <div class="ap-meta" id="ap-opened">Aberta 24/02/2026 · atualizando…</div>
     </div>
 
-    <div class="ap-body">
-      <!-- Position Composition -->
-      <div class="ap-section">
-        <div class="ap-section-title">Position Composition <i class="tt-icon" data-tip="Ativos atuais na pool vs o que você teria se tivesse apenas segurado os tokens iniciais.">?</i></div>
-        <table class="ap-tbl">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Current Assets <i class="tt-icon" data-tip="Quantidade e valor atual de cada token na sua posição LP.">?</i></th>
-              <th>HODL Initial <i class="tt-icon" data-tip="O que valeria se você tivesse segurado os tokens iniciais sem entrar na pool.">?</i></th>
-              <th>Initial Assets <i class="tt-icon" data-tip="Tokens e valores que você depositou na abertura da posição.">?</i></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" onerror="this.style.display='none'">WETH</div></td>
-              <td id="ap-weth-curr">—</td>
-              <td id="ap-weth-hodl">—</td>
-              <td id="ap-weth-init">—</td>
-            </tr>
-            <tr>
-              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" onerror="this.style.display='none'">USDC</div></td>
-              <td id="ap-usdc-curr">—</td>
-              <td id="ap-usdc-hodl">—</td>
-              <td id="ap-usdc-init">—</td>
-            </tr>
-          </tbody>
-        </table>
+
+    <!-- METRICS CARDS GRID (6 cards) -->
+    <div class="ap-metrics-grid">
+      <!-- Current Assets -->
+      <div class="ap-metric-card">
+        <div class="ap-metric-label">Current Assets</div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" alt="WETH" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">WETH</span>
+          </div>
+          <div class="ap-metric-val" id="ap-curr-weth-qty">—</div>
+          <div class="ap-metric-sub" id="ap-curr-weth-usd">—</div>
+        </div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">USDC</span>
+          </div>
+          <div class="ap-metric-val" id="ap-curr-usdc-qty">—</div>
+          <div class="ap-metric-sub" id="ap-curr-usdc-usd">—</div>
+        </div>
       </div>
 
-      <!-- Earnings -->
-      <div class="ap-section">
-        <div class="ap-section-title">Earnings <i class="tt-icon" data-tip="Taxas geradas pela pool. Unclaimed = não coletadas (ainda na posição). Claimed = já sacadas.">?</i></div>
-        <table class="ap-tbl">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Unclaimed <i class="tt-icon" data-tip="Taxas acumuladas que ainda não foram coletadas. Incluídas no cálculo de P&L.">?</i></th>
-              <th>Claimed <i class="tt-icon" data-tip="Taxas já sacadas da posição. Nenhuma coleta feita até agora.">?</i></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" onerror="this.style.display='none'">WETH</div></td>
-              <td id="ap-fee-weth">—</td>
-              <td style="color:var(--muted)">—</td>
-            </tr>
-            <tr>
-              <td><div class="ap-tok"><img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" onerror="this.style.display='none'">USDC</div></td>
-              <td id="ap-fee-usdc">—</td>
-              <td style="color:var(--muted)">—</td>
-            </tr>
-            <tr class="ap-total-row">
-              <td style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Total</td>
-              <td id="ap-fee-total" style="font-weight:700">—</td>
-              <td style="color:var(--muted)">—</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- HODL Initial -->
+      <div class="ap-metric-card">
+        <div class="ap-metric-label">HODL Initial</div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" alt="WETH" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">WETH</span>
+          </div>
+          <div class="ap-metric-val" id="ap-hodl-weth-qty">—</div>
+          <div class="ap-metric-sub" id="ap-hodl-weth-usd">—</div>
+        </div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">USDC</span>
+          </div>
+          <div class="ap-metric-val" id="ap-hodl-usdc-qty">—</div>
+          <div class="ap-metric-sub" id="ap-hodl-usdc-usd">—</div>
+        </div>
       </div>
-    </div>
 
-    <!-- Divergence Loss Table -->
-    <div class="ap-div-section">
-      <div class="ap-section-title">
-        Divergence Loss
-        <i class="tt-icon" data-tip="Compara o valor atual da posição com diferentes estratégias de holding. Negativo = pool teve IL vs aquela estratégia.">?</i>
+      <!-- Initial Assets -->
+      <div class="ap-metric-card">
+        <div class="ap-metric-label">Initial Assets</div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" alt="WETH" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">WETH</span>
+          </div>
+          <div class="ap-metric-val" id="ap-init-weth-qty">—</div>
+          <div class="ap-metric-sub" id="ap-init-weth-usd">—</div>
+        </div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">USDC</span>
+          </div>
+          <div class="ap-metric-val" id="ap-init-usdc-qty">—</div>
+          <div class="ap-metric-sub" id="ap-init-usdc-usd">—</div>
+        </div>
       </div>
-      <table class="ap-div-tbl">
-        <thead>
-          <tr>
-            <th></th>
-            <th>100% WETH <i class="tt-icon" data-tip="Cenário: converteu todo o capital em WETH na entrada e segurou.">?</i></th>
-            <th>100% USDC <i class="tt-icon" data-tip="Cenário: ficou 100% em stablecoin desde a entrada ($315.88).">?</i></th>
-            <th>50 / 50 <i class="tt-icon" data-tip="Cenário: dividiu 50% WETH e 50% USDC na entrada e segurou.">?</i></th>
-            <th>Capital Entrada <i class="tt-icon" data-tip="Referência em USD: o valor exato depositado na abertura ($315.88 em 24/02/2026).">?</i></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>HODL <i class="tt-icon" data-tip="Valor que cada estratégia teria hoje se você não tivesse entrado na pool.">?</i></td>
-            <td id="ap-dv-hodl-weth">—</td>
-            <td id="ap-dv-hodl-usdc">—</td>
-            <td id="ap-dv-hodl-5050">—</td>
-            <td id="ap-dv-hodl-init">—</td>
-          </tr>
-          <tr>
-            <td>DIV. LOSS <i class="tt-icon" data-tip="Valor atual da posição (sem taxas) menos o benchmark. Negativo = IL vs aquela estratégia.">?</i></td>
-            <td id="ap-dv-loss-weth">—</td>
-            <td id="ap-dv-loss-usdc">—</td>
-            <td id="ap-dv-loss-5050">—</td>
-            <td id="ap-dv-loss-init">—</td>
-          </tr>
-          <tr>
-            <td>VS HODL <i class="tt-icon" data-tip="Performance total vs benchmark = taxas acumuladas + Divergence Loss. Verde = você superou o holding.">?</i></td>
-            <td id="ap-dv-vs-weth">—</td>
-            <td id="ap-dv-vs-usdc">—</td>
-            <td id="ap-dv-vs-5050">—</td>
-            <td id="ap-dv-vs-init">—</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <!-- KPI Mini Row -->
-    <div class="ap-kpi-row">
-      <div class="ap-kpi-mini">
-        <div class="ap-kpi-mini-label">
-          ROI
-          <i class="tt-icon" data-tip="Retorno total sobre o capital inicial em USD. (Liquidez atual + Taxas − $315.88) ÷ $315.88.">?</i>
+      <!-- Fees (Unclaimed) -->
+      <div class="ap-metric-card">
+        <div class="ap-metric-label">Unclaimed Fees</div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" alt="WETH" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">WETH</span>
+          </div>
+          <div class="ap-metric-val" id="ap-fee-weth-qty">—</div>
+          <div class="ap-metric-sub" id="ap-fee-weth-usd">—</div>
         </div>
-        <div class="ap-kpi-mini-val" id="ap-roi">—</div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">USDC</span>
+          </div>
+          <div class="ap-metric-val" id="ap-fee-usdc-qty">—</div>
+          <div class="ap-metric-sub" id="ap-fee-usdc-usd">—</div>
+        </div>
       </div>
-      <div class="ap-kpi-mini">
-        <div class="ap-kpi-mini-label">
-          Asset Gain
-          <i class="tt-icon" data-tip="Variação de preço dos ativos na posição vs o capital de entrada — sem contar taxas.">?</i>
+
+      <!-- Divergence Loss -->
+      <div class="ap-metric-card">
+        <div class="ap-metric-label">Divergence Loss</div>
+        <div class="ap-metric-box-center">
+          <div class="ap-metric-val-large" id="ap-il-total">—</div>
+          <div class="ap-metric-sub" id="ap-il-vs">vs 50/50 HODL</div>
         </div>
-        <div class="ap-kpi-mini-val" id="ap-asset-gain">—</div>
       </div>
-      <div class="ap-kpi-mini">
-        <div class="ap-kpi-mini-label">
-          24h Projection
-          <i class="tt-icon" data-tip="Projeção de taxas diárias baseada no total acumulado desde 24/02/2026 ÷ dias abertos.">?</i>
-        </div>
-        <div class="ap-kpi-mini-val" id="ap-proj-24h">—</div>
-      </div>
-      <div class="ap-kpi-mini">
-        <div class="ap-kpi-mini-label">
-          Deposits / Withdrawals
-          <i class="tt-icon" data-tip="Capital depositado na abertura. Nenhum saque realizado até agora.">?</i>
-        </div>
-        <div class="ap-kpi-mini-val" style="font-size:17px">
-          <span style="color:var(--green)">$315.88</span>
-          <span style="color:var(--muted);font-size:12px"> / $0.00</span>
+
+      <!-- Performance Summary -->
+      <div class="ap-metric-card">
+        <div class="ap-metric-label">Performance</div>
+        <div class="ap-metric-box-center">
+          <div class="ap-metric-val-large" id="ap-roi-val">—</div>
+          <div class="ap-metric-sub">ROI (fees + IL)</div>
+          <div class="ap-metric-val" style="margin-top:8px" id="ap-24h-proj">—</div>
+          <div class="ap-metric-sub">24h projection</div>
         </div>
       </div>
     </div>
 
-    <!-- AP PANEL CHART -->
-    <div class="ap-chart-section">
-      <div class="ap-chart-header">
-        <div class="ap-chart-total" id="ap-chart-total">—</div>
-        <div class="ap-chart-delta" id="ap-chart-delta"></div>
+    <!-- CHARTS IN 2 COLUMNS -->
+    <div class="ap-charts-row">
+      <!-- PnL Chart (Left) -->
+      <div class="ap-chart-col">
+        <div class="ap-chart-header">
+          <div class="ap-chart-total" id="ap-chart-total">—</div>
+          <div class="ap-chart-delta" id="ap-chart-delta"></div>
+        </div>
+        <div class="ap-chart-tabs">
+          <button class="ap-chart-tab active" onclick="switchApChart('pnl',this)">PnL</button>
+          <button class="ap-chart-tab" onclick="switchApChart('liquidez',this)">Assets</button>
+          <button class="ap-chart-tab" onclick="switchApChart('apr',this)">APR</button>
+          <button class="ap-chart-tab" onclick="switchApChart('taxas',this)">Fees</button>
+          <button class="ap-chart-tab" onclick="switchApChart('il',this)">IL</button>
+        </div>
+        <canvas id="apChart" height="140"></canvas>
       </div>
-      <div class="ap-chart-tabs">
-        <button class="ap-chart-tab active" onclick="switchApChart('pnl',this)">PnL</button>
-        <button class="ap-chart-tab" onclick="switchApChart('liquidez',this)">Assets value</button>
-        <button class="ap-chart-tab" onclick="switchApChart('apr',this)">APR</button>
-        <button class="ap-chart-tab" onclick="switchApChart('taxas',this)">Fees APR</button>
-        <button class="ap-chart-tab" onclick="switchApChart('il',this)">Div. loss</button>
+
+      <!-- Price Chart (Right) -->
+      <div class="ap-chart-col">
+        <div class="ap-chart-sub-title">
+          Preço WETH/USDC
+          <span class="ap-chart-sub-note">· — — range</span>
+          <span class="range-pill">$1,856 – $3,146</span>
+        </div>
+        <canvas id="priceChart" height="140"></canvas>
       </div>
-      <canvas id="apChart" height="120"></canvas>
     </div>
 
-    <!-- Price Chart with Range Lines -->
-    <div class="ap-price-section">
-      <div class="ap-chart-sub-title">
-        Preço WETH / USDC
-        <span class="ap-chart-sub-note">linha dourada · — — range da posição</span>
-        <span class="range-pill">$1,856 – $3,146</span>
-      </div>
-      <canvas id="priceChart" height="120"></canvas>
-    </div>
-
-    <!-- Liquidity Distribution -->
+    <!-- Liquidity Distribution Full Width -->
     <div class="ap-liq-dist-section">
       <div class="ap-chart-sub-title">
         Distribuição de Liquidez
-        <span class="ap-chart-sub-note">concentração estimada por faixa de preço</span>
+        <span class="ap-chart-sub-note">concentração por faixa de preço</span>
       </div>
       <canvas id="liqDistChart" height="90"></canvas>
     </div>
@@ -1341,54 +1373,46 @@ async function fetchLiveActivePool() {
     // opened line
     s('ap-opened', `Aberta 24/02/2026 · ${days.toFixed(1)}d · <span class="live-dot" style="vertical-align:middle"></span> ao vivo`);
 
-    // Position Composition — Current
-    s('ap-weth-curr', `${wethA.toFixed(4)} ${q(wethPct)}${u(wethA * eth)}`);
-    s('ap-usdc-curr', `${usdcA.toFixed(2)} ${q(usdcPct)}${u(usdcA)}`);
-    // Position Composition — HODL Initial (se tivesse só segurado)
-    s('ap-weth-hodl', `${ENTRY_WETH.toFixed(4)} <span class="ap-pct">100%</span>${u(hodlValue)}`);
-    s('ap-usdc-hodl', `0.00 <span class="ap-pct">0%</span><div class="ap-usd">$0.00</div>`);
-    // Position Composition — Initial Assets (entrada)
-    s('ap-weth-init', `${ENTRY_WETH.toFixed(4)}${u(ENTRY_CAPITAL)}`);
-    s('ap-usdc-init', `0.00<div class="ap-usd">$0.00</div>`);
-
-    // Earnings
-    s('ap-fee-weth', `${uncW.toFixed(6)}<div class="ap-usd" style="color:var(--green)">${fmtUsd(uncW * eth, 2)}</div>`);
-    s('ap-fee-usdc', `${uncU.toFixed(2)}<div class="ap-usd" style="color:var(--green)">${fmtUsd(uncU, 2)}</div>`);
-    s('ap-fee-total', `<span style="color:var(--green)">${fmtUsd(uncFeeUsd, 2)}</span>`);
-
-    // Divergence Loss — 4 benchmark scenarios
+    // Benchmark scenarios for Divergence Loss
     const totalPosVal  = pooledUsd + uncFeeUsd;
     const hodl100Weth  = ENTRY_WETH * eth;                              // HODL 100% WETH
     const hodl100Usdc  = ENTRY_CAPITAL;                                 // HODL 100% USDC ($365)
     const hodl5050     = 0.5 * (ENTRY_WETH * eth + ENTRY_CAPITAL);     // HODL 50/50
-    // entry was 100% WETH so hodlInit = hodl100Weth
     const cc = v => v >= 0 ? 'var(--green)' : 'var(--red)';
-    const fh = v => `<span style="font-family:var(--mono)">${fmtUsd(v, 2)}</span>`;
     const fd = v => `<span style="color:${cc(v)}">${v >= 0 ? '+' : ''}${fmtUsd(Math.abs(v), 2)}</span>`;
 
-    // HODL row
-    s('ap-dv-hodl-weth', fh(hodl100Weth));
-    s('ap-dv-hodl-usdc', fh(hodl100Usdc));
-    s('ap-dv-hodl-5050', fh(hodl5050));
-    s('ap-dv-hodl-init', fh(hodl100Weth)); // entry = 100% WETH
+    // METRICS CARDS (novo layout grid)
+    // Current Assets
+    s('ap-curr-weth-qty', `${wethA.toFixed(4)} WETH`);
+    s('ap-curr-weth-usd', `${fmtUsd(wethA * eth, 2)}`);
+    s('ap-curr-usdc-qty', `${usdcA.toFixed(2)} USDC`);
+    s('ap-curr-usdc-usd', `${fmtUsd(usdcA, 2)}`);
 
-    // Divergence Loss row (pooled only, no fees)
-    s('ap-dv-loss-weth', fd(pooledUsd - hodl100Weth));
-    s('ap-dv-loss-usdc', fd(pooledUsd - hodl100Usdc));
-    s('ap-dv-loss-5050', fd(pooledUsd - hodl5050));
-    s('ap-dv-loss-init', fd(pooledUsd - hodl100Weth));
+    // HODL Initial
+    s('ap-hodl-weth-qty', `${ENTRY_WETH.toFixed(4)} WETH`);
+    s('ap-hodl-weth-usd', `${fmtUsd(hodlValue, 2)}`);
+    s('ap-hodl-usdc-qty', `0.00 USDC`);
+    s('ap-hodl-usdc-usd', `$0.00`);
 
-    // VS HODL row (fees + divergence)
-    s('ap-dv-vs-weth', fd(totalPosVal - hodl100Weth));
-    s('ap-dv-vs-usdc', fd(totalPosVal - hodl100Usdc));
-    s('ap-dv-vs-5050', fd(totalPosVal - hodl5050));
-    s('ap-dv-vs-init', fd(totalPosVal - hodl100Weth));
+    // Initial Assets
+    s('ap-init-weth-qty', `${ENTRY_WETH.toFixed(4)} WETH`);
+    s('ap-init-weth-usd', `${fmtUsd(ENTRY_CAPITAL, 2)}`);
+    s('ap-init-usdc-qty', `0.00 USDC`);
+    s('ap-init-usdc-usd', `$0.00`);
 
-    // KPI mini row
-    const assetGain = pooledUsd - ENTRY_CAPITAL;
-    s('ap-roi',        `<span style="color:${cc(roi)}">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</span>`);
-    s('ap-asset-gain', `<span style="color:${cc(assetGain)}">${assetGain >= 0 ? '+' : ''}${fmtUsd(Math.abs(assetGain), 2)}</span>`);
-    s('ap-proj-24h',   `<span style="color:var(--green)">${fmtUsd(proj24h, 2)}/dia</span>`);
+    // Unclaimed Fees
+    s('ap-fee-weth-qty', `${uncW.toFixed(6)} WETH`);
+    s('ap-fee-weth-usd', `${fmtUsd(uncW * eth, 2)}`);
+    s('ap-fee-usdc-qty', `${uncU.toFixed(2)} USDC`);
+    s('ap-fee-usdc-usd', `${fmtUsd(uncU, 2)}`);
+
+    // Divergence Loss (vs 50/50 HODL)
+    s('ap-il-total', `${fd(divLoss)}`);
+    s('ap-il-vs', `vs HODL ${hodl5050 > pooledUsd ? '50/50' : 'WETH'}`);
+
+    // Performance Summary
+    s('ap-roi-val', `<span style="color:${cc(roi)}">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</span>`);
+    s('ap-24h-proj', `<span style="color:var(--green)">${fmtUsd(proj24h, 2)}</span>`);
   }
 
   // 10. Update KPI display
