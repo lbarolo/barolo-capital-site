@@ -675,11 +675,10 @@ body, input, button, select, textarea {
  <a href="ferramentas.html" class="act" data-i18n="nav-tools">Ferramentas</a>
  </div>
  <div class="nav-right">
-    <button class="btn-sm lang-btn" onclick="toggleLang()" id="langBtn" title="Switch language">PT</button>
- <div class="live-dot"></div>
- <div id="hf-nav-badge" style="display:none;font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border-radius:3px;border:1px solid;letter-spacing:.06em;cursor:default;" title="Health Factor AAVE V4"></div>
- <button class="theme-btn" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
- <button class="theme-btn" onclick="toggleTheme()">◐ TEMA</button>
+    <button class="btn-sm" onclick="window.print()" title="Exportar como PDF">📄 PDF</button>
+    <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
+    <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
+    <button class="btn-sm" onclick="toggleTheme()">☾</button>
  </div>
 </nav>
 

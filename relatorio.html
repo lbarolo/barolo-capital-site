@@ -28,6 +28,15 @@ body{
   font-family:'Satoshi',sans-serif; background:var(--bg); color:var(--text);
   font-size:13px; line-height:1.55;
 }
+nav{ color:var(--text); }
+[data-theme="dark"] nav{ background:rgba(13,9,23,.96) !important; }
+nav a.nav-brand, nav .nav-links a, nav .btn-sm{
+  color:var(--muted); transition:color .2s;
+}
+nav .nav-links a:hover, nav .btn-sm:hover{
+  color:var(--accent); border-color:var(--accent);
+}
+nav .btn-sm:hover{ color:var(--accent); border-color:var(--accent) !important; }
 
 /* ── Screen controls (hidden on print) ── */
 .screen-bar{
@@ -65,7 +74,7 @@ body{
 
 /* ── Report container (A4-like) ── */
 .report{
-  max-width:900px; margin:32px auto; padding:0 20px 60px;
+  max-width:900px; margin:132px auto 32px; padding:0 20px 60px;
 }
 
 /* ── Report header ── */
@@ -191,18 +200,45 @@ tr:hover td{ background:var(--surface2); }
 </head>
 <body>
 
-<!-- ══ SCREEN CONTROLS ══ -->
-<div class="screen-bar no-print">
-  <h1>Barolo Capital · Relatório</h1>
-  <div class="actions">
-    <div class="period-toggle">
-      <button class="btn-period active" id="btn-mensal" onclick="setPeriod('mensal')">Mensal</button>
-      <button class="btn-period" id="btn-semanal" onclick="setPeriod('semanal')">Semanal</button>
+<nav style="position:fixed;top:0;left:0;right:0;z-index:300;height:50px;background:rgba(242,236,224,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(14px,3vw,28px);" id="topNav">
+  <a href="index.html" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--text);" class="nav-brand">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+      <defs>
+        <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="transparent"/>
+          <stop offset="18%" stop-color="#c9a050"/>
+          <stop offset="82%" stop-color="#c9a050"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+      <text x="105" y="20" font-family="Satoshi, Palatino Linotype, Times New Roman, serif" font-weight="600" font-size="14" letter-spacing="3" fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+    </svg>
+  </a>
+  <div style="display:flex;gap:2px;" class="nav-links">
+    <a href="index.html" style="padding:5px 12px;border-radius:4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;">Início</a>
+    <a href="portfolio_analytics.html" style="padding:5px 12px;border-radius:4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;">Portfolio</a>
+    <a href="pools.html" style="padding:5px 12px;border-radius:4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;">Pools &amp; DeFi</a>
+    <a href="track.html" style="padding:5px 12px;border-radius:4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;">Track</a>
+    <a href="emprestimos.html" style="padding:5px 12px;border-radius:4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;">Empréstimos</a>
+    <a href="ferramentas.html" style="padding:5px 12px;border-radius:4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;">Ferramentas</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;" class="nav-right">
+    <button style="background:none;border:1px solid var(--border);border-radius:4px;padding:4px 9px;font-size:9px;color:var(--muted);cursor:pointer;letter-spacing:.1em;transition:color .2s;" class="btn-sm" onclick="window.print()" title="Exportar como PDF">📄 PDF</button>
+    <button style="background:none;border:1px solid var(--border);border-radius:4px;padding:4px 9px;font-size:9px;color:var(--muted);cursor:pointer;letter-spacing:.1em;transition:color .2s;" class="btn-sm" onclick="window.location.href='track.html'" title="Abrir Track">↗ Track</button>
+    <button style="background:none;border:1px solid var(--border);border-radius:4px;padding:4px 9px;font-size:9px;color:var(--muted);cursor:pointer;letter-spacing:.1em;transition:color .2s;" class="btn-sm" id="currencyBtn" onclick="toggleTheme()" title="Alternar moeda">$ USD</button>
+    <button style="background:none;border:1px solid var(--border);border-radius:4px;padding:4px 9px;font-size:9px;color:var(--muted);cursor:pointer;letter-spacing:.1em;transition:color .2s;" class="btn-sm" onclick="toggleTheme()">☾</button>
+  </div>
+</nav>
+
+<div style="position:fixed;top:50px;left:0;right:0;z-index:299;height:50px;background:var(--surface);border-bottom:1px solid var(--border);padding:0 clamp(14px,3vw,28px);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;" class="screen-bar no-print">
+  <h1 style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);">Barolo Capital · Relatório</h1>
+  <div class="actions" style="display:flex;gap:8px;align-items:center;">
+    <div class="period-toggle" style="display:flex;gap:2px;">
+      <button class="btn-period active" id="btn-mensal" onclick="setPeriod('mensal')" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .15s;">Mensal</button>
+      <button class="btn-period" id="btn-semanal" onclick="setPeriod('semanal')" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .15s;">Semanal</button>
     </div>
-    <button class="btn" onclick="toggleTheme()">◑ Tema</button>
-    <a href="pools.html" class="btn">← Pools</a>
-    <a href="portfolio_analytics.html" class="btn">Analytics</a>
-    <button class="btn btn-primary" onclick="window.print()">⬇ Exportar PDF</button>
   </div>
 </div>
 
