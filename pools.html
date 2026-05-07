@@ -403,37 +403,38 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </head>
 <body>
 <nav>
- <a class="nav-brand" href="index.html">
- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
- <defs>
- <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
- <stop offset="0%" stop-color="transparent"/>
- <stop offset="18%" stop-color="#c9a050"/>
- <stop offset="82%" stop-color="#c9a050"/>
- <stop offset="100%" stop-color="transparent"/>
- </linearGradient>
- </defs>
- <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
- <text x="105" y="20"
- font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
- font-weight="600" font-size="14" letter-spacing="3"
- fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
- <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
-</svg>
- </a>
- <div class="nav-links">
- <a href="index.html" data-i18n="nav-home">Início</a>
- <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
- <a href="pools.html" class="active" data-i18n="nav-pools">Pools &amp; DeFi</a>
- <a href="track.html" data-i18n="nav-track">Track</a>
- <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
- <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
- </div>
- <div style="display:flex;align-items:center;gap:8px;">
- <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
- <button class="btn-sm" onclick="toggleTheme()">☾</button>
- <button class="btn-sm" onclick="window.baroloRefresh && window.baroloRefresh()" title="Atualizar dados on-chain" style="color:var(--green)">⟳ Live</button>
- </div>
+  <a class="nav-brand" href="index.html">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+      <defs>
+        <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="transparent"/>
+          <stop offset="18%" stop-color="#c9a050"/>
+          <stop offset="82%" stop-color="#c9a050"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+      <text x="105" y="20"
+        font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
+        font-weight="600" font-size="14" letter-spacing="3"
+        fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+    </svg>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" data-i18n="nav-home">Início</a>
+    <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
+    <a href="pools.html" class="active" data-i18n="nav-pools">Pools &amp; DeFi</a>
+    <a href="track.html" data-i18n="nav-track">Track</a>
+    <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
+    <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-sm" onclick="window.print()" title="Exportar como PDF">📄 PDF</button>
+    <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
+    <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
+    <button class="btn-sm" onclick="toggleTheme()" id="themeBtn">☾</button>
+  </div>
 </nav>
 
 <div class="container">
@@ -1691,7 +1692,7 @@ function setRef(ref){
 
   // 8. APR via on-chain (fees acumuladas desde abertura, sem coletas manuais)
   // Se ocorrer um Collect event, o contador de uncollected reseta — APR ficaria subestimado.
-  // Por enquanto a posição não teve coletas, então uncollected = total acumulado desde 18/03/2026.
+  // Por enquanto a posição não teve coletas, então uncollected = total acumulado desde 24/02/2026.
   const ENTRY_CAPITAL = 365;
   const OPEN_TS = new Date('2026-02-24T17:40:00').getTime() / 1000;
   let pnl=null, il=null, apr=null, feeApr=null, dailyFees=null;
@@ -2440,7 +2441,7 @@ var POOLS = [
   { pair:'ETH/USDC 0.05%', net:'Arbitrum', open:'01/08/2023', close:'26/03/2024', days:209, capital:1014, fees:22,   il:0,   result:22,   status:'closed', lvr:0,    fcr:3.8,   invGrowth:2.2,  obs:'Pool longa com pouco volume. ETH deu grande valorização, pool deslizou em ranges. Final: 0.148 ETH + 30.95 USDC.' },
   { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
   // ── ATIVA ──
-  { pair:'WETH/USDC 0.3%', net:'Base', open:'18/03/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),  capital:365, fees:21.11, il:23.50, result:-2.39, status:'active',  lvr:0,   fcr:35.0,  invGrowth:-0.65 },
+  { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-02-24');return Math.max(1,Math.floor(d/86400000));})(),  capital:365, fees:21.11, il:23.50, result:-2.39, status:'active',  lvr:0,   fcr:35.0,  invGrowth:-0.65 },
 ];
 
 // ── Hidrata pool ativa (POOLS[POOLS.length-1]) com cache live do track.html ──
@@ -3630,7 +3631,7 @@ function buildNetRanking() {
  try {
  const POOL_WETH_USDC = '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8'; // USDC/WETH 0.3% Ethereum
  const Q96 = 2n ** 96n;
- const CAPITAL = 365; // capital de abertura da posição (0.17 WETH em 18/03/2026)
+ const CAPITAL = 365; // capital de abertura da posição (0.17 WETH em 24/02/2026)
 
  // 1. positions(tokenId) → ABI slot layout:
  //  [0]=nonce [1]=operator [2]=token0 [3]=token1 [4]=fee

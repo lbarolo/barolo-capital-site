@@ -135,7 +135,7 @@ addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znu
 | Protocolo | Uniswap V3 |
 | **Rede** | **Base** (chain_id=8453) |
 | Carteira | `0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6` |
-| Abertura | 18/03/2026 |
+| Abertura | 24/02/2026 (17:40 BRT) |
 | Capital entrada | 0.17 WETH ($365 na época) — **100% WETH, zero USDC** |
 | Range mínimo | **$1,855.72** |
 | Range máximo | **$3,146.36** |
