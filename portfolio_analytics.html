@@ -612,14 +612,10 @@ body, input, button, select, textarea {
     </div>
     <div id="ev-hf-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">liq. LTV Kamino: 77.2%</div>
   </div>
-  <div style="background:var(--surface);padding:14px 16px;">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Resultado DeFi Total</div>
-    <div id="ev-defi-net" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;">—</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;display:flex;flex-direction:column;gap:2px;">
-      <span>Fees <span id="ev-defi-fees" style="color:var(--green);">—</span></span>
-      <span>IL <span id="ev-defi-il" style="color:var(--red);">—</span></span>
-      <span>Juros pagos <span id="ev-defi-juros" style="color:var(--red);">—</span></span>
-    </div>
+  <div style="background:var(--surface);padding:14px 16px;border-left:2px solid rgba(201,160,80,0.35);">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Crescimento Total</div>
+    <div id="ev-growth-pct" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;color:var(--gold);">—</div>
+    <div id="ev-growth-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">desde 01/2022 · live</div>
   </div>
   <div style="background:var(--surface);padding:14px 16px;border-left:2px solid rgba(63,185,80,0.25);">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Yield Líq. / Mês</div>
@@ -870,12 +866,12 @@ body, input, button, select, textarea {
  <div style="height:280px;">
   <canvas id="percentGrowthChart"></canvas>
  </div>
- <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+ <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
   <div style="display:flex;align-items:center;justify-content:space-between;">
-   <span style="font-size:12px;color:var(--muted);font-weight:500;">Retorno Capital Atual (Abr/2026)</span>
+   <span style="font-size:12px;color:var(--muted);font-weight:500;">Retorno Capital Atual</span>
    <span id="pct-current" class="pos" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;">—</span>
   </div>
-  <div style="font-size:9px;color:var(--muted);" id="pct-current-sub">—</div>
+  <div style="font-size:9px;color:var(--muted);margin-top:4px;" id="pct-current-sub">—</div>
  </div>
 </div>
 
@@ -1467,17 +1463,34 @@ function renderUI(enriched){
      kHfEl.style.color = ltv < 50 ? 'var(--green)' : ltv < 65 ? 'var(--yellow)' : 'var(--red)';
    }
 
-   // ── Resultado DeFi acumulado ──
-   const po = WEEKLY_UPDATE.pnlOrigin;
-   const defiNet = po.totalFees + po.totalIL + (po.jurosAcumulados || 0);
-   const defiNetEl = document.getElementById('ev-defi-net');
-   if(defiNetEl){
-     defiNetEl.textContent = (defiNet>=0?'+':'')+fmtCurrency(Math.abs(defiNet),0);
-     defiNetEl.style.color = defiNet>=0 ? 'var(--green)' : 'var(--red)';
+   // ── Crescimento Total (% live desde 01/2022) ──
+   const INITIAL_CAPITAL = (WEEKLY_UPDATE.wealthCurve.invested[0]) || 1061;
+   const growthPct = (netTotal / INITIAL_CAPITAL - 1) * 100;
+   const growthEl = document.getElementById('ev-growth-pct');
+   if (growthEl) {
+     growthEl.textContent = (growthPct >= 0 ? '+' : '') + growthPct.toFixed(1) + '%';
+     growthEl.style.color = growthPct >= 0 ? 'var(--gold)' : 'var(--red)';
    }
-   set('ev-defi-fees',  '+'+fmtCurrency(po.totalFees, 0));
-   set('ev-defi-il',    fmtCurrency(po.totalIL, 0));
-   set('ev-defi-juros', fmtCurrency(po.jurosAcumulados||0, 0));
+   set('ev-growth-sub', 'desde 01/2022 · '+fmtCurrency(INITIAL_CAPITAL,0)+' → '+fmtCurrency(netTotal,0));
+   const pctCurEl = document.getElementById('pct-current');
+   if (pctCurEl) {
+     pctCurEl.textContent = (growthPct >= 0 ? '+' : '') + growthPct.toFixed(1) + '%';
+     pctCurEl.className = growthPct >= 0 ? 'pos' : 'neg';
+   }
+   set('pct-current-sub', 'Patrimônio atual '+fmtCurrency(netTotal,0)+' · capital inicial '+fmtCurrency(INITIAL_CAPITAL,0));
+   // Atualiza chart se já renderizado: substitui último ponto pelo netTotal ao vivo
+   if (typeof _percentChart !== 'undefined' && _percentChart) {
+     try {
+       const ds0 = _percentChart.data.datasets[0].data;
+       const ds1 = _percentChart.data.datasets[1].data;
+       const liveHist = (netTotal - INITIAL_CAPITAL) / INITIAL_CAPITAL * 100;
+       const lastInv = WEEKLY_UPDATE.wealthCurve.invested.slice(-1)[0] || INITIAL_CAPITAL;
+       const liveCur = (netTotal - lastInv) / lastInv * 100;
+       ds0[ds0.length-1] = liveHist;
+       ds1[ds1.length-1] = liveCur;
+       _percentChart.update('none');
+     } catch(e){}
+   }
 
    // ── Yield líq./mês ──
    const yieldEl = document.getElementById('ev-yield');
