@@ -2443,6 +2443,26 @@ var POOLS = [
   { pair:'WETH/USDC 0.3%', net:'Base', open:'18/03/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),  capital:365, fees:21.11, il:23.50, result:-2.39, status:'active',  lvr:0,   fcr:35.0,  invGrowth:-0.65 },
 ];
 
+// ── Hidrata pool ativa (POOLS[POOLS.length-1]) com cache live do track.html ──
+// O track.html grava em localStorage 'bc-active-pool' a cada fetchLiveActivePool().
+// Aqui sobrescrevemos os valores estáticos do array com dados live se cache < 24h.
+(function(){
+  try {
+    var raw = localStorage.getItem('bc-active-pool');
+    if (!raw) return;
+    var c = JSON.parse(raw);
+    if (!c || !c.timestamp) return;
+    var ageMs = Date.now() - c.timestamp;
+    if (ageMs > 24*60*60*1000) return; // ignora cache > 24h
+    var ap = POOLS.find(function(p){ return p.status === 'active'; });
+    if (!ap) return;
+    if (typeof c.fees   === 'number') ap.fees   = c.fees;
+    if (typeof c.il     === 'number') ap.il     = Math.abs(c.il); // pools.html usa IL positivo
+    if (typeof c.result === 'number') ap.result = c.result;
+    if (typeof c.days   === 'number' && c.days > 0) ap.days = c.days;
+  } catch(e) {}
+})();
+
 // ── Chart data derived from POOLS (single source of truth) ─────────────────
 var _netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff', Polygon:'#A855F7', ZkSync:'#8080ff' };
 var _poolLabel = function(p) {

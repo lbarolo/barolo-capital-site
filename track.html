@@ -1438,10 +1438,24 @@ async function fetchLiveActivePool() {
   POOLS[0].il     = parseFloat(divLoss.toFixed(2));
   POOLS[0].result = parseFloat((pooledUsd + uncFeeUsd - ENTRY_CAPITAL).toFixed(2));
 
-  // Publica para portfolio_analytics.html / pools.html via localStorage
+  // Publica para portfolio_analytics.html / pools.html / relatorio.html via localStorage
   window._liveLP = pooledUsd;
   try {
     localStorage.setItem('bc-lp-pooled', JSON.stringify({ value: pooledUsd, timestamp: Date.now() }));
+    // Snapshot completo da pool ativa (fees, il, result, days, etc)
+    localStorage.setItem('bc-active-pool', JSON.stringify({
+      pooled:   parseFloat(pooledUsd.toFixed(2)),
+      fees:     parseFloat(uncFeeUsd.toFixed(2)),
+      il:       parseFloat(divLoss.toFixed(2)),
+      result:   parseFloat((pooledUsd + uncFeeUsd - ENTRY_CAPITAL).toFixed(2)),
+      days:     Math.round(days),
+      wethQty:  parseFloat(wethA.toFixed(6)),
+      usdcQty:  parseFloat(usdcA.toFixed(2)),
+      uncWeth:  parseFloat(uncW.toFixed(6)),
+      uncUsdc:  parseFloat(uncU.toFixed(2)),
+      ethPrice: parseFloat(eth.toFixed(2)),
+      timestamp: Date.now()
+    }));
   } catch(e) {}
 
   // 9. Active Pool Detail Panel

@@ -363,7 +363,7 @@ tr:hover td{ background:var(--surface2); }
       </tr>
       <tr>
         <td style="color:var(--muted);padding-bottom:12px;">Pool Ativa</td>
-        <td style="padding-bottom:12px;">WETH/USDC 0.3% · Ethereum · desde 18/03/2026</td>
+        <td style="padding-bottom:12px;">WETH/USDC 0.3% · Base · desde 18/03/2026</td>
       </tr>
       <tr>
         <td style="color:var(--muted);padding-bottom:12px;">Última Compra</td>
@@ -498,7 +498,7 @@ var KAM_USDS_QTY=301.01, KAM_USDS_APY=0.0461;
 var KAM_BORROW=808.77,   KAM_BORROW_APY=0.0464;
 
 var POOLS_DATA = [
-  { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:9,   il:0,  result:1    },
+  { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:21.11, il:23.50, result:-2.39 },
   { pair:'ETH/USDC 0.3%',  net:'Base',     status:'closed',  fees:16,  il:0,  result:16   },
   { pair:'ETH/USDT 0.05%', net:'Arbitrum', status:'closed',  fees:34,  il:0,  result:34   },
   { pair:'SOL/USDC 0.04%', net:'Solana',   status:'closed',  fees:23,  il:0,  result:23   },
@@ -523,8 +523,24 @@ var MONTHLY_RETURNS = {
   2023:{ Jan:50,Feb:9,Mar:14,Apr:11,May:2,Jun:6,Jul:7,Aug:-9,Sep:1,Oct:17,Nov:16,Dec:17 },
   2024:{ Jan:14,Feb:22,Mar:29,Apr:-5,May:21,Jun:-7,Jul:16,Aug:-13,Sep:-2,Oct:17,Nov:36,Dec:6 },
   2025:{ Jan:-1,Feb:-8,Mar:-17,Apr:-8,May:29,Jun:4,Jul:12,Aug:-11,Sep:2,Oct:21,Nov:12,Dec:-7 },
-  2026:{ Jan:-12,Feb:-22,Mar:-16,Apr:null,May:null,Jun:null,Jul:null,Aug:null,Sep:null,Oct:null,Nov:null,Dec:null },
+  2026:{ Jan:-18,Feb:-22,Mar:-13.6,Apr:40.3,May:null,Jun:null,Jul:null,Aug:null,Sep:null,Oct:null,Nov:null,Dec:null },
 };
+
+// ── Hidrata pool ativa com cache live do track.html (localStorage) ──
+(function(){
+  try {
+    var raw = localStorage.getItem('bc-active-pool');
+    if (!raw) return;
+    var c = JSON.parse(raw);
+    if (!c || !c.timestamp) return;
+    if (Date.now() - c.timestamp > 24*60*60*1000) return;
+    var ap = POOLS_DATA.find(function(p){ return p.status === 'active'; });
+    if (!ap) return;
+    if (typeof c.fees   === 'number') ap.fees   = c.fees;
+    if (typeof c.il     === 'number') ap.il     = Math.abs(c.il);
+    if (typeof c.result === 'number') ap.result = c.result;
+  } catch(e) {}
+})();
 
 // ─────────────────────────────────────────────
 // RENDER
