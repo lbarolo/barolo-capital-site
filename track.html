@@ -550,6 +550,9 @@
       font-family: var(--mono); font-size: 28px; font-weight: 700;
       color: var(--text); line-height: 1; margin-bottom: 6px;
     }
+    .ap-metric-divider {
+      height: 1px; background: var(--border); margin: 10px 0;
+    }
     .ap-metric-sub {
       font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 4px;
       letter-spacing: 0.05em;
@@ -677,6 +680,11 @@
       <div class="kpi-value" id="kpi-pnl">—</div>
       <div class="kpi-sub" id="kpi-pnl-sub">fees − IL · todas as pools</div>
     </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Dias em Funcionamento</div>
+      <div class="kpi-value" id="kpi-days">—</div>
+      <div class="kpi-sub" id="kpi-days-sub">desde 18 de março</div>
+    </div>
   </div>
 
   <!-- ACTIVE POOL DETAIL PANEL -->
@@ -744,7 +752,10 @@
         <div class="ap-metric-box-center">
           <div class="ap-metric-val-large" id="ap-roi-val">—</div>
           <div class="ap-metric-sub">ROI (fees + IL)</div>
-          <div class="ap-metric-val" style="margin-top:8px" id="ap-24h-proj">—</div>
+        </div>
+        <div class="ap-metric-divider"></div>
+        <div class="ap-metric-box-center">
+          <div class="ap-metric-val-large" id="ap-24h-proj">—</div>
           <div class="ap-metric-sub">24h projection</div>
         </div>
       </div>
@@ -777,8 +788,9 @@
           <div class="ap-metric-val-large" id="ap-il-total">—</div>
           <div class="ap-metric-sub" id="ap-il-vs">vs HODL WETH</div>
         </div>
-        <div class="ap-metric-box-center" style="margin-top:8px;border-top:1px solid var(--border);padding-top:10px;">
-          <div class="ap-metric-val" id="ap-il-vs-usd">—</div>
+        <div class="ap-metric-divider"></div>
+        <div class="ap-metric-box-center">
+          <div class="ap-metric-val-large" id="ap-il-vs-usd">—</div>
           <div class="ap-metric-sub">vs HODL USD ($365)</div>
         </div>
       </div>
@@ -1130,6 +1142,17 @@ function computeKPIs() {
   document.getElementById('c-all').textContent    = POOLS.length;
   document.getElementById('c-ativa').textContent  = na;
   document.getElementById('c-fechada').textContent = nf;
+
+  // Dias em funcionamento (pool aberta em 18/03/2026)
+  const openDate = new Date(2026, 2, 18);
+  const today = new Date();
+  const days = Math.floor((today - openDate) / (1000 * 60 * 60 * 24));
+  const daysEl = document.getElementById('kpi-days');
+  if (daysEl) {
+    daysEl.textContent = days + ' dias';
+    const daysSubEl = document.getElementById('kpi-days-sub');
+    if (daysSubEl) daysSubEl.textContent = 'desde 18 de março · ' + new Date(2026, 2, 18).toLocaleDateString('pt-BR', {weekday:'short', year:'numeric', month:'long', day:'numeric'});
+  }
 }
 
 // ─── FILTER / SORT ───────────────────────────────────────────────────────────
