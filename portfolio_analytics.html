@@ -613,9 +613,9 @@ body, input, button, select, textarea {
     <div id="ev-hf-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">liq. LTV Kamino: 77.2%</div>
   </div>
   <div style="background:var(--surface);padding:14px 16px;border-left:2px solid rgba(201,160,80,0.35);">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Crescimento Total</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Lifetime Return</div>
     <div id="ev-growth-pct" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;color:var(--gold);">—</div>
-    <div id="ev-growth-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">desde 01/2022 · live</div>
+    <div id="ev-growth-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;">Inception-to-date · since 01/2022</div>
   </div>
   <div style="background:var(--surface);padding:14px 16px;border-left:2px solid rgba(63,185,80,0.25);">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Yield Líq. / Mês</div>
@@ -860,15 +860,15 @@ body, input, button, select, textarea {
 </div>
 
 <!-- ══ EVOLUÇÃO PERCENTUAL ══ -->
-<div class="section-label">Evolução Percentual — Crescimento Acumulado</div>
+<div class="section-label">Lifetime Return — Inception-to-Date Performance</div>
 <div class="card" style="margin-bottom:12px;">
- <div class="chart-title" style="margin-bottom:14px;">% Crescimento desde Jan/2022 · vs Retorno Capital Atual</div>
+ <div class="chart-title" style="margin-bottom:14px;">Lifetime Return since Jan/2022 · Current Capital Return</div>
  <div style="height:280px;">
   <canvas id="percentGrowthChart"></canvas>
  </div>
  <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
   <div style="display:flex;align-items:center;justify-content:space-between;">
-   <span style="font-size:12px;color:var(--muted);font-weight:500;">Retorno Capital Atual</span>
+   <span style="font-size:12px;color:var(--muted);font-weight:500;">Current Capital Return</span>
    <span id="pct-current" class="pos" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;">—</span>
   </div>
   <div style="font-size:9px;color:var(--muted);margin-top:4px;" id="pct-current-sub">—</div>
@@ -1471,13 +1471,13 @@ function renderUI(enriched){
      growthEl.textContent = (growthPct >= 0 ? '+' : '') + growthPct.toFixed(1) + '%';
      growthEl.style.color = growthPct >= 0 ? 'var(--gold)' : 'var(--red)';
    }
-   set('ev-growth-sub', 'desde 01/2022 · '+fmtCurrency(INITIAL_CAPITAL,0)+' → '+fmtCurrency(netTotal,0));
+   set('ev-growth-sub', 'since 01/2022 · '+fmtCurrency(INITIAL_CAPITAL,0)+' → '+fmtCurrency(netTotal,0));
    const pctCurEl = document.getElementById('pct-current');
    if (pctCurEl) {
      pctCurEl.textContent = (growthPct >= 0 ? '+' : '') + growthPct.toFixed(1) + '%';
      pctCurEl.className = growthPct >= 0 ? 'pos' : 'neg';
    }
-   set('pct-current-sub', 'Patrimônio atual '+fmtCurrency(netTotal,0)+' · capital inicial '+fmtCurrency(INITIAL_CAPITAL,0));
+   set('pct-current-sub', 'Current NAV '+fmtCurrency(netTotal,0)+' · initial capital '+fmtCurrency(INITIAL_CAPITAL,0));
    // Atualiza chart se já renderizado: substitui último ponto pelo netTotal ao vivo
    if (typeof _percentChart !== 'undefined' && _percentChart) {
      try {
@@ -2150,7 +2150,7 @@ function buildPercentGrowthChart() {
       labels: labels,
       datasets: [
         {
-          label: 'Crescimento desde Jan/2022',
+          label: 'Lifetime Return (since Jan/2022)',
           data: pctHistorical,
           borderColor: '#c9a050',
           backgroundColor: 'rgba(201,160,80,0.12)',
@@ -2164,7 +2164,7 @@ function buildPercentGrowthChart() {
           pointHoverBorderWidth: 1.5
         },
         {
-          label: 'Retorno capital atual',
+          label: 'Current Capital Return',
           data: pctCurrent,
           borderColor: '#3fb950',
           borderWidth: 2.5,
