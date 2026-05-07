@@ -2540,12 +2540,21 @@ function buildPerfChart(period){
  let _runPk=d.p[0], _maxDD=0;
  for(let i=1;i<d.p.length;i++){ if(d.p[i]>_runPk) _runPk=d.p[i]; const _c=(d.p[i]-_runPk)/_runPk*100; if(_c<_maxDD) _maxDD=_c; }
  const dd=_maxDD.toFixed(1);
- const chg=(((last-first)/first)*100).toFixed(1);
  const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px;text-align:center;"><div style="font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">${lbl}</div><div style="font-size:14px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
+ // Para período ALL: substitui Variação por Lifetime Return (denominador = capital inicial real, não primeiro patrimônio)
+ let retCard;
+ if (period === 'all') {
+   const initCap = (WEEKLY_UPDATE.wealthCurve.invested[0]) || 1061;
+   const lr = ((last - initCap) / initCap * 100);
+   retCard = cs('LIFETIME RETURN', (lr>=0?'+':'')+lr.toFixed(1)+'%', lr>=0?'var(--green)':'var(--red)');
+ } else {
+   const chg=(((last-first)/first)*100).toFixed(1);
+   retCard = cs('VARIAÇÃO',(parseFloat(chg)>=0?'+':'')+chg+'%',parseFloat(chg)>=0?'var(--green)':'var(--red)');
+ }
  document.getElementById('perfStats').innerHTML=
  cs('INÍCIO','$'+first.toLocaleString())+
  cs('FIM','$'+last.toLocaleString())+
- cs('VARIAÇÃO',(parseFloat(chg)>=0?'+':'')+chg+'%',parseFloat(chg)>=0?'var(--green)':'var(--red)')+
+ retCard+
  cs('PICO','$'+peak.toLocaleString(),'var(--green)')+
  cs('MAX DD',dd+'%','var(--red)');
  }catch(e){ console.warn('perfChart error:',e); }
