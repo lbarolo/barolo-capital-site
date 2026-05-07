@@ -2082,7 +2082,7 @@ function buildDetailChart(p, metric) {
   const ilNow   = p.il     || -28.20;
   const pnlNow  = p.result || -9.58;
   const liqNow  = p.pooled || p.capital || 365;
-  const aprNow  = p.days > 0 ? (feesNow / (p.capital||315.88) / p.days * 365 * 100) : 35;
+  const aprNow  = p.days > 0 ? (feesNow / (p.capital||365) / p.days * 365 * 100) : 35;
 
   const SERIES = {
     pnl:     { data:[0,-1.5,-4,-7,-9,-9.58,-10,-10.5,pnlNow],     color: pnlNow  >= 0 ? '#3fb950' : '#f85149', label:'PnL',          fmt:v=>fmtUsd(v,2) },
