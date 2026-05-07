@@ -918,72 +918,141 @@ const NET_C = {
 const POOLS = [
   // ── ATIVA ──
   { id:1,  pair:'WETH/USDC', fee:'0.30%', proto:'Uniswap V3', net:'Base',
-    open:'24/02/2026', close:null,       days:70,  capital:315.88, fees:21.11, il:-23.50, result:85.61, status:'ativa',
+    open:'18/03/2026', close:null, days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),
+    capital:365, fees:21.11, il:-23.50, result:-2.39, status:'ativa',
     wallet:'0x5Ff957…4AE4B6',
     range:'$1,855 – $3,146 (saída gradual ETH→USDC)',
-    notes:'Estratégia de saída: entra 100% WETH, sai 100% USDC ao atingir $3.146. Fee APR 32% (Revert Finance, 17/04/2026).' },
+    notes:'Estratégia de saída: entra 100% WETH, sai 100% USDC ao atingir $3.146. Fee APR ~32% (Revert Finance).' },
 
-  // ── FECHADAS ──
+  // ── 2026 (fechadas) ──
   { id:2,  pair:'ETH/USDC',  fee:'0.30%', proto:'Uniswap V3', net:'Base',
-    open:'15/02/2026', close:'12/03/2026', days:25,  capital:453,  fees:16,     il:0,      result:16,    status:'fechada',
+    open:'30/01/2026', close:'24/02/2026', days:25, capital:453, fees:16, il:0, result:16, status:'fechada',
     wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
 
-  { id:3,  pair:'ETH/USDT',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
-    open:'01/10/2025', close:'14/01/2026', days:105, capital:277,  fees:34,     il:0,      result:34,    status:'fechada',
+  { id:3,  pair:'SOL/USDT',  fee:'0.01%', proto:'Orca',       net:'Solana',
+    open:'29/01/2026', close:'07/02/2026', days:9, capital:25, fees:1, il:0, result:1, status:'fechada',
+    wallet:'Fq1F49V…VnrfW', range:null, notes:null },
+
+  // ── 2025 ──
+  { id:4,  pair:'ETH/USDT',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'17/10/2025', close:'30/01/2026', days:105, capital:277, fees:34, il:0, result:34, status:'fechada',
     wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
 
-  { id:4,  pair:'SOL/USDC',  fee:'0.04%', proto:'Orca',       net:'Solana',
-    open:'10/07/2025', close:'11/10/2025', days:93,  capital:660,  fees:23,     il:0,      result:23,    status:'fechada',
-    wallet:'Fq1F49V…VnrfW',  range:null, notes:null },
+  { id:5,  pair:'SOL/USDC',  fee:'0.04%', proto:'Orca',       net:'Solana',
+    open:'19/10/2025', close:'20/01/2026', days:93, capital:660, fees:23, il:0, result:23, status:'fechada',
+    wallet:'Fq1F49V…VnrfW', range:null, notes:null },
 
-  { id:5,  pair:'XAI/WETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
-    open:'01/05/2025', close:'30/06/2025', days:60,  capital:35,   fees:7,      il:-21,    result:-14,   status:'fechada',
+  { id:6,  pair:'XAI/WETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'01/07/2025', close:'29/08/2025', days:60, capital:35, fees:7, il:-21, result:-14, status:'fechada',
     wallet:'0x5Ff957…4AE4B6', range:null,
     notes:'XAI token perdeu valor significativo — IL resultante.' },
 
-  { id:6,  pair:'SOL/GRIFT', fee:'2%',    proto:'Raydium',    net:'Solana',
-    open:'01/01/2025', close:'22/03/2025', days:80,  capital:780,  fees:1389,   il:-2899,  result:-1510, status:'fechada',
-    wallet:'Fq1F49V…VnrfW',  range:null,
-    notes:'GRIFT token foi a zero — IL severo de $2.899. Fees altas ($1.389) não compensaram. SOL recuperado via Kamino.' },
+  { id:7,  pair:'SOL/GRIFT', fee:'2%',    proto:'Raydium',    net:'Solana',
+    open:'15/02/2025', close:'05/05/2025', days:80, capital:780, fees:1389, il:-2899, result:-1510, status:'fechada',
+    wallet:'Fq1F49V…VnrfW', range:null,
+    notes:'Token GRIFT foi a zero. Início: 4 SOL (~$3k). Taxas $1.389 mas IL -$2.899. Erro: acumulou mais que deveria, ficou preso em tendência baixa.' },
 
-  { id:7,  pair:'MSTR/ETH',  fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
-    open:'01/10/2024', close:'14/10/2024', days:13,  capital:260,  fees:36,     il:0,      result:36,    status:'fechada',
-    wallet:'0x835a5F…77F6',  range:null, notes:null },
-
-  { id:8,  pair:'ARB/USDT',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
-    open:'01/09/2024', close:'19/10/2024', days:48,  capital:628,  fees:73,     il:0,      result:73,    status:'fechada',
-    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
-
-  { id:9,  pair:'PEANUT/ETH',fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
-    open:'20/09/2024', close:'30/09/2024', days:10,  capital:300,  fees:0,      il:-243,   result:-243,  status:'fechada',
-    wallet:'0x835a5F…77F6',  range:null,
-    notes:'Token scam — posição zerou por completo. IL = capital total.' },
-
-  { id:10, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
-    open:'01/09/2024', close:'09/09/2024', days:8,   capital:957,  fees:90,     il:0,      result:90,    status:'fechada',
-    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
-
-  { id:11, pair:'ARB/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
-    open:'20/02/2024', close:'20/08/2024', days:181, capital:884,  fees:155,    il:0,      result:155,   status:'fechada',
-    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
-
-  { id:12, pair:'ARB/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
-    open:'15/02/2024', close:'20/02/2024', days:5,   capital:900,  fees:180,    il:0,      result:180,   status:'fechada',
+  { id:8,  pair:'XAI/WETH',  fee:'0.30%', proto:'Uniswap V3', net:'Ethereum',
+    open:'10/01/2025', close:'28/01/2025', days:18, capital:30, fees:7, il:-10, result:-3, status:'fechada',
     wallet:'0x5Ff957…4AE4B6', range:null,
-    notes:'Volume explosivo durante o período — melhor FCR% da história.' },
+    notes:'0.009 ETH entrada. Bom APR após queda. 24/01 saiu do range, remontagem. Token caiu demais, desmontada.' },
 
-  { id:13, pair:'ETH/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
-    open:'25/07/2023', close:'21/02/2024', days:209, capital:1014, fees:22,     il:0,      result:22,    status:'fechada',
-    wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
+  // ── 2024 ──
+  { id:9,  pair:'MSTR/ETH',  fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
+    open:'22/11/2024', close:'04/12/2024', days:13, capital:260, fees:36, il:0, result:36, status:'fechada',
+    wallet:'0x835a5F…77F6', range:null,
+    notes:'Segunda posição MSTR. Resultado final +$36 em 13 dias.' },
 
-  { id:14, pair:'PENG/ETH',  fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
-    open:'08/06/2024', close:'20/07/2024', days:42,  capital:260,  fees:0,      il:-72,    result:-72,   status:'fechada',
-    wallet:'0x835a5F…77F6',  range:null,
-    notes:'Token scam. Custo = gas de saída ($72).' },
+  { id:10, pair:'PEANUT/ETH',fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
+    open:'10/11/2024', close:'20/11/2024', days:10, capital:300, fees:0, il:-243, result:-243, status:'fechada',
+    wallet:'0x835a5F…77F6', range:null,
+    notes:'Projeto SCAM. Altas taxas de gas: $22 montagem + $72 desmontagem.' },
 
-  { id:15, pair:'XAI/ETH',   fee:'0.30%', proto:'Uniswap V3', net:'Ethereum',
-    open:'17/06/2024', close:'30/07/2024', days:43,  capital:100,  fees:3,      il:0,      result:3,     status:'fechada',
-    wallet:'0x835a5F…77F6',  range:null, notes:null },
+  { id:11, pair:'MSTR/ETH',  fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
+    open:'24/10/2024', close:'22/11/2024', days:29, capital:395, fees:36, il:0, result:36, status:'fechada',
+    wallet:'0x835a5F…77F6', range:null,
+    notes:'0.152 ETH + 3.77 MSTR entrada. APR 1100%→800%. Saiu do range em 6 dias. Remontagens 30/10 e 22/11.' },
+
+  { id:12, pair:'ARB/USDT',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'01/10/2024', close:'18/11/2024', days:48, capital:628, fees:73, il:0, result:73, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Final: 307 USDT + 177 ARB. Taxas $73 bruto. Gas $5.74. Migrou para ARB/USDC com APR maior.' },
+
+  { id:13, pair:'XAI/ETH',   fee:'0.30%', proto:'Uniswap V3', net:'Ethereum',
+    open:'17/06/2024', close:'30/07/2024', days:43, capital:100, fees:3, il:0, result:3, status:'fechada',
+    wallet:'0x835a5F…77F6', range:null,
+    notes:'Mercado caindo, remontou para capitalizar taxas. Saiu 12% pra baixo 30/06.' },
+
+  { id:14, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'11/06/2024', close:'21/07/2024', days:40, capital:1200, fees:42, il:0, result:42, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Final: 7038.01 RDNT + 0.0016 ETH. Objetivo 7000 RDNT cumprido.' },
+
+  { id:15, pair:'PENG/ETH',  fee:'1%',    proto:'Uniswap V3', net:'Ethereum',
+    open:'08/06/2024', close:'20/07/2024', days:42, capital:260, fees:0, il:-72, result:-72, status:'fechada',
+    wallet:'0x835a5F…77F6', range:null,
+    notes:'Token PENG caiu demais. Pool já em lucro mas mercado reverteu. IL consumiu resultado.' },
+
+  { id:16, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'18/05/2024', close:'11/06/2024', days:24, capital:1500, fees:55, il:0, result:55, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Final: 6952.68 RDNT + 0.0074 ETH. Saiu +8% do range, remontagem.' },
+
+  { id:17, pair:'PENG/SOL',  fee:'2%',    proto:'Raydium',    net:'Solana',
+    open:'13/03/2024', close:'02/04/2024', days:20, capital:50, fees:3, il:-8, result:-5, status:'fechada',
+    wallet:'Fq1F49V…VnrfW', range:null,
+    notes:'Token PENG (Solana) caiu 24%. $20 de taxas em 2 dias. Range 174% pra cima. Só caindo depois, fechada.' },
+
+  { id:18, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'06/02/2024', close:'01/03/2024', days:23, capital:2035, fees:85, il:0, result:85, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'$85.25 de taxas (+3.48% vs hold). Compound: 114.23 RDNT + 0.0133 ETH.' },
+
+  { id:19, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'05/01/2024', close:'05/02/2024', days:31, capital:2035, fees:30, il:0, result:30, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'6313 RDNT entrada (~$2035). Aprovação ETF BTC spot. Saiu do range após 11 dias.' },
+
+  // ── 2023 ──
+  { id:20, pair:'ARB/USDT',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'15/12/2023', close:'28/02/2024', days:75, capital:628, fees:22, il:0, result:22, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Final: 307.49 USDT + 177.90 ARB. APR 300%+.' },
+
+  { id:21, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'06/12/2023', close:'27/12/2023', days:21, capital:884, fees:90, il:0, result:90, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'3345.90 RDNT entrada ($883.69). Mono ativo. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
+
+  { id:22, pair:'ETH/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'ZkSync',
+    open:'21/08/2023', close:'20/10/2023', days:60, capital:159, fees:12, il:0, result:12, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'APY 700%→1200%. 0.014 ETH + $33.58 USDC inicial, ampliado para $159.' },
+
+  { id:23, pair:'ETH/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'01/08/2023', close:'26/03/2024', days:209, capital:1014, fees:22, il:0, result:22, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Pool longa com pouco volume. ETH valorizou bastante, pool deslizou em ranges. Final: 0.148 ETH + 30.95 USDC.' },
+
+  { id:24, pair:'ARB/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'21/07/2023', close:'26/07/2023', days:5, capital:900, fees:180, il:0, result:180, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Melhor FCR de todas as pools. 5 dias altíssimo volume ARB. Saiu do range em FOMO.' },
+
+  { id:25, pair:'ARB/USDC',  fee:'0.05%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'05/07/2023', close:'02/01/2024', days:181, capital:884, fees:155, il:0, result:155, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'25 dias iniciais: +$27.51. Ampliada com 157 ARB + 237 USDC. Total fees $155. ROI ~20%.' },
+
+  { id:26, pair:'MATIC/USDC',fee:'0.05%', proto:'Uniswap V3', net:'Polygon',
+    open:'05/07/2023', close:'03/10/2023', days:90, capital:67, fees:5, il:0, result:5, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'MATIC 70.42 + USDC $19.91. Range 0.6579~0.700. APY 50-60%/mês. Mudou estratégia em outubro.' },
+
+  { id:27, pair:'RDNT/ETH',  fee:'0.30%', proto:'Uniswap V3', net:'Arbitrum',
+    open:'19/06/2023', close:'27/06/2023', days:8, capital:957, fees:90, il:0, result:90, status:'fechada',
+    wallet:'0x5Ff957…4AE4B6', range:null,
+    notes:'Primeira pool RDNT. Mono ativo. Grandes taxas em período curto. APR excepcional.' },
 ];
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
