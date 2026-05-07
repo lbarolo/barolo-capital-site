@@ -820,10 +820,14 @@
 
       <!-- Price Chart (Right) -->
       <div class="ap-chart-col">
-        <div class="ap-chart-sub-title">
-          Preço WETH/USDC
+        <div class="ap-chart-sub-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span>Preço WETH/USDC</span>
           <span class="ap-chart-sub-note">· — — range</span>
           <span class="range-pill">$1,856 – $3,146</span>
+          <span style="margin-left:auto;display:inline-flex;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+            <button id="priceChartBtnLine" type="button" onclick="setPriceChartMode('line', this)" style="background:rgba(201,160,80,0.12);color:var(--gold);border:none;padding:3px 8px;font-size:9px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;cursor:pointer;">LINHA</button>
+            <button id="priceChartBtnBars" type="button" onclick="setPriceChartMode('bars', this)" style="background:transparent;color:var(--muted);border:none;border-left:1px solid var(--border);padding:3px 8px;font-size:9px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;cursor:pointer;">BARRAS</button>
+          </span>
         </div>
         <canvas id="priceChart" height="140"></canvas>
       </div>
@@ -1680,8 +1684,21 @@ async function fetchLiqDistOnchain() {
 // ─── PRICE CHART (ETH history + range lines) ─────────────────────────────────
 
 let _priceChart = null;
+let _priceMode = 'line'; // 'line' | 'bars'
+let _priceLastEth = null;
+
+function setPriceChartMode(mode, btn) {
+  if (mode === _priceMode) return;
+  _priceMode = mode;
+  const a = document.getElementById('priceChartBtnLine');
+  const b = document.getElementById('priceChartBtnBars');
+  [a,b].forEach(el => { if(el){ el.style.background='transparent'; el.style.color='var(--muted)'; }});
+  if (btn) { btn.style.background='rgba(201,160,80,0.12)'; btn.style.color='var(--gold)'; }
+  buildPriceChart(_priceLastEth);
+}
 
 async function buildPriceChart(currentEth) {
+  _priceLastEth = currentEth;
   const canvas = document.getElementById('priceChart');
   if (!canvas) return;
   if (_priceChart) { _priceChart.destroy(); _priceChart = null; }
@@ -1690,34 +1707,60 @@ async function buildPriceChart(currentEth) {
   const gridC  = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)';
   const textC  = isDark ? '#8a78a8' : '#956a72';
   const MIN = 1855.72, MAX = 3146.36;
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const cutoff = new Date('2026-03-01').getTime();
 
-  let labels = [], prices = [], depositLabel = null;
+  let labels = [], prices = [], ohlc = [], depositLabel = null;
 
-  try {
-    const r = await fetchTimeout(
-      'https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=75&interval=daily',
-      {}, 10000);
-    if (r.ok) {
-      const data = await r.json();
-      if (data && data.prices) {
-        const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-        const cutoff = new Date('2026-03-01').getTime();
-        const filtered = data.prices.filter(([ts]) => ts >= cutoff);
-        filtered.forEach(([ts, p]) => {
-          const d = new Date(ts);
-          const lbl = d.getDate() + '/' + months[d.getMonth()];
-          labels.push(lbl);
-          prices.push(parseFloat(p.toFixed(2)));
-          if (d.getDate() === 18 && d.getMonth() === 2) depositLabel = lbl; // Mar = 2
-        });
+  if (_priceMode === 'bars') {
+    // OHLC daily candles via CoinGecko
+    try {
+      const r = await fetchTimeout(
+        'https://api.coingecko.com/api/v3/coins/ethereum/ohlc?vs_currency=usd&days=90',
+        {}, 10000);
+      if (r.ok) {
+        const data = await r.json();
+        if (Array.isArray(data)) {
+          data.filter(arr => arr[0] >= cutoff).forEach(([ts,o,h,l,c]) => {
+            const d = new Date(ts);
+            const lbl = d.getDate() + '/' + months[d.getMonth()];
+            labels.push(lbl);
+            ohlc.push({ o:+o.toFixed(2), h:+h.toFixed(2), l:+l.toFixed(2), c:+c.toFixed(2) });
+            if (d.getDate() === 18 && d.getMonth() === 2) depositLabel = lbl;
+          });
+        }
       }
+    } catch(e) {}
+    if (!ohlc.length) {
+      labels = ['01/Mar','08/Mar','15/Mar','18/Mar','22/Mar','29/Mar','05/Abr','12/Abr','19/Abr','26/Abr','03/Mai'];
+      const seed = [2100, 2050, 1950, 1920, 2050, 1780, 1750, 1800, 1920, 2050, currentEth || 1850];
+      ohlc = seed.map((c,i)=>{ const o = i>0?seed[i-1]:c; const h=Math.max(o,c)*1.02; const l=Math.min(o,c)*0.98; return {o:+o.toFixed(2),h:+h.toFixed(2),l:+l.toFixed(2),c:+c.toFixed(2)}; });
+      depositLabel = '18/Mar';
     }
-  } catch(e) {}
-
-  if (!prices.length) {
-    labels  = ['01/Mar','08/Mar','15/Mar','18/Mar','22/Mar','29/Mar','05/Abr','12/Abr','19/Abr','26/Abr','03/Mai'];
-    prices  = [2100, 2050, 1950, 1920, 2050, 1780, 1750, 1800, 1920, 2050, currentEth || 1850];
-    depositLabel = '18/Mar';
+  } else {
+    try {
+      const r = await fetchTimeout(
+        'https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=75&interval=daily',
+        {}, 10000);
+      if (r.ok) {
+        const data = await r.json();
+        if (data && data.prices) {
+          const filtered = data.prices.filter(([ts]) => ts >= cutoff);
+          filtered.forEach(([ts, p]) => {
+            const d = new Date(ts);
+            const lbl = d.getDate() + '/' + months[d.getMonth()];
+            labels.push(lbl);
+            prices.push(parseFloat(p.toFixed(2)));
+            if (d.getDate() === 18 && d.getMonth() === 2) depositLabel = lbl;
+          });
+        }
+      }
+    } catch(e) {}
+    if (!prices.length) {
+      labels  = ['01/Mar','08/Mar','15/Mar','18/Mar','22/Mar','29/Mar','05/Abr','12/Abr','19/Abr','26/Abr','03/Mai'];
+      prices  = [2100, 2050, 1950, 1920, 2050, 1780, 1750, 1800, 1920, 2050, currentEth || 1850];
+      depositLabel = '18/Mar';
+    }
   }
 
   const annotations = {
@@ -1746,44 +1789,98 @@ async function buildPriceChart(currentEth) {
     };
   }
 
-  _priceChart = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data: prices,
-        borderColor: '#c9a050',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.2,
-        pointRadius: 0,
-        pointHoverRadius: 4,
-        pointHoverBackgroundColor: '#c9a050',
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: true, animation: { duration: 300 },
-      plugins: {
-        legend: { display: false },
-        annotation: { annotations },
-        tooltip: {
-          backgroundColor: isDark ? '#1e1438' : '#fff8f6',
-          borderColor: 'rgba(180,140,240,0.2)', borderWidth: 1,
-          titleColor: textC, bodyColor: isDark ? '#ede8f8' : '#1c0c10',
-          bodyFont: { family: 'JetBrains Mono', size: 12 },
-          callbacks: { label: ctx => ' $' + ctx.raw.toLocaleString('en-US', {maximumFractionDigits:0}) }
-        }
+  let chartConfig;
+  if (_priceMode === 'bars') {
+    // Floating bars [low, high] coloridas por direção (close vs open)
+    const upC = isDark ? '#3fb950' : '#1f8a3a';
+    const dnC = isDark ? '#f85149' : '#c8302a';
+    const colors = ohlc.map(c => c.c >= c.o ? upC : dnC);
+    chartConfig = {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: ohlc.map(c => [c.l, c.h]),
+          backgroundColor: colors,
+          borderColor: colors,
+          borderWidth: 1,
+          borderSkipped: false,
+          barPercentage: 0.35,
+          categoryPercentage: 0.95,
+          _ohlc: ohlc
+        }]
       },
-      scales: {
-        x: { grid: { color: gridC }, ticks: { color: textC, font: { size: 9 }, maxRotation: 0, maxTicksLimit: 10 } },
-        y: {
-          grid: { color: gridC },
-          ticks: { color: textC, font: { family: 'JetBrains Mono', size: 9 },
-            callback: v => '$' + (v/1000).toFixed(1) + 'K' }
+      options: {
+        responsive: true, maintainAspectRatio: true, animation: { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          annotation: { annotations },
+          tooltip: {
+            backgroundColor: isDark ? '#1e1438' : '#fff8f6',
+            borderColor: 'rgba(180,140,240,0.2)', borderWidth: 1,
+            titleColor: textC, bodyColor: isDark ? '#ede8f8' : '#1c0c10',
+            bodyFont: { family: 'JetBrains Mono', size: 11 },
+            callbacks: {
+              label: ctx => {
+                const c = ohlc[ctx.dataIndex];
+                if (!c) return '';
+                const fmt = v => '$' + v.toLocaleString('en-US', {maximumFractionDigits:0});
+                return [' O '+fmt(c.o), ' H '+fmt(c.h), ' L '+fmt(c.l), ' C '+fmt(c.c)];
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: gridC }, ticks: { color: textC, font: { size: 9 }, maxRotation: 0, maxTicksLimit: 10 } },
+          y: {
+            grid: { color: gridC },
+            ticks: { color: textC, font: { family: 'JetBrains Mono', size: 9 },
+              callback: v => '$' + (v/1000).toFixed(1) + 'K' }
+          }
         }
       }
-    }
-  });
+    };
+  } else {
+    chartConfig = {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: prices,
+          borderColor: '#c9a050',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointHoverBackgroundColor: '#c9a050',
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true, animation: { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          annotation: { annotations },
+          tooltip: {
+            backgroundColor: isDark ? '#1e1438' : '#fff8f6',
+            borderColor: 'rgba(180,140,240,0.2)', borderWidth: 1,
+            titleColor: textC, bodyColor: isDark ? '#ede8f8' : '#1c0c10',
+            bodyFont: { family: 'JetBrains Mono', size: 12 },
+            callbacks: { label: ctx => ' $' + ctx.raw.toLocaleString('en-US', {maximumFractionDigits:0}) }
+          }
+        },
+        scales: {
+          x: { grid: { color: gridC }, ticks: { color: textC, font: { size: 9 }, maxRotation: 0, maxTicksLimit: 10 } },
+          y: {
+            grid: { color: gridC },
+            ticks: { color: textC, font: { family: 'JetBrains Mono', size: 9 },
+              callback: v => '$' + (v/1000).toFixed(1) + 'K' }
+          }
+        }
+      }
+    };
+  }
+  _priceChart = new Chart(canvas, chartConfig);
 }
 
 // ─── LIQUIDITY DISTRIBUTION CHART ────────────────────────────────────────────
