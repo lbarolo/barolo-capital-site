@@ -1072,7 +1072,7 @@ body, input, button, select, textarea {
 <div class="metrics-grid">
  <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">SHARPE RATIO</div><div class="metric-val neg">−1.42</div><div class="metric-desc">Retorno/risco inadequado</div></div>
  <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">VOLATILIDADE</div><div class="metric-val warn">87%</div><div class="metric-desc">Anualizada estimada</div></div>
- <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">MAX DRAWDOWN</div><div class="metric-val neg">−83%</div><div class="metric-desc">Pico → fundo</div></div>
+ <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">MAX DRAWDOWN</div><div class="metric-val neg">−50.9%</div><div class="metric-desc">Jun/2022 · running peak</div></div>
  <div class="metric-card"><div class="metric-icon"></div><div class="metric-name">DEFI YIELD/ANO</div><div class="metric-val pos">~$180</div><div class="metric-desc">Aave + Kamino líquido</div></div>
 </div>
 
@@ -2536,8 +2536,10 @@ function buildPerfChart(period){
  });
  // Stats bar
  const first=d.p[0], last=d.p[d.p.length-1], peak=Math.max(...d.p);
- const trough=Math.min(...d.p.slice(d.p.findIndex(v=>v===peak)));
- const dd=peak>0?(((trough-peak)/peak)*100).toFixed(1):'—';
+ // Max Drawdown — running peak (metodologia padrão CFA/Bloomberg)
+ let _runPk=d.p[0], _maxDD=0;
+ for(let i=1;i<d.p.length;i++){ if(d.p[i]>_runPk) _runPk=d.p[i]; const _c=(d.p[i]-_runPk)/_runPk*100; if(_c<_maxDD) _maxDD=_c; }
+ const dd=_maxDD.toFixed(1);
  const chg=(((last-first)/first)*100).toFixed(1);
  const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px;text-align:center;"><div style="font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">${lbl}</div><div style="font-size:14px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
  document.getElementById('perfStats').innerHTML=
