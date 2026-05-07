@@ -716,45 +716,35 @@
         </div>
       </div>
 
-      <!-- HODL Initial -->
+      <!-- Avg Daily Fees (24h) — replaces HODL Initial -->
       <div class="ap-metric-card">
-        <div class="ap-metric-label">HODL Initial</div>
+        <div class="ap-metric-label">Avg Daily Fees (24h)</div>
         <div class="ap-metric-box">
           <div class="ap-metric-item">
             <img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" alt="WETH" style="width:14px;height:14px" onerror="this.style.display='none'">
             <span class="ap-metric-tok">WETH</span>
           </div>
-          <div class="ap-metric-val" id="ap-hodl-weth-qty">—</div>
-          <div class="ap-metric-sub" id="ap-hodl-weth-usd">—</div>
+          <div class="ap-metric-val" id="ap-dfee-weth-qty">—</div>
+          <div class="ap-metric-sub" id="ap-dfee-weth-usd">—</div>
         </div>
         <div class="ap-metric-box">
           <div class="ap-metric-item">
             <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" style="width:14px;height:14px" onerror="this.style.display='none'">
             <span class="ap-metric-tok">USDC</span>
           </div>
-          <div class="ap-metric-val" id="ap-hodl-usdc-qty">—</div>
-          <div class="ap-metric-sub" id="ap-hodl-usdc-usd">—</div>
+          <div class="ap-metric-val" id="ap-dfee-usdc-qty">—</div>
+          <div class="ap-metric-sub" id="ap-dfee-usdc-usd">—</div>
         </div>
       </div>
 
-      <!-- Initial Assets -->
+      <!-- Performance Summary (moved up — swapped with Initial Assets) -->
       <div class="ap-metric-card">
-        <div class="ap-metric-label">Initial Assets</div>
-        <div class="ap-metric-box">
-          <div class="ap-metric-item">
-            <img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" alt="WETH" style="width:14px;height:14px" onerror="this.style.display='none'">
-            <span class="ap-metric-tok">WETH</span>
-          </div>
-          <div class="ap-metric-val" id="ap-init-weth-qty">—</div>
-          <div class="ap-metric-sub" id="ap-init-weth-usd">—</div>
-        </div>
-        <div class="ap-metric-box">
-          <div class="ap-metric-item">
-            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" style="width:14px;height:14px" onerror="this.style.display='none'">
-            <span class="ap-metric-tok">USDC</span>
-          </div>
-          <div class="ap-metric-val" id="ap-init-usdc-qty">—</div>
-          <div class="ap-metric-sub" id="ap-init-usdc-usd">—</div>
+        <div class="ap-metric-label">Performance</div>
+        <div class="ap-metric-box-center">
+          <div class="ap-metric-val-large" id="ap-roi-val">—</div>
+          <div class="ap-metric-sub">ROI (fees + IL)</div>
+          <div class="ap-metric-val" style="margin-top:8px" id="ap-24h-proj">—</div>
+          <div class="ap-metric-sub">24h projection</div>
         </div>
       </div>
 
@@ -779,23 +769,37 @@
         </div>
       </div>
 
-      <!-- Divergence Loss -->
+      <!-- Divergence Loss (vs HODL WETH + vs HODL USD) -->
       <div class="ap-metric-card">
         <div class="ap-metric-label">Divergence Loss</div>
         <div class="ap-metric-box-center">
           <div class="ap-metric-val-large" id="ap-il-total">—</div>
-          <div class="ap-metric-sub" id="ap-il-vs">vs 50/50 HODL</div>
+          <div class="ap-metric-sub" id="ap-il-vs">vs HODL WETH</div>
+        </div>
+        <div class="ap-metric-box-center" style="margin-top:8px;border-top:1px solid var(--border);padding-top:10px;">
+          <div class="ap-metric-val" id="ap-il-vs-usd">—</div>
+          <div class="ap-metric-sub">vs HODL USD ($365)</div>
         </div>
       </div>
 
-      <!-- Performance Summary -->
+      <!-- Initial Assets (moved down — swapped with Performance) -->
       <div class="ap-metric-card">
-        <div class="ap-metric-label">Performance</div>
-        <div class="ap-metric-box-center">
-          <div class="ap-metric-val-large" id="ap-roi-val">—</div>
-          <div class="ap-metric-sub">ROI (fees + IL)</div>
-          <div class="ap-metric-val" style="margin-top:8px" id="ap-24h-proj">—</div>
-          <div class="ap-metric-sub">24h projection</div>
+        <div class="ap-metric-label">Initial Assets</div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/2518/small/weth.png" alt="WETH" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">WETH</span>
+          </div>
+          <div class="ap-metric-val" id="ap-init-weth-qty">—</div>
+          <div class="ap-metric-sub" id="ap-init-weth-usd">—</div>
+        </div>
+        <div class="ap-metric-box">
+          <div class="ap-metric-item">
+            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="USDC" style="width:14px;height:14px" onerror="this.style.display='none'">
+            <span class="ap-metric-tok">USDC</span>
+          </div>
+          <div class="ap-metric-val" id="ap-init-usdc-qty">—</div>
+          <div class="ap-metric-sub" id="ap-init-usdc-usd">—</div>
         </div>
       </div>
     </div>
@@ -1466,11 +1470,13 @@ async function fetchLiveActivePool() {
     s('ap-curr-usdc-qty', `${usdcA.toFixed(2)} USDC`);
     s('ap-curr-usdc-usd', `${fmtUsd(usdcA, 2)}`);
 
-    // HODL Initial
-    s('ap-hodl-weth-qty', `${ENTRY_WETH.toFixed(4)} WETH`);
-    s('ap-hodl-weth-usd', `${fmtUsd(hodlValue, 2)}`);
-    s('ap-hodl-usdc-qty', `0.00 USDC`);
-    s('ap-hodl-usdc-usd', `$0.00`);
+    // Avg Daily Fees (24h) — substitui HODL Initial
+    const avgFeeW = days > 0 ? uncW / days : 0;
+    const avgFeeU = days > 0 ? uncU / days : 0;
+    s('ap-dfee-weth-qty', `${avgFeeW.toFixed(6)} WETH`);
+    s('ap-dfee-weth-usd', `${fmtUsd(avgFeeW * eth, 4)} /dia`);
+    s('ap-dfee-usdc-qty', `${avgFeeU.toFixed(4)} USDC`);
+    s('ap-dfee-usdc-usd', `${fmtUsd(avgFeeU, 2)} /dia`);
 
     // Initial Assets
     s('ap-init-weth-qty', `${ENTRY_WETH.toFixed(4)} WETH`);
@@ -1484,9 +1490,13 @@ async function fetchLiveActivePool() {
     s('ap-fee-usdc-qty', `${uncU.toFixed(2)} USDC`);
     s('ap-fee-usdc-usd', `${fmtUsd(uncU, 2)}`);
 
-    // Divergence Loss (vs 50/50 HODL)
+    // Divergence Loss
+    // Linha 1: vs HODL WETH (entrou 100% em WETH)
     s('ap-il-total', `${fd(divLoss)}`);
-    s('ap-il-vs', `vs HODL ${hodl5050 > pooledUsd ? '50/50' : 'WETH'}`);
+    s('ap-il-vs', `vs HODL WETH`);
+    // Linha 2: vs HODL USD ($365 entry capital, se tivesse mantido em stables)
+    const vsUsd = (pooledUsd + uncFeeUsd) - ENTRY_CAPITAL;
+    s('ap-il-vs-usd', `${fd(vsUsd)}`);
 
     // Performance Summary
     s('ap-roi-val', `<span style="color:${cc(roi)}">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</span>`);
