@@ -689,7 +689,7 @@
           <span class="net-dot" style="background:#4fa8ff"></span>Base
         </span>
       </div>
-      <div class="ap-meta" id="ap-opened">Aberta 24/02/2026 · atualizando…</div>
+      <div class="ap-meta" id="ap-opened">Aberta 18/03/2026 · atualizando…</div>
     </div>
 
 
@@ -1345,7 +1345,7 @@ async function fetchLiveActivePool() {
   const NFT_MGR  = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base NonfungiblePositionManager
   const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
   const TOKEN_ID = 4694262;
-  const ENTRY_CAPITAL = 315.88;
+  const ENTRY_CAPITAL = 365;
   const OPEN_TS  = new Date('2026-02-24T17:40:00').getTime() / 1000;
   const RPCS = [
     'https://base-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7',
@@ -1419,7 +1419,7 @@ async function fetchLiveActivePool() {
   const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
 
   // 8. Patch POOLS[0] with live numbers
-  const ENTRY_WETH = 0.17; // entrada 100% WETH em 24/02/2026 ($315.88)
+  const ENTRY_WETH = 0.17; // entrada 100% WETH em 18/03/2026 ($365)
   const hodlValue  = ENTRY_WETH * eth;
   const divLoss    = pooledUsd - hodlValue;   // negativo = IL
   const vsHodl     = uncFeeUsd + divLoss;
@@ -1449,7 +1449,7 @@ async function fetchLiveActivePool() {
     const u = v => `<div class="ap-usd">${fmtUsd(v, 2)}</div>`;
 
     // opened line
-    s('ap-opened', `Aberta 24/02/2026 · ${days.toFixed(1)}d · <span class="live-dot" style="vertical-align:middle"></span> ao vivo`);
+    s('ap-opened', `Aberta 18/03/2026 · ${days.toFixed(1)}d · <span class="live-dot" style="vertical-align:middle"></span> ao vivo`);
 
     // Benchmark scenarios for Divergence Loss
     const totalPosVal  = pooledUsd + uncFeeUsd;
@@ -1548,7 +1548,7 @@ function buildApChart(metric, p) {
   const pnlNow  = p.result || -0.94;
   const liqNow  = p.pooled || p.capital || 379;
   const days    = p.days   || 48;
-  const cap     = p.capital || 315.88;
+  const cap     = p.capital || 365;
   const feeAprNow = days > 0 ? (feesNow / cap / days * 365 * 100) : 35.0;
 
   const SERIES = {
@@ -2081,7 +2081,7 @@ function buildDetailChart(p, metric) {
   const feesNow = p.fees   || 18.62;
   const ilNow   = p.il     || -28.20;
   const pnlNow  = p.result || -9.58;
-  const liqNow  = p.pooled || p.capital || 315.88;
+  const liqNow  = p.pooled || p.capital || 365;
   const aprNow  = p.days > 0 ? (feesNow / (p.capital||315.88) / p.days * 365 * 100) : 35;
 
   const SERIES = {
