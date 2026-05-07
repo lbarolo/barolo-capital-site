@@ -558,6 +558,46 @@
       letter-spacing: 0.05em;
     }
 
+    /* ─── BENCHMARK SCENARIOS (3-way comparison) ─── */
+    .ap-benchmark-section {
+      margin-bottom: 20px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .ap-benchmark-title {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ap-benchmark-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .ap-benchmark-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px; text-align: center;
+    }
+    .ap-benchmark-card.winning {
+      border-color: rgba(63,185,80,0.4); background: rgba(63,185,80,0.08);
+    }
+    .ap-benchmark-card.losing {
+      border-color: rgba(248,81,73,0.3);
+    }
+    .ap-benchmark-strategy {
+      font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .ap-benchmark-value {
+      font-family: var(--mono); font-size: 18px; font-weight: 700;
+      color: var(--text); margin-bottom: 4px; line-height: 1;
+    }
+    .ap-benchmark-detail {
+      font-size: 9px; color: var(--muted); margin-bottom: 6px; line-height: 1.4;
+    }
+    .ap-benchmark-delta {
+      font-family: var(--mono); font-size: 10px; font-weight: 600;
+      padding-top: 6px; border-top: 1px solid rgba(201,160,80,0.15);
+    }
+
     /* ─── CHARTS IN 2 COLUMNS ─── */
     .ap-charts-row {
       display: grid; grid-template-columns: 1fr 1fr;
@@ -814,6 +854,34 @@
           </div>
           <div class="ap-metric-val" id="ap-init-usdc-qty">—</div>
           <div class="ap-metric-sub" id="ap-init-usdc-usd">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BENCHMARK SCENARIOS (3-way comparison: Pool vs HODL ETH vs HODL USD) -->
+    <div class="ap-benchmark-section">
+      <div class="ap-benchmark-title">Análise Comparativa</div>
+      <div class="ap-benchmark-grid">
+        <!-- Strategy 1: Pool -->
+        <div class="ap-benchmark-card" id="bm-pool">
+          <div class="ap-benchmark-strategy">📊 Pool Strategy</div>
+          <div class="ap-benchmark-value" id="bm-pool-val">—</div>
+          <div class="ap-benchmark-detail" id="bm-pool-detail">—</div>
+          <div class="ap-benchmark-delta" id="bm-pool-delta">—</div>
+        </div>
+        <!-- Strategy 2: HODL 100% WETH -->
+        <div class="ap-benchmark-card" id="bm-hodl-eth">
+          <div class="ap-benchmark-strategy">💎 HODL 100% WETH</div>
+          <div class="ap-benchmark-value" id="bm-hodl-eth-val">—</div>
+          <div class="ap-benchmark-detail" id="bm-hodl-eth-detail">—</div>
+          <div class="ap-benchmark-delta" id="bm-hodl-eth-delta">—</div>
+        </div>
+        <!-- Strategy 3: HODL 100% USD -->
+        <div class="ap-benchmark-card" id="bm-hodl-usd">
+          <div class="ap-benchmark-strategy">💰 HODL 100% USD</div>
+          <div class="ap-benchmark-value" id="bm-hodl-usd-val">—</div>
+          <div class="ap-benchmark-detail" id="bm-hodl-usd-detail">—</div>
+          <div class="ap-benchmark-delta" id="bm-hodl-usd-delta">—</div>
         </div>
       </div>
     </div>
@@ -1540,6 +1608,42 @@ async function fetchLiveActivePool() {
     // Performance Summary
     s('ap-roi-val', `<span style="color:${cc(roi)}">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</span>`);
     s('ap-24h-proj', `<span style="color:var(--green)">${fmtUsd(proj24h, 2)}</span>`);
+
+    // ─── BENCHMARK SCENARIOS (3-way comparison) ───
+    const poolTotal = pooledUsd + uncFeeUsd;
+    const hodlEthTotal = hodl100Weth;
+    const hodlUsdTotal = hodl100Usdc;
+
+    // Pool Strategy
+    s('bm-pool-val', fmtUsd(poolTotal, 2));
+    s('bm-pool-detail', `Taxas: ${fmtUsd(uncFeeUsd, 2)}<br>IL: ${fmtUsd(divLoss, 2)}`);
+    const poolDelta = poolTotal - ENTRY_CAPITAL;
+    s('bm-pool-delta', `${poolDelta >= 0 ? '+' : ''}${fmtUsd(poolDelta, 2)} ROI`);
+    const bmPoolCard = document.getElementById('bm-pool');
+    if (bmPoolCard) bmPoolCard.className = poolDelta >= 0 ? 'ap-benchmark-card winning' : 'ap-benchmark-card';
+
+    // HODL 100% WETH
+    s('bm-hodl-eth-val', fmtUsd(hodlEthTotal, 2));
+    s('bm-hodl-eth-detail', `${ENTRY_WETH.toFixed(6)} WETH @ ${fmtUsd(eth, 2)}`);
+    const hodlEthDelta = hodlEthTotal - ENTRY_CAPITAL;
+    s('bm-hodl-eth-delta', `${hodlEthDelta >= 0 ? '+' : ''}${fmtUsd(hodlEthDelta, 2)} ROI`);
+    const bmEthCard = document.getElementById('bm-hodl-eth');
+    if (bmEthCard) bmEthCard.className = hodlEthDelta >= 0 ? 'ap-benchmark-card winning' : 'ap-benchmark-card';
+
+    // HODL 100% USD
+    s('bm-hodl-usd-val', fmtUsd(hodlUsdTotal, 2));
+    s('bm-hodl-usd-detail', `$${ENTRY_CAPITAL.toFixed(2)} USDC (sem mudanças)`);
+    const hodlUsdDelta = 0; // USD não muda
+    s('bm-hodl-usd-delta', `0.00 ROI`);
+
+    // Highlight winner
+    const winner = Math.max(poolDelta, hodlEthDelta, hodlUsdDelta);
+    if (winner === poolDelta && poolDelta > 0 && document.getElementById('bm-pool')) {
+      document.getElementById('bm-pool').classList.add('winning');
+    }
+    if (winner === hodlEthDelta && hodlEthDelta > 0 && document.getElementById('bm-hodl-eth')) {
+      document.getElementById('bm-hodl-eth').classList.add('winning');
+    }
   }
 
   // 10. Update KPI display
