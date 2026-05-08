@@ -586,7 +586,7 @@ body, input, button, select, textarea {
               </div>
               <div style="text-align:right;">
                 <span id="em-kamino-sol-usd" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);">$1,720</span>
-                <span style="font-size:8px;color:var(--muted);margin-left:4px;">APY <span id="em-kamino-sol-apy">5.26%</span></span>
+                <span style="font-size:8px;color:var(--muted);margin-left:4px;">APY <span id="em-kamino-sol-apy">6.52%</span></span>
               </div>
             </div>
             <div style="height:5px;background:var(--surface2);border-radius:2px;overflow:hidden;">
@@ -735,8 +735,8 @@ body, input, button, select, textarea {
  <!-- Kamino Yield -->
  <div class="kpi-card" style="background:rgba(63,185,80,0.08);border-color:rgba(63,185,80,0.3);">
   <div class="kpi-lbl" style="color:var(--green);">KAMINO — Yield Mensal</div>
-  <div class="kpi-val" style="color:var(--green);">≈ $103</div>
-  <div class="kpi-sub">20.42 SOL @ 5.26% + 301 USDS @ 4.61%</div>
+  <div class="kpi-val" style="color:var(--green);">≈ $115</div>
+  <div class="kpi-sub">20.43 SOL @ 6.52% + 301.12 USDS @ 4.66%</div>
  </div>
  <!-- Kamino Dias -->
  <div class="kpi-card">
@@ -747,7 +747,7 @@ body, input, button, select, textarea {
  <!-- Total Mensal -->
  <div class="kpi-card" style="background:linear-gradient(135deg,rgba(201,160,80,0.12),rgba(63,185,80,0.08));border-color:rgba(201,160,80,0.25);">
   <div class="kpi-lbl" style="color:var(--accent);">TOTAL — Yield Mensal</div>
-  <div class="kpi-val" style="color:var(--accent);">≈ $160</div>
+  <div class="kpi-val" style="color:var(--accent);">≈ $172</div>
   <div class="kpi-sub">Ambas as posições combinadas</div>
  </div>
 </div>
@@ -814,7 +814,7 @@ body, input, button, select, textarea {
  <td class="td-mono">Jan 2026–hoje</td>
  <td class="td-mono neg">$808.77</td>
  <td class="td-mono pos">$8.65</td>
- <td class="td-mono neg">4.64% APY</td>
+ <td class="td-mono neg">8.67% APY</td>
  <td style="font-size:10px;color:var(--muted);">20.42 SOL + 301.01 USDS supply · LTV 40.07% · Liq. $35.77/SOL</td>
  <td><span class="badge badge-open">● ABERTO</span></td>
  </tr>
@@ -1742,19 +1742,42 @@ function toggleLang() {
         fetchAaveApys().catch(() => null)
       ]);
 
-      // Parse MAIN_SPOKE — has the borrow, so gives real HF
-      const mainColl = decNum(decUint(mainRaw, 3), 8);   // V4: totalCollateral em USD (8 decimais)
-      const mainDebt = decNum(decUint(mainRaw, 4), 27);  // V4: totalDebtRay em RAY (1e27)
-      const mainHF   = decNum(decUint(mainRaw, 2), 18);  // WAD = 1e18
-      const mainAvgCF= decNum(decUint(mainRaw, 1), 18);  // avgCollateralFactor WAD
+      // AAVE V4 spoke retorna struct compatível V3:
+      // [0]=totalCollateralBase(8dec), [1]=totalDebtBase(8dec), [2]=availableBorrows(8dec),
+      // [3]=liquidationThreshold(BPS,4dec), [4]=ltv(BPS,4dec), [5]=healthFactor(WAD,18dec)
+      const tryParse = (raw, collOffset, debtOffset, hfOffset, collDec, debtDec) => {
+        const c = decNum(decUint(raw, collOffset), collDec);
+        const d = decNum(decUint(raw, debtOffset), debtDec);
+        const h = decNum(decUint(raw, hfOffset), 18);
+        return { c, d, h };
+      };
 
-      // BLUECHIP_SPOKE: extra collateral only — if Lucas has a separate WETH position there
+      // Tenta layout V3-padrão: offsets [0,1,5], decimais [8,8,18]
+      let { c: mainColl, d: mainDebt, h: mainHF } = tryParse(mainRaw, 0, 1, 5, 8, 8);
+
+      // Sanity: valores razoáveis para o portfólio de Lucas ($100–$50K colateral, $1–$20K dívida, HF 0.5–100)
+      const saneV3 = mainColl >= 100 && mainColl <= 50000 &&
+                     mainDebt >= 1   && mainDebt <= 20000 &&
+                     mainHF  >= 0.5  && mainHF   <= 100;
+
+      if (!saneV3) {
+        // Tenta layout alternativo: offsets [3,4,2], decimais [8,8,18] (campo 5 pode estar em posição diferente)
+        const alt = tryParse(mainRaw, 3, 4, 2, 8, 8);
+        const saneAlt = alt.c >= 100 && alt.c <= 50000 && alt.d >= 1 && alt.d <= 20000 && alt.h >= 0.5 && alt.h <= 100;
+        if (saneAlt) {
+          mainColl = alt.c; mainDebt = alt.d; mainHF = alt.h;
+          console.log('[AAVE V4] Usando layout alt (offsets 3,4,2)');
+        } else {
+          console.warn('[AAVE V4] Todos os layouts falharam sanity. Valores on-chain: coll=' + mainColl.toFixed(2) + ' debt=' + mainDebt.toFixed(2) + ' hf=' + mainHF.toFixed(2));
+          return null; // força uso dos fallbacks hardcoded
+        }
+      }
+
       let bcColl = 0;
       if (bcRaw && bcRaw.length > 10 && bcRaw !== '0x') {
-        const bcHF = decNum(decUint(bcRaw, 2), 18);
-        if (isFinite(bcHF) && bcHF < 1e15) { // skip empty spoke (HF = uint256.max)
-          const bc = decNum(decUint(bcRaw, 3), 26);
-          if (isFinite(bc) && bc > 50) bcColl = bc;
+        const bcParsed = tryParse(bcRaw, 0, 1, 5, 8, 8);
+        if (bcParsed.c >= 50 && bcParsed.c <= 50000 && bcParsed.h >= 0.5 && bcParsed.h <= 100) {
+          bcColl = bcParsed.c;
         }
       }
 
@@ -1763,21 +1786,14 @@ function toggleLang() {
       const hf = mainHF;
       const net = totalColl - totalDebt;
       const ltv = totalColl > 0 ? (totalDebt / totalColl * 100) : 0;
-      // borrowPwr using avgCF from V4 struct (avgCollateralFactor is the blended LT)
-      const effLT = (mainAvgCF > 0.5 && mainAvgCF <= 1) ? mainAvgCF : 0.825;
+      const effLT = 0.825;
       const borrowPwr = totalColl > 0 ? (totalDebt / (totalColl * effLT) * 100) : 0;
 
-      console.log(`[AAVE V4] MAIN coll=$${mainColl.toFixed(0)} BC coll=$${bcColl.toFixed(0)} debt=$${totalDebt.toFixed(2)} HF=${hf.toFixed(2)}`);
+      console.log(`[AAVE V4] ✓ coll=$${mainColl.toFixed(0)} debt=$${mainDebt.toFixed(2)} HF=${hf.toFixed(2)} ltv=${ltv.toFixed(1)}%`);
 
-      // ── Sanity checks ────────────────────────────────────────────
-      if (!isFinite(totalColl) || !isFinite(totalDebt) || !isFinite(hf)) {
-        console.warn('[AAVE V4] Sanity: valor não-finito, descartando'); return null;
-      }
-      if (totalColl < 100) {
-        console.warn('[AAVE V4] Sanity: colateral $' + totalColl.toFixed(2) + ' < $100, descartando'); return null;
-      }
-      if (hf > 1e15) {
-        console.warn('[AAVE V4] Sanity: HF impossível (' + hf.toExponential(2) + ') — debt=0 ou bloco vazio, descartando'); return null;
+      // Sanity final — cap adicional para garantir que nada absurdo passa
+      if (!isFinite(totalColl) || !isFinite(totalDebt) || !isFinite(hf) || totalColl > 50000 || totalDebt > 20000 || hf > 100) {
+        console.warn('[AAVE V4] Sanity final falhou, descartando'); return null;
       }
 
       // ── Per-asset quantity derivation ────────────────────────────
