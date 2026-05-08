@@ -1727,92 +1727,52 @@ function toggleLang() {
   }
 
   // ── AAVE V4 ─────────────────────────────────────────────────────
-  // V4 struct at each spoke: [0]=riskPremium(BPS), [1]=avgCF(WAD), [2]=HF(WAD),
-  //                          [3]=totalCollateral(8dec USD), [4]=totalDebtRay(RAY=1e27),
-  //                          [5]=activeCollateralCount, [6]=borrowCount
+  // ── AAVE V4 — lê balanceOf() direto nos aTokens (ERC-20 padrão, sempre funciona) ──
+  // aWETH V4 · aUSDT V4 · variableDebtUSDC V4 — endereços do contrato do AAVE V4 Ethereum
+  const AWETH_TOKEN = '0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8';
+  const AUSDT_TOKEN = '0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a';
+  const VDEBT_USDC  = '0x72E95b8931767C79bA4EeE721354d6E99a61D004';
+  const BAL_SEL     = '0x70a08231'; // balanceOf(address)
+
   async function fetchAave(ethPrice) {
     try {
-      const walletData = V4_SEL + padAddr(AAVE_WALLET);
+      const ep = ethPrice || liveEth || 2000;
+      const wd = BAL_SEL + padAddr(AAVE_WALLET);
 
-      // Query MAIN_SPOKE (primary market — WETH + USDT supply + USDC borrow)
-      // Query BLUECHIP_SPOKE in parallel (premium tier — may have additional WETH collateral)
-      const [mainRaw, bcRaw, apys] = await Promise.all([
-        rpc(ETH_RPC, 'eth_call', [{to: MAIN_SPOKE, data: walletData}, 'latest']),
-        rpc(ETH_RPC, 'eth_call', [{to: BLUECHIP_SPOKE, data: walletData}, 'latest']).catch(() => null),
+      // Busca balances dos aTokens + APYs em paralelo
+      const [wethRaw, usdtRaw, usdcRaw, apys] = await Promise.all([
+        rpc(ETH_RPC, 'eth_call', [{to: AWETH_TOKEN, data: wd}, 'latest']),
+        rpc(ETH_RPC, 'eth_call', [{to: AUSDT_TOKEN, data: wd}, 'latest']),
+        rpc(ETH_RPC, 'eth_call', [{to: VDEBT_USDC,  data: wd}, 'latest']),
         fetchAaveApys().catch(() => null)
       ]);
 
-      // AAVE V4 spoke retorna struct compatível V3:
-      // [0]=totalCollateralBase(8dec), [1]=totalDebtBase(8dec), [2]=availableBorrows(8dec),
-      // [3]=liquidationThreshold(BPS,4dec), [4]=ltv(BPS,4dec), [5]=healthFactor(WAD,18dec)
-      const tryParse = (raw, collOffset, debtOffset, hfOffset, collDec, debtDec) => {
-        const c = decNum(decUint(raw, collOffset), collDec);
-        const d = decNum(decUint(raw, debtOffset), debtDec);
-        const h = decNum(decUint(raw, hfOffset), 18);
-        return { c, d, h };
-      };
+      // Parse: aWETH=18dec, aUSDT=6dec, variableDebtUSDC=6dec
+      const wethQty = decNum(decUint(wethRaw, 0), 18);
+      const usdtQty = decNum(decUint(usdtRaw, 0), 6);
+      const usdcQty = decNum(decUint(usdcRaw, 0), 6);
 
-      // Tenta layout V3-padrão: offsets [0,1,5], decimais [8,8,18]
-      let { c: mainColl, d: mainDebt, h: mainHF } = tryParse(mainRaw, 0, 1, 5, 8, 8);
+      // Sanity checks — valores fora desse range = RPC falhou
+      if (wethQty < 0.01 || wethQty > 50)      { console.warn('[AAVE] wethQty fora do range:', wethQty); return null; }
+      if (usdtQty < 100  || usdtQty > 100000)   { console.warn('[AAVE] usdtQty fora do range:', usdtQty); return null; }
+      if (usdcQty < 1    || usdcQty > 20000)    { console.warn('[AAVE] usdcQty fora do range:', usdcQty); return null; }
 
-      // Sanity: valores razoáveis para o portfólio de Lucas ($100–$50K colateral, $1–$20K dívida, HF 0.5–100)
-      const saneV3 = mainColl >= 100 && mainColl <= 50000 &&
-                     mainDebt >= 1   && mainDebt <= 20000 &&
-                     mainHF  >= 0.5  && mainHF   <= 100;
+      const ethUsd   = wethQty * ep;
+      const totalColl = ethUsd + usdtQty;
+      const totalDebt = usdcQty;
+      const net       = totalColl - totalDebt;
+      const ltv       = totalColl > 0 ? (totalDebt / totalColl * 100) : 0;
 
-      if (!saneV3) {
-        // Tenta layout alternativo: offsets [3,4,2], decimais [8,8,18] (campo 5 pode estar em posição diferente)
-        const alt = tryParse(mainRaw, 3, 4, 2, 8, 8);
-        const saneAlt = alt.c >= 100 && alt.c <= 50000 && alt.d >= 1 && alt.d <= 20000 && alt.h >= 0.5 && alt.h <= 100;
-        if (saneAlt) {
-          mainColl = alt.c; mainDebt = alt.d; mainHF = alt.h;
-          console.log('[AAVE V4] Usando layout alt (offsets 3,4,2)');
-        } else {
-          console.warn('[AAVE V4] Todos os layouts falharam sanity. Valores on-chain: coll=' + mainColl.toFixed(2) + ' debt=' + mainDebt.toFixed(2) + ' hf=' + mainHF.toFixed(2));
-          return null; // força uso dos fallbacks hardcoded
-        }
-      }
+      // HF calculado: (WETH×LT_WETH + USDT×LT_USDT) / dívida   (AAVE V4 LTs: WETH 82.5%, USDT 77.5%)
+      const hf = totalDebt > 0 ? (ethUsd * 0.825 + usdtQty * 0.775) / totalDebt : 99;
+      const borrowPwr = totalColl > 0 ? (totalDebt / (totalColl * 0.825) * 100) : 0;
 
-      let bcColl = 0;
-      if (bcRaw && bcRaw.length > 10 && bcRaw !== '0x') {
-        const bcParsed = tryParse(bcRaw, 0, 1, 5, 8, 8);
-        if (bcParsed.c >= 50 && bcParsed.c <= 50000 && bcParsed.h >= 0.5 && bcParsed.h <= 100) {
-          bcColl = bcParsed.c;
-        }
-      }
+      console.log(`[AAVE V4 ✓] WETH=${wethQty.toFixed(3)} USDT=${usdtQty.toFixed(0)} USDC_debt=${usdcQty.toFixed(2)} HF=${hf.toFixed(2)} LTV=${ltv.toFixed(1)}%`);
 
-      const totalColl = mainColl + bcColl;
-      const totalDebt = mainDebt;
-      const hf = mainHF;
-      const net = totalColl - totalDebt;
-      const ltv = totalColl > 0 ? (totalDebt / totalColl * 100) : 0;
-      const effLT = 0.825;
-      const borrowPwr = totalColl > 0 ? (totalDebt / (totalColl * effLT) * 100) : 0;
-
-      console.log(`[AAVE V4] ✓ coll=$${mainColl.toFixed(0)} debt=$${mainDebt.toFixed(2)} HF=${hf.toFixed(2)} ltv=${ltv.toFixed(1)}%`);
-
-      // Sanity final — cap adicional para garantir que nada absurdo passa
-      if (!isFinite(totalColl) || !isFinite(totalDebt) || !isFinite(hf) || totalColl > 50000 || totalDebt > 20000 || hf > 100) {
-        console.warn('[AAVE V4] Sanity final falhou, descartando'); return null;
-      }
-
-      // ── Per-asset quantity derivation ────────────────────────────
-      const ep = ethPrice || liveEth || 2000;
-      // If BLUECHIP has collateral: WETH is there → derive qty; USDT ≈ mainColl
-      // If all in MAIN (bcColl=0): WETH portion ≈ totalColl - USDT; USDT from remainder
-      // Static fallbacks (known quantities) used when derivation is uncertain
-      let wethQty, usdtQty, usdcQty;
-      if (bcColl > 100) {
-        wethQty = bcColl / ep;
-        usdtQty = mainColl; // MAIN only has stables
-      } else {
-        // All in MAIN — estimate WETH portion as total minus known USDT balance
-        const estUsdt = Math.min(mainColl * 0.55, mainColl - 100); // at least some WETH
-        usdtQty = estUsdt > 1000 ? estUsdt : 1990;
-        wethQty = (mainColl - usdtQty) / ep;
-        if (wethQty < 0.1) wethQty = 1.88; // static fallback if derivation nonsensical
-      }
-      usdcQty = totalDebt > 0 ? totalDebt : 750.16;
+      // APYs (ao vivo do DataProvider, fallback para valores conhecidos)
+      const wethApy = (apys?.weth?.supply > 0.01) ? apys.weth.supply : 2.50;
+      const usdtApy = (apys?.usdt?.supply > 0.01) ? apys.usdt.supply : 1.77;
+      const usdcApy = (apys?.usdc?.borrow > 0.01) ? apys.usdc.borrow : 3.79;
 
       // APYs (fallback para valores conhecidos)
       const wethApy = (apys?.weth?.supply > 0) ? apys.weth.supply : 2.50;
