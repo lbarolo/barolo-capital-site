@@ -1444,11 +1444,10 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 // ── KAMINO LIVE DATA ──
 // URL: kamino.com/lend/{MARKET}/{USER_WALLET}
 (async function fetchKaminoData() {
- const USER_WALLET = 'xXfd2gvYy1ePAioRzG3jVQGK79PiBQWpR7Pcf4XWxUK'; // Solana wallet
- const MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'; // Main Market
- const USDS_QTY   = 300.42;
- // Fixed position — only update if you change the position manually
- const FIXED = { solQty: 19.33, debtUsd: 804.22, liqThreshold: 0.7720, currentLtv: 0.3922 };
+ const SOL_WALLET_K = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
+ const MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
+ const USDS_QTY   = 301.01;
+ const FIXED = { solQty: 20.42, debtUsd: 808.77, liqThreshold: 0.7720, currentLtv: 0.4007 };
 
  const $ = id => document.getElementById(id);
  const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -1462,39 +1461,40 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
  lbl.style.color = ok ? 'var(--green)' : 'var(--red)';
  }
 
- // Kamino API — best-effort, CORS may block from file:// origin
+ // Kamino API — obligations → klend/loans
  async function tryKaminoAPI() {
- const urls = [
- `https://api.kamino.finance/v2/users/${USER_WALLET}/lending-positions`,
- `https://api.kamino.finance/v2/users/${USER_WALLET}/obligations?market=${MARKET}`,
- `https://api.kamino.finance/v2/lending/markets/${MARKET}/obligations?owner=${USER_WALLET}`,
- ];
- for (const url of urls) {
- try {
- const res = await fetchTimeout(url, { headers:{ Accept:'application/json' } }, 6000);
- if (!res.ok) continue;
- const data = await res.json();
- // Find the relevant market position in array responses
- const pos = Array.isArray(data)
- ? (data.find(o => (o.market||o.lendingMarket||o.marketAddress||'') === MARKET) || data[0])
- : data;
- if (!pos) continue;
- // Parse deposits
- const deps = pos.deposits || pos.collaterals || pos.positions?.deposits || [];
- const bors = pos.borrows || pos.loans || pos.positions?.borrows || [];
- const solD = [].concat(deps).find(d => (d.mintSymbol||d.symbol||'').toUpperCase().replace('W','') === 'SOL');
- const usdcB= [].concat(bors).find(b => (b.mintSymbol||b.symbol||'').toUpperCase().includes('USDC'));
- if (solD || usdcB) {
+ const SOL_MINT = 'So11111111111111111111111111111111111111112';
+ const oblResp = await fetchTimeout(
+   `https://api.kamino.finance/kamino-market/${MARKET}/users/${SOL_WALLET_K}/obligations`,
+   { headers:{ Accept:'application/json' } }, 8000
+ );
+ if (!oblResp.ok) return null;
+ const obligations = await oblResp.json();
+ if (!obligations || !obligations.length) return null;
+ const obligationAddress = obligations[0].obligationAddress;
+
+ const loanResp = await fetchTimeout(
+   `https://api.kamino.finance/klend/loans/${obligationAddress}`,
+   { headers:{ Accept:'application/json' } }, 8000
+ );
+ if (!loanResp.ok) return null;
+ const loan = await loanResp.json();
+
+ const deposits = loan.loanInfo?.collateral?.deposits || [];
+ const borrows  = loan.loanInfo?.debt?.borrows || [];
+ let solQty = FIXED.solQty, debtUsd = FIXED.debtUsd;
+ deposits.forEach(d => { if (d.tokenMint === SOL_MINT) solQty = parseFloat(d.tokenAmount); });
+ borrows.forEach(b => { debtUsd += parseFloat(b.tokenValue || 0) - FIXED.debtUsd; });
+ // Recalculate debtUsd cleanly
+ debtUsd = 0;
+ borrows.forEach(b => { debtUsd += parseFloat(b.tokenValue || 0); });
+
  return {
- solQty: parseFloat(solD?.amount || solD?.depositedAmount || FIXED.solQty),
- debtUsd: parseFloat(usdcB?.marketValueRefreshed || usdcB?.marketValue || usdcB?.amount || FIXED.debtUsd),
- liqThreshold: parseFloat(pos.liquidationLtv || pos.liqThreshold || pos.liqLtv || FIXED.liqThreshold),
- currentLtv: parseFloat(pos.ltv || pos.loanToValue || pos.currentLtv || FIXED.currentLtv),
+   solQty,
+   debtUsd,
+   liqThreshold: parseFloat(loan.loanInfo?.liquidationLtv || FIXED.liqThreshold),
+   currentLtv:   parseFloat(loan.loanInfo?.currentLtv    || FIXED.currentLtv),
  };
- }
- } catch(e) { console.debug('[Kamino] API unavailable'); }
- }
- return null; // All failed — caller will use FIXED
  }
 
  function updateKamino({ solQty, debtUsd, liqThreshold, currentLtv }, solPrice) {
@@ -3843,65 +3843,56 @@ function buildNetRanking() {
  // ── Kamino: fetch position via Helius DAS ────────────────────────
  async function fetchKamino() {
  try {
- // Use Helius DAS to get parsed account data for Kamino
- const r = await fetch(`${HELIUS_API}/addresses/${SOL_WALLET}/balances?api-key=${HELIUS_KEY}`);
- if (!r.ok) throw new Error('Helius balances ' + r.status);
- const data = await r.json();
+ const MARKET   = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
+ const SOL_MINT = 'So11111111111111111111111111111111111111112';
 
- // Also try Kamino API directly
- const kaminoR = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
- if (kaminoR.ok) {
- const kData = await kaminoR.json();
- if (kData && kData.length > 0) {
- const obligation = kData[0];
- const deposits = obligation.deposits || [];
- const borrows = obligation.borrows || [];
+ const [oblResp] = await Promise.all([
+   fetch(`https://api.kamino.finance/kamino-market/${MARKET}/users/${SOL_WALLET}/obligations`)
+ ]);
+ if (!oblResp.ok) throw new Error('Obligations API ' + oblResp.status);
+ const obligations = await oblResp.json();
+ if (!obligations || !obligations.length) throw new Error('no obligations');
+ const obligationAddress = obligations[0].obligationAddress;
 
- let totalDepositUsd = 0;
- let totalBorrowUsd = 0;
- let solQty = 0;
+ const loanResp = await fetch(`https://api.kamino.finance/klend/loans/${obligationAddress}`);
+ if (!loanResp.ok) throw new Error('Loan API ' + loanResp.status);
+ const loan = await loanResp.json();
 
+ const deposits = loan.loanInfo?.collateral?.deposits || [];
+ const borrows  = loan.loanInfo?.debt?.borrows || [];
+
+ let totalDepositUsd = 0, totalBorrowUsd = 0, solQty = 0;
  deposits.forEach(d => {
- totalDepositUsd += parseFloat(d.marketValueRefreshed || d.marketValue || 0);
- if (d.mintAddress === 'So11111111111111111111111111111111111111112') {
- solQty += parseFloat(d.amount || 0);
- }
+   const val = parseFloat(d.tokenValue || 0);
+   totalDepositUsd += val;
+   if (d.tokenMint === SOL_MINT) solQty = parseFloat(d.tokenAmount || 0);
  });
- borrows.forEach(b => {
- totalBorrowUsd += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
- });
+ borrows.forEach(b => { totalBorrowUsd += parseFloat(b.tokenValue || 0); });
 
  const netValue = totalDepositUsd - totalBorrowUsd;
  const ltv = totalDepositUsd > 0 ? totalBorrowUsd / totalDepositUsd : 0;
 
  console.log(`[Kamino] Deposits: $${totalDepositUsd.toFixed(2)}, Borrows: $${totalBorrowUsd.toFixed(2)}, SOL: ${solQty.toFixed(3)}, LTV: ${(ltv*100).toFixed(1)}%`);
+ if (totalDepositUsd < 100) { console.warn('[Kamino] Sanity: deposit too low'); return null; }
 
- window._liveKaminoDebt = totalBorrowUsd;
+ window._liveKaminoDebt    = totalBorrowUsd;
  window._liveKaminoDeposit = totalDepositUsd;
- window._liveKaminoNetVal = netValue;
- window._liveKaminoSol = solQty;
- window._liveKaminoLtv = ltv;
+ window._liveKaminoNetVal  = netValue;
+ window._liveKaminoSol     = solQty;
+ window._liveKaminoLtv     = ltv;
 
  // Update Kamino UI
  setEl('kamino-net-val', fmtK(netValue));
  const ltvEl = document.getElementById('kamino-ltv-bar');
  if (ltvEl) {
- const fill = ltvEl.querySelector('.bar-fill');
- if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
+   const fill = ltvEl.querySelector('.bar-fill');
+   if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
  }
 
  return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
- }
- }
-
- // Fallback: use static values
- console.warn('[Kamino] API returned no data, using static fallback');
- window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
- window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
- return null;
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 804.22;
+ window._liveKaminoDebt = window._liveKaminoDebt || 808.77;
  return null;
  }
  }

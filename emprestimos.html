@@ -724,32 +724,32 @@ body, input, button, select, textarea {
  <!-- AAVE Yield -->
  <div class="kpi-card" style="background:rgba(138,104,32,0.08);border-color:rgba(138,104,32,0.3);">
   <div class="kpi-lbl" style="color:var(--accent);">AAVE — Yield Mensal</div>
-  <div class="kpi-val" style="color:var(--accent);">≈ $57</div>
-  <div class="kpi-sub">1.88 WETH @ 2.50% + 1,986 USDT @ 9.26%</div>
+  <div class="kpi-val" id="yd-aave-yield" style="color:var(--accent);">≈ $57</div>
+  <div class="kpi-sub" id="yd-aave-yield-sub">1.88 WETH @ 2.50% + 1,990 USDT @ 1.77%</div>
  </div>
  <!-- AAVE Dias -->
  <div class="kpi-card">
   <div class="kpi-lbl">AAVE — Dias em Aberto</div>
-  <div class="kpi-val pos">228 dias</div>
+  <div class="kpi-val pos" id="yd-aave-dias">—</div>
   <div class="kpi-sub">Set 2025 – Hoje | Ciclo A3</div>
  </div>
  <!-- Kamino Yield -->
  <div class="kpi-card" style="background:rgba(63,185,80,0.08);border-color:rgba(63,185,80,0.3);">
   <div class="kpi-lbl" style="color:var(--green);">KAMINO — Yield Mensal</div>
-  <div class="kpi-val" style="color:var(--green);">≈ $115</div>
-  <div class="kpi-sub">20.43 SOL @ 6.52% + 301.12 USDS @ 4.66%</div>
+  <div class="kpi-val" id="yd-kamino-yield" style="color:var(--green);">≈ $115</div>
+  <div class="kpi-sub" id="yd-kamino-yield-sub">20.42 SOL @ 6.52% + 301 USDS @ 4.66%</div>
  </div>
  <!-- Kamino Dias -->
  <div class="kpi-card">
   <div class="kpi-lbl">KAMINO — Dias em Aberto</div>
-  <div class="kpi-val pos">128 dias</div>
+  <div class="kpi-val pos" id="yd-kamino-dias">—</div>
   <div class="kpi-sub">Jan 2026 – Hoje | Ciclo K4</div>
  </div>
  <!-- Total Mensal -->
  <div class="kpi-card" style="background:linear-gradient(135deg,rgba(201,160,80,0.12),rgba(63,185,80,0.08));border-color:rgba(201,160,80,0.25);">
   <div class="kpi-lbl" style="color:var(--accent);">TOTAL — Yield Mensal</div>
-  <div class="kpi-val" style="color:var(--accent);">≈ $172</div>
-  <div class="kpi-sub">Ambas as posições combinadas</div>
+  <div class="kpi-val" id="yd-total-yield" style="color:var(--accent);">≈ $172</div>
+  <div class="kpi-sub" id="yd-total-yield-sub">Ambas as posições combinadas</div>
  </div>
 </div>
 
@@ -1708,9 +1708,9 @@ function toggleLang() {
     return decNum(decUint(raw, 0), decimals);
   }
 
-  // ── APYs da AAVE via Protocol DataProvider ────────────────────────
-  // selector 0x35ea6a75 = getReserveData(address)
-  // offset 5 = liquidityRate (supply APY em RAY=27dec), offset 6 = variableBorrowRate
+  // ── AAVE V4 — via GraphQL API (quantities + HF ao vivo) ─────────
+  // api.aave.com/graphql: userSummary + userSupplies + userBorrows
+  // APYs via V3 DataProvider (mesmos ativos, taxas compatíveis)
   async function fetchAaveApys() {
     const sel = '0x35ea6a75';
     async function rateOf(asset) {
@@ -1727,60 +1727,82 @@ function toggleLang() {
     return { weth, usdt, usdc };
   }
 
-  // ── AAVE V4 ─────────────────────────────────────────────────────
-  // ── AAVE V4 — lê balanceOf() direto nos aTokens (ERC-20 padrão, sempre funciona) ──
-  // aWETH V4 · aUSDT V4 · variableDebtUSDC V4 — endereços do contrato do AAVE V4 Ethereum
-  const AWETH_TOKEN = '0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8';
-  const AUSDT_TOKEN = '0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a';
-  const VDEBT_USDC  = '0x72E95b8931767C79bA4EeE721354d6E99a61D004';
-  const BAL_SEL     = '0x70a08231'; // balanceOf(address)
-
   async function fetchAave(ethPrice) {
     try {
       const ep = ethPrice || liveEth || 2000;
-      const wd = BAL_SEL + padAddr(AAVE_WALLET);
 
-      // Busca balances dos aTokens + APYs em paralelo
-      const [wethRaw, usdtRaw, usdcRaw, apys] = await Promise.all([
-        rpc(ETH_RPC, 'eth_call', [{to: AWETH_TOKEN, data: wd}, 'latest']),
-        rpc(ETH_RPC, 'eth_call', [{to: AUSDT_TOKEN, data: wd}, 'latest']),
-        rpc(ETH_RPC, 'eth_call', [{to: VDEBT_USDC,  data: wd}, 'latest']),
+      // GraphQL query: summary (HF+totals) + supplies + borrows em paralelo com APYs
+      const AAVE_GQL = 'https://api.aave.com/graphql';
+      const gqlQuery = `{
+        userSummary(request: { user: "${AAVE_WALLET}" }) {
+          totalCollateral { value }
+          totalDebt { value }
+          lowestHealthFactor
+        }
+        userSupplies(request: {
+          query: { userChains: { user: "${AAVE_WALLET}", chainIds: [1] } },
+          orderBy: { amount: DESC },
+          includeZeroBalances: false
+        }) { balance { amount { value } token { address } } }
+        userBorrows(request: {
+          query: { userChains: { user: "${AAVE_WALLET}", chainIds: [1] } },
+          orderBy: { amount: DESC },
+          includeZeroBalances: false
+        }) { debt { amount { value } token { address } } }
+      }`;
+
+      const [gqlResp, apys] = await Promise.all([
+        fetch(AAVE_GQL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: gqlQuery })
+        }),
         fetchAaveApys().catch(() => null)
       ]);
 
-      // Parse: aWETH=18dec, aUSDT=6dec, variableDebtUSDC=6dec
-      const wethQty = decNum(decUint(wethRaw, 0), 18);
-      const usdtQty = decNum(decUint(usdtRaw, 0), 6);
-      const usdcQty = decNum(decUint(usdcRaw, 0), 6);
+      const gqlData = await gqlResp.json();
+      if (gqlData.errors) throw new Error(gqlData.errors[0].message);
 
-      // Sanity checks — valores fora desse range = RPC falhou
-      if (wethQty < 0.01 || wethQty > 50)      { console.warn('[AAVE] wethQty fora do range:', wethQty); return null; }
-      if (usdtQty < 100  || usdtQty > 100000)   { console.warn('[AAVE] usdtQty fora do range:', usdtQty); return null; }
-      if (usdcQty < 1    || usdcQty > 20000)    { console.warn('[AAVE] usdcQty fora do range:', usdcQty); return null; }
+      const summary  = gqlData.data.userSummary;
+      const supplies = gqlData.data.userSupplies || [];
+      const brrws    = gqlData.data.userBorrows  || [];
 
-      const ethUsd   = wethQty * ep;
-      const totalColl = ethUsd + usdtQty;
-      const totalDebt = usdcQty;
+      // Totals from GraphQL
+      const totalColl = parseFloat(summary.totalCollateral.value);
+      const totalDebt = parseFloat(summary.totalDebt.value);
+      const hf        = parseFloat(summary.lowestHealthFactor);
+
+      // Per-asset quantities
+      const WETH_N = WETH_ADDR.toLowerCase();
+      const USDT_N = USDT_ADDR.toLowerCase();
+      const USDC_N = USDC_ADDR.toLowerCase();
+      let wethQty = 0, usdtQty = 0, usdcQty = 0;
+      supplies.forEach(s => {
+        const addr = (s.balance.token.address || '').toLowerCase();
+        if (addr === WETH_N) wethQty = parseFloat(s.balance.amount.value);
+        if (addr === USDT_N) usdtQty = parseFloat(s.balance.amount.value);
+      });
+      brrws.forEach(b => {
+        const addr = (b.debt.token.address || '').toLowerCase();
+        if (addr === USDC_N) usdcQty = parseFloat(b.debt.amount.value);
+      });
+
+      // Sanity checks
+      if (!isFinite(hf) || !isFinite(totalColl) || !isFinite(totalDebt)) { console.warn('[AAVE] non-finite values'); return null; }
+      if (totalColl < 100) { console.warn('[AAVE] totalColl < $100:', totalColl); return null; }
+      if (hf > 1e15)       { console.warn('[AAVE] HF suspiciously high:', hf); return null; }
+
+      const ethUsd    = wethQty > 0 ? wethQty * ep : totalColl - usdtQty;
       const net       = totalColl - totalDebt;
       const ltv       = totalColl > 0 ? (totalDebt / totalColl * 100) : 0;
-
-      // HF calculado: (WETH×LT_WETH + USDT×LT_USDT) / dívida   (AAVE V4 LTs: WETH 82.5%, USDT 77.5%)
-      const hf = totalDebt > 0 ? (ethUsd * 0.825 + usdtQty * 0.775) / totalDebt : 99;
       const borrowPwr = totalColl > 0 ? (totalDebt / (totalColl * 0.825) * 100) : 0;
 
-      console.log(`[AAVE V4 ✓] WETH=${wethQty.toFixed(3)} USDT=${usdtQty.toFixed(0)} USDC_debt=${usdcQty.toFixed(2)} HF=${hf.toFixed(2)} LTV=${ltv.toFixed(1)}%`);
+      console.log(`[AAVE V4 GQL ✓] WETH=${wethQty.toFixed(3)} USDT=${usdtQty.toFixed(0)} USDC_debt=${usdcQty.toFixed(2)} HF=${hf.toFixed(2)} LTV=${ltv.toFixed(1)}%`);
 
       // APYs (ao vivo do DataProvider, fallback para valores conhecidos)
       const wethApy = (apys?.weth?.supply > 0.01) ? apys.weth.supply : 2.50;
       const usdtApy = (apys?.usdt?.supply > 0.01) ? apys.usdt.supply : 1.77;
       const usdcApy = (apys?.usdc?.borrow > 0.01) ? apys.usdc.borrow : 3.79;
-
-      // APYs (fallback para valores conhecidos)
-      const wethApy = (apys?.weth?.supply > 0) ? apys.weth.supply : 2.50;
-      const usdtApy = (apys?.usdt?.supply > 0) ? apys.usdt.supply : 1.77;
-      const usdcApy = (apys?.usdc?.borrow > 0) ? apys.usdc.borrow : 3.79;
-
-      const ethUsd = wethQty * ep;
 
       // ── Update UI ────────────────────────────────────────────────
       // Supply
@@ -1830,6 +1852,10 @@ function toggleLang() {
       window._liveAaveHF          = hf;
       window._liveAaveDebt        = totalDebt;
       window._liveAaveCollateral  = totalColl;
+      window._liveAaveWethQty     = wethQty;
+      window._liveAaveUsdtQty     = usdtQty;
+      window._liveAaveWethApy     = wethApy;
+      window._liveAaveUsdtApy     = usdtApy;
       return { collateral: totalColl, debt: totalDebt, hf, ltv };
     } catch(e) {
       console.warn('[AAVE V4] failed:', e.message);
@@ -1838,49 +1864,62 @@ function toggleLang() {
   }
 
   // ── Kamino Finance ───────────────────────────────────────────────
+  // Endpoint: /kamino-market/{market}/users/{wallet}/obligations → obligation address
+  // Then: /klend/loans/{obligationAddress} → human-readable deposit/borrow data
+  // APYs: /kamino-market/{market}/reserves/metrics
   async function fetchKamino(solPrice) {
     try {
-      const r = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
-      if (!r.ok) throw new Error('Kamino API ' + r.status);
-      const kData = await r.json();
-      if (!kData || !kData.length) throw new Error('no obligations');
+      const MARKET   = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
+      const SOL_MINT = 'So11111111111111111111111111111111111111112';
+      const USDS_MINT= 'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA';
+      const USDC_MINT= 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
-      const obligation = kData[0];
-      const deposits   = obligation.deposits || [];
-      const borrows    = obligation.borrows  || [];
-      const SOL_MINT   = 'So11111111111111111111111111111111111111112';
-      const USDS_MINT  = '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo';
+      // Step 1: obligation address + reserves APYs in parallel
+      const [oblResp, resResp] = await Promise.all([
+        fetch(`https://api.kamino.finance/kamino-market/${MARKET}/users/${SOL_WALLET}/obligations`),
+        fetch(`https://api.kamino.finance/kamino-market/${MARKET}/reserves/metrics`)
+      ]);
+      if (!oblResp.ok) throw new Error('Obligations API ' + oblResp.status);
+      const obligations = await oblResp.json();
+      if (!obligations || !obligations.length) throw new Error('no obligations');
+      const obligationAddress = obligations[0].obligationAddress;
+
+      // Step 2: loan details (human-readable amounts & values)
+      const loanResp = await fetch(`https://api.kamino.finance/klend/loans/${obligationAddress}`);
+      if (!loanResp.ok) throw new Error('Loan API ' + loanResp.status);
+      const loan = await loanResp.json();
+
+      const deposits = loan.loanInfo?.collateral?.deposits || [];
+      const borrows  = loan.loanInfo?.debt?.borrows || [];
 
       let totalDeposit = 0, totalBorrow = 0, solQty = 0, usdsQty = 0;
-      let solApy = 0, usdsApy = 0, borrowApy = 0;
       deposits.forEach(d => {
-        const usd = parseFloat(d.marketValueRefreshed || d.marketValue || 0);
-        totalDeposit += usd;
-        if (d.mintAddress === SOL_MINT) {
-          solQty  += parseFloat(d.amount || 0);
-          // Kamino API: supplyInterestAPY ou apy (decimal, ex: 0.0319 = 3.19%)
-          const apy = parseFloat(d.supplyInterestAPY || d.apy || d.supplyApy || 0);
-          if (apy > 0) solApy = apy * 100;
-        }
-        if (d.mintAddress === USDS_MINT) {
-          usdsQty += parseFloat(d.amount || 0);
-          const apy = parseFloat(d.supplyInterestAPY || d.apy || d.supplyApy || 0);
-          if (apy > 0) usdsApy = apy * 100;
-        }
+        const val = parseFloat(d.tokenValue || 0);
+        totalDeposit += val;
+        if (d.tokenMint === SOL_MINT)  solQty  = parseFloat(d.tokenAmount || 0);
+        if (d.tokenMint === USDS_MINT) usdsQty = parseFloat(d.tokenAmount || 0);
       });
-      borrows.forEach(b => {
-        totalBorrow += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
-        const apy = parseFloat(b.borrowInterestAPY || b.apy || b.borrowApy || 0);
-        if (apy > 0) borrowApy = apy * 100;
-      });
-      // Fallback para valores informados pelo usuário se API não retornar APY
-      if (solApy === 0)    solApy    = 5.26;
-      if (usdsApy === 0)   usdsApy   = 4.61;
-      if (borrowApy === 0) borrowApy = 4.64;
+      borrows.forEach(b => { totalBorrow += parseFloat(b.tokenValue || 0); });
 
+      // Step 3: APYs from reserves metrics
+      let solApy = 5.26, usdsApy = 4.61, borrowApy = 4.64;
+      if (resResp.ok) {
+        const reserves = await resResp.json();
+        reserves.forEach(r => {
+          const apy = parseFloat(r.supplyApy || 0) * 100;
+          const bapy= parseFloat(r.borrowApy || 0) * 100;
+          if (r.liquidityTokenMint === SOL_MINT  && apy > 0) solApy   = apy;
+          if (r.liquidityTokenMint === USDS_MINT && apy > 0) usdsApy  = apy;
+          if (r.liquidityTokenMint === USDC_MINT && bapy> 0) borrowApy= bapy;
+        });
+      }
+
+      // Metrics from loan object (real on-chain values)
+      const ltvRaw = parseFloat(loan.loanInfo?.currentLtv || 0);
+      const liqLtvRaw = parseFloat(loan.loanInfo?.liquidationLtv || 0.7720);
+      const ltv    = ltvRaw * 100;
+      const liqLtv = liqLtvRaw * 100;
       const net    = totalDeposit - totalBorrow;
-      const ltv    = totalDeposit > 0 ? (totalBorrow / totalDeposit * 100) : 0;
-      const liqLtv = 77.20;
       const sp     = solPrice || window._liveSolPrice || 87;
       const liqPriceSol = totalBorrow > 0 && solQty > 0 ? (totalBorrow / (solQty * liqLtv / 100)).toFixed(2) : '—';
       const solUsd  = solQty * sp;
@@ -1927,12 +1966,57 @@ function toggleLang() {
       window._liveKaminoDeposit = totalDeposit;
       window._liveKaminoNetVal  = net;
       window._liveKaminoSol     = solQty;
+      window._liveKaminoUsds    = usdsQty;
       window._liveKaminoLtv     = ltv / 100;
+      window._liveKaminoSolApy  = solApy;
+      window._liveKaminoUsdsApy = usdsApy;
       return { totalDeposit, totalBorrow, net, solQty, ltv };
     } catch(e) {
       console.warn('[Kamino Emp] failed:', e.message);
       return null;
     }
+  }
+
+  // ── Yield Section ─────────────────────────────────────────────────
+  function updateYieldSection() {
+    const ep = window.liveEth || 2313;
+    const sp = window.liveSol  || 92;
+
+    // AAVE
+    const wethQty  = window._liveAaveWethQty  || 1.88;
+    const usdtQty  = window._liveAaveUsdtQty  || 1990;
+    const wethApy  = window._liveAaveWethApy  || 2.50;
+    const usdtApy  = window._liveAaveUsdtApy  || 1.77;
+    const aaveYield = ((wethQty * ep * wethApy / 100) + (usdtQty * usdtApy / 100)) / 12;
+
+    // Kamino
+    const solQty   = window._liveKaminoSol    || 20.42;
+    const usdsQty  = window._liveKaminoUsds   || 301;
+    const solApy   = window._liveKaminoSolApy || 6.52;
+    const usdsApy  = window._liveKaminoUsdsApy|| 4.66;
+    const kamYield = ((solQty * sp * solApy / 100) + (usdsQty * usdsApy / 100)) / 12;
+
+    const totalYield = aaveYield + kamYield;
+
+    // Dias em aberto — calculado pela data de abertura de cada ciclo
+    const now = Date.now();
+    const aaveDias  = Math.floor((now - new Date('2025-09-22').getTime()) / 86400000);
+    const kaminoDias= Math.floor((now - new Date('2026-01-01').getTime()) / 86400000);
+
+    // Update DOM
+    const fmt = v => '≈ $' + Math.round(v);
+    const el = id => document.getElementById(id);
+    if (el('yd-aave-yield'))     el('yd-aave-yield').textContent = fmt(aaveYield);
+    if (el('yd-aave-yield-sub')) el('yd-aave-yield-sub').textContent =
+      `${wethQty.toFixed(2)} WETH @ ${wethApy.toFixed(2)}% + ${Math.round(usdtQty).toLocaleString('en-US')} USDT @ ${usdtApy.toFixed(2)}%`;
+    if (el('yd-aave-dias'))      el('yd-aave-dias').textContent = aaveDias + ' dias';
+    if (el('yd-kamino-yield'))   el('yd-kamino-yield').textContent = fmt(kamYield);
+    if (el('yd-kamino-yield-sub')) el('yd-kamino-yield-sub').textContent =
+      `${solQty.toFixed(2)} SOL @ ${solApy.toFixed(2)}% + ${Math.round(usdsQty).toLocaleString('en-US')} USDS @ ${usdsApy.toFixed(2)}%`;
+    if (el('yd-kamino-dias'))    el('yd-kamino-dias').textContent = kaminoDias + ' dias';
+    if (el('yd-total-yield'))    el('yd-total-yield').textContent = fmt(totalYield);
+    if (el('yd-total-yield-sub')) el('yd-total-yield-sub').textContent =
+      `AAVE ${fmt(aaveYield)} · Kamino ${fmt(kamYield)}`;
   }
 
   // ── Run ──────────────────────────────────────────────────────────
@@ -1951,6 +2035,7 @@ function toggleLang() {
       console.warn('[LiveFetch Emp] price fetch failed, trying without price');
       await Promise.all([fetchAave(), fetchKamino()]);
     }
+    updateYieldSection();
   }
 
   const delay = document.readyState === 'loading' ? 2000 : 800;

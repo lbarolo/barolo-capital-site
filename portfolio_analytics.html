@@ -3529,75 +3529,74 @@ document.addEventListener('DOMContentLoaded',function(){
  }
  }
 
- // ── Kamino: fetch position via Helius DAS ────────────────────────
+ // ── Kamino: fetch position via Kamino API ────────────────────────
  async function fetchKamino() {
  try {
- // Use Helius DAS to get parsed account data for Kamino
- const r = await fetch(`${HELIUS_API}/addresses/${SOL_WALLET}/balances?api-key=${HELIUS_KEY}`);
- if (!r.ok) throw new Error('Helius balances ' + r.status);
- const data = await r.json();
+ const MARKET   = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
+ const SOL_MINT = 'So11111111111111111111111111111111111111112';
+ const USDS_MINT= 'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA';
+ const USDC_MINT= 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
- // Also try Kamino API directly
- const kaminoR = await fetch(`https://api.kamino.finance/user-metadata/${SOL_WALLET}/obligations`);
- if (kaminoR.ok) {
- const kData = await kaminoR.json();
- if (kData && kData.length > 0) {
- const obligation = kData[0];
- const deposits = obligation.deposits || [];
- const borrows = obligation.borrows || [];
+ // Step 1: obligation address + reserves APYs in parallel
+ const [oblResp, resResp] = await Promise.all([
+   fetch(`https://api.kamino.finance/kamino-market/${MARKET}/users/${SOL_WALLET}/obligations`),
+   fetch(`https://api.kamino.finance/kamino-market/${MARKET}/reserves/metrics`)
+ ]);
+ if (!oblResp.ok) throw new Error('Obligations API ' + oblResp.status);
+ const obligations = await oblResp.json();
+ if (!obligations || !obligations.length) throw new Error('no obligations');
+ const obligationAddress = obligations[0].obligationAddress;
 
- let totalDepositUsd = 0;
- let totalBorrowUsd = 0;
- let solQty = 0;
+ // Step 2: loan details
+ const loanResp = await fetch(`https://api.kamino.finance/klend/loans/${obligationAddress}`);
+ if (!loanResp.ok) throw new Error('Loan API ' + loanResp.status);
+ const loan = await loanResp.json();
 
- const SOL_MINT  = 'So11111111111111111111111111111111111111112';
- const USDS_MINT = 'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA';
+ const deposits = loan.loanInfo?.collateral?.deposits || [];
+ const borrows  = loan.loanInfo?.debt?.borrows || [];
+
+ let totalDepositUsd = 0, totalBorrowUsd = 0, solQty = 0;
  deposits.forEach(d => {
- totalDepositUsd += parseFloat(d.marketValueRefreshed || d.marketValue || 0);
- if (d.mintAddress === SOL_MINT) {
-   solQty += parseFloat(d.amount || 0);
-   const apy = parseFloat(d.supplyInterestAPY || d.apy || d.supplyApy || 0) * 100;
-   if (apy > 0 && apy < 50) window._liveKaminoSolApy = apy;
- }
- if (d.mintAddress === USDS_MINT) {
-   const apy = parseFloat(d.supplyInterestAPY || d.apy || d.supplyApy || 0) * 100;
-   if (apy > 0 && apy < 50) window._liveKaminoUsdsApy = apy;
- }
+   const val = parseFloat(d.tokenValue || 0);
+   totalDepositUsd += val;
+   if (d.tokenMint === SOL_MINT) solQty = parseFloat(d.tokenAmount || 0);
  });
- borrows.forEach(b => {
- totalBorrowUsd += parseFloat(b.marketValueRefreshed || b.marketValue || 0);
- const apy = parseFloat(b.borrowInterestAPY || b.apy || b.borrowApy || 0) * 100;
- if (apy > 0 && apy < 50) window._liveKaminoBorrowApy = apy;
- });
+ borrows.forEach(b => { totalBorrowUsd += parseFloat(b.tokenValue || 0); });
+
+ // Step 3: APYs from reserves
+ if (resResp.ok) {
+   const reserves = await resResp.json();
+   reserves.forEach(r => {
+     const apy = parseFloat(r.supplyApy || 0) * 100;
+     const bapy= parseFloat(r.borrowApy || 0) * 100;
+     if (r.liquidityTokenMint === SOL_MINT  && apy  > 0 && apy  < 50) window._liveKaminoSolApy   = apy;
+     if (r.liquidityTokenMint === USDS_MINT && apy  > 0 && apy  < 50) window._liveKaminoUsdsApy  = apy;
+     if (r.liquidityTokenMint === USDC_MINT && bapy > 0 && bapy < 50) window._liveKaminoBorrowApy = bapy;
+   });
+ }
 
  const netValue = totalDepositUsd - totalBorrowUsd;
  const ltv = totalDepositUsd > 0 ? totalBorrowUsd / totalDepositUsd : 0;
 
  console.log(`[Kamino] Deposits: $${totalDepositUsd.toFixed(2)}, Borrows: $${totalBorrowUsd.toFixed(2)}, SOL: ${solQty.toFixed(3)}, LTV: ${(ltv*100).toFixed(1)}%`);
 
- window._liveKaminoDebt = totalBorrowUsd;
+ if (totalDepositUsd < 100) { console.warn('[Kamino] Sanity: deposit too low, discarding'); return null; }
+
+ window._liveKaminoDebt    = totalBorrowUsd;
  window._liveKaminoDeposit = totalDepositUsd;
- window._liveKaminoNetVal = netValue;
- window._liveKaminoSol = solQty;
- window._liveKaminoLtv = ltv;
+ window._liveKaminoNetVal  = netValue;
+ window._liveKaminoSol     = solQty;
+ window._liveKaminoLtv     = ltv;
 
  // Update Kamino UI
  setEl('kamino-net-val', fmtK(netValue));
  const ltvEl = document.getElementById('kamino-ltv-bar');
  if (ltvEl) {
- const fill = ltvEl.querySelector('.bar-fill');
- if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
+   const fill = ltvEl.querySelector('.bar-fill');
+   if (fill) fill.style.width = Math.min(ltv*100, 100).toFixed(1) + '%';
  }
 
  return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
- }
- }
-
- // Fallback: use static values
- console.warn('[Kamino] API returned no data, using static fallback');
- window._liveKaminoDebt = window._liveKaminoDebt || 808.77;
- window._liveKaminoDeposit = window._liveKaminoDeposit || 1852.04;
- return null;
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
  window._liveKaminoDebt = window._liveKaminoDebt || 808.77;
