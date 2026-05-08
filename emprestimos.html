@@ -717,6 +717,40 @@ body, input, button, select, textarea {
  </div>
 </div>
 
+<!-- ══ YIELD MENSAL DESTACADO ══ -->
+<div class="section-label">Rendimento — Yield Mensal + Dias Emprestado</div>
+<div class="kpi-row">
+ <!-- AAVE Yield -->
+ <div class="kpi-card" style="background:rgba(138,104,32,0.08);border-color:rgba(138,104,32,0.3);">
+  <div class="kpi-lbl" style="color:var(--accent);">AAVE — Yield Mensal</div>
+  <div class="kpi-val" style="color:var(--accent);">≈ $57</div>
+  <div class="kpi-sub">1.88 WETH @ 2.50% + 1,986 USDT @ 9.26%</div>
+ </div>
+ <!-- AAVE Dias -->
+ <div class="kpi-card">
+  <div class="kpi-lbl">AAVE — Dias em Aberto</div>
+  <div class="kpi-val pos">228 dias</div>
+  <div class="kpi-sub">Set 2025 – Hoje | Ciclo A3</div>
+ </div>
+ <!-- Kamino Yield -->
+ <div class="kpi-card" style="background:rgba(63,185,80,0.08);border-color:rgba(63,185,80,0.3);">
+  <div class="kpi-lbl" style="color:var(--green);">KAMINO — Yield Mensal</div>
+  <div class="kpi-val" style="color:var(--green);">≈ $103</div>
+  <div class="kpi-sub">20.42 SOL @ 5.26% + 301 USDS @ 4.61%</div>
+ </div>
+ <!-- Kamino Dias -->
+ <div class="kpi-card">
+  <div class="kpi-lbl">KAMINO — Dias em Aberto</div>
+  <div class="kpi-val pos">128 dias</div>
+  <div class="kpi-sub">Jan 2026 – Hoje | Ciclo K4</div>
+ </div>
+ <!-- Total Mensal -->
+ <div class="kpi-card" style="background:linear-gradient(135deg,rgba(201,160,80,0.12),rgba(63,185,80,0.08));border-color:rgba(201,160,80,0.25);">
+  <div class="kpi-lbl" style="color:var(--accent);">TOTAL — Yield Mensal</div>
+  <div class="kpi-val" style="color:var(--accent);">≈ $160</div>
+  <div class="kpi-sub">Ambas as posições combinadas</div>
+ </div>
+</div>
 
 <!-- ══ COLATERAL HISTORY ══ -->
 <div class="section-label">Colateral — Entradas de ETH no AAVE (cronológico)</div>
@@ -1709,8 +1743,8 @@ function toggleLang() {
       ]);
 
       // Parse MAIN_SPOKE — has the borrow, so gives real HF
-      const mainColl = decNum(decUint(mainRaw, 3), 26);  // V4: USD-8dec × RAY/1e9 → 1e26
-      const mainDebt = decNum(decUint(mainRaw, 4), 35);  // V4: USD-8dec × RAY → 1e35
+      const mainColl = decNum(decUint(mainRaw, 3), 8);   // V4: totalCollateral em USD (8 decimais)
+      const mainDebt = decNum(decUint(mainRaw, 4), 27);  // V4: totalDebtRay em RAY (1e27)
       const mainHF   = decNum(decUint(mainRaw, 2), 18);  // WAD = 1e18
       const mainAvgCF= decNum(decUint(mainRaw, 1), 18);  // avgCollateralFactor WAD
 
