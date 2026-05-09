@@ -2731,3 +2731,82 @@ Nenhum dado de posição alterado nesta sessão. Apenas refinamentos visuais.
 
 ---
 
+## Sessão 08–09/05/2026 — Code review geral: AAVE V4 GraphQL + Kamino novo endpoint (3 arquivos)
+
+### Contexto
+Sessão iniciada com revisão geral de código ("ver se está tudo rodando certinho, sem erros, e atualizando automaticamente da blockchain"). Encontrados dois bugs críticos que impediam todos os fetches ao vivo de funcionar.
+
+### Bugs corrigidos
+
+#### `emprestimos.html` — SyntaxError por `const` duplicado em `fetchAave()` (vinha da sessão anterior)
+- Duas declarações idênticas de `wethApy`, `usdtApy`, `usdcApy`, `ethUsd` dentro do mesmo bloco `try`
+- JavaScript ParseError silencioso: função parseada como `undefined`, nunca executada
+- Fix: bloco duplicado removido (mantida apenas a primeira declaração em linha ~1774)
+
+#### `emprestimos.html` — Yield section hardcoded (sem IDs, sem atualização ao vivo)
+- "228 dias", "128 dias", "≈ $57", "≈ $115" eram strings estáticas no HTML sem IDs
+- Fix: IDs adicionados a todos os valores (`yd-aave-yield`, `yd-kamino-yield`, etc.) + função `updateYieldSection()` que calcula dinamicamente e é chamada em `runFetch()`
+
+#### AAVE V4 — V3 aToken addresses retornando 0 (causa raiz da zeragem)
+- `AWETH_TOKEN = '0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8'` (V3 aWETH) e `AUSDT_TOKEN = '0x23878914EFE38d27C4D67Ab83ed1b93A74D4086a'` (V3 aUSDT) retornam 0 porque a posição foi migrada para V4
+- Todos os sanity checks falhavam (`wethQty < 0.01`), `fetchAave()` retornava `null`, UI mostrava dados estáticos
+- **Fix:** `fetchAave()` substituído completamente — agora usa `api.aave.com/graphql`:
+  - `userSummary` → `totalCollateral.value`, `totalDebt.value`, `lowestHealthFactor`
+  - `userSupplies` → wethQty (`0xC02a...` = WETH), usdtQty (`0xdAC1...` = USDT)
+  - `userBorrows` → usdcQty (`0xA0b8...` = USDC)
+  - Tudo em paralelo com `fetchAaveApys()` (DataProvider, sem alteração)
+- **Resultado verificado:** `WETH=1.884 USDT=1992 USDC_debt=750.66 HF=6.88`
+
+#### Kamino — `/user-metadata/{wallet}/obligations` retornando 404 (endpoint descontinuado)
+- API Kamino mudou: endpoint antigo deprecado, dados não disponíveis nesta rota
+- **Fix:** novo fluxo em 2 passos:
+  1. `/kamino-market/{market}/users/{wallet}/obligations` → `obligationAddress`
+  2. `/klend/loans/{obligationAddress}` → `tokenAmount`, `tokenValue`, `currentLtv`, `liquidationLtv`
+  3. `/kamino-market/{market}/reserves/metrics` → `supplyApy`, `borrowApy` por mint
+- **Resultado verificado:** `Deposit $2182 Borrow $809 SOL 20.43 LTV 37.1%`
+- Aplicado em **3 arquivos**: `emprestimos.html`, `portfolio_analytics.html`, `pools.html`
+  - Em `pools.html` também corrigido `USER_WALLET` (era `xXfd2g...` = obligation address, não wallet Solana) → `Fq1F49...` (wallet correto)
+  - `FIXED.solQty 19.33 → 20.42`, `FIXED.debtUsd 804.22 → 808.77`
+
+### AAVE GraphQL API — campos descobertos via introspection
+
+| Tipo | Campo | Formato |
+|------|-------|---------|
+| `userSummary` | `totalCollateral { value }` | String decimal USD |
+| `userSummary` | `totalDebt { value }` | String decimal USD |
+| `userSummary` | `lowestHealthFactor` | BigDecimal (sem subfields) |
+| `userSupplies request` | `query: { userChains: { user, chainIds: [1] } }` | Oneof input |
+| `userSupplies request` | `orderBy: { amount: DESC }` | Input object |
+| `UserSupplyItem` | `balance { amount { value } token { address } }` | Endereço lowercase |
+| `userBorrows` | `debt { amount { value } token { address } }` | Mesmo padrão |
+
+### Kamino API — endpoints ativos descobertos
+
+| Endpoint | Retorna |
+|----------|---------|
+| `/kamino-market/{market}/users/{wallet}/obligations` | Lista de obligations com `obligationAddress` |
+| `/klend/loans/{obligationAddress}` | `loanInfo.collateral.deposits[].{tokenMint, tokenAmount, tokenValue}` + `loanInfo.debt.borrows[]` + `loanInfo.currentLtv` + `loanInfo.liquidationLtv` |
+| `/kamino-market/{market}/reserves/metrics` | `{ liquidityTokenMint, supplyApy, borrowApy }[]` |
+
+### Globals verificados após fix
+
+```json
+{ "aaveHF": 6.88, "aaveDebt": 750.57, "aaveWeth": 1.884, "aaveUsdt": 1992.4,
+  "kaminoDebt": 809.24, "kaminoDeposit": 2182.48, "kaminoSol": 20.43 }
+```
+
+### Commit
+- **`339d8e4`** — `fix: AAVE V4 GraphQL API + Kamino new endpoint (all 3 files)`
+
+### O que ainda falta
+
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
+- **CSVs das CEX** — Lucas traz para custo BRL + IR
+- **i18n painel Sizing & Risk** — labels só em PT; falta strings EN
+- **Validar `calcLevHedge()`** com cenários reais
+- **Mentoria DeFi avançado** — Euler V2, Morpho, Gearbox, Drift, Hyperliquid HLP, Pendle PT
+- **Distribuição de liquidez real** — a atual é sintética (track.html)
+- **Track.html responsividade mobile** — charts podem sair do quadro em telas pequenas
+
+---
+
