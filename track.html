@@ -737,7 +737,7 @@
           <span class="net-dot" style="background:#4fa8ff"></span>Base
         </span>
       </div>
-      <div class="ap-meta" id="ap-opened">Aberta 18/03/2026 · atualizando…</div>
+      <div class="ap-meta" id="ap-opened">Aberta 24/02/2026 · atualizando…</div>
     </div>
 
 
@@ -1002,7 +1002,7 @@ const NET_C = {
 const POOLS = [
   // ── ATIVA ──
   { id:1,  pair:'WETH/USDC', fee:'0.30%', proto:'Uniswap V3', net:'Base',
-    open:'18/03/2026', close:null, days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),
+    open:'24/02/2026', close:null, days:(function(){var d=new Date()-new Date('2026-03-18');return Math.max(1,Math.floor(d/86400000));})(),
     capital:365, fees:21.11, il:-23.50, result:-2.39, status:'ativa',
     wallet:'0x5Ff957…4AE4B6',
     range:'$1,855 – $3,146 (saída gradual ETH→USDC)',
@@ -1010,7 +1010,7 @@ const POOLS = [
 
   // ── 2026 (fechadas) ──
   { id:2,  pair:'ETH/USDC',  fee:'0.30%', proto:'Uniswap V3', net:'Base',
-    open:'30/01/2026', close:'18/03/2026', days:25, capital:453, fees:16, il:0, result:16, status:'fechada',
+    open:'30/01/2026', close:'24/02/2026', days:25, capital:453, fees:16, il:0, result:16, status:'fechada',
     wallet:'0x5Ff957…4AE4B6', range:null, notes:null },
 
   { id:3,  pair:'SOL/USDT',  fee:'0.01%', proto:'Orca',       net:'Solana',
@@ -1210,8 +1210,8 @@ function computeKPIs() {
   document.getElementById('c-ativa').textContent  = na;
   document.getElementById('c-fechada').textContent = nf;
 
-  // Dias em funcionamento (pool aberta em 18/03/2026)
-  const openDate = new Date(2026, 2, 18);
+  // Dias em funcionamento (pool aberta em 24/02/2026)
+  const openDate = new Date(2026, 1, 24);
   const today = new Date();
   const days = Math.floor((today - openDate) / (1000 * 60 * 60 * 24));
   const daysEl = document.getElementById('kpi-days');
@@ -1441,7 +1441,7 @@ async function fetchLiveActivePool() {
   const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
   const TOKEN_ID = 4694262;
   const ENTRY_CAPITAL = 365;
-  const OPEN_TS  = new Date('2026-03-18T17:40:00').getTime() / 1000;
+  const OPEN_TS  = new Date('2026-02-24T17:40:00').getTime() / 1000;
   const RPCS = [
     'https://base-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7',
     'https://mainnet.base.org',
@@ -1496,7 +1496,7 @@ async function fetchLiveActivePool() {
   else               { a0 = liq*Q96*(spU-sqP)/(sqP*spU); a1 = liq*(sqP-spL)/Q96; }
   const wethA = Number(a0)/1e18, usdcA = Number(a1)/1e6;
 
-  // 6. Uncollected fees (no Collect events — uncollected = total since 18/03/2026)
+  // 6. Uncollected fees (no Collect events — uncollected = total since 24/02/2026)
   const fgi = (fgG,foL,foU,tLow,tUp,tCur) => {
     const bl = tCur>=tLow ? foL : m256(fgG-foL);
     const ab = tCur<tUp   ? foU : m256(fgG-foU);
@@ -1514,7 +1514,7 @@ async function fetchLiveActivePool() {
   const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
 
   // 8. Patch POOLS[0] with live numbers
-  const ENTRY_WETH = 0.17; // entrada 100% WETH em 18/03/2026 ($365)
+  const ENTRY_WETH = 0.17; // entrada 100% WETH em 24/02/2026 ($365)
   const hodlValue  = ENTRY_WETH * eth;
   const divLoss    = pooledUsd - hodlValue;   // negativo = IL
   const vsHodl     = uncFeeUsd + divLoss;
@@ -1558,7 +1558,7 @@ async function fetchLiveActivePool() {
     const u = v => `<div class="ap-usd">${fmtUsd(v, 2)}</div>`;
 
     // opened line
-    s('ap-opened', `Aberta 18/03/2026 · ${days.toFixed(1)}d · <span class="live-dot" style="vertical-align:middle"></span> ao vivo`);
+    s('ap-opened', `Aberta 24/02/2026 · ${days.toFixed(1)}d · <span class="live-dot" style="vertical-align:middle"></span> ao vivo`);
 
     // Benchmark scenarios for Divergence Loss
     const totalPosVal  = pooledUsd + uncFeeUsd;
