@@ -3914,7 +3914,7 @@ function buildNetRanking() {
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
- const STABLES = 2441.13; // USDT 2140.12 + USDS 301.01
+ const STABLES = 2536.59; // USDT 2235.58 + USDS 301.01
  const LP_POOLED = window._liveLP || 380;
  const DEBT = (window._liveAaveDebt || 750.16) + (window._liveKaminoDebt || 808.77);
  const total = spot + STABLES + LP_POOLED - DEBT;
