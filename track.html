@@ -2370,6 +2370,8 @@ function toggleTheme() {
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async function init() {
+  console.log('[Track] DOMContentLoaded iniciado');
+
   const saved = localStorage.getItem('bc-theme');
   if (saved) {
     document.documentElement.setAttribute('data-theme', saved);
@@ -2384,20 +2386,26 @@ document.addEventListener('DOMContentLoaded', async function init() {
   renderTable();
 
   // live on-chain fetch — Base RPC (BLOCKING: aguarda antes de mostrar)
+  console.log('[Track] Iniciando fetch da pool ativa...');
   try {
     await fetchLiveActivePool();
-    console.log('[Track] Pool ativa carregada com sucesso');
+    console.log('[Track] ✅ Pool ativa carregada com sucesso');
   } catch(e) {
-    console.error('[Track] Erro ao carregar pool:', e.message);
+    console.error('[Track] ❌ Erro ao carregar pool:', e.message, e);
     // Mostra panel mesmo com erro para fallback
     const panel = document.getElementById('apPanel');
-    if (panel) panel.style.display = '';
+    if (panel) {
+      panel.style.display = '';
+      console.log('[Track] Painel exibido em modo fallback');
+    }
   }
 
   // auto-refresh a cada 2 minutos
   setInterval(() => {
     fetchLiveActivePool().catch(e => console.debug('[Track] refresh failed:', e.message));
   }, 120000);
+
+  console.log('[Track] Init completo');
 });
 </script>
 </body>
