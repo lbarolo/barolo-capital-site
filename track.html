@@ -2369,7 +2369,7 @@ function toggleTheme() {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
-(function init() {
+document.addEventListener('DOMContentLoaded', async function init() {
   const saved = localStorage.getItem('bc-theme');
   if (saved) {
     document.documentElement.setAttribute('data-theme', saved);
@@ -2383,14 +2383,22 @@ function toggleTheme() {
   document.getElementById('sa-id') && (document.getElementById('sa-id').textContent = '▼');
   renderTable();
 
-  // live on-chain fetch — Base RPC (async, non-blocking)
-  fetchLiveActivePool().catch(e => console.debug('[Track] live pool fetch failed:', e.message));
+  // live on-chain fetch — Base RPC (BLOCKING: aguarda antes de mostrar)
+  try {
+    await fetchLiveActivePool();
+    console.log('[Track] Pool ativa carregada com sucesso');
+  } catch(e) {
+    console.error('[Track] Erro ao carregar pool:', e.message);
+    // Mostra panel mesmo com erro para fallback
+    const panel = document.getElementById('apPanel');
+    if (panel) panel.style.display = '';
+  }
 
   // auto-refresh a cada 2 minutos
   setInterval(() => {
     fetchLiveActivePool().catch(e => console.debug('[Track] refresh failed:', e.message));
   }, 120000);
-})();
+});
 </script>
 </body>
 </html>
