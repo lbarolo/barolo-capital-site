@@ -1175,6 +1175,14 @@ function toggleMobile() {
 
   var INITIAL_CAPITAL = 1061; // primeiro capital registrado (Jan/2022, wealthCurve.invested[0])
 
+  function calculateCAGR(netWorth) {
+    var start = new Date(2022, 0, 1); // Jan 1, 2022
+    var end = new Date();
+    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
+    if (years <= 0 || netWorth <= 0) return 0;
+    return (Math.pow(netWorth / INITIAL_CAPITAL, 1 / years) - 1) * 100;
+  }
+
   function updateHeroReturn(prices) {
     var spotVal = 0;
     HOLDINGS.forEach(function(h) {
@@ -1183,9 +1191,9 @@ function toggleMobile() {
     });
     if (spotVal === 0) return;
     var netWorth = spotVal + STABLES_USD + LP_POOLED - TOTAL_DEBT;
-    var roi = (netWorth / INITIAL_CAPITAL - 1) * 100;
+    var cagr = calculateCAGR(netWorth);
     var el = document.getElementById('heroReturn');
-    if (el) el.textContent = (roi >= 0 ? '+' : '') + roi.toFixed(1) + '%';
+    if (el) el.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%';
   }
 
   // IDs de todos os tokens para fetch (ticker + portfolio)

@@ -652,6 +652,11 @@ body, input, button, select, textarea {
  <div class="hero-meta-val pos" id="s-best24h">—</div>
  <div style="font-size:8px;color:var(--muted);" id="s-best24h-sub">—</div>
  </div>
+ <div class="hero-meta-item">
+ <div class="hero-meta-label">CAGR DESDE 2022</div>
+ <div class="hero-meta-val acc" id="s-cagr">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-cagr-sub">ao ano</div>
+ </div>
  </div>
 </div>
 
@@ -1420,6 +1425,18 @@ function renderUI(enriched){
    if(b24El){ b24El.textContent = gainSign+fmtCurrency(Math.abs(best24.gain),2); b24El.className='hero-meta-val '+(best24.gain>=0?'pos':'neg'); }
    set('s-best24h-sub', best24.a.ticker+' '+gainSign+(best24.a.change24h||0).toFixed(2)+'%');
  }
+
+ // CAGR desde 2022
+ (function(){
+   var start = new Date(2022, 0, 1);
+   var end = new Date();
+   var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
+   if (years > 0 && netTotal > 0 && TOTAL_INVESTED > 0) {
+     var cagr = (Math.pow(netTotal / TOTAL_INVESTED, 1 / years) - 1) * 100;
+     var cagrEl = document.getElementById('s-cagr');
+     if(cagrEl){ cagrEl.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%'; cagrEl.className = 'hero-meta-val acc ' + (cagr >= 0 ? 'pos' : 'neg'); }
+   }
+ })();
 
  // ── EXEC BAR ──
  (function(){
