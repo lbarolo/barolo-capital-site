@@ -661,6 +661,7 @@
   <div class="nav-right">
     <button class="btn-sm" onclick="window.print()" title="Exportar como PDF">📄 PDF</button>
     <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
+    <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
   </div>
 </nav>
 
@@ -2363,7 +2364,8 @@ function toggleTheme() {
   const html = document.documentElement;
   const dark = html.getAttribute('data-theme') === 'dark';
   html.setAttribute('data-theme', dark ? 'light' : 'dark');
-  document.getElementById('themeBtn').textContent = dark ? '☀' : '☾';
+  const themeBtn = document.getElementById('themeBtn');
+  if (themeBtn) themeBtn.textContent = dark ? '☀' : '☾';
   localStorage.setItem('bc-theme', dark ? 'light' : 'dark');
 }
 
@@ -2375,7 +2377,8 @@ document.addEventListener('DOMContentLoaded', async function init() {
   const saved = localStorage.getItem('bc-theme');
   if (saved) {
     document.documentElement.setAttribute('data-theme', saved);
-    document.getElementById('themeBtn').textContent = saved === 'dark' ? '☾' : '☀';
+    const themeBtn = document.getElementById('themeBtn');
+    if (themeBtn) themeBtn.textContent = saved === 'dark' ? '☾' : '☀';
   }
 
   computeKPIs();
