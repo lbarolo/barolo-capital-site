@@ -1426,13 +1426,14 @@ function renderUI(enriched){
    set('s-best24h-sub', best24.a.ticker+' '+gainSign+(best24.a.change24h||0).toFixed(2)+'%');
  }
 
- // CAGR desde 2022
+ // CAGR desde 2022 (baseado no valor inicial real da carteira)
  (function(){
    var start = new Date(2022, 0, 1);
    var end = new Date();
    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
-   if (years > 0 && netTotal > 0 && TOTAL_INVESTED > 0) {
-     var cagr = (Math.pow(netTotal / TOTAL_INVESTED, 1 / years) - 1) * 100;
+   var initialCap = (WEEKLY_UPDATE.wealthCurve.invested[0]) || 1061;
+   if (years > 0 && netTotal > 0 && initialCap > 0) {
+     var cagr = (Math.pow(netTotal / initialCap, 1 / years) - 1) * 100;
      var cagrEl = document.getElementById('s-cagr');
      if(cagrEl){ cagrEl.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%'; cagrEl.className = 'hero-meta-val acc ' + (cagr >= 0 ? 'pos' : 'neg'); }
    }
