@@ -688,6 +688,100 @@ body, input, button, select, textarea {
 
 
 
+<!-- ══ JUROS EM TEMPO REAL ══ -->
+<div class="section-label">Juros em Tempo Real — AAVE + Kamino</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+
+  <!-- AAVE YIELD CARD -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <div style="background:linear-gradient(to right, rgba(138,104,32,0.15), rgba(74,124,63,0.08));border-bottom:1px solid var(--border);padding:14px 18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px;">AAVE V4</div>
+      <div style="font-family:'Satoshi',sans-serif;font-size:15px;font-weight:700;color:var(--text);">Juros Mensais</div>
+    </div>
+    <div style="padding:16px 18px;">
+      <!-- Supply Yield -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">↑ Recebidos (Supply)</span>
+          <span id="aave-supply-yield" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--green);">+$42.50</span>
+        </div>
+        <div style="font-size:8px;color:var(--muted);">
+          <span id="aave-supply-yield-detail">1.88 WETH @ 2.50% + 1,990 USDT @ 1.77%</span>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px;">
+      <!-- Borrow Cost -->
+      <div style="margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">↓ Pagos (Borrow)</span>
+          <span id="aave-borrow-cost" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--red);">−$2.36</span>
+        </div>
+        <div style="font-size:8px;color:var(--muted);">
+          <span id="aave-borrow-cost-detail">750.16 USDC @ 3.79%</span>
+        </div>
+      </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px;">
+      <!-- Net APY -->
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">NET LÍQUIDO</span>
+        <div style="text-align:right;">
+          <div id="aave-net-monthly" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--green);line-height:1;">+$40.14</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace;">APY: <span id="aave-net-apy">0.49%</span></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KAMINO YIELD CARD -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <div style="background:linear-gradient(to right, rgba(63,185,80,0.15), rgba(74,124,63,0.08));border-bottom:1px solid var(--border);padding:14px 18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--green);letter-spacing:.1em;margin-bottom:4px;">KAMINO FINANCE</div>
+      <div style="font-family:'Satoshi',sans-serif;font-size:15px;font-weight:700;color:var(--text);">Juros Mensais</div>
+    </div>
+    <div style="padding:16px 18px;">
+      <!-- Supply Yield -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">↑ Recebidos (Supply)</span>
+          <span id="kamino-supply-yield" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--green);">+$118.50</span>
+        </div>
+        <div style="font-size:8px;color:var(--muted);">
+          <span id="kamino-supply-yield-detail">20.42 SOL @ 5.26% + 301.01 USDS @ 4.61%</span>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px;">
+      <!-- Borrow Cost -->
+      <div style="margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">↓ Pagos (Borrow)</span>
+          <span id="kamino-borrow-cost" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--red);">−$31.29</span>
+        </div>
+        <div style="font-size:8px;color:var(--muted);">
+          <span id="kamino-borrow-cost-detail">808.77 USDC @ 4.64%</span>
+        </div>
+      </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px;">
+      <!-- Net APY -->
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">NET LÍQUIDO</span>
+        <div style="text-align:right;">
+          <div id="kamino-net-monthly" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--green);line-height:1;">+$87.21</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace;">APY: <span id="kamino-net-apy">4.74%</span></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <!-- ══ KPI ══ -->
 <div class="section-label">Visão Geral — Histórico de Empréstimos DeFi</div>
 <div class="kpi-row">
@@ -1004,6 +1098,7 @@ async function fetchPrices(){
  buildCollChart(); // re-render bars with live price
  updateCollateralCards();
  updateLiqPrices();
+ updateYieldCards();
  }catch(e){ buildTicker(null); }
 }
 
@@ -1053,6 +1148,9 @@ function updateCollateralCards(){
  if(el('em-kamino-ltv-pct'))  el('em-kamino-ltv-pct').textContent  = kaminoLtv + '%';
  if(el('em-kamino-ltv-lbl'))  el('em-kamino-ltv-lbl').textContent  = kaminoLtv + '%';
  if(el('em-kamino-ltv-fill')) el('em-kamino-ltv-fill').style.width = (parseFloat(kaminoLtv)/77.20*100).toFixed(1) + '%';
+
+ // Update yield cards with new prices
+ updateYieldCards();
 }
 
 // ── LIQUIDATION PRICES ──
@@ -1113,6 +1211,69 @@ function updateLiqPrices(){
  // Also update the existing liq display in borrow section
  if(el('em-kamino-liq'))  el('em-kamino-liq').textContent  = liqSol > 0 ? '$' + liqSol.toFixed(2) : 'Protegido';
  if(el('em-kamino-liq2')) el('em-kamino-liq2').textContent = liqSol > 0 ? '$' + liqSol.toFixed(2) : 'Protegido';
+}
+
+// ── JUROS EM TEMPO REAL ──
+function updateYieldCards(){
+ const el = (id) => document.getElementById(id);
+
+ // AAVE YIELD
+ const aaveWethQty = 1.88, aaveUsdtQty = 1990;
+ const aaveWethApy = 2.50, aaveUsdtApy = 1.77, aaveBorrowApy = 3.79;
+ const aaveBorrow = 750.16;
+
+ // Supply yield/mês: (WETH_USD * APY/100/12) + (USDT_USD * APY/100/12)
+ const aaveWethUsd = aaveWethQty * liveEth;
+ const aaveUsdtUsd = aaveUsdtQty * 1.00;
+ const aaveSupplyYield = (aaveWethUsd * aaveWethApy / 100 / 12) + (aaveUsdtUsd * aaveUsdtApy / 100 / 12);
+
+ // Borrow cost/mês
+ const aaveBorrowCost = aaveBorrow * aaveBorrowApy / 100 / 12;
+
+ // Net
+ const aaveNetMonthly = aaveSupplyYield - aaveBorrowCost;
+ const aaveTotal = aaveWethUsd + aaveUsdtUsd;
+ const aaveNetApy = (aaveNetMonthly / aaveTotal * 12 * 100).toFixed(2);
+
+ // Update AAVE cards
+ if(el('aave-supply-yield')) el('aave-supply-yield').textContent = (aaveSupplyYield >= 0 ? '+' : '') + '$' + aaveSupplyYield.toFixed(2);
+ if(el('aave-supply-yield-detail')) el('aave-supply-yield-detail').textContent = aaveWethQty.toFixed(2) + ' WETH @ ' + aaveWethApy + '% + ' + Math.round(aaveUsdtQty) + ' USDT @ ' + aaveUsdtApy + '%';
+ if(el('aave-borrow-cost')) el('aave-borrow-cost').textContent = aaveBorrowCost > 0 ? '−$' + aaveBorrowCost.toFixed(2) : '−$0.00';
+ if(el('aave-borrow-cost-detail')) el('aave-borrow-cost-detail').textContent = aaveBorrow.toFixed(2) + ' USDC @ ' + aaveBorrowApy + '%';
+ if(el('aave-net-monthly')) {
+   el('aave-net-monthly').textContent = (aaveNetMonthly >= 0 ? '+' : '') + '$' + aaveNetMonthly.toFixed(2);
+   el('aave-net-monthly').style.color = aaveNetMonthly >= 0 ? 'var(--green)' : 'var(--red)';
+ }
+ if(el('aave-net-apy')) el('aave-net-apy').textContent = aaveNetApy + '%';
+
+ // KAMINO YIELD
+ const kaminoSolQty = 20.42, kaminoUsdsQty = 301.01;
+ const kaminoSolApy = 5.26, kaminoUsdsApy = 4.61, kaminoBorrowApy = 4.64;
+ const kaminoBorrow = 808.77;
+
+ // Supply yield/mês: (SOL_USD * APY/100/12) + (USDS_USD * APY/100/12)
+ const kaminoSolUsd = kaminoSolQty * liveSol;
+ const kaminoUsdsUsd = kaminoUsdsQty * 1.00;
+ const kaminoSupplyYield = (kaminoSolUsd * kaminoSolApy / 100 / 12) + (kaminoUsdsUsd * kaminoUsdsApy / 100 / 12);
+
+ // Borrow cost/mês
+ const kaminoBorrowCost = kaminoBorrow * kaminoBorrowApy / 100 / 12;
+
+ // Net
+ const kaminoNetMonthly = kaminoSupplyYield - kaminoBorrowCost;
+ const kaminoTotal = kaminoSolUsd + kaminoUsdsUsd;
+ const kaminoNetApy = (kaminoNetMonthly / kaminoTotal * 12 * 100).toFixed(2);
+
+ // Update KAMINO cards
+ if(el('kamino-supply-yield')) el('kamino-supply-yield').textContent = (kaminoSupplyYield >= 0 ? '+' : '') + '$' + kaminoSupplyYield.toFixed(2);
+ if(el('kamino-supply-yield-detail')) el('kamino-supply-yield-detail').textContent = kaminoSolQty.toFixed(2) + ' SOL @ ' + kaminoSolApy + '% + ' + kaminoUsdsQty.toFixed(2) + ' USDS @ ' + kaminoUsdsApy + '%';
+ if(el('kamino-borrow-cost')) el('kamino-borrow-cost').textContent = kaminoBorrowCost > 0 ? '−$' + kaminoBorrowCost.toFixed(2) : '−$0.00';
+ if(el('kamino-borrow-cost-detail')) el('kamino-borrow-cost-detail').textContent = kaminoBorrow.toFixed(2) + ' USDC @ ' + kaminoBorrowApy + '%';
+ if(el('kamino-net-monthly')) {
+   el('kamino-net-monthly').textContent = (kaminoNetMonthly >= 0 ? '+' : '') + '$' + kaminoNetMonthly.toFixed(2);
+   el('kamino-net-monthly').style.color = kaminoNetMonthly >= 0 ? 'var(--green)' : 'var(--red)';
+ }
+ if(el('kamino-net-apy')) el('kamino-net-apy').textContent = kaminoNetApy + '%';
 }
 
 function updateEthUI(price, chg){
@@ -1359,6 +1520,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  buildDebtChart();
  updateCollateralCards();
  updateLiqPrices();
+ updateYieldCards();
  fetchPrices();
 });
 </script>
