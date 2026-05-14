@@ -697,7 +697,7 @@ body, input, button, select, textarea {
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
     <div style="background:linear-gradient(to right, rgba(138,104,32,0.15), rgba(74,124,63,0.08));border-bottom:1px solid var(--border);padding:14px 18px;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px;">AAVE V4</div>
-      <div style="font-family:'Satoshi',sans-serif;font-size:15px;font-weight:700;color:var(--text);">Juros Mensais</div>
+      <div style="font-family:'Satoshi',sans-serif;font-size:15px;font-weight:700;color:var(--text);">Juros Acumulados <span style="font-size:10px;font-weight:400;color:var(--muted);font-family:'JetBrains Mono',monospace;">• ao vivo</span></div>
     </div>
     <div style="padding:16px 18px;">
       <!-- Supply Yield -->
@@ -741,7 +741,7 @@ body, input, button, select, textarea {
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
     <div style="background:linear-gradient(to right, rgba(63,185,80,0.15), rgba(74,124,63,0.08));border-bottom:1px solid var(--border);padding:14px 18px;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--green);letter-spacing:.1em;margin-bottom:4px;">KAMINO FINANCE</div>
-      <div style="font-family:'Satoshi',sans-serif;font-size:15px;font-weight:700;color:var(--text);">Juros Mensais</div>
+      <div style="font-family:'Satoshi',sans-serif;font-size:15px;font-weight:700;color:var(--text);">Juros Acumulados <span style="font-size:10px;font-weight:400;color:var(--muted);font-family:'JetBrains Mono',monospace;">• ao vivo</span></div>
     </div>
     <div style="padding:16px 18px;">
       <!-- Supply Yield -->
@@ -1214,65 +1214,88 @@ function updateLiqPrices(){
  if(el('em-kamino-liq2')) el('em-kamino-liq2').textContent = liqSol > 0 ? '$' + liqSol.toFixed(2) : 'Protegido';
 }
 
-// ── JUROS EM TEMPO REAL ──
+// ── JUROS ACUMULADOS (ao vivo — diferença vs principal do ciclo) ──
+// Princípios: valor depositado/emprestado no início do ciclo, sem juros
+// Atualizar aqui quando houver novo depósito ou novo ciclo
+const AAVE_WETH_PRINCIPAL = 1.880;   // WETH depositado (sem juros)
+const AAVE_USDT_PRINCIPAL = 1990;    // USDT depositado (sem juros) — último depósito 24/04/2026
+const AAVE_USDC_PRINCIPAL = 748.00;  // USDC emprestado inicial — refinanciamento 10/04/2026
+const KAMINO_SOL_PRINCIPAL  = 20.39; // SOL depositado (sem juros) — último depósito 24/04/2026
+const KAMINO_USDS_PRINCIPAL = 300.78;// USDS depositado (sem juros)
+const KAMINO_USDC_PRINCIPAL = 807.49;// USDC emprestado inicial Kamino K4
+
 function updateYieldCards(){
  const el = (id) => document.getElementById(id);
+ const ep = liveEth || window.liveEth || 2313;
+ const sp = liveSol || window.liveSol || 145;
 
- // AAVE YIELD
- const aaveWethQty = 1.88, aaveUsdtQty = 1990;
- const aaveWethApy = 2.50, aaveUsdtApy = 1.77, aaveBorrowApy = 3.79;
- const aaveBorrow = 750.16;
+ // ── AAVE — juros acumulados reais ──
+ // Quantidade atual (ao vivo do GQL) vs principal (depósito original sem juros)
+ const aaveWethNow  = window._liveAaveWethQty  || 1.884;
+ const aaveUsdtNow  = window._liveAaveUsdtQty  || 1995;
+ const aaveUsdcNow  = window._liveAaveUsdcDebt || 751.22;
+ const aaveWethApy  = window._liveAaveWethApy  || 2.50;
+ const aaveUsdtApy  = window._liveAaveUsdtApy  || 1.77;
 
- // Supply yield/mês: (WETH_USD * APY/100/12) + (USDT_USD * APY/100/12)
- const aaveWethUsd = aaveWethQty * liveEth;
- const aaveUsdtUsd = aaveUsdtQty * 1.00;
- const aaveSupplyYield = (aaveWethUsd * aaveWethApy / 100 / 12) + (aaveUsdtUsd * aaveUsdtApy / 100 / 12);
+ // Juros recebidos = (atual - principal) × preço
+ const aaveWethEarningsTokens = Math.max(0, aaveWethNow - AAVE_WETH_PRINCIPAL);
+ const aaveUsdtEarnings       = Math.max(0, aaveUsdtNow - AAVE_USDT_PRINCIPAL);
+ const aaveSupplyEarnings     = (aaveWethEarningsTokens * ep) + aaveUsdtEarnings;
 
- // Borrow cost/mês
- const aaveBorrowCost = aaveBorrow * aaveBorrowApy / 100 / 12;
+ // Juros pagos = dívida atual - empréstimo inicial
+ const aaveBorrowFees  = Math.max(0, aaveUsdcNow - AAVE_USDC_PRINCIPAL);
 
- // Net
- const aaveNetMonthly = aaveSupplyYield - aaveBorrowCost;
- const aaveTotal = aaveWethUsd + aaveUsdtUsd;
- const aaveNetApy = (aaveNetMonthly / aaveTotal * 12 * 100).toFixed(2);
+ // Net acumulado
+ const aaveNetAccrued = aaveSupplyEarnings - aaveBorrowFees;
+
+ // APY verificação (anualizado sobre o capital)
+ const aaveTotal = (aaveWethNow * ep) + aaveUsdtNow;
+ const aaveNetApy = aaveTotal > 0 ? (aaveNetAccrued / aaveTotal * 100).toFixed(2) : '0.00';
 
  // Update AAVE cards
- if(el('aave-supply-yield')) el('aave-supply-yield').textContent = (aaveSupplyYield >= 0 ? '+' : '') + '$' + aaveSupplyYield.toFixed(2);
- if(el('aave-supply-yield-detail')) el('aave-supply-yield-detail').textContent = aaveWethQty.toFixed(2) + ' WETH @ ' + aaveWethApy + '% + ' + Math.round(aaveUsdtQty) + ' USDT @ ' + aaveUsdtApy + '%';
- if(el('aave-borrow-cost')) el('aave-borrow-cost').textContent = aaveBorrowCost > 0 ? '−$' + aaveBorrowCost.toFixed(2) : '−$0.00';
- if(el('aave-borrow-cost-detail')) el('aave-borrow-cost-detail').textContent = aaveBorrow.toFixed(2) + ' USDC @ ' + aaveBorrowApy + '%';
+ if(el('aave-supply-yield')) el('aave-supply-yield').textContent = '+$' + aaveSupplyEarnings.toFixed(2);
+ if(el('aave-supply-yield-detail')) el('aave-supply-yield-detail').textContent =
+   '+' + aaveWethEarningsTokens.toFixed(4) + ' WETH ($' + (aaveWethEarningsTokens * ep).toFixed(2) + ') · +' + aaveUsdtEarnings.toFixed(2) + ' USDT';
+ if(el('aave-borrow-cost')) el('aave-borrow-cost').textContent = '−$' + aaveBorrowFees.toFixed(2);
+ if(el('aave-borrow-cost-detail')) el('aave-borrow-cost-detail').textContent =
+   aaveUsdcNow.toFixed(2) + ' USDC atual · principal ' + AAVE_USDC_PRINCIPAL.toFixed(2);
  if(el('aave-net-monthly')) {
-   el('aave-net-monthly').textContent = (aaveNetMonthly >= 0 ? '+' : '') + '$' + aaveNetMonthly.toFixed(2);
-   el('aave-net-monthly').style.color = aaveNetMonthly >= 0 ? 'var(--green)' : 'var(--red)';
+   el('aave-net-monthly').textContent = (aaveNetAccrued >= 0 ? '+' : '') + '$' + aaveNetAccrued.toFixed(2);
+   el('aave-net-monthly').style.color = aaveNetAccrued >= 0 ? 'var(--green)' : 'var(--red)';
  }
  if(el('aave-net-apy')) el('aave-net-apy').textContent = aaveNetApy + '%';
 
- // KAMINO YIELD
- const kaminoSolQty = 20.42, kaminoUsdsQty = 301.01;
- const kaminoSolApy = 5.26, kaminoUsdsApy = 4.61, kaminoBorrowApy = 4.64;
- const kaminoBorrow = 808.77;
+ // ── KAMINO — juros acumulados reais ──
+ const kaminoSolNow  = window._liveKaminoSol   || 20.42;
+ const kaminoUsdsNow = window._liveKaminoUsds  || 301.01;
+ const kaminoDebtNow = window._liveKaminoDebt  || 808.77;
+ const kaminoSolApy  = window._liveKaminoSolApy  || 5.26;
+ const kaminoUsdsApy = window._liveKaminoUsdsApy || 4.61;
 
- // Supply yield/mês: (SOL_USD * APY/100/12) + (USDS_USD * APY/100/12)
- const kaminoSolUsd = kaminoSolQty * liveSol;
- const kaminoUsdsUsd = kaminoUsdsQty * 1.00;
- const kaminoSupplyYield = (kaminoSolUsd * kaminoSolApy / 100 / 12) + (kaminoUsdsUsd * kaminoUsdsApy / 100 / 12);
+ // Juros recebidos = (atual - principal) × preço
+ const kaminoSolEarningsTokens = Math.max(0, kaminoSolNow - KAMINO_SOL_PRINCIPAL);
+ const kaminoUsdsEarnings      = Math.max(0, kaminoUsdsNow - KAMINO_USDS_PRINCIPAL);
+ const kaminoSupplyEarnings    = (kaminoSolEarningsTokens * sp) + kaminoUsdsEarnings;
 
- // Borrow cost/mês
- const kaminoBorrowCost = kaminoBorrow * kaminoBorrowApy / 100 / 12;
+ // Juros pagos = dívida atual - empréstimo inicial
+ const kaminoBorrowFees  = Math.max(0, kaminoDebtNow - KAMINO_USDC_PRINCIPAL);
 
- // Net
- const kaminoNetMonthly = kaminoSupplyYield - kaminoBorrowCost;
- const kaminoTotal = kaminoSolUsd + kaminoUsdsUsd;
- const kaminoNetApy = (kaminoNetMonthly / kaminoTotal * 12 * 100).toFixed(2);
+ // Net acumulado
+ const kaminoNetAccrued = kaminoSupplyEarnings - kaminoBorrowFees;
+
+ const kaminoTotal = (kaminoSolNow * sp) + kaminoUsdsNow;
+ const kaminoNetApy = kaminoTotal > 0 ? (kaminoNetAccrued / kaminoTotal * 100).toFixed(2) : '0.00';
 
  // Update KAMINO cards
- if(el('kamino-supply-yield')) el('kamino-supply-yield').textContent = (kaminoSupplyYield >= 0 ? '+' : '') + '$' + kaminoSupplyYield.toFixed(2);
- if(el('kamino-supply-yield-detail')) el('kamino-supply-yield-detail').textContent = kaminoSolQty.toFixed(2) + ' SOL @ ' + kaminoSolApy + '% + ' + kaminoUsdsQty.toFixed(2) + ' USDS @ ' + kaminoUsdsApy + '%';
- if(el('kamino-borrow-cost')) el('kamino-borrow-cost').textContent = kaminoBorrowCost > 0 ? '−$' + kaminoBorrowCost.toFixed(2) : '−$0.00';
- if(el('kamino-borrow-cost-detail')) el('kamino-borrow-cost-detail').textContent = kaminoBorrow.toFixed(2) + ' USDC @ ' + kaminoBorrowApy + '%';
+ if(el('kamino-supply-yield')) el('kamino-supply-yield').textContent = '+$' + kaminoSupplyEarnings.toFixed(2);
+ if(el('kamino-supply-yield-detail')) el('kamino-supply-yield-detail').textContent =
+   '+' + kaminoSolEarningsTokens.toFixed(4) + ' SOL ($' + (kaminoSolEarningsTokens * sp).toFixed(2) + ') · +' + kaminoUsdsEarnings.toFixed(2) + ' USDS';
+ if(el('kamino-borrow-cost')) el('kamino-borrow-cost').textContent = '−$' + kaminoBorrowFees.toFixed(2);
+ if(el('kamino-borrow-cost-detail')) el('kamino-borrow-cost-detail').textContent =
+   kaminoDebtNow.toFixed(2) + ' USDC atual · principal ' + KAMINO_USDC_PRINCIPAL.toFixed(2);
  if(el('kamino-net-monthly')) {
-   el('kamino-net-monthly').textContent = (kaminoNetMonthly >= 0 ? '+' : '') + '$' + kaminoNetMonthly.toFixed(2);
-   el('kamino-net-monthly').style.color = kaminoNetMonthly >= 0 ? 'var(--green)' : 'var(--red)';
+   el('kamino-net-monthly').textContent = (kaminoNetAccrued >= 0 ? '+' : '') + '$' + kaminoNetAccrued.toFixed(2);
+   el('kamino-net-monthly').style.color = kaminoNetAccrued >= 0 ? 'var(--green)' : 'var(--red)';
  }
  if(el('kamino-net-apy')) el('kamino-net-apy').textContent = kaminoNetApy + '%';
 }
@@ -2017,6 +2040,7 @@ function toggleLang() {
       window._liveAaveCollateral  = totalColl;
       window._liveAaveWethQty     = wethQty;
       window._liveAaveUsdtQty     = usdtQty;
+      window._liveAaveUsdcDebt    = usdcQty;
       window._liveAaveWethApy     = wethApy;
       window._liveAaveUsdtApy     = usdtApy;
       return { collateral: totalColl, debt: totalDebt, hf, ltv };
