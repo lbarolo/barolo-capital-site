@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
@@ -17,18 +17,19 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
- --bg:#fdf3f0;--surface:#fff8f6;--surface2:#f0ddd8;--border:#e2ccc4;
- --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;
- --text:#16110c;--muted:#7a6a50;--card-shadow:0 1px 4px rgba(22,17,12,0.08);
+ --bg:#0d0917;--surface:#160d2c;--surface2:#1e1438;--border:rgba(180,140,240,0.09);
+ --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--wine:#8b3048;
+ --text:#ede8f8;--muted:#8a78a8;--card-shadow:0 4px 18px rgba(0,0,0,0.18);
+ --font:'Satoshi',sans-serif;--mono:'JetBrains Mono',monospace;
 }
-[data-theme="dark"]{
- --bg:#0d0917;--surface:#160d2c;--surface2:#1e1438;--border:#2a1e40;
- --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;
- --text:#e6edf3;--muted:#8b7d6b;--card-shadow:none;
+[data-theme="light"]{
+ --bg:#fdf3f0;--surface:#fff8f6;--surface2:#f0ddd8;--border:rgba(120,45,55,0.1);
+ --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--wine:#7a2535;
+ --text:#1c0c10;--muted:#956a72;--card-shadow:0 1px 4px rgba(22,17,12,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Satoshi',sans-serif;font-size:13px;min-height:100vh;}
-.container{max-width:1440px;margin:0 auto;padding:80px 28px 50px;display:flex;flex-direction:column;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh;}
+.container{max-width:1320px;margin:0 auto;padding:70px 24px 48px;display:flex;flex-direction:column;}
 #bc-apr-section{order:-2;}
 #bc-lp-active-section{order:-1;}
 #bc-meta-ytd-section{order:0;}
