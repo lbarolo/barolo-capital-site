@@ -646,40 +646,38 @@ body, input, button, select, textarea {
  <button class="popup-close" onclick="closePopup()"></button>
 </div>
 
-<!-- NAV -->
 <nav>
- <a href="index.html" class="nav-brand">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
- <defs>
- <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
- <stop offset="0%" stop-color="transparent"/>
- <stop offset="18%" stop-color="#c9a050"/>
- <stop offset="82%" stop-color="#c9a050"/>
- <stop offset="100%" stop-color="transparent"/>
- </linearGradient>
- </defs>
- <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
- <text x="105" y="20"
- font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
- font-weight="600" font-size="14" letter-spacing="3"
- fill="var(--text)" text-anchor="middle">BAROLO CAPITAL</text>
- <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
-</svg>
- </a>
- <div class="nav-links">
- <a href="index.html" data-i18n="nav-home">Início</a>
- <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
- <a href="pools.html" data-i18n="nav-pools">Pools &amp; DeFi</a>
- <a href="track.html" data-i18n="nav-track">Track</a>
- <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
- <a href="ferramentas.html" class="act" data-i18n="nav-tools">Ferramentas</a>
- </div>
- <div class="nav-right">
+  <a class="nav-brand" href="index.html">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+      <defs>
+        <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="transparent"/>
+          <stop offset="18%" stop-color="#c9a050"/>
+          <stop offset="82%" stop-color="#c9a050"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+      <text x="105" y="20"
+        font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
+        font-weight="600" font-size="14" letter-spacing="3"
+        fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+    </svg>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" data-i18n="nav-home">Início</a>
+    <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
+    <a href="pools.html" data-i18n="nav-pools">Pools &amp; DeFi</a>
+    <a href="track.html" data-i18n="nav-track">Track</a>
+    <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
+    <a href="ferramentas.html" class="active" data-i18n="nav-tools">Ferramentas</a>
+  </div>
+  <div class="nav-right">
     <button class="btn-sm" onclick="window.print()" title="Exportar como PDF">📄 PDF</button>
     <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
-    <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Alternar moeda">$ USD</button>
-    <button class="btn-sm" onclick="toggleTheme()">☾</button>
- </div>
+    <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
+  </div>
 </nav>
 
 <div class="container">
