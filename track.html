@@ -627,6 +627,21 @@
       td, th { padding: 8px 10px; }
       .hide-sm { display: none; }
     }
+  @media print {
+    * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    body { background:#0d0917 !important; color:#e8e4da !important; }
+    :root,[data-theme="dark"],[data-theme="light"] {
+      --bg:#0d0917; --surface:#14102b; --surface2:#1a1533;
+      --border:#2a2244; --text:#e8e4da; --muted:#8a7a62; --accent:#c9a050;
+      --green:#3fb950; --red:#f85149;
+    }
+    nav, .btn-sm { display:none !important; }
+    .container { max-width:100% !important; padding:10px; overflow:hidden !important; box-sizing:border-box; }
+    .kpi-card, .ap-panel, table { page-break-inside:avoid; }
+    /* Portrait fit */
+    canvas { max-width:100% !important; width:100% !important; height:auto !important; }
+    .kpi-grid, .ap-charts-row, .detail-grid { grid-template-columns:1fr !important; }
+  }
   </style>
 </head>
 <body>

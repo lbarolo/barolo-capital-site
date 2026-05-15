@@ -510,16 +510,18 @@ body, input, button, select, textarea {
 .sw-history-q .sw-hq-empty{font-size:11px;color:var(--muted);font-style:italic;}
 .sw-copy-notice{font-size:10px;color:var(--green);display:none;margin-left:8px;}
 @media print {
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   body > *:not(#print-semanal){display:none !important;}
-  #print-semanal{display:block !important;padding:20px;font-family:Georgia,serif;color:#111;}
-  #print-semanal h1{font-size:18px;margin-bottom:4px;}
-  #print-semanal .sw-ph2{font-size:12px;color:#666;margin-bottom:20px;}
-  #print-semanal .sw-ps{font-size:11px;font-weight:700;letter-spacing:2px;color:#888;text-transform:uppercase;margin:18px 0 10px;border-bottom:1px solid #ddd;padding-bottom:6px;}
+  body{background:#0d0917 !important;}
+  #print-semanal{display:block !important;padding:20px;font-family:Georgia,serif;background:#0d0917 !important;color:#e8e4da !important;}
+  #print-semanal h1{font-size:18px;margin-bottom:4px;color:#c9a050;}
+  #print-semanal .sw-ph2{font-size:12px;color:#8a7a62;margin-bottom:20px;}
+  #print-semanal .sw-ps{font-size:11px;font-weight:700;letter-spacing:2px;color:#c9a050;text-transform:uppercase;margin:18px 0 10px;border-bottom:1px solid #2a2244;padding-bottom:6px;}
   #print-semanal .sw-pq{margin-bottom:12px;}
-  #print-semanal .sw-pq-label{font-size:9px;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
-  #print-semanal .sw-pq-text{font-size:12px;line-height:1.6;color:#222;white-space:pre-wrap;}
-  #print-semanal .sw-pq-empty{color:#aaa;font-style:italic;font-size:11px;}
-  #print-semanal .sw-pfooter{margin-top:30px;font-size:9px;color:#aaa;border-top:1px solid #ddd;padding-top:8px;}
+  #print-semanal .sw-pq-label{font-size:9px;color:#8a7a62;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+  #print-semanal .sw-pq-text{font-size:12px;line-height:1.6;color:#e8e4da;white-space:pre-wrap;}
+  #print-semanal .sw-pq-empty{color:#8a7a62;font-style:italic;font-size:11px;}
+  #print-semanal .sw-pfooter{margin-top:30px;font-size:9px;color:#8a7a62;border-top:1px solid #2a2244;padding-top:8px;}
 }
 
 /* ── FEEDBACK VISUAL: Highlight + Toast ── */

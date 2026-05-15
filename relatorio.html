@@ -181,15 +181,16 @@ tr:hover td{ background:var(--surface2); }
 ════════════════════════════════ */
 @media print {
   @page{ size:A4; margin:14mm 14mm 14mm 14mm; }
-  body{ background:#fff !important; color:#111 !important; font-size:11px; }
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+  body{ background:#0d0917 !important; color:#e8e4da !important; font-size:11px; }
 
   .screen-bar{ display:none !important; }
   .report{ max-width:100%; margin:0; padding:0 0 20px; }
 
   :root, [data-theme="dark"],[data-theme="light"]{
-    --bg:#fff; --surface:#fff; --surface2:#f8f8f8;
-    --border:#ddd; --text:#111; --muted:#666; --accent:#8a6820;
-    --green:#2e7d32; --red:#c62828;
+    --bg:#0d0917; --surface:#14102b; --surface2:#1a1533;
+    --border:#2a2244; --text:#e8e4da; --muted:#8a7a62; --accent:#c9a050;
+    --green:#3fb950; --red:#f85149;
   }
 
   .kpi-grid{ page-break-inside:avoid; }
@@ -199,6 +200,11 @@ tr:hover td{ background:var(--surface2); }
   tr{ page-break-inside:avoid; }
   .report-header{ page-break-after:avoid; }
   .r-section{ page-break-after:avoid; }
+
+  /* Portrait fit */
+  canvas { max-width:100% !important; width:100% !important; height:auto !important; }
+  .report { max-width:100% !important; overflow:hidden !important; box-sizing:border-box; }
+  .two-col, .kpi-grid { grid-template-columns:1fr !important; }
 }
 </style>
 </head>
