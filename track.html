@@ -662,7 +662,7 @@
     white-space: nowrap; margin-top: 4px;
   }
   .track-chart-controls {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;
   }
   .track-period-tabs {
     display: flex; gap: 1px;
@@ -689,10 +689,6 @@
   /* Stats panel */
   .track-stats-panel {
     display: flex; flex-direction: column; min-width: 0;
-  }
-  .track-stats-header {
-    display: flex; align-items: center; justify-content: flex-end;
-    padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
   }
   .track-stat-tabs {
     display: flex; border-bottom: 1px solid var(--border);
@@ -728,6 +724,32 @@
     .track-overview { grid-template-columns: 1fr; }
     .track-chart-area { border-right: none; border-bottom: 1px solid var(--border); }
   }
+
+  /* ─── Metrix Pool Rows ─── */
+  .pr-row td { padding: 10px 8px; vertical-align: middle; border-bottom: 1px solid var(--border); }
+  .pr-row:hover { background: var(--surface2); cursor: pointer; }
+  .pr-row.expanded { background: var(--surface2); }
+  .pr-identity { display: flex; align-items: center; gap: 10px; }
+  .pr-icons { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .pr-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; position: absolute; border: 2px solid var(--bg); }
+  .pr-icon2 { left: 14px; }
+  .pr-info { min-width: 0; }
+  .pr-pair { font-size: 12px; font-weight: 700; color: var(--text); font-family: var(--mono); letter-spacing: -.01em; }
+  .pr-fee { font-size: 10px; color: var(--muted); margin-left: 4px; font-weight: 400; }
+  .pr-proto { font-size: 10px; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .pr-proto-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .pr-metrics { font-size: 11px; }
+  .pr-metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 1px 0; gap: 12px; }
+  .pr-ml { color: var(--muted); white-space: nowrap; }
+  .pr-mv { font-family: var(--mono); font-weight: 600; color: var(--text); white-space: nowrap; }
+  /* Range bar */
+  .range-bar-wrap { min-width: 160px; max-width: 220px; }
+  .range-bar-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--muted); margin-bottom: 4px; }
+  .range-track { position: relative; height: 4px; background: var(--surface2); border-radius: 2px; overflow: visible; }
+  .range-fill { height: 100%; border-radius: 2px; background: rgba(63,185,80,0.4); }
+  .range-dot { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--bg); }
+  .range-bar-pcts { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; margin-top: 4px; }
+  .range-na { color: var(--muted); font-size: 10px; font-family: var(--mono); }
 
   @media print {
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
@@ -819,7 +841,7 @@
           <div class="track-ov-label" id="ov-chart-mode-label">P&amp;L Total (todas as pools)</div>
           <div class="track-ov-value" id="ov-total">—</div>
         </div>
-        <div class="track-ov-update"><span class="live-dot"></span>atualizado <span id="ov-last-update">—</span></div>
+        <div class="track-ov-update" style="display:flex;align-items:center;gap:8px;"><span class="live-dot"></span>atualizado <span id="ov-last-update">—</span><button id="refreshBtn" onclick="refreshAll()" style="background:none;border:1px solid var(--border);border-radius:4px;color:var(--accent);font-size:12px;padding:2px 7px;cursor:pointer;font-family:var(--mono);">↻</button></div>
       </div>
       <div class="track-chart-controls">
         <div class="track-period-tabs">
@@ -829,18 +851,16 @@
           <button class="track-period-tab" onclick="setOvPeriod('ytd',this)">YTD</button>
           <button class="track-period-tab" onclick="setOvPeriod('all',this)">All</button>
         </div>
-      </div>
-      <div style="position:relative;height:88px;"><canvas id="ovChart"></canvas></div>
-    </div>
-
-    <!-- Right: stats panel -->
-    <div class="track-stats-panel">
-      <div class="track-stats-header">
         <div class="track-vt-toggle">
           <button class="track-vt-btn active" onclick="setOvMode('value',this)">Value</button>
           <button class="track-vt-btn" onclick="setOvMode('earnings',this)">Earnings</button>
         </div>
       </div>
+      <div style="position:relative;height:185px;"><canvas id="ovChart"></canvas></div>
+    </div>
+
+    <!-- Right: stats panel -->
+    <div class="track-stats-panel">
       <div class="track-stat-tabs">
         <button class="track-stat-tab active" onclick="setOvPanel('stats',this)">Stats</button>
         <button class="track-stat-tab" onclick="setOvPanel('exposure',this)">Exposure</button>
@@ -1178,15 +1198,9 @@
     <table>
       <thead>
         <tr>
-          <th onclick="sortBy('pair')">Par / Protocolo <span class="sort-arrow" id="sa-pair"></span></th>
-          <th onclick="sortBy('net')" class="hide-sm">Rede <span class="sort-arrow" id="sa-net"></span></th>
-          <th onclick="sortBy('days')" class="hide-m">Período <span class="sort-arrow" id="sa-days"></span></th>
-          <th onclick="sortBy('capital')" class="r">Capital <span class="sort-arrow" id="sa-capital"></span></th>
-          <th onclick="sortBy('fees')" class="r">Taxas <span class="sort-arrow" id="sa-fees"></span></th>
-          <th onclick="sortBy('il')" class="r hide-m">IL <span class="sort-arrow" id="sa-il"></span></th>
-          <th onclick="sortBy('result')" class="r">P&L <span class="sort-arrow" id="sa-result"></span></th>
-          <th onclick="sortBy('fcr')" class="r hide-m">FCR% <span class="sort-arrow" id="sa-fcr"></span></th>
-          <th onclick="sortBy('status')" style="text-align:center">Status <span class="sort-arrow" id="sa-status"></span></th>
+          <th>Par / Protocolo</th>
+          <th class="r">Balance / Earnings / APR</th>
+          <th>Range</th>
           <th style="width:28px"></th>
         </tr>
       </thead>
@@ -1529,36 +1543,72 @@ function renderTable() {
   empty.style.display = 'none';
   info.textContent = list.length + (list.length < POOLS.length ? ' de ' + POOLS.length : '') + ' pools';
 
+  // Token color map for pair icons
+  const TOKEN_COLORS = {
+    'ETH':'#627EEA','WETH':'#627EEA','USDC':'#2775ca','USDT':'#26a17b',
+    'SOL':'#9945ff','ARB':'#28a0f0','BTC':'#F7931A','WBTC':'#F7931A',
+    'MATIC':'#A855F7','POL':'#A855F7','RDNT':'#00D4FF','XAI':'#F59E0B',
+    'GRIFT':'#888','PEANUT':'#888','PENG':'#888','MSTR':'#888',
+    'DEFAULT':'#888'
+  };
+  const NET_COLOR_MAP = {
+    Base:'#4fa8ff',Ethereum:'#627EEA',Arbitrum:'#5882d2',
+    Solana:'#14F195',Polygon:'#A855F7',ZkSync:'#8080ff'
+  };
+  function tokenColor(sym) { return TOKEN_COLORS[sym] || TOKEN_COLORS.DEFAULT; }
+  function tokenInitial(sym) { return sym ? sym.charAt(0) : '?'; }
+  function parsePairTokens(pairStr) {
+    const parts = pairStr.split('/');
+    return { t1: parts[0] || '', t2: parts[1] || '' };
+  }
+
   let html = '';
   list.forEach(p => {
     const fcr  = calcFCR(p);
     const isEx = expandedId === p.id;
-    const fcrClass = fcr == null ? '' : fcr >= 25 ? 'pos' : fcr >= 8 ? '' : 'neg';
+    const { t1, t2 } = parsePairTokens(p.pair);
+    const t1c = tokenColor(t1), t2c = tokenColor(t2);
+    const netC = NET_COLOR_MAP[p.net] || '#888';
 
-    const periodLine = p.status === 'ativa'
-      ? `<span style="color:var(--muted);font-size:10px">${p.open} → <span style="color:var(--green)">hoje</span></span>`
-      : `<span style="color:var(--muted);font-size:10px">${p.open} → ${p.close}</span>`;
+    // Balance: active pool uses pooled value, closed uses capital
+    const balance = (p.status === 'ativa' && p.pooled != null) ? fmtUsd(p.pooled) : fmtUsd(p.capital);
+    // Pending Earnings = fees
+    const feesStr = p.fees > 0 ? fmtUsd(p.fees, 2) : '$0.00';
+    const feesClass = p.fees > 0 ? 'pos' : '';
+    // APR
+    const fcrVal = calcFCR(p);
+    const aprStr = fcrVal != null ? (fcrVal >= 0 ? '+' : '') + fcrVal.toFixed(1) + '%' : '—';
+    const aprClass = fcrVal != null ? (fcrVal >= 0 ? 'pos' : 'neg') : '';
+
+    // Status dot
+    const statusDot = p.status === 'ativa'
+      ? '<span class="live-dot" style="width:6px;height:6px;margin-right:3px"></span>'
+      : '';
+    const statusText = p.status === 'ativa' ? 'Ativa' : (p.open ? p.open.slice(-2) + '/' + p.open.slice(3,5) + '/' + p.open.slice(6,10) : 'Fechada');
 
     html += `
-    <tr onclick="toggleExpand(${p.id})" ${isEx ? 'class="expanded"' : ''}>
+    <tr class="pr-row${isEx ? ' expanded' : ''}" onclick="toggleExpand(${p.id})">
       <td>
-        <div class="pair-name">${p.pair}<span class="pair-fee">${p.fee}</span></div>
-        <div class="pair-proto">${p.proto}</div>
+        <div class="pr-identity">
+          <div class="pr-icons">
+            <div class="pr-icon" style="background:${t1c}">${tokenInitial(t1)}</div>
+            <div class="pr-icon pr-icon2" style="background:${t2c}">${tokenInitial(t2)}</div>
+          </div>
+          <div class="pr-info">
+            <div class="pr-pair">${p.pair}<span class="pr-fee">${p.fee}</span></div>
+            <div class="pr-proto">
+              <span class="pr-proto-dot" style="background:${netC}"></span>
+              ${statusDot}${p.proto} · ${p.net}
+            </div>
+          </div>
+        </div>
       </td>
-      <td class="hide-sm">${netBadge(p.net)}</td>
-      <td class="hide-m" style="color:var(--muted);font-family:var(--mono);font-size:11px">
-        ${fmtDays(p.days)}<br>${periodLine}
+      <td class="pr-metrics">
+        <div class="pr-metric-row"><span class="pr-ml">Balance</span><span class="pr-mv">${balance}</span></div>
+        <div class="pr-metric-row"><span class="pr-ml">Pending Earnings</span><span class="pr-mv ${feesClass}">${feesStr}</span></div>
+        <div class="pr-metric-row"><span class="pr-ml">APR</span><span class="pr-mv ${aprClass}">${aprStr}</span></div>
       </td>
-      <td class="num">
-        ${p.status === 'ativa' && p.pooled != null
-          ? `${fmtUsd(p.pooled)}<div style="font-size:10px;color:var(--muted);margin-top:2px">entrada ${fmtUsd(p.capital)}</div>`
-          : fmtUsd(p.capital)}
-      </td>
-      <td class="num ${p.fees > 0 ? 'pos' : ''}">${p.fees > 0 ? fmtUsd(p.fees, 2) : '<span style="color:var(--muted)">$0</span>'}</td>
-      <td class="num hide-m ${p.il < 0 ? 'neg' : ''}">${p.il ? fmtUsd(p.il, 2) : '<span style="color:var(--muted)">—</span>'}</td>
-      <td class="num" ${cc(p.result)} style="font-weight:700">${fmtUsd(p.result, 2)}</td>
-      <td class="num hide-m ${fcrClass}">${fcr != null ? fmtPct(fcr, 1) : '<span style="color:var(--muted)">—</span>'}</td>
-      <td style="text-align:center">${statusBadge(p.status)}</td>
+      <td>${rangeBarHtml(p, window._liveEthPrice || null)}</td>
       <td style="text-align:center"><span class="expand-icon">▾</span></td>
     </tr>`;
 
@@ -1568,7 +1618,7 @@ function renderTable() {
       const cid = 'dc-' + p.id;
       html += `
     <tr class="detail-row">
-      <td colspan="10" style="padding:0">
+      <td colspan="4" style="padding:0">
         <div class="detail-content">
           ${rangeMain ? `<div class="d-item"><div class="d-label">Range</div><div class="d-value" style="white-space:nowrap">${rangeMain}</div>${rangeSub ? `<div style="font-size:9px;color:var(--muted);margin-top:3px">${rangeSub}</div>` : ''}</div>` : ''}
           <div class="d-item"><div class="d-label">Abertura</div><div class="d-value">${p.open}</div></div>
@@ -1623,14 +1673,8 @@ function renderTable() {
   const pnlClass = tf.pnl >= 0 ? 'pos' : 'neg';
   tfoot.innerHTML = `<tr>
     <td class="tfoot-label">Total (${list.length})</td>
-    <td class="hide-sm"></td>
-    <td class="hide-m"></td>
-    <td class="num">${fmtUsd(tf.cap)}</td>
-    <td class="num pos">${fmtUsd(tf.fees, 2)}</td>
-    <td class="num neg hide-m">${fmtUsd(tf.il, 2)}</td>
-    <td class="num ${pnlClass}" style="font-size:13px;font-weight:700">${fmtUsd(tf.pnl, 2)}</td>
-    <td class="hide-m"></td>
-    <td></td>
+    <td class="num" style="font-size:11px;color:var(--muted)">Capital: ${fmtUsd(tf.cap)} · Fees: <span class="pos">${fmtUsd(tf.fees, 2)}</span></td>
+    <td class="num ${pnlClass}" style="font-size:13px;font-weight:700">P&amp;L: ${fmtUsd(tf.pnl, 2)}</td>
     <td></td>
   </tr>`;
 }
@@ -1729,6 +1773,7 @@ async function fetchLiveActivePool() {
   // 7. ETH price + USD values
   const prices = await getLivePrice(['ethereum']);
   const eth = prices?.ethereum?.usd || 1800;
+  window._liveEthPrice = eth;
   const pooledUsd = wethA*eth + usdcA;
   const uncFeeUsd = uncW*eth + uncU;
   const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
@@ -2594,6 +2639,47 @@ function switchDetailChart(cid, metric, btn, poolId) {
   btn.classList.add('active');
   const p = POOLS.find(pl => pl.id === poolId);
   if (p) buildDetailChart(p, metric);
+}
+
+// ─── RANGE BAR ───────────────────────────────────────────────────────────────
+
+function rangeBarHtml(p, livePrice) {
+  if (!p.range) return '<span class="range-na">—</span>';
+  const match = p.range.match(/\$([\d,]+\.?\d*)\s*[–\-]\s*\$([\d,]+\.?\d*)/);
+  if (!match) return '<span class="range-na">—</span>';
+
+  const pMin = parseFloat(match[1].replace(/,/g,''));
+  const pMax = parseFloat(match[2].replace(/,/g,''));
+  const cur  = livePrice || 0;
+  if (!cur) return `<div class="range-bar-wrap"><div class="range-bar-labels"><span>${fmtUsd(pMin,0)}</span><span>${fmtUsd(pMax,0)}</span></div><div class="range-track"></div></div>`;
+
+  const inRange = cur >= pMin && cur <= pMax;
+  const pct = Math.max(0, Math.min(100, (cur - pMin) / (pMax - pMin) * 100));
+  const pctFromMin = ((cur - pMin) / pMin * 100).toFixed(1);
+  const pctToMax   = ((pMax - cur) / cur * 100).toFixed(1);
+  const dotColor   = inRange ? 'var(--green)' : 'var(--red)';
+
+  return `<div class="range-bar-wrap">
+    <div class="range-bar-labels"><span>${fmtUsd(pMin,0)}</span><span>${fmtUsd(pMax,0)}</span></div>
+    <div class="range-track">
+      <div class="range-fill" style="width:${pct}%"></div>
+      <div class="range-dot" style="left:${pct}%;background:${dotColor}"></div>
+    </div>
+    <div class="range-bar-pcts">
+      <span class="${pctFromMin >= 0 ? 'pos' : 'neg'}">${pctFromMin >= 0 ? '+' : ''}${pctFromMin}%</span>
+      <span class="${pctToMax >= 0 ? 'pos' : 'neg'}">${pctToMax >= 0 ? '+' : ''}${pctToMax}%</span>
+    </div>
+  </div>`;
+}
+
+// ─── REFRESH ALL ──────────────────────────────────────────────────────────────
+
+function refreshAll() {
+  const btn = document.getElementById('refreshBtn');
+  if (btn) { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
+  fetchLiveActivePool().finally(() => {
+    if (btn) { btn.style.opacity = ''; btn.style.pointerEvents = ''; }
+  });
 }
 
 // ─── CURRENCY TOGGLE ─────────────────────────────────────────────────────────
