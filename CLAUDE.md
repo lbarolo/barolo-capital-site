@@ -2810,3 +2810,118 @@ Sessão iniciada com revisão geral de código ("ver se está tudo rodando certi
 
 ---
 
+## Sessão 16/05/2026 — track.html redesign estilo Metrix (overview + pool rows + range bar)
+
+### Contexto
+Sessão continuou de context esgotado. Havia uma tarefa pendente: implementar o overview estilo Metrix em `track.html` e verificar/publicar. Usuário também enviou print do Metrix para guiar o redesign da lista de pools.
+
+### Implementado
+
+#### `track.html` — Overview estilo Metrix (2 colunas: gráfico + stats panel)
+
+**Seção `.track-overview` adicionada** entre o page-header e os KPI cards (que foram ocultados com `display:none`):
+
+**Coluna esquerda (gráfico):**
+- Label `ov-chart-mode-label` + número grande `ov-total` no header
+- Botão `↻` (`id="refreshBtn"`, `onclick="refreshAll()"`) ao lado de "atualizado X ago"
+- Controles em uma linha com `justify-content:space-between`:
+  - Period tabs esquerda: `7D | 1M | 3M | YTD | All` (`.track-period-tab`)
+  - Value/Earnings toggle direita (`.track-vt-toggle` dentro de `.track-chart-controls`)
+- Canvas `ovChart` em wrapper `position:relative; height:185px`
+
+**Coluna direita (stats panel, largura 272px):**
+- Tabs `Stats | Exposure` (`.track-stat-tab`)
+- **Stats**: Earnings (`ov-earnings`), Pending (`ov-pending`), APR (`ov-apr`), divider, Profit & Loss (`ov-pnl`), vs HODL (`ov-vs-hodl`), ROI (`ov-roi`)
+- **Exposure**: barras WETH/USDC (`ov-exp-weth/usdc-bar/pct`), ETH price (`ov-exp-price`), in-range (`ov-in-range`)
+
+**JS — funções novas:**
+
+| Função | O que faz |
+|--------|-----------|
+| `updateOvStats()` | Soma todos os POOLS: totFees, totPnl, totIL, totCap → preenche todos os IDs do stats panel |
+| `_updateOvTotal()` | Atualiza `ov-total` com P&L ou fees brutas dependendo de `_ovMode` |
+| `buildOvChart()` | Chart.js line area, verde/vermelho baseado no delta do período selecionado |
+| `_buildOvPoints(period, mode)` | Gera pontos por dia: value=P&L acumulado, earnings=fees acumuladas. Último ponto patchado com dados ao vivo da pool ativa |
+| `setOvPeriod(p, btn)` | Troca período e reconstrói gráfico |
+| `setOvMode(m, btn)` | Troca Value/Earnings e atualiza label + `ov-total` + reconstrói gráfico |
+| `setOvPanel(panel, btn)` | Alterna Stats/Exposure |
+| `refreshAll()` | Chama `fetchLiveActivePool()` com feedback visual no botão (opacity durante fetch) |
+
+**`ov-total` mostra retorno TOTAL de todas as pools** (não só a pool ativa):
+- Value mode: `totPnl = POOLS.reduce((s,p) => s + p.result, 0)` = `-$839.39`
+- Earnings mode: `totFees = POOLS.reduce((s,p) => s + p.fees, 0)` = `+$2,437.11`
+- `_buildOvPoints` value mode: `val += ev.result * progress` (P&L proporcional — não capital)
+- Last point: `closedPools finalValue + liveActivePnl` (via `window._liveLP - capital`)
+
+**`fetchLiveActivePool()` atualizado** para preencher todos os IDs da overview após fetch:
+- `ov-total`, `ov-pending`, `ov-apr`, `ov-earnings`, `ov-pnl`, `ov-vs-hodl`, `ov-roi`
+- Barras de exposure: WETH/USDC split calculado de `amount0`/`amount1`
+- `ov-exp-price`, `ov-in-range`
+- `window._liveEthPrice` setado para uso em `rangeBarHtml()`
+
+#### `track.html` — Pool list redesign estilo Metrix
+
+**Table headers** simplificados de 10 colunas para 4:
+```
+Par / Protocolo | Balance / Earnings / APR | Range | ▾
+```
+
+**`renderTable()` reescrita** — cada row usa `.pr-row` com 4 colunas:
+
+| Coluna | Conteúdo |
+|--------|----------|
+| Col 1 (identidade) | 2 ícones circulares sobrepostos (cor por token) + par + protocolo/rede com dot colorido |
+| Col 2 (métricas) | Balance · Pending Earnings · APR (3 linhas label/valor) |
+| Col 3 (range) | `rangeBarHtml(p, window._liveEthPrice)` |
+| Col 4 | `▾` expand icon |
+
+**Token color map:**
+```js
+{ ETH:'#627EEA', WETH:'#627EEA', USDC:'#2775ca', USDT:'#26a17b',
+  SOL:'#9945ff', ARB:'#28a0f0', WBTC:'#F7931A', RDNT:'#00D4FF', ... }
+```
+
+**`rangeBarHtml(p, livePrice)` nova função:**
+- Parseia `p.range` via regex `\$([\d,]+\.?\d*)\s*[–\-]\s*\$([\d,]+\.?\d*)`
+- Calcula `pct = (cur - pMin) / (pMax - pMin) * 100`
+- Gera barra com `.range-fill` (verde, largura = pct%), `.range-dot` (verde se in-range, vermelho se out)
+- Labels min/max acima, percentuais `+X% from min` / `+Y% to max` abaixo
+
+**CSS adicionado** (antes do `@media print`):
+`.pr-row`, `.pr-identity`, `.pr-icons`, `.pr-icon`, `.pr-icon2`, `.pr-info`, `.pr-pair`, `.pr-fee`, `.pr-proto`, `.pr-proto-dot`, `.pr-metrics`, `.pr-metric-row`, `.pr-ml`, `.pr-mv`, `.range-bar-wrap`, `.range-bar-labels`, `.range-track`, `.range-fill`, `.range-dot`, `.range-bar-pcts`, `.range-na`
+
+**Expand rows**: `colspan` atualizado de `10` → `4`. Conteúdo do detalhe expandido mantido intacto (grid com d-items + gráfico de série histórica com 5 tabs).
+
+**Footer da tabela** atualizado para 4 colunas com Capital · Fees · P&L.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| `ov-total` mostrava valor da pool ativa ($360) | `updateOvStats` usava `window._liveLP || activePool.capital` para o número grande | Substituído por soma de `result` (value mode) ou `fees` (earnings mode) de TODOS os POOLS |
+| Gráfico renderizava 388px | `maintainAspectRatio:false` no Chart.js faz ignorar `height="80"` no `<canvas>` | Wrapper `<div style="position:relative;height:185px;">` → Chart.js respeita a altura do container |
+| Value/Earnings toggle no painel direito | Movido para `track-stats-header` (direita) para parecer diferente — mas Metrix tem no mesmo row dos period tabs | Movido de volta para `.track-chart-controls` com `justify-content:space-between` |
+| `_buildOvPoints` value mode mostrava capital + P&L | `val += ev.capital + ev.result * progress` inflava o gráfico com capital deployed | Removido o `ev.capital` — só P&L: `val += ev.result * progress` |
+
+### Commits desta sessão
+
+| Hash | Mensagem |
+|------|----------|
+| `2228b5e` | feat: track.html Metrix-style overview — chart + Stats/Exposure panel |
+| `2d4159b` | fix: track.html overview — gráfico menor + Value/Earnings movido para direita |
+| `1a48887` | feat: track.html overview — total return de todas as pools (não só pool ativa) |
+| `fab3b96` | feat: track.html redesign estilo Metrix — pool rows + range bar + refresh |
+
+### O que ainda falta
+
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
+- **CSVs das CEX** — Lucas traz para custo BRL + IR
+- **i18n painel Sizing & Risk** — labels só em PT; falta strings EN
+- **Validar `calcLevHedge()`** com cenários reais
+- **Mentoria DeFi avançado** — Euler V2, Morpho, Gearbox, Drift, Hyperliquid HLP, Pendle PT
+- **Distribuição de liquidez real** — a atual é sintética (track.html); leitura real exige scan de ticks do subgraph
+- **Track.html responsividade mobile** — charts e range bar podem sair do quadro em telas pequenas
+- **pools.html redesign** — plano existente (cards expandíveis + pools recomendadas) ainda não executado — o plan file em `.claude/plans/glistening-juggling-forest.md` descreve o escopo completo
+
+---
+
