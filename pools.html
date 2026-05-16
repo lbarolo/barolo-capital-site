@@ -1865,6 +1865,101 @@ document.addEventListener('DOMContentLoaded',()=>{
 .pill-gold{background:rgba(138,104,32,0.15);color:#8a6820;}
 .pill-muted{background:rgba(128,128,128,0.1);color:var(--muted);}
 
+/* ══ POOL LIST — ESTILO METRIX ══ */
+/* Stats agregados no topo */
+.pool-list-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px 8px 0 0;overflow:hidden;margin-bottom:0;}
+.pls-item{background:var(--surface);padding:12px 16px;display:flex;flex-direction:column;gap:3px;}
+.pls-lbl{font-size:8px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+.pls-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;}
+@media(max-width:640px){.pool-list-stats{grid-template-columns:repeat(3,1fr);}}
+
+/* Container lista */
+.pool-list-wrap{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;overflow:hidden;margin-bottom:20px;}
+
+/* Cabeçalho colunas */
+.pool-list-hdr{display:grid;grid-template-columns:1.8fr 72px 72px 72px 68px 140px 86px;gap:8px;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:8px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+@media(max-width:900px){.pool-list-hdr{grid-template-columns:1fr auto auto;}}
+@media(max-width:900px){.pool-list-hdr .plh-cap,.pool-list-hdr .plh-fees,.pool-list-hdr .plh-fcr,.pool-list-hdr .plh-bar{display:none;}}
+
+/* Cada linha de pool */
+.pool-row{display:grid;grid-template-columns:1.8fr 72px 72px 72px 68px 140px 86px;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;transition:background .15s;}
+.pool-row:last-of-type{border-bottom:none;}
+.pool-row:hover{background:var(--surface2);}
+.pool-row-active{background:rgba(74,124,63,0.05);}
+.pool-row-active:hover{background:rgba(74,124,63,0.09);}
+@media(max-width:900px){.pool-row{grid-template-columns:1fr auto auto;}}
+@media(max-width:900px){.pool-row .pcell-cap,.pool-row .pcell-fees,.pool-row .pcell-fcr,.pool-row .pcell-bar{display:none;}}
+
+/* Ícones do par (dois círculos sobrepostos) */
+.pool-icons{display:flex;align-items:center;flex-shrink:0;}
+.pool-icon-a,.pool-icon-b{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;border:1.5px solid var(--bg);flex-shrink:0;color:#fff;}
+.pool-icon-b{margin-left:-7px;}
+
+/* Nome + badges */
+.pool-name-wrap{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.pool-name-pair{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;}
+.pool-name-sub{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.pbadge{font-size:7.5px;padding:1px 5px;border-radius:3px;letter-spacing:.03em;font-weight:600;}
+.pbadge-fee{background:rgba(201,160,80,0.12);color:var(--accent);}
+.pbadge-eth{background:rgba(232,119,61,0.15);color:#e8773d;}
+.pbadge-base{background:rgba(79,168,255,0.15);color:#4fa8ff;}
+.pbadge-arb{background:rgba(88,130,210,0.15);color:#5882d2;}
+.pbadge-sol{background:rgba(20,241,149,0.15);color:#14F195;}
+.pbadge-pol{background:rgba(168,85,247,0.15);color:#a855f7;}
+.pbadge-zk{background:rgba(128,128,255,0.15);color:#8080ff;}
+.pbadge-muted{background:rgba(128,128,128,0.1);color:var(--muted);}
+
+/* Células de stat */
+.pcell{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.pcell-v{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;}
+.pcell-s{font-size:7.5px;color:var(--muted);}
+
+/* Barra de performance */
+.pool-perf-wrap{display:flex;flex-direction:column;gap:3px;}
+.pool-perf-track{position:relative;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.pool-perf-fees{position:absolute;left:0;top:0;bottom:0;background:var(--green);border-radius:3px;transition:width .4s;}
+.pool-perf-il{position:absolute;right:0;top:0;bottom:0;background:var(--red);border-radius:3px;opacity:.75;}
+.pool-perf-lbls{display:flex;justify-content:space-between;font-size:7px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+
+/* Barra de range (pool ativa) */
+.pool-range-track{position:relative;height:5px;border-radius:3px;overflow:visible;background:linear-gradient(90deg,rgba(248,81,73,0.4) 0%,rgba(63,185,80,0.5) 50%,rgba(248,81,73,0.4) 100%);}
+.pool-range-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:9px;height:9px;background:white;border:2px solid var(--accent);border-radius:50%;pointer-events:none;box-shadow:0 0 4px rgba(201,160,80,.5);}
+
+/* Status badges */
+.pool-badge-active{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;background:rgba(74,124,63,0.15);border:1px solid rgba(74,124,63,0.4);border-radius:3px;color:var(--green);font-size:7.5px;font-weight:700;letter-spacing:.05em;white-space:nowrap;}
+.pool-badge-closed{font-size:7.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-align:right;line-height:1.4;}
+
+/* Linha de detalhe expandida (abaixo da row) */
+.pool-detail-row{display:none;padding:14px;background:rgba(0,0,0,0.1);border-bottom:1px solid var(--border);}
+.pool-detail-row.open{display:block;}
+.pool-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+.pdg-item{display:flex;flex-direction:column;gap:2px;}
+.pdg-lbl{font-size:7.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;}
+.pdg-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);}
+.pool-obs{margin-top:10px;padding:10px 12px;background:rgba(201,160,80,0.07);border-radius:4px;border-left:2px solid var(--accent);font-size:9.5px;color:var(--muted);line-height:1.5;}
+.pool-obs strong{color:var(--accent);}
+.pool-detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.pdact{padding:5px 11px;font-size:8.5px;background:rgba(201,160,80,0.12);border:1px solid rgba(201,160,80,0.3);border-radius:4px;color:var(--accent);text-decoration:none;cursor:pointer;font-weight:600;letter-spacing:.04em;transition:background .15s;}
+.pdact:hover{background:rgba(201,160,80,0.22);}
+
+/* Recommended pools */
+.recommended-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;}
+.recommended-tab{padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.recommended-tab:hover{color:var(--text);}
+.recommended-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.recommended-pools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:20px;}
+.recommended-pool-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative;transition:all .2s;}
+.recommended-pool-card:hover{background:var(--surface2);border-color:rgba(201,160,80,0.4);}
+.recommended-pool-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;}
+.recommended-pool-pair{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--text);}
+.recommended-pool-apr{position:absolute;top:8px;right:8px;background:var(--green);color:#0d0917;padding:3px 8px;border-radius:4px;font-size:8px;font-weight:700;letter-spacing:.05em;}
+.recommended-pool-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;padding:8px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.recommended-pool-meta-item{display:flex;flex-direction:column;gap:2px;}
+.recommended-pool-meta-label{font-size:7px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;}
+.recommended-pool-meta-value{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);font-weight:600;}
+.recommended-pool-action{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;background:rgba(201,160,80,0.15);border:1px solid rgba(201,160,80,0.3);border-radius:4px;color:var(--accent);text-decoration:none;font-size:8px;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:all .15s;}
+.recommended-pool-action:hover{background:rgba(201,160,80,0.25);border-color:var(--accent);}
+
 /* Market ticker bar */
 .market-ticker{position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:0;height:28px;font-family:'JetBrains Mono',monospace;font-size:10px;}
 .ticker-item{display:flex;align-items:center;gap:6px;padding:0 16px;border-right:1px solid var(--border);height:100%;white-space:nowrap;}
@@ -2099,31 +2194,35 @@ body, input, button, select, textarea {
 </div>
 
 
-<!-- TABELA HISTÓRICA COMPLETA -->
-<div class="chart-panel">
- <div class="chart-panel-hdr" style="padding-bottom:14px;">
- <div>
- <div class="chart-panel-title">Todas as Pools — Registro Histórico</div>
- <div class="chart-panel-sub">DADOS EXTRAÍDOS DO DIÁRIO · 2023–2026</div>
+<!-- ══ POOLS RECOMENDADAS ══ -->
+<div class="section-label">Pools Recomendadas — Melhores APRs</div>
+
+<div class="recommended-tabs" id="recommendedTabs">
+ <button class="recommended-tab active" onclick="switchRecommendedNet('ethereum',this)">Ethereum</button>
+ <button class="recommended-tab" onclick="switchRecommendedNet('arbitrum',this)">Arbitrum</button>
+ <button class="recommended-tab" onclick="switchRecommendedNet('base',this)">Base</button>
+ <button class="recommended-tab" onclick="switchRecommendedNet('solana',this)">Solana</button>
+ <button class="recommended-tab" onclick="switchRecommendedNet('polygon',this)">Polygon</button>
+</div>
+
+<div class="recommended-pools-grid" id="recommendedPoolsGrid">
+ <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);">
+  <span style="font-size:12px;">Carregando pools recomendadas...</span>
  </div>
- <a href="track.html" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(201,160,80,0.1);border:1px solid rgba(201,160,80,0.3);border-radius:4px;color:var(--accent);font-size:10px;letter-spacing:.1em;text-decoration:none;font-family:'JetBrains Mono',monospace;font-weight:600;transition:background .15s;" onmouseover="this.style.background='rgba(201,160,80,0.2)'" onmouseout="this.style.background='rgba(201,160,80,0.1)'">
-   ↗ ABRIR TRACK
- </a>
- </div>
- <div style="overflow-x:auto;padding:0 18px 18px;">
- <table class="pool-tbl">
- <thead>
- <tr>
- <th>PAR</th><th>REDE</th><th>ABERTURA</th><th>FECHAMENTO</th><th>DIAS</th>
- <th>CAPITAL</th><th>TAXAS</th><th>IL EST.</th><th title="Loss vs Rebalancing — IL ÷ Fees. 0=perfeito, &gt;1=IL comeu mais que taxas">LVR</th><th title="Fee Capture Rate anualizado — (Fees ÷ Capital) × (365 ÷ Dias)">FCR %</th><th title="Crescimento do inventário vs capital inicial">INV.GROWTH</th><th>LÍQUIDO</th><th>STATUS</th>
- </tr>
- </thead>
- <tbody id="poolTableBody"></tbody>
- </table>
- </div>
- <div style="padding:10px 18px;border-top:1px solid var(--border);font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">
-   * IL estimado onde não documentado · Ver tabela interativa (sort, filtros, FCR%) em <a href="track.html" style="color:var(--accent);text-decoration:none;">Track →</a>
- </div>
+</div>
+
+<!-- ══ HISTÓRICO COMPLETO ══ -->
+<div style="margin-top:48px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+ <div class="section-label" style="margin:0;padding-bottom:0;border:none;">Histórico Completo — Pools Ativas & Encerradas</div>
+ <a href="track.html" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(201,160,80,0.1);border:1px solid rgba(201,160,80,0.3);border-radius:4px;color:var(--accent);font-size:9px;letter-spacing:.1em;text-decoration:none;font-family:'JetBrains Mono',monospace;font-weight:600;transition:background .15s;" onmouseover="this.style.background='rgba(201,160,80,0.2)'" onmouseout="this.style.background='rgba(201,160,80,0.1)'">↗ ABRIR TRACK</a>
+</div>
+
+<div id="poolCardsGrid">
+ <!-- Preenchido dinamicamente por buildPoolCards() -->
+</div>
+
+<div style="padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;border-top:none;font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;">
+ * Dados extraídos do diário · 2023–2026 · Ver análise interativa (sort, filtros, FCR%) em <a href="track.html" style="color:var(--accent);text-decoration:none;">Track →</a>
 </div>
 
 <!-- ══ SEÇÃO: ANÁLISE AVANÇADA DE POOLS ══ -->
@@ -2555,6 +2654,17 @@ var charts    = {};
 var chartTypes = { pnl:'bar', fees:'bar', timeline:'bar', apr:'bar', net:'bar' };
 var font = { family: 'JetBrains Mono, monospace', size: 9 };
 
+var _TOKEN_COLORS = {
+  WETH:'#627EEA', ETH:'#627EEA', USDC:'#2775CA', USDT:'#26A17B',
+  SOL:'#9945FF', ARB:'#1B4ADD', RDNT:'#00D4FF', XAI:'#F59E0B',
+  PENG:'#FF6B9D', PEANUT:'#8B5CF6', MSTR:'#F7A600', GRIFT:'#8B4513',
+  MATIC:'#A855F7', USDS:'#5B8EF0', GHO:'#B6509E', EIGEN:'#5B5EA6'
+};
+var _NET_BADGE = {
+  'Base':'pbadge-base','Ethereum':'pbadge-eth','Arbitrum':'pbadge-arb',
+  'Solana':'pbadge-sol','Polygon':'pbadge-pol','ZkSync':'pbadge-zk'
+};
+
 function ttOpts() {
   var dk = isDark();
   return {
@@ -2943,28 +3053,6 @@ function buildProjChart() {
  }
 }
 
- buildProjChart();
-
- // ── Expose global controls ──
- window.setChartType = function(chartId, type, btn) {
- chartTypes[chartId] = type;
- // toggle button state within parent ct-toggle
- const parent = btn.closest('.ct-toggle');
- if (parent) parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
- btn.classList.add('active');
- if (chartId === 'pnl') buildPnl(type);
- else if (chartId === 'fees') buildFees(type);
- else if (chartId === 'timeline') buildTimeline(type);
- else if (chartId === 'apr') buildApr(type);
- else if (chartId === 'net') buildNet(type);
- };
-
-
- // ── Ticker ──
- updateTicker();
- updateGas();
- setInterval(updateTicker, 60000);
- setInterval(updateGas, 30000);
 
 
 
@@ -3058,10 +3146,203 @@ function buildPoolTable() {
   tbody.innerHTML = html;
 }
 
+// ══ POOL LIST — ESTILO METRIX ════════════════════════════════════════════════
+var _TOKEN_COLORS = {
+  WETH:'#627EEA', ETH:'#627EEA', USDC:'#2775CA', USDT:'#26A17B',
+  SOL:'#9945FF', ARB:'#1B4ADD', RDNT:'#00D4FF', XAI:'#F59E0B',
+  PENG:'#FF6B9D', PEANUT:'#8B5CF6', MSTR:'#F7A600', GRIFT:'#8B4513',
+  MATIC:'#A855F7', USDS:'#5B8EF0', GHO:'#B6509E', EIGEN:'#5B5EA6'
+};
+var _NET_BADGE = {
+  'Base':'pbadge-base','Ethereum':'pbadge-eth','Arbitrum':'pbadge-arb',
+  'Solana':'pbadge-sol','Polygon':'pbadge-pol','ZkSync':'pbadge-zk'
+};
+
+function buildPoolCards() {
+  var wrap = document.getElementById('poolCardsGrid');
+  if (!wrap || typeof POOLS === 'undefined') return;
+
+  // ── Totais para stats header ──────────────────────────────────────────
+  var totFees = POOLS.reduce(function(s,p){return s+(p.fees||0);},0);
+  var totPnl  = POOLS.reduce(function(s,p){return s+(p.result||0);},0);
+  var totCap  = POOLS.reduce(function(s,p){return s+(p.capital||0);},0);
+  var bestFcr = Math.max.apply(null, POOLS.map(function(p){return p.fcr||0;}));
+  var nActive = POOLS.filter(function(p){return p.status==='active';}).length;
+  var pnlStyle = totPnl >= 0 ? 'color:var(--green)' : 'color:var(--red)';
+
+  var statsHtml = '<div class="pool-list-stats">'
+    + '<div class="pls-item"><div class="pls-lbl">Taxas Brutas</div><div class="pls-val pos">$' + totFees.toLocaleString() + '</div></div>'
+    + '<div class="pls-item"><div class="pls-lbl">P&L Líquido</div><div class="pls-val" style="' + pnlStyle + ';">' + (totPnl>=0?'+':'-') + '$' + Math.abs(totPnl).toLocaleString() + '</div></div>'
+    + '<div class="pls-item"><div class="pls-lbl">Capital Total</div><div class="pls-val">$' + totCap.toLocaleString() + '</div></div>'
+    + '<div class="pls-item"><div class="pls-lbl">Melhor FCR</div><div class="pls-val acc">' + bestFcr.toFixed(0) + '%</div></div>'
+    + '<div class="pls-item"><div class="pls-lbl">Pools Ativas</div><div class="pls-val pos">' + nActive + '</div></div>'
+    + '</div>';
+
+  // ── Cabeçalho de colunas ──────────────────────────────────────────────
+  var hdrHtml = '<div class="pool-list-hdr">'
+    + '<div>Pool</div>'
+    + '<div class="plh-cap" style="text-align:right">Capital</div>'
+    + '<div class="plh-fees" style="text-align:right">Taxas</div>'
+    + '<div style="text-align:right">Resultado</div>'
+    + '<div class="plh-fcr" style="text-align:right">FCR%</div>'
+    + '<div class="plh-bar" style="text-align:center">Performance</div>'
+    + '<div style="text-align:right">Status</div>'
+    + '</div>';
+
+  // ── Linhas de pool ────────────────────────────────────────────────────
+  var rowsHtml = '';
+  POOLS.forEach(function(p, idx) {
+    var isActive = p.status === 'active';
+    var pairBase = (p.pair.split(' ')[0]) || p.pair;
+    var feeStr   = p.pair.split(' ').slice(1).join(' ');
+    var toks     = pairBase.split('/');
+    var tA = toks[0]||'?', tB = toks[1]||'?';
+    var cA = _TOKEN_COLORS[tA]||'#8a78a8', cB = _TOKEN_COLORS[tB]||'#8a78a8';
+    var netBadge = _NET_BADGE[p.net]||'pbadge-muted';
+    var resColor = p.result >= 0 ? 'var(--green)' : 'var(--red)';
+    var fcrColor = p.fcr > 100 ? 'var(--green)' : (p.fcr > 30 ? 'var(--text)' : 'var(--muted)');
+
+    // Barra de performance
+    var perfHtml;
+    if (isActive) {
+      var pMin = 1855.72, pMax = 3146.36;
+      var pNow = window._liveEthPrice || 2431;
+      var pct  = Math.max(0, Math.min(1, (pNow - pMin) / (pMax - pMin)));
+      var pNowK = '$' + (Math.round(pNow/100)/10).toFixed(1) + 'K';
+      perfHtml = '<div class="pool-perf-wrap">'
+        + '<div class="pool-range-track"><div class="pool-range-dot" style="left:' + Math.round(pct*100) + '%;"></div></div>'
+        + '<div class="pool-perf-lbls"><span>$1.86K</span><span style="color:var(--accent);">' + pNowK + '</span><span>$3.15K</span></div>'
+        + '</div>';
+    } else {
+      // Normalizar fees e IL em relação ao capital para a barra
+      var cap = p.capital || 1;
+      var fPct = Math.min(Math.round((p.fees / cap) * 80), 80);
+      var iPct = p.il > 0 ? Math.min(Math.round((p.il / cap) * 80), 80) : 0;
+      var fLbl = p.fees > 0 ? '+$' + p.fees : '';
+      var iLbl = p.il  > 0 ? '-$' + p.il  : '';
+      perfHtml = '<div class="pool-perf-wrap">'
+        + '<div class="pool-perf-track">'
+        + (p.fees > 0 ? '<div class="pool-perf-fees" style="width:' + fPct + '%;"></div>' : '')
+        + (p.il   > 0 ? '<div class="pool-perf-il"   style="width:' + iPct + '%;"></div>' : '')
+        + '</div>'
+        + '<div class="pool-perf-lbls">'
+        + '<span style="color:var(--green);">' + fLbl + '</span>'
+        + '<span style="color:var(--red);">'   + iLbl + '</span>'
+        + '</div>'
+        + '</div>';
+    }
+
+    // Status
+    var statusHtml = isActive
+      ? '<span class="pool-badge-active">● ATIVA</span>'
+      : '<div class="pool-badge-closed">' + (p.close||'') + '</div>';
+
+    // Row principal
+    rowsHtml += '<div class="pool-row' + (isActive ? ' pool-row-active' : '') + '" onclick="togglePoolDetail(' + idx + ')">'
+      // Coluna 1 — par + ícones
+      + '<div style="display:flex;align-items:center;gap:8px;">'
+      +   '<div class="pool-icons">'
+      +     '<div class="pool-icon-a" style="background:' + cA + ';">' + tA.slice(0,2) + '</div>'
+      +     '<div class="pool-icon-b" style="background:' + cB + ';">' + tB.slice(0,2) + '</div>'
+      +   '</div>'
+      +   '<div class="pool-name-wrap">'
+      +     '<div class="pool-name-pair">' + pairBase + '</div>'
+      +     '<div class="pool-name-sub">'
+      +       (feeStr ? '<span class="pbadge pbadge-fee">' + feeStr + '</span>' : '')
+      +       '<span class="pbadge ' + netBadge + '">' + p.net + '</span>'
+      +     '</div>'
+      +   '</div>'
+      + '</div>'
+      // Coluna 2 — capital
+      + '<div class="pcell pcell-cap"><div class="pcell-v">$' + (p.capital||0).toLocaleString() + '</div></div>'
+      // Coluna 3 — taxas
+      + '<div class="pcell pcell-fees"><div class="pcell-v pos">$' + (p.fees||0).toLocaleString() + '</div></div>'
+      // Coluna 4 — resultado
+      + '<div class="pcell"><div class="pcell-v" style="color:' + resColor + ';">' + (p.result>=0?'+':'-') + '$' + Math.abs(p.result||0) + '</div></div>'
+      // Coluna 5 — FCR%
+      + '<div class="pcell pcell-fcr"><div class="pcell-v" style="color:' + fcrColor + ';">' + (p.fcr||0).toFixed(0) + '%</div></div>'
+      // Coluna 6 — barra
+      + '<div class="pcell-bar">' + perfHtml + '</div>'
+      // Coluna 7 — status
+      + '<div style="text-align:right;">' + statusHtml + '</div>'
+      + '</div>';
+
+    // Detail row (expandível ao clicar)
+    var fcrNote = p.fcr > 200 ? '🏆 Melhor trade' : (p.il > p.fees ? '⚠️ IL > Fees' : '');
+    rowsHtml += '<div class="pool-detail-row" id="pool-detail-' + idx + '">'
+      + '<div class="pool-detail-grid">'
+      + '<div class="pdg-item"><div class="pdg-lbl">Período</div><div class="pdg-val">' + (p.days||'—') + ' dias</div><div style="font-size:9px;color:var(--muted);">' + (p.open||'') + ' → ' + (p.close||'em andamento') + '</div></div>'
+      + '<div class="pdg-item"><div class="pdg-lbl">Capital</div><div class="pdg-val">$' + (p.capital||0).toLocaleString() + '</div></div>'
+      + '<div class="pdg-item"><div class="pdg-lbl">Taxas Brutas</div><div class="pdg-val pos">$' + (p.fees||0).toLocaleString() + '</div></div>'
+      + '<div class="pdg-item"><div class="pdg-lbl">IL Estimado</div><div class="pdg-val neg">-$' + (p.il||0) + '</div></div>'
+      + '<div class="pdg-item"><div class="pdg-lbl">FCR% Anual.</div><div class="pdg-val" style="color:' + fcrColor + ';">' + (p.fcr||0).toFixed(1) + '% ' + fcrNote + '</div></div>'
+      + '<div class="pdg-item"><div class="pdg-lbl">Resultado</div><div class="pdg-val" style="color:' + resColor + ';">' + (p.result>=0?'+':'-') + '$' + Math.abs(p.result||0) + '</div></div>'
+      + '</div>'
+      + (p.obs ? '<div class="pool-obs"><strong>Diário:</strong> ' + p.obs + '</div>' : '')
+      + '<div class="pool-detail-actions">'
+      + (isActive
+          ? '<a href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" target="_blank" class="pdact">↗ Revert Finance</a>'
+            + '<button class="pdact" onclick="refreshActivePoolData(event)">↻ Atualizar ao vivo</button>'
+          : '<a href="https://app.uniswap.org/explore/pools" target="_blank" class="pdact">↗ Uniswap</a>')
+      + '</div>'
+      + '</div>';
+  });
+
+  wrap.innerHTML = statsHtml
+    + '<div class="pool-list-wrap">' + hdrHtml + rowsHtml + '</div>';
+}
+
+function togglePoolDetail(idx) {
+  var row = document.getElementById('pool-detail-' + idx);
+  if (!row) return;
+  row.classList.toggle('open');
+}
+
+function refreshActivePoolData(event) {
+  event.stopPropagation();
+  var btn = event.target;
+  var orig = btn.textContent;
+  btn.textContent = '⟳ Atualizando...';
+  btn.disabled = true;
+  var done = function() { btn.textContent = orig; btn.disabled = false; };
+  if (typeof fetchLiveActivePool === 'function') {
+    fetchLiveActivePool().then(done).catch(done);
+  } else { done(); }
+}
+
+// ══ RECOMMENDED POOLS — TABS E GRID ═════════════════════════════════════════
+var _recommendedCache = {};
+var _currentRecommendedNet = 'ethereum';
+
+function switchRecommendedNet(net, btn) {
+  _currentRecommendedNet = net;
+  var tabs = document.querySelectorAll('.recommended-tab');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  buildRecommendedSection();
+}
+
+function buildRecommendedSection() {
+  var grid = document.getElementById('recommendedPoolsGrid');
+  if (!grid) return;
+  if (_recommendedCache[_currentRecommendedNet]) {
+    grid.innerHTML = _recommendedCache[_currentRecommendedNet];
+    return;
+  }
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-size:11px;">Carregando ' + _currentRecommendedNet + '...</div>';
+  if (typeof fetchNet === 'function') {
+    fetchNet(_currentRecommendedNet).catch(function() {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-size:11px;">Erro ao carregar pools de ' + _currentRecommendedNet + '</div>';
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   buildTable();
   buildLicoes();
   buildPoolTable();
+  buildPoolCards();
+  buildRecommendedSection();
 });
 
 
