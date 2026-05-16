@@ -591,51 +591,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
 
- <!-- Iframe wrapper with loading overlay -->
- <div class="iframe-wrap" id="iframeWrap" style="height:860px;">
-
- <!-- Spinner overlay (fades out after load or timeout) -->
- <div id="revertLoading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--surface);z-index:3;pointer-events:none;transition:opacity .5s;">
- <div style="width:36px;height:36px;border:3px solid rgba(201,160,80,0.2);border-top-color:#c9a050;border-radius:50%;animation:spin .9s linear infinite;"></div>
- <div style="font-size:9px;color:var(--muted);letter-spacing:2px;">CARREGANDO REVERT…</div>
- </div>
-
- <!-- The actual iframe -->
- <iframe
- id="revertFrame"
- src="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6"
- title="Revert Finance — Barolo Capital LP"
- allow="clipboard-write; clipboard-read; web-share"
- sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation allow-downloads"
- referrerpolicy="no-referrer-when-downgrade"
- style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
- </iframe>
-
- <!-- Fallback (shown only when blocked) -->
- <div id="revertFallback" style="display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;text-align:center;background:var(--surface);z-index:2;">
- <div style="font-size:36px;opacity:.35;">⬡</div>
- <div style="font-family:'Satoshi',serif;font-size:17px;color:var(--text);font-weight:600;">Revert Finance</div>
- <div style="font-size:11px;color:var(--muted);max-width:360px;line-height:1.7;">
- O site bloqueia carregamento em iframe via <strong>X-Frame-Options</strong>.<br>
- Clique abaixo para ver sua posição completa.
- </div>
- <a href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6"
- target="_blank" rel="noopener"
- class="btn-open-lg">↗ Abrir no Revert Finance</a>
- <div style="font-size:9px;color:var(--muted);">0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6</div>
- </div>
- </div>
-
- <!-- Footer bar -->
- <div style="padding:8px 14px;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
- <span style="font-size:9px;color:var(--muted);">Revert Finance · 0x5Ff957···4aE4B6</span>
- <div style="display:flex;gap:6px;">
- <button class="btn-sm" onclick="toggleHeight()">⤢ Expandir</button>
- <button class="btn-sm" onclick="reloadFrame()">↺ Recarregar</button>
- <a class="btn-open" href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
- </div>
- </div>
-</div>
 </div><!-- end bc-lp-active-section -->
 
 <div id="bc-apr-section">
@@ -1133,87 +1088,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </script>
 </div><!-- end bc-apr-section -->
 
-<!-- ══ RAYDIUM ══ -->
-<div class="section-label" style="margin-top:32px;">Raydium — Portfolio</div>
-<div class="revert-panel">
- <div class="revert-toolbar">
- <div class="revert-title">
- <span style="font-size:15px;color:#c200fb;font-weight:800;font-family:'Satoshi',serif;">◎ RAYDIUM</span>
- <span style="font-size:9px;color:var(--muted);">Portfolio · Solana</span>
- </div>
- <a class="btn-open" href="https://raydium.io/portfolio/" target="_blank" rel="noopener">↗ Abrir Raydium</a>
- </div>
- <div class="iframe-wrap" id="raydiumWrap">
- <div class="iframe-spinner" id="raydiumLoading">
- <div class="spinner-ring" style="border-top-color:#c200fb;"></div>
- <div class="spinner-label">CARREGANDO RAYDIUM…</div>
- </div>
- <iframe id="raydiumFrame"
- src="https://raydium.io/portfolio/"
- title="Raydium Portfolio"
- sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation allow-downloads"
- allow="clipboard-write; clipboard-read; web-share"
- referrerpolicy="no-referrer-when-downgrade"
- style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
- </iframe>
- <div class="iframe-fallback" id="raydiumFallback">
- <div class="ifb-icon" style="color:#c200fb;">◎</div>
- <div class="ifb-title">Raydium Portfolio</div>
- <div class="ifb-sub">O site bloqueia embed via <strong>X-Frame-Options</strong>.<br>Clique para abrir em nova aba.</div>
- <a href="https://raydium.io/portfolio/" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir no Raydium</a>
- <div class="ifb-addr">raydium.io/portfolio</div>
- </div>
- </div>
- <div class="panel-footer">
- <span>Raydium · raydium.io/portfolio</span>
- <div style="display:flex;gap:6px;">
- <button class="btn-sm" onclick="togglePanel('raydiumWrap',this)">⤢ Expandir</button>
- <button class="btn-sm" onclick="reloadPanel('raydiumFrame','raydiumLoading','raydiumFallback')">↺ Recarregar</button>
- <a class="btn-open" href="https://raydium.io/portfolio/" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
- </div>
- </div>
-</div>
-
-<!-- ══ AAVE ══ -->
-<div class="section-label" style="margin-top:32px;">AAVE V4 — Dashboard</div>
-<div class="revert-panel">
- <div class="revert-toolbar">
- <div class="revert-title">
- <span style="font-size:15px;color:#b6509e;font-weight:800;font-family:'Satoshi',serif;">⬡ AAVE V4</span>
- <span style="font-size:9px;color:var(--muted);">pro.aave.com · Ethereum</span>
- </div>
- <a class="btn-open" href="https://pro.aave.com/" target="_blank" rel="noopener">↗ Abrir AAVE</a>
- </div>
- <div class="iframe-wrap" id="aaveWrap">
- <div class="iframe-spinner" id="aaveAppLoading">
- <div class="spinner-ring" style="border-top-color:#b6509e;"></div>
- <div class="spinner-label">CARREGANDO AAVE…</div>
- </div>
- <iframe id="aaveFrame"
- src="https://pro.aave.com/"
- title="AAVE V4 Dashboard"
- sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation-by-user-activation allow-downloads"
- allow="clipboard-write; clipboard-read; web-share"
- referrerpolicy="no-referrer-when-downgrade"
- style="width:100%;height:100%;border:none;display:block;opacity:0;transition:opacity .5s;">
- </iframe>
- <div class="iframe-fallback" id="aaveAppFallback">
- <div class="ifb-icon" style="color:#b6509e;">⬡</div>
- <div class="ifb-title">AAVE V4</div>
- <div class="ifb-sub">O site bloqueia embed via <strong>X-Frame-Options</strong>.<br>Clique para abrir em nova aba e conectar sua carteira.</div>
- <a href="https://pro.aave.com/" target="_blank" rel="noopener" class="btn-open-lg">↗ Abrir no AAVE</a>
- <div class="ifb-addr">pro.aave.com</div>
- </div>
- </div>
- <div class="panel-footer">
- <span>AAVE V4 · Core Instance · Ethereum</span>
- <div style="display:flex;gap:6px;">
- <button class="btn-sm" onclick="togglePanel('aaveWrap',this)">⤢ Expandir</button>
- <button class="btn-sm" onclick="reloadPanel('aaveFrame','aaveAppLoading','aaveAppFallback')">↺ Recarregar</button>
- <a class="btn-open" href="https://pro.aave.com/" target="_blank" rel="noopener" style="font-size:9px;padding:4px 10px;">↗ Nova aba</a>
- </div>
- </div>
-</div>
 
 <!-- ══ KAMINO ══ -->
 
