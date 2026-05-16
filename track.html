@@ -816,7 +816,7 @@
     <div class="track-chart-area">
       <div class="track-chart-header">
         <div>
-          <div class="track-ov-label" id="ov-chart-mode-label">Total Value</div>
+          <div class="track-ov-label" id="ov-chart-mode-label">P&amp;L Total (todas as pools)</div>
           <div class="track-ov-value" id="ov-total">—</div>
         </div>
         <div class="track-ov-update"><span class="live-dot"></span>atualizado <span id="ov-last-update">—</span></div>
@@ -2666,7 +2666,8 @@ function setOvMode(m, btn) {
   document.querySelectorAll('.track-vt-btn').forEach(t => t.classList.remove('active'));
   if (btn) btn.classList.add('active');
   const lbl = document.getElementById('ov-chart-mode-label');
-  if (lbl) lbl.textContent = m === 'value' ? 'Total Value' : 'Total Earnings';
+  if (lbl) lbl.textContent = m === 'value' ? 'P&L Total (todas as pools)' : 'Taxas Brutas (todas as pools)';
+  _updateOvTotal();
   buildOvChart();
 }
 function setOvPanel(panel, btn) {
@@ -2674,6 +2675,15 @@ function setOvPanel(panel, btn) {
   if (btn) btn.classList.add('active');
   document.getElementById('ov-panel-stats').style.display    = panel === 'stats'    ? '' : 'none';
   document.getElementById('ov-panel-exposure').style.display = panel === 'exposure' ? '' : 'none';
+}
+
+function _updateOvTotal() {
+  const totFees = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
+  const totPnl  = POOLS.reduce((s, p) => s + (p.result || 0), 0);
+  const val = _ovMode === 'value' ? totPnl : totFees;
+  const fmtVal = (val >= 0 ? '+' : '-') + '$' + Math.abs(val).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const el = document.getElementById('ov-total');
+  if (el) { el.textContent = fmtVal; el.className = 'track-ov-value ' + (val >= 0 ? 'pos' : 'neg'); }
 }
 
 function updateOvStats() {
@@ -2685,6 +2695,9 @@ function updateOvStats() {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   const setClass = (id, v, cls) => { const el = document.getElementById(id); if (el) { el.textContent = v; el.className = cls; } };
 
+  // Big number: total P&L or total fees depending on current mode
+  _updateOvTotal();
+
   set('ov-earnings', '+$' + totFees.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
 
   const pnlStr = (totPnl >= 0 ? '+' : '-') + '$' + Math.abs(totPnl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -2695,13 +2708,6 @@ function updateOvStats() {
 
   const vsHodlPct = totCap > 0 ? -(totIL / totCap * 100) : 0;
   setClass('ov-vs-hodl', (vsHodlPct >= 0 ? '+' : '') + vsHodlPct.toFixed(1) + '%', 'ts-val ' + (vsHodlPct >= 0 ? 'pos' : 'neg'));
-
-  // Total value: active pool capital
-  const activePool = POOLS.find(p => p.status === 'ativa');
-  if (activePool) {
-    const liveVal = (window._liveLP && window._liveLP > 0) ? window._liveLP : activePool.capital;
-    set('ov-total', '$' + liveVal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
-  }
 }
 
 function buildOvChart() {
@@ -2804,13 +2810,14 @@ function _buildOvPoints(period, mode) {
     events.forEach(ev => {
       if (ts < ev.openTs || ts > ev.closeTs) return;
       if (mode === 'earnings') {
+        // cumulative raw fees accrued up to this day
         const elapsed = Math.max(0, (ts - ev.openTs) / 86400000);
         val += elapsed * ev.dailyFees;
       } else {
-        // value = capital + prorated result
+        // cumulative P&L (result) prorated over the pool's lifetime
         const span = ev.closeTs - ev.openTs || 1;
         const progress = Math.min(1, (ts - ev.openTs) / span);
-        val += ev.capital + ev.result * progress;
+        val += ev.result * progress;
       }
     });
 
@@ -2821,15 +2828,22 @@ function _buildOvPoints(period, mode) {
     d.setDate(d.getDate() + step);
   }
 
-  // Patch last point with live data
+  // Patch last point: replace the active pool's prorated contribution with live data
   if (points.length > 0) {
     const activePool = POOLS.find(p => p.status === 'ativa');
     if (activePool) {
+      // Re-sum all closed pools' final values
+      const closedVal = POOLS.filter(p => p.status !== 'ativa').reduce((s, p) => {
+        return s + (mode === 'earnings' ? (p.fees || 0) : (p.result || 0));
+      }, 0);
       if (mode === 'value') {
-        const liveVal = (window._liveLP && window._liveLP > 0) ? window._liveLP : activePool.capital;
-        points[points.length - 1].y = parseFloat(liveVal.toFixed(2));
+        // live P&L for active pool = liveLP - capital (if available) else use stored result
+        const livePnl = (window._liveLP && window._liveLP > 0) ? (window._liveLP - activePool.capital) : (activePool.result || 0);
+        points[points.length - 1].y = parseFloat((closedVal + livePnl).toFixed(2));
       } else {
-        points[points.length - 1].y = parseFloat(activePool.fees.toFixed(2));
+        // live fees for active pool
+        const liveFees = (window._liveLPFees && window._liveLPFees > 0) ? window._liveLPFees : (activePool.fees || 0);
+        points[points.length - 1].y = parseFloat((closedVal + liveFees).toFixed(2));
       }
     }
   }
