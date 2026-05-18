@@ -831,9 +831,6 @@
     </div>
   </div>
 
-  <!-- ══ POOLS ABERTAS (QUICK VIEW) ══ -->
-  <div id="openPoolsContainer"></div>
-
   <!-- ══ METRIX-STYLE OVERVIEW ══ -->
   <div class="track-overview">
 
@@ -2743,99 +2740,6 @@ function toggleTheme() {
   localStorage.setItem('bc-theme', dark ? 'light' : 'dark');
 }
 
-// ─── RENDER OPEN POOLS (QUICK VIEW) ──────────────────────────────────────────
-function renderOpenPools() {
-  const container = document.getElementById('openPoolsContainer');
-  if (!container) return;
-
-  const openPools = POOLS.filter(p => p.status === 'ativa');
-  if (openPools.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-
-  const TOKEN_COLORS = {
-    'ETH':'#627EEA','WETH':'#627EEA','USDC':'#2775ca','USDT':'#26a17b',
-    'SOL':'#9945ff','ARB':'#28a0f0','BTC':'#F7931A','WBTC':'#F7931A',
-    'MATIC':'#A855F7','POL':'#A855F7','RDNT':'#00D4FF','XAI':'#F59E0B',
-    'GRIFT':'#888','PEANUT':'#888','PENG':'#888','MSTR':'#888',
-    'DEFAULT':'#888'
-  };
-  const NET_COLOR_MAP = {
-    Base:'#4fa8ff',Ethereum:'#627EEA',Arbitrum:'#5882d2',
-    Solana:'#14F195',Polygon:'#A855F7',ZkSync:'#8080ff'
-  };
-
-  function tokenColor(sym) { return TOKEN_COLORS[sym] || TOKEN_COLORS.DEFAULT; }
-  function tokenInitial(sym) { return sym ? sym.charAt(0) : '?'; }
-  function parsePairTokens(pairStr) {
-    const parts = pairStr.split('/');
-    return { t1: parts[0] || '', t2: parts[1] || '' };
-  }
-
-  let html = `
-  <div style="margin-bottom:22px;">
-    <h3 style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Pools Abertas</h3>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Par / Protocolo</th>
-            <th class="r">Balance / Earnings / APR</th>
-            <th>Range</th>
-            <th style="width:28px"></th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-  openPools.forEach(p => {
-    const { t1, t2 } = parsePairTokens(p.pair);
-    const t1c = tokenColor(t1), t2c = tokenColor(t2);
-    const netC = NET_COLOR_MAP[p.net] || '#888';
-
-    const balance = (p.status === 'ativa' && p.pooled != null) ? fmtUsd(p.pooled) : fmtUsd(p.capital);
-    const feesStr = p.fees > 0 ? fmtUsd(p.fees, 2) : '$0.00';
-    const feesClass = p.fees > 0 ? 'pos' : '';
-    const fcrVal = calcFCR(p);
-    const aprStr = fcrVal != null ? (fcrVal >= 0 ? '+' : '') + fcrVal.toFixed(1) + '%' : '—';
-    const aprClass = fcrVal != null ? (fcrVal >= 0 ? 'pos' : 'neg') : '';
-
-    html += `
-          <tr class="pr-row">
-            <td>
-              <div class="pr-identity">
-                <div class="pr-icons">
-                  <div class="pr-icon" style="background:${t1c}">${tokenInitial(t1)}</div>
-                  <div class="pr-icon pr-icon2" style="background:${t2c}">${tokenInitial(t2)}</div>
-                </div>
-                <div class="pr-info">
-                  <div class="pr-pair">${p.pair}<span class="pr-fee">${p.fee}</span></div>
-                  <div class="pr-proto">
-                    <span class="pr-proto-dot" style="background:${netC}"></span>
-                    <span class="live-dot" style="width:5px;height:5px;margin-right:3px"></span>${p.proto} · ${p.net}
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td class="pr-metrics">
-              <div class="pr-metric-row"><span class="pr-ml">Balance</span><span class="pr-mv">${balance}</span></div>
-              <div class="pr-metric-row"><span class="pr-ml">Pending Earnings</span><span class="pr-mv ${feesClass}">${feesStr}</span></div>
-              <div class="pr-metric-row"><span class="pr-ml">APR</span><span class="pr-mv ${aprClass}">${aprStr}</span></div>
-            </td>
-            <td>${rangeBarHtml(p, window._liveEthPrice || null)}</td>
-            <td style="text-align:center"><span class="expand-icon">—</span></td>
-          </tr>`;
-  });
-
-  html += `
-        </tbody>
-      </table>
-    </div>
-  </div>`;
-
-  container.innerHTML = html;
-}
-
 // ─── METRIX OVERVIEW ─────────────────────────────────────────────────────────
 let _ovPeriod = '7d', _ovMode = 'earnings', _ovChart = null;
 
@@ -3091,7 +2995,6 @@ document.addEventListener('DOMContentLoaded', async function init() {
 
   computeKPIs();
   updateOvStats();
-  renderOpenPools();
   setTimeout(() => { buildOvChart(); buildApChart('pnl'); buildLiqDistChart(1850); }, 100);
 
   // default: newest first
