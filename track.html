@@ -3237,33 +3237,38 @@ function updateLpSummary(pool, ethPrice) {
   const result = pool.result || 0;
   const days = pool.days || 1;
 
-  const set = (id, v, cls) => {
+  const setWithColor = (id, v, isPositive) => {
     const el = document.getElementById(id);
     if (el) {
       el.textContent = v;
-      if (cls) el.className = cls;
+      el.className = 'lp-metric-value ' + (isPositive ? 'pos' : 'neg');
     }
   };
 
   // Metrics in USD reference
   if (_lpRefMode === 'USD') {
     // Pooled assets
-    set('lp-pooled', '$' + pooled.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
+    const pooledEl = document.getElementById('lp-pooled');
+    if (pooledEl) pooledEl.textContent = '$' + pooled.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 
     // Total PnL (in USD)
     const pnlUsd = result;
-    set('lp-pnl', (pnlUsd >= 0 ? '+' : '') + '$' + Math.abs(pnlUsd).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), 'lp-metric-value ' + (pnlUsd >= 0 ? 'pos' : 'neg'));
+    const pnlText = (pnlUsd >= 0 ? '+' : '') + '$' + Math.abs(pnlUsd).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    setWithColor('lp-pnl', pnlText, pnlUsd >= 0);
 
     // Total APR (includes IL)
     const totalAprPct = days > 0 ? ((result / cap) / (days / 365) * 100) : 0;
-    set('lp-apr', (totalAprPct >= 0 ? '+' : '') + totalAprPct.toFixed(1) + '%', 'lp-metric-value ' + (totalAprPct >= 0 ? 'pos' : 'neg'));
+    const aprText = (totalAprPct >= 0 ? '+' : '') + totalAprPct.toFixed(1) + '%';
+    setWithColor('lp-apr', aprText, totalAprPct >= 0);
 
     // Fee APR (fees only, excluding IL)
     const feeAprPct = days > 0 ? ((fees / cap) / (days / 365) * 100) : 0;
-    set('lp-fee-apr', (feeAprPct >= 0 ? '+' : '') + feeAprPct.toFixed(1) + '%', 'lp-metric-value pos');
+    const feeAprText = (feeAprPct >= 0 ? '+' : '') + feeAprPct.toFixed(1) + '%';
+    setWithColor('lp-fee-apr', feeAprText, feeAprPct >= 0);
 
     // Uncollected fees
-    set('lp-uncollected', '+$' + fees.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), 'lp-metric-value pos');
+    const feesText = '+$' + fees.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    setWithColor('lp-uncollected', feesText, true);
   } else {
     // HOLD reference — compare vs holding 0.17 WETH
     const ENTRY_WETH = 0.17;
@@ -3271,22 +3276,27 @@ function updateLpSummary(pool, ethPrice) {
 
     // Pooled assets (delta vs HODL)
     const pooledVsHodl = pooled - hodlValue;
-    set('lp-pooled', (pooledVsHodl >= 0 ? '+' : '') + '$' + Math.abs(pooledVsHodl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), 'lp-metric-value ' + (pooledVsHodl >= 0 ? 'pos' : 'neg'));
+    const pooledText = (pooledVsHodl >= 0 ? '+' : '') + '$' + Math.abs(pooledVsHodl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    setWithColor('lp-pooled', pooledText, pooledVsHodl >= 0);
 
-    // Total PnL vs HODL (IL captured + fees earned - capital difference)
-    const pnlVsHodl = fees + il;  // fees - IL (IL is negative, so this is fees minus absolute IL loss)
-    set('lp-pnl', (pnlVsHodl >= 0 ? '+' : '') + '$' + Math.abs(pnlVsHodl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), 'lp-metric-value ' + (pnlVsHodl >= 0 ? 'pos' : 'neg'));
+    // Total PnL vs HODL (fees earned + IL captured)
+    const pnlVsHodl = fees + il;  // IL is negative, so fees - absolute(IL)
+    const pnlVsHoldlText = (pnlVsHodl >= 0 ? '+' : '') + '$' + Math.abs(pnlVsHodl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    setWithColor('lp-pnl', pnlVsHoldlText, pnlVsHodl >= 0);
 
     // Total APR vs HODL
     const totalAprVsHodl = days > 0 ? ((pnlVsHodl / hodlValue) / (days / 365) * 100) : 0;
-    set('lp-apr', (totalAprVsHodl >= 0 ? '+' : '') + totalAprVsHodl.toFixed(1) + '%', 'lp-metric-value ' + (totalAprVsHodl >= 0 ? 'pos' : 'neg'));
+    const aprVsHoldText = (totalAprVsHodl >= 0 ? '+' : '') + totalAprVsHodl.toFixed(1) + '%';
+    setWithColor('lp-apr', aprVsHoldText, totalAprVsHodl >= 0);
 
     // Fee APR vs HODL
     const feeAprVsHodl = days > 0 ? ((fees / hodlValue) / (days / 365) * 100) : 0;
-    set('lp-fee-apr', (feeAprVsHodl >= 0 ? '+' : '') + feeAprVsHodl.toFixed(1) + '%', 'lp-metric-value ' + (feeAprVsHodl >= 0 ? 'pos' : 'neg'));
+    const feeAprVsHoldText = (feeAprVsHodl >= 0 ? '+' : '') + feeAprVsHodl.toFixed(1) + '%';
+    setWithColor('lp-fee-apr', feeAprVsHoldText, feeAprVsHodl >= 0);
 
     // Uncollected fees (same in both references)
-    set('lp-uncollected', '+$' + fees.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), 'lp-metric-value pos');
+    const feesText = '+$' + fees.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    setWithColor('lp-uncollected', feesText, true);
   }
 
   // Range visualization: fill bar and dot position based on current price
