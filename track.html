@@ -841,7 +841,7 @@
     <div class="track-chart-area">
       <div class="track-chart-header">
         <div>
-          <div class="track-ov-label" id="ov-chart-mode-label">P&amp;L Total (todas as pools)</div>
+          <div class="track-ov-label" id="ov-chart-mode-label">Earnings · Pool Ativa</div>
           <div class="track-ov-value" id="ov-total">—</div>
         </div>
         <div class="track-ov-update" style="display:flex;align-items:center;gap:8px;"><span class="live-dot"></span>atualizado <span id="ov-last-update">—</span><button id="refreshBtn" onclick="refreshAll()" style="background:none;border:1px solid var(--border);border-radius:4px;color:var(--accent);font-size:12px;padding:2px 7px;cursor:pointer;font-family:var(--mono);">↻</button></div>
@@ -2862,35 +2862,42 @@ function setOvPanel(panel, btn) {
 }
 
 function _updateOvTotal() {
-  const totFees = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
-  const totPnl  = POOLS.reduce((s, p) => s + (p.result || 0), 0);
-  const val = _ovMode === 'value' ? totPnl : totFees;
+  // Pool ativa apenas (POOLS[0])
+  const p = POOLS[0];
+  if (!p) return;
+  const fees = p.fees || 0;
+  const pnl = p.result || 0;
+  const val = _ovMode === 'value' ? pnl : fees;
   const fmtVal = (val >= 0 ? '+' : '-') + '$' + Math.abs(val).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   const el = document.getElementById('ov-total');
   if (el) { el.textContent = fmtVal; el.className = 'track-ov-value ' + (val >= 0 ? 'pos' : 'neg'); }
 }
 
 function updateOvStats() {
-  const totFees = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
-  const totCap  = POOLS.reduce((s, p) => s + (p.capital || 0), 0);
-  const totPnl  = POOLS.reduce((s, p) => s + (p.result || 0), 0);
-  const totIL   = POOLS.reduce((s, p) => s + Math.abs(p.il || 0), 0);
+  // Pool ativa apenas (POOLS[0])
+  const p = POOLS[0];
+  if (!p) return;
+
+  const fees = p.fees || 0;
+  const cap  = p.capital || 0;
+  const pnl  = p.result || 0;
+  const il   = Math.abs(p.il || 0);
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   const setClass = (id, v, cls) => { const el = document.getElementById(id); if (el) { el.textContent = v; el.className = cls; } };
 
-  // Big number: total P&L or total fees depending on current mode
+  // Big number: P&L or fees from active pool only
   _updateOvTotal();
 
-  set('ov-earnings', '+$' + totFees.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
+  set('ov-earnings', '+$' + fees.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
 
-  const pnlStr = (totPnl >= 0 ? '+' : '-') + '$' + Math.abs(totPnl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-  setClass('ov-pnl', pnlStr, 'ts-val ' + (totPnl >= 0 ? 'pos' : 'neg'));
+  const pnlStr = (pnl >= 0 ? '+' : '-') + '$' + Math.abs(pnl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  setClass('ov-pnl', pnlStr, 'ts-val ' + (pnl >= 0 ? 'pos' : 'neg'));
 
-  const roi = totCap > 0 ? (totFees / totCap * 100) : 0;
+  const roi = cap > 0 ? (fees / cap * 100) : 0;
   setClass('ov-roi', (roi >= 0 ? '+' : '') + roi.toFixed(1) + '%', 'ts-val ' + (roi >= 0 ? 'pos' : 'neg'));
 
-  const vsHodlPct = totCap > 0 ? -(totIL / totCap * 100) : 0;
+  const vsHodlPct = cap > 0 ? -(il / cap * 100) : 0;
   setClass('ov-vs-hodl', (vsHodlPct >= 0 ? '+' : '') + vsHodlPct.toFixed(1) + '%', 'ts-val ' + (vsHodlPct >= 0 ? 'pos' : 'neg'));
 }
 
@@ -2971,20 +2978,22 @@ function _buildOvPoints(period, mode) {
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const step = period === '7d' ? 1 : period === '1m' ? 3 : period === '3m' ? 7 : 14;
 
-  // Build pool events in range
-  const events = POOLS.map(p => {
-    const openTs  = _parseDateTs(p.open);
-    const closeTs = p.close ? _parseDateTs(p.close) : now.getTime();
-    const days    = p.days || Math.max(1, Math.round((closeTs - openTs) / 86400000));
-    return {
-      openTs, closeTs,
-      capital: p.capital || 0,
-      fees: p.fees || 0,
-      result: p.result || 0,
-      dailyFees: (p.fees || 0) / days,
-      isActive: p.status === 'ativa'
-    };
-  }).filter(ev => ev.closeTs >= cutoff.getTime());
+  // Build pool event for active pool only (POOLS[0])
+  const activePool = POOLS[0];
+  if (!activePool) return [];
+
+  const openTs  = _parseDateTs(activePool.open);
+  const closeTs = activePool.close ? _parseDateTs(activePool.close) : now.getTime();
+  const days    = activePool.days || Math.max(1, Math.round((closeTs - openTs) / 86400000));
+
+  const events = [{
+    openTs, closeTs,
+    capital: activePool.capital || 0,
+    fees: activePool.fees || 0,
+    result: activePool.result || 0,
+    dailyFees: (activePool.fees || 0) / days,
+    isActive: activePool.status === 'ativa'
+  }].filter(ev => ev.closeTs >= cutoff.getTime());
 
   const points = [];
   const d = new Date(cutoff);
