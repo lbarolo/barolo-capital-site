@@ -972,24 +972,24 @@
         </div>
       </div>
       <div class="lp-metric">
-        <div class="lp-metric-label">pooled assets</div>
-        <div class="lp-metric-value" id="lp-pooled">$352.01</div>
+        <div class="lp-metric-label" data-tooltip-key="lp-pooled-label" title="USD value of the underlying assets currently in the pool. Does not include uncollected fees.">pooled assets</div>
+        <div class="lp-metric-value" id="lp-pooled" data-tooltip-key="lp-pooled-value" title="USD value of the underlying assets currently in the pool. Does not include uncollected fees.">$352.01</div>
       </div>
       <div class="lp-metric">
-        <div class="lp-metric-label">total PnL</div>
-        <div class="lp-metric-value" id="lp-pnl">$57.48</div>
+        <div class="lp-metric-label" data-tooltip-key="lp-pnl-label" title="Profit and loss for the LP position from fees accrued, price divergence, gas costs, and reward incentives">total PnL</div>
+        <div class="lp-metric-value" id="lp-pnl" data-tooltip-key="lp-pnl-value" title="Profit and loss for the LP position from fees accrued, price divergence, gas costs, and reward incentives">$57.48</div>
       </div>
       <div class="lp-metric">
-        <div class="lp-metric-label">total APR</div>
-        <div class="lp-metric-value" id="lp-apr">80.15%</div>
+        <div class="lp-metric-label" data-tooltip-key="lp-apr-label" title="Annual percentage rate of returns given the current value of the underlying LP assets, deposits, withdrawals, divergence loss, gas costs, and staking rewards at current prices.">total APR</div>
+        <div class="lp-metric-value" id="lp-apr" data-tooltip-key="lp-apr-value" title="Annual percentage rate of returns given the current value of the underlying LP assets, deposits, withdrawals, divergence loss, gas costs, and staking rewards at current prices.">80.15%</div>
       </div>
       <div class="lp-metric">
-        <div class="lp-metric-label">fee APR</div>
-        <div class="lp-metric-value" id="lp-fee-apr">29.78%</div>
+        <div class="lp-metric-label" data-tooltip-key="lp-fee-apr-label" title="Annual percentage rate of returns from fees only.">fee APR</div>
+        <div class="lp-metric-value" id="lp-fee-apr" data-tooltip-key="lp-fee-apr-value" title="Annual percentage rate of returns from fees only.">29.78%</div>
       </div>
       <div class="lp-metric">
-        <div class="lp-metric-label">uncollected fees</div>
-        <div class="lp-metric-value" id="lp-uncollected">$21.36</div>
+        <div class="lp-metric-label" data-tooltip-key="lp-uncollected-label" title="Accumulated trading fees can be claimed.">uncollected fees</div>
+        <div class="lp-metric-value" id="lp-uncollected" data-tooltip-key="lp-uncollected-value" title="Accumulated trading fees can be claimed.">$21.36</div>
       </div>
     </div>
   </div>
@@ -1535,6 +1535,51 @@ const POOLS = [
     wallet:'0x5Ff957…4AE4B6', range:null,
     notes:'Primeira pool RDNT. Mono ativo. Grandes taxas em período curto. APR excepcional.' },
 ];
+
+// ─── LANGUAGE STRINGS ────────────────────────────────────────────────────────
+
+const TRACK_LANG_STRINGS = {
+  'lp-pooled-label': {
+    EN: 'pooled assets',
+    PT: 'ativos em pool'
+  },
+  'lp-pooled-value': {
+    EN: 'USD value of the underlying assets currently in the pool. Does not include uncollected fees.',
+    PT: 'Valor em USD dos ativos subjacentes atualmente na pool. Não inclui taxas não coletadas.'
+  },
+  'lp-pnl-label': {
+    EN: 'total PnL',
+    PT: 'PnL total'
+  },
+  'lp-pnl-value': {
+    EN: 'Profit and loss for the LP position from fees accrued, price divergence, gas costs, and reward incentives.',
+    PT: 'Lucro e perda para a posição LP de taxas acumuladas, divergência de preço, custos de gas e incentivos de recompensa.'
+  },
+  'lp-apr-label': {
+    EN: 'total APR',
+    PT: 'APR total'
+  },
+  'lp-apr-value': {
+    EN: 'Annual percentage rate of returns given the current value of the underlying LP assets, deposits, withdrawals, divergence loss, gas costs, and staking rewards at current prices.',
+    PT: 'Taxa percentual anual de retornos dado o valor atual dos ativos LP subjacentes, depósitos, retiradas, perda de divergência, custos de gas e recompensas de staking.'
+  },
+  'lp-fee-apr-label': {
+    EN: 'fee APR',
+    PT: 'APR de taxas'
+  },
+  'lp-fee-apr-value': {
+    EN: 'Annual percentage rate of returns from fees only.',
+    PT: 'Taxa percentual anual de retornos apenas de taxas de trading.'
+  },
+  'lp-uncollected-label': {
+    EN: 'uncollected fees',
+    PT: 'taxas não coletadas'
+  },
+  'lp-uncollected-value': {
+    EN: 'Accumulated trading fees that can be claimed.',
+    PT: 'Taxas de trading acumuladas que podem ser reivindicadas.'
+  }
+};
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 
@@ -3319,6 +3364,18 @@ function updateLpSummary(pool, ethPrice) {
   if (maxEl) maxEl.textContent = '$' + pMax.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
+// ─── LANGUAGE / TOOLTIPS ─────────────────────────────────────────────────────
+
+function applyLangTrack(lang) {
+  lang = lang || localStorage.getItem('bc-lang') || 'PT';
+  document.querySelectorAll('[data-tooltip-key]').forEach(el => {
+    const key = el.getAttribute('data-tooltip-key');
+    if (TRACK_LANG_STRINGS[key] && TRACK_LANG_STRINGS[key][lang]) {
+      el.setAttribute('title', TRACK_LANG_STRINGS[key][lang]);
+    }
+  });
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async function init() {
@@ -3330,6 +3387,9 @@ document.addEventListener('DOMContentLoaded', async function init() {
     const themeBtn = document.getElementById('themeBtn');
     if (themeBtn) themeBtn.textContent = saved === 'dark' ? '☾' : '☀';
   }
+
+  // Apply language strings to tooltips
+  applyLangTrack();
 
   computeKPIs();
   updateOvStats();
