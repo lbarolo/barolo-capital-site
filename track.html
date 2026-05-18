@@ -3493,10 +3493,36 @@ document.addEventListener('DOMContentLoaded', async function init() {
     }
   }
 
-  // auto-refresh a cada 2 minutos
-  setInterval(() => {
-    fetchLiveActivePool().catch(e => console.debug('[Track] refresh failed:', e.message));
-  }, 120000);
+  // auto-refresh a cada 2 minutos — com fallback para cache
+  async function autoRefreshActivePool() {
+    try {
+      await fetchLiveActivePool();
+    } catch(e) {
+      console.debug('[Track] live fetch failed, using cached data:', e.message);
+      // Try to restore from cache
+      try {
+        const cached = JSON.parse(localStorage.getItem('bc-active-pool') || null);
+        if (cached && POOLS[0]) {
+          POOLS[0].pooled = cached.pooled;
+          POOLS[0].fees = cached.fees;
+          POOLS[0].il = cached.il;
+          POOLS[0].result = cached.result;
+          POOLS[0].days = cached.days;
+          // Update UI with cached data (use last known ETH price)
+          const ethPrice = cached.ethPrice || window._liveEthPrice || 1800;
+          updateLpSummary(POOLS[0], ethPrice);
+          // Update last-update timestamp
+          const luEl = document.getElementById('ov-last-update');
+          if (luEl) luEl.textContent = 'cache (' + new Date(cached.timestamp).toLocaleTimeString('pt-BR') + ')';
+          console.debug('[Track] restored from cache');
+        }
+      } catch(cacheErr) {
+        console.debug('[Track] cache restoration failed:', cacheErr.message);
+      }
+    }
+  }
+
+  setInterval(autoRefreshActivePool, 120000);
 
   console.log('[Track] Init completo');
 });
