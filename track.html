@@ -1524,6 +1524,50 @@ function toggleExpand(id) {
   renderTable();
 }
 
+function togglePnlRef(evt, poolId) {
+  evt.stopPropagation();
+  const p = POOLS.find(x => x.id === poolId);
+  if (!p) return;
+
+  const refBtn = evt.target;
+  const valEl = document.getElementById('pnl-val-' + poolId);
+  if (!refBtn || !valEl) return;
+
+  const isUsd = refBtn.textContent.includes('USD');
+  if (isUsd) {
+    // Switch to HOLD reference
+    // HOLD value = capital (assuming stable if no price change) vs actual result
+    // For WETH/USDC entered 100% WETH: HOLD = qty_weth × current_eth_price
+    const holdVal = calculateHoldValue(p);
+    valEl.textContent = holdVal;
+    valEl.className = 'pr-mv ' + (parseFloat(holdVal.replace(/[^0-9.-]/g, '')) >= 0 ? 'pos' : 'neg');
+    refBtn.textContent = '[HOLD]';
+  } else {
+    // Switch back to USD reference
+    valEl.textContent = fmtUsd(p.result, 2);
+    valEl.className = 'pr-mv ' + (p.result >= 0 ? 'pos' : 'neg');
+    refBtn.textContent = '[USD]';
+  }
+}
+
+function calculateHoldValue(p) {
+  // For WETH/USDC: calculate what HODL would give
+  // If entered 100% WETH: HOLD = (capital/entry_price) × current_eth - capital + fees
+  // Simplified: show P&L vs if you just held capital in USDC (0% gain)
+
+  if (p.pair === 'WETH/USDC' && p.status === 'ativa') {
+    // This pool entered 100% WETH at ~$2,147 on 24/02/2026
+    // 0.17 WETH = $365 capital
+    const qty_weth = 0.17;
+    const current_eth = window._liveEthPrice || 2431;
+    const holdValue = qty_weth * current_eth - p.capital; // HODL gains vs capital
+    const holdWithFees = holdValue; // HODL wouldn't get fees
+    const holdPnL = holdWithFees - p.result; // difference vs LP result
+    return (holdPnL >= 0 ? '+' : '') + fmtUsd(holdPnL, 2) + ' vs LP';
+  }
+  return '—';
+}
+
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 
 function renderTable() {
@@ -1580,6 +1624,11 @@ function renderTable() {
     const aprStr = fcrVal != null ? (fcrVal >= 0 ? '+' : '') + fcrVal.toFixed(1) + '%' : '—';
     const aprClass = fcrVal != null ? (fcrVal >= 0 ? 'pos' : 'neg') : '';
 
+    // Total PnL
+    const pnlStr = fmtUsd(p.result, 2);
+    const pnlClass = p.result >= 0 ? 'pos' : 'neg';
+    const pnlRef = p.status === 'ativa' ? `<span class="pnl-ref" data-pool-id="${p.id}" style="font-size:9px;color:var(--muted);margin-left:4px;cursor:pointer" onclick="togglePnlRef(event,${p.id})">[USD]</span>` : '';
+
     // Status dot
     const statusDot = p.status === 'ativa'
       ? '<span class="live-dot" style="width:6px;height:6px;margin-right:3px"></span>'
@@ -1607,6 +1656,7 @@ function renderTable() {
         <div class="pr-metric-row"><span class="pr-ml">Balance</span><span class="pr-mv">${balance}</span></div>
         <div class="pr-metric-row"><span class="pr-ml">Pending Earnings</span><span class="pr-mv ${feesClass}">${feesStr}</span></div>
         <div class="pr-metric-row"><span class="pr-ml">APR</span><span class="pr-mv ${aprClass}">${aprStr}</span></div>
+        <div class="pr-metric-row"><span class="pr-ml">Total PnL</span><span class="pr-mv ${pnlClass}" id="pnl-val-${p.id}">${pnlStr}</span>${pnlRef}</div>
       </td>
       <td>${rangeBarHtml(p, window._liveEthPrice || null)}</td>
       <td style="text-align:center"><span class="expand-icon">▾</span></td>
