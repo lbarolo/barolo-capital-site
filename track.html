@@ -2666,7 +2666,9 @@ function rangeBarHtml(p, livePrice) {
     <div class="range-bar-labels"><span>${fmtUsd(pMin,0)}</span><span>${fmtUsd(pMax,0)}</span></div>
     <div class="range-track">
       <div class="range-fill" style="width:${pct}%"></div>
-      <div class="range-dot" style="left:${pct}%;background:${dotColor}"></div>
+      <div class="range-dot" style="left:0%;background:#8a78a8;width:8px;height:8px"></div>
+      <div class="range-dot" style="left:100%;background:#8a78a8;width:8px;height:8px"></div>
+      <div class="range-dot" style="left:${pct}%;background:${dotColor};width:10px;height:10px"></div>
     </div>
     <div class="range-bar-pcts">
       <span class="${pctFromMin >= 0 ? 'pos' : 'neg'}">${pctFromMin >= 0 ? '+' : ''}${pctFromMin}%</span>
@@ -2835,7 +2837,7 @@ function renderOpenPools() {
 }
 
 // ─── METRIX OVERVIEW ─────────────────────────────────────────────────────────
-let _ovPeriod = '7d', _ovMode = 'value', _ovChart = null;
+let _ovPeriod = '7d', _ovMode = 'earnings', _ovChart = null;
 
 function setOvPeriod(p, btn) {
   _ovPeriod = p;
