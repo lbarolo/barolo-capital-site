@@ -2910,37 +2910,59 @@ function buildOvChart() {
   const gridCol = isDk ? 'rgba(180,140,240,0.07)' : 'rgba(120,45,55,0.07)';
   const mutedCol = isDk ? '#8a78a8' : '#956a72';
 
-  const points = _buildOvPoints(_ovPeriod, _ovMode);
-  if (points.length < 2) return;
+  // Get both value and earnings points
+  const pointsValue = _buildOvPoints(_ovPeriod, 'value');
+  const pointsEarnings = _buildOvPoints(_ovPeriod, 'earnings');
+  if (pointsValue.length < 2 || pointsEarnings.length < 2) return;
 
-  const lastY  = points[points.length - 1].y;
-  const firstY = points[0].y;
-  const delta  = lastY - firstY;
-  const lineCol = delta >= 0 ? '#3fb950' : '#f85149';
-  const fillCol = delta >= 0 ? 'rgba(63,185,80,0.18)' : 'rgba(248,81,73,0.18)';
+  const labels = pointsValue.map(p => p.label);
+  const valueData = pointsValue.map(p => p.y);
+  const earningsData = pointsEarnings.map(p => p.y);
 
   _ovChart = new Chart(canvas, {
     type: 'line',
     data: {
-      labels: points.map(p => p.label),
-      datasets: [{
-        data: points.map(p => p.y),
-        borderColor: lineCol,
-        borderWidth: 2,
-        fill: true,
-        backgroundColor: fillCol,
-        tension: 0.35,
-        pointRadius: 0,
-        pointHoverRadius: 4,
-        pointHoverBackgroundColor: lineCol,
-      }]
+      labels: labels,
+      datasets: [
+        {
+          label: 'P&L',
+          data: valueData,
+          borderColor: '#f85149',
+          backgroundColor: 'rgba(248,81,73,0.08)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.35,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointHoverBackgroundColor: '#f85149',
+          yAxisID: 'y'
+        },
+        {
+          label: 'Earnings',
+          data: earningsData,
+          borderColor: '#3fb950',
+          backgroundColor: 'rgba(63,185,80,0.08)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.35,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointHoverBackgroundColor: '#3fb950',
+          yAxisID: 'y'
+        }
+      ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { display: false },
+        legend: { display: true, position: 'top', labels: { color: mutedCol, font: { size: 10 }, boxWidth: 12, padding: 10 } },
         tooltip: {
-          callbacks: { label: ctx => ' $' + ctx.raw.toFixed(2) },
+          callbacks: {
+            label: ctx => {
+              const label = ctx.dataset.label || '';
+              return label + ': $' + ctx.raw.toFixed(2);
+            }
+          },
           backgroundColor: isDk ? '#1e1438' : '#fff8f6',
           titleColor: isDk ? '#ede8f8' : '#1c0c10',
           bodyColor: mutedCol,
