@@ -770,6 +770,46 @@
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 16px;
   }
+
+  /* ─── CUSTOM TOOLTIPS ─── */
+  .tooltip-box {
+    position: absolute;
+    background: rgba(20, 20, 30, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text);
+    z-index: 1000;
+    max-width: 220px;
+    white-space: normal;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -110px;
+    margin-bottom: 8px;
+  }
+
+  .tooltip-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .tooltip-box::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(20, 20, 30, 0.95);
+  }
+
   .lp-metric {
     display: flex;
     flex-direction: column;
@@ -3366,13 +3406,51 @@ function updateLpSummary(pool, ethPrice) {
 
 // ─── LANGUAGE / TOOLTIPS ─────────────────────────────────────────────────────
 
+let _currentLang = 'PT';
+
 function applyLangTrack(lang) {
   lang = lang || localStorage.getItem('bc-lang') || 'PT';
+  _currentLang = lang;
   document.querySelectorAll('[data-tooltip-key]').forEach(el => {
     const key = el.getAttribute('data-tooltip-key');
     if (TRACK_LANG_STRINGS[key] && TRACK_LANG_STRINGS[key][lang]) {
       el.setAttribute('title', TRACK_LANG_STRINGS[key][lang]);
+      el.setAttribute('data-tooltip-text', TRACK_LANG_STRINGS[key][lang]);
     }
+  });
+}
+
+function initCustomTooltips() {
+  document.querySelectorAll('[data-tooltip-key]').forEach(el => {
+    el.addEventListener('mouseenter', function(e) {
+      const text = this.getAttribute('data-tooltip-text');
+      if (!text) return;
+
+      // Remove any existing tooltip
+      const existing = document.querySelector('.tooltip-box');
+      if (existing) existing.remove();
+
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip-box';
+      tooltip.textContent = text;
+      document.body.appendChild(tooltip);
+
+      // Position it
+      setTimeout(() => {
+        const rect = this.getBoundingClientRect();
+        tooltip.style.position = 'fixed';
+        tooltip.style.left = (rect.left + rect.width / 2 - 110) + 'px';
+        tooltip.style.top = (rect.top - 80) + 'px';
+        tooltip.classList.add('visible');
+      }, 0);
+
+      // Remove on mouse leave
+      this.addEventListener('mouseleave', function() {
+        tooltip.classList.remove('visible');
+        setTimeout(() => tooltip.remove(), 200);
+      }, { once: true });
+    });
   });
 }
 
@@ -3390,6 +3468,7 @@ document.addEventListener('DOMContentLoaded', async function init() {
 
   // Apply language strings to tooltips
   applyLangTrack();
+  initCustomTooltips();
 
   computeKPIs();
   updateOvStats();
