@@ -2007,6 +2007,19 @@ async function fetchLiveActivePool() {
   POOLS[0].il     = parseFloat(divLoss.toFixed(2));
   POOLS[0].result = parseFloat((pooledUsd + uncFeeUsd - ENTRY_CAPITAL).toFixed(2));
 
+  // DEBUG: log live data to compare with Revert
+  console.log('[LP Live Data]', {
+    pooledUsd: pooledUsd.toFixed(2),
+    uncFeeUsd: uncFeeUsd.toFixed(2),
+    divLoss: divLoss.toFixed(2),
+    days: Math.round(days),
+    eth: eth.toFixed(2),
+    wethA: wethA.toFixed(6),
+    usdcA: usdcA.toFixed(2),
+    uncW: uncW.toFixed(6),
+    uncU: uncU.toFixed(2)
+  });
+
   // Publica para portfolio_analytics.html / pools.html / relatorio.html via localStorage
   window._liveLP = pooledUsd;
   try {
