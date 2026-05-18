@@ -2966,21 +2966,23 @@ function buildOvChart() {
 
 function _buildOvPoints(period, mode) {
   const now = new Date();
+
+  // Get active pool first to determine cutoff for 'all' period
+  const activePool = POOLS[0];
+  if (!activePool) return [];
+
   let cutoff;
   switch (period) {
     case '7d':  cutoff = new Date(now - 7  * 86400000); break;
     case '1m':  cutoff = new Date(now - 30 * 86400000); break;
     case '3m':  cutoff = new Date(now - 90 * 86400000); break;
     case 'ytd': cutoff = new Date(now.getFullYear(), 0, 1); break;
-    default:    cutoff = new Date('2023-06-01'); break;
+    case 'all': cutoff = new Date(_parseDateTs(activePool.open)); break;
+    default:    cutoff = new Date(_parseDateTs(activePool.open)); break;
   }
 
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const step = period === '7d' ? 1 : period === '1m' ? 3 : period === '3m' ? 7 : 14;
-
-  // Build pool event for active pool only (POOLS[0])
-  const activePool = POOLS[0];
-  if (!activePool) return [];
 
   const openTs  = _parseDateTs(activePool.open);
   const closeTs = activePool.close ? _parseDateTs(activePool.close) : now.getTime();
