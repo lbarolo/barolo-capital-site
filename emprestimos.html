@@ -2224,6 +2224,7 @@ function toggleLang() {
 
   // ── Run ──────────────────────────────────────────────────────────
   async function runFetch() {
+    console.log('[LiveFetch] Starting live data fetch...');
     try {
       const priceR  = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana&vs_currencies=usd');
       const prices  = await priceR.json();
@@ -2231,21 +2232,29 @@ function toggleLang() {
       const solPrice = prices?.solana?.usd    || window.liveSol || 87;
       window.liveEth = ethPrice;
       window.liveSol = solPrice;
+      console.log(`[LiveFetch] Prices: ETH=$${ethPrice}, SOL=$${solPrice}`);
       // Update collateral bars with live ETH price
       if (typeof buildCollChart === 'function') buildCollChart();
-      await Promise.all([fetchAave(ethPrice), fetchKamino(solPrice)]);
+      const [aaveResult, kaminoResult] = await Promise.all([fetchAave(ethPrice), fetchKamino(solPrice)]);
+      console.log('[LiveFetch] AAVE result:', aaveResult);
+      console.log('[LiveFetch] Kamino result:', kaminoResult);
     } catch(e) {
-      console.warn('[LiveFetch Emp] price fetch failed, trying without price');
-      await Promise.all([fetchAave(), fetchKamino()]);
+      console.warn('[LiveFetch] price fetch failed:', e.message);
+      console.log('[LiveFetch] Trying without prices...');
+      const [aaveResult, kaminoResult] = await Promise.all([fetchAave(), fetchKamino()]);
+      console.log('[LiveFetch] Fallback AAVE result:', aaveResult);
+      console.log('[LiveFetch] Fallback Kamino result:', kaminoResult);
     }
     updateYieldSection();
+    console.log('[LiveFetch] Complete');
   }
 
-  const delay = document.readyState === 'loading' ? 2000 : 800;
+  // Fetch imediatamente ao carregar (sem delay)
+  console.log('[Init] emprestimos.html loaded, document.readyState=' + document.readyState);
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => setTimeout(runFetch, delay));
+    document.addEventListener('DOMContentLoaded', runFetch);
   } else {
-    setTimeout(runFetch, delay);
+    runFetch();
   }
 
   // Auto-refresh a cada 5 minutos
