@@ -3235,16 +3235,30 @@ function _buildOvPoints(period, mode) {
     const ts = d.getTime();
     let val = 0;
     events.forEach(ev => {
-      if (ts < ev.openTs || ts > ev.closeTs) return;
+      // Skip pools that haven't opened yet
+      if (ts < ev.openTs) return;
+
       if (mode === 'earnings') {
-        // cumulative raw fees accrued up to this day
-        const elapsed = Math.max(0, (ts - ev.openTs) / 86400000);
-        val += elapsed * ev.dailyFees;
+        // For earnings: if pool is closed (ts > closeTs), use final fees; else prorate
+        if (ts > ev.closeTs) {
+          // Pool is closed, use final earned fees
+          val += ev.fees;
+        } else {
+          // Pool is still open, prorate fees
+          const elapsed = Math.max(0, (ts - ev.openTs) / 86400000);
+          val += elapsed * ev.dailyFees;
+        }
       } else {
-        // cumulative P&L (result) prorated over the pool's lifetime
-        const span = ev.closeTs - ev.openTs || 1;
-        const progress = Math.min(1, (ts - ev.openTs) / span);
-        val += ev.result * progress;
+        // For value (P&L): if pool is closed, use final result; else prorate
+        if (ts > ev.closeTs) {
+          // Pool is closed, use final result
+          val += ev.result;
+        } else {
+          // Pool is still open, prorate P&L
+          const span = ev.closeTs - ev.openTs || 1;
+          const progress = Math.min(1, (ts - ev.openTs) / span);
+          val += ev.result * progress;
+        }
       }
     });
 
