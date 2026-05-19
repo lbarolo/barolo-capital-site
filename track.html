@@ -2133,18 +2133,20 @@ async function fetchLiveActivePool() {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
 
-  set('ov-total', '$' + pooledUsd.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
+  // Calculate totals FIRST (all pools)
+  const totFees2 = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
+  const totPnL = POOLS.reduce((s, p) => s + (p.result || 0), 0);
+
+  set('ov-total', (totFees2 >= 0 ? '+' : '') + '$' + Math.abs(totFees2).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
   set('ov-pending', '+$' + uncFeeUsd.toFixed(2));
   set('ov-apr', totalApr.toFixed(1) + '%');
 
-  const totFees2 = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
   set('ov-earnings', '+$' + totFees2.toFixed(2));
 
-  const netResult = POOLS.reduce((s, p) => s + (p.result || 0), 0);
   const pnlEl2 = document.getElementById('ov-pnl');
   if (pnlEl2) {
-    pnlEl2.textContent = (netResult >= 0 ? '+' : '-') + '$' + Math.abs(netResult).toFixed(2);
-    pnlEl2.className = 'ts-val ' + (netResult >= 0 ? 'pos' : 'neg');
+    pnlEl2.textContent = (totPnL >= 0 ? '+' : '-') + '$' + Math.abs(totPnL).toFixed(2);
+    pnlEl2.className = 'ts-val ' + (totPnL >= 0 ? 'pos' : 'neg');
   }
 
   const vsHodlPct2 = ENTRY_CAPITAL > 0 ? (vsHodl / ENTRY_CAPITAL * 100) : 0;
