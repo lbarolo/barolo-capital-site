@@ -2090,7 +2090,8 @@ async function fetchLiveActivePool() {
   POOLS[0].days   = Math.round(days);
   POOLS[0].fees   = parseFloat(uncFeeUsd.toFixed(2));
   POOLS[0].il     = parseFloat(divLoss.toFixed(2));
-  POOLS[0].result = parseFloat((pooledUsd + uncFeeUsd - ENTRY_CAPITAL).toFixed(2));
+  // result = IL + fees (this is what Revert shows as "Total PnL")
+  POOLS[0].result = parseFloat((divLoss + uncFeeUsd).toFixed(2));
 
   // DEBUG: log live data to compare with Revert
   console.log('[LP Live Data]', {
