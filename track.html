@@ -2080,8 +2080,11 @@ async function fetchLiveActivePool() {
   const ENTRY_WETH = 0.17; // entrada 100% WETH em 24/02/2026 ($365)
   const hodlValue  = ENTRY_WETH * eth;
   const divLoss    = pooledUsd - hodlValue;   // negativo = IL
+  const totalPnL   = divLoss + uncFeeUsd;     // Total PnL = IL + fees
   const vsHodl     = uncFeeUsd + divLoss;
   const roi        = (pooledUsd + uncFeeUsd - ENTRY_CAPITAL) / ENTRY_CAPITAL * 100;
+  const totalApr   = ENTRY_CAPITAL > 0 && days > 0 ? (totalPnL / ENTRY_CAPITAL / days * 365 * 100) : 0;
+  const feeApr     = ENTRY_CAPITAL > 0 && days > 0 ? (uncFeeUsd / ENTRY_CAPITAL / days * 365 * 100) : 0;
   const proj24h    = uncFeeUsd / days;
   const wethPct    = pooledUsd > 0 ? wethA * eth / pooledUsd * 100 : 0;
   const usdcPct    = pooledUsd > 0 ? usdcA     / pooledUsd * 100 : 0;
@@ -2091,7 +2094,7 @@ async function fetchLiveActivePool() {
   POOLS[0].fees   = parseFloat(uncFeeUsd.toFixed(2));
   POOLS[0].il     = parseFloat(divLoss.toFixed(2));
   // result = IL + fees (this is what Revert shows as "Total PnL")
-  POOLS[0].result = parseFloat((divLoss + uncFeeUsd).toFixed(2));
+  POOLS[0].result = parseFloat(totalPnL.toFixed(2));
 
   // DEBUG: log live data to compare with Revert
   console.log('[LP Live Data]', {
@@ -2115,7 +2118,7 @@ async function fetchLiveActivePool() {
       pooled:   parseFloat(pooledUsd.toFixed(2)),
       fees:     parseFloat(uncFeeUsd.toFixed(2)),
       il:       parseFloat(divLoss.toFixed(2)),
-      result:   parseFloat((pooledUsd + uncFeeUsd - ENTRY_CAPITAL).toFixed(2)),
+      result:   parseFloat(totalPnL.toFixed(2)),  // IL + fees
       days:     Math.round(days),
       wethQty:  parseFloat(wethA.toFixed(6)),
       usdcQty:  parseFloat(usdcA.toFixed(2)),
@@ -2133,7 +2136,7 @@ async function fetchLiveActivePool() {
   set('ov-total', '$' + pooledUsd.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
   set('ov-pending', '+$' + uncFeeUsd.toFixed(2));
   const feeApr = uncFeeUsd > 0 ? (uncFeeUsd / ENTRY_CAPITAL / days * 365 * 100) : 0;
-  set('ov-apr', feeApr.toFixed(1) + '%');
+  set('ov-apr', totalApr.toFixed(1) + '%');
 
   const totFees2 = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
   set('ov-earnings', '+$' + totFees2.toFixed(2));
