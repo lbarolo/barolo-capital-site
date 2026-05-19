@@ -602,6 +602,39 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 </div><!-- end bc-lp-active-section -->
 
+
+<!-- ══ AAVE PRO ══ -->
+<div id="bc-aave-section">
+<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
+    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">AAVE Pro — Dashboard</h3>
+    <span style="font-size:10px;color:var(--muted);">Ethereum</span>
+  </div>
+  <div class="apr-toolbar">
+    <span style="flex:1;"></span>
+    <button class="tbtn" onclick="document.getElementById('aaveFrame').requestFullscreen()" title="Expandir">⛶</button>
+    <button class="tbtn" onclick="document.getElementById('aaveFrame').src += ''" title="Recarregar">↻</button>
+    <a class="tbtn" href="https://pro.aave.com/" target="_blank" title="Nova aba">↗</a>
+  </div>
+</div>
+<div class="iframe-wrap" id="aaveWrap" style="height:480px;margin-bottom:20px;">
+  <div class="iframe-loading">
+    <div style="font-size:11px;color:var(--muted);">carregando AAVE Pro…</div>
+    <div class="spinner"></div>
+  </div>
+  <iframe id="aaveFrame" src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+    <p>📊 AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba ↗</a></p>
+  </div>
+</div>
+</div>
+
+<!-- ══ KAMINO ══ -->
+<div id="bc-kamino-section" style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:40px;text-align:center;">
+  <h3 style="margin:0 0 16px 0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">Kamino Finance — Solana</h3>
+  <a href="https://kamino.finance/" target="_blank" rel="noopener" class="btn-open" style="padding:10px 20px;font-size:11px;display:inline-block;">↗ Abrir Kamino.finance</a>
+  <p style="margin:12px 0 0 0;font-size:9px;color:var(--muted);">Gerencie suas posições de lending e LP em Solana</p>
+</div>
 <div id="bc-apr-section">
 <!-- SECTION HEADER -->
 <div class="apr-section-header">
@@ -1097,59 +1130,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </script>
 </div><!-- end bc-apr-section -->
 
-<!-- ══ AAVE PRO ══ -->
-<div id="bc-aave-section">
-<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
-  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
-    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">AAVE Pro — Dashboard</h3>
-    <span style="font-size:10px;color:var(--muted);">Ethereum</span>
-  </div>
-  <div class="apr-toolbar">
-    <span style="flex:1;"></span>
-    <button class="tbtn" onclick="document.getElementById('aaveFrame').requestFullscreen()" title="Expandir">⛶</button>
-    <button class="tbtn" onclick="document.getElementById('aaveFrame').src += ''" title="Recarregar">↻</button>
-    <a class="tbtn" href="https://pro.aave.com/" target="_blank" title="Nova aba">↗</a>
-  </div>
-</div>
-<div class="iframe-wrap" id="aaveWrap" style="height:480px;margin-bottom:20px;">
-  <div class="iframe-loading">
-    <div style="font-size:11px;color:var(--muted);">carregando AAVE Pro…</div>
-    <div class="spinner"></div>
-  </div>
-  <iframe id="aaveFrame" src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
-    <p>📊 AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba ↗</a></p>
-  </div>
-</div>
-</div>
-
-<!-- ══ KAMINO ══ -->
-<div id="bc-kamino-section">
-<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
-  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
-    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">Kamino — Portfolio</h3>
-    <span style="font-size:10px;color:var(--muted);">Solana</span>
-  </div>
-  <div class="apr-toolbar">
-    <span style="flex:1;"></span>
-    <button class="tbtn" onclick="document.getElementById('kaminoFrame').requestFullscreen()" title="Expandir">⛶</button>
-    <button class="tbtn" onclick="document.getElementById('kaminoFrame').src += ''" title="Recarregar">↻</button>
-    <a class="tbtn" href="https://kamino.finance/" target="_blank" title="Nova aba">↗</a>
-  </div>
-</div>
-<div class="iframe-wrap" id="kaminoWrap" style="height:480px;margin-bottom:20px;">
-  <div class="iframe-loading">
-    <div style="font-size:11px;color:var(--muted);">carregando Kamino…</div>
-    <div class="spinner"></div>
-  </div>
-  <iframe id="kaminoFrame" src="https://kamino.finance/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
-    <p>📊 Kamino bloqueado — <a href="https://kamino.finance/" target="_blank" style="color:#5B8EF0;">abra em nova aba ↗</a></p>
-  </div>
-</div>
-</div>
-
-<!-- ══ KAMINO ══ -->
 
 
 <script>
