@@ -3207,35 +3207,41 @@ function buildOvChart() {
 function _buildOvPoints(period, mode) {
   const now = new Date();
 
-  // Get active pool first to determine cutoff for 'all' period
-  const activePool = POOLS[0];
-  if (!activePool) return [];
-
+  // For 'all' period, find the earliest pool's opening date
   let cutoff;
+  let earliestTs = now.getTime();
+
+  // Build events from ALL pools
+  const events = POOLS.map(p => {
+    const openTs = _parseDateTs(p.open);
+    const closeTs = p.close ? _parseDateTs(p.close) : now.getTime();
+    const days = p.days || Math.max(1, Math.round((closeTs - openTs) / 86400000));
+    return {
+      openTs, closeTs,
+      capital: p.capital || 0,
+      fees: p.fees || 0,
+      result: p.result || 0,
+      dailyFees: (p.fees || 0) / days,
+      isActive: p.status === 'ativa'
+    };
+  }).filter(ev => ev.openTs > 0);
+
+  // Find the earliest opening date from all pools
+  events.forEach(ev => {
+    if (ev.openTs < earliestTs) earliestTs = ev.openTs;
+  });
+
   switch (period) {
     case '7d':  cutoff = new Date(now - 7  * 86400000); break;
     case '1m':  cutoff = new Date(now - 30 * 86400000); break;
     case '3m':  cutoff = new Date(now - 90 * 86400000); break;
     case 'ytd': cutoff = new Date(now.getFullYear(), 0, 1); break;
-    case 'all': cutoff = new Date(_parseDateTs(activePool.open)); break;
-    default:    cutoff = new Date(_parseDateTs(activePool.open)); break;
+    case 'all': cutoff = new Date(earliestTs); break;
+    default:    cutoff = new Date(earliestTs); break;
   }
 
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const step = period === '7d' ? 1 : period === '1m' ? 3 : period === '3m' ? 7 : 14;
-
-  const openTs  = _parseDateTs(activePool.open);
-  const closeTs = activePool.close ? _parseDateTs(activePool.close) : now.getTime();
-  const days    = activePool.days || Math.max(1, Math.round((closeTs - openTs) / 86400000));
-
-  const events = [{
-    openTs, closeTs,
-    capital: activePool.capital || 0,
-    fees: activePool.fees || 0,
-    result: activePool.result || 0,
-    dailyFees: (activePool.fees || 0) / days,
-    isActive: activePool.status === 'ativa'
-  }].filter(ev => ev.closeTs >= cutoff.getTime());
 
   const points = [];
   const d = new Date(cutoff);
@@ -3301,11 +3307,8 @@ var _lpRefMode = 'USD';  // or 'HOLD'
 
 function toggleLpRefMode() {
   _lpRefMode = _lpRefMode === 'USD' ? 'HOLD' : 'USD';
-  const btn = document.getElementById('lp-ref-btn');
-  if (btn) {
-    const label = btn.querySelector('#lp-ref-label');
-    if (label) label.textContent = _lpRefMode;
-  }
+  const label = document.getElementById('lp-ref-label');
+  if (label) label.textContent = _lpRefMode;
   // Re-render the LP summary with new reference
   const p = POOLS[0];
   if (p) updateLpSummary(p, window._liveEthPrice || 1800);
