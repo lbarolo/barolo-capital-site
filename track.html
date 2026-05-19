@@ -2175,9 +2175,9 @@ async function fetchLiveActivePool() {
     inRangeEl.className = 'ts-val ' + (inRange ? 'pos' : 'neg');
   }
 
-  // Update chart + last-update timestamp
+  // Update last-update timestamp (NO auto-refresh of chart to avoid flickering)
   set('ov-last-update', 'agora');
-  buildOvChart();
+  // buildOvChart();  // Disabled: chart only builds on manual period/mode change
 
   // Also update Unclaimed KPI (hidden but referenced in ap panel)
   const ucEl = document.getElementById('kpi-unclaimed');
@@ -3128,13 +3128,11 @@ function buildOvChart() {
   const gridCol = isDk ? 'rgba(180,140,240,0.07)' : 'rgba(120,45,55,0.07)';
   const mutedCol = isDk ? '#8a78a8' : '#956a72';
 
-  // Get both value and earnings points
-  const pointsValue = _buildOvPoints(_ovPeriod, 'value');
+  // Get earnings points only (no P&L to avoid negative confusion)
   const pointsEarnings = _buildOvPoints(_ovPeriod, 'earnings');
-  if (pointsValue.length < 2 || pointsEarnings.length < 2) return;
+  if (pointsEarnings.length < 2) return;
 
-  const labels = pointsValue.map(p => p.label);
-  const valueData = pointsValue.map(p => p.y);
+  const labels = pointsEarnings.map(p => p.label);
   const earningsData = pointsEarnings.map(p => p.y);
 
   _ovChart = new Chart(canvas, {
@@ -3142,19 +3140,6 @@ function buildOvChart() {
     data: {
       labels: labels,
       datasets: [
-        {
-          label: 'P&L',
-          data: valueData,
-          borderColor: '#f85149',
-          backgroundColor: 'rgba(248,81,73,0.08)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.35,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          pointHoverBackgroundColor: '#f85149',
-          yAxisID: 'y'
-        },
         {
           label: 'Earnings',
           data: earningsData,
@@ -3497,35 +3482,14 @@ document.addEventListener('DOMContentLoaded', async function init() {
   }
 
   // auto-refresh a cada 2 minutos — com fallback para cache
-  async function autoRefreshActivePool() {
-    try {
-      await fetchLiveActivePool();
-    } catch(e) {
-      console.debug('[Track] live fetch failed, using cached data:', e.message);
-      // Try to restore from cache
-      try {
-        const cached = JSON.parse(localStorage.getItem('bc-active-pool') || null);
-        if (cached && POOLS[0]) {
-          POOLS[0].pooled = cached.pooled;
-          POOLS[0].fees = cached.fees;
-          POOLS[0].il = cached.il;
-          POOLS[0].result = cached.result;
-          POOLS[0].days = cached.days;
-          // Update UI with cached data (use last known ETH price)
-          const ethPrice = cached.ethPrice || window._liveEthPrice || 1800;
-          updateLpSummary(POOLS[0], ethPrice);
-          // Update last-update timestamp
-          const luEl = document.getElementById('ov-last-update');
-          if (luEl) luEl.textContent = 'cache (' + new Date(cached.timestamp).toLocaleTimeString('pt-BR') + ')';
-          console.debug('[Track] restored from cache');
-        }
-      } catch(cacheErr) {
-        console.debug('[Track] cache restoration failed:', cacheErr.message);
-      }
-    }
-  }
-
-  setInterval(autoRefreshActivePool, 120000);
+  // Auto-refresh disabled to prevent constant UI updates that cause flickering
+  // Data is updated on manual refresh or when user clicks "↻" button
+  // async function autoRefreshActivePool() {
+  //   try {
+  //     await fetchLiveActivePool();
+  //   } catch(e) { ... }
+  // }
+  // setInterval(autoRefreshActivePool, 120000);  // DISABLED
 
   console.log('[Track] Init completo');
 });
