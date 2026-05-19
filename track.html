@@ -2135,7 +2135,6 @@ async function fetchLiveActivePool() {
 
   set('ov-total', '$' + pooledUsd.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
   set('ov-pending', '+$' + uncFeeUsd.toFixed(2));
-  const feeApr = uncFeeUsd > 0 ? (uncFeeUsd / ENTRY_CAPITAL / days * 365 * 100) : 0;
   set('ov-apr', totalApr.toFixed(1) + '%');
 
   const totFees2 = POOLS.reduce((s, p) => s + (p.fees || 0), 0);
