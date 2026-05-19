@@ -1814,24 +1814,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 .pdact{padding:5px 11px;font-size:8.5px;background:rgba(201,160,80,0.12);border:1px solid rgba(201,160,80,0.3);border-radius:4px;color:var(--accent);text-decoration:none;cursor:pointer;font-weight:600;letter-spacing:.04em;transition:background .15s;}
 .pdact:hover{background:rgba(201,160,80,0.22);}
 
-/* Recommended pools */
-.recommended-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto;}
-.recommended-tab{padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.recommended-tab:hover{color:var(--text);}
-.recommended-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.recommended-pools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:20px;}
-.recommended-pool-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative;transition:all .2s;}
-.recommended-pool-card:hover{background:var(--surface2);border-color:rgba(201,160,80,0.4);}
-.recommended-pool-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;}
-.recommended-pool-pair{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--text);}
-.recommended-pool-apr{position:absolute;top:8px;right:8px;background:var(--green);color:#0d0917;padding:3px 8px;border-radius:4px;font-size:8px;font-weight:700;letter-spacing:.05em;}
-.recommended-pool-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;padding:8px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.recommended-pool-meta-item{display:flex;flex-direction:column;gap:2px;}
-.recommended-pool-meta-label{font-size:7px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;}
-.recommended-pool-meta-value{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);font-weight:600;}
-.recommended-pool-action{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;background:rgba(201,160,80,0.15);border:1px solid rgba(201,160,80,0.3);border-radius:4px;color:var(--accent);text-decoration:none;font-size:8px;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:all .15s;}
-.recommended-pool-action:hover{background:rgba(201,160,80,0.25);border-color:var(--accent);}
-
 /* Market ticker bar */
 .market-ticker{position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:0;height:28px;font-family:'JetBrains Mono',monospace;font-size:10px;}
 .ticker-item{display:flex;align-items:center;gap:6px;padding:0 16px;border-right:1px solid var(--border);height:100%;white-space:nowrap;}
@@ -2064,25 +2046,6 @@ body, input, button, select, textarea {
  </div>
 
 </div>
-
-
-<!-- ══ POOLS RECOMENDADAS ══ -->
-<div class="section-label">Pools Recomendadas — Melhores APRs</div>
-
-<div class="recommended-tabs" id="recommendedTabs">
- <button class="recommended-tab active" onclick="switchRecommendedNet('ethereum',this)">Ethereum</button>
- <button class="recommended-tab" onclick="switchRecommendedNet('arbitrum',this)">Arbitrum</button>
- <button class="recommended-tab" onclick="switchRecommendedNet('base',this)">Base</button>
- <button class="recommended-tab" onclick="switchRecommendedNet('solana',this)">Solana</button>
- <button class="recommended-tab" onclick="switchRecommendedNet('polygon',this)">Polygon</button>
-</div>
-
-<div class="recommended-pools-grid" id="recommendedPoolsGrid">
- <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);">
-  <span style="font-size:12px;">Carregando pools recomendadas...</span>
- </div>
-</div>
-
 <!-- ══ HISTÓRICO COMPLETO ══ -->
 <div style="margin-top:48px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
  <div class="section-label" style="margin:0;padding-bottom:0;border:none;">Histórico Completo — Pools Ativas & Encerradas</div>
@@ -3180,39 +3143,11 @@ function refreshActivePoolData(event) {
   } else { done(); }
 }
 
-// ══ RECOMMENDED POOLS — TABS E GRID ═════════════════════════════════════════
-var _recommendedCache = {};
-var _currentRecommendedNet = 'ethereum';
-
-function switchRecommendedNet(net, btn) {
-  _currentRecommendedNet = net;
-  var tabs = document.querySelectorAll('.recommended-tab');
-  tabs.forEach(function(t) { t.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  buildRecommendedSection();
-}
-
-function buildRecommendedSection() {
-  var grid = document.getElementById('recommendedPoolsGrid');
-  if (!grid) return;
-  if (_recommendedCache[_currentRecommendedNet]) {
-    grid.innerHTML = _recommendedCache[_currentRecommendedNet];
-    return;
-  }
-  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-size:11px;">Carregando ' + _currentRecommendedNet + '...</div>';
-  if (typeof fetchNet === 'function') {
-    fetchNet(_currentRecommendedNet).catch(function() {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-size:11px;">Erro ao carregar pools de ' + _currentRecommendedNet + '</div>';
-    });
-  }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
   buildTable();
   buildLicoes();
   buildPoolTable();
   buildPoolCards();
-  buildRecommendedSection();
 });
 
 
