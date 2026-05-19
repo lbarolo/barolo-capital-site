@@ -589,6 +589,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
 
+<div class="iframe-wrap" id="iframeWrap" style="height:480px;margin-top:16px;">
+  <div class="iframe-loading">
+    <div style="font-size:11px;color:var(--muted);">carregando Revert Finance…</div>
+    <div class="spinner"></div>
+  </div>
+  <iframe id="revertFrame" src="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+    <p>📊 Revert Finance bloqueado — <a href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" target="_blank" style="color:var(--gold);">abra em nova aba ↗</a></p>
+  </div>
+</div>
+
 </div><!-- end bc-lp-active-section -->
 
 <div id="bc-apr-section">
@@ -1086,6 +1097,57 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </script>
 </div><!-- end bc-apr-section -->
 
+<!-- ══ RAYDIUM ══ -->
+<div id="bc-raydium-section">
+<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
+    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">Raydium — Portfolio</h3>
+    <span style="font-size:10px;color:var(--muted);">Solana</span>
+  </div>
+  <div class="apr-toolbar">
+    <span style="flex:1;"></span>
+    <button class="tbtn" onclick="document.getElementById('raydiumFrame').requestFullscreen()" title="Expandir">⛶</button>
+    <button class="tbtn" onclick="document.getElementById('raydiumFrame').src += ''" title="Recarregar">↻</button>
+    <a class="tbtn" href="https://app.raydium.io/" target="_blank" title="Nova aba">↗</a>
+  </div>
+</div>
+<div class="iframe-wrap" id="raydiumWrap" style="height:480px;margin-bottom:20px;">
+  <div class="iframe-loading">
+    <div style="font-size:11px;color:var(--muted);">carregando Raydium…</div>
+    <div class="spinner"></div>
+  </div>
+  <iframe id="raydiumFrame" src="https://app.raydium.io/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+    <p>📊 Raydium bloqueado — <a href="https://app.raydium.io/" target="_blank" style="color:#c200fb;">abra em nova aba ↗</a></p>
+  </div>
+</div>
+</div>
+
+<!-- ══ AAVE V4 ══ -->
+<div id="bc-aave-section">
+<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
+    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">AAVE V4 — Dashboard</h3>
+    <span style="font-size:10px;color:var(--muted);">Ethereum</span>
+  </div>
+  <div class="apr-toolbar">
+    <span style="flex:1;"></span>
+    <button class="tbtn" onclick="document.getElementById('aaveFrame').requestFullscreen()" title="Expandir">⛶</button>
+    <button class="tbtn" onclick="document.getElementById('aaveFrame').src += ''" title="Recarregar">↻</button>
+    <a class="tbtn" href="https://app.aave.com/" target="_blank" title="Nova aba">↗</a>
+  </div>
+</div>
+<div class="iframe-wrap" id="aaveWrap" style="height:480px;margin-bottom:20px;">
+  <div class="iframe-loading">
+    <div style="font-size:11px;color:var(--muted);">carregando AAVE V4…</div>
+    <div class="spinner"></div>
+  </div>
+  <iframe id="aaveFrame" src="https://app.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+    <p>📊 AAVE V4 bloqueado — <a href="https://app.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba ↗</a></p>
+  </div>
+</div>
+</div>
 
 <!-- ══ KAMINO ══ -->
 
