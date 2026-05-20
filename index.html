@@ -8,6 +8,7 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 (function(){
   var t=localStorage.getItem('bc-theme')||'dark';
@@ -593,6 +594,99 @@ section{
 }
 [data-theme="light"] .perf-note{background:rgba(138,104,32,.08);}
 
+/* ── Inflation Comparison Section ── */
+.inflation-section{
+  padding-top:48px;
+  border-top:1px solid var(--border);
+}
+.infl-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.30em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.infl-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.infl-controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.infl-toggle-btn{
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  padding:8px 16px;
+  cursor:pointer;
+  border-radius:4px;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.infl-toggle-btn.active{
+  background:var(--gold);
+  color:var(--dark);
+  border-color:var(--gold);
+  font-weight:600;
+}
+.infl-toggle-btn:hover{
+  border-color:var(--gold);
+  color:var(--gold);
+}
+.infl-chart-wrap{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:24px;
+  position:relative;
+  height:320px;
+}
+.infl-stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.infl-stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px;
+  text-align:center;
+}
+.infl-stat-label{
+  font-size:10px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.infl-stat-value{
+  font-size:22px;
+  font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--green);
+  margin-bottom:4px;
+}
+.infl-stat-sub{
+  font-size:9px;
+  color:var(--muted);
+}
+@media(max-width:640px){
+  .infl-stats-grid{grid-template-columns:1fr}
+  .infl-header{flex-direction:column;align-items:flex-start}
+}
+
 .proto-sub{
   font-family:'JetBrains Mono',monospace;
   font-size:8px;
@@ -1051,6 +1145,41 @@ footer span:first-of-type{margin-right:auto}
       </div>
     </div>
 
+    <!-- INFLATION COMPARISON CHART -->
+    <div class="inflation-section">
+      <div class="infl-label" data-i18n="infl-track">Real Gains vs Inflation</div>
+      <div class="infl-header">
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;" data-i18n="infl-title">Portfolio Performance (Inflation-Adjusted)</div>
+          <div style="font-size:12px;color:var(--muted);" data-i18n="infl-desc">Comparing portfolio growth against cumulative inflation in each currency.</div>
+        </div>
+        <div class="infl-controls">
+          <button class="infl-toggle-btn active" id="inflCurrBtn-usd" onclick="setInflCurrency('usd', this)">USD</button>
+          <button class="infl-toggle-btn" id="inflCurrBtn-brl" onclick="setInflCurrency('brl', this)">BRL</button>
+        </div>
+      </div>
+      <div class="infl-chart-wrap">
+        <canvas id="inflChart" width="400" height="300"></canvas>
+      </div>
+      <div class="infl-stats-grid" id="inflStats">
+        <div class="infl-stat-card">
+          <div class="infl-stat-label" data-i18n="infl-stat-real">Real Gain</div>
+          <div class="infl-stat-value" id="inflStatReal">+$2,545</div>
+          <div class="infl-stat-sub">Above inflation</div>
+        </div>
+        <div class="infl-stat-card">
+          <div class="infl-stat-label" data-i18n="infl-stat-pct">Real Return %</div>
+          <div class="infl-stat-value" id="inflStatPct">+42.5%</div>
+          <div class="infl-stat-sub">Total period</div>
+        </div>
+        <div class="infl-stat-card">
+          <div class="infl-stat-label" data-i18n="infl-stat-annual">Real Return Annual</div>
+          <div class="infl-stat-value" id="inflStatAnnual">+4.8%</div>
+          <div class="infl-stat-sub">Per year</div>
+        </div>
+      </div>
+    </div><!-- /inflation-section -->
+
   </div>
 </section>
 
@@ -1143,6 +1272,9 @@ var INDEX_LANG_STRINGS = {
     'perf-track': 'Track Record', 'perf-return': 'Total Return', 'perf-annual': 'Annualized',
     'perf-volatility': 'Volatility', 'perf-maxdd': 'Max Drawdown',
     'perf-note': 'Methodology: Total return based on monthly DCA (Dollar Cost Averaging). IRR includes aporte timing. Benchmark: 50% BTC + 50% ETH.',
+    'infl-track': 'Real Gains vs Inflation', 'infl-title': 'Portfolio Performance (Inflation-Adjusted)',
+    'infl-desc': 'Comparing portfolio growth against cumulative inflation in each currency.',
+    'infl-stat-real': 'Real Gain', 'infl-stat-pct': 'Real Return %', 'infl-stat-annual': 'Real Return Annual',
     'nav-contact': 'Contact',
     'contact-tag': 'Contact',
     'contact-title': 'Get in <em>touch</em>',
@@ -1176,6 +1308,9 @@ var INDEX_LANG_STRINGS = {
     'perf-track': 'Track Record', 'perf-return': 'Retorno Total', 'perf-annual': 'Anualizado',
     'perf-volatility': 'Volatilidade', 'perf-maxdd': 'Máx. Drawdown',
     'perf-note': 'Metodologia: Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH.',
+    'infl-track': 'Ganhos Reais vs Inflação', 'infl-title': 'Desempenho da Carteira (Ajustado pela Inflação)',
+    'infl-desc': 'Comparando o crescimento da carteira contra a inflação acumulada em cada moeda.',
+    'infl-stat-real': 'Ganho Real', 'infl-stat-pct': 'Retorno Real %', 'infl-stat-annual': 'Retorno Real Anual',
     'nav-contact': 'Contato',
     'contact-tag': 'Contato',
     'contact-title': 'Entre em <em>contato</em>',
@@ -1371,10 +1506,224 @@ function toggleMobile() {
   setInterval(fetchTicker, 60000);
 })();
 
-// Set initial theme icon
+// ══════════════════════════════════
+// INFLATION COMPARISON CHART
+// ══════════════════════════════════
+var _inflChart = null;
+var _inflCurrency = 'usd';
+
+// Wealth curve data (53 months Jan/22 → May/26)
+var WEALTH_LABELS = ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22',
+  '11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23',
+  '09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24',
+  '07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25',
+  '05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26',
+  '03/26','04/26','05/26'];
+
+var WEALTH_VALUES = [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,
+  1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,
+  8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,8872];
+
+// CPI USA (accumulated since Jan/2022)
+var CPI_USA = {'01/22': 0, '02/22': 0.8, '03/22': 1.2, '04/22': 2.9, '05/22': 5.0, '06/22': 8.6,
+  '07/22': 8.5, '08/22': 8.0, '09/22': 8.2, '10/22': 8.0, '11/22': 7.1, '12/22': 6.5,
+  '01/23': 6.2, '02/23': 6.0, '03/23': 5.0, '04/23': 4.9, '05/23': 4.0, '06/23': 3.0,
+  '07/23': 3.2, '08/23': 3.7, '09/23': 4.0, '10/23': 3.2, '11/23': 3.1, '12/23': 3.4,
+  '01/24': 3.2, '02/24': 3.2, '03/24': 3.5, '04/24': 3.4, '05/24': 3.3, '06/24': 3.0,
+  '07/24': 2.9, '08/24': 2.6, '09/24': 2.4, '10/24': 2.6, '11/24': 2.7, '12/24': 2.6,
+  '01/25': 2.7, '02/25': 2.5, '03/25': 3.2, '04/25': 3.6, '05/25': 3.3, '06/25': 3.0,
+  '07/25': 2.9, '08/25': 2.2, '09/25': 2.4, '10/25': 2.6, '11/25': 2.7, '12/25': 2.6,
+  '01/26': 2.4, '02/26': 2.6, '03/26': 3.2, '04/26': 3.3, '05/26': 3.3};
+
+// IPCA Brasil (accumulated since Jan/2022)
+var IPCA_BR = {'01/22': 0, '02/22': 1.0, '03/22': 2.1, '04/22': 3.9, '05/22': 5.3, '06/22': 6.8,
+  '07/22': 7.8, '08/22': 8.8, '09/22': 9.4, '10/22': 10.7, '11/22': 11.5, '12/22': 11.4,
+  '01/23': 10.5, '02/23': 10.3, '03/23': 9.9, '04/23': 9.3, '05/23': 8.5, '06/23': 7.9,
+  '07/23': 8.2, '08/23': 8.0, '09/23': 8.5, '10/23': 9.3, '11/23': 9.8, '12/23': 9.5,
+  '01/24': 8.9, '02/24': 8.3, '03/24': 8.1, '04/24': 7.5, '05/24': 6.5, '06/24': 5.9,
+  '07/24': 5.8, '08/24': 5.3, '09/24': 5.8, '10/24': 5.9, '11/24': 6.3, '12/24': 6.5,
+  '01/25': 6.1, '02/25': 5.7, '03/25': 5.3, '04/25': 5.6, '05/25': 6.0, '06/25': 6.2,
+  '07/25': 6.4, '08/25': 6.0, '09/25': 5.9, '10/25': 6.3, '11/25': 6.2, '12/25': 6.0,
+  '01/26': 5.5, '02/26': 5.3, '03/26': 5.6, '04/26': 5.8, '05/26': 5.9};
+
+// USD/BRL rates
+var USD_BRL = {'01/22': 5.25, '02/22': 5.16, '03/22': 5.02, '04/22': 4.94, '05/22': 5.04, '06/22': 5.24,
+  '07/22': 5.33, '08/22': 5.27, '09/22': 5.36, '10/22': 5.38, '11/22': 5.48, '12/22': 5.22,
+  '01/23': 5.25, '02/23': 5.19, '03/23': 5.17, '04/23': 4.99, '05/23': 4.97, '06/23': 4.95,
+  '07/23': 4.96, '08/23': 5.02, '09/23': 5.10, '10/23': 5.08, '11/23': 5.10, '12/23': 5.04,
+  '01/24': 4.94, '02/24': 4.89, '03/24': 4.82, '04/24': 4.84, '05/24': 4.93, '06/24': 5.02,
+  '07/24': 5.10, '08/24': 5.14, '09/24': 5.24, '10/24': 5.29, '11/24': 5.35, '12/24': 5.09,
+  '01/25': 4.87, '02/25': 4.92, '03/25': 4.88, '04/25': 4.95, '05/25': 5.06, '06/25': 5.15,
+  '07/25': 5.22, '08/25': 5.18, '09/25': 5.25, '10/25': 5.30, '11/25': 5.35, '12/25': 5.25,
+  '01/26': 5.20, '02/26': 5.18, '03/26': 5.15, '04/26': 5.12, '05/26': 5.10};
+
+function calculateInflationData() {
+  var startCapUSD = 1061;
+  var endLabel = '05/26';
+  var years = 4.42;
+
+  var inflUSD = CPI_USA[endLabel];
+  var inflBRL = IPCA_BR[endLabel];
+
+  var capNeededUSD = startCapUSD * (1 + inflUSD / 100);
+  var capNeededBRL = startCapUSD * USD_BRL['01/22'] * (1 + inflBRL / 100);
+
+  var endValUSD = WEALTH_VALUES[WEALTH_VALUES.length - 1];
+  var endValBRL = endValUSD * USD_BRL[endLabel];
+
+  var realGainUSD = endValUSD - capNeededUSD;
+  var realGainBRL = endValBRL - capNeededBRL;
+
+  var pctAboveInflUSD = ((endValUSD / capNeededUSD) - 1) * 100;
+  var pctAboveInflBRL = ((endValBRL / capNeededBRL) - 1) * 100;
+
+  var cgrReal = pctAboveInflUSD / years;
+
+  return {
+    realGainUSD: realGainUSD, realGainBRL: realGainBRL,
+    pctAboveInflUSD: pctAboveInflUSD, pctAboveInflBRL: pctAboveInflBRL,
+    cgrReal: cgrReal
+  };
+}
+
+function buildInflationChart(currency) {
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var textColor = isDark ? '#e8dfc8' : '#2a1e0e';
+  var gridColor = isDark ? '#2a2620' : '#ddd4c0';
+  var goldColor = '#c9a050';
+  var greenColor = '#3fb950';
+  var redColor = '#f85149';
+
+  var isUSD = currency === 'usd';
+  var inflData = isUSD ? CPI_USA : IPCA_BR;
+  var rateMultiplier = isUSD ? 1 : USD_BRL['01/22'];
+  var endRate = isUSD ? 1 : USD_BRL['05/26'];
+
+  var portfolioData = WEALTH_VALUES.map(function(val, idx) {
+    return val * (isUSD ? 1 : USD_BRL[WEALTH_LABELS[idx]]);
+  });
+
+  var inflationThresholdData = portfolioData.map(function(val, idx) {
+    var label = WEALTH_LABELS[idx];
+    var inflRate = parseFloat(inflData[label]) || 0;
+    var startCap = 1061 * (isUSD ? 1 : USD_BRL['01/22']);
+    return startCap * (1 + inflRate / 100);
+  });
+
+  var ctx = document.getElementById('inflChart').getContext('2d');
+
+  if (_inflChart) _inflChart.destroy();
+
+  _inflChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEALTH_LABELS,
+      datasets: [
+        {
+          label: 'Portfolio Value',
+          data: portfolioData,
+          borderColor: goldColor,
+          backgroundColor: 'rgba(201, 160, 80, 0.1)',
+          borderWidth: 2.5,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointBackgroundColor: goldColor,
+          tension: 0.4,
+          fill: true,
+          order: 0
+        },
+        {
+          label: 'Inflation Threshold',
+          data: inflationThresholdData,
+          borderColor: redColor,
+          borderWidth: 2,
+          borderDash: [5, 5],
+          pointRadius: 0,
+          tension: 0.4,
+          fill: false,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index', intersect: false},
+      plugins: {
+        legend: {
+          labels: {color: textColor, font: {size: 11}, usePointStyle: true, padding: 15}
+        },
+        tooltip: {
+          backgroundColor: isDark ? 'rgba(42, 38, 32, 0.9)' : 'rgba(245, 240, 232, 0.9)',
+          titleColor: textColor,
+          bodyColor: textColor,
+          borderColor: gridColor,
+          borderWidth: 1,
+          callbacks: {
+            label: function(ctx) {
+              var val = ctx.parsed.y.toFixed(0);
+              return ctx.dataset.label + ': ' + (isUSD ? '$' : 'R$') + val.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {color: gridColor, drawBorder: false},
+          ticks: {color: textColor, font: {size: 10}},
+          max: WEALTH_LABELS.length - 1
+        },
+        y: {
+          grid: {color: gridColor, drawBorder: false},
+          ticks: {
+            color: textColor,
+            font: {size: 10},
+            callback: function(val) { return (isUSD ? '$' : 'R$') + val.toLocaleString('en-US', {maximumFractionDigits: 0}); }
+          }
+        }
+      }
+    }
+  });
+}
+
+function setInflCurrency(curr, btn) {
+  _inflCurrency = curr;
+  document.querySelectorAll('.infl-toggle-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+
+  buildInflationChart(curr);
+  updateInflationStats(curr);
+}
+
+function updateInflationStats(currency) {
+  var isUSD = currency === 'usd';
+  var startCapUSD = 1061;
+  var endLabel = '05/26';
+  var years = 4.42;
+
+  var inflRate = isUSD ? CPI_USA[endLabel] : IPCA_BR[endLabel];
+  var capNeeded = isUSD ? startCapUSD * (1 + inflRate / 100) : startCapUSD * USD_BRL['01/22'] * (1 + inflRate / 100);
+  var endVal = isUSD ? WEALTH_VALUES[WEALTH_VALUES.length - 1] : WEALTH_VALUES[WEALTH_VALUES.length - 1] * USD_BRL[endLabel];
+
+  var realGain = endVal - capNeeded;
+  var pctAboveInfl = ((endVal / capNeeded) - 1) * 100;
+  var cgrReal = pctAboveInfl / years;
+
+  document.getElementById('inflStatReal').textContent = (isUSD ? '$' : 'R$') + realGain.toLocaleString('en-US', {maximumFractionDigits: 0});
+  document.getElementById('inflStatPct').textContent = '+' + pctAboveInfl.toFixed(1) + '%';
+  document.getElementById('inflStatAnnual').textContent = '+' + cgrReal.toFixed(2) + '%';
+}
+
+// Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize inflation chart
+  buildInflationChart('usd');
+  updateInflationStats('usd');
+
+  // Set initial theme icon
   var btn = document.getElementById('themeToggle');
   if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀';
+
   // Set first nav link active
   var first = document.querySelector('.nav-links a');
   if (first) first.classList.add('active');
