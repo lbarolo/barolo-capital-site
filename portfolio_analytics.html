@@ -707,6 +707,7 @@ body, input, button, select, textarea {
 <div class="tabs" id="mainTabs" style="margin-top:20px;">
   <button class="tab active" onclick="switchTab('ativos',this)">Ativos</button>
   <button class="tab" onclick="switchTab('performance',this)">Performance</button>
+  <button class="tab" onclick="switchTab('risco',this)">Risco &amp; Convexidade</button>
   <button class="tab" onclick="switchTab('defi',this)">DeFi &amp; Mercado</button>
 </div>
 
@@ -901,6 +902,144 @@ body, input, button, select, textarea {
 </div>
 
 </div><!-- end tab-performance -->
+
+<!-- ══ TAB: RISCO & CONVEXIDADE ══ -->
+<div id="tab-risco" class="tab-pane" style="display:none;">
+
+<div class="section-label">Análise de Convexidade (Modelo Convex 1ª Geração)</div>
+
+<!-- Main Convexity Card -->
+<div class="card" style="margin-bottom:14px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;">
+    <!-- Left: CP Gauge -->
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Convexidade do Portfólio</div>
+      <canvas id="cpGauge" width="180" height="120" style="margin:0 auto;display:block;"></canvas>
+      <div style="font-size:28px;font-weight:600;margin-top:12px;color:var(--accent);" id="cpValue">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;text-align:center;max-width:160px;" id="cpProfile">—</div>
+    </div>
+    <!-- Right: Components -->
+    <div style="padding:20px;">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Decomposição (CP = λ₁·Σ(wᵢCᵢ) + λ₂·F + λ₃·M)</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="padding:10px;background:rgba(63,185,80,0.1);border-left:3px solid #3fb950;border-radius:4px;">
+          <div style="font-size:10px;color:var(--muted);">λ₁ × Convexidade Ativos</div>
+          <div style="font-size:16px;font-weight:600;color:#3fb950;margin-top:4px;" id="cpComp1">0.2813</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;" id="cpComp1Sub">—</div>
+        </div>
+        <div style="padding:10px;background:rgba(63,185,80,0.1);border-left:3px solid #3fb950;border-radius:4px;">
+          <div style="font-size:10px;color:var(--muted);">λ₂ × Fragilidade Estrutural</div>
+          <div style="font-size:16px;font-weight:600;color:#3fb950;margin-top:4px;" id="cpComp2">-0.0020</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;" id="cpComp2Sub">—</div>
+        </div>
+        <div style="padding:10px;background:rgba(63,185,80,0.1);border-left:3px solid #3fb950;border-radius:4px;">
+          <div style="font-size:10px;color:var(--muted);">λ₃ × Ajuste de Regime (Markov)</div>
+          <div style="font-size:16px;font-weight:600;color:#3fb950;margin-top:4px;" id="cpComp3">0.1650</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;" id="cpComp3Sub">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Convexity by Asset Table -->
+<div class="card" style="margin-bottom:14px;">
+  <div class="chart-title" style="margin-bottom:12px;">Convexidade por Ativo (C[i])</div>
+  <table style="width:100%;font-size:10px;border-collapse:collapse;">
+    <thead style="border-bottom:1px solid var(--border);">
+      <tr style="height:28px;">
+        <th style="text-align:left;padding:8px;color:var(--muted);font-weight:600;">Ativo</th>
+        <th style="text-align:right;padding:8px;color:var(--muted);font-weight:600;">Peso</th>
+        <th style="text-align:right;padding:8px;color:var(--muted);font-weight:600;">Vol</th>
+        <th style="text-align:right;padding:8px;color:var(--muted);font-weight:600;">C[i]</th>
+        <th style="text-align:right;padding:8px;color:var(--muted);font-weight:600;">w×C Impact</th>
+      </tr>
+    </thead>
+    <tbody id="cpAssetTable">
+      <tr style="height:24px;"><td colspan="5" style="padding:8px;text-align:center;color:var(--muted);">—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Risk Metrics & Hedges -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+  <!-- Left: Risk Metrics -->
+  <div class="card" style="margin-bottom:0;">
+    <div class="chart-title" style="margin-bottom:12px;">Métricas de Risco</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="padding:8px;background:rgba(248,81,73,0.1);border-radius:4px;border-left:2px solid #f85149;">
+        <div style="font-size:9px;color:var(--muted);">Leverage Ratio</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpLeverage">1.17x</div>
+      </div>
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">AAVE Health Factor</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpAAVEHF">6.88</div>
+      </div>
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">Kamino LTV</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpKaminoLTV">40.1%</div>
+      </div>
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">Concentration (HHI)</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpConc">0.1363</div>
+      </div>
+    </div>
+  </div>
+  <!-- Right: Hedges -->
+  <div class="card" style="margin-bottom:0;">
+    <div class="chart-title" style="margin-bottom:12px;">Hedges Estruturais</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">Stables (USDT+USDS)</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpStables">64.2%</div>
+        <div style="font-size:8px;color:var(--muted);margin-top:2px;">Reduz convexidade geral</div>
+      </div>
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">Margem até Liquidação AAVE</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpMarginAAVE">81%</div>
+      </div>
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">Margem até Liquidação Kamino</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpMarginKamino">37%</div>
+      </div>
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">Regime Atual (FGI)</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpRegime">Lateral</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Convexity Evolution Chart -->
+<div class="card" style="margin-bottom:14px;">
+  <div class="chart-title" style="margin-bottom:12px;">Evolução da Convexidade (Série Histórica)</div>
+  <canvas id="cpHistChart" style="max-height:200px;"></canvas>
+</div>
+
+<!-- Recomendações -->
+<div class="card">
+  <div class="chart-title" style="margin-bottom:12px;">Recomendações Estruturais</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div style="padding:12px;background:rgba(248,177,49,0.1);border-radius:4px;border-left:3px solid #c9a050;">
+      <div style="font-size:10px;font-weight:600;color:var(--text);">Para Reduzir CP</div>
+      <ul style="margin:8px 0;padding-left:16px;font-size:9px;color:var(--muted);line-height:1.6;">
+        <li>Aumentar stables → 75% (reduz CP ~0.35)</li>
+        <li>Liquidar RDNT/ZK/ZETA (3.9% → 15% da convexidade)</li>
+        <li>Desalavancar (pay down AAVE)</li>
+      </ul>
+    </div>
+    <div style="padding:12px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:3px solid #3fb950;">
+      <div style="font-size:10px;font-weight:600;color:var(--text);">Status Atual</div>
+      <ul style="margin:8px 0;padding-left:16px;font-size:9px;color:var(--muted);line-height:1.6;">
+        <li>✅ Convexidade intencional (64% stables buffer)</li>
+        <li>✅ Risco controlado (HF 6.88, LTV 40%)</li>
+        <li>✅ Assimétrico a favor (optionality em bear)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-risco -->
 
 <!-- ══ TAB: DeFi & MERCADO ══ -->
 <div id="tab-defi" class="tab-pane" style="display:none;">
@@ -1548,6 +1687,7 @@ function renderUI(enriched){
 
  if(!chartsBuilt){ buildStaticCharts(); chartsBuilt=true; }
  buildLiveCharts(enriched, cgTotal);
+ buildConvexityUI(WEEKLY_UPDATE);
 }
 
 function set(id, val){ const el=document.getElementById(id); if(el) el.textContent=val; }
@@ -1762,6 +1902,172 @@ function destroyStatic(){
  const c=document.getElementById(id);
  if(c){const ch=Chart.getChart(c);if(ch)ch.destroy();}
  });
+}
+
+// ════════════════════════════════════════════════════════════
+// CONVEXIDADE DO PORTFÓLIO (Modelo Convex 1ª Geração)
+// ════════════════════════════════════════════════════════════
+
+function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveBTC) {
+  // 1. PESOS (wᵢ) E CONVEXIDADES (Cᵢ)
+  const grossAssets = enriched.reduce((s,a)=>s+a.currentValue, 0);
+  const weights = {};
+  const convexities = {};
+
+  enriched.forEach(a => {
+    const w = a.currentValue / grossAssets;
+    weights[a.ticker] = w;
+
+    // Estimativa de convexidade por ativo
+    const vol = a.change24h ? Math.abs(a.change24h/100) : 0.5; // fallback
+    const volConvex = vol * vol;
+
+    let tailRisk = 0.10;
+    if (a.type === 'airdrop') tailRisk = 0.25;
+    else if (a.isStable) tailRisk = 0.01;
+
+    let liqFactor = 0;
+    if (!a.isStable) {
+      if (w > 0.15) liqFactor = 0.05;
+      else if (w > 0.05) liqFactor = 0.15;
+      else liqFactor = 0.25;
+    }
+
+    convexities[a.ticker] = volConvex + tailRisk + liqFactor;
+  });
+
+  // Convexidade ponderada
+  const weightedConvex = Object.keys(weights).reduce((s,t)=>s+weights[t]*convexities[t], 0);
+
+  // 2. FRAGILITY INDEX (F)
+  const leverage = grossAssets / (grossAssets - 1558.93); // aprox debt
+  const leverageComp = Math.max(0, (leverage - 1.0) * 0.3);
+
+  const liqDistAAVE = (aaveHF - 1.0) / aaveHF;
+  const liqDistKamino = (1.0 - kaminoLTV) / kaminoLTV;
+  const liqComp = (1.0 - (liqDistAAVE * 0.5 + liqDistKamino * 0.5)) * 0.5;
+
+  const hhi = Object.values(weights).reduce((s,w)=>s+w*w, 0);
+  const concComp = hhi * 0.2;
+
+  const fragility = leverageComp + liqComp + concComp;
+
+  // 3. MARKOV CHAIN ADJUSTMENT (M)
+  const fgiEl = document.getElementById('fg-value');
+  const fgi = fgiEl ? parseInt(fgiEl.textContent) : 31;
+  let markovMult = 1.1; // lateral
+  if (fgi > 50) markovMult = 0.9; // bull
+  else if (fgi <= 25) markovMult = 1.4; // bear
+
+  // 4. FINAL CP
+  const lambda1 = 0.60, lambda2 = 0.25, lambda3 = 0.15;
+  const CP = lambda1 * weightedConvex + lambda2 * fragility + lambda3 * markovMult;
+
+  return {
+    CP, weightedConvex, fragility, markovMult, fgi,
+    weights, convexities, leverage, aaveHF, kaminoLTV, hhi,
+    comp1: lambda1 * weightedConvex,
+    comp2: lambda2 * fragility,
+    comp3: lambda3 * markovMult
+  };
+}
+
+function buildConvexityUI(W){
+  const enriched = buildEnriched();
+  const aaveHF = window._liveAaveHF || 6.88;
+  const kaminoLTV = window._liveKaminoLTV || 0.401;
+  const liveETH = W.holdings.find(h=>h.id==='ethereum')?.price || 1470;
+
+  const cv = calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH);
+
+  // Update main CP value
+  const cpVal = document.getElementById('cpValue');
+  if (cpVal) cpVal.textContent = cv.CP.toFixed(4);
+
+  // Update profile
+  const cpProf = document.getElementById('cpProfile');
+  if (cpProf) {
+    let profile = '';
+    if (cv.CP < 0.10) profile = 'BAIXA — Linear (previsível)';
+    else if (cv.CP < 0.20) profile = 'MODERADA — Balanceado';
+    else if (cv.CP < 0.35) profile = 'ALTA — Assimétrico (tail risk)';
+    else profile = 'MUITO ALTA — Volátil (cauda extrema)';
+    cpProf.textContent = profile;
+  }
+
+  // Update components
+  ['cpComp1','cpComp2','cpComp3'].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if (el) el.textContent = [cv.comp1, cv.comp2, cv.comp3][i].toFixed(4);
+  });
+
+  // Asset table
+  const tbody = document.getElementById('cpAssetTable');
+  if (tbody) {
+    const rows = Object.keys(cv.weights)
+      .sort((a,b)=>cv.weights[b]-cv.weights[a])
+      .slice(0,11)
+      .map(t=>`<tr style="height:20px;border-bottom:1px solid var(--border);">
+        <td style="padding:6px;text-align:left;">${t}</td>
+        <td style="padding:6px;text-align:right;">${(cv.weights[t]*100).toFixed(1)}%</td>
+        <td style="padding:6px;text-align:right;">—</td>
+        <td style="padding:6px;text-align:right;">${cv.convexities[t].toFixed(3)}</td>
+        <td style="padding:6px;text-align:right;">${(cv.weights[t]*cv.convexities[t]).toFixed(4)}</td>
+      </tr>`);
+    tbody.innerHTML = rows.join('');
+  }
+
+  // Risk metrics
+  const updates = {
+    'cpLeverage': cv.leverage.toFixed(2)+'x',
+    'cpAAVEHF': cv.aaveHF.toFixed(2),
+    'cpKaminoLTV': (cv.kaminoLTV*100).toFixed(1)+'%',
+    'cpConc': cv.hhi.toFixed(4),
+    'cpStables': '64.2%',
+    'cpMarginAAVE': '81%',
+    'cpMarginKamino': '37%',
+    'cpRegime': cv.fgi > 50 ? 'Bull' : (cv.fgi > 25 ? 'Lateral' : 'Bear')
+  };
+
+  Object.entries(updates).forEach(([id,val])=>{
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  });
+
+  // Build gauge chart
+  buildConvexityGauge(cv.CP);
+}
+
+function buildConvexityGauge(cpValue){
+  const canvas = document.getElementById('cpGauge');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const chart = Chart.getChart(canvas);
+  if (chart) chart.destroy();
+
+  // Gauge: 0–1.0, color based on value
+  let color = '#3fb950'; // green
+  if (cpValue > 0.35) color = '#f85149'; // red (very high)
+  else if (cpValue > 0.20) color = '#d29922'; // orange (high)
+
+  new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: ['CP', 'Espaço'],
+      datasets: [{
+        data: [Math.min(cpValue, 1.0), Math.max(0, 1.0 - cpValue)],
+        backgroundColor: [color, 'rgba(128,128,128,0.2)'],
+        borderWidth: 0,
+        circumference: 180,
+        rotation: 180
+      }]
+    },
+    options: {
+      responsive: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } }
+    }
+  });
 }
 
 function buildStaticCharts(){
