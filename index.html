@@ -737,7 +737,12 @@ footer span:first-of-type{margin-right:auto}
       <div class="hero-divider"></div>
       <div>
         <div class="hero-stat-val" id="heroCAGR">+63.7%</div>
-        <div class="hero-stat-lbl">CAGR (nominal)</div>
+        <div class="hero-stat-lbl">CAGR 2022–2026</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val" id="heroCAGRYTD">+40.3%</div>
+        <div class="hero-stat-lbl">CAGR 2026 YTD</div>
       </div>
       <div class="hero-divider"></div>
       <div>
@@ -1188,6 +1193,16 @@ function toggleMobile() {
     return (Math.pow(currentAssets / INITIAL_CAPITAL, 1 / years) - 1) * 100;
   }
 
+  function calculateCAGRYTD(currentAssets) {
+    var start = new Date(2026, 0, 1); // Jan 1, 2026
+    var end = new Date();
+    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
+    // Ponto base: wealthCurve Jan/26 (value 8570, index 48 dos 53 meses)
+    var ytdStart = 8570; // portfolio value em Jan/2026
+    if (years <= 0 || currentAssets <= 0 || ytdStart <= 0) return 0;
+    return (Math.pow(currentAssets / ytdStart, 1 / years) - 1) * 100;
+  }
+
   function calculateRealReturn(currentAssets) {
     // Inflação acumulada USA (jan 2022 - maio 2026): 20.2%
     var cumulativeInflation = 1.202; // 1 + 0.202
@@ -1206,10 +1221,14 @@ function toggleMobile() {
     // Usar ativos brutos (sem dívida) para comparação consistente com capital inicial
     var currentAssets = spotVal + STABLES_USD + LP_POOLED;
     var cagr = calculateCAGR(currentAssets);
+    var cagrYTD = calculateCAGRYTD(currentAssets);
     var realReturn = calculateRealReturn(currentAssets);
 
     var cagrEl = document.getElementById('heroCAGR');
     if (cagrEl) cagrEl.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%';
+
+    var cagrYTDEl = document.getElementById('heroCAGRYTD');
+    if (cagrYTDEl) cagrYTDEl.textContent = (cagrYTD >= 0 ? '+' : '') + cagrYTD.toFixed(1) + '%';
 
     var realEl = document.getElementById('heroRealReturn');
     if (realEl) realEl.textContent = (realReturn >= 0 ? '+' : '') + realReturn.toFixed(1) + '%';
