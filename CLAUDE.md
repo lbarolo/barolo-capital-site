@@ -2990,6 +2990,44 @@ Nenhum nesta sessão. Arquivo novo criado (MONTHLY_UPDATE_WORKFLOW.md).
 |------|----------|
 | `da87f94` | docs: monthly update workflow template — automação para future prints |
 
+---
+
+## Sessão 20/05/2026 (continuação) — Fix: Risco & Convexidade com valores dinâmicos
+
+### Bug identificado e corrigido
+Aba "Risco & Convexidade" em `portfolio_analytics.html` tinha valores hardcoded que não atualizavam:
+- `cpStables` (% stables): hardcoded "64.2%"
+- `cpMarginAAVE` (margem até liquidação AAVE): hardcoded "81%"
+- `cpMarginKamino` (margem até liquidação Kamino): hardcoded "37%"
+- Débito na fórmula de alavancagem: hardcoded "1558.93" (valor antigo de maio)
+
+### Fix aplicado
+**Função `calculatePortfolioConvexity()`:**
+- Débito agora dinâmico: `debt = window._liveAaveDebt + window._liveKaminoDebt`
+- Cálculo de margens no retorno:
+  - `stablesPct = stablesTotal / grossAssets` (calcula % ao vivo)
+  - `aaveMargin = ((0.825 - aaveLTVcurrent) / 0.825) * 100` (82.5% = max LTV AAVE)
+  - `kaminoMargin = ((0.7722 - kaminoLTV) / kaminoLTV) * 100` (77.22% = liq threshold Kamino)
+
+**Função `buildConvexityUI()`:**
+- Substitui hardcoded por dinâmico:
+  - `cpStables`: `(cv.stablesPct*100).toFixed(1)+'%'`
+  - `cpMarginAAVE`: `Math.max(0, cv.aaveMargin).toFixed(0)+'%'`
+  - `cpMarginKamino`: `Math.max(0, cv.kaminoMargin).toFixed(0)+'%'`
+
+**Função `renderUI()`:**
+- Adicionada linha: `window._stablesTotalUSD = stablesTotal;` para fornecer global à convexidade
+
+### Resultado
+Todos os valores no tab "Risco & Convexidade" agora atualizam dinamicamente:
+- Quando AAVE debt ou Kamino debt mudam → alavancagem recalcula
+- Quando USDT/USDS mudam → % stables recalcula
+- Quando AAVE HF ou Kamino LTV mudam → margens recalculam
+- Gauge de CP atualiza cor (verde < 0.20, laranja < 0.35, vermelho acima)
+
+### Commits
+- **`fb636ca`** — fix: Risk & Convexity tab — valores dinâmicos em vez de hardcoded
+
 ### O que ainda falta
 
 - **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada (ainda pendente de clarificação)
