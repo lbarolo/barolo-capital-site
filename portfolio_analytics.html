@@ -2282,7 +2282,7 @@ function renderPerformanceMetrics(metrics) {
    </div>
   `;
 
-  const tabPane = document.querySelector('[data-tab="performance"]');
+  // Insert metrics section into performance tab (reuse tabPane from above)
   if (tabPane) {
    const firstCard = tabPane.querySelector('.card');
    if (firstCard) {
