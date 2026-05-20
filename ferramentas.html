@@ -783,9 +783,9 @@ body, input, button, select, textarea {
  <div class="section-title">Aave V4 — Ethereum <span>MAINNET</span></div>
  <div class="two-col">
  <div>
- <div class="field"><label data-i18n="lbl-eth-col">ETH colateral (ETH)</label><input type="number" id="aave-eth" value="1.88" step="0.001" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-eth-col">ETH colateral (ETH)</label><input type="number" id="aave-eth" value="1.89" step="0.001" oninput="calcAave()"></div>
  <div class="field"><label data-i18n="lbl-usdt-col">USDT colateral ($)</label><input type="number" id="aave-usdt" value="1990" step="1" oninput="calcAave()"></div>
- <div class="field"><label data-i18n="lbl-usdc-debt-aave">Dívida USDC ($)</label><input type="number" id="aave-debt" value="750.16" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-debt-aave">Dívida USDC ($)</label><input type="number" id="aave-debt" value="751.82" step="1" oninput="calcAave()"></div>
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="aave-ethprice" value="2070" step="1" oninput="calcAave()"></div>
@@ -813,9 +813,9 @@ body, input, button, select, textarea {
  <div class="section-title">Kamino — Solana <span>MAIN MARKET</span></div>
  <div class="two-col">
  <div>
- <div class="field"><label data-i18n="lbl-sol-col">SOL colateral (SOL)</label><input type="number" id="kam-sol" value="20.42" step="0.1" oninput="calcKamino()"></div>
- <div class="field"><label data-i18n="lbl-usds-col">USDS colateral ($)</label><input type="number" id="kam-pyusd" value="301.01" step="1" oninput="calcKamino()"></div>
- <div class="field"><label data-i18n="lbl-usdc-debt">Dívida USDC ($)</label><input type="number" id="kam-debt" value="808.77" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-sol-col">SOL colateral (SOL)</label><input type="number" id="kam-sol" value="20.47" step="0.1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usds-col">USDS colateral ($)</label><input type="number" id="kam-pyusd" value="301.42" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-debt">Dívida USDC ($)</label><input type="number" id="kam-debt" value="811.35" step="1" oninput="calcKamino()"></div>
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-sol-price">Preço SOL atual ($)</label><input type="number" id="kam-solprice" value="90.24" step="0.1" oninput="calcKamino()"></div>
@@ -2057,11 +2057,11 @@ function calcUni(){
 // ══════════════════════════════════════════════
 // Portfolio base values
 var BASE = {
- ethQty:2.084106, solQty:20.42+0.13059,
+ ethQty:2.084106, solQty:20.47+0.13059,
  ethPrice:2340.66, solPrice:84.08,
  altVal:150, // ADA+RDNT+ZK+etc rough
- aaveDebt:750.16, aaveUSDT:1985.65, aaveETH:1.88,
- kamDebt:808.77, kamPYUSD:301.01, kamSOL:20.42,
+ aaveDebt:751.82, aaveUSDT:1990, aaveETH:1.89,
+ kamDebt:811.35, kamPYUSD:301.42, kamSOL:20.47,
  kamLiqThresh:0.7579, aaveLiqThresh:0.86,
  uniRangeMin:1855.72, uniRangeMax:3146.36,
  totalBase:5525

@@ -4092,9 +4092,9 @@ function buildNetRanking() {
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
- const STABLES = 2536.59; // USDT 2235.58 + USDS 301.01
+ const STABLES = 2536.40; // USDT 2235.98 + USDS 300.42
  const LP_POOLED = window._liveLP || 380;
- const DEBT = (window._liveAaveDebt || 750.16) + (window._liveKaminoDebt || 808.77);
+ const DEBT = (window._liveAaveDebt || 751.82) + (window._liveKaminoDebt || 811.35);
  const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;
  console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + lp $${LP_POOLED.toFixed(0)} − debt $${DEBT.toFixed(0)}`);
