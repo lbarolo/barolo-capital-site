@@ -1249,10 +1249,31 @@ footer span:first-of-type{margin-right:auto}
     <!-- Performance Analysis Section -->
     <div class="perf-analysis-section">
       <div class="perf-analysis-label" data-i18n="perf-analysis-label">Performance Metrics</div>
+
+      <!-- Capital Allocation Breakdown -->
       <div class="perf-analysis-grid">
         <div class="perf-metric-card">
-          <div class="perf-metric-title" data-i18n="perf-cagr-label">CAGR (Annualized)</div>
-          <div class="perf-metric-value" id="perfCAGR">+8.24%</div>
+          <div class="perf-metric-title" data-i18n="perf-invested-label">Capital Invested</div>
+          <div class="perf-metric-value pos" id="perfInvested">$4,248</div>
+          <div class="perf-metric-sub">Deployed in assets</div>
+        </div>
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-drybowl-label">Dry Powder</div>
+          <div class="perf-metric-value" id="perfDryPowder">$2,536</div>
+          <div class="perf-metric-sub">Stables + opportunities</div>
+        </div>
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-invested-return-label">Return (Invested)</div>
+          <div class="perf-metric-value pos" id="perfInvestedReturn">+49%</div>
+          <div class="perf-metric-sub">Total appreciation</div>
+        </div>
+      </div>
+
+      <!-- Performance Metrics (excluding dry powder) -->
+      <div class="perf-analysis-grid">
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-cagr-label">CAGR (Invested)</div>
+          <div class="perf-metric-value" id="perfCAGR">+10.0%</div>
           <div class="perf-metric-sub">Jan 2022 → May 2026</div>
         </div>
         <div class="perf-metric-card">
@@ -1266,6 +1287,7 @@ footer span:first-of-type{margin-right:auto}
           <div class="perf-metric-sub">Risk-adjusted return</div>
         </div>
       </div>
+
       <div class="perf-analysis-grid">
         <div class="perf-metric-card">
           <div class="perf-metric-title" data-i18n="perf-volatility-label">Volatility</div>
@@ -1278,13 +1300,14 @@ footer span:first-of-type{margin-right:auto}
           <div class="perf-metric-sub">Lowest point vs peak</div>
         </div>
         <div class="perf-metric-card">
-          <div class="perf-metric-title" data-i18n="perf-roi-label">Total Return</div>
+          <div class="perf-metric-title" data-i18n="perf-roi-label">Total ROI (Gross)</div>
           <div class="perf-metric-value" id="perfROI">+736%</div>
-          <div class="perf-metric-sub">Capital appreciation</div>
+          <div class="perf-metric-sub">Total portfolio (4.3 yrs)</div>
         </div>
       </div>
+
       <div class="perf-analysis-note" data-i18n="perf-analysis-note">
-        Methodology: CAGR = annualized compound growth from start to end. IRR = internal rate of return accounting for monthly DCA contributions. Sharpe ratio = (return − risk-free) / volatility. Volatility = annualized standard deviation of monthly returns. Max Drawdown = largest peak-to-trough decline. Benchmark: 50% BTC + 50% ETH.
+        Methodology: Capital Invested = total aported capital minus dry powder stables ($2.536K). CAGR (Invested) = annualized return of deployed capital only. IRR = internal rate of return accounting for DCA monthly contributions. Sharpe ratio = (return − risk-free 2.5% annual) / volatility. Max Drawdown = largest peak-to-trough decline. Note: CAGR +10% matches historical S&P 500 performance while carrying 4x the volatility; Sharpe Ratio +0.98 demonstrates better risk-adjusted returns than S&P +0.70.
       </div>
     </div><!-- /perf-analysis-section -->
 
@@ -1395,6 +1418,9 @@ var INDEX_LANG_STRINGS = {
     'contact-tag': 'Contact',
     'contact-title': 'Get in <em>touch</em>',
     'contact-desc': 'For partnerships, questions or collaboration opportunities — reach out directly.',
+    'perf-invested-label': 'Capital Invested',
+    'perf-drybowl-label': 'Dry Powder',
+    'perf-invested-return-label': 'Return (Invested)',
   },
   pt: {
     'nav-home': 'Início', 'nav-sobre': 'Sobre', 'nav-strat': 'Estratégias', 'nav-port': 'Portfólio',
@@ -1439,6 +1465,9 @@ var INDEX_LANG_STRINGS = {
     'contact-tag': 'Contato',
     'contact-title': 'Entre em <em>contato</em>',
     'contact-desc': 'Para parcerias, dúvidas ou oportunidades de colaboração — fale diretamente.',
+    'perf-invested-label': 'Capital Investido',
+    'perf-drybowl-label': 'Caixa de Oportunidade',
+    'perf-invested-return-label': 'Retorno (Investido)',
   }
 };
 
@@ -1863,8 +1892,25 @@ function calculatePerformanceMetrics() {
   var endVal = WEALTH_VALUES[n - 1];
   var years = 4 + (4 / 12); // Jan 2022 to May 2026 = 4 years 4 months
 
-  // ── CAGR ──
-  var cagr = (Math.pow(endVal / startVal, 1 / years) - 1) * 100;
+  // ── Capital allocation (20/05/2026 verified data) ──
+  var STABLES_DRY_POWDER = 2536.40;  // USDT + USDS (not invested)
+  var TOTAL_APORTED = 6784;           // Total capital aported since Jan/2022
+  var CAPITAL_INVESTED = TOTAL_APORTED - STABLES_DRY_POWDER; // 4248K deployed in assets
+
+  // Portfolio composition (May 26, 2026)
+  var SPOT_VALUE = 7533.55;    // Cripto holdings
+  var LP_POOLED = 365;          // Uniswap pool
+  var TOTAL_DEBT = 1563.17;     // AAVE + Kamino
+  var PORTFOLIO_INVESTED_VALUE = SPOT_VALUE + LP_POOLED - TOTAL_DEBT; // 6335.38K
+
+  // ── CAGR of invested capital (excluding dry powder) ──
+  var cagrInvested = (Math.pow(PORTFOLIO_INVESTED_VALUE / CAPITAL_INVESTED, 1 / years) - 1) * 100;
+
+  // ── Return on invested capital ──
+  var returnInvested = ((PORTFOLIO_INVESTED_VALUE - CAPITAL_INVESTED) / CAPITAL_INVESTED) * 100;
+
+  // ── CAGR of total gross portfolio (for reference) ──
+  var cagrGross = (Math.pow(endVal / startVal, 1 / years) - 1) * 100;
 
   // ── IRR (approximate via Newton-Raphson) ──
   var irr = estimateIRR(WEALTH_VALUES, INVESTED);
@@ -1897,11 +1943,16 @@ function calculatePerformanceMetrics() {
   var excessReturn = meanReturn - riskFreeMonthly;
   var sharpe = (excessReturn / monthlyStdDev) * Math.sqrt(12);
 
-  // ── Total ROI ──
+  // ── Total ROI (gross portfolio) ──
   var roi = ((endVal - startVal) / startVal) * 100;
 
-  // Update DOM
-  document.getElementById('perfCAGR').textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(2) + '%';
+  // Update DOM — Capital allocation
+  document.getElementById('perfInvested').textContent = '$' + CAPITAL_INVESTED.toLocaleString('en-US', {maximumFractionDigits: 0});
+  document.getElementById('perfDryPowder').textContent = '$' + STABLES_DRY_POWDER.toLocaleString('en-US', {maximumFractionDigits: 0});
+  document.getElementById('perfInvestedReturn').textContent = (returnInvested >= 0 ? '+' : '') + returnInvested.toFixed(0) + '%';
+
+  // Update DOM — Performance metrics
+  document.getElementById('perfCAGR').textContent = (cagrInvested >= 0 ? '+' : '') + cagrInvested.toFixed(2) + '%';
   document.getElementById('perfIRR').textContent = (irr >= 0 ? '+' : '') + irr.toFixed(2) + '%';
   document.getElementById('perfSharpe').textContent = (sharpe >= 0 ? '+' : '') + sharpe.toFixed(2);
   document.getElementById('perfVolatility').textContent = (volatility >= 0 ? '+' : '') + volatility.toFixed(1) + '%';
@@ -1912,7 +1963,7 @@ function calculatePerformanceMetrics() {
 
   // Color coding for metrics
   var cagrEl = document.getElementById('perfCAGR');
-  cagrEl.className = 'perf-metric-value' + (cagr >= 0 ? ' pos' : ' neg');
+  cagrEl.className = 'perf-metric-value' + (cagrInvested >= 0 ? ' pos' : ' neg');
   var irrEl = document.getElementById('perfIRR');
   irrEl.className = 'perf-metric-value' + (irr >= 0 ? ' pos' : ' neg');
   var sharpeEl = document.getElementById('perfSharpe');
@@ -1921,6 +1972,8 @@ function calculatePerformanceMetrics() {
   volEl.className = 'perf-metric-value' + (volatility >= 0 ? ' neg' : ' pos');
   var roiEl = document.getElementById('perfROI');
   roiEl.className = 'perf-metric-value' + (roi >= 0 ? ' pos' : ' neg');
+  var investedReturnEl = document.getElementById('perfInvestedReturn');
+  investedReturnEl.className = 'perf-metric-value' + (returnInvested >= 0 ? ' pos' : ' neg');
 }
 
 // Estimate IRR using Newton-Raphson method
