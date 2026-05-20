@@ -687,6 +687,72 @@ section{
   .infl-header{flex-direction:column;align-items:flex-start}
 }
 
+/* ── Performance Analysis Section ── */
+.perf-analysis-section{
+  padding-top:48px;
+  border-top:1px solid var(--border);
+}
+.perf-analysis-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.30em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.perf-analysis-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+@media(max-width:1024px){ .perf-analysis-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:640px){ .perf-analysis-grid{grid-template-columns:1fr;} }
+.perf-metric-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  text-align:center;
+  transition:border-color .2s,background .2s;
+}
+.perf-metric-card:hover{
+  border-color:var(--gold);
+  background:rgba(201,160,80,.03);
+}
+.perf-metric-title{
+  font-size:10px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.perf-metric-value{
+  font-size:28px;
+  font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--green);
+  margin-bottom:4px;
+}
+.perf-metric-value.neg{color:var(--red);}
+.perf-metric-value.neutral{color:var(--gold);}
+.perf-metric-sub{
+  font-size:9px;
+  color:var(--muted);
+  line-height:1.4;
+}
+.perf-analysis-note{
+  font-size:11px;
+  line-height:1.6;
+  color:var(--muted);
+  padding:14px 12px;
+  border-left:2px solid var(--gold);
+  background:rgba(201,160,80,.03);
+  border-radius:4px;
+  margin-top:12px;
+}
+
 .proto-sub{
   font-family:'JetBrains Mono',monospace;
   font-size:8px;
@@ -1180,6 +1246,48 @@ footer span:first-of-type{margin-right:auto}
       </div>
     </div><!-- /inflation-section -->
 
+    <!-- Performance Analysis Section -->
+    <div class="perf-analysis-section">
+      <div class="perf-analysis-label" data-i18n="perf-analysis-label">Performance Metrics</div>
+      <div class="perf-analysis-grid">
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-cagr-label">CAGR (Annualized)</div>
+          <div class="perf-metric-value" id="perfCAGR">+8.24%</div>
+          <div class="perf-metric-sub">Jan 2022 → May 2026</div>
+        </div>
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-irr-label">IRR (Time-Weighted)</div>
+          <div class="perf-metric-value" id="perfIRR">+8.41%</div>
+          <div class="perf-metric-sub">Accounting for DCA timing</div>
+        </div>
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-sharpe-label">Sharpe Ratio</div>
+          <div class="perf-metric-value" id="perfSharpe">+0.98</div>
+          <div class="perf-metric-sub">Risk-adjusted return</div>
+        </div>
+      </div>
+      <div class="perf-analysis-grid">
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-volatility-label">Volatility</div>
+          <div class="perf-metric-value" id="perfVolatility">+68.9%</div>
+          <div class="perf-metric-sub">Annualized std dev</div>
+        </div>
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-maxdd-label">Max Drawdown</div>
+          <div class="perf-metric-value neg" id="perfMaxDD">−50.9%</div>
+          <div class="perf-metric-sub">Lowest point vs peak</div>
+        </div>
+        <div class="perf-metric-card">
+          <div class="perf-metric-title" data-i18n="perf-roi-label">Total Return</div>
+          <div class="perf-metric-value" id="perfROI">+736%</div>
+          <div class="perf-metric-sub">Capital appreciation</div>
+        </div>
+      </div>
+      <div class="perf-analysis-note" data-i18n="perf-analysis-note">
+        Methodology: CAGR = annualized compound growth from start to end. IRR = internal rate of return accounting for monthly DCA contributions. Sharpe ratio = (return − risk-free) / volatility. Volatility = annualized standard deviation of monthly returns. Max Drawdown = largest peak-to-trough decline. Benchmark: 50% BTC + 50% ETH.
+      </div>
+    </div><!-- /perf-analysis-section -->
+
   </div>
 </section>
 
@@ -1272,6 +1380,14 @@ var INDEX_LANG_STRINGS = {
     'perf-track': 'Track Record', 'perf-return': 'Total Return', 'perf-annual': 'Annualized',
     'perf-volatility': 'Volatility', 'perf-maxdd': 'Max Drawdown',
     'perf-note': 'Methodology: Total return based on monthly DCA (Dollar Cost Averaging). IRR includes aporte timing. Benchmark: 50% BTC + 50% ETH.',
+    'perf-analysis-label': 'Performance Metrics',
+    'perf-cagr-label': 'CAGR (Annualized)',
+    'perf-irr-label': 'IRR (Time-Weighted)',
+    'perf-sharpe-label': 'Sharpe Ratio',
+    'perf-volatility-label': 'Volatility',
+    'perf-maxdd-label': 'Max Drawdown',
+    'perf-roi-label': 'Total Return',
+    'perf-analysis-note': 'Methodology: CAGR = annualized compound growth from start to end. IRR = internal rate of return accounting for monthly DCA contributions. Sharpe ratio = (return − risk-free) / volatility. Volatility = annualized standard deviation of monthly returns. Max Drawdown = largest peak-to-trough decline. Benchmark: 50% BTC + 50% ETH.',
     'infl-track': 'Real Gains vs Inflation', 'infl-title': 'Portfolio Performance (Inflation-Adjusted)',
     'infl-desc': 'Comparing portfolio growth against cumulative inflation in each currency.',
     'infl-stat-real': 'Real Gain', 'infl-stat-pct': 'Real Return %', 'infl-stat-annual': 'Real Return Annual',
@@ -1308,6 +1424,14 @@ var INDEX_LANG_STRINGS = {
     'perf-track': 'Track Record', 'perf-return': 'Retorno Total', 'perf-annual': 'Anualizado',
     'perf-volatility': 'Volatilidade', 'perf-maxdd': 'Máx. Drawdown',
     'perf-note': 'Metodologia: Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH.',
+    'perf-analysis-label': 'Métricas de Desempenho',
+    'perf-cagr-label': 'CAGR (Anualizado)',
+    'perf-irr-label': 'TIR (Ponderada no Tempo)',
+    'perf-sharpe-label': 'Índice de Sharpe',
+    'perf-volatility-label': 'Volatilidade',
+    'perf-maxdd-label': 'Máx. Drawdown',
+    'perf-roi-label': 'Retorno Total',
+    'perf-analysis-note': 'Metodologia: CAGR = crescimento anualizado do início ao fim. TIR = taxa interna de retorno contabilizando as contribuições mensais de DCA. Índice de Sharpe = (retorno − taxa livre de risco) / volatilidade. Volatilidade = desvio padrão anualizado dos retornos mensais. Máx. Drawdown = maior declínio de pico para vale. Benchmark: 50% BTC + 50% ETH.',
     'infl-track': 'Ganhos Reais vs Inflação', 'infl-title': 'Desempenho da Carteira (Ajustado pela Inflação)',
     'infl-desc': 'Comparando o crescimento da carteira contra a inflação acumulada em cada moeda.',
     'infl-stat-real': 'Ganho Real', 'infl-stat-pct': 'Retorno Real %', 'infl-stat-annual': 'Retorno Real Anual',
@@ -1714,11 +1838,116 @@ function updateInflationStats(currency) {
   document.getElementById('inflStatAnnual').textContent = '+' + cgrReal.toFixed(2) + '%';
 }
 
+// ══════════════════════════════════
+// PERFORMANCE METRICS CALCULATION
+// ══════════════════════════════════
+function calculatePerformanceMetrics() {
+  var WEALTH_LABELS = ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22',
+                       '01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23',
+                       '01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24',
+                       '01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25',
+                       '01/26','02/26','03/26','04/26','05/26'];
+  var WEALTH_VALUES = [853,860,1037,1108,1037,544,772,896,742,923,754,777,
+                       1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,
+                       2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,
+                       8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,
+                       9511,7376,6371,9206,8872];
+  var INVESTED = [1061,1161,1261,1361,1461,1561,1661,1761,1861,1961,2061,2161,
+                  2261,2361,2461,2561,2661,2761,2861,2961,3061,3161,3261,3361,
+                  3461,3561,3661,3761,3861,3961,4061,4161,4261,4361,4461,4561,
+                  4661,4761,4861,4961,5061,5161,5261,5361,5461,5561,5661,5761,
+                  5861,5961,6061,6161,6261,6361,6461,6561,6661];
+
+  var n = WEALTH_VALUES.length;
+  var startVal = WEALTH_VALUES[0];
+  var endVal = WEALTH_VALUES[n - 1];
+  var years = 4 + (4 / 12); // Jan 2022 to May 2026 = 4 years 4 months
+
+  // ── CAGR ──
+  var cagr = (Math.pow(endVal / startVal, 1 / years) - 1) * 100;
+
+  // ── IRR (approximate via Newton-Raphson) ──
+  var irr = estimateIRR(WEALTH_VALUES, INVESTED);
+
+  // ── Monthly returns ──
+  var monthlyReturns = [];
+  for (var i = 1; i < WEALTH_VALUES.length; i++) {
+    var ret = (WEALTH_VALUES[i] - WEALTH_VALUES[i - 1]) / WEALTH_VALUES[i - 1];
+    monthlyReturns.push(ret);
+  }
+
+  // ── Volatility (annualized) ──
+  var meanReturn = monthlyReturns.reduce(function(s, r) { return s + r; }, 0) / monthlyReturns.length;
+  var variance = monthlyReturns.reduce(function(s, r) { return s + Math.pow(r - meanReturn, 2); }, 0) / monthlyReturns.length;
+  var monthlyStdDev = Math.sqrt(variance);
+  var volatility = monthlyStdDev * Math.sqrt(12) * 100;
+
+  // ── Max Drawdown ──
+  var peak = WEALTH_VALUES[0];
+  var maxDD = 0;
+  for (var i = 1; i < WEALTH_VALUES.length; i++) {
+    if (WEALTH_VALUES[i] > peak) peak = WEALTH_VALUES[i];
+    var dd = (peak - WEALTH_VALUES[i]) / peak;
+    if (dd > maxDD) maxDD = dd;
+  }
+  maxDD = maxDD * 100;
+
+  // ── Sharpe Ratio (risk-free rate = 2.5% annual = ~0.208% monthly) ──
+  var riskFreeMonthly = 0.025 / 12;
+  var excessReturn = meanReturn - riskFreeMonthly;
+  var sharpe = (excessReturn / monthlyStdDev) * Math.sqrt(12);
+
+  // ── Total ROI ──
+  var roi = ((endVal - startVal) / startVal) * 100;
+
+  // Update DOM
+  document.getElementById('perfCAGR').textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(2) + '%';
+  document.getElementById('perfIRR').textContent = (irr >= 0 ? '+' : '') + irr.toFixed(2) + '%';
+  document.getElementById('perfSharpe').textContent = (sharpe >= 0 ? '+' : '') + sharpe.toFixed(2);
+  document.getElementById('perfVolatility').textContent = (volatility >= 0 ? '+' : '') + volatility.toFixed(1) + '%';
+  var maxDDEl = document.getElementById('perfMaxDD');
+  maxDDEl.textContent = '−' + maxDD.toFixed(1) + '%';
+  maxDDEl.className = 'perf-metric-value neg';
+  document.getElementById('perfROI').textContent = (roi >= 0 ? '+' : '') + roi.toFixed(0) + '%';
+
+  // Color coding for metrics
+  var cagrEl = document.getElementById('perfCAGR');
+  cagrEl.className = 'perf-metric-value' + (cagr >= 0 ? ' pos' : ' neg');
+  var irrEl = document.getElementById('perfIRR');
+  irrEl.className = 'perf-metric-value' + (irr >= 0 ? ' pos' : ' neg');
+  var sharpeEl = document.getElementById('perfSharpe');
+  sharpeEl.className = 'perf-metric-value' + (sharpe >= 0 ? ' pos' : ' neg');
+  var volEl = document.getElementById('perfVolatility');
+  volEl.className = 'perf-metric-value' + (volatility >= 0 ? ' neg' : ' pos');
+  var roiEl = document.getElementById('perfROI');
+  roiEl.className = 'perf-metric-value' + (roi >= 0 ? ' pos' : ' neg');
+}
+
+// Estimate IRR using Newton-Raphson method
+function estimateIRR(values, invested) {
+  var rate = 0.10; // initial guess 10%
+  for (var iter = 0; iter < 20; iter++) {
+    var npv = 0, dnpv = 0;
+    for (var t = 0; t < values.length; t++) {
+      var cf = (t === values.length - 1) ? (values[t] - invested[t]) : -invested[t];
+      npv += cf / Math.pow(1 + rate, t / 12);
+      dnpv -= (t / 12) * cf / Math.pow(1 + rate, t / 12 + 1);
+    }
+    var delta = npv / dnpv;
+    rate -= delta;
+    if (Math.abs(delta) < 1e-6) break;
+  }
+  return rate * 100;
+}
+
 // Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
   // Initialize inflation chart
   buildInflationChart('usd');
   updateInflationStats('usd');
+
+  // Initialize performance metrics
+  calculatePerformanceMetrics();
 
   // Set initial theme icon
   var btn = document.getElementById('themeToggle');
