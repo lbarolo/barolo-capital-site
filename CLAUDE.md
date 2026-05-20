@@ -2925,3 +2925,91 @@ Par / Protocolo | Balance / Earnings / APR | Range | ▾
 
 ---
 
+## Sessão 20/05/2026 — Automação mensal + verificação dados 20/05 + workflow template criado
+
+### Contexto
+Sessão iniciada em context esgotado. Foram retomadas e finalizadas as atualizações de dados de 20/05/2026 de uma sessão anterior (all 6 HTML files + JSON snapshot já haviam sido atualizados). O usuário solicitou explicitamente: (1) verificação que todos os dados estão corretos, (2) criação de um processo mensal automatizado para future updates.
+
+### Implementado
+
+#### **Verificação de dados (20/05/2026)**
+Confirmado que os 7 arquivos foram corretamente atualizados na sessão anterior:
+- `index.html`: HOLDINGS array (9 tokens), STABLES_USD, TOTAL_DEBT
+- `portfolio_analytics.html`: WEEKLY_UPDATE object completo com defi.aave e defi.kamino
+- `emprestimos.html`: updateCollateralCards() com hardcoded values + live fetch
+- `ferramentas.html`: BASE simulator object
+- `relatorio.html`: APY constants + position quantities
+- `pools.html`: STABLES fallback + debt fallbacks
+- `EXPORTS SEMANAIS/MAIO/20-05-26-posicoes.json`: snapshot JSON criado
+
+**Dados de 20/05/2026 confirmados:**
+| Campo | Valor |
+|-------|-------|
+| Portfolio total USD | $8,871.78 |
+| ETH | 2.084106 |
+| SOL | 20.3113268 |
+| AAVE WETH | 1.89 (supply) |
+| AAVE USDT | 1,990 (supply) |
+| AAVE USDC borrow | 751.82 @ 8.93% APY |
+| Kamino SOL | 20.47 (supply) @ 5.59% APY |
+| Kamino USDS | 301.42 (supply) @ 4.56% APY |
+| Kamino USDC borrow | 811.35 @ 6.19% APY |
+| STABLES_USD | 2,536.40 (USDT 2,235.98 + USDS 300.42) |
+| TOTAL_DEBT | 1,563.17 (AAVE 751.82 + Kamino 811.35) |
+
+#### **Automação mensal — MONTHLY_UPDATE_WORKFLOW.md criado**
+Arquivo novo criado na raiz: `C:\Users\barol\OneDrive\Documentos\barolo-site\MONTHLY_UPDATE_WORKFLOW.md`
+
+**Conteúdo do workflow (9 seções):**
+1. **Prints necessários** — exatamente onde tirar screenshot (CoinGecko, AAVE V4, Kamino) e pasta para salvar
+2. **Mapeamento Print → Código** — tabelas com correspondência exata:
+   - CoinGecko holdings → HOLDINGS array em index.html
+   - AAVE V4 qtys e APYs → AAVE_*_QTY e AAVE_*_APY em relatorio.html
+   - Kamino qtys e APYs → KAM_*_QTY e KAM_*_APY em relatorio.html
+   - Hardcoded values em emprestimos.html (updateCollateralCards, linhas 1142–1165)
+   - BASE simulator em ferramentas.html (linhas 2059–2068)
+3. **Checklist dos 6 arquivos HTML + JSON** — qual constante atualizar em cada arquivo
+4. **Passo a passo do processo** — extrair prints → editar HTML → criar JSON → git commit → validar
+5. **Validação pós-atualização** — Health Factor, LTV, CAGR, STABLES_USD, JSON snapshot
+6. **Campos opcionais** — compras via CEX, coleta de fees em pools, novos tokens
+7. **Automação futura** — sugestões de OCR + webhook + GitHub Actions
+8. **Template de commit** — mensagem padrão para copiar/colar
+9. **Calendário** — próximas datas de atualização (20–21 de cada mês)
+
+**Objetivo:** quando Lucas enviar prints no próximo mês, será possível seguir o workflow exatamente sem qualquer pergunta ou ambiguidade.
+
+### Dados atualizados
+Nenhum. Todos os dados de 20/05/2026 foram atualizados na sessão anterior (confirmado nesta).
+
+### Bugs corrigidos
+Nenhum nesta sessão. Arquivo novo criado (MONTHLY_UPDATE_WORKFLOW.md).
+
+### Commits desta sessão
+
+| Hash | Mensagem |
+|------|----------|
+| `da87f94` | docs: monthly update workflow template — automação para future prints |
+
+### O que ainda falta
+
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada (ainda pendente de clarificação)
+- **CSVs das CEX** — Lucas traz para custo de aquisição em BRL e base para IR (pendente desde sessão 11/04)
+- **i18n painel Sizing & Risk** — labels só em PT; falta strings EN
+- **Validar `calcLevHedge()`** com cenários reais
+- **Mentoria DeFi avançado** — Euler V2, Morpho Blue, Gearbox V3, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **Distribuição de liquidez real em track.html** — a atual é sintética; leitura real exige scan de Uniswap V3 subgraph ticks
+- **Track.html responsividade mobile** — charts e range bar podem sair do quadro em telas pequenas
+- **pools.html redesign** — cards expandíveis + recomendações de pools (plano em `.claude/plans/glistening-juggling-forest.md`)
+
+### Workflow para próximas sessões
+
+**Modelo padrão (jun/2026 e futuro):**
+1. Lucas envia prints de CoinGecko, AAVE V4, Kamino (salva em `DIARIO DEFI E PRINTS/`)
+2. Claude segue `MONTHLY_UPDATE_WORKFLOW.md` seção por seção
+3. Atualiza 6 arquivos HTML + cria JSON snapshot
+4. Git commit com template padrão
+5. Push para main
+6. Zero confirmações necessárias (user autorizou antecipadamente em 20/05/2026)
+
+---
+
