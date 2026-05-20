@@ -1555,6 +1555,7 @@ function renderUI(enriched){
  set('s-net-card', fmtCurrency(netTotal, 0));
   // Update STABLES card — soma todos os isStable do enriched
   var stablesTotal = enriched.filter(a=>a.isStable).reduce((s,a)=>s+(a.currentValue||a.qty),0);
+  window._stablesTotalUSD = stablesTotal; // global para convexidade
   set('s-stables', fmtCurrency(stablesTotal, 0));
   var stablesSub = enriched.filter(a=>a.isStable).map(a=>a.ticker+' '+fmtCurrency(a.currentValue||a.qty,0)).join(' · ');
   if(stablesSub) set('s-stables-sub', stablesSub);
@@ -1940,7 +1941,8 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
   const weightedConvex = Object.keys(weights).reduce((s,t)=>s+weights[t]*convexities[t], 0);
 
   // 2. FRAGILITY INDEX (F)
-  const leverage = grossAssets / (grossAssets - 1558.93); // aprox debt
+  const debt = (window._liveAaveDebt || 751.82) + (window._liveKaminoDebt || 811.35);
+  const leverage = debt > 0 ? grossAssets / (grossAssets - debt) : 1.0;
   const leverageComp = Math.max(0, (leverage - 1.0) * 0.3);
 
   const liqDistAAVE = (aaveHF - 1.0) / aaveHF;
@@ -1963,12 +1965,21 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
   const lambda1 = 0.60, lambda2 = 0.25, lambda3 = 0.15;
   const CP = lambda1 * weightedConvex + lambda2 * fragility + lambda3 * markovMult;
 
+  // Calcula margens de liquidação (dinâmico)
+  const stablesPct = (window._stablesTotalUSD || 2536.40) / grossAssets;
+  const aaveLTVlimit = 0.825; // 82.5% max
+  const aaveLTVcurrent = (window._liveAaveDebt || 751.82) / (window._liveAaveCollateral || 6000);
+  const aaveMargin = ((aaveLTVlimit - aaveLTVcurrent) / aaveLTVlimit) * 100;
+  const kaminoLTVlimit = 0.7722; // 77.22% liq threshold
+  const kaminoMargin = ((kaminoLTVlimit - kaminoLTV) / kaminoLTV) * 100;
+
   return {
     CP, weightedConvex, fragility, markovMult, fgi,
     weights, convexities, leverage, aaveHF, kaminoLTV, hhi,
     comp1: lambda1 * weightedConvex,
     comp2: lambda2 * fragility,
-    comp3: lambda3 * markovMult
+    comp3: lambda3 * markovMult,
+    stablesPct, aaveMargin, kaminoMargin
   };
 }
 
@@ -2023,9 +2034,9 @@ function buildConvexityUI(W){
     'cpAAVEHF': cv.aaveHF.toFixed(2),
     'cpKaminoLTV': (cv.kaminoLTV*100).toFixed(1)+'%',
     'cpConc': cv.hhi.toFixed(4),
-    'cpStables': '64.2%',
-    'cpMarginAAVE': '81%',
-    'cpMarginKamino': '37%',
+    'cpStables': (cv.stablesPct*100).toFixed(1)+'%',
+    'cpMarginAAVE': Math.max(0, cv.aaveMargin).toFixed(0)+'%',
+    'cpMarginKamino': Math.max(0, cv.kaminoMargin).toFixed(0)+'%',
     'cpRegime': cv.fgi > 50 ? 'Bull' : (cv.fgi > 25 ? 'Lateral' : 'Bear')
   };
 
