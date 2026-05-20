@@ -1123,7 +1123,7 @@ async function fetchPrices(){
 // ── COLLATERAL CARDS (live token values + bars) ──
 function updateCollateralCards(){
  // AAVE — WETH qty + USDT qty (stable)
- const wethQty = 1.88;
+ const wethQty = 1.89;
  const usdtQty = 1990;
  const wethUsd = wethQty * liveEth;
  const usdtUsd = usdtQty * 1.00;
@@ -1136,11 +1136,11 @@ function updateCollateralCards(){
  if(el('em-aave-supply'))    el('em-aave-supply').textContent   = '$' + Math.round(aaveTotal).toLocaleString('en-US');
  if(el('em-aave-weth-bar'))  el('em-aave-weth-bar').style.width = wethPct + '%';
  if(el('em-aave-usdt-bar'))  el('em-aave-usdt-bar').style.width = usdtPct + '%';
- if(el('em-aave-net'))       el('em-aave-net').textContent      = '$' + Math.round(aaveTotal - 750.16).toLocaleString('en-US');
+ if(el('em-aave-net'))       el('em-aave-net').textContent      = '$' + Math.round(aaveTotal - 751.82).toLocaleString('en-US');
 
  // Kamino — SOL qty + USDS qty (stable)
- const solQty  = 20.42;
- const usdsQty = 301.01;
+ const solQty  = 20.47;
+ const usdsQty = 301.42;
  const solUsd  = solQty * liveSol;
  const usdsUsd = usdsQty * 1.00;
  const kaminoTotal = solUsd + usdsUsd;
@@ -1151,10 +1151,10 @@ function updateCollateralCards(){
  if(el('em-kamino-supply'))    el('em-kamino-supply').textContent    = '$' + Math.round(kaminoTotal).toLocaleString('en-US');
  if(el('em-kamino-sol-bar'))   el('em-kamino-sol-bar').style.width   = solPct + '%';
  if(el('em-kamino-usds-bar'))  el('em-kamino-usds-bar').style.width  = usdsPct + '%';
- if(el('em-kamino-net'))       el('em-kamino-net').textContent       = '$' + Math.round(kaminoTotal - 808.77).toLocaleString('en-US');
+ if(el('em-kamino-net'))       el('em-kamino-net').textContent       = '$' + Math.round(kaminoTotal - 811.35).toLocaleString('en-US');
 
  // Update LTV values
- const aaveLtv = (750.16 / aaveTotal * 100).toFixed(1);
+ const aaveLtv = (751.82 / aaveTotal * 100).toFixed(1);
  if(el('em-aave-ltv-pct'))  el('em-aave-ltv-pct').textContent  = aaveLtv + '%';
  if(el('em-aave-ltv-lbl'))  el('em-aave-ltv-lbl').textContent  = aaveLtv + '%';
  if(el('em-aave-ltv-fill')) el('em-aave-ltv-fill').style.width = aaveLtv + '%';
@@ -1162,7 +1162,7 @@ function updateCollateralCards(){
  if(el('em-aave-ltv-pct'))  el('em-aave-ltv-pct').style.color  = aaveColor;
  if(el('em-aave-ltv-lbl'))  { const b=el('em-aave-ltv-lbl'); b.style.color=aaveColor; }
 
- const kaminoLtv = (808.77 / kaminoTotal * 100).toFixed(1);
+ const kaminoLtv = (811.35 / kaminoTotal * 100).toFixed(1);
  if(el('em-kamino-ltv-pct'))  el('em-kamino-ltv-pct').textContent  = kaminoLtv + '%';
  if(el('em-kamino-ltv-lbl'))  el('em-kamino-ltv-lbl').textContent  = kaminoLtv + '%';
  if(el('em-kamino-ltv-fill')) el('em-kamino-ltv-fill').style.width = (parseFloat(kaminoLtv)/77.20*100).toFixed(1) + '%';
