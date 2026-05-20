@@ -736,8 +736,13 @@ footer span:first-of-type{margin-right:auto}
       </div>
       <div class="hero-divider"></div>
       <div>
-        <div class="hero-stat-val" id="heroReturn">+68%</div>
-        <div class="hero-stat-lbl">CAGR (annual)</div>
+        <div class="hero-stat-val" id="heroCAGR">+63.7%</div>
+        <div class="hero-stat-lbl">CAGR (nominal)</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val" id="heroRealReturn">+621.7%</div>
+        <div class="hero-stat-lbl">Track Record (real)</div>
       </div>
       <div class="hero-divider"></div>
       <div>
@@ -1175,12 +1180,20 @@ function toggleMobile() {
 
   var INITIAL_CAPITAL = 1061; // primeiro capital registrado (Jan/2022, wealthCurve.invested[0])
 
-  function calculateCAGR(netWorth) {
+  function calculateCAGR(currentAssets) {
     var start = new Date(2022, 0, 1); // Jan 1, 2022
     var end = new Date();
     var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
-    if (years <= 0 || netWorth <= 0) return 0;
-    return (Math.pow(netWorth / INITIAL_CAPITAL, 1 / years) - 1) * 100;
+    if (years <= 0 || currentAssets <= 0) return 0;
+    return (Math.pow(currentAssets / INITIAL_CAPITAL, 1 / years) - 1) * 100;
+  }
+
+  function calculateRealReturn(currentAssets) {
+    // Inflação acumulada USA (jan 2022 - maio 2026): 20.2%
+    var cumulativeInflation = 1.202; // 1 + 0.202
+    var nominalReturn = (currentAssets / INITIAL_CAPITAL - 1) * 100;
+    var realReturn = ((currentAssets / INITIAL_CAPITAL) / cumulativeInflation - 1) * 100;
+    return realReturn;
   }
 
   function updateHeroReturn(prices) {
@@ -1190,10 +1203,16 @@ function toggleMobile() {
       if (p) spotVal += h.qty * p;
     });
     if (spotVal === 0) return;
-    var netWorth = spotVal + STABLES_USD + LP_POOLED - TOTAL_DEBT;
-    var cagr = calculateCAGR(netWorth);
-    var el = document.getElementById('heroReturn');
-    if (el) el.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%';
+    // Usar ativos brutos (sem dívida) para comparação consistente com capital inicial
+    var currentAssets = spotVal + STABLES_USD + LP_POOLED;
+    var cagr = calculateCAGR(currentAssets);
+    var realReturn = calculateRealReturn(currentAssets);
+
+    var cagrEl = document.getElementById('heroCAGR');
+    if (cagrEl) cagrEl.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%';
+
+    var realEl = document.getElementById('heroRealReturn');
+    if (realEl) realEl.textContent = (realReturn >= 0 ? '+' : '') + realReturn.toFixed(1) + '%';
   }
 
   // IDs de todos os tokens para fetch (ticker + portfolio)
