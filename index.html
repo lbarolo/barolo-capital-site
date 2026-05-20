@@ -1752,15 +1752,17 @@ function buildInflationChart(currency) {
   var rateMultiplier = isUSD ? 1 : USD_BRL['01/22'];
   var endRate = isUSD ? 1 : USD_BRL['05/26'];
 
+  var startingCapital = 1061 * (isUSD ? 1 : USD_BRL['01/22']);
+
   var portfolioData = WEALTH_VALUES.map(function(val, idx) {
-    return val * (isUSD ? 1 : USD_BRL[WEALTH_LABELS[idx]]);
+    var absoluteVal = val * (isUSD ? 1 : USD_BRL[WEALTH_LABELS[idx]]);
+    return (absoluteVal - startingCapital) / startingCapital * 100;
   });
 
-  var inflationThresholdData = portfolioData.map(function(val, idx) {
-    var label = WEALTH_LABELS[idx];
+  var inflationThresholdData = WEALTH_LABELS.map(function(label, idx) {
     var inflRate = parseFloat(inflData[label]) || 0;
-    var startCap = 1061 * (isUSD ? 1 : USD_BRL['01/22']);
-    return startCap * (1 + inflRate / 100);
+    var thresholdValue = startingCapital * (1 + inflRate / 100);
+    return (thresholdValue - startingCapital) / startingCapital * 100;
   });
 
   var ctx = document.getElementById('inflChart').getContext('2d');
@@ -1773,7 +1775,7 @@ function buildInflationChart(currency) {
       labels: WEALTH_LABELS,
       datasets: [
         {
-          label: 'Portfolio Value',
+          label: 'Portfolio Gain',
           data: portfolioData,
           borderColor: goldColor,
           backgroundColor: 'rgba(201, 160, 80, 0.1)',
@@ -1786,7 +1788,7 @@ function buildInflationChart(currency) {
           order: 0
         },
         {
-          label: 'Inflation Threshold',
+          label: 'Inflation Adjustment',
           data: inflationThresholdData,
           borderColor: redColor,
           borderWidth: 2,
@@ -1814,8 +1816,8 @@ function buildInflationChart(currency) {
           borderWidth: 1,
           callbacks: {
             label: function(ctx) {
-              var val = ctx.parsed.y.toFixed(0);
-              return ctx.dataset.label + ': ' + (isUSD ? '$' : 'R$') + val.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+              var val = ctx.parsed.y.toFixed(1);
+              return ctx.dataset.label + ': ' + (val >= 0 ? '+' : '') + val + '%';
             }
           }
         }
@@ -1831,7 +1833,7 @@ function buildInflationChart(currency) {
           ticks: {
             color: textColor,
             font: {size: 10},
-            callback: function(val) { return (isUSD ? '$' : 'R$') + val.toLocaleString('en-US', {maximumFractionDigits: 0}); }
+            callback: function(val) { return (val >= 0 ? '+' : '') + val.toFixed(0) + '%'; }
           }
         }
       }
