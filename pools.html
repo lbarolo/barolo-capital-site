@@ -174,6 +174,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .iframe-spinner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--surface);z-index:3;pointer-events:none;transition:opacity .5s;}
 .spinner-ring{width:36px;height:36px;border:3px solid rgba(201,160,80,0.2);border-top-color:#c9a050;border-radius:50%;animation:spin .9s linear infinite;}
 .spinner-label{font-size:9px;color:var(--muted);letter-spacing:2px;}
+
+/* LOADING STATE */
+.iframe-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--surface);z-index:10;border-radius:8px;}
+.spinner{width:32px;height:32px;border:2.5px solid rgba(201,160,80,0.15);border-top-color:#c9a050;border-radius:50%;animation:spin 0.8s cubic-bezier(0.4,0.0,0.2,1) infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 .iframe-fallback{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;background:var(--surface);z-index:2;}
 .ifb-icon{font-size:34px;opacity:.35;}
 .ifb-title{font-family:'Satoshi',serif;font-size:17px;color:var(--text);font-weight:600;}
@@ -589,10 +594,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
 
-<div class="iframe-wrap" id="iframeWrap" style="height:960px;margin-top:16px;">
-  <div class="iframe-loading">
-    <div style="font-size:11px;color:var(--muted);">carregando Revert Finance…</div>
+<div class="iframe-wrap" id="iframeWrap" style="height:960px;margin-top:16px;border:1px solid var(--border);border-radius:8px;">
+  <div class="iframe-loading" style="border-radius:8px;">
     <div class="spinner"></div>
+    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
   </div>
   <iframe id="revertFrame" src="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
   <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
@@ -617,14 +622,41 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
     <a class="tbtn" href="https://pro.aave.com/" target="_blank" title="Nova aba">↗</a>
   </div>
 </div>
-<div class="iframe-wrap" id="aaveWrap" style="height:960px;margin-bottom:20px;">
-  <div class="iframe-loading">
-    <div style="font-size:11px;color:var(--muted);">carregando AAVE Pro…</div>
+<div class="iframe-wrap" id="aaveWrap" style="height:960px;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;">
+  <div class="iframe-loading" style="border-radius:8px;">
     <div class="spinner"></div>
+    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
   </div>
   <iframe id="aaveFrame" src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
   <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
     <p>📊 AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba ↗</a></p>
+  </div>
+</div>
+</div>
+
+
+<!-- ══ RAYDIUM ══ -->
+<div id="bc-raydium-section">
+<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
+    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">Raydium — Liquidity</h3>
+    <span style="font-size:10px;color:var(--muted);">Solana</span>
+  </div>
+  <div class="apr-toolbar">
+    <span style="flex:1;"></span>
+    <button class="tbtn" onclick="document.getElementById('raydiumFrame').requestFullscreen()" title="Expandir">⛶</button>
+    <button class="tbtn" onclick="document.getElementById('raydiumFrame').src += ''" title="Recarregar">↻</button>
+    <a class="tbtn" href="https://app.raydium.io/pools" target="_blank" title="Nova aba">↗</a>
+  </div>
+</div>
+<div class="iframe-wrap" id="raydiumWrap" style="height:960px;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;">
+  <div class="iframe-loading" style="border-radius:8px;">
+    <div class="spinner"></div>
+    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
+  </div>
+  <iframe id="raydiumFrame" src="https://app.raydium.io/pools" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+    <p>📊 Raydium bloqueado — <a href="https://app.raydium.io/pools" target="_blank" style="color:#b6509e;">abra em nova aba ↗</a></p>
   </div>
 </div>
 </div>
