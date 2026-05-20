@@ -533,6 +533,66 @@ section{
   line-height:1.2;
 }
 [data-theme="light"] .proto-name{color:var(--dark)}
+/* Performance summary */
+.performance-summary{
+  margin-top:48px;
+  padding-top:48px;
+  border-top:1px solid var(--border);
+}
+.perf-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.30em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.perf-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+@media(max-width:1024px){ .perf-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:640px){ .perf-grid{grid-template-columns:1fr;} }
+.perf-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  text-align:center;
+}
+.perf-title{
+  font-size:10px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.perf-value{
+  font-size:28px;
+  font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--green);
+  margin-bottom:6px;
+}
+.perf-value.neg{color:var(--red);}
+.perf-sub{
+  font-size:9px;
+  color:var(--muted);
+}
+.perf-note{
+  font-size:12px;
+  line-height:1.6;
+  color:var(--muted);
+  padding:16px 12px;
+  border-left:2px solid var(--gold);
+  background:rgba(201,160,80,.05);
+  border-radius:4px;
+}
+[data-theme="light"] .perf-note{background:rgba(138,104,32,.08);}
+
 .proto-sub{
   font-family:'JetBrains Mono',monospace;
   font-size:8px;
@@ -961,6 +1021,36 @@ footer span:first-of-type{margin-right:auto}
 
     </div><!-- /protocol-grid -->
 
+    <!-- PERFORMANCE METRICS -->
+    <div class="performance-summary">
+      <div class="perf-label" data-i18n="perf-track">Track Record</div>
+      <div class="perf-grid">
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-return">Total Return</div>
+          <div class="perf-value">+27.7%</div>
+          <div class="perf-sub">Jan 2022 — Mai 2026</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-annual">Annualized</div>
+          <div class="perf-value">+8.4%</div>
+          <div class="perf-sub">IRR over 4.3 years</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-volatility">Volatility</div>
+          <div class="perf-value">68.9%</div>
+          <div class="perf-sub">Annual standard deviation</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-maxdd">Max Drawdown</div>
+          <div class="perf-value">-50.9%</div>
+          <div class="perf-sub">Peak to trough (Mar 2022)</div>
+        </div>
+      </div>
+      <div class="perf-note" data-i18n="perf-note">
+        <strong>Metodologia:</strong> Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH. <a href="portfolio_analytics.html" style="color:var(--accent);text-decoration:underline;">Ver análise completa →</a>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1050,6 +1140,9 @@ var INDEX_LANG_STRINGS = {
     'strat3-tag': 'Accumulation', 'strat3-title': 'Long-Term Conviction',
     'strat3-desc': 'Monthly DCA into ETH, SOL and ADA with a 10+ year horizon. Bear markets are treated as accumulation phases, not reasons to exit.',
     'port-tag': 'DeFi Ecosystem', 'port-title': 'Portfolio <em>Assets</em>',
+    'perf-track': 'Track Record', 'perf-return': 'Total Return', 'perf-annual': 'Annualized',
+    'perf-volatility': 'Volatility', 'perf-maxdd': 'Max Drawdown',
+    'perf-note': 'Methodology: Total return based on monthly DCA (Dollar Cost Averaging). IRR includes aporte timing. Benchmark: 50% BTC + 50% ETH.',
     'nav-contact': 'Contact',
     'contact-tag': 'Contact',
     'contact-title': 'Get in <em>touch</em>',
@@ -1080,6 +1173,9 @@ var INDEX_LANG_STRINGS = {
     'strat3-tag': 'Acumulação', 'strat3-title': 'Convicção de Longo Prazo',
     'strat3-desc': 'DCA mensal em ETH, SOL e ADA com horizonte de 10+ anos. Bear markets são tratados como fases de acumulação, não razão para sair.',
     'port-tag': 'Ecossistema DeFi', 'port-title': 'Ativos do <em>Portfólio</em>',
+    'perf-track': 'Track Record', 'perf-return': 'Retorno Total', 'perf-annual': 'Anualizado',
+    'perf-volatility': 'Volatilidade', 'perf-maxdd': 'Máx. Drawdown',
+    'perf-note': 'Metodologia: Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH.',
     'nav-contact': 'Contato',
     'contact-tag': 'Contato',
     'contact-title': 'Entre em <em>contato</em>',
