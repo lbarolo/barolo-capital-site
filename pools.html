@@ -610,26 +610,26 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 <!-- ══ AAVE PRO ══ -->
 <div id="bc-aave-section">
-<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
-  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
-    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">AAVE Pro — Dashboard</h3>
-    <span style="font-size:10px;color:var(--muted);">Ethereum</span>
+<div class="revert-panel" style="margin-bottom:20px;">
+  <div class="revert-toolbar">
+    <div class="revert-title">
+      <span style="font-size:15px;color:#B6509E;font-weight:800;font-family:'Satoshi',serif;">⬡ AAVE V4</span>
+      <span style="font-size:9px;color:var(--muted);">Ethereum</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <button class="btn-open" onclick="document.getElementById('aaveFrame').src += ''; return false;" style="font-size:11px;">⟲ Atualizar</button>
+      <a class="btn-open" href="https://pro.aave.com/" target="_blank" rel="noopener" style="font-size:11px;">→ Abrir</a>
+    </div>
   </div>
-  <div class="apr-toolbar">
-    <span style="flex:1;"></span>
-    <button class="tbtn" onclick="document.getElementById('aaveFrame').requestFullscreen()" title="Expandir" style="font-size:11px;font-weight:600;">[ ]</button>
-    <button class="tbtn" onclick="document.getElementById('aaveFrame').src += ''" title="Recarregar" style="font-size:11px;font-weight:600;">⟲</button>
-    <a class="tbtn" href="https://pro.aave.com/" target="_blank" title="Nova aba" style="font-size:11px;font-weight:600;">→</a>
-  </div>
-</div>
-<div class="iframe-wrap" id="aaveWrap" style="height:960px;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;">
-  <div class="iframe-loading" id="aaveAppLoading" style="border-radius:8px;">
-    <div class="spinner"></div>
-    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
-  </div>
-  <iframe id="aaveFrame" src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div id="aaveAppFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
-    <p>⚠ AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba →</a></p>
+  <div class="iframe-wrap" id="aaveWrap" style="height:480px;border:1px solid var(--border);border-radius:8px;">
+    <div class="iframe-loading" id="aaveAppLoading" style="border-radius:8px;">
+      <div class="spinner"></div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
+    </div>
+    <iframe id="aaveFrame" src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+    <div id="aaveAppFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+      <p>⚠ AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba →</a></p>
+    </div>
   </div>
 </div>
 </div>
@@ -637,26 +637,26 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 <!-- ══ RAYDIUM ══ -->
 <div id="bc-raydium-section">
-<div style="padding:20px 0;border-bottom:1px solid rgba(201,160,80,0.1);margin-bottom:20px;">
-  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
-    <h3 style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text);">Raydium — Liquidity</h3>
-    <span style="font-size:10px;color:var(--muted);">Solana</span>
+<div class="revert-panel" style="margin-bottom:20px;">
+  <div class="revert-toolbar">
+    <div class="revert-title">
+      <span style="font-size:15px;color:#15b66a;font-weight:800;font-family:'Satoshi',serif;">⬡ Raydium</span>
+      <span style="font-size:9px;color:var(--muted);">Solana</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <button class="btn-open" onclick="document.getElementById('raydiumFrame').src += ''; return false;" style="font-size:11px;">⟲ Atualizar</button>
+      <a class="btn-open" href="https://app.raydium.io/" target="_blank" rel="noopener" style="font-size:11px;">→ Abrir</a>
+    </div>
   </div>
-  <div class="apr-toolbar">
-    <span style="flex:1;"></span>
-    <button class="tbtn" onclick="document.getElementById('raydiumFrame').requestFullscreen()" title="Expandir" style="font-size:11px;font-weight:600;">[ ]</button>
-    <button class="tbtn" onclick="document.getElementById('raydiumFrame').src += ''" title="Recarregar" style="font-size:11px;font-weight:600;">⟲</button>
-    <a class="tbtn" href="https://app.raydium.io/" target="_blank" title="Nova aba" style="font-size:11px;font-weight:600;">→</a>
-  </div>
-</div>
-<div class="iframe-wrap" id="raydiumWrap" style="height:480px;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;">
-  <div class="iframe-loading" id="raydiumLoading" style="border-radius:8px;">
-    <div class="spinner"></div>
-    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
-  </div>
-  <iframe id="raydiumFrame" src="https://app.raydium.io/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div id="raydiumFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
-    <p>⚠ Raydium bloqueado — <a href="https://app.raydium.io/" target="_blank" style="color:#b6509e;">abra em nova aba →</a></p>
+  <div class="iframe-wrap" id="raydiumWrap" style="height:480px;border:1px solid var(--border);border-radius:8px;">
+    <div class="iframe-loading" id="raydiumLoading" style="border-radius:8px;">
+      <div class="spinner"></div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
+    </div>
+    <iframe id="raydiumFrame" src="https://app.raydium.io/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+    <div id="raydiumFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+      <p>⚠ Raydium bloqueado — <a href="https://app.raydium.io/" target="_blank" style="color:#15b66a;">abra em nova aba →</a></p>
+    </div>
   </div>
 </div>
 </div>
