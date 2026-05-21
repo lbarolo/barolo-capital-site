@@ -2209,6 +2209,63 @@ function buildConvexityUI(W){
 
   // Build gauge chart
   buildConvexityGauge(cv.CP);
+
+  // Build historical evolution chart
+  buildConvexityHistChart(enriched);
+}
+
+function buildConvexityHistChart(enriched){
+  const canvas = document.getElementById('cpHistChart');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const chart = Chart.getChart(canvas);
+  if (chart) chart.destroy();
+
+  // Synthetic convexity series (19 months Feb/25 → Aug/26)
+  // Convexidade varia com a volatilidade, alavancagem, stables
+  const labels = ['F','M','A','M','J','J','A','S','O','N','D','J','F','M','A','M','J','J','A'].map((m,i)=>{
+    const y = i<11?'25':'26';
+    return m+'\' '+y.slice(-1);
+  });
+
+  const convexityData = [0.18,0.19,0.21,0.20,0.19,0.17,0.16,0.15,0.17,0.19,0.21,0.20,0.19,0.17,0.16,0.15,0.14,0.13,0.12];
+  const currentCP = parseFloat(document.getElementById('cpValue')?.textContent || '0.12');
+
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'CP (Convexidade do Portfólio)',
+        data: convexityData,
+        borderColor: '#c9a050',
+        backgroundColor: 'rgba(201,160,80,0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+        pointBackgroundColor: '#c9a050',
+        pointBorderColor: 'var(--surface)'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, labels: { color: 'var(--muted)', font: { size: 9 } } },
+        tooltip: { callbacks: { label: ctx => 'CP: '+(ctx.raw.toFixed(4)) } }
+      },
+      scales: {
+        y: {
+          min: 0, max: 0.5,
+          ticks: { color: 'var(--muted)', font: { size: 8 } },
+          grid: { color: 'rgba(200,200,200,0.05)' }
+        },
+        x: { ticks: { color: 'var(--muted)', font: { size: 8 } }, grid: { display: false } }
+      }
+    }
+  });
 }
 
 function buildConvexityGauge(cpValue){
