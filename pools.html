@@ -595,12 +595,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  </div>
 
 <div class="iframe-wrap" id="iframeWrap" style="height:960px;margin-top:16px;border:1px solid var(--border);border-radius:8px;">
-  <div class="iframe-loading" style="border-radius:8px;">
+  <div class="iframe-loading" id="revertLoading" style="border-radius:8px;">
     <div class="spinner"></div>
     <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
   </div>
   <iframe id="revertFrame" src="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+  <div id="revertFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
     <p>📊 Revert Finance bloqueado — <a href="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" target="_blank" style="color:var(--gold);">abra em nova aba ↗</a></p>
   </div>
 </div>
@@ -623,12 +623,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   </div>
 </div>
 <div class="iframe-wrap" id="aaveWrap" style="height:960px;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;">
-  <div class="iframe-loading" style="border-radius:8px;">
+  <div class="iframe-loading" id="aaveAppLoading" style="border-radius:8px;">
     <div class="spinner"></div>
     <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
   </div>
   <iframe id="aaveFrame" src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+  <div id="aaveAppFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
     <p>📊 AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba ↗</a></p>
   </div>
 </div>
@@ -650,12 +650,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   </div>
 </div>
 <div class="iframe-wrap" id="raydiumWrap" style="height:960px;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;">
-  <div class="iframe-loading" style="border-radius:8px;">
+  <div class="iframe-loading" id="raydiumLoading" style="border-radius:8px;">
     <div class="spinner"></div>
     <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
   </div>
   <iframe id="raydiumFrame" src="https://app.raydium.io/pools" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+  <div id="raydiumFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
     <p>📊 Raydium bloqueado — <a href="https://app.raydium.io/pools" target="_blank" style="color:#b6509e;">abra em nova aba ↗</a></p>
   </div>
 </div>
@@ -1265,9 +1265,8 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  const timer = setTimeout(showFallback, ms || 20000);
 }
 
-// Inicializar painéis — Uniswap recebe timeout maior (25s) pois pode ser lento
+// Inicializar painéis
 initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 15000);
-initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 25000);
 initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 15000);
 initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
