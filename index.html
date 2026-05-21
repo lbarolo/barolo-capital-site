@@ -1211,6 +1211,35 @@ footer span:first-of-type{margin-right:auto}
       </div>
     </div>
 
+    <!-- INFLATION COMPARISON CHART -->
+    <div class="inflation-section">
+      <div class="infl-label" data-i18n="infl-track">Real Gains vs Inflation</div>
+      <div class="infl-header">
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;" data-i18n="infl-title">Portfolio Performance (Inflation-Adjusted)</div>
+          <div style="font-size:12px;color:var(--muted);" data-i18n="infl-desc">Comparing portfolio growth against cumulative inflation in each currency.</div>
+        </div>
+        <div class="infl-controls">
+          <button class="infl-toggle-btn active" id="inflCurrBtn-usd" onclick="setInflCurrency('usd', this)">USD</button>
+          <button class="infl-toggle-btn" id="inflCurrBtn-brl" onclick="setInflCurrency('brl', this)">BRL</button>
+        </div>
+      </div>
+      <div class="infl-chart-wrap">
+        <canvas id="inflChart" width="400" height="300"></canvas>
+      </div>
+      <div class="infl-stats-grid" id="inflStats">
+        <div class="infl-stat-card">
+          <div class="infl-stat-label" data-i18n="infl-stat-pct">Real Return %</div>
+          <div class="infl-stat-value" id="inflStatPct">+42.5%</div>
+          <div class="infl-stat-sub">Total period</div>
+        </div>
+        <div class="infl-stat-card">
+          <div class="infl-stat-label" data-i18n="infl-stat-annual">Real Return Annual</div>
+          <div class="infl-stat-value" id="inflStatAnnual">+4.8%</div>
+          <div class="infl-stat-sub">Per year</div>
+        </div>
+      </div>
+    </div><!-- /inflation-section -->
 
   </div>
 </section>
