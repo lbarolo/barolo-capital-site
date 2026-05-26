@@ -609,30 +609,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </div><!-- end bc-lp-active-section -->
 
 
-<!-- ══ UNISWAP V3 EXPLORER ══ -->
+<!-- ══ UNISWAP V3 ══ -->
 <div class="revert-panel">
   <div class="revert-toolbar">
     <div class="revert-title">
       <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ Uniswap V3</span>
-      <span style="font-size:9px;color:var(--muted);">Explorar Pools</span>
+      <span style="font-size:9px;color:var(--muted);">DEX · Ethereum</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <button class="btn-open" onclick="document.getElementById('uniswapFrame').src += ''; return false;" style="font-size:11px;">⟲ Atualizar</button>
-      <a class="btn-open" href="https://app.uniswap.org/" target="_blank" rel="noopener">
-        ↗ Abrir Uniswap
+      <a class="btn-open" href="https://app.uniswap.org/" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;">
+        ↗ Abrir em Nova Aba
       </a>
     </div>
   </div>
-
-  <div class="iframe-wrap" id="uniswapWrap" style="height:960px;margin-top:16px;border:1px solid var(--border);border-radius:8px;">
-    <div class="iframe-loading" id="uniswapLoading" style="border-radius:8px;">
-      <div class="spinner"></div>
-      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
-    </div>
-    <iframe id="uniswapFrame" src="https://app.uniswap.org/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-    <div id="uniswapFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
-      <p>⚠ Uniswap bloqueado — <a href="https://app.uniswap.org/" target="_blank" style="color:#FF007A;">abra em nova aba →</a></p>
-    </div>
+  <div style="height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;padding:32px;text-align:center;border-radius:8px;background:linear-gradient(135deg,rgba(255,0,122,0.05) 0%,rgba(0,0,0,0) 100%);">
+    <div style="font-size:48px;">⬡</div>
+    <div style="font-size:14px;color:var(--text);font-weight:600;">Uniswap V3 Interface</div>
+    <div style="font-size:11px;color:var(--muted);max-width:360px;">A interface do Uniswap funciona melhor abrindo diretamente no navegador. Clique no botão acima para acessar.</div>
   </div>
 </div>
 
