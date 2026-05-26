@@ -608,29 +608,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 </div><!-- end bc-lp-active-section -->
 
 
-<!-- ══ UNISWAP V3 EXPLORER ══ -->
+<!-- ══ UNISWAP V3 EXPLORER (via GeckoTerminal) ══ -->
 <div class="revert-panel">
   <div class="revert-toolbar">
     <div class="revert-title">
       <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ Uniswap V3</span>
-      <span style="font-size:9px;color:var(--muted);">Explorar Pools</span>
+      <span style="font-size:9px;color:var(--muted);">via GeckoTerminal · Ethereum</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <button class="btn-open" onclick="document.getElementById('uniswapFrame').src += ''; return false;" style="font-size:11px;">⟲ Atualizar</button>
-      <a class="btn-open" href="https://app.uniswap.org/explore/pools" target="_blank" rel="noopener">
-        ↗ Abrir Uniswap
+      <button class="btn-open" onclick="document.getElementById('geckoterminalFrame').src += ''; return false;" style="font-size:11px;">⟲ Atualizar</button>
+      <a class="btn-open" href="https://www.geckoterminal.com/eth/pools" target="_blank" rel="noopener">
+        ↗ Abrir GeckoTerminal
       </a>
     </div>
   </div>
 
-  <div class="iframe-wrap" id="uniswapWrap" style="height:960px;margin-top:16px;border:1px solid var(--border);border-radius:8px;">
-    <div class="iframe-loading" id="uniswapLoading" style="border-radius:8px;">
+  <div class="iframe-wrap" id="geckoterminalWrap" style="height:960px;margin-top:16px;border:1px solid var(--border);border-radius:8px;">
+    <div class="iframe-loading" id="geckoterminalLoading" style="border-radius:8px;">
       <div class="spinner"></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
     </div>
-    <iframe id="uniswapFrame" src="https://app.uniswap.org/explore/pools" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-    <div id="uniswapFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
-      <p>⚠ Uniswap bloqueado — <a href="https://app.uniswap.org/explore/pools" target="_blank" style="color:#FF007A;">abra em nova aba →</a></p>
+    <iframe id="geckoterminalFrame" src="https://www.geckoterminal.com/eth/pools?embed=1&info=0&swaps=0" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+    <div id="geckoterminalFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+      <p>⚠ GeckoTerminal bloqueado — <a href="https://www.geckoterminal.com/eth/pools" target="_blank" style="color:#FF007A;">abra em nova aba →</a></p>
     </div>
   </div>
 </div>
@@ -1295,7 +1295,7 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
 
 // Inicializar painéis
 initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 15000);
-initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 15000);
+initIframePanel('geckoterminalFrame', 'geckoterminalLoading', 'geckoterminalFallback', 15000);
 initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 15000);
 initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
