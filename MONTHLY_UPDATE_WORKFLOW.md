@@ -22,7 +22,7 @@
   - Salvar em: `DIARIO DEFI E PRINTS\aave-DD-MM-26.png`
 
 ### C. Kamino Finance — Posições no Solana
-- **URL:** https://app.kamino.finance/liquidity/view (selecionar wallet `Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW`)
+- **URL:** https://app.kamino.finance/liquidity/view (selecionar sua carteira Solana)
 - **O que capturar:**
   - **Supplied**: SOL qty, USDS qty (com APY%)
   - **Borrowed**: USDC qty, APY%
