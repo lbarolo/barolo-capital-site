@@ -771,7 +771,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
       </tr>
     </thead>
     <tbody id="uniPoolsBody">
-      <tr><td colspan="6" style="padding:40px;text-align:center;color:var(--muted);">
+      <tr><td colspan="7" style="padding:40px;text-align:center;color:var(--muted);">
         <div class="spinner-ring" style="display:inline-block;width:18px;height:18px;border-width:2px;border-top-color:#ff007a;margin-right:8px;vertical-align:middle;"></div>
         Carregando pools…
       </td></tr>
@@ -1186,6 +1186,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  };
 
  document.addEventListener('DOMContentLoaded', function() {
+ window.scrollTo(0, 0);
  loadNet('eth');
  setTimeout(()=>loadNet('base'), 4000);
  setTimeout(()=>loadNet('arbitrum'), 12000);
