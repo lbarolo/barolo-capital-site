@@ -4454,6 +4454,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 </script>
+
+<!-- Force scroll to top on page load -->
+<script>
+history.scrollRestoration = 'manual';
+window.addEventListener('load', function() {
+  window.scrollTo(0, 0);
+  setTimeout(function() { window.scrollTo(0, 0); }, 100);
+});
+if (document.readyState === 'complete') {
+  window.scrollTo(0, 0);
+}
+</script>
 </div><!-- /container -->
 </body>
 </html>
