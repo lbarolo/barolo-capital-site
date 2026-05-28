@@ -9,6 +9,9 @@
  var t=localStorage.getItem('bc-theme');
  if(t) document.documentElement.setAttribute('data-theme',t);
 })();
+// Scroll to top immediately — prevent auto scroll to Raydium
+history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
 </script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml"><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Satoshi,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>"><rect width='32' height='32' rx='6' fill='%23f2ece0'/><text x='16' y='23' font-family='Satoshi,serif' font-size='20' font-weight='700' fill='%238a6820' text-anchor='middle'>B</text></svg>"><link rel="canonical" href="/pools">
@@ -663,7 +666,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 
 <!-- ══ RAYDIUM ══ -->
-<div id="bc-raydium-section">
+<div id="bc-raydium-section" style="display:none;">
 <div class="revert-panel" style="margin-bottom:20px;">
   <div class="revert-toolbar">
     <div class="revert-title">
@@ -1189,6 +1192,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  setTimeout(()=>loadNet('base'), 4000);
  setTimeout(()=>loadNet('arbitrum'), 12000);
  setTimeout(()=>loadNet('solana'), 20000);
+ // Show Raydium section after page is rendered to prevent auto-scroll
+ setTimeout(function() {
+   var raydiumSection = document.getElementById('bc-raydium-section');
+   if (raydiumSection) raydiumSection.style.display = '';
+ }, 500);
  });
 })();
 </script>
