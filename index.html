@@ -1446,15 +1446,15 @@ function toggleMobile() {
 
   // Portfólio interno para cálculo de retorno (quantidades não exibidas)
   var HOLDINGS = [
-    { id: 'ethereum',       qty: 2.084106,      invested: 4433.16 },
-    { id: 'solana',         qty: 20.3113268,     invested: 2280.39 },
+    { id: 'ethereum',       qty: 2.10366741,    invested: 4433.16 },
+    { id: 'solana',         qty: 20.3134268,    invested: 2280.39 },
     { id: 'cardano',        qty: 375.245,        invested: 530.95  },
-    { id: 'eigenlayer',     qty: 153.3629802,    invested: 45.87   },
+    { id: 'eigenlayer',     qty: 153.36298802,  invested: 45.87   },
     { id: 'radiant-capital',qty: 7290.46,        invested: 0       },
     { id: 'matic-network',  qty: 218,            invested: 143.88  },
     { id: 'zksync',         qty: 876,            invested: 0       },
     { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
-    { id: 'zetachain',      qty: 51.1434,        invested: 0       },
+    { id: 'zetachain',      qty: 511434,         invested: 0       },
   ];
   // TOTAL_INVESTED fixado nas quantidades base (imune ao diary sync)
   var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);

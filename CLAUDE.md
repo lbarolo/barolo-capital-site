@@ -8,6 +8,38 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 
 ---
 
+## POLÍTICA DE PRIVACIDADE (IMPORTANTE)
+
+**Lucas quer ser EFETIVO, não VISTO.**
+
+### Regras de Privacidade:
+
+1. **❌ NÃO EXPONHA endereços de wallet em links públicos**
+   - ❌ Revert: `https://revert.finance/#/account/0x5Ff...4B6`
+   - ✅ Revert: `https://revert.finance/`
+   - Os endereços podem estar no JavaScript (necessário para fetch), mas NÃO em URLs públicas
+
+2. **❌ NÃO REVELE identificadores únicos**
+   - ❌ NFT ID: `#4694262` em comentários ou descrições
+   - ❌ Cardano address completo em arquivos públicos
+   - ✅ Use genéricos: "sua carteira", "sua pool ativa"
+
+3. **✅ MANTENHA anonimato online**
+   - `robots.txt`: bloqueia ALL crawlers
+   - Meta `noindex, nofollow`: em todo HTML
+   - Site NÃO aparece no Google
+   - Links não expõem carteira
+
+4. **❌ NÃO CRIE dados pessoais**
+   - ❌ Nomes, endereços, telefones
+   - ❌ Datas de nascimento ou eventos pessoais
+   - ✅ Dados financeiros (apenas números, sem contexto pessoal)
+
+### Objetivo:
+O site é **prova de competência técnica**, não **portfolio público**. Funcionalidade sim, exposição não.
+
+---
+
 ## Estrutura de arquivos
 
 ```

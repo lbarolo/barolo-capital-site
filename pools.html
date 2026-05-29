@@ -1598,7 +1598,7 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
 // ── META 5% ──
 setTimeout(function() {
- var STABLES = 2536.59; // USDT 2235.58 + USDS 301.01
+ var STABLES = 2536.40; // USDT 2236.404 + USDS 300
  var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
  var QTYS = {ethereum:2.084106,solana:20.31134268,cardano:375.245,'radiant-capital':7290.46,
  eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
@@ -4165,7 +4165,7 @@ function buildNetRanking() {
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
  const STABLES = 2536.40; // USDT 2235.98 + USDS 300.42
  const LP_POOLED = window._liveLP || 380;
- const DEBT = (window._liveAaveDebt || 751.82) + (window._liveKaminoDebt || 811.35);
+ const DEBT = (window._liveAaveDebt || 752.68) + (window._liveKaminoDebt || 812.83);
  const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;
  console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + lp $${LP_POOLED.toFixed(0)} − debt $${DEBT.toFixed(0)}`);
