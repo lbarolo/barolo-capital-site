@@ -3083,3 +3083,4 @@ Todos os valores no tab "Risco & Convexidade" agora atualizam dinamicamente:
 
 ---
 
+Atualizado: 29/05/2026 — ZETA fix
