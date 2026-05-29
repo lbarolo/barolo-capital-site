@@ -1365,7 +1365,7 @@ var WEEKLY_UPDATE = {
  // ── Saldos de carteira (quantidades) ──
  holdings: {
  ETH: 2.10366741,
- SOL: 20.3134268,
+ SOL: 20.31134268,
  ADA: 375.245,
  RDNT: 7290.46,
  EIGEN: 153.36298802,
@@ -1468,17 +1468,17 @@ var WEEKLY_UPDATE = {
 // ══════════════════════════════════════════════════════════════════
 
 var PORTFOLIO_DATA = [
- { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.084106,      invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
- { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:20.3113268,    invested:2280.39, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
+ { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.10366741,    invested:4433.16, avgCost:1915.83, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
+ { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:20.31134268,   invested:2280.39, avgCost:146.97,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
  { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
  { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
- { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.3629802,   invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
+ { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/33373/small/eigen.png' },
  { cgId:'matic-network', ticker:'POL',  name:'POL',       qty:218,           invested:143.88,  avgCost:0.66,    color:'#A855F7', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
  { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/zksync.jpg' },
  { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/small/logo.png' },
  { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:2236.404,      invested:2235.58,  avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
- { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:301.42,        invested:301.42,  avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
+ { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300,           invested:300,     avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
 ];
 var PORTFOLIO = PORTFOLIO_DATA; // alias
 
@@ -1506,9 +1506,9 @@ var LP_POOLED = (function() {
   return 380; // fallback se nunca foi aberto pools.html ou cache expirou (≈ valor atual da pool ativa)
 })();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
-var AAVE_DEBT = 751.82; // atualizar semanalmente
-var KAMINO_DEBT = 811.35; // atualizar semanalmente
-var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $751.82 + $811.35 = $1,563.17
+var AAVE_DEBT = 752.68; // atualizar semanalmente
+var KAMINO_DEBT = 812.83; // atualizar semanalmente
+var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $752.68 + $812.83 = $1,565.51
 var KAMINO_SOL_EXTRA_QTY = 19.35 - 20.31134268; // ~0.038 SOL restante // SOL no Kamino não rastreado pelo CG
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 

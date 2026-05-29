@@ -1,62 +1,27 @@
 {
   "date": "2026-05-29",
   "timestamp": "2026-05-29T00:00:00Z",
-  "portfolio": {
-    "spotValue": 8554.74,
-    "defiValue": 2536.40,
-    "lpPooled": 365,
-    "totalGross": 11456.14,
+  "note": "CoinGecko portfolio rastreia TODOS os ativos (spot + colateral DeFi). DeFi positions abaixo sao SUBCONJUNTOS do total CoinGecko (USDT/SOL/USDS/WETH supplied ja contam no cgTotal). Nao somar DeFi por cima.",
+  "patrimonio": {
+    "coingeckoTotal": 8554.74,
+    "lpPooledBase": 365,
+    "grossAssets": 8919.74,
     "totalDebt": 1565.51,
-    "netWorth": 9890.63
+    "netWorth": 7354.23
   },
   "holdings": {
     "ETH": 2.10366741,
-    "SOL": 20.3134268,
+    "SOL": 20.31134268,
     "ADA": 375.245,
     "EIGEN": 153.36298802,
     "RDNT": 7290.46,
     "POL": 218,
     "ZK": 876,
     "XAI": 692.86,
-    "ZETA": 511434,
+    "ZETA": 51.1434,
+    "SCR": 0.0018,
     "USDT": 2236.404,
     "USDS": 300
-  },
-  "defi": {
-    "aave": {
-      "supply": {
-        "WETH": { qty: 1.89, value: 4171.59, apy: 0.0130 },
-        "USDT": { qty: 2000, value: 1999.90, apy: 0.0260 }
-      },
-      "borrow": {
-        "USDC": { qty: 752.68, value: 752.68, apy: 0.0399 }
-      },
-      "healthFactor": 6.88
-    },
-    "kamino": {
-      "supply": {
-        "SOL": { qty: 20.50, value: 1651.15, apy: 0.0351 },
-        "USDS": { qty: 301.72, value: 301.43, apy: 0.1349 }
-      },
-      "borrow": {
-        "USDC": { qty: 812.83, value: 812.83, apy: 0.0703 }
-      },
-      "ltv": 0.4126,
-      "liquidationThreshold": 0.7730
-    },
-    "uniswapV3": {
-      "pair": "WETH/USDC 0.3%",
-      "network": "Base",
-      "nft": "#4694262",
-      "capital": 365,
-      "pooled": 384.56,
-      "fees": {
-        "uncollected": 18.62,
-        "total": 9
-      },
-      "il": 0,
-      "pnl": -9.58
-    }
   },
   "prices": {
     "ETH": 1995.31,
@@ -71,9 +36,48 @@
     "USDT": 0.9985,
     "USDS": 0.9995
   },
+  "defi": {
+    "aave": {
+      "deposited": 5759.00,
+      "collateral": 4680.00,
+      "netDepositApy": 0.0175,
+      "supply": {
+        "WETH": { "qty": 1.89, "value": 3770, "apy": 0.0130 },
+        "USDT": { "qty": 2000, "value": 1990, "apy": 0.0260 }
+      },
+      "borrow": {
+        "USDC": { "qty": 752.68, "value": 752.32, "apy": 0.0399 }
+      },
+      "healthFactor": 6.88
+    },
+    "kamino": {
+      "netValue": 1160,
+      "netApy": 0.0364,
+      "interestEarned": 128.66,
+      "supply": {
+        "SOL": { "qty": 20.50, "value": 1670, "apy": 0.0351 },
+        "USDS": { "qty": 301.72, "value": 301.72, "apy": 0.1349 }
+      },
+      "borrow": {
+        "USDC": { "qty": 812.83, "value": 812.52, "apy": 0.0703 }
+      },
+      "ltv": 0.4126,
+      "liquidationLtv": 0.7730
+    },
+    "uniswapV3": {
+      "pair": "WETH/USDC 0.3%",
+      "network": "Base",
+      "nft": "#4694262",
+      "capital": 365,
+      "pooled": 384.56,
+      "feesUncollected": 18.62,
+      "il": 0,
+      "pnl": -9.58
+    }
+  },
   "roi": {
     "totalReturn": 649.9,
-    "totalPnL": 913.74,
-    "totalInvested": 6950
+    "totalInvested": 6950,
+    "netPnL": 404.23
   }
 }
