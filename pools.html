@@ -1600,12 +1600,12 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 setTimeout(function() {
  var STABLES = 2536.40; // USDT 2236.404 + USDS 300
  var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
- var QTYS = {ethereum:2.084106,solana:20.31134268,cardano:375.245,'radiant-capital':7290.46,
+ var QTYS = {ethereum:2.10366741,solana:20.31134268,cardano:375.245,'radiant-capital':7290.46,
  eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 750.16) + (window._liveKaminoDebt || 808.77);
+ var debt = (window._liveAaveDebt || 752.77) + (window._liveKaminoDebt || 813.01);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -1743,7 +1743,7 @@ function setRef(ref){
 
   // 9. Atualiza REFS e UI
   const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  const AAVE_BORROW_RATE = 3.79; // % a.a. — taxa USDC AAVE V4 (atualizado 03/05/26)
+  const AAVE_BORROW_RATE = 3.72; // % a.a. — taxa USDC AAVE V4 (atualizado 30/05/26)
 
   // POOLED
   set('lp-pooled', '$'+pooledUsd.toFixed(2));
@@ -2537,7 +2537,7 @@ var POOLS = [
   { pair:'ETH/USDC 0.05%', net:'Arbitrum', open:'01/08/2023', close:'26/03/2024', days:209, capital:1014, fees:22,   il:0,   result:22,   status:'closed', lvr:0,    fcr:3.8,   invGrowth:2.2,  obs:'Pool longa com pouco volume. ETH deu grande valorização, pool deslizou em ranges. Final: 0.148 ETH + 30.95 USDC.' },
   { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
   // ── ATIVA ──
-  { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-02-24');return Math.max(1,Math.floor(d/86400000));})(),  capital:365, fees:21.11, il:23.50, result:-2.39, status:'active',  lvr:0,   fcr:35.0,  invGrowth:-0.65 },
+  { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'—',             days:(function(){var d=new Date()-new Date('2026-02-24');return Math.max(1,Math.floor(d/86400000));})(),  capital:365, fees:22.57, il:24.64, result:-2.07, status:'active',  lvr:0,   fcr:30.9,  invGrowth:-0.57 },
 ];
 
 // ── Hidrata pool ativa (POOLS[POOLS.length-1]) com cache live do track.html ──
