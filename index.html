@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Barolo Capital — investidor independente, educação em criptoativos e finanças pessoais.">
+<meta name="robots" content="noindex, nofollow">
+<title>Barolo Capital</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function(){
+  var t=localStorage.getItem('bc-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+
+<style>
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* ── Variables ── */
+:root{
+  --gold:#c9a050;
+  --gold2:#9a7228;
+  --cream:#e8dfc8;
+  --muted:#8a7a62;
+  --surface:#141418;
+  --surface2:#1a1a20;
+  --border:#2a2620;
+  --border2:#3a3228;
+  --text:#e8dfc8;
+  --dark:#0e0e12;
+  --bg:#0e0e12;
+  --accent:#c9a050;
+  --green:#3fb950;
+  --red:#f85149;
+}
+[data-theme="light"]{
+  --bg:#f5f0e8;
+  --surface:#faf6ee;
+  --surface2:#f0ebe0;
+  --border:#ddd4c0;
+  --border2:#ccc2a8;
+  --text:#2a1e0e;
+  --cream:#2a1e0e;
+  --muted:#7a6a52;
+  --dark:#2a1e0e;
+}
+
+/* ── Base ── */
+body{
+  font-family:'Satoshi',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-size:15px;
+  line-height:1.6;
+}
+
+/* ── Ticker ── */
+.ticker-wrap{
+  background:var(--dark);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+  height:32px;
+  display:flex;
+  align-items:center;
+}
+.ticker-track{
+  display:flex;
+  gap:0;
+  animation:ticker 40s linear infinite;
+  white-space:nowrap;
+}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:0 28px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.08em;
+  border-right:1px solid var(--border);
+}
+.ticker-item .t-sym{color:var(--muted)}
+.ticker-item .t-val{color:var(--text)}
+.ticker-item .t-up{color:#3fb950}
+.ticker-item .t-dn{color:#f85149}
+
+/* ── Nav ── */
+nav{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(14,14,18,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  height:60px;
+  padding:0 28px;
+  gap:20px;
+}
+[data-theme="light"] nav{background:rgba(245,240,232,.92)}
+.nav-logo{cursor:pointer;flex-shrink:0}
+.nav-links{
+  display:flex;
+  gap:2px;
+  align-items:center;
+  flex:1;
+  justify-content:center;
+}
+.nav-links a{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  padding:6px 14px;
+  border-radius:2px;
+  transition:color .2s,background .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);background:rgba(201,160,80,.07)}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-input{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  padding:5px 10px;
+  width:100px;
+  outline:none;
+  letter-spacing:.04em;
+  transition:border-color .2s;
+}
+.nav-input:focus{border-color:var(--gold2)}
+.nav-btn{
+  background:var(--gold);
+  color:#0e0e12;
+  border:none;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.2em;
+  padding:7px 14px;
+  cursor:pointer;
+  font-weight:700;
+  transition:opacity .2s;
+}
+.nav-btn:hover{opacity:.85}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.nav-hamburger span{width:22px;height:1.5px;background:var(--muted);display:block;transition:.3s}
+
+/* ── Hero ── */
+.hero{
+  min-height:calc(100vh - 92px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:80px 48px 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 50%, rgba(201,160,80,.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 30%, rgba(201,160,80,.025) 0%, transparent 60%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.38em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:28px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.hero-eyebrow::before{
+  content:'';
+  width:32px;
+  height:1px;
+  background:var(--gold);
+  opacity:.5;
+  flex-shrink:0;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,6vw,88px);
+  font-weight:300;
+  line-height:1.06;
+  color:var(--cream);
+  max-width:720px;
+  margin-bottom:32px;
+  letter-spacing:-.01em;
+}
+.hero-title em{
+  font-style:italic;
+  color:var(--gold);
+}
+[data-theme="light"] .hero-title{color:var(--dark)}
+.hero-sub{
+  font-size:15px;
+  color:var(--muted);
+  max-width:480px;
+  line-height:1.75;
+  margin-bottom:44px;
+  font-weight:400;
+}
+.hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--gold);
+  color:#0e0e12;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-weight:700;
+  padding:13px 28px;
+  text-decoration:none;
+  transition:opacity .2s;
+  cursor:pointer;
+}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  color:var(--muted);
+  border:1px solid var(--border2);
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  padding:13px 28px;
+  text-decoration:none;
+  transition:all .2s;
+  cursor:pointer;
+}
+.btn-ghost:hover{border-color:var(--gold2);color:var(--gold)}
+.hero-stats{
+  position:absolute;
+  right:48px;
+  bottom:80px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  text-align:right;
+}
+.hero-stat-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;
+  font-weight:300;
+  color:var(--cream);
+  line-height:1;
+}
+[data-theme="light"] .hero-stat-val{color:var(--dark)}
+.hero-stat-lbl{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-top:4px;
+}
+.hero-divider{
+  width:1px;
+  height:48px;
+  background:var(--border2);
+  margin:4px auto;
+}
+
+/* ── Sections ── */
+section{
+  padding:100px 48px;
+  position:relative;
+  border-top:1px solid var(--border);
+}
+.container{max-width:1100px;margin:0 auto}
+.section-num{
+  position:absolute;
+  right:48px;
+  top:28px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.2em;
+  color:var(--border2);
+  user-select:none;
+}
+.section-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8.5px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.section-tag::before{
+  content:'';
+  width:20px;
+  height:1px;
+  background:var(--gold);
+  opacity:.5;
+}
+.section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,4vw,54px);
+  font-weight:300;
+  line-height:1.1;
+  color:var(--cream);
+  margin-bottom:48px;
+  max-width:640px;
+}
+[data-theme="light"] .section-title{color:var(--dark)}
+.section-title em{font-style:italic;color:var(--gold)}
+
+/* ── About ── */
+.sobre-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:64px;
+  align-items:start;
+}
+.sobre-text p{
+  color:var(--muted);
+  line-height:1.8;
+  margin-bottom:20px;
+  font-size:15px;
+}
+.sobre-text p.lead{
+  font-size:18px;
+  color:var(--text);
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;
+  line-height:1.6;
+}
+[data-theme="light"] .sobre-text p.lead{color:var(--dark)}
+.beliefs-grid{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  border:1px solid var(--border);
+}
+.belief-item{
+  padding:22px 24px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  transition:background .2s;
+}
+.belief-item:last-child{border-bottom:none}
+.belief-item:hover{background:var(--surface2)}
+.belief-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--gold);
+  opacity:.5;
+  flex-shrink:0;
+  padding-top:3px;
+  letter-spacing:.1em;
+}
+.belief-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;
+  color:var(--cream);
+  line-height:1.5;
+  font-weight:300;
+}
+[data-theme="light"] .belief-text{color:var(--dark)}
+
+/* ── Strategies ── */
+.strat-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+}
+.strat-card{
+  background:var(--surface);
+  padding:32px 28px;
+  transition:background .2s;
+}
+.strat-card:hover{background:var(--surface2)}
+.strat-icon{
+  font-size:22px;
+  margin-bottom:20px;
+  opacity:.8;
+}
+.strat-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+}
+.strat-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;
+  font-weight:300;
+  color:var(--cream);
+  margin-bottom:14px;
+  line-height:1.25;
+}
+[data-theme="light"] .strat-title{color:var(--dark)}
+.strat-desc{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.strat-tags{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+.strat-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.14em;
+  color:var(--muted);
+  border:1px solid var(--border2);
+  padding:3px 8px;
+}
+
+/* ── Portfolio tokens ── */
+.token-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  margin-bottom:1px;
+}
+.token-card{
+  background:var(--surface);
+  padding:22px 20px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  text-decoration:none;
+  transition:background .25s;
+  position:relative;
+}
+.token-card:hover{background:var(--surface2)}
+.token-card:hover .token-arrow{opacity:1;transform:translateX(2px)}
+.token-logo{
+  width:38px;height:38px;
+  border-radius:50%;
+  flex-shrink:0;
+  background:var(--border);
+  object-fit:cover;
+}
+.token-info{flex:1;min-width:0}
+.token-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;
+  font-weight:400;
+  color:var(--cream);
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+[data-theme="light"] .token-name{color:var(--dark)}
+.token-ticker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.16em;
+  color:var(--muted);
+  margin-top:3px;
+}
+.token-arrow{
+  font-size:12px;
+  color:var(--gold);
+  opacity:0;
+  transition:opacity .2s,transform .2s;
+  flex-shrink:0;
+}
+
+/* Protocol cards (full-width row) */
+.protocol-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-top:none;
+}
+.protocol-card{
+  background:var(--surface);
+  padding:18px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  transition:background .25s;
+}
+.protocol-card:hover{background:var(--surface2)}
+.protocol-card:hover .token-arrow{opacity:1}
+.proto-logo{
+  width:32px;height:32px;
+  border-radius:50%;
+  flex-shrink:0;
+  background:var(--border);
+  object-fit:cover;
+}
+.proto-info{flex:1;min-width:0}
+.proto-name{
+  font-family:'Satoshi',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  color:var(--cream);
+  line-height:1.2;
+}
+[data-theme="light"] .proto-name{color:var(--dark)}
+/* Performance summary */
+.performance-summary{
+  margin-top:48px;
+  padding-top:48px;
+  border-top:1px solid var(--border);
+}
+.perf-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.30em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.perf-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+@media(max-width:1024px){ .perf-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:640px){ .perf-grid{grid-template-columns:1fr;} }
+.perf-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  text-align:center;
+}
+.perf-title{
+  font-size:10px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.perf-value{
+  font-size:28px;
+  font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--green);
+  margin-bottom:6px;
+}
+.perf-value.neg{color:var(--red);}
+.perf-sub{
+  font-size:9px;
+  color:var(--muted);
+}
+.perf-note{
+  font-size:12px;
+  line-height:1.6;
+  color:var(--muted);
+  padding:16px 12px;
+  border-left:2px solid var(--gold);
+  background:rgba(201,160,80,.05);
+  border-radius:4px;
+}
+[data-theme="light"] .perf-note{background:rgba(138,104,32,.08);}
+
+/* ── Inflation Comparison Section ── */
+.inflation-section{
+  padding-top:48px;
+  border-top:1px solid var(--border);
+}
+.infl-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.30em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.infl-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.infl-controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.infl-toggle-btn{
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  padding:8px 16px;
+  cursor:pointer;
+  border-radius:4px;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.infl-toggle-btn.active{
+  background:var(--gold);
+  color:var(--dark);
+  border-color:var(--gold);
+  font-weight:600;
+}
+.infl-toggle-btn:hover{
+  border-color:var(--gold);
+  color:var(--gold);
+}
+.infl-chart-wrap{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:24px;
+  position:relative;
+  height:320px;
+}
+.infl-stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.infl-stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px;
+  text-align:center;
+}
+.infl-stat-label{
+  font-size:10px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.infl-stat-value{
+  font-size:22px;
+  font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--green);
+  margin-bottom:4px;
+}
+.infl-stat-sub{
+  font-size:9px;
+  color:var(--muted);
+}
+@media(max-width:640px){
+  .infl-stats-grid{grid-template-columns:1fr}
+  .infl-header{flex-direction:column;align-items:flex-start}
+}
+
+/* ── Performance Analysis Section ── */
+.perf-analysis-section{
+  padding-top:48px;
+  border-top:1px solid var(--border);
+}
+.perf-analysis-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.30em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.perf-analysis-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+@media(max-width:1024px){ .perf-analysis-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:640px){ .perf-analysis-grid{grid-template-columns:1fr;} }
+.perf-metric-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  text-align:center;
+  transition:border-color .2s,background .2s;
+}
+.perf-metric-card:hover{
+  border-color:var(--gold);
+  background:rgba(201,160,80,.03);
+}
+.perf-metric-title{
+  font-size:10px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.perf-metric-value{
+  font-size:28px;
+  font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--green);
+  margin-bottom:4px;
+}
+.perf-metric-value.neg{color:var(--red);}
+.perf-metric-value.neutral{color:var(--gold);}
+.perf-metric-sub{
+  font-size:9px;
+  color:var(--muted);
+  line-height:1.4;
+}
+.perf-analysis-note{
+  font-size:11px;
+  line-height:1.6;
+  color:var(--muted);
+  padding:14px 12px;
+  border-left:2px solid var(--gold);
+  background:rgba(201,160,80,.03);
+  border-radius:4px;
+  margin-top:12px;
+}
+
+.proto-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:.12em;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+/* ── Access section ── */
+.access-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:64px;
+  align-items:center;
+}
+.access-text p{
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.8;
+  margin-bottom:16px;
+}
+.access-form-wrap{
+  border:1px solid var(--border);
+  padding:36px;
+  background:var(--surface);
+}
+.access-form-title{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:24px;
+}
+.access-form-fields{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:16px;
+}
+.access-input{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  padding:11px 14px;
+  outline:none;
+  letter-spacing:.06em;
+  transition:border-color .2s;
+  width:100%;
+}
+.access-input:focus{border-color:var(--gold2)}
+.access-input::placeholder{color:var(--muted);opacity:.5}
+#access-error{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.1em;
+  color:#f85149;
+  margin-bottom:8px;
+  min-height:14px;
+}
+
+/* ── Contact section ── */
+.contact-block{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:32px;
+  max-width:640px;
+}
+.contact-block p{
+  font-size:17px;
+  line-height:1.7;
+  color:var(--muted);
+}
+.contact-email{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  letter-spacing:.04em;
+  color:var(--gold);
+  text-decoration:none;
+  border:1px solid rgba(201,160,80,.25);
+  padding:14px 24px;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.contact-email::before{
+  content:'✉';
+  font-size:16px;
+  opacity:.7;
+}
+.contact-email:hover{
+  background:rgba(201,160,80,.07);
+  border-color:rgba(201,160,80,.6);
+  color:var(--cream);
+}
+
+/* ── Footer ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:24px 48px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+footer span{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.12em;
+  color:var(--muted);
+}
+footer span:first-of-type{margin-right:auto}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .hero{padding:60px 24px}
+  .hero-stats{display:none}
+  section{padding:72px 24px}
+  nav{padding:0 20px}
+  .sobre-grid,.access-wrap{grid-template-columns:1fr;gap:40px}
+  .strat-grid{grid-template-columns:1fr}
+  .token-grid{grid-template-columns:repeat(2,1fr)}
+  .protocol-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .nav-links.open{
+    display:flex;flex-direction:column;
+    position:fixed;top:60px;left:0;right:0;
+    background:var(--dark);
+    border-bottom:1px solid var(--border);
+    padding:16px;gap:4px;z-index:99;
+  }
+}
+@media(max-width:600px){
+  .hero-title{font-size:clamp(38px,8vw,56px)}
+  .token-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+<script>
+// Theme init — runs before render to avoid flash
+(function(){
+  var t=localStorage.getItem('bc-theme');
+  if(t) document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 30" width="195" height="22" style="display:block;">
+      <text x="0" y="22" font-family="Cormorant Garamond, Georgia, serif" font-size="21" font-weight="500" fill="#c9a050" letter-spacing="5">BAROLO CAPITAL</text>
+    </svg>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="#home"        onclick="setActive(this);closeMobile()" data-i18n="nav-home">Home</a>
+    <a href="#sobre"       onclick="setActive(this);closeMobile()" data-i18n="nav-sobre">About</a>
+    <a href="#estrategias" onclick="setActive(this);closeMobile()" data-i18n="nav-strat">Strategies</a>
+    <a href="#portfolio"   onclick="setActive(this);closeMobile()" data-i18n="nav-port">Portfolio</a>
+    <a href="#contato"     onclick="setActive(this);closeMobile()" data-i18n="nav-contact">Contact</a>
+  </div>
+
+  <div class="nav-right">
+    <input type="text"     id="nu" class="nav-input" autocomplete="username"         autocapitalize="none" spellcheck="false" placeholder="username" onkeydown="if(event.key==='Enter')document.getElementById('np').focus()">
+    <input type="password" id="np" class="nav-input" autocomplete="current-password"                       placeholder="••••••"   onkeydown="if(event.key==='Enter')loginNav()">
+    <button class="nav-btn" onclick="loginNav()" data-i18n="btn-enter">Enter</button>
+    <button style="background:transparent;border:1px solid var(--border2);padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold);cursor:pointer;transition:all .2s;" id="indexLangBtn" onclick="toggleIndexLang()" title="Switch to Portuguese">PT</button>
+    <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border2);width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:border-color .2s;">☾</button>
+  </div>
+
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" style="border-top:none;padding:0">
+  <div class="hero">
+    <div class="hero-eyebrow" data-i18n="eyebrow">Strategic Capital Management</div>
+    <h1 class="hero-title" data-i18n="hero-title">Wealth built with <em>consistency</em>, not haste.</h1>
+    <p class="hero-sub" data-i18n="hero-sub">Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.</p>
+    <div class="hero-cta">
+      <a href="#sobre" class="btn-primary" data-i18n="cta-about">About</a>
+      <a href="#portfolio" class="btn-ghost" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'});return false;" data-i18n="cta-portfolio">Portfolio</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">2021</div>
+        <div class="hero-stat-lbl">Since</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val" id="heroCAGR">+63.7%</div>
+        <div class="hero-stat-lbl">CAGR 2022–2026</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val" id="heroCAGRYTD">+40.3%</div>
+        <div class="hero-stat-lbl">CAGR 2026 YTD</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val" id="heroRealReturn">+621.7%</div>
+        <div class="hero-stat-lbl">Track Record (real)</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div>
+        <div class="hero-stat-val">DeFi</div>
+        <div class="hero-stat-lbl">Focus</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="sobre">
+  <div class="section-num">01</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="about-tag">About</div>
+    <h2 class="section-title" data-i18n="about-title">A <em>different</em> approach to the crypto market</h2>
+    <div class="sobre-grid">
+      <div class="sobre-text">
+        <p class="lead" data-i18n="about-lead">Barolo Capital is an independent firm focused on strategic capital management in the crypto market.</p>
+        <p data-i18n="about-p1">We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, we act selectively — focusing only on opportunities where we have genuine conviction.</p>
+        <p data-i18n="about-p2">We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols as tools for generating yield, managing risk and expanding positions in assets we believe in.</p>
+      </div>
+      <div class="beliefs-grid">
+        <div class="belief-item">
+          <span class="belief-num">01</span>
+          <span class="belief-text" data-i18n="belief-1">Real wealth is built with consistency, not haste.</span>
+        </div>
+        <div class="belief-item">
+          <span class="belief-num">02</span>
+          <span class="belief-text" data-i18n="belief-2">We do not seek the largest gain — we seek the sustainable gain.</span>
+        </div>
+        <div class="belief-item">
+          <span class="belief-num">03</span>
+          <span class="belief-text" data-i18n="belief-3">Concentration in what we understand is better than diversification in what we do not.</span>
+        </div>
+        <div class="belief-item">
+          <span class="belief-num">04</span>
+          <span class="belief-text" data-i18n="belief-4">Bear markets are buying opportunities, not reasons to exit.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGIES -->
+<section id="estrategias">
+  <div class="section-num">02</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="strat-tag">Strategies</div>
+    <h2 class="section-title" data-i18n="strat-title"><em>Selective</em> strategies focused on DeFi</h2>
+    <div class="strat-grid">
+      <div class="strat-card">
+        <div class="strat-icon">◈</div>
+        <div class="strat-name" data-i18n="strat1-tag">Active Liquidity</div>
+        <div class="strat-title" data-i18n="strat1-title">Concentrated Liquidity Pools</div>
+        <div class="strat-desc" data-i18n="strat1-desc">Concentrated liquidity positions on DEXs like Uniswap V3, used both to capture fees and as a disciplined exit strategy on selected positions.</div>
+        <div class="strat-tags">
+          <span class="strat-tag">Uniswap V3</span>
+          <span class="strat-tag">Raydium</span>
+          <span class="strat-tag">Ethereum · Arbitrum · Solana</span>
+        </div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-icon">⬡</div>
+        <div class="strat-name" data-i18n="strat2-tag">Lending</div>
+        <div class="strat-title" data-i18n="strat2-title">Collateralised Borrowing</div>
+        <div class="strat-desc" data-i18n="strat2-desc">Supply ETH and stablecoins as collateral on AAVE V4 and Kamino Finance, borrowing USDC at strategic rates to optimise capital efficiency.</div>
+        <div class="strat-tags">
+          <span class="strat-tag">AAVE V4</span>
+          <span class="strat-tag">Kamino</span>
+          <span class="strat-tag">Ethereum · Solana</span>
+        </div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-icon">◎</div>
+        <div class="strat-name" data-i18n="strat3-tag">Accumulation</div>
+        <div class="strat-title" data-i18n="strat3-title">Long-Term Conviction</div>
+        <div class="strat-desc" data-i18n="strat3-desc">Monthly DCA into ETH, SOL and ADA with a 10+ year horizon. Bear markets are treated as accumulation phases, not reasons to exit.</div>
+        <div class="strat-tags">
+          <span class="strat-tag">ETH · SOL · ADA</span>
+          <span class="strat-tag">DCA mensal</span>
+          <span class="strat-tag">10+ anos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-num">03</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="port-tag">DeFi Ecosystem</div>
+    <h2 class="section-title" data-i18n="port-title">Portfolio <em>Assets</em></h2>
+
+    <!-- Token grid — 3 columns, clean rows -->
+    <div class="token-grid">
+
+      <a href="https://ethereum.org" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png" alt="ETH" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Ethereum</div>
+          <div class="token-ticker">ETH</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://solana.com" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/4128/large/solana.png" alt="SOL" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Solana</div>
+          <div class="token-ticker">SOL</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://cardano.org" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/975/large/cardano.png" alt="ADA" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Cardano</div>
+          <div class="token-ticker">ADA</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://www.eigenlayer.xyz" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/37441/large/eigencloud.jpg" alt="EIGEN" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">EigenLayer</div>
+          <div class="token-ticker">EIGEN</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://radiant.capital" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/26536/large/Radiant-Logo-200x200.png" alt="RDNT" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Radiant</div>
+          <div class="token-ticker">RDNT</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://polygon.technology" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/32440/large/polygon.png" alt="POL" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">POL</div>
+          <div class="token-ticker">POL</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://zksync.io" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/38043/large/ZKTokenBlack.png" alt="ZK" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">ZKsync</div>
+          <div class="token-ticker">ZK</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://xai.games" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/34258/large/xai.png" alt="XAI" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Xai</div>
+          <div class="token-ticker">XAI</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+      <a href="https://zetachain.com" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/26718/large/Twitter_icon.png" alt="ZETA" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">ZetaChain</div>
+          <div class="token-ticker">ZETA</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
+
+    </div><!-- /token-grid -->
+
+    <!-- Protocols row -->
+    <div class="protocol-grid">
+
+      <a href="https://pro.aave.com" target="_blank" rel="noopener" class="protocol-card">
+        <img class="proto-logo" src="https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png" alt="AAVE" onerror="this.style.display='none'">
+        <div class="proto-info">
+          <div class="proto-name">AAVE V4</div>
+          <div class="proto-sub">Lending · Ethereum</div>
+        </div>
+        <span class="token-arrow" style="opacity:0.4;">↗</span>
+      </a>
+
+      <a href="https://kamino.finance" target="_blank" rel="noopener" class="protocol-card">
+        <img class="proto-logo" src="https://coin-images.coingecko.com/coins/images/35801/large/Kamino_200x200.png" alt="Kamino" onerror="this.style.display='none'">
+        <div class="proto-info">
+          <div class="proto-name">Kamino</div>
+          <div class="proto-sub">Lending · Solana</div>
+        </div>
+        <span class="token-arrow" style="opacity:0.4;">↗</span>
+      </a>
+
+      <a href="https://app.uniswap.org" target="_blank" rel="noopener" class="protocol-card">
+        <img class="proto-logo" src="https://coin-images.coingecko.com/coins/images/12504/large/uniswap-uni.png" alt="UNI" onerror="this.style.display='none'">
+        <div class="proto-info">
+          <div class="proto-name">Uniswap V3</div>
+          <div class="proto-sub">Liquidity · Ethereum</div>
+        </div>
+        <span class="token-arrow" style="opacity:0.4;">↗</span>
+      </a>
+
+    </div><!-- /protocol-grid -->
+
+    <!-- PERFORMANCE METRICS -->
+    <div class="performance-summary">
+      <div class="perf-label" data-i18n="perf-track">Track Record</div>
+      <div class="perf-grid">
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-return">Total Return</div>
+          <div class="perf-value">+27.7%</div>
+          <div class="perf-sub">Jan 2022 — Mai 2026</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-annual">Annualized</div>
+          <div class="perf-value">+8.4%</div>
+          <div class="perf-sub">IRR over 4.3 years</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-volatility">Volatility</div>
+          <div class="perf-value">68.9%</div>
+          <div class="perf-sub">Annual standard deviation</div>
+        </div>
+        <div class="perf-card">
+          <div class="perf-title" data-i18n="perf-maxdd">Max Drawdown</div>
+          <div class="perf-value">-50.9%</div>
+          <div class="perf-sub">Peak to trough (Mar 2022)</div>
+        </div>
+      </div>
+      <div class="perf-note" data-i18n="perf-note">
+        <strong>Metodologia:</strong> Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH. <a href="portfolio_analytics.html" style="color:var(--accent);text-decoration:underline;">Ver análise completa →</a>
+      </div>
+    </div>
+
+    <!-- INFLATION COMPARISON CHART -->
+    <div class="inflation-section">
+      <div class="infl-label" data-i18n="infl-track">Real Gains vs Inflation</div>
+      <div class="infl-header">
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;" data-i18n="infl-title">Portfolio Performance (Inflation-Adjusted)</div>
+          <div style="font-size:12px;color:var(--muted);" data-i18n="infl-desc">Comparing portfolio growth against cumulative inflation in each currency.</div>
+        </div>
+        <div class="infl-controls">
+          <button class="infl-toggle-btn active" id="inflCurrBtn-usd" onclick="setInflCurrency('usd', this)">USD</button>
+          <button class="infl-toggle-btn" id="inflCurrBtn-brl" onclick="setInflCurrency('brl', this)">BRL</button>
+        </div>
+      </div>
+      <div class="infl-chart-wrap">
+        <canvas id="inflChart" width="400" height="300"></canvas>
+      </div>
+      <div class="infl-stats-grid" id="inflStats">
+        <div class="infl-stat-card">
+          <div class="infl-stat-label" data-i18n="infl-stat-pct">Real Return %</div>
+          <div class="infl-stat-value" id="inflStatPct">+42.5%</div>
+          <div class="infl-stat-sub">Total period</div>
+        </div>
+        <div class="infl-stat-card">
+          <div class="infl-stat-label" data-i18n="infl-stat-annual">Real Return Annual</div>
+          <div class="infl-stat-value" id="inflStatAnnual">+4.8%</div>
+          <div class="infl-stat-sub">Per year</div>
+        </div>
+      </div>
+    </div><!-- /inflation-section -->
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contato">
+  <div class="section-num">04</div>
+  <div class="container">
+    <div class="section-tag" data-i18n="contact-tag">Contact</div>
+    <h2 class="section-title" data-i18n="contact-title">Get in <em>touch</em></h2>
+    <div class="contact-block">
+      <p data-i18n="contact-desc">For partnerships, questions or collaboration opportunities — reach out directly.</p>
+      <a href="mailto:contato@barolocapital.com.br" class="contact-email">contato@barolocapital.com.br</a>
+    </div>
+  </div>
+</section>
+
+<script>
+// ══════════════════════════════════
+// LOGIN
+// ══════════════════════════════════
+function loginNav() {
+  var u = (document.getElementById('nu') || {}).value || '';
+  var p = (document.getElementById('np') || {}).value || '';
+  var err = document.getElementById('access-error');
+  if (u.trim().toUpperCase() === 'ADM' && p === '102030') {
+    window.location.href = 'portfolio_analytics.html';
+  } else {
+    if (err) { err.textContent = 'Invalid credentials.'; }
+    // shake the button
+    var btn = document.querySelector('.nav-btn');
+    if (btn) { btn.style.opacity = '.4'; setTimeout(function(){ btn.style.opacity = '1'; }, 400); }
+  }
+}
+
+// Access section login (if exists)
+function loginAccess() {
+  var u = (document.getElementById('au') || {}).value || '';
+  var p = (document.getElementById('ap') || {}).value || '';
+  var err = document.getElementById('access-error');
+  if (u.trim().toUpperCase() === 'ADM' && p === '102030') {
+    window.location.href = 'portfolio_analytics.html';
+  } else {
+    if (err) { err.textContent = 'Credenciais inválidas. Tente novamente.'; }
+  }
+}
+
+// ══════════════════════════════════
+// THEME TOGGLE
+// ══════════════════════════════════
+function toggleTheme() {
+  var html = document.documentElement;
+  var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('bc-theme', next);
+  var btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '☾' : '☀';
+}
+
+// ══════════════════════════════════
+// LANGUAGE TOGGLE
+// ══════════════════════════════════
+var INDEX_LANG = 'en';
+
+var INDEX_LANG_STRINGS = {
+  en: {
+    'nav-home': 'Home', 'nav-sobre': 'About', 'nav-strat': 'Strategies', 'nav-port': 'Portfolio',
+    'btn-enter': 'Enter',
+    'eyebrow': 'Strategic Capital Management',
+    'hero-title': 'Wealth built with <em>consistency</em>, not haste.',
+    'hero-sub': 'Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.',
+    'cta-about': 'About', 'cta-portfolio': 'Portfolio',
+    'about-tag': 'About',
+    'about-title': 'A <em>different</em> approach to the crypto market',
+    'about-lead': 'Barolo Capital is an independent firm focused on strategic capital management in the crypto market.',
+    'about-p1': 'We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, we act selectively — focusing only on opportunities where we have genuine conviction.',
+    'about-p2': 'We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols as tools for generating yield, managing risk and expanding positions in assets we believe in.',
+    'belief-1': 'Real wealth is built with consistency, not haste.',
+    'belief-2': 'We do not seek the largest gain — we seek the sustainable gain.',
+    'belief-3': 'Concentration in what we understand is better than diversification in what we do not.',
+    'belief-4': 'Bear markets are buying opportunities, not reasons to exit.',
+    'strat-tag': 'Strategies',
+    'strat-title': '<em>Selective</em> strategies focused on DeFi',
+    'strat1-tag': 'Active Liquidity', 'strat1-title': 'Concentrated Liquidity Pools',
+    'strat1-desc': 'Concentrated liquidity positions on DEXs like Uniswap V3, used both to capture fees and as a disciplined exit strategy on selected positions.',
+    'strat2-tag': 'Lending', 'strat2-title': 'Collateralised Borrowing',
+    'strat2-desc': 'Supply ETH and stablecoins as collateral on AAVE V4 and Kamino Finance, borrowing USDC at strategic rates to optimise capital efficiency.',
+    'strat3-tag': 'Accumulation', 'strat3-title': 'Long-Term Conviction',
+    'strat3-desc': 'Monthly DCA into ETH, SOL and ADA with a 10+ year horizon. Bear markets are treated as accumulation phases, not reasons to exit.',
+    'port-tag': 'DeFi Ecosystem', 'port-title': 'Portfolio <em>Assets</em>',
+    'perf-track': 'Track Record', 'perf-return': 'Total Return', 'perf-annual': 'Annualized',
+    'perf-volatility': 'Volatility', 'perf-maxdd': 'Max Drawdown',
+    'perf-note': 'Methodology: Total return based on monthly DCA (Dollar Cost Averaging). IRR includes aporte timing. Benchmark: 50% BTC + 50% ETH.',
+    'perf-analysis-label': 'Performance Metrics',
+    'perf-cagr-label': 'CAGR (Annualized)',
+    'perf-irr-label': 'IRR (Time-Weighted)',
+    'perf-sharpe-label': 'Sharpe Ratio',
+    'perf-volatility-label': 'Volatility',
+    'perf-maxdd-label': 'Max Drawdown',
+    'perf-roi-label': 'Total Return',
+    'perf-analysis-note': 'Methodology: CAGR = annualized compound growth from start to end. IRR = internal rate of return accounting for monthly DCA contributions. Sharpe ratio = (return − risk-free) / volatility. Volatility = annualized standard deviation of monthly returns. Max Drawdown = largest peak-to-trough decline. Benchmark: 50% BTC + 50% ETH.',
+    'infl-track': 'Real Gains vs Inflation', 'infl-title': 'Portfolio Performance (Inflation-Adjusted)',
+    'infl-desc': 'Comparing portfolio growth against cumulative inflation in each currency.',
+    'infl-stat-real': 'Real Gain', 'infl-stat-pct': 'Real Return %', 'infl-stat-annual': 'Real Return Annual',
+    'nav-contact': 'Contact',
+    'contact-tag': 'Contact',
+    'contact-title': 'Get in <em>touch</em>',
+    'contact-desc': 'For partnerships, questions or collaboration opportunities — reach out directly.',
+    'perf-invested-label': 'Capital Invested',
+    'perf-drybowl-label': 'Dry Powder',
+    'perf-invested-return-label': 'Return (Invested)',
+  },
+  pt: {
+    'nav-home': 'Início', 'nav-sobre': 'Sobre', 'nav-strat': 'Estratégias', 'nav-port': 'Portfólio',
+    'btn-enter': 'Entrar',
+    'eyebrow': 'Gestão Estratégica de Capital',
+    'hero-title': 'Patrimônio construído com <em>consistência</em>, não pressa.',
+    'hero-sub': 'Barolo Capital é uma gestora independente focada em estratégias de capital no mercado cripto — com disciplina, visão de longo prazo e preservação como base.',
+    'cta-about': 'Sobre', 'cta-portfolio': 'Portfólio',
+    'about-tag': 'Sobre',
+    'about-title': 'Uma abordagem <em>diferente</em> do mercado cripto',
+    'about-lead': 'Barolo Capital é uma firma independente focada em gestão estratégica de capital no mercado de criptoativos.',
+    'about-p1': 'Acreditamos que patrimônio não é construído com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, atuamos de forma seletiva — focando apenas nas oportunidades onde temos convicção genuína.',
+    'about-p2': 'Operamos na interseção entre estratégias DeFi ativas e acumulação de longo prazo, usando protocolos descentralizados como ferramentas de geração de yield, gestão de risco e expansão de posições nos ativos em que acreditamos.',
+    'belief-1': 'Patrimônio real é construído com consistência, não com pressa.',
+    'belief-2': 'Não buscamos o maior ganho — buscamos o ganho sustentável.',
+    'belief-3': 'Concentração no que entendemos é melhor do que diversificação no que não entendemos.',
+    'belief-4': 'Bear markets são oportunidades de compra, não razão para sair.',
+    'strat-tag': 'Estratégias',
+    'strat-title': 'Estratégias <em>seletivas</em> focadas em DeFi',
+    'strat1-tag': 'Liquidez Ativa', 'strat1-title': 'Pools de Liquidez Concentrada',
+    'strat1-desc': 'Posições de liquidez concentrada em DEXs como Uniswap V3, usadas tanto para capturar taxas quanto como estratégia de saída disciplinada em posições selecionadas.',
+    'strat2-tag': 'Lending', 'strat2-title': 'Empréstimos Colateralizados',
+    'strat2-desc': 'Supply de ETH e stablecoins como colateral no AAVE V4 e Kamino Finance, tomando USDC emprestado a taxas estratégicas para otimizar a eficiência de capital.',
+    'strat3-tag': 'Acumulação', 'strat3-title': 'Convicção de Longo Prazo',
+    'strat3-desc': 'DCA mensal em ETH, SOL e ADA com horizonte de 10+ anos. Bear markets são tratados como fases de acumulação, não razão para sair.',
+    'port-tag': 'Ecossistema DeFi', 'port-title': 'Ativos do <em>Portfólio</em>',
+    'perf-track': 'Track Record', 'perf-return': 'Retorno Total', 'perf-annual': 'Anualizado',
+    'perf-volatility': 'Volatilidade', 'perf-maxdd': 'Máx. Drawdown',
+    'perf-note': 'Metodologia: Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH.',
+    'perf-analysis-label': 'Métricas de Desempenho',
+    'perf-cagr-label': 'CAGR (Anualizado)',
+    'perf-irr-label': 'TIR (Ponderada no Tempo)',
+    'perf-sharpe-label': 'Índice de Sharpe',
+    'perf-volatility-label': 'Volatilidade',
+    'perf-maxdd-label': 'Máx. Drawdown',
+    'perf-roi-label': 'Retorno Total',
+    'perf-analysis-note': 'Metodologia: CAGR = crescimento anualizado do início ao fim. TIR = taxa interna de retorno contabilizando as contribuições mensais de DCA. Índice de Sharpe = (retorno − taxa livre de risco) / volatilidade. Volatilidade = desvio padrão anualizado dos retornos mensais. Máx. Drawdown = maior declínio de pico para vale. Benchmark: 50% BTC + 50% ETH.',
+    'infl-track': 'Ganhos Reais vs Inflação', 'infl-title': 'Desempenho da Carteira (Ajustado pela Inflação)',
+    'infl-desc': 'Comparando o crescimento da carteira contra a inflação acumulada em cada moeda.',
+    'infl-stat-real': 'Ganho Real', 'infl-stat-pct': 'Retorno Real %', 'infl-stat-annual': 'Retorno Real Anual',
+    'nav-contact': 'Contato',
+    'contact-tag': 'Contato',
+    'contact-title': 'Entre em <em>contato</em>',
+    'contact-desc': 'Para parcerias, dúvidas ou oportunidades de colaboração — fale diretamente.',
+    'perf-invested-label': 'Capital Investido',
+    'perf-drybowl-label': 'Caixa de Oportunidade',
+    'perf-invested-return-label': 'Retorno (Investido)',
+  }
+};
+
+function toggleIndexLang() {
+  INDEX_LANG = INDEX_LANG === 'en' ? 'pt' : 'en';
+  var strings = INDEX_LANG_STRINGS[INDEX_LANG];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (strings[key] !== undefined) {
+      el.innerHTML = strings[key];
+    }
+  });
+  var label = INDEX_LANG === 'en' ? 'PT' : 'EN';
+  var btns = document.querySelectorAll('#indexLangBtn, #indexLangBtnFooter');
+  btns.forEach(function(b){ b.textContent = label; });
+  document.documentElement.setAttribute('lang', INDEX_LANG === 'en' ? 'en' : 'pt-BR');
+}
+
+// ══════════════════════════════════
+// NAV HELPERS
+// ══════════════════════════════════
+function setActive(el) {
+  document.querySelectorAll('.nav-links a').forEach(function(a){ a.classList.remove('active'); });
+  el.classList.add('active');
+}
+function closeMobile() {
+  document.getElementById('navLinks').classList.remove('open');
+}
+function toggleMobile() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// ══════════════════════════════════
+// TICKER + RETORNO AO VIVO
+// ══════════════════════════════════
+(function initTicker() {
+  // Tokens exibidos no ticker
+  var TICKER_ASSETS = [
+    { sym: 'BTC', id: 'bitcoin' },
+    { sym: 'ETH', id: 'ethereum' },
+    { sym: 'SOL', id: 'solana' },
+    { sym: 'ADA', id: 'cardano' },
+  ];
+
+  // Portfólio interno para cálculo de retorno (quantidades não exibidas)
+  var HOLDINGS = [
+    { id: 'ethereum',       qty: 2.10366741,    invested: 4433.16 },
+    { id: 'solana',         qty: 20.31134268,   invested: 2280.39 },
+    { id: 'cardano',        qty: 375.245,        invested: 530.95  },
+    { id: 'eigenlayer',     qty: 153.36298802,  invested: 45.87   },
+    { id: 'radiant-capital',qty: 7290.46,        invested: 0       },
+    { id: 'matic-network',  qty: 218,            invested: 143.88  },
+    { id: 'zksync',         qty: 876,            invested: 0       },
+    { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
+    { id: 'zetachain',      qty: 51.1434,        invested: 0       },
+  ];
+  // TOTAL_INVESTED fixado nas quantidades base (imune ao diary sync)
+  var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
+  // ── Aplica trades do Diário DeFi (só qty — cost basis não altera ROI display) ──
+  (function(){
+    try {
+      var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
+      var idMap = { ETH:'ethereum', SOL:'solana', ADA:'cardano', EIGEN:'eigenlayer',
+                    RDNT:'radiant-capital', POL:'matic-network', ZK:'zksync',
+                    XAI:'xai-blockchain', ZETA:'zetachain' };
+      diary.filter(function(e){ return e.type==='trade' && e.trade && e.trade.qty>0; })
+           .forEach(function(e){
+             var t = e.trade;
+             var h = HOLDINGS.find(function(h){ return h.id === idMap[t.token]; });
+             if (!h) return;
+             h.qty += (t.side === 'buy' ? 1 : -1) * t.qty;
+           });
+    } catch(e) {}
+  })();
+  var STABLES_USD    = 2536.40;  // USDT 2236.404 + USDS 300
+  var LP_POOLED      = 365;
+  var TOTAL_DEBT     = 1565.78;  // AAVE 752.77 USDC + Kamino 813.01 USDC
+
+  var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
+
+  function fmt(n) {
+    return n >= 1000
+      ? '$' + n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0})
+      : '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function renderTicker(prices) {
+    var items = TICKER_ASSETS.map(function(a) {
+      var p  = prices[a.id] || FALLBACK[a.id];
+      var ch = prices[a.id + '_change'] || 0;
+      var chClass = ch >= 0 ? 't-up' : 't-dn';
+      var chSign  = ch >= 0 ? '+' : '';
+      return '<div class="ticker-item"><span class="t-sym">' + a.sym + '</span><span class="t-val">' + fmt(p) + '</span><span class="' + chClass + '">' + chSign + ch.toFixed(2) + '%</span></div>';
+    });
+    var html = items.join('') + items.join('');
+    var track = document.getElementById('tickerTrack');
+    if (track) track.innerHTML = html;
+  }
+
+  var INITIAL_CAPITAL = 1061; // primeiro capital registrado (Jan/2022, wealthCurve.invested[0])
+
+  function calculateCAGR(currentAssets) {
+    var start = new Date(2022, 0, 1); // Jan 1, 2022
+    var end = new Date();
+    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
+    if (years <= 0 || currentAssets <= 0) return 0;
+    return (Math.pow(currentAssets / INITIAL_CAPITAL, 1 / years) - 1) * 100;
+  }
+
+  function calculateCAGRYTD(currentAssets) {
+    var start = new Date(2026, 0, 1); // Jan 1, 2026
+    var end = new Date();
+    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
+    // Ponto base: wealthCurve Jan/26 (value 8570, index 48 dos 53 meses)
+    var ytdStart = 8570; // portfolio value em Jan/2026
+    if (years <= 0 || currentAssets <= 0 || ytdStart <= 0) return 0;
+    return (Math.pow(currentAssets / ytdStart, 1 / years) - 1) * 100;
+  }
+
+  function calculateRealReturn(currentAssets) {
+    // Inflação acumulada USA (jan 2022 - maio 2026): 20.2%
+    var cumulativeInflation = 1.202; // 1 + 0.202
+    var nominalReturn = (currentAssets / INITIAL_CAPITAL - 1) * 100;
+    var realReturn = ((currentAssets / INITIAL_CAPITAL) / cumulativeInflation - 1) * 100;
+    return realReturn;
+  }
+
+  function updateHeroReturn(prices) {
+    var spotVal = 0;
+    HOLDINGS.forEach(function(h) {
+      var p = prices[h.id];
+      if (p) spotVal += h.qty * p;
+    });
+    if (spotVal === 0) return;
+    // Usar ativos brutos (sem dívida) para comparação consistente com capital inicial
+    var currentAssets = spotVal + STABLES_USD + LP_POOLED;
+    var cagr = calculateCAGR(currentAssets);
+    var cagrYTD = calculateCAGRYTD(currentAssets);
+    var realReturn = calculateRealReturn(currentAssets);
+
+    var cagrEl = document.getElementById('heroCAGR');
+    if (cagrEl) cagrEl.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%';
+
+    var cagrYTDEl = document.getElementById('heroCAGRYTD');
+    if (cagrYTDEl) cagrYTDEl.textContent = (cagrYTD >= 0 ? '+' : '') + cagrYTD.toFixed(1) + '%';
+
+    var realEl = document.getElementById('heroRealReturn');
+    if (realEl) realEl.textContent = (realReturn >= 0 ? '+' : '') + realReturn.toFixed(1) + '%';
+  }
+
+  // IDs de todos os tokens para fetch (ticker + portfolio)
+  var allIds = Array.from(new Set(
+    TICKER_ASSETS.map(function(a){ return a.id; }).concat(HOLDINGS.map(function(h){ return h.id; }))
+  )).join(',');
+
+  var INDEX_CACHE_KEY = 'bc-index-prices-cache';
+  var INDEX_CACHE_TTL = 2 * 60 * 1000; // 2 min
+  function loadIndexCache() { try { var r=localStorage.getItem(INDEX_CACHE_KEY); return r?JSON.parse(r):null; } catch(e){return null;} }
+  function saveIndexCache(p) { try { localStorage.setItem(INDEX_CACHE_KEY, JSON.stringify({ts:Date.now(),data:p})); } catch(e){} }
+
+  async function fetchTicker() {
+    try {
+      var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + allIds + '&vs_currencies=usd&include_24hr_change=true', { signal: AbortSignal.timeout(8000) });
+      var d = await r.json();
+      var prices = {};
+      Object.keys(d).forEach(function(id) {
+        prices[id] = d[id].usd;
+        prices[id + '_change'] = d[id].usd_24h_change || 0;
+      });
+      saveIndexCache(prices);
+      renderTicker(prices);
+      updateHeroReturn(prices);
+    } catch(e) {
+      var cached = loadIndexCache();
+      if (cached) { renderTicker(cached.data); updateHeroReturn(cached.data); }
+      else renderTicker({});
+    }
+  }
+
+  // Serve cache imediato se < 2 min (carregamento instantâneo do ticker)
+  var _ic = loadIndexCache();
+  if (_ic && (Date.now() - _ic.ts < INDEX_CACHE_TTL)) {
+    renderTicker(_ic.data);
+    updateHeroReturn(_ic.data);
+  } else {
+    renderTicker({});
+  }
+  fetchTicker();
+  setInterval(fetchTicker, 60000);
+})();
+
+// ══════════════════════════════════
+// INFLATION COMPARISON CHART
+// ══════════════════════════════════
+var _inflChart = null;
+var _inflCurrency = 'usd';
+
+// Wealth curve data (53 months Jan/22 → May/26)
+var WEALTH_LABELS = ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22',
+  '11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23',
+  '09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24',
+  '07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25',
+  '05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26',
+  '03/26','04/26','05/26'];
+
+var WEALTH_VALUES = [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,
+  1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,
+  8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,8872];
+
+// CPI USA (accumulated since Jan/2022)
+var CPI_USA = {'01/22': 0, '02/22': 0.8, '03/22': 1.2, '04/22': 2.9, '05/22': 5.0, '06/22': 8.6,
+  '07/22': 8.5, '08/22': 8.0, '09/22': 8.2, '10/22': 8.0, '11/22': 7.1, '12/22': 6.5,
+  '01/23': 6.2, '02/23': 6.0, '03/23': 5.0, '04/23': 4.9, '05/23': 4.0, '06/23': 3.0,
+  '07/23': 3.2, '08/23': 3.7, '09/23': 4.0, '10/23': 3.2, '11/23': 3.1, '12/23': 3.4,
+  '01/24': 3.2, '02/24': 3.2, '03/24': 3.5, '04/24': 3.4, '05/24': 3.3, '06/24': 3.0,
+  '07/24': 2.9, '08/24': 2.6, '09/24': 2.4, '10/24': 2.6, '11/24': 2.7, '12/24': 2.6,
+  '01/25': 2.7, '02/25': 2.5, '03/25': 3.2, '04/25': 3.6, '05/25': 3.3, '06/25': 3.0,
+  '07/25': 2.9, '08/25': 2.2, '09/25': 2.4, '10/25': 2.6, '11/25': 2.7, '12/25': 2.6,
+  '01/26': 2.4, '02/26': 2.6, '03/26': 3.2, '04/26': 3.3, '05/26': 3.3};
+
+// IPCA Brasil (accumulated since Jan/2022)
+var IPCA_BR = {'01/22': 0, '02/22': 1.0, '03/22': 2.1, '04/22': 3.9, '05/22': 5.3, '06/22': 6.8,
+  '07/22': 7.8, '08/22': 8.8, '09/22': 9.4, '10/22': 10.7, '11/22': 11.5, '12/22': 11.4,
+  '01/23': 10.5, '02/23': 10.3, '03/23': 9.9, '04/23': 9.3, '05/23': 8.5, '06/23': 7.9,
+  '07/23': 8.2, '08/23': 8.0, '09/23': 8.5, '10/23': 9.3, '11/23': 9.8, '12/23': 9.5,
+  '01/24': 8.9, '02/24': 8.3, '03/24': 8.1, '04/24': 7.5, '05/24': 6.5, '06/24': 5.9,
+  '07/24': 5.8, '08/24': 5.3, '09/24': 5.8, '10/24': 5.9, '11/24': 6.3, '12/24': 6.5,
+  '01/25': 6.1, '02/25': 5.7, '03/25': 5.3, '04/25': 5.6, '05/25': 6.0, '06/25': 6.2,
+  '07/25': 6.4, '08/25': 6.0, '09/25': 5.9, '10/25': 6.3, '11/25': 6.2, '12/25': 6.0,
+  '01/26': 5.5, '02/26': 5.3, '03/26': 5.6, '04/26': 5.8, '05/26': 5.9};
+
+// USD/BRL rates
+var USD_BRL = {'01/22': 5.25, '02/22': 5.16, '03/22': 5.02, '04/22': 4.94, '05/22': 5.04, '06/22': 5.24,
+  '07/22': 5.33, '08/22': 5.27, '09/22': 5.36, '10/22': 5.38, '11/22': 5.48, '12/22': 5.22,
+  '01/23': 5.25, '02/23': 5.19, '03/23': 5.17, '04/23': 4.99, '05/23': 4.97, '06/23': 4.95,
+  '07/23': 4.96, '08/23': 5.02, '09/23': 5.10, '10/23': 5.08, '11/23': 5.10, '12/23': 5.04,
+  '01/24': 4.94, '02/24': 4.89, '03/24': 4.82, '04/24': 4.84, '05/24': 4.93, '06/24': 5.02,
+  '07/24': 5.10, '08/24': 5.14, '09/24': 5.24, '10/24': 5.29, '11/24': 5.35, '12/24': 5.09,
+  '01/25': 4.87, '02/25': 4.92, '03/25': 4.88, '04/25': 4.95, '05/25': 5.06, '06/25': 5.15,
+  '07/25': 5.22, '08/25': 5.18, '09/25': 5.25, '10/25': 5.30, '11/25': 5.35, '12/25': 5.25,
+  '01/26': 5.20, '02/26': 5.18, '03/26': 5.15, '04/26': 5.12, '05/26': 5.10};
+
+function calculateInflationData() {
+  var startCapUSD = 1061;
+  var endLabel = '05/26';
+  var years = 4.42;
+
+  var inflUSD = CPI_USA[endLabel];
+  var inflBRL = IPCA_BR[endLabel];
+
+  var capNeededUSD = startCapUSD * (1 + inflUSD / 100);
+  var capNeededBRL = startCapUSD * USD_BRL['01/22'] * (1 + inflBRL / 100);
+
+  var endValUSD = WEALTH_VALUES[WEALTH_VALUES.length - 1];
+  var endValBRL = endValUSD * USD_BRL[endLabel];
+
+  var realGainUSD = endValUSD - capNeededUSD;
+  var realGainBRL = endValBRL - capNeededBRL;
+
+  var pctAboveInflUSD = ((endValUSD / capNeededUSD) - 1) * 100;
+  var pctAboveInflBRL = ((endValBRL / capNeededBRL) - 1) * 100;
+
+  var cgrReal = pctAboveInflUSD / years;
+
+  return {
+    realGainUSD: realGainUSD, realGainBRL: realGainBRL,
+    pctAboveInflUSD: pctAboveInflUSD, pctAboveInflBRL: pctAboveInflBRL,
+    cgrReal: cgrReal
+  };
+}
+
+function buildInflationChart(currency) {
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var textColor = isDark ? '#e8dfc8' : '#2a1e0e';
+  var gridColor = isDark ? '#2a2620' : '#ddd4c0';
+  var goldColor = '#c9a050';
+  var greenColor = '#3fb950';
+  var redColor = '#f85149';
+
+  var isUSD = currency === 'usd';
+  var inflData = isUSD ? CPI_USA : IPCA_BR;
+  var rateMultiplier = isUSD ? 1 : USD_BRL['01/22'];
+  var endRate = isUSD ? 1 : USD_BRL['05/26'];
+
+  var startingCapital = 1061 * (isUSD ? 1 : USD_BRL['01/22']);
+
+  var portfolioData = WEALTH_VALUES.map(function(val, idx) {
+    var absoluteVal = val * (isUSD ? 1 : USD_BRL[WEALTH_LABELS[idx]]);
+    return (absoluteVal - startingCapital) / startingCapital * 100;
+  });
+
+  var inflationThresholdData = WEALTH_LABELS.map(function(label, idx) {
+    var inflRate = parseFloat(inflData[label]) || 0;
+    var thresholdValue = startingCapital * (1 + inflRate / 100);
+    return (thresholdValue - startingCapital) / startingCapital * 100;
+  });
+
+  var ctx = document.getElementById('inflChart').getContext('2d');
+
+  if (_inflChart) _inflChart.destroy();
+
+  _inflChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEALTH_LABELS,
+      datasets: [
+        {
+          label: 'Portfolio Gain',
+          data: portfolioData,
+          borderColor: goldColor,
+          backgroundColor: 'rgba(201, 160, 80, 0.1)',
+          borderWidth: 2.5,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointBackgroundColor: goldColor,
+          tension: 0.4,
+          fill: true,
+          order: 0
+        },
+        {
+          label: 'Inflation Adjustment',
+          data: inflationThresholdData,
+          borderColor: redColor,
+          borderWidth: 2,
+          borderDash: [5, 5],
+          pointRadius: 0,
+          tension: 0.4,
+          fill: false,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode: 'index', intersect: false},
+      plugins: {
+        legend: {
+          labels: {color: textColor, font: {size: 11}, usePointStyle: true, padding: 15}
+        },
+        tooltip: {
+          backgroundColor: isDark ? 'rgba(42, 38, 32, 0.9)' : 'rgba(245, 240, 232, 0.9)',
+          titleColor: textColor,
+          bodyColor: textColor,
+          borderColor: gridColor,
+          borderWidth: 1,
+          callbacks: {
+            label: function(ctx) {
+              var val = ctx.parsed.y.toFixed(1);
+              return ctx.dataset.label + ': ' + (val >= 0 ? '+' : '') + val + '%';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {color: gridColor, drawBorder: false},
+          ticks: {color: textColor, font: {size: 10}},
+          max: WEALTH_LABELS.length - 1
+        },
+        y: {
+          grid: {color: gridColor, drawBorder: false},
+          ticks: {
+            color: textColor,
+            font: {size: 10},
+            callback: function(val) { return (val >= 0 ? '+' : '') + val.toFixed(0) + '%'; }
+          }
+        }
+      }
+    }
+  });
+}
+
+function setInflCurrency(curr, btn) {
+  _inflCurrency = curr;
+  document.querySelectorAll('.infl-toggle-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+
+  buildInflationChart(curr);
+  updateInflationStats(curr);
+}
+
+function updateInflationStats(currency) {
+  var isUSD = currency === 'usd';
+  var startCapUSD = 1061;
+  var endLabel = '05/26';
+  var years = 4.42;
+
+  var inflRate = isUSD ? CPI_USA[endLabel] : IPCA_BR[endLabel];
+  var capNeeded = isUSD ? startCapUSD * (1 + inflRate / 100) : startCapUSD * USD_BRL['01/22'] * (1 + inflRate / 100);
+  var endVal = isUSD ? WEALTH_VALUES[WEALTH_VALUES.length - 1] : WEALTH_VALUES[WEALTH_VALUES.length - 1] * USD_BRL[endLabel];
+
+  var realGain = endVal - capNeeded;
+  var pctAboveInfl = ((endVal / capNeeded) - 1) * 100;
+  var cgrReal = pctAboveInfl / years;
+
+  document.getElementById('inflStatReal').textContent = (isUSD ? '$' : 'R$') + realGain.toLocaleString('en-US', {maximumFractionDigits: 0});
+  document.getElementById('inflStatPct').textContent = '+' + pctAboveInfl.toFixed(1) + '%';
+  document.getElementById('inflStatAnnual').textContent = '+' + cgrReal.toFixed(2) + '%';
+}
+
+// ══════════════════════════════════
+// PERFORMANCE METRICS CALCULATION
+// ══════════════════════════════════
+function calculatePerformanceMetrics() {
+  var WEALTH_LABELS = ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22',
+                       '01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23',
+                       '01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24',
+                       '01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25',
+                       '01/26','02/26','03/26','04/26','05/26'];
+  var WEALTH_VALUES = [853,860,1037,1108,1037,544,772,896,742,923,754,777,
+                       1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,
+                       2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,
+                       8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,
+                       9511,7376,6371,9206,8872];
+  var INVESTED = [1061,1161,1261,1361,1461,1561,1661,1761,1861,1961,2061,2161,
+                  2261,2361,2461,2561,2661,2761,2861,2961,3061,3161,3261,3361,
+                  3461,3561,3661,3761,3861,3961,4061,4161,4261,4361,4461,4561,
+                  4661,4761,4861,4961,5061,5161,5261,5361,5461,5561,5661,5761,
+                  5861,5961,6061,6161,6261,6361,6461,6561,6661];
+
+  var n = WEALTH_VALUES.length;
+  var startVal = WEALTH_VALUES[0];
+  var endVal = WEALTH_VALUES[n - 1];
+  var years = 4 + (4 / 12); // Jan 2022 to May 2026 = 4 years 4 months
+
+  // ── Capital allocation (20/05/2026 verified data) ──
+  var STABLES_DRY_POWDER = 2536.40;  // USDT + USDS (not invested)
+  var TOTAL_APORTED = 6784;           // Total capital aported since Jan/2022
+  var CAPITAL_INVESTED = TOTAL_APORTED - STABLES_DRY_POWDER; // 4248K deployed in assets
+
+  // Portfolio composition (May 26, 2026)
+  var SPOT_VALUE = 7533.55;    // Cripto holdings
+  var LP_POOLED = 365;          // Uniswap pool
+  var TOTAL_DEBT = 1565.78;     // AAVE 752.77 + Kamino 813.01
+  var PORTFOLIO_INVESTED_VALUE = SPOT_VALUE + LP_POOLED - TOTAL_DEBT; // 6335.38K
+
+  // ── CAGR of invested capital (excluding dry powder) ──
+  var cagrInvested = (Math.pow(PORTFOLIO_INVESTED_VALUE / CAPITAL_INVESTED, 1 / years) - 1) * 100;
+
+  // ── Return on invested capital ──
+  var returnInvested = ((PORTFOLIO_INVESTED_VALUE - CAPITAL_INVESTED) / CAPITAL_INVESTED) * 100;
+
+  // ── CAGR of total gross portfolio (for reference) ──
+  var cagrGross = (Math.pow(endVal / startVal, 1 / years) - 1) * 100;
+
+  // ── IRR (approximate via Newton-Raphson) ──
+  var irr = estimateIRR(WEALTH_VALUES, INVESTED);
+
+  // ── Monthly returns ──
+  var monthlyReturns = [];
+  for (var i = 1; i < WEALTH_VALUES.length; i++) {
+    var ret = (WEALTH_VALUES[i] - WEALTH_VALUES[i - 1]) / WEALTH_VALUES[i - 1];
+    monthlyReturns.push(ret);
+  }
+
+  // ── Volatility (annualized) ──
+  var meanReturn = monthlyReturns.reduce(function(s, r) { return s + r; }, 0) / monthlyReturns.length;
+  var variance = monthlyReturns.reduce(function(s, r) { return s + Math.pow(r - meanReturn, 2); }, 0) / monthlyReturns.length;
+  var monthlyStdDev = Math.sqrt(variance);
+  var volatility = monthlyStdDev * Math.sqrt(12) * 100;
+
+  // ── Max Drawdown ──
+  var peak = WEALTH_VALUES[0];
+  var maxDD = 0;
+  for (var i = 1; i < WEALTH_VALUES.length; i++) {
+    if (WEALTH_VALUES[i] > peak) peak = WEALTH_VALUES[i];
+    var dd = (peak - WEALTH_VALUES[i]) / peak;
+    if (dd > maxDD) maxDD = dd;
+  }
+  maxDD = maxDD * 100;
+
+  // ── Sharpe Ratio (risk-free rate = 2.5% annual = ~0.208% monthly) ──
+  var riskFreeMonthly = 0.025 / 12;
+  var excessReturn = meanReturn - riskFreeMonthly;
+  var sharpe = (excessReturn / monthlyStdDev) * Math.sqrt(12);
+
+  // ── Total ROI (gross portfolio) ──
+  var roi = ((endVal - startVal) / startVal) * 100;
+
+  // Update DOM — Capital allocation
+  document.getElementById('perfInvested').textContent = '$' + CAPITAL_INVESTED.toLocaleString('en-US', {maximumFractionDigits: 0});
+  document.getElementById('perfDryPowder').textContent = '$' + STABLES_DRY_POWDER.toLocaleString('en-US', {maximumFractionDigits: 0});
+  document.getElementById('perfInvestedReturn').textContent = (returnInvested >= 0 ? '+' : '') + returnInvested.toFixed(0) + '%';
+
+  // Update DOM — Performance metrics
+  document.getElementById('perfCAGR').textContent = (cagrInvested >= 0 ? '+' : '') + cagrInvested.toFixed(2) + '%';
+  document.getElementById('perfIRR').textContent = (irr >= 0 ? '+' : '') + irr.toFixed(2) + '%';
+  document.getElementById('perfSharpe').textContent = (sharpe >= 0 ? '+' : '') + sharpe.toFixed(2);
+  document.getElementById('perfVolatility').textContent = (volatility >= 0 ? '+' : '') + volatility.toFixed(1) + '%';
+  var maxDDEl = document.getElementById('perfMaxDD');
+  maxDDEl.textContent = '−' + maxDD.toFixed(1) + '%';
+  maxDDEl.className = 'perf-metric-value neg';
+  document.getElementById('perfROI').textContent = (roi >= 0 ? '+' : '') + roi.toFixed(0) + '%';
+
+  // Color coding for metrics
+  var cagrEl = document.getElementById('perfCAGR');
+  cagrEl.className = 'perf-metric-value' + (cagrInvested >= 0 ? ' pos' : ' neg');
+  var irrEl = document.getElementById('perfIRR');
+  irrEl.className = 'perf-metric-value' + (irr >= 0 ? ' pos' : ' neg');
+  var sharpeEl = document.getElementById('perfSharpe');
+  sharpeEl.className = 'perf-metric-value' + (sharpe >= 0 ? ' pos' : ' neg');
+  var volEl = document.getElementById('perfVolatility');
+  volEl.className = 'perf-metric-value' + (volatility >= 0 ? ' neg' : ' pos');
+  var roiEl = document.getElementById('perfROI');
+  roiEl.className = 'perf-metric-value' + (roi >= 0 ? ' pos' : ' neg');
+  var investedReturnEl = document.getElementById('perfInvestedReturn');
+  investedReturnEl.className = 'perf-metric-value' + (returnInvested >= 0 ? ' pos' : ' neg');
+}
+
+// Estimate IRR using Newton-Raphson method
+function estimateIRR(values, invested) {
+  var rate = 0.10; // initial guess 10%
+  for (var iter = 0; iter < 20; iter++) {
+    var npv = 0, dnpv = 0;
+    for (var t = 0; t < values.length; t++) {
+      var cf = (t === values.length - 1) ? (values[t] - invested[t]) : -invested[t];
+      npv += cf / Math.pow(1 + rate, t / 12);
+      dnpv -= (t / 12) * cf / Math.pow(1 + rate, t / 12 + 1);
+    }
+    var delta = npv / dnpv;
+    rate -= delta;
+    if (Math.abs(delta) < 1e-6) break;
+  }
+  return rate * 100;
+}
+
+// Initialize on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize inflation chart
+  buildInflationChart('usd');
+  updateInflationStats('usd');
+
+  // Initialize performance metrics
+  calculatePerformanceMetrics();
+
+  // Set initial theme icon
+  var btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀';
+
+  // Set first nav link active
+  var first = document.querySelector('.nav-links a');
+  if (first) first.classList.add('active');
+});
+</script>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:8px;margin-right:auto;">
+    <button id="indexLangBtnFooter" onclick="toggleIndexLang()" style="background:transparent;border:1px solid rgba(201,160,80,.3);padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);cursor:pointer;">PT</button>
+  </div>
+  <span>© 2021 Barolo Capital · Strategic Capital Management</span>
+  <span>All data is for internal and private use only</span>
+</footer>
+

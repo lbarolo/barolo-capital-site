@@ -1,1 +1,27 @@
-# Arquivos privados — nunca subir para 
+# Arquivos privados — nunca subir para o GitHub público
+DIARIO DEFI E PRINTS/
+CLAUDE.md
+
+# Scripts de automação e dados financeiros
+fechar_mes.py
+dados_TEMPLATE.json
+*-dados.json
+*-posicoes.json
+
+# Exports e snapshots com dados de posição
+EXPORTS SEMANAIS/
+
+# Arquivos Excel e PDF com dados pessoais
+*.xlsx
+*.pdf
+
+# Arquivos Python auxiliares
+analise_custo_brl_consolidado.py
+convexidade_portfolio.py
+create_cost_basis_excel.py
+barolo-data.js
+
+# Documentos pessoais
+BAROLO_CAPITAL_O_Verdadeiro_Caminho_Documento_Pessoal.md
+Custo_*.xlsx
+MONTHLY_UPDATE_WORKFLOW.md
