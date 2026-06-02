@@ -1574,7 +1574,20 @@ body, input, button, select, textarea {
  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
  <div>
  <label style="font-size:9px;color:var(--muted);display:block;margin-bottom:3px;">Token</label>
- <input type="text" id="edit-trade-token" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:3px;background:var(--s1);color:var(--text);font-size:10px;">
+ <select id="edit-trade-token" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:3px;background:var(--s1);color:var(--text);font-size:10px;">
+ <option value="BTC">BTC — Bitcoin</option>
+ <option value="ETH">ETH — Ethereum</option>
+ <option value="SOL">SOL — Solana</option>
+ <option value="ADA">ADA — Cardano</option>
+ <option value="USDT">USDT — Tether</option>
+ <option value="USDC">USDC — USD Coin</option>
+ <option value="EIGEN">EIGEN — EigenLayer</option>
+ <option value="RDNT">RDNT — Radiant</option>
+ <option value="POL">POL — Polygon</option>
+ <option value="ZK">ZK — ZKsync</option>
+ <option value="XAI">XAI — Xai</option>
+ <option value="ZETA">ZETA — ZetaChain</option>
+ </select>
  </div>
  <div>
  <label style="font-size:9px;color:var(--muted);display:block;margin-bottom:3px;">Operação</label>
