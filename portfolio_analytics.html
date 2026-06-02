@@ -21,6 +21,7 @@ window.addEventListener('error',function(e){if(!e.message||e.message.includes('S
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>if(typeof Chart==='undefined'){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';document.head.appendChild(s);}</script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
@@ -1064,6 +1065,20 @@ body, input, button, select, textarea {
   </table>
 </div>
 
+<!-- Charts Grid: Impact + Decomposition -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+  <!-- Left: Impact Chart -->
+  <div class="card" style="margin-bottom:0;">
+    <div class="chart-title" style="margin-bottom:12px;">Impacto por Ativo (w×C[i])</div>
+    <canvas id="cpImpactChart" style="max-height:200px;"></canvas>
+  </div>
+  <!-- Right: Decomposition Pie -->
+  <div class="card" style="margin-bottom:0;">
+    <div class="chart-title" style="margin-bottom:12px;">Decomposição de CP (λ₁/λ₂/λ₃)</div>
+    <canvas id="cpDecompositionChart" style="max-height:200px;"></canvas>
+  </div>
+</div>
+
 <!-- Risk Metrics & Hedges -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
   <!-- Left: Risk Metrics -->
@@ -1088,22 +1103,22 @@ body, input, button, select, textarea {
       </div>
     </div>
   </div>
-  <!-- Right: Hedges -->
+  <!-- Right: Hedges & Defensivity -->
   <div class="card" style="margin-bottom:0;">
-    <div class="chart-title" style="margin-bottom:12px;">Hedges Estruturais</div>
+    <div class="chart-title" style="margin-bottom:12px;">Hedges & Defensividade</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
+        <div style="font-size:9px;color:var(--muted);">Defensividade Total</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpDefensiveness">—</div>
+        <div style="font-size:8px;color:var(--muted);margin-top:2px;" id="cpDefensivenessProfile">—</div>
+      </div>
       <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
         <div style="font-size:9px;color:var(--muted);">Stables (USDT+USDS)</div>
         <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpStables">64.2%</div>
-        <div style="font-size:8px;color:var(--muted);margin-top:2px;">Reduz convexidade geral</div>
       </div>
       <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
-        <div style="font-size:9px;color:var(--muted);">Margem até Liquidação AAVE</div>
-        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpMarginAAVE">81%</div>
-      </div>
-      <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
-        <div style="font-size:9px;color:var(--muted);">Margem até Liquidação Kamino</div>
-        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpMarginKamino">37%</div>
+        <div style="font-size:9px;color:var(--muted);">Margem AAVE + Kamino</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpMarginAvg">—</div>
       </div>
       <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
         <div style="font-size:9px;color:var(--muted);">Regime Atual (FGI)</div>
@@ -1115,8 +1130,28 @@ body, input, button, select, textarea {
 
 <!-- Convexity Evolution Chart -->
 <div class="card" style="margin-bottom:14px;">
-  <div class="chart-title" style="margin-bottom:12px;">Evolução da Convexidade (Série Histórica)</div>
+  <div class="chart-title" style="margin-bottom:12px;">Evolução da Convexidade (Série Histórica com Anotações)</div>
   <canvas id="cpHistChart" style="max-height:200px;"></canvas>
+</div>
+
+<!-- Stress Test Matrix -->
+<div class="card" style="margin-bottom:14px;">
+  <div class="chart-title" style="margin-bottom:12px;">Matriz de Cenários (Stress Testing)</div>
+  <table style="width:100%;font-size:10px;border-collapse:collapse;">
+    <thead style="border-bottom:1px solid var(--border);">
+      <tr style="height:28px;">
+        <th style="text-align:left;padding:8px;color:var(--muted);font-weight:600;">Cenário</th>
+        <th style="text-align:center;padding:8px;color:var(--muted);font-weight:600;">ETH</th>
+        <th style="text-align:center;padding:8px;color:var(--muted);font-weight:600;">SOL</th>
+        <th style="text-align:center;padding:8px;color:var(--muted);font-weight:600;">AAVE HF</th>
+        <th style="text-align:center;padding:8px;color:var(--muted);font-weight:600;">Kamino LTV</th>
+        <th style="text-align:right;padding:8px;color:var(--muted);font-weight:600;">CP Resultado</th>
+      </tr>
+    </thead>
+    <tbody id="cpScenariosTable">
+      <tr style="height:24px;"><td colspan="6" style="padding:8px;text-align:center;color:var(--muted);">—</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <!-- Recomendações -->
@@ -2207,6 +2242,26 @@ function buildConvexityUI(W){
 
   // Build historical evolution chart
   buildConvexityHistChart(enriched);
+
+  // Build new charts and tables
+  buildConvexityAssetTable(enriched, cv);
+  buildConvexityImpactChart(enriched, cv);
+  buildConvexityDecompositionChart(cv);
+  buildConvexityScenarios(enriched, cv.CP, liveETH, window._liveSolPrice || 75.71);
+
+  // Update defensiveness KPI
+  const def = calculateDefensiveness(cv.stablesPct, cv.aaveMargin, cv.kaminoMargin);
+  const defEl = document.getElementById('cpDefensiveness');
+  const defSubEl = document.getElementById('cpDefensivenessProfile');
+  const defColor = def.defensiveness > 0.50 ? '#3fb950' : def.defensiveness > 0.30 ? '#d29922' : '#f85149';
+  if (defEl) { defEl.textContent = (def.defensiveness*100).toFixed(1)+'%'; defEl.style.color = defColor; }
+  if (defSubEl) { defSubEl.textContent = def.profile; defSubEl.style.color = defColor; }
+
+  // Update margin average
+  const marginAvg = ((cv.aaveMargin + cv.kaminoMargin) / 2);
+  const marginEl = document.getElementById('cpMarginAvg');
+  const marginColor = marginAvg > 60 ? '#3fb950' : marginAvg > 30 ? '#d29922' : '#f85149';
+  if (marginEl) { marginEl.textContent = marginAvg.toFixed(0)+'%'; marginEl.style.color = marginColor; }
 }
 
 function buildConvexityHistChart(enriched){
@@ -2261,6 +2316,172 @@ function buildConvexityHistChart(enriched){
       }
     }
   });
+}
+
+// ═══ Convexidade — Tabela Dinâmica por Ativo ═══
+function buildConvexityAssetTable(enriched, convexData) {
+  const tbody = document.getElementById('cpAssetTable');
+  if (!tbody) return;
+
+  const grossValue = enriched.reduce((s, a) => s + (a.currentValue || 0), 0);
+  if (grossValue <= 0) { tbody.innerHTML = '<tr><td colspan="5" style="padding:8px;text-align:center;color:var(--muted);">—</td></tr>'; return; }
+
+  // Calcular C[i] por ativo
+  const rows = enriched.map(a => {
+    const weight = a.currentValue / grossValue; // peso %
+    const vol = Math.abs(a.change24h || 0) / 100; // vol como |change24h|
+    const tailRisk = a.isStable ? 0.01 : (a.isAirdrop ? 0.25 : 0.10);
+    const liqFactor = weight > 0.25 ? 0.25 : (weight > 0.10 ? 0.15 : 0.05);
+    const ci = (vol * vol * 0.5) + (tailRisk * 0.3) + (liqFactor * 0.2);
+    const wci = weight * ci; // impact
+
+    return { ticker: a.ticker, weight, vol, ci, wci, color: a.color };
+  }).sort((a, b) => b.wci - a.wci); // ordenar por impact desc
+
+  tbody.innerHTML = rows.map(r => {
+    const wciColor = r.wci > 0.15 ? '#f85149' : r.wci > 0.05 ? '#d29922' : '#3fb950';
+    return `<tr style="height:24px;border-bottom:1px solid var(--border);">
+      <td style="padding:8px;"><strong>${r.ticker}</strong></td>
+      <td style="text-align:right;padding:8px;color:var(--muted);">${(r.weight*100).toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px;color:var(--muted);">${(r.vol*100).toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px;color:var(--muted);">${r.ci.toFixed(4)}</td>
+      <td style="text-align:right;padding:8px;"><span style="color:${wciColor};font-weight:600;">${r.wci.toFixed(4)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ Convexidade — Gráfico de Barras de Impacto ═══
+function buildConvexityImpactChart(enriched, convexData) {
+  const canvas = document.getElementById('cpImpactChart');
+  if (!canvas) return;
+  if (window.cpImpactChartInst) window.cpImpactChartInst.destroy();
+
+  const grossValue = enriched.reduce((s, a) => s + (a.currentValue || 0), 0);
+  if (grossValue <= 0) return;
+
+  // Calcular w×C para cada ativo
+  const data = enriched.map(a => {
+    const weight = a.currentValue / grossValue;
+    const vol = Math.abs(a.change24h || 0) / 100;
+    const tailRisk = a.isStable ? 0.01 : (a.isAirdrop ? 0.25 : 0.10);
+    const liqFactor = weight > 0.25 ? 0.25 : (weight > 0.10 ? 0.15 : 0.05);
+    const ci = (vol * vol * 0.5) + (tailRisk * 0.3) + (liqFactor * 0.2);
+    return { ticker: a.ticker, impact: weight * ci, color: a.color };
+  }).sort((a, b) => b.impact - a.impact).slice(0, 10);
+
+  window.cpImpactChartInst = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.ticker),
+      datasets: [{
+        data: data.map(d => d.impact),
+        backgroundColor: data.map(d => d.impact > 0.15 ? '#f85149' : d.impact > 0.05 ? '#d29922' : '#3fb950'),
+        borderColor: 'var(--border)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { ticks: { color: 'var(--muted)', font: { size: 8 } }, grid: { color: 'rgba(200,200,200,0.05)' } },
+        y: { ticks: { color: 'var(--muted)', font: { size: 9 } }, grid: { display: false } } }
+    }
+  });
+}
+
+// ═══ Convexidade — Pie Chart de Decomposição ═══
+function buildConvexityDecompositionChart(convexData) {
+  const canvas = document.getElementById('cpDecompositionChart');
+  if (!canvas) return;
+  if (window.cpDecompChartInst) window.cpDecompChartInst.destroy();
+
+  const c1 = parseFloat(document.getElementById('cpComp1')?.textContent || 0.2813);
+  const c2 = Math.abs(parseFloat(document.getElementById('cpComp2')?.textContent || -0.0020));
+  const c3 = parseFloat(document.getElementById('cpComp3')?.textContent || 0.1650);
+  const total = c1 + c2 + c3;
+
+  window.cpDecompChartInst = new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: ['λ₁ Convex Assets', 'λ₂ Fragilidade', 'λ₃ Regime Markov'],
+      datasets: [{
+        data: [c1, c2, c3],
+        backgroundColor: ['#627EEA', '#f85149', '#3fb950'],
+        borderColor: 'var(--surface)',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: 'var(--muted)', font: { size: 9 }, padding: 12 } },
+        tooltip: { callbacks: { label: ctx => {
+          const pct = (ctx.raw / total * 100).toFixed(1);
+          return `${ctx.label}: ${ctx.raw.toFixed(4)} (${pct}%)`;
+        }}}
+      }
+    }
+  });
+}
+
+// ═══ Convexidade — Matriz de Cenários ═══
+function buildConvexityScenarios(enriched, cpCurrent, liveEth, liveSol) {
+  const tbody = document.getElementById('cpScenariosTable');
+  if (!tbody) return;
+
+  const lev = (window._liveAaveDebt || 748) / (window._liveAaveCollateral || 4000);
+  const hf = window._liveAaveHF || 6.88;
+  const ltv = window._liveKaminoLTV || 0.40;
+
+  // Cenários: [nome, ethMul, solMul, aaveHFMul, kaminoLTVAdd]
+  const scenarios = [
+    ['Atual', 1.0, 1.0, 1.0, 0],
+    ['ETH -30%', 0.70, 1.0, 1.0, 0],
+    ['SOL -40%', 1.0, 0.60, 1.0, 0],
+    ['Bull +50%', 1.50, 1.50, 1.0, 0],
+    ['Bear -40%', 0.60, 0.60, 0.9, 0.15],
+    ['AAVE Liq Risk', 1.0, 1.0, 0.6, 0],
+    ['Kamino Liq Risk', 1.0, 1.0, 1.0, 0.25]
+  ];
+
+  tbody.innerHTML = scenarios.map(s => {
+    const [sname, ethMul, solMul, hfMul, ltvAdd] = s;
+    const ethSim = liveEth * ethMul;
+    const solSim = liveSol * solMul;
+    const hfSim = hf * hfMul;
+    const ltvSim = ltv + ltvAdd;
+
+    // Recalcular CP simplificado para cenário
+    const leverage = (hfSim < 1.5 ? 'CRÍTICO' : hfSim < 3 ? 'ALTO' : 'OK');
+    const cpEstimate = hfSim < 2 ? 0.35 : ltvSim > 0.60 ? 0.28 : cpCurrent;
+    const delta = cpEstimate - cpCurrent;
+    const deltaColor = delta > 0.05 ? '#f85149' : delta < -0.05 ? '#3fb950' : '#d29922';
+
+    return `<tr style="height:24px;border-bottom:1px solid var(--border);">
+      <td style="padding:8px;"><strong>${sname}</strong></td>
+      <td style="text-align:center;padding:8px;color:var(--muted);">$${ethSim.toFixed(0)}</td>
+      <td style="text-align:center;padding:8px;color:var(--muted);">$${solSim.toFixed(0)}</td>
+      <td style="text-align:center;padding:8px;color:${hfSim < 1.5 ? '#f85149' : '#3fb950'};font-weight:600;">${hfSim.toFixed(2)}</td>
+      <td style="text-align:center;padding:8px;color:${ltvSim > 0.70 ? '#f85149' : '#3fb950'};font-weight:600;">${(ltvSim*100).toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px;"><span style="color:${deltaColor};font-weight:600;">${cpEstimate.toFixed(4)}</span> <span style="color:var(--muted);font-size:8px;">${delta>=0?'+':''} ${delta.toFixed(4)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ Defensividade ═══
+function calculateDefensiveness(stablesPct, aaveMargin, kaminoMargin) {
+  const stablesScore = Math.min(stablesPct / 0.75, 1.0); // 75% é ideal
+  const marginScore = Math.min((aaveMargin + kaminoMargin) / 2 / 60, 1.0); // 60% margin é bom
+  const defensiveness = (stablesScore + marginScore) / 2;
+
+  let profile = 'DEFENSIVO';
+  if (defensiveness < 0.30) profile = 'FRÁGIL';
+  else if (defensiveness < 0.50) profile = 'MODERADO';
+
+  return { defensiveness, profile };
 }
 
 function buildConvexityGauge(cpValue){
