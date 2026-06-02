@@ -3250,24 +3250,8 @@ function updateLivePerfPeriods(enriched) {
   };
 }
 
-// ── Aplica trades do Diário DeFi (ferramentas.html → localStorage) ──
-(function(){
-  try {
-    var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
-    var tickerMap = {};
-    PORTFOLIO.forEach(function(a){ tickerMap[a.ticker] = a; });
-    diary.filter(function(e){ return e.type==='trade' && e.trade && e.trade.qty>0; })
-         .forEach(function(e){
-           var t = e.trade;
-           var a = tickerMap[t.token];
-           if (!a) return;
-           var mul = t.side === 'buy' ? 1 : -1;
-           a.qty += mul * t.qty;
-           if (t.totalCost) a.invested += mul * t.totalCost;
-         });
-  } catch(e) {}
-})();
-// Recomputa TOTAL_INVESTED com os ajustes do diário + WEEKLY_UPDATE
+// Nota: Sincronização do Diário DeFi desabilitada (atualização manual via print apenas)
+// Recomputa TOTAL_INVESTED com WEEKLY_UPDATE
 TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
 function buildPerfChart(period){

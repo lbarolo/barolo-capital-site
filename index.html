@@ -1458,22 +1458,7 @@ function toggleMobile() {
   ];
   // TOTAL_INVESTED fixado nas quantidades base (imune ao diary sync)
   var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
-  // ── Aplica trades do Diário DeFi (só qty — cost basis não altera ROI display) ──
-  (function(){
-    try {
-      var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
-      var idMap = { BTC:'bitcoin', ETH:'ethereum', SOL:'solana', ADA:'cardano', EIGEN:'eigenlayer',
-                    RDNT:'radiant-capital', POL:'matic-network', ZK:'zksync',
-                    XAI:'xai-blockchain', ZETA:'zetachain' };
-      diary.filter(function(e){ return e.type==='trade' && e.trade && e.trade.qty>0; })
-           .forEach(function(e){
-             var t = e.trade;
-             var h = HOLDINGS.find(function(h){ return h.id === idMap[t.token]; });
-             if (!h) return;
-             h.qty += (t.side === 'buy' ? 1 : -1) * t.qty;
-           });
-    } catch(e) {}
-  })();
+  // Nota: Sincronização do Diário DeFi desabilitada (atualização manual via print apenas)
   var STABLES_USD    = 2536.40;  // USDT 2236.404 + USDS 300
   var LP_POOLED      = 365;
   var TOTAL_DEBT     = 1565.78;  // AAVE 752.77 USDC + Kamino 813.01 USDC
