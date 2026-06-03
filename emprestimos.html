@@ -972,8 +972,8 @@ body, input, button, select, textarea {
  <td class="td-mono neg">$1.736 mix</td>
  <td class="td-mono pos">$1.383</td>
  <td class="td-mono neg">≈ $22</td>
- <td class="td-mono">+1.89 WETH + 1990 USDT supply · HF 6.24</td>
- <td><span class="badge badge-open">● ABERTO · $750 USDC</span></td>
+ <td class="td-mono">+1.89 WETH + 1690 USDT supply · HF 6.24</td>
+ <td><span class="badge badge-open">● ABERTO · $450 USDC</span></td>
  </tr>
  </tbody>
  </table>
@@ -1236,7 +1236,7 @@ function updateLiqPrices(){
 // Princípios: valor depositado/emprestado no início do ciclo, sem juros
 // Atualizar aqui quando houver novo depósito ou novo ciclo
 const AAVE_WETH_PRINCIPAL = 1.880;   // WETH depositado (sem juros)
-const AAVE_USDT_PRINCIPAL = 1990;    // USDT depositado (sem juros) — último depósito 24/04/2026
+const AAVE_USDT_PRINCIPAL = 1690;    // USDT depositado (sem juros) — último saque 03/06/2026 (-$300)
 const AAVE_USDC_PRINCIPAL = 748.00;  // USDC emprestado inicial — refinanciamento 10/04/2026
 const KAMINO_SOL_PRINCIPAL  = 20.39; // SOL depositado (sem juros) — último depósito 24/04/2026
 const KAMINO_USDS_PRINCIPAL = 300.78;// USDS depositado (sem juros)
@@ -2161,7 +2161,7 @@ function toggleLang() {
       if (fill) { fill.style.width = fillPct + '%'; fill.style.background = ltvColor; }
 
       // KPI dívida total (atualiza depois do AAVE)
-      const aaveDebt = window._liveAaveDebt || 750.16;
+      const aaveDebt = window._liveAaveDebt || 450.16;
       updateDataUsd('em-kpi-debt', aaveDebt + totalBorrow);
       const kpiDebtSub = $('em-kpi-debt')?.nextElementSibling;
       if (kpiDebtSub) kpiDebtSub.textContent = `AAVE $${aaveDebt.toFixed(0)} · Kamino $${totalBorrow.toFixed(0)}`;
@@ -2188,7 +2188,7 @@ function toggleLang() {
 
     // AAVE
     const wethQty  = window._liveAaveWethQty  || 1.88;
-    const usdtQty  = window._liveAaveUsdtQty  || 1990;
+    const usdtQty  = window._liveAaveUsdtQty  || 1690;
     const wethApy  = window._liveAaveWethApy  || 2.50;
     const usdtApy  = window._liveAaveUsdtApy  || 1.77;
     const aaveYield = ((wethQty * ep * wethApy / 100) + (usdtQty * usdtApy / 100)) / 12;
