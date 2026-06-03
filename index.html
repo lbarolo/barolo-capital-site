@@ -1447,7 +1447,7 @@ function toggleMobile() {
   // Portfólio interno para cálculo de retorno (quantidades não exibidas)
   var HOLDINGS = [
     { id: 'bitcoin',        qty: 0.0012463,     invested: 85.83   },
-    { id: 'ethereum',       qty: 2.18402741,    invested: 4863.02 },  // +0.0543 ETH da Uniswap swap de $300 USDT
+    { id: 'ethereum',       qty: 2.12972741,    invested: 4563.02 },
     { id: 'solana',         qty: 21.11481476,   invested: 2343.93 },
     { id: 'cardano',        qty: 375.245,        invested: 530.95  },
     { id: 'eigenlayer',     qty: 153.36298802,  invested: 45.87   },
@@ -1476,9 +1476,9 @@ function toggleMobile() {
            });
     } catch(e) {}
   })();
-  var STABLES_USD    = 2002.57;  // USDT 1702.574 + USDS 300 (saída $533.83 em 03/06/2026)
+  var STABLES_USD    = 2536.40;  // USDT 2236.404 + USDS 300
   var LP_POOLED      = 365;
-  var TOTAL_DEBT     = 1265.78;  // AAVE 452.77 USDC + Kamino 813.01 USDC
+  var TOTAL_DEBT     = 1565.78;  // AAVE 752.77 USDC + Kamino 813.01 USDC
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
 
