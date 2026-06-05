@@ -1644,13 +1644,15 @@ function renderUI(enriched){
  ethPrice = getPrice('ethereum');
  solPrice = getPrice('solana');
 
- _livePortfolioGross = enriched.reduce((s,a)=>s+a.currentValue, 0);
- const cgTotal = _livePortfolioGross;
+ var stablesTotal = enriched.filter(a=>a.isStable).reduce((s,a)=>s+a.currentValue, 0);
+ var tokensVolatilesTotal = enriched.filter(a=>!a.isStable).reduce((s,a)=>s+a.currentValue, 0);
+ _livePortfolioGross = tokensVolatilesTotal + stablesTotal;
+ const cgTotal = tokensVolatilesTotal; // só tokens voláteis, sem stables
  const aaveDebtLive = window._liveAaveDebt || AAVE_DEBT;
  const kaminoDebtLive = window._liveKaminoDebt || KAMINO_DEBT;
- // Patrimônio Líquido = SPOT (ativos ao vivo, inclui stables) + POOLS LP − Dívida total
- const netTotal = cgTotal + LP_POOLED - (aaveDebtLive + kaminoDebtLive);
- const totalPnL = cgTotal + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
+ // Patrimônio Líquido = Tokens voláteis + Stables + POOLS LP − Dívida total
+ const netTotal = tokensVolatilesTotal + stablesTotal + LP_POOLED - (aaveDebtLive + kaminoDebtLive);
+ const totalPnL = _livePortfolioGross + LP_POOLED - TOTAL_DEBT - TOTAL_INVESTED;
  const realPnL = netTotal - TOTAL_INVESTED;
  const roi = (realPnL / TOTAL_INVESTED)*100;
  // 24h: só ativos voláteis (stables ~0% mas incluídas) + estimativa LP (50% WETH)
@@ -1660,14 +1662,13 @@ function renderUI(enriched){
 
  set('s-net-total', fmtCurrency(netTotal, 0));
  set('s-net-card', fmtCurrency(netTotal, 0));
-  // Update STABLES card — soma todos os isStable do enriched
-  var stablesTotal = enriched.filter(a=>a.isStable).reduce((s,a)=>s+(a.currentValue||a.qty),0);
+  // Update STABLES card — already calculated above as stablesTotal
   window._stablesTotalUSD = stablesTotal; // global para convexidade
   set('s-stables', fmtCurrency(stablesTotal, 0));
   var stablesSub = enriched.filter(a=>a.isStable).map(a=>a.ticker+' '+fmtCurrency(a.currentValue||a.qty,0)).join(' · ');
   if(stablesSub) set('s-stables-sub', stablesSub);
- var volatileTotal = enriched.filter(a=>!a.isStable).reduce((s,a)=>s+a.currentValue,0);
- set('s-spot', fmtCurrency(volatileTotal, 0));
+ // volatileTotal already calculated as tokensVolatilesTotal above
+ set('s-spot', fmtCurrency(tokensVolatilesTotal, 0));
  set('s-spot-sub', enriched.filter(a=>!a.isStable).length+' ativos');
  set('s-pool', fmtCurrency(LP_POOLED, 0));
  set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
@@ -1679,7 +1680,7 @@ function renderUI(enriched){
 
  const ch24El = document.getElementById('s-24h');
  if(ch24El){ const c24abs=Math.abs(ch24); ch24El.textContent=(ch24>=0?'+':'-')+fmtCurrency(c24abs,0); ch24El.className='hero-meta-val sensitive '+(ch24>=0?'pos':'neg'); }
- set('s-24h-sub', (ch24>=0?'+':'')+((ch24/cgTotal)*100).toFixed(2)+'% 24h');
+ set('s-24h-sub', (ch24>=0?'+':'')+((ch24/_livePortfolioGross)*100).toFixed(2)+'% 24h');
 
  // Melhor ativo em 24h (maior ganho absoluto em $, excluindo stables)
  const best24 = enriched.filter(a=>!a.isStable).reduce((best,a)=>{
@@ -1699,7 +1700,7 @@ function renderUI(enriched){
    var end = new Date();
    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
    var initialCap = WEEKLY_UPDATE.wealthCurve.invested[0] || 1061;
-   var currentAssets = cgTotal + LP_POOLED; // Ativos brutos (sem descontar dívida)
+   var currentAssets = _livePortfolioGross + LP_POOLED; // Ativos brutos (tokens + stables + LP, sem descontar dívida)
    if (years > 0 && currentAssets > 0 && initialCap > 0) {
      var cagr = (Math.pow(currentAssets / initialCap, 1 / years) - 1) * 100;
      var cagrEl = document.getElementById('s-cagr');
@@ -1751,8 +1752,8 @@ function renderUI(enriched){
 
    // ── Crescimento Total (% live desde 01/2022) ── (usando ativos brutos, sem dívida)
    const INITIAL_CAPITAL = (WEEKLY_UPDATE.wealthCurve.invested[0]) || 1061;
-   const currentAssets = cgTotal + LP_POOLED; // Mesma lógica do CAGR: ativos brutos
-   const growthPct = (currentAssets / INITIAL_CAPITAL - 1) * 100;
+   const currentAssets2 = _livePortfolioGross + LP_POOLED; // Mesma lógica do CAGR: ativos brutos (tokens + stables + LP)
+   const growthPct = (currentAssets2 / INITIAL_CAPITAL - 1) * 100;
    const growthEl = document.getElementById('ev-growth-pct');
    if (growthEl) {
      growthEl.textContent = (growthPct >= 0 ? '+' : '') + growthPct.toFixed(1) + '%';
@@ -1795,7 +1796,7 @@ function renderUI(enriched){
  // ── POPULATE METRICS TAB ──
  (function(){
    var invested = TOTAL_INVESTED;
-   var gross = cgTotal + LP_POOLED;
+   var gross = _livePortfolioGross + LP_POOLED; // tokens + stables + LP
    var debt = aaveDebtLive + kaminoDebtLive;
    var netWorth = gross - debt;
    var dryPowder = WEEKLY_UPDATE.holdings.USDT + WEEKLY_UPDATE.holdings.USDS;
@@ -1831,10 +1832,10 @@ function renderUI(enriched){
    set('metric-roi', '+' + ((gross / initialCap - 1) * 100).toFixed(0) + '%');
  })();
 
- buildAllocationChart(enriched, cgTotal);
+ buildAllocationChart(enriched, _livePortfolioGross); // total includes tokens + stables
 
  if(!chartsBuilt){ buildStaticCharts(); chartsBuilt=true; }
- buildLiveCharts(enriched, cgTotal);
+ buildLiveCharts(enriched, _livePortfolioGross);
  buildConvexityUI(WEEKLY_UPDATE);
 
  // Calculate and render performance metrics
