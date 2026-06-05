@@ -696,7 +696,7 @@ body, input, button, select, textarea {
  </div>
  <div class="stat-card">
   <div class="stat-label">POOLS LP</div>
-  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$380</div>
+  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">—</div>
   <div class="stat-sub">WETH/USDC · Uniswap V3</div>
  </div>
  <div class="stat-card">
@@ -1505,7 +1505,7 @@ var LP_POOLED = (function() {
       return cached.value;
     }
   } catch(e) {}
-  return 380; // fallback se nunca foi aberto pools.html ou cache expirou (≈ valor atual da pool ativa)
+  return 365; // fallback se nunca foi aberto pools.html ou cache expirou (valor inicial da pool em 24/02/2026)
 })();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 753.28;     // USDC @ 2.93% APY (05/06/2026)
