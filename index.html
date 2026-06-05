@@ -1446,16 +1446,16 @@ function toggleMobile() {
 
   // Portfólio interno para cálculo de retorno (quantidades não exibidas)
   var HOLDINGS = [
-    { id: 'bitcoin',        qty: 0.0012463,     invested: 85.83   },
-    { id: 'ethereum',       qty: 2.18402741,    invested: 4863.02 },  // +0.0543 ETH de Uniswap swap de $300 USDT
-    { id: 'solana',         qty: 21.11481476,   invested: 2343.93 },
+    { id: 'bitcoin',        qty: 0.00204156,    invested: 135.74  },
+    { id: 'ethereum',       qty: 2.31142741,    invested: 4880.53 },  // +0.0111 + 0.0596 + 0.0567 + 0.0543 = +0.2417 ETH (03–05 Jun)
+    { id: 'solana',         qty: 22.06959576,   invested: 2409.76 },
     { id: 'cardano',        qty: 375.245,        invested: 530.95  },
     { id: 'eigenlayer',     qty: 153.36298802,  invested: 45.87   },
     { id: 'radiant-capital',qty: 7290.46,        invested: 0       },
     { id: 'matic-network',  qty: 218,            invested: 143.88  },
     { id: 'zksync',         qty: 876,            invested: 0       },
     { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
-    { id: 'zetachain',      qty: 51.1434,        invested: 0       },
+    { id: 'zetachain',      qty: 511434,         invested: 0       },
   ];
   // TOTAL_INVESTED fixado nas quantidades base (imune ao diary sync)
   var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
@@ -1476,9 +1476,9 @@ function toggleMobile() {
            });
     } catch(e) {}
   })();
-  var STABLES_USD    = 2012.57;  // USDT 1702.574 + USDS 300 (saída $533.83 em 03/06/2026)
+  var STABLES_USD    = 2001.94;  // USDT 1700 (1300 AAVE colateral + 400 carteira) + USDS 301.94 Kamino (05/06/2026)
   var LP_POOLED      = 365;
-  var TOTAL_DEBT     = 1565.78;  // AAVE 752.77 USDC + Kamino 813.01 USDC (inalterado)
+  var TOTAL_DEBT     = 1567.31;  // AAVE 753.28 USDC @ 2.93% + Kamino 814.03 USDC @ 5.75% (05/06/2026)
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
 
