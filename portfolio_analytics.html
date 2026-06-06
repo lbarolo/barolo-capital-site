@@ -4524,7 +4524,6 @@ document.addEventListener('DOMContentLoaded',function(){
  }
 
  console.log('[BaroloFetch] Complete ');
- }
 
  // ── Run ───────────────────────────────────────────────────────────
  async function runAll() {
@@ -4902,122 +4901,6 @@ function toggleLang() {
   document.addEventListener('DOMContentLoaded', function() {
     load();
     setInterval(load, 5 * 60 * 1000);
-  });
-})();
-
-
-// ── FEAR & GREED INDEX ──────────────────────────────────────────────────────
-(function() {
-  function fgColor(v) {
-    if (v <= 24) return '#b22222';
-    if (v <= 44) return '#cd5c5c';
-    if (v <= 55) return '#daa520';
-    if (v <= 74) return '#3cb371';
-    return '#228b22';
-  }
-  function fgText(v) {
-    if (v <= 24) return 'MEDO EXTREMO';
-    if (v <= 44) return 'MEDO';
-    if (v <= 55) return 'NEUTRO';
-    if (v <= 74) return 'GANANCIA';
-    return 'GANANCIA EXT.';
-  }
-  var fgInst = null;
-
-  function drawGauge(val) {
-    var canvas = document.getElementById('fg-gauge');
-    if (!canvas) return;
-    var ctx2 = canvas.getContext('2d');
-    var W = 130, H = 70, cx = 65, cy = 68, r = 58;
-    ctx2.clearRect(0, 0, W, H);
-
-    // Background arc
-    ctx2.beginPath();
-    ctx2.arc(cx, cy, r, Math.PI, 0);
-    ctx2.lineWidth = 10;
-    ctx2.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark'
-      ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
-    ctx2.stroke();
-
-    // Colored arc
-    var grad = ctx2.createLinearGradient(cx - r, cy, cx + r, cy);
-    grad.addColorStop(0,    '#b22222');
-    grad.addColorStop(0.25, '#cd5c5c');
-    grad.addColorStop(0.5,  '#daa520');
-    grad.addColorStop(0.75, '#3cb371');
-    grad.addColorStop(1,    '#228b22');
-    var pct = val / 100;
-    ctx2.beginPath();
-    ctx2.arc(cx, cy, r, Math.PI, Math.PI + Math.PI * pct);
-    ctx2.lineWidth = 10;
-    ctx2.lineCap = 'round';
-    ctx2.strokeStyle = fgColor(val);
-    ctx2.stroke();
-
-    // Needle
-    var angle = Math.PI + Math.PI * pct;
-    var nx = cx + (r - 5) * Math.cos(angle);
-    var ny = cy + (r - 5) * Math.sin(angle);
-    ctx2.beginPath();
-    ctx2.moveTo(cx, cy);
-    ctx2.lineTo(nx, ny);
-    ctx2.lineWidth = 2.5;
-    ctx2.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark'
-      ? '#e8e0d0' : '#16110c';
-    ctx2.lineCap = 'round';
-    ctx2.stroke();
-
-    // Center dot
-    ctx2.beginPath();
-    ctx2.arc(cx, cy, 4, 0, Math.PI * 2);
-    ctx2.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark'
-      ? '#e8e0d0' : '#16110c';
-    ctx2.fill();
-
-    // Update text
-    var vEl = document.getElementById('fg-value');
-    var lEl = document.getElementById('fg-label');
-    var ndl = document.getElementById('fg-needle');
-    if (vEl) { vEl.textContent = val; vEl.style.color = fgColor(val); }
-    if (lEl) { lEl.textContent = fgText(val); lEl.style.color = fgColor(val); }
-    if (ndl) ndl.style.left = (val) + '%';
-  }
-
-  function setHist(id, val) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = val + ' · ' + fgText(val);
-    el.style.color = fgColor(val);
-  }
-
-  function fetchFG() {
-    fetch('https://api.alternative.me/fng/?limit=7&format=json')
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (!d || !d.data || !d.data.length) throw new Error('no data');
-        var today = parseInt(d.data[0].value);
-        var yest  = parseInt(d.data[1].value);
-        var week  = parseInt(d.data[6].value);
-        var ts    = new Date(parseInt(d.data[0].timestamp) * 1000);
-        drawGauge(today);
-        setHist('fg-yesterday', yest);
-        setHist('fg-week', week);
-        var upEl = document.getElementById('fg-updated');
-        if (upEl) upEl.textContent = ts.toLocaleDateString('pt-BR');
-      })
-      .catch(function() {
-        // static fallback
-        drawGauge(30);
-        setHist('fg-yesterday', 28);
-        setHist('fg-week', 35);
-        var upEl = document.getElementById('fg-updated');
-        if (upEl) upEl.textContent = 'dados estaticos';
-      });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(fetchFG, 600);
-    setInterval(fetchFG, 300000); // every 5 min
   });
 })();
 
