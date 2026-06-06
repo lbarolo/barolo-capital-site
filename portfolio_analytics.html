@@ -1635,6 +1635,151 @@ async function fetchPrices(){
 }
 
 // ──────────────────────────────────────────────────
+// ON-CHAIN FETCH (EVM, Solana, Cardano)
+// ──────────────────────────────────────────────────
+const EVM_WALLETS = [
+  '0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6',
+  '0x5a9aaA78B379ec19beb9E44CCe12697d1894f396',
+  '0x835a5F686c489023064Edb0EA3A0f4ee54BD77F6',
+  '0x8311038D68039f4C3e7237D64f4F2c598fBf4ea3'
+];
+const SOL_WALLET = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
+const CARDANO_WALLET = 'addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znuy0ctq737ruk7e72dqkm0a23';
+
+const ALCHEMY_KEY = 'R_9y5DBqKNR2NapexG8n7';
+const HELIUS_KEY = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
+const BLOCKFROST_KEY = 'mainnetUUNZyRnZ6sg9uAvwnprB7vNIu8s7VPKm';
+
+// EVM RPC URLs (Ethereum, Arbitrum, Base)
+const EVM_RPCS = {
+  ethereum: `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+  arbitrum: `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+  base: `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`
+};
+
+// Tokens to track on EVM (por rede)
+const EVM_TOKENS = {
+  ethereum: {
+    '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2': 'WETH',
+    '0xdAC17F958D2ee523a2206206994597C13D831ec7': 'USDT',
+    '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': 'USDC',
+  },
+  arbitrum: {
+    '0x82aF49447d8a07e3bd95bd0d56f313302c4033DA': 'WETH',
+    '0xFd086bC7CD5C481DCC9C85Ebe478A1C0b69FCbb9': 'USDT',
+    '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5F8a': 'USDC',
+  },
+  base: {
+    '0x4200000000000000000000000000000000000006': 'WETH',
+    '0xd9aAEc86B65D86f6A7B630E2412a2e2e7620e735': 'USDC',
+  }
+};
+
+async function fetchEVMBalances() {
+  try {
+    const allBalances = {};
+    for (const [chain, rpcUrl] of Object.entries(EVM_RPCS)) {
+      const chainBalances = {};
+      for (const wallet of EVM_WALLETS) {
+        // Get ETH balance
+        try {
+          const ethRes = await fetch(rpcUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [wallet, 'latest'] }),
+            signal: AbortSignal.timeout(5000)
+          });
+          const ethData = await ethRes.json();
+          if (ethData.result) {
+            const wethAmt = parseInt(ethData.result, 16) / 1e18;
+            chainBalances['WETH'] = (chainBalances['WETH'] || 0) + wethAmt;
+          }
+        } catch(e) { console.debug('[EVM] ETH fetch failed:', e.message); }
+
+        // Get ERC-20 balances
+        const tokens = EVM_TOKENS[chain] || {};
+        for (const [tokenAddr, tokenSymbol] of Object.entries(tokens)) {
+          try {
+            const balanceOfSig = '0x70a08231'; // balanceOf(address)
+            const paddedWallet = wallet.toLowerCase().slice(2).padStart(64, '0');
+            const data = `${balanceOfSig}000000000000000000000000${paddedWallet}`;
+            const callRes = await fetch(rpcUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to: tokenAddr, data }, 'latest'] }),
+              signal: AbortSignal.timeout(5000)
+            });
+            const callData = await callRes.json();
+            if (callData.result && callData.result !== '0x') {
+              const decimals = tokenSymbol === 'USDT' ? 6 : 18;
+              const amt = parseInt(callData.result, 16) / Math.pow(10, decimals);
+              chainBalances[tokenSymbol] = (chainBalances[tokenSymbol] || 0) + amt;
+            }
+          } catch(e) { console.debug(`[EVM] ${tokenSymbol} fetch failed:`, e.message); }
+        }
+      }
+      allBalances[chain] = chainBalances;
+    }
+    return allBalances;
+  } catch(e) {
+    console.error('[EVM] Fetch error:', e);
+    return {};
+  }
+}
+
+async function fetchSolanaBalances() {
+  try {
+    const response = await fetch(`https://api.helius.xyz/v0/addresses/${SOL_WALLET}/balances?api-key=${HELIUS_KEY}`, {
+      signal: AbortSignal.timeout(8000)
+    });
+    const data = await response.json();
+    const balances = {};
+    if (data.tokens) {
+      data.tokens.forEach(token => {
+        if (token.mint === 'So11111111111111111111111111111111111111112') {
+          balances['SOL'] = token.amount / 1e9;
+        }
+        // Add other SPL tokens as needed
+      });
+    }
+    return balances;
+  } catch(e) {
+    console.error('[Solana] Fetch error:', e);
+    return {};
+  }
+}
+
+async function fetchCardanoStake() {
+  try {
+    const response = await fetch(`https://cardano-mainnet.blockfrost.io/api/v0/accounts/${CARDANO_WALLET}`, {
+      headers: { 'project_id': BLOCKFROST_KEY },
+      signal: AbortSignal.timeout(8000)
+    });
+    const data = await response.json();
+    return {
+      'ADA': (data.controlled_amount ? parseInt(data.controlled_amount) / 1e6 : 0)
+    };
+  } catch(e) {
+    console.error('[Cardano] Fetch error:', e);
+    return {};
+  }
+}
+
+async function fetchAllOnChain() {
+  try {
+    const [evm, solana, cardano] = await Promise.all([
+      fetchEVMBalances(),
+      fetchSolanaBalances(),
+      fetchCardanoStake()
+    ]);
+    return { evm, solana, cardano };
+  } catch(e) {
+    console.error('[OnChain] Aggregation error:', e);
+    return { evm: {}, solana: {}, cardano: {} };
+  }
+}
+
+// ──────────────────────────────────────────────────
 // RENDER UI
 // ──────────────────────────────────────────────────
 var chartsBuilt = false;
@@ -4384,22 +4529,49 @@ document.addEventListener('DOMContentLoaded',function(){
  // ── Run ───────────────────────────────────────────────────────────
  async function runAll() {
    const ep = window._liveEthPrice || 2079.21;
+
+   // Fetch all balances in parallel (on-chain + DeFi)
+   const onChainData = await fetchAllOnChain().catch(e => {
+     console.warn('[runAll] fetchAllOnChain:', e.message);
+     return { evm: {}, solana: {}, cardano: {} };
+   });
+
+   // Update PORTFOLIO_DATA with on-chain balances
+   if (onChainData.evm && Object.keys(onChainData.evm).length > 0) {
+     const ethBalances = onChainData.evm.ethereum || {};
+     PORTFOLIO_DATA.forEach(a => {
+       if (a.ticker === 'ETH' || a.ticker === 'WETH') a.qty = ethBalances['WETH'] || a.qty;
+       if (a.ticker === 'USDT') a.qty = ethBalances['USDT'] || a.qty;
+       if (a.ticker === 'USDC') a.qty = ethBalances['USDC'] || a.qty;
+     });
+   }
+
+   if (onChainData.solana && onChainData.solana['SOL']) {
+     const solIndex = PORTFOLIO_DATA.findIndex(a => a.ticker === 'SOL');
+     if (solIndex >= 0) PORTFOLIO_DATA[solIndex].qty = onChainData.solana['SOL'];
+   }
+
+   if (onChainData.cardano && onChainData.cardano['ADA']) {
+     const adaIndex = PORTFOLIO_DATA.findIndex(a => a.ticker === 'ADA');
+     if (adaIndex >= 0) PORTFOLIO_DATA[adaIndex].qty = onChainData.cardano['ADA'];
+   }
+
+   // Fetch DeFi positions and prices in parallel
    await Promise.all([
      fetchAave(ep).catch(e => console.warn('[runAll] fetchAave:', e.message)),
      fetchAaveApys().catch(e => console.warn('[runAll] fetchAaveApys:', e.message)),
      fetchKamino().catch(e => console.warn('[runAll] fetchKamino:', e.message)),
      fetchUniswapLP().catch(() => {}),
-     fetchSolBalance().catch(() => {}),
-     fetchSolTokens().catch(() => {}),
    ]);
-   // Re-render exec bar with live APYs
+
+   // Fetch prices and re-render
    if (typeof fetchPrices === 'function') {
      const ok = await fetchPrices().catch(() => false);
      if (ok && typeof buildEnriched === 'function' && typeof renderUI === 'function') {
        try { renderUI(buildEnriched()); } catch(e) {}
      }
    }
-   console.log('[BaroloFetch] Complete ✓');
+   console.log('[BaroloFetch] On-chain ✓');
  }
 
  const delay = document.readyState === 'loading' ? 2500 : 1500;
