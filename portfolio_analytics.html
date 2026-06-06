@@ -2291,7 +2291,8 @@ function buildConvexityUI(W){
   const enriched = buildEnriched();
   const aaveHF = window._liveAaveHF || 6.88;
   const kaminoLTV = window._liveKaminoLTV || 0.401;
-  const liveETH = W.holdings.find(h=>h.id==='ethereum')?.price || 1470;
+  // W.holdings é objeto {ticker:qty}, não array — usa o helper de preço live
+  const liveETH = getPrice('ethereum') || 1470;
 
   const cv = calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH);
 
@@ -3851,6 +3852,7 @@ function buildPnlOrigin() {
  border: { display: false }
  }
  }
+ }
  });
 }
 
@@ -4288,8 +4290,8 @@ document.addEventListener('DOMContentLoaded',function(){
    ethCall(ETH_RPC, BLUECHIP_SPOKE, walletData).catch(() => null)
  ]);
 
- const mainColl = decNum(decUint(mainRaw, 3), 26); // V4: USD-8dec × RAY/1e9
- const mainDebt = decNum(decUint(mainRaw, 4), 35); // V4: USD-8dec × RAY
+ const mainColl = decNum(decUint(mainRaw, 3), 26); // V4: collateral USD /1e26
+ const mainDebt = decNum(decUint(mainRaw, 4), 53); // V4: debt USD /1e53 (collateral scale × RAY 1e27)
  const hf       = decNum(decUint(mainRaw, 2), 18); // WAD = 1e18
 
  let bcColl = 0;
@@ -4314,6 +4316,10 @@ document.addEventListener('DOMContentLoaded',function(){
  }
  if (hf > 1e15) {
    console.warn('[AAVE V4] Sanity: HF impossible (' + hf.toExponential(2) + '), discarding'); return null;
+ }
+ // Com HF > 1, dívida < colateral sempre. Valor acima = erro de escala no parse → descarta.
+ if (debt > collateral || debt > 1e7) {
+   console.warn('[AAVE V4] Sanity: debt $' + debt.toExponential(2) + ' > collateral, parse error, discarding'); return null;
  }
 
  // Update AAVE card UI
@@ -4533,24 +4539,27 @@ document.addEventListener('DOMContentLoaded',function(){
      return { evm: {}, solana: {}, cardano: {} };
    });
 
-   // Update PORTFOLIO_DATA with on-chain balances
+   // Atualiza PORTFOLIO_DATA com saldos on-chain — NÃO destrutivo.
+   // WEEKLY_UPDATE.holdings é o TOTAL (wallet + CEX + staking + Kamino), mantido manualmente.
+   // On-chain só vê as wallets rastreadas, então usamos Math.max: detecta depósitos novos
+   // mas nunca encolhe o total manual (ex: ETH wallet 0.066 não deve substituir 2.31 total).
    if (onChainData.evm && Object.keys(onChainData.evm).length > 0) {
      const ethBalances = onChainData.evm.ethereum || {};
      PORTFOLIO_DATA.forEach(a => {
-       if (a.ticker === 'ETH' || a.ticker === 'WETH') a.qty = ethBalances['WETH'] || a.qty;
-       if (a.ticker === 'USDT') a.qty = ethBalances['USDT'] || a.qty;
-       if (a.ticker === 'USDC') a.qty = ethBalances['USDC'] || a.qty;
+       if ((a.ticker === 'ETH' || a.ticker === 'WETH') && ethBalances['WETH']) a.qty = Math.max(a.qty, ethBalances['WETH']);
+       if (a.ticker === 'USDT' && ethBalances['USDT']) a.qty = Math.max(a.qty, ethBalances['USDT']);
+       if (a.ticker === 'USDC' && ethBalances['USDC']) a.qty = Math.max(a.qty, ethBalances['USDC']);
      });
    }
 
    if (onChainData.solana && onChainData.solana['SOL']) {
      const solIndex = PORTFOLIO_DATA.findIndex(a => a.ticker === 'SOL');
-     if (solIndex >= 0) PORTFOLIO_DATA[solIndex].qty = onChainData.solana['SOL'];
+     if (solIndex >= 0) PORTFOLIO_DATA[solIndex].qty = Math.max(PORTFOLIO_DATA[solIndex].qty, onChainData.solana['SOL']);
    }
 
    if (onChainData.cardano && onChainData.cardano['ADA']) {
      const adaIndex = PORTFOLIO_DATA.findIndex(a => a.ticker === 'ADA');
-     if (adaIndex >= 0) PORTFOLIO_DATA[adaIndex].qty = onChainData.cardano['ADA'];
+     if (adaIndex >= 0) PORTFOLIO_DATA[adaIndex].qty = Math.max(PORTFOLIO_DATA[adaIndex].qty, onChainData.cardano['ADA']);
    }
 
    // Fetch DeFi positions and prices in parallel

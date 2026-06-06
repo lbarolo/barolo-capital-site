@@ -1318,7 +1318,7 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
  const MAIN_SPOKE_POOL = '0x94e7A5dCbE816e498b89aB752661904E2F56c485';
  const BC_SPOKE_POOL   = '0x973a023A77420ba610f06b3858aD991Df6d85A08';
  const V4_SELECTOR     = '0xbf92857c'; // getUserAccountData (V4 retorna struct novo)
- // V4 struct: [2]=HF(WAD),[3]=totalCollateral(/1e26),[4]=totalDebt(/1e35)
+ // V4 struct: [2]=HF(WAD),[3]=totalCollateral(/1e26),[4]=totalDebt(/1e53)
  const ETH_QTY = 1.88;
  const USDT_QTY = 1990;
  const USDT_LT = 0.775;
@@ -1361,13 +1361,13 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
    if (!j.result || j.result === '0x') throw new Error('empty result');
    return j.result;
  };
- // V4 struct: [2]=HF(WAD=1e18), [3]=totalCollateral(/1e26), [4]=totalDebt(/1e35)
+ // V4 struct: [2]=HF(WAD=1e18), [3]=totalCollateral(/1e26), [4]=totalDebt(/1e53)
  const parseSpoke = hex => {
    const s = hex.slice(2);
    const u = i => BigInt('0x' + s.slice(i*64,(i+1)*64));
    return {
      coll: Number(u(3)) / 1e26,
-     debt: Number(u(4)) / 1e35,
+     debt: Number(u(4)) / 1e53, // debt scale = collateral 1e26 × RAY 1e27
      hf:   Number(u(2)) / 1e18,
    };
  };
@@ -3829,7 +3829,7 @@ function buildNetRanking() {
  ]);
 
  const mainColl = decNum(decUint(mainRaw, 3), 26);
- const mainDebt = decNum(decUint(mainRaw, 4), 35);
+ const mainDebt = decNum(decUint(mainRaw, 4), 53); // debt scale = collateral 1e26 × RAY 1e27
  const hf       = decNum(decUint(mainRaw, 2), 18);
 
  let bcColl = 0;
@@ -3853,6 +3853,10 @@ function buildNetRanking() {
  }
  if (hf > 1e15) {
    console.warn('[AAVE V4] Sanity: HF impossible, discarding'); return null;
+ }
+ // Com HF > 1, dívida < colateral sempre. Valor acima = erro de escala → descarta.
+ if (debt > collateral || debt > 1e7) {
+   console.warn('[AAVE V4] Sanity: debt $' + debt.toExponential(2) + ' > collateral, parse error, discarding'); return null;
  }
 
  // Update AAVE card UI
