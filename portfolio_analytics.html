@@ -3533,10 +3533,9 @@ function toggleTheme(){
  chartsBuilt=false;
  if(allocChartInst) allocChartInst.destroy();
  destroyStatic();
- Object.values(sparkCharts).forEach(c=>{try{c.destroy();
-  var btn=document.querySelector('button[onclick="toggleTheme()"]');
-  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
-}catch(e){}});
+ Object.values(sparkCharts).forEach(c=>{try{c.destroy();}catch(e){}});
+ var btn=document.querySelector('button[onclick="toggleTheme()"]');
+ if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
  sparkCharts={};
  const enriched=buildEnriched();
  renderUI(enriched);
