@@ -1902,21 +1902,21 @@ function renderUI(enriched){
      growthEl.textContent = (growthPct >= 0 ? '+' : '') + growthPct.toFixed(1) + '%';
      growthEl.style.color = growthPct >= 0 ? 'var(--gold)' : 'var(--red)';
    }
-   set('ev-growth-sub', 'since 01/2022 · '+fmtCurrency(INITIAL_CAPITAL,0)+' → '+fmtCurrency(currentAssets,0));
+   set('ev-growth-sub', 'since 01/2022 · '+fmtCurrency(INITIAL_CAPITAL,0)+' → '+fmtCurrency(currentAssets2,0));
    const pctCurEl = document.getElementById('pct-current');
    if (pctCurEl) {
      pctCurEl.textContent = (growthPct >= 0 ? '+' : '') + growthPct.toFixed(1) + '%';
      pctCurEl.className = growthPct >= 0 ? 'pos' : 'neg';
    }
-   set('pct-current-sub', 'Current assets '+fmtCurrency(currentAssets,0)+' · initial capital '+fmtCurrency(INITIAL_CAPITAL,0));
+   set('pct-current-sub', 'Current assets '+fmtCurrency(currentAssets2,0)+' · initial capital '+fmtCurrency(INITIAL_CAPITAL,0));
    // Atualiza chart se já renderizado: substitui último ponto pelos ativos ao vivo (brutos)
    if (typeof _percentChart !== 'undefined' && _percentChart) {
      try {
        const ds0 = _percentChart.data.datasets[0].data;
        const ds1 = _percentChart.data.datasets[1].data;
-       const liveHist = (currentAssets - INITIAL_CAPITAL) / INITIAL_CAPITAL * 100;
+       const liveHist = (currentAssets2 - INITIAL_CAPITAL) / INITIAL_CAPITAL * 100;
        const lastInv = WEEKLY_UPDATE.wealthCurve.invested.slice(-1)[0] || INITIAL_CAPITAL;
-       const liveCur = (currentAssets - lastInv) / lastInv * 100;
+       const liveCur = (currentAssets2 - lastInv) / lastInv * 100;
        ds0[ds0.length-1] = liveHist;
        ds1[ds1.length-1] = liveCur;
        _percentChart.update('none');
