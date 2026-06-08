@@ -1403,11 +1403,12 @@ var WEEKLY_UPDATE = {
  },
 
  // ── Custos totais investidos por ativo ──
+ // Custo de aquisição = espelha o CoinGecko do Lucas (valor − P&L de cada token, em 08/06/2026)
  invested: {
  BTC: 135.74,
- ETH: 4880.53,
- SOL: 2409.76,
- ADA: 530.95,
+ ETH: 4532.01,  // CoinGecko: valor $3.976 − P&L −$556
+ SOL: 2435.48,  // CoinGecko: valor $1.542 − P&L −$894
+ ADA: 490.92,   // CoinGecko: valor $62 − P&L −$429
  RDNT: 0,
  EIGEN: 45.87,
  POL: 143.88,
@@ -1415,8 +1416,8 @@ var WEEKLY_UPDATE = {
  XAI: 164.52,
  ZETA: 0,
  SCR: 0,
- USDT: 1700,    // colateral AAVE (1,300) + carteira (400) — total cost basis
- USDS: 301.94,  // colateral Kamino
+ USDT: 582.64,  // CoinGecko: valor $1.302 − P&L +$719 (custo de aquisição baixo no CG)
+ USDS: 300,     // stablecoin 1:1
  },
 
  // ── Retornos mensais do portfólio (%) — adicione o mês atual ──
@@ -1795,10 +1796,12 @@ function renderUI(enriched){
  const cgTotal = _livePortfolioGross; // Total de ativos conforme CoinGecko
  const aaveDebtLive = window._liveAaveDebt || AAVE_DEBT;
  const kaminoDebtLive = window._liveKaminoDebt || KAMINO_DEBT;
- // Patrimônio Líquido = CoinGecko total − Dívida total
+ // Patrimônio Líquido = CoinGecko total − Dívida total (card próprio; a dívida aparece SÓ aqui)
  const netTotal = _livePortfolioGross - (aaveDebtLive + kaminoDebtLive);
  const totalPnL = _livePortfolioGross - TOTAL_DEBT - TOTAL_INVESTED;
- const realPnL = netTotal - TOTAL_INVESTED;
+ // P&L TOTAL espelha o CoinGecko: valor das holdings − custo de aquisição, SEM descontar dívida
+ // (a alavancagem/dívida não entra aqui — ela já está refletida no card Patrimônio Líquido).
+ const realPnL = _livePortfolioGross - TOTAL_INVESTED;
  const roi = (realPnL / TOTAL_INVESTED)*100;
  // 24h: variação de todos os ativos em portfolio (LP já incluído em enriched via CoinGecko)
  const ch24 = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0);
