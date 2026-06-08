@@ -1360,8 +1360,8 @@ var WEEKLY_UPDATE = {
  // ── Saldos de carteira (quantidades) ──
  holdings: {
  BTC: 0.00204156,
- ETH: 2.31142741,
- SOL: 22.73102076,
+ ETH: 2.37632741,
+ SOL: 23.31,
  ADA: 375.245,
  RDNT: 7290.46,
  EIGEN: 153.36298802,
@@ -1470,7 +1470,7 @@ var WEEKLY_UPDATE = {
 
 var PORTFOLIO_DATA = [
  { cgId:'bitcoin',       ticker:'BTC',  name:'Bitcoin',   qty:0.00204156,    invested:135.74,  avgCost:66488.37, color:'#F7931A', logo:'https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png' },
- { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.31142741,    invested:4880.53, avgCost:1917.43, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
+ { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.37632741,    invested:4880.53, avgCost:1917.43, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
  { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:23.31,         invested:2450.94, avgCost:107.87,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
  { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
  { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
@@ -4533,34 +4533,11 @@ document.addEventListener('DOMContentLoaded',function(){
  async function runAll() {
    const ep = window._liveEthPrice || 2079.21;
 
-   // Fetch all balances in parallel (on-chain + DeFi)
-   const onChainData = await fetchAllOnChain().catch(e => {
-     console.warn('[runAll] fetchAllOnChain:', e.message);
-     return { evm: {}, solana: {}, cardano: {} };
-   });
-
-   // Atualiza PORTFOLIO_DATA com saldos on-chain — NÃO destrutivo.
-   // WEEKLY_UPDATE.holdings é o TOTAL (wallet + CEX + staking + Kamino), mantido manualmente.
-   // On-chain só vê as wallets rastreadas, então usamos Math.max: detecta depósitos novos
-   // mas nunca encolhe o total manual (ex: ETH wallet 0.066 não deve substituir 2.31 total).
-   if (onChainData.evm && Object.keys(onChainData.evm).length > 0) {
-     const ethBalances = onChainData.evm.ethereum || {};
-     PORTFOLIO_DATA.forEach(a => {
-       if ((a.ticker === 'ETH' || a.ticker === 'WETH') && ethBalances['WETH']) a.qty = Math.max(a.qty, ethBalances['WETH']);
-       if (a.ticker === 'USDT' && ethBalances['USDT']) a.qty = Math.max(a.qty, ethBalances['USDT']);
-       if (a.ticker === 'USDC' && ethBalances['USDC']) a.qty = Math.max(a.qty, ethBalances['USDC']);
-     });
-   }
-
-   if (onChainData.solana && onChainData.solana['SOL']) {
-     const solIndex = PORTFOLIO_DATA.findIndex(a => a.ticker === 'SOL');
-     if (solIndex >= 0) PORTFOLIO_DATA[solIndex].qty = Math.max(PORTFOLIO_DATA[solIndex].qty, onChainData.solana['SOL']);
-   }
-
-   if (onChainData.cardano && onChainData.cardano['ADA']) {
-     const adaIndex = PORTFOLIO_DATA.findIndex(a => a.ticker === 'ADA');
-     if (adaIndex >= 0) PORTFOLIO_DATA[adaIndex].qty = Math.max(PORTFOLIO_DATA[adaIndex].qty, onChainData.cardano['ADA']);
-   }
+   // NOTA: as quantidades de spot (ETH, SOL, USDT, ADA, etc.) vêm EXCLUSIVAMENTE de
+   // WEEKLY_UPDATE.holdings / PORTFOLIO_DATA, sincronizados manualmente com o CoinGecko do Lucas
+   // (a fonte de verdade). Antes havia um fetch on-chain de saldos de carteira que tentava ajustar
+   // o spot, mas as wallets rastreadas não contêm o total (parte fica em CEX/staking/Kamino), o que
+   // inflava/distorcia os números. Removido. O on-chain abaixo é só para DeFi (AAVE/Kamino).
 
    // Fetch DeFi positions and prices in parallel
    await Promise.all([
