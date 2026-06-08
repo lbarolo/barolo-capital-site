@@ -1457,25 +1457,10 @@ function toggleMobile() {
     { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
     { id: 'zetachain',      qty: 51.1434,        invested: 0       },
   ];
-  // TOTAL_INVESTED fixado nas quantidades base (imune ao diary sync)
   var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
-  // ── Aplica trades do Diário DeFi automaticamente (sem duplicidade) ──
-  // IMPORTANTE: Ao atualizar manualmente via print, NÃO incluir trades que já estão no Diário
-  (function(){
-    try {
-      var diary = JSON.parse(localStorage.getItem('bc-diary-v2') || '[]');
-      var idMap = { BTC:'bitcoin', ETH:'ethereum', SOL:'solana', ADA:'cardano', EIGEN:'eigenlayer',
-                    RDNT:'radiant-capital', POL:'matic-network', ZK:'zksync',
-                    XAI:'xai-blockchain', ZETA:'zetachain' };
-      diary.filter(function(e){ return e.type==='trade' && e.trade && e.trade.qty>0; })
-           .forEach(function(e){
-             var t = e.trade;
-             var h = HOLDINGS.find(function(h){ return h.id === idMap[t.token]; });
-             if (!h) return;
-             h.qty += (t.side === 'buy' ? 1 : -1) * t.qty;
-           });
-    } catch(e) {}
-  })();
+  // ── Diário DeFi NÃO altera mais as holdings ──
+  // Removido o sync que somava trades do Diário (localStorage) às quantidades: o Lucas já mantém
+  // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.
   var STABLES_USD    = 2001.94;  // USDT 1700 (1300 AAVE colateral + 400 carteira) + USDS 301.94 Kamino (05/06/2026)
   var LP_POOLED      = 365;
   var TOTAL_DEBT     = 1567.31;  // AAVE 753.28 USDC @ 2.93% + Kamino 814.03 USDC @ 5.75% (05/06/2026)
