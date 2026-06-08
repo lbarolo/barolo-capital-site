@@ -963,8 +963,8 @@ footer span:first-of-type{margin-right:auto}
       </div>
       <div class="hero-divider"></div>
       <div>
-        <div class="hero-stat-val" id="heroCAGRYTD">+40.3%</div>
-        <div class="hero-stat-lbl">CAGR 2026 YTD</div>
+        <div class="hero-stat-val" id="heroCAGRYTD">+14.2%</div>
+        <div class="hero-stat-lbl">Retorno Anual (TIR)</div>
       </div>
       <div class="hero-divider"></div>
       <div>
@@ -1511,16 +1511,6 @@ function toggleMobile() {
     return (Math.pow(currentAssets / INITIAL_CAPITAL, 1 / years) - 1) * 100;
   }
 
-  function calculateCAGRYTD(currentAssets) {
-    var start = new Date(2026, 0, 1); // Jan 1, 2026
-    var end = new Date();
-    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
-    // Ponto base: wealthCurve Jan/26 (value 8570, index 48 dos 53 meses)
-    var ytdStart = 8570; // portfolio value em Jan/2026
-    if (years <= 0 || currentAssets <= 0 || ytdStart <= 0) return 0;
-    return (Math.pow(currentAssets / ytdStart, 1 / years) - 1) * 100;
-  }
-
   function calculateRealReturn(currentAssets) {
     // Inflação acumulada USA (jan 2022 - maio 2026): 20.2%
     var cumulativeInflation = 1.202; // 1 + 0.202
@@ -1539,14 +1529,22 @@ function toggleMobile() {
     // Usar ativos brutos (sem dívida) para comparação consistente com capital inicial
     var currentAssets = spotVal + STABLES_USD + LP_POOLED;
     var cagr = calculateCAGR(currentAssets);
-    var cagrYTD = calculateCAGRYTD(currentAssets);
     var realReturn = calculateRealReturn(currentAssets);
 
     var cagrEl = document.getElementById('heroCAGR');
     if (cagrEl) cagrEl.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%';
 
-    var cagrYTDEl = document.getElementById('heroCAGRYTD');
-    if (cagrYTDEl) cagrYTDEl.textContent = (cagrYTD >= 0 ? '+' : '') + cagrYTD.toFixed(1) + '%';
+    // Retorno Anual (TIR money-weighted) — valor atual da carteira como ponto terminal da série.
+    // Guard: updateHeroReturn pode rodar SINCRONAMENTE (cache quente) antes de WEALTH_VALUES/INVESTED
+    // serem declarados (estão depois da IIFE do ticker). Nesse caso, calculatePerformanceMetrics
+    // preenche o valor no DOMContentLoaded e o próximo fetch atualiza ao vivo.
+    if (typeof WEALTH_VALUES !== 'undefined' && typeof INVESTED !== 'undefined') {
+      var liveCurve = WEALTH_VALUES.slice();
+      liveCurve[liveCurve.length - 1] = currentAssets;
+      var irr = estimateIRR(liveCurve, INVESTED);
+      var irrEl = document.getElementById('heroCAGRYTD');
+      if (irrEl) irrEl.textContent = (irr >= 0 ? '+' : '') + irr.toFixed(1) + '%';
+    }
 
     var realEl = document.getElementById('heroRealReturn');
     if (realEl) realEl.textContent = (realReturn >= 0 ? '+' : '') + realReturn.toFixed(1) + '%';
@@ -1610,6 +1608,14 @@ var WEALTH_LABELS = ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08
 var WEALTH_VALUES = [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,
   1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,
   8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,8872];
+
+// Capital acumulado aportado por mês — 53 entradas, alinhado 1:1 com WEALTH_VALUES (Jan/22→Mai/26).
+// Usado para a TIR (money-weighted) do hero e da seção Performance.
+var INVESTED = [1061,1161,1261,1361,1461,1561,1661,1761,1861,1961,2061,2161,
+  2261,2361,2461,2561,2661,2761,2861,2961,3061,3161,3261,3361,
+  3461,3561,3661,3761,3861,3961,4061,4161,4261,4361,4461,4561,
+  4661,4761,4861,4961,5061,5161,5261,5361,5461,5561,5661,5761,
+  5861,5961,6061,6161,6261];
 
 // CPI USA (accumulated since Jan/2022)
 var CPI_USA = {'01/22': 0, '02/22': 0.8, '03/22': 1.2, '04/22': 2.9, '05/22': 5.0, '06/22': 8.6,
@@ -1807,22 +1813,7 @@ function updateInflationStats(currency) {
 // PERFORMANCE METRICS CALCULATION
 // ══════════════════════════════════
 function calculatePerformanceMetrics() {
-  var WEALTH_LABELS = ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22',
-                       '01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23',
-                       '01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24',
-                       '01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25',
-                       '01/26','02/26','03/26','04/26','05/26'];
-  var WEALTH_VALUES = [853,860,1037,1108,1037,544,772,896,742,923,754,777,
-                       1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,
-                       2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,
-                       8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,
-                       9511,7376,6371,9206,8872];
-  var INVESTED = [1061,1161,1261,1361,1461,1561,1661,1761,1861,1961,2061,2161,
-                  2261,2361,2461,2561,2661,2761,2861,2961,3061,3161,3261,3361,
-                  3461,3561,3661,3761,3861,3961,4061,4161,4261,4361,4461,4561,
-                  4661,4761,4861,4961,5061,5161,5261,5361,5461,5561,5661,5761,
-                  5861,5961,6061,6161,6261,6361,6461,6561,6661];
-
+  // Usa as séries globais WEALTH_LABELS / WEALTH_VALUES / INVESTED (fonte única — atualize só uma vez)
   var n = WEALTH_VALUES.length;
   var startVal = WEALTH_VALUES[0];
   var endVal = WEALTH_VALUES[n - 1];
@@ -1848,8 +1839,13 @@ function calculatePerformanceMetrics() {
   // ── CAGR of total gross portfolio (for reference) ──
   var cagrGross = (Math.pow(endVal / startVal, 1 / years) - 1) * 100;
 
-  // ── IRR (approximate via Newton-Raphson) ──
+  // ── IRR (money-weighted) ──
   var irr = estimateIRR(WEALTH_VALUES, INVESTED);
+
+  // Hero "Retorno Anual (TIR)" — setado AQUI (antes do bloco DOM da seção Performance, que é
+  // dead code e pode lançar) para garantir render no load mesmo sem preços ao vivo.
+  var heroIRRel = document.getElementById('heroCAGRYTD');
+  if (heroIRRel) heroIRRel.textContent = (irr >= 0 ? '+' : '') + irr.toFixed(1) + '%';
 
   // ── Monthly returns ──
   var monthlyReturns = [];
@@ -1882,51 +1878,49 @@ function calculatePerformanceMetrics() {
   // ── Total ROI (gross portfolio) ──
   var roi = ((endVal - startVal) / startVal) * 100;
 
-  // Update DOM — Capital allocation
-  document.getElementById('perfInvested').textContent = '$' + CAPITAL_INVESTED.toLocaleString('en-US', {maximumFractionDigits: 0});
-  document.getElementById('perfDryPowder').textContent = '$' + STABLES_DRY_POWDER.toLocaleString('en-US', {maximumFractionDigits: 0});
-  document.getElementById('perfInvestedReturn').textContent = (returnInvested >= 0 ? '+' : '') + returnInvested.toFixed(0) + '%';
-
-  // Update DOM — Performance metrics
-  document.getElementById('perfCAGR').textContent = (cagrInvested >= 0 ? '+' : '') + cagrInvested.toFixed(2) + '%';
-  document.getElementById('perfIRR').textContent = (irr >= 0 ? '+' : '') + irr.toFixed(2) + '%';
-  document.getElementById('perfSharpe').textContent = (sharpe >= 0 ? '+' : '') + sharpe.toFixed(2);
-  document.getElementById('perfVolatility').textContent = (volatility >= 0 ? '+' : '') + volatility.toFixed(1) + '%';
-  var maxDDEl = document.getElementById('perfMaxDD');
-  maxDDEl.textContent = '−' + maxDD.toFixed(1) + '%';
-  maxDDEl.className = 'perf-metric-value neg';
-  document.getElementById('perfROI').textContent = (roi >= 0 ? '+' : '') + roi.toFixed(0) + '%';
-
-  // Color coding for metrics
-  var cagrEl = document.getElementById('perfCAGR');
-  cagrEl.className = 'perf-metric-value' + (cagrInvested >= 0 ? ' pos' : ' neg');
-  var irrEl = document.getElementById('perfIRR');
-  irrEl.className = 'perf-metric-value' + (irr >= 0 ? ' pos' : ' neg');
-  var sharpeEl = document.getElementById('perfSharpe');
-  sharpeEl.className = 'perf-metric-value' + (sharpe >= 0 ? ' pos' : ' neg');
-  var volEl = document.getElementById('perfVolatility');
-  volEl.className = 'perf-metric-value' + (volatility >= 0 ? ' neg' : ' pos');
-  var roiEl = document.getElementById('perfROI');
-  roiEl.className = 'perf-metric-value' + (roi >= 0 ? ' pos' : ' neg');
-  var investedReturnEl = document.getElementById('perfInvestedReturn');
-  investedReturnEl.className = 'perf-metric-value' + (returnInvested >= 0 ? ' pos' : ' neg');
+  // Update DOM — seção "Performance" (pode não existir no HTML atual). Helper tolerante a null
+  // para nunca lançar e interromper o resto da inicialização (ícone de tema, nav, etc.).
+  function setPerf(id, text, cls) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (text != null) el.textContent = text;
+    if (cls) el.className = cls;
+  }
+  setPerf('perfInvested', '$' + CAPITAL_INVESTED.toLocaleString('en-US', {maximumFractionDigits: 0}));
+  setPerf('perfDryPowder', '$' + STABLES_DRY_POWDER.toLocaleString('en-US', {maximumFractionDigits: 0}));
+  setPerf('perfInvestedReturn', (returnInvested >= 0 ? '+' : '') + returnInvested.toFixed(0) + '%', 'perf-metric-value' + (returnInvested >= 0 ? ' pos' : ' neg'));
+  setPerf('perfCAGR', (cagrInvested >= 0 ? '+' : '') + cagrInvested.toFixed(2) + '%', 'perf-metric-value' + (cagrInvested >= 0 ? ' pos' : ' neg'));
+  setPerf('perfIRR', (irr >= 0 ? '+' : '') + irr.toFixed(2) + '%', 'perf-metric-value' + (irr >= 0 ? ' pos' : ' neg'));
+  setPerf('perfSharpe', (sharpe >= 0 ? '+' : '') + sharpe.toFixed(2), 'perf-metric-value' + (sharpe >= 0 ? ' pos' : ' neg'));
+  setPerf('perfVolatility', (volatility >= 0 ? '+' : '') + volatility.toFixed(1) + '%', 'perf-metric-value' + (volatility >= 0 ? ' neg' : ' pos'));
+  setPerf('perfMaxDD', '−' + maxDD.toFixed(1) + '%', 'perf-metric-value neg');
+  setPerf('perfROI', (roi >= 0 ? '+' : '') + roi.toFixed(0) + '%', 'perf-metric-value' + (roi >= 0 ? ' pos' : ' neg'));
 }
 
-// Estimate IRR using Newton-Raphson method
+// IRR money-weighted (taxa interna de retorno) — % ANUALIZADO.
+// Fluxo de caixa: aportes incrementais negativos a cada mês + valor terminal da carteira no fim.
+// Resolve por bisseção na taxa mensal (estável; o Newton-Raphson anterior divergia para ~1e28).
 function estimateIRR(values, invested) {
-  var rate = 0.10; // initial guess 10%
-  for (var iter = 0; iter < 20; iter++) {
-    var npv = 0, dnpv = 0;
-    for (var t = 0; t < values.length; t++) {
-      var cf = (t === values.length - 1) ? (values[t] - invested[t]) : -invested[t];
-      npv += cf / Math.pow(1 + rate, t / 12);
-      dnpv -= (t / 12) * cf / Math.pow(1 + rate, t / 12 + 1);
-    }
-    var delta = npv / dnpv;
-    rate -= delta;
-    if (Math.abs(delta) < 1e-6) break;
+  var n = values.length;
+  if (n < 2 || !invested || invested.length < n) return 0; // usa os primeiros n aportes
+  // aporte incremental do mês t (o primeiro é o capital inicial)
+  var contrib = [];
+  for (var t = 0; t < n; t++) contrib.push(t === 0 ? invested[0] : invested[t] - invested[t - 1]);
+  var terminal = values[n - 1];
+  function npv(rm) {
+    var s = 0;
+    for (var t = 0; t < n; t++) s += -contrib[t] / Math.pow(1 + rm, t);
+    return s + terminal / Math.pow(1 + rm, n - 1);
   }
-  return rate * 100;
+  // npv decresce com a taxa → bisseção entre -99% e +100% ao mês
+  var lo = -0.99, hi = 1.0;
+  if (npv(lo) <= 0 || npv(hi) >= 0) return 0; // sem raiz no intervalo (ex: dados inconsistentes)
+  for (var i = 0; i < 200; i++) {
+    var mid = (lo + hi) / 2;
+    if (npv(mid) > 0) lo = mid; else hi = mid;
+  }
+  var rm = (lo + hi) / 2;
+  return (Math.pow(1 + rm, 12) - 1) * 100; // anualiza a taxa mensal
 }
 
 // Initialize on DOMContentLoaded
