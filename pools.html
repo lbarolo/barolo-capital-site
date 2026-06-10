@@ -572,15 +572,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 <div id="bc-lp-active-section">
 <!-- ══ UNISWAP V3 LP — REVERT ══ -->
-<div class="section-label">Liquidity Pool Ativa — Uniswap V3</div>
+<div class="section-label">Liquidity Pool — Uniswap V3 (encerrada em 03/06/2026)</div>
 
 <div class="revert-panel">
  <!-- Toolbar -->
  <div class="revert-toolbar">
  <div class="revert-title">
  <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ WETH/USDC</span>
- <span style="font-size:9px;color:var(--muted);">0.30% · NFT #4694262</span>
- <span class="badge-green">● IN-RANGE</span>
+ <span style="font-size:9px;color:var(--muted);">0.30% · Base</span>
+ <span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;color:var(--muted);border:1px solid var(--border);">● ENCERRADA 03/06/2026</span>
  </div>
  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
  <a class="btn-open" href="https://revert.finance/" target="_blank" rel="noopener">
@@ -591,7 +591,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
  <!-- LP metrics bar — APR líquido pós-AAVE -->
  <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
- <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms" id="lp-pooled-sub">0.1185 WETH + 102.76 USDC</div></div>
+ <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$0.00</div><div class="lp-ms" id="lp-pooled-sub">posição encerrada — fundos retirados em 03/06/2026</div></div>
  <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-apr-sub">fees / capital investido</div></div>
  <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−3.79%</div><div class="lp-ms">USDC · taxa atual</div></div>
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
@@ -1599,14 +1599,14 @@ initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
 
 // ── META 5% ──
 setTimeout(function() {
- var STABLES = 2012.57; // USDT 1702.574 + USDS 300 (saída $533.83 em 03/06/2026)
- var ids = ['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'];
- var QTYS = {ethereum:2.15766741,solana:20.31134268,cardano:375.245,'radiant-capital':7290.46,
- eigenlayer:153.363,'matic-network':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
+ var STABLES = 2001.94; // USDT 1700 (1300 AAVE colateral + 400 carteira) + USDS 301.94 (05/06/2026)
+ var ids = ['bitcoin','ethereum','solana','cardano','radiant-capital','eigenlayer','polygon-ecosystem-token','zksync','xai-blockchain','zetachain'];
+ var QTYS = {bitcoin:0.00204156,ethereum:2.37632741,solana:23.31,cardano:375.245,'radiant-capital':7290.46,
+ eigenlayer:153.36298802,'polygon-ecosystem-token':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 752.77) + (window._liveKaminoDebt || 813.01);
+ var debt = (window._liveAaveDebt || 753.28) + (window._liveKaminoDebt || 814.03);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -1641,7 +1641,23 @@ function setRef(ref){
 
 // ── UNISWAP V3 LP LIVE DATA ──
 (async function fetchUniswapLPData() {
-  // Pool ATIVA: WETH/USDC 0.30% na BASE (chain_id=8453) — NFT #4694262
+  // POSIÇÃO ENCERRADA em 03/06/2026 — liquidez 0 e fees coletadas on-chain (verificado 10/06/2026).
+  // O fetch live foi desativado: exibe estado final realizado e zera o LP no patrimônio.
+  {
+    const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+    set('lp-pooled', '$0.00');
+    set('lp-pooled-sub', 'posição encerrada — fundos retirados em 03/06/2026');
+    set('lp-apr', '+32.0%');
+    set('lp-apr-sub', 'fee APR realizado (24/02–03/06)');
+    set('lp-apr-net', '+29.1%');
+    set('lp-apr-net-sub', '+32.0% − 2.93% borrow');
+    const netEl = document.getElementById('lp-apr-net');
+    if (netEl) netEl.className = 'lp-mv pos';
+    window._liveLP = 0;
+    try { localStorage.setItem('bc-lp-pooled', JSON.stringify({ value: 0, timestamp: Date.now() })); } catch(e) {}
+    return;
+  }
+  // Pool WETH/USDC 0.30% na BASE (chain_id=8453) — código mantido para reuso em pool futura
   const NFT_MGR  = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base Uniswap V3 NonfungiblePositionManager
   const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
   const TOKEN_ID = 4694262;
@@ -2538,7 +2554,7 @@ var POOLS = [
   { pair:'ETH/USDC 0.05%', net:'Arbitrum', open:'01/08/2023', close:'26/03/2024', days:209, capital:1014, fees:22,   il:0,   result:22,   status:'closed', lvr:0,    fcr:3.8,   invGrowth:2.2,  obs:'Pool longa com pouco volume. ETH deu grande valorização, pool deslizou em ranges. Final: 0.148 ETH + 30.95 USDC.' },
   { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
   // ── ATIVA ──
-  { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'03/06/2026', days:99,  capital:365, fees:22.28, il:24.64, result:15.73, status:'closed', lvr:0,   fcr:30.9,  invGrowth:-0.57, obs:'Saiu do range em 03/06 com preço 1821.67 > max 3146.36. Coletadas taxas e encerrada. Fee APR 32% realizado.' },
+  { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'03/06/2026', days:99,  capital:365, fees:22.28, il:6.55, result:15.73, status:'closed', lvr:0,   fcr:30.9,  invGrowth:-0.57, obs:'Saiu do range em 03/06 com preço $1.821,67 < min $1.855,72 (100% WETH). Coletadas taxas e encerrada. Fee APR 32% realizado. il = fees − result (Revert 03/06).' },
 ];
 
 // ── Hidrata pool ativa (POOLS[POOLS.length-1]) com cache live do track.html ──
@@ -4160,16 +4176,16 @@ function buildNetRanking() {
  window._liveSolPrice = solPrice || window._liveSolPrice || 87.28;
  // Re-trigger via getLivePrice so calcCapOp recalculates with fresh debt values
  if (typeof getLivePrice === 'function') {
- const IDS = ['ethereum','solana','cardano','radiant-capital','eigenlayer',
- 'matic-network','zksync','xai-blockchain','zetachain'];
- const QTYS = {ethereum:2.084106,solana:20.31134268,cardano:375.245,
- 'radiant-capital':7290.46,eigenlayer:153.363,'matic-network':218,
+ const IDS = ['bitcoin','ethereum','solana','cardano','radiant-capital','eigenlayer',
+ 'polygon-ecosystem-token','zksync','xai-blockchain','zetachain'];
+ const QTYS = {bitcoin:0.00204156,ethereum:2.37632741,solana:23.31,cardano:375.245,
+ 'radiant-capital':7290.46,eigenlayer:153.36298802,'polygon-ecosystem-token':218,
  zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
  const STABLES = 2001.94; // USDT 1700 (1300 colateral AAVE + 400 carteira) + USDS 301.94 (05/06/26)
- const LP_POOLED = window._liveLP || 365;
+ const LP_POOLED = window._liveLP || 0; // pool encerrada 03/06/2026
  const DEBT = (window._liveAaveDebt || 753.28) + (window._liveKaminoDebt || 814.03);
  const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;
@@ -4192,7 +4208,7 @@ function buildNetRanking() {
   await Promise.all([fetchAllEVM(), fetchKamino(), fetchSolBalance(), fetchSolTokens(), fetchAave(), fetchUniswapLP()]);
  // Re-trigger capital operacional chart if on pools page
  if (typeof getLivePrice === 'function') {
- getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'])
+ getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','polygon-ecosystem-token','zksync','xai-blockchain','zetachain'])
  .then(prices => {
  let total = window._livePatrimonio;
  if (!total) return;

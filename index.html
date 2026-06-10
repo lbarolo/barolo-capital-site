@@ -1452,7 +1452,7 @@ function toggleMobile() {
     { id: 'cardano',        qty: 375.245,        invested: 530.95  },
     { id: 'eigenlayer',     qty: 153.36298802,  invested: 45.87   },
     { id: 'radiant-capital',qty: 7290.46,        invested: 0       },
-    { id: 'matic-network',  qty: 218,            invested: 143.88  },
+    { id: 'polygon-ecosystem-token',  qty: 218,            invested: 143.88  },
     { id: 'zksync',         qty: 876,            invested: 0       },
     { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
     { id: 'zetachain',      qty: 51.1434,        invested: 0       },
@@ -1462,7 +1462,7 @@ function toggleMobile() {
   // Removido o sync que somava trades do Diário (localStorage) às quantidades: o Lucas já mantém
   // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.
   var STABLES_USD    = 2001.94;  // USDT 1700 (1300 AAVE colateral + 400 carteira) + USDS 301.94 Kamino (05/06/2026)
-  var LP_POOLED      = 365;
+  var LP_POOLED      = 0;        // pool WETH/USDC Base encerrada em 03/06/2026 — fundos voltaram à carteira (já no spot)
   var TOTAL_DEBT     = 1567.31;  // AAVE 753.28 USDC @ 2.93% + Kamino 814.03 USDC @ 5.75% (05/06/2026)
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
@@ -1804,15 +1804,15 @@ function calculatePerformanceMetrics() {
   var endVal = WEALTH_VALUES[n - 1];
   var years = 4 + (4 / 12); // Jan 2022 to May 2026 = 4 years 4 months
 
-  // ── Capital allocation (20/05/2026 verified data) ──
-  var STABLES_DRY_POWDER = 2536.40;  // USDT + USDS (not invested)
+  // ── Capital allocation (05/06/2026 verified data) ──
+  var STABLES_DRY_POWDER = 2001.94;  // USDT 1700 + USDS 301.94 (not invested)
   var TOTAL_APORTED = 6784;           // Total capital aported since Jan/2022
-  var CAPITAL_INVESTED = TOTAL_APORTED - STABLES_DRY_POWDER; // 4248K deployed in assets
+  var CAPITAL_INVESTED = TOTAL_APORTED - STABLES_DRY_POWDER; // deployed in assets
 
-  // Portfolio composition (May 26, 2026)
-  var SPOT_VALUE = 7533.55;    // Cripto holdings
-  var LP_POOLED = 365;          // Uniswap pool
-  var TOTAL_DEBT = 1565.78;     // AAVE 752.77 + Kamino 813.01
+  // Portfolio composition (10/06/2026)
+  var SPOT_VALUE = 5698;        // Cripto holdings (preços CoinGecko 10/06/2026)
+  var LP_POOLED = 0;            // pool WETH/USDC Base encerrada em 03/06/2026
+  var TOTAL_DEBT = 1567.31;     // AAVE 753.28 + Kamino 814.03 (05/06/2026)
   var PORTFOLIO_INVESTED_VALUE = SPOT_VALUE + LP_POOLED - TOTAL_DEBT; // 6335.38K
 
   // ── CAGR of invested capital (excluding dry powder) ──

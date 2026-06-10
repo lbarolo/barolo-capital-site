@@ -784,9 +784,9 @@ body, input, button, select, textarea {
  <div class="section-title">Aave V4 — Ethereum <span>MAINNET</span></div>
  <div class="two-col">
  <div>
- <div class="field"><label data-i18n="lbl-eth-col">ETH colateral (ETH)</label><input type="number" id="aave-eth" value="1.89" step="0.001" oninput="calcAave()"></div>
- <div class="field"><label data-i18n="lbl-usdt-col">USDT colateral ($)</label><input type="number" id="aave-usdt" value="1990" step="1" oninput="calcAave()"></div>
- <div class="field"><label data-i18n="lbl-usdc-debt-aave">Dívida USDC ($)</label><input type="number" id="aave-debt" value="751.82" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-eth-col">ETH colateral (ETH)</label><input type="number" id="aave-eth" value="2.16" step="0.001" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-usdt-col">USDT colateral ($)</label><input type="number" id="aave-usdt" value="1300" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-debt-aave">Dívida USDC ($)</label><input type="number" id="aave-debt" value="753.28" step="1" oninput="calcAave()"></div>
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="aave-ethprice" value="2070" step="1" oninput="calcAave()"></div>
@@ -814,9 +814,9 @@ body, input, button, select, textarea {
  <div class="section-title">Kamino — Solana <span>MAIN MARKET</span></div>
  <div class="two-col">
  <div>
- <div class="field"><label data-i18n="lbl-sol-col">SOL colateral (SOL)</label><input type="number" id="kam-sol" value="20.47" step="0.1" oninput="calcKamino()"></div>
- <div class="field"><label data-i18n="lbl-usds-col">USDS colateral ($)</label><input type="number" id="kam-pyusd" value="301.42" step="1" oninput="calcKamino()"></div>
- <div class="field"><label data-i18n="lbl-usdc-debt">Dívida USDC ($)</label><input type="number" id="kam-debt" value="811.35" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-sol-col">SOL colateral (SOL)</label><input type="number" id="kam-sol" value="23.30" step="0.1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usds-col">USDS colateral ($)</label><input type="number" id="kam-pyusd" value="301.94" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-debt">Dívida USDC ($)</label><input type="number" id="kam-debt" value="814.03" step="1" oninput="calcKamino()"></div>
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-sol-price">Preço SOL atual ($)</label><input type="number" id="kam-solprice" value="90.24" step="0.1" oninput="calcKamino()"></div>
@@ -2173,7 +2173,7 @@ function calcUni(){
 // ══════════════════════════════════════════════
 // Portfolio base values
 var BASE = {
- ethQty:2.31142741, solQty:22.73102076,  // +0.2417 ETH + 1.8345 SOL + 0.6614 SOL (02–05 Jun 2026)
+ ethQty:2.37632741, solQty:23.31,  // sync CoinGecko 08/06/2026
  ethPrice:1550.85, solPrice:63.01,
  altVal:150, // ADA+RDNT+ZK+etc rough
  aaveDebt:753.28, aaveUSDT:1300, aaveETH:2.16,  // retirada $400 USDT colateral + adição $0.27 ETH (05/06/2026)
@@ -3147,10 +3147,10 @@ function checkAlerts(verbose){
  // Recalc HF quickly
  const ethPrice=parseFloat(document.getElementById('aave-ethprice')?.value||liveETH);
  const solPrice=parseFloat(document.getElementById('kam-solprice')?.value||liveSOL);
- const ethCol=1.88*ethPrice+1990;
- const aaveHF=(ethCol*0.86)/750.16;
- const kamCol=20.42*solPrice+301.01;
- const kamLTV=(808.77/kamCol*100);
+ const ethCol=2.16*ethPrice+1300;
+ const aaveHF=(ethCol*0.86)/753.28;
+ const kamCol=23.30*solPrice+301.94;
+ const kamLTV=(814.03/kamCol*100);
  const uniIn=ethPrice>=1855.72&&ethPrice<=3146.36;
 
  let fired=0;

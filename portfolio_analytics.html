@@ -696,8 +696,8 @@ body, input, button, select, textarea {
  </div>
  <div class="stat-card">
   <div class="stat-label">POOLS LP</div>
-  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">—</div>
-  <div class="stat-sub">WETH/USDC · Uniswap V3</div>
+  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$0</div>
+  <div class="stat-sub">WETH/USDC encerrada em 03/06/2026</div>
  </div>
  <div class="stat-card">
   <div class="stat-label">DÍVIDAS</div>
@@ -1476,7 +1476,7 @@ var PORTFOLIO_DATA = [
  { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
  { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
  { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/37441/large/eigencloud.jpg' },
- { cgId:'matic-network', ticker:'POL',  name:'POL',       qty:218,           invested:143.88,  avgCost:0.66,    color:'#A855F7', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
+ { cgId:'polygon-ecosystem-token', ticker:'POL',  name:'POL',       qty:218,           invested:143.88,  avgCost:0.66,    color:'#A855F7', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
  { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/ZKTokenBlack.png' },
  { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/large/Twitter_icon.png' },
@@ -1489,12 +1489,12 @@ var PORTFOLIO = PORTFOLIO_DATA; // alias
 var FALLBACK_PRICES = {
  // Preços dos prints (Mar/2026) — atualizados ao vivo pelo CoinGecko
  'bitcoin':67053.75,'ethereum':1906.77,'solana':75.71,'cardano':0.2617,'eigenlayer':0.1870,
- 'matic-network':0.09693,'xai-blockchain':0.01102,'zksync':0.01914,
+ 'polygon-ecosystem-token':0.09693,'xai-blockchain':0.01102,'zksync':0.01914,
  'radiant-capital':0.005543,'zetachain':0.05045,'tether':1,'usds-stablecoin':1,
 };
 var FALLBACK_24H = {
  'ethereum':6.9,'solana':4.5,'cardano':6.9,'eigenlayer':3.8,
- 'matic-network':-3.2,'xai-blockchain':-3.2,'zksync':0.5,
+ 'polygon-ecosystem-token':-3.2,'xai-blockchain':-3.2,'zksync':0.5,
  'radiant-capital':2.9,'zetachain':-0.7,'tether':0,'usds-stablecoin':0
 };
 
@@ -1507,14 +1507,12 @@ var LP_POOLED = (function() {
       return cached.value;
     }
   } catch(e) {}
-  return 365; // fallback se nunca foi aberto pools.html ou cache expirou (valor inicial da pool em 24/02/2026)
+  return 0; // pool WETH/USDC Base encerrada em 03/06/2026 — liquidez 0 on-chain
 })();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 753.28;     // USDC @ 2.93% APY (05/06/2026)
 var KAMINO_DEBT = 814.03;   // USDC @ 5.75% APY (05/06/2026)
-var KAMINO_DEBT = 813.01; // atualizar semanalmente
-var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $752.77 + $813.01 = $1,565.78
-var KAMINO_SOL_EXTRA_QTY = 19.35 - 20.31134268; // ~0.038 SOL restante // SOL no Kamino não rastreado pelo CG
+var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $753.28 + $814.03 = $1,567.31
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
 var liveData = {};
@@ -4507,7 +4505,7 @@ document.addEventListener('DOMContentLoaded',function(){
  }
  // Re-trigger capital operacional chart if on pools page
  if (typeof getLivePrice === 'function') {
- getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','matic-network','zksync','xai-blockchain','zetachain'])
+ getLivePrice(['ethereum','solana','cardano','radiant-capital','eigenlayer','polygon-ecosystem-token','zksync','xai-blockchain','zetachain'])
  .then(prices => {
  let total = window._livePatrimonio;
  if (!total) return;

@@ -234,7 +234,6 @@ tr:hover td{ background:var(--surface2); }
     <a href="index.html" data-i18n="nav-home">Início</a>
     <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
     <a href="pools.html" data-i18n="nav-pools">Pools &amp; DeFi</a>
-    <a href="track.html" data-i18n="nav-track">Track</a>
     <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
     <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
   </div>
@@ -493,7 +492,7 @@ var PORTFOLIO_DATA = [
   { cgId:'cardano',        ticker:'ADA',  name:'Cardano',    qty:375.245,        invested:490.92,  avgCost:1.31,    color:'#3773F5', price:0.62  },
   { cgId:'radiant-capital',ticker:'RDNT', name:'Radiant',    qty:7290.46,        invested:0,       avgCost:null,    color:'#00D4FF', price:0.006 },
   { cgId:'eigenlayer',     ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,   invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', price:0.32  },
-  { cgId:'matic-network',  ticker:'POL',  name:'POL',        qty:218,            invested:143.88,  avgCost:0.66,    color:'#A855F7', price:0.08  },
+  { cgId:'polygon-ecosystem-token',  ticker:'POL',  name:'POL',        qty:218,            invested:143.88,  avgCost:0.66,    color:'#A855F7', price:0.08  },
   { cgId:'zksync',         ticker:'ZK',   name:'ZKsync',     qty:876,            invested:0,       avgCost:null,    color:'#1E90FF', price:0.065 },
   { cgId:'xai-blockchain', ticker:'XAI',  name:'Xai',        qty:692.86,         invested:164.52,  avgCost:0.2375,  color:'#F59E0B', price:0.028 },
   { cgId:'zetachain',      ticker:'ZETA', name:'ZetaChain',  qty:51.1434,        invested:0,       avgCost:null,    color:'#00C896', price:0.055 },
@@ -512,7 +511,7 @@ var KAM_USDS_QTY=301.94, KAM_USDS_APY=0.0451;
 var KAM_BORROW=814.03,   KAM_BORROW_APY=0.0575;
 
 var POOLS_DATA = [
-  { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:21.11, il:23.50, result:-2.39 },
+  { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:22.28, il:6.55, result:15.73 }, // encerrada 03/06/2026 — dados finais Revert
   { pair:'ETH/USDC 0.3%',  net:'Base',     status:'closed',  fees:16,  il:0,  result:16   },
   { pair:'ETH/USDT 0.05%', net:'Arbitrum', status:'closed',  fees:34,  il:0,  result:34   },
   { pair:'SOL/USDC 0.04%', net:'Solana',   status:'closed',  fees:23,  il:0,  result:23   },
