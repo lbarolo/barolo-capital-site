@@ -572,7 +572,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 <div id="bc-lp-active-section">
 <!-- ══ UNISWAP V3 LP — REVERT ══ -->
-<div class="section-label">Liquidity Pool — Uniswap V3 (encerrada em 03/06/2026)</div>
+<div class="section-label">Liquidity Pool Ativa — Uniswap V3</div>
 
 <div class="revert-panel">
  <!-- Toolbar -->
@@ -580,7 +580,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="revert-title">
  <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ WETH/USDC</span>
  <span style="font-size:9px;color:var(--muted);">0.30% · Base</span>
- <span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;color:var(--muted);border:1px solid var(--border);">● ENCERRADA 03/06/2026</span>
+ <span class="badge-warn">○ OUT-OF-RANGE</span>
  </div>
  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
  <a class="btn-open" href="https://revert.finance/" target="_blank" rel="noopener">
@@ -591,7 +591,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
  <!-- LP metrics bar — APR líquido pós-AAVE -->
  <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
- <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$0.00</div><div class="lp-ms" id="lp-pooled-sub">posição encerrada — fundos retirados em 03/06/2026</div></div>
+ <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms" id="lp-pooled-sub">0.1800 WETH + 0.00 USDC</div></div>
  <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-apr-sub">fees / capital investido</div></div>
  <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−3.79%</div><div class="lp-ms">USDC · taxa atual</div></div>
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
@@ -1641,26 +1641,10 @@ function setRef(ref){
 
 // ── UNISWAP V3 LP LIVE DATA ──
 (async function fetchUniswapLPData() {
-  // POSIÇÃO ENCERRADA em 03/06/2026 — liquidez 0 e fees coletadas on-chain (verificado 10/06/2026).
-  // O fetch live foi desativado: exibe estado final realizado e zera o LP no patrimônio.
-  {
-    const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-    set('lp-pooled', '$0.00');
-    set('lp-pooled-sub', 'posição encerrada — fundos retirados em 03/06/2026');
-    set('lp-apr', '+32.0%');
-    set('lp-apr-sub', 'fee APR realizado (24/02–03/06)');
-    set('lp-apr-net', '+29.1%');
-    set('lp-apr-net-sub', '+32.0% − 2.93% borrow');
-    const netEl = document.getElementById('lp-apr-net');
-    if (netEl) netEl.className = 'lp-mv pos';
-    window._liveLP = 0;
-    try { localStorage.setItem('bc-lp-pooled', JSON.stringify({ value: 0, timestamp: Date.now() })); } catch(e) {}
-    return;
-  }
-  // Pool WETH/USDC 0.30% na BASE (chain_id=8453) — código mantido para reuso em pool futura
+  // Pool ATIVA: WETH/USDC 0.30% na BASE (chain_id=8453) — aberta em 03/06/2026 (rollover da anterior)
   const NFT_MGR  = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base Uniswap V3 NonfungiblePositionManager
   const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
-  const TOKEN_ID = 4694262;
+  const TOKEN_ID = 5247352;
   const BASE_RPCS = [
     'https://mainnet.base.org',
     'https://base.llamarpc.com',
@@ -1746,8 +1730,8 @@ function setRef(ref){
   // 8. APR via on-chain (fees acumuladas desde abertura, sem coletas manuais)
   // Se ocorrer um Collect event, o contador de uncollected reseta — APR ficaria subestimado.
   // Por enquanto a posição não teve coletas, então uncollected = total acumulado desde 24/02/2026.
-  const ENTRY_CAPITAL = 365;
-  const OPEN_TS = new Date('2026-02-24T17:40:00').getTime() / 1000;
+  const ENTRY_CAPITAL = 329; // 0.18 WETH @ ETH $1.828 (03/06/2026)
+  const OPEN_TS = new Date('2026-06-03T17:20:00Z').getTime() / 1000;
   let pnl=null, il=null, apr=null, feeApr=null, dailyFees=null;
   let aprSource = 'acumulado desde abertura';
 
@@ -1783,7 +1767,8 @@ function setRef(ref){
     const netEl = document.getElementById('lp-apr-net');
     if (netEl) netEl.className = 'lp-mv '+(aprNet>=0?'pos':'neg');
   } else {
-    set('lp-apr-sub', 'dados indisponíveis — subgraph offline');
+    set('lp-apr', '0.0%');
+    set('lp-apr-sub', 'sem fees acumuladas — preço fora do range');
   }
 
 })().catch(e => console.debug('[LP] dados LP falharam:',e.message));
@@ -2555,6 +2540,8 @@ var POOLS = [
   { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
   // ── ATIVA ──
   { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'03/06/2026', days:99,  capital:365, fees:22.28, il:6.55, result:15.73, status:'closed', lvr:0,   fcr:30.9,  invGrowth:-0.57, obs:'Saiu do range em 03/06 com preço $1.821,67 < min $1.855,72 (100% WETH). Coletadas taxas e encerrada. Fee APR 32% realizado. il = fees − result (Revert 03/06).' },
+  // ── ATIVA ──
+  { pair:'WETH/USDC 0.3%', net:'Base', open:'03/06/2026', close:'—', days:(function(){var d=new Date()-new Date('2026-06-03');return Math.max(1,Math.floor(d/86400000));})(), capital:329, fees:0, il:0, result:0, status:'active', lvr:0, fcr:0, invGrowth:0, obs:'Rollover da pool anterior no mesmo dia: entrada 0.18 WETH ($329 @ ETH $1.828) na borda inferior do range $1.822,61–$2.401,90. Saída gradual ETH→USDC; preço médio efetivo de saída ≈ $2.092. Abriu praticamente fora do range — só gera fees quando ETH > $1.823.' },
 ];
 
 // ── Hidrata pool ativa (POOLS[POOLS.length-1]) com cache live do track.html ──
@@ -3168,13 +3155,13 @@ function buildPoolCards() {
     // Barra de performance
     var perfHtml;
     if (isActive) {
-      var pMin = 1855.72, pMax = 3146.36;
-      var pNow = window._liveEthPrice || 2431;
+      var pMin = 1822.61, pMax = 2401.90;
+      var pNow = window._liveEthPrice || 1650;
       var pct  = Math.max(0, Math.min(1, (pNow - pMin) / (pMax - pMin)));
       var pNowK = '$' + (Math.round(pNow/100)/10).toFixed(1) + 'K';
       perfHtml = '<div class="pool-perf-wrap">'
         + '<div class="pool-range-track"><div class="pool-range-dot" style="left:' + Math.round(pct*100) + '%;"></div></div>'
-        + '<div class="pool-perf-lbls"><span>$1.86K</span><span style="color:var(--accent);">' + pNowK + '</span><span>$3.15K</span></div>'
+        + '<div class="pool-perf-lbls"><span>$1.82K</span><span style="color:var(--accent);">' + pNowK + '</span><span>$2.40K</span></div>'
         + '</div>';
     } else {
       // Normalizar fees e IL em relação ao capital para a barra
@@ -3746,7 +3733,7 @@ function buildNetRanking() {
  const HELIUS_KEY = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
 
  const ETH_RPC = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
- const BASE_RPC = `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+ const BASE_RPC = 'https://mainnet.base.org'; // RPC público — a key Alchemy não tem Base habilitada
  const HELIUS_RPC= `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
  const HELIUS_API= `https://api.helius.xyz/v0`;
 
@@ -3765,8 +3752,8 @@ function buildNetRanking() {
  const MAIN_SPOKE     = '0x94e7A5dCbE816e498b89aB752661904E2F56c485';
  const BLUECHIP_SPOKE = '0x973a023A77420ba610f06b3858aD991Df6d85A08';
  const V4_SEL         = '0xbf92857c'; // getUserAccountData (V4 retorna struct novo)
- const UNI_NFT = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
- const LP_TOKEN_ID = 4694262;
+ const UNI_NFT = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base NonfungiblePositionManager
+ const LP_TOKEN_ID = 5247352; // posição ativa aberta em 03/06/2026
  const USDT_ADDR = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
  const USDC_ADDR = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
  const WETH_ADDR = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
@@ -3896,22 +3883,22 @@ function buildNetRanking() {
  }
  }
 
- // ── Uniswap V3 position — composição real via RPC ───────────────
+ // ── Uniswap V3 position — composição real via RPC (BASE) ────────
  async function fetchUniswapLP() {
  try {
- const POOL_WETH_USDC = '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8'; // USDC/WETH 0.3% Ethereum
+ const POOL_WETH_USDC = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // WETH/USDC 0.3% Base (token0=WETH, token1=USDC)
  const Q96 = 2n ** 96n;
- const CAPITAL = 365; // capital de abertura da posição (0.17 WETH em 24/02/2026)
+ const CAPITAL = 329; // capital de abertura da posição (0.18 WETH @ ETH $1.828 em 03/06/2026)
 
  // 1. positions(tokenId) → ABI slot layout:
  //  [0]=nonce [1]=operator [2]=token0 [3]=token1 [4]=fee
  //  [5]=tickLower [6]=tickUpper [7]=liquidity
  //  [8]=feeGrowth0 [9]=feeGrowth1 [10]=tokensOwed0 [11]=tokensOwed1
- const rawPos = await ethCall(ETH_RPC, UNI_NFT, '0x99fbab88' + padUint(LP_TOKEN_ID));
+ const rawPos = await ethCall(BASE_RPC, UNI_NFT, '0x99fbab88' + padUint(LP_TOKEN_ID));
 
  const liquidity = decUint(rawPos, 7);
- const tokensOwed0 = decUint(rawPos, 10); // USDC (token0, 6 dec)
- const tokensOwed1 = decUint(rawPos, 11); // WETH (token1, 18 dec)
+ const tokensOwed0 = decUint(rawPos, 10); // WETH (token0, 18 dec na Base)
+ const tokensOwed1 = decUint(rawPos, 11); // USDC (token1, 6 dec na Base)
 
  // int24 sign-extension (ticks can be negative)
  const toInt = v => v >= 2n**255n ? Number(v - 2n**256n) : Number(v);
@@ -3919,7 +3906,7 @@ function buildNetRanking() {
  const tickUpper = toInt(decUint(rawPos, 6));
 
  // 2. slot0() → sqrtPriceX96 + currentTick
- const rawSlot0 = await ethCall(ETH_RPC, POOL_WETH_USDC, '0x3850c7bd');
+ const rawSlot0 = await ethCall(BASE_RPC, POOL_WETH_USDC, '0x3850c7bd');
  const sqrtPriceX96 = decUint(rawSlot0, 0);
  const currentTick = toInt(decUint(rawSlot0, 1));
 
@@ -3937,13 +3924,13 @@ function buildNetRanking() {
  const sqrtB = tickToSqrtX96(tickUpper);
  const sqrtP = sqrtPriceX96;
 
- // 4. Calcular quantidades de token0 (USDC) e token1 (WETH)
+ // 4. Calcular quantidades de token0 (WETH) e token1 (USDC) — ordem da Base
  let amount0 = 0n, amount1 = 0n;
  if (currentTick < tickLower) {
-  // Abaixo do range: tudo em USDC
+  // Abaixo do range: tudo em WETH (token0)
   amount0 = liquidity * (sqrtB - sqrtA) * Q96 / sqrtA / sqrtB;
  } else if (currentTick >= tickUpper) {
-  // Acima do range: tudo em WETH
+  // Acima do range: tudo em USDC (token1)
   amount1 = liquidity * (sqrtB - sqrtA) / Q96;
  } else {
   // In-range: mistura dos dois
@@ -3951,10 +3938,10 @@ function buildNetRanking() {
   amount1 = liquidity * (sqrtP - sqrtA) / Q96;
  }
 
- const usdc    = Number(amount0) / 1e6;
- const weth    = Number(amount1) / 1e18;
- const feeUsdc = Number(tokensOwed0) / 1e6;
- const feeWeth = Number(tokensOwed1) / 1e18;
+ const weth    = Number(amount0) / 1e18;
+ const usdc    = Number(amount1) / 1e6;
+ const feeWeth = Number(tokensOwed0) / 1e18;
+ const feeUsdc = Number(tokensOwed1) / 1e6;
 
  console.log(`[UNI] USDC:${usdc.toFixed(2)} WETH:${weth.toFixed(5)} fees: ${feeUsdc.toFixed(4)} USDC + ${feeWeth.toFixed(6)} WETH`);
 
@@ -4007,7 +3994,7 @@ function buildNetRanking() {
  }
 
  // 8. Atualizar LP bar (REFS.usd)
- const openDate = new Date('2026-03-18');
+ const openDate = new Date('2026-06-03');
  const DAYS = Math.max(1, Math.floor((Date.now() - openDate.getTime()) / 86400000));
  // PnL = position value + uncollected fees - initial capital
  const pnl      = totalPooled + totalFees - CAPITAL;
@@ -4039,11 +4026,13 @@ function buildNetRanking() {
 
  } catch(e) {
  console.warn('[UNI] failed:', e.message);
+ // Se o outro fetch (fetchUniswapLPData, multi-RPC) já trouxe dados live, não sobrescrever
+ if (window._liveLP > 0) return null;
  // Fallback: usar dados do array POOLS (última pool ativa)
  if (typeof POOLS !== 'undefined') {
   const active = POOLS.find(p => p.status === 'active');
   if (active) {
-   const days = Math.max(1, Math.floor((Date.now() - new Date('2026-03-18').getTime()) / 86400000));
+   const days = Math.max(1, Math.floor((Date.now() - new Date('2026-06-03').getTime()) / 86400000));
    const feeApr = active.fees > 0 ? (active.fees / active.capital / days * 365 * 100).toFixed(1) + '% fee APR' : days + 'd aberto';
    const totalAprFallback = active.result > 0 ? (active.result / active.capital / days * 365 * 100).toFixed(1) + '% / ano' : '—';
    REFS.usd = {

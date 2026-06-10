@@ -842,7 +842,7 @@ body, input, button, select, textarea {
 
  <!-- UNISWAP POOL -->
  <div class="section">
- <div class="section-title">Uniswap V3 — Pool WETH/USDC <span>0.30% · NFT #4694262</span></div>
+ <div class="section-title">Uniswap V3 — Pool WETH/USDC <span>0.30% · Base</span></div>
  <div class="three-col">
  <div>
  <div class="field"><label data-i18n="lbl-weth-pool">WETH na pool</label><input type="number" id="uni-weth" value="0.136" step="0.001" oninput="calcUni()"></div>
@@ -851,8 +851,8 @@ body, input, button, select, textarea {
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="uni-ethprice" value="1936" step="1" oninput="calcUni()"></div>
- <div class="field"><label data-i18n="lbl-range-min">Range mínimo ($)</label><input type="number" id="uni-rangemin" value="1855.72" step="1" oninput="calcUni()"></div>
- <div class="field"><label data-i18n="lbl-range-max">Range máximo ($)</label><input type="number" id="uni-rangemax" value="3146.36" step="1" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-range-min">Range mínimo ($)</label><input type="number" id="uni-rangemin" value="1822.61" step="1" oninput="calcUni()"></div>
+ <div class="field"><label data-i18n="lbl-range-max">Range máximo ($)</label><input type="number" id="uni-rangemax" value="2401.90" step="1" oninput="calcUni()"></div>
  </div>
  <div class="result-grid" style="grid-template-columns:1fr;" id="uni-results"></div>
  </div>
@@ -1074,15 +1074,15 @@ body, input, button, select, textarea {
        <div>
          <div class="field">
            <label data-i18n="sz-hd-capital">Capital pool ($) — pre-fill: WETH/USDC Base</label>
-           <input type="number" id="hd-capital" value="365" step="10" oninput="calcHedge()">
+           <input type="number" id="hd-capital" value="329" step="10" oninput="calcHedge()">
          </div>
          <div class="field">
            <label data-i18n="sz-hd-pmin">Range mínimo ($)</label>
-           <input type="number" id="hd-pmin" value="1855.72" step="10" oninput="calcHedge()">
+           <input type="number" id="hd-pmin" value="1822.61" step="10" oninput="calcHedge()">
          </div>
          <div class="field">
            <label data-i18n="sz-hd-pmax">Range máximo ($)</label>
-           <input type="number" id="hd-pmax" value="3146.36" step="10" oninput="calcHedge()">
+           <input type="number" id="hd-pmax" value="2401.90" step="10" oninput="calcHedge()">
          </div>
          <div class="field">
            <label><span data-i18n="sz-hd-pnow">Preço atual ETH ($)</span> <span data-i18n="sz-hd-live" style="color:var(--green);font-size:9px;">· LIVE</span></label>
@@ -2179,7 +2179,7 @@ var BASE = {
  aaveDebt:753.28, aaveUSDT:1300, aaveETH:2.16,  // retirada $400 USDT colateral + adição $0.27 ETH (05/06/2026)
  kamDebt:814.03, kamPYUSD:301.94, kamSOL:23.30,
  kamLiqThresh:0.7579, aaveLiqThresh:0.86,
- uniRangeMin:1855.72, uniRangeMax:3146.36,
+ uniRangeMin:1822.61, uniRangeMax:2401.90,
  totalBase:5620
 };
 
@@ -2734,18 +2734,17 @@ function showToast(message, duration){
   }, duration);
 }
 
-// Fonte de verdade: CLAUDE.md "Pool ATIVA — Dados completos" (WETH/USDC 0.30% Base).
-// Dados verificados via Revert Finance em 17/04/2026.
+// Fonte de verdade: pool ativa WETH/USDC 0.30% Base aberta em 03/06/2026 (verificada on-chain 10/06/2026).
 function loadActivePoolHedge(){
- var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 2431;
+ var live = (typeof liveETH !== 'undefined' && liveETH > 0) ? liveETH : 1650;
  var set = function(id, v){ var el = document.getElementById(id); if (el) el.value = v; };
- set('hd-capital', 385);       // pooled atual (0.07741 WETH + 196.67 USDC)
- set('hd-pmin',    1855.72);
- set('hd-pmax',    3146.36);
+ set('hd-capital', 329);       // entrada: 0.18 WETH @ ETH $1.828 (03/06/2026)
+ set('hd-pmin',    1822.61);
+ set('hd-pmax',    2401.90);
  set('hd-pnow',    live.toFixed(0));
- set('hd-feeapr',  32);        // Fee APR do Revert em 17/04/2026
+ set('hd-feeapr',  32);        // referência: fee APR realizado na pool anterior (mesmo par/range style)
  set('hd-funding', 5);
- set('hd-borrow',  2.32);      // AAVE USDC atual (refinanciamento 10/04)
+ set('hd-borrow',  2.93);      // AAVE USDC atual (05/06/2026)
  set('hd-vol',     60);
  set('hd-pct',     0);         // default: SEM hedge (estratégia saída gradual ETH→USDC)
  var pctVal = document.getElementById('hd-pct-val');
@@ -3151,7 +3150,7 @@ function checkAlerts(verbose){
  const aaveHF=(ethCol*0.86)/753.28;
  const kamCol=23.30*solPrice+301.94;
  const kamLTV=(814.03/kamCol*100);
- const uniIn=ethPrice>=1855.72&&ethPrice<=3146.36;
+ const uniIn=ethPrice>=1822.61&&ethPrice<=2401.90;
 
  let fired=0;
 
@@ -3164,7 +3163,7 @@ function checkAlerts(verbose){
  if(kamLTV>thresh){showPopup('warn','','Kamino LTV Alto',`LTV em ${kamLTV.toFixed(1)}% — acima do seu limite de ${thresh}%`);fired++;}
  }
  if(document.getElementById('al-uni-range')?.checked && !uniIn){
- showPopup('warn','','Uniswap Fora do Range',`ETH em $${ethPrice.toFixed(0)} está fora do range $${(1855.72).toFixed(0)}–$${(3146.36).toFixed(0)}`);fired++;
+ showPopup('warn','','Uniswap Fora do Range',`ETH em $${ethPrice.toFixed(0)} está fora do range $${(1822.61).toFixed(0)}–$${(2401.90).toFixed(0)}`);fired++;
  }
  if(document.getElementById('al-eth-drop')?.checked){
  const thresh=parseFloat(document.getElementById('al-eth-drop-val').value)||-10;

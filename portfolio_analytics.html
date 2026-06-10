@@ -696,8 +696,8 @@ body, input, button, select, textarea {
  </div>
  <div class="stat-card">
   <div class="stat-label">POOLS LP</div>
-  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$0</div>
-  <div class="stat-sub">WETH/USDC encerrada em 03/06/2026</div>
+  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">—</div>
+  <div class="stat-sub">WETH/USDC · Uniswap V3 · Base</div>
  </div>
  <div class="stat-card">
   <div class="stat-label">DÍVIDAS</div>
@@ -1393,12 +1393,11 @@ var WEEKLY_UPDATE = {
  usdcBorrowApy: 5.75,
  },
  uniswapLP: {
- capital: 365,
- fees: 9,
+ capital: 329,
+ fees: 0,
  il: 0,
- nft: '#4694262',
  pair: 'WETH/USDC 0.3%',
- range: 'ETH $2,450–$3,100',
+ range: 'ETH $1,823–$2,402',
  },
  },
 
@@ -1507,8 +1506,10 @@ var LP_POOLED = (function() {
       return cached.value;
     }
   } catch(e) {}
-  return 0; // pool WETH/USDC Base encerrada em 03/06/2026 — liquidez 0 on-chain
+  return 296; // pool WETH/USDC Base aberta 03/06/2026: 0.18 WETH (capital $329, valor 10/06/2026)
 })();
+// Card POOLS LP — mostra valor da pool (cache live do pools.html ou fallback acima)
+(function(){ var el = document.getElementById('s-pool'); if (el && LP_POOLED > 0) el.textContent = '$' + Math.round(LP_POOLED); })();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var AAVE_DEBT = 753.28;     // USDC @ 2.93% APY (05/06/2026)
 var KAMINO_DEBT = 814.03;   // USDC @ 5.75% APY (05/06/2026)
@@ -4176,7 +4177,7 @@ document.addEventListener('DOMContentLoaded',function(){
  const HELIUS_KEY = '76a7f1e6-fac9-4361-a6bb-f7787926c719';
 
  const ETH_RPC = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
- const BASE_RPC = `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+ const BASE_RPC = 'https://mainnet.base.org'; // RPC público — a key Alchemy não tem Base habilitada
  const HELIUS_RPC= `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
  const HELIUS_API= `https://api.helius.xyz/v0`;
 
@@ -4196,8 +4197,8 @@ document.addEventListener('DOMContentLoaded',function(){
  const BLUECHIP_SPOKE = '0x973a023A77420ba610f06b3858aD991Df6d85A08'; // extra WETH tier (if any)
  const V4_SEL         = '0xbf92857c'; // getUserAccountData (V4 retorna struct novo)
  const AAVE_DATA_PROVIDER = '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3';
- const UNI_NFT = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
- const LP_TOKEN_ID = 4694262;
+ const UNI_NFT = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base NonfungiblePositionManager
+ const LP_TOKEN_ID = 5247352; // posição ativa aberta em 03/06/2026
  const USDT_ADDR = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
  const USDC_ADDR = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
  const WETH_ADDR = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
@@ -4356,7 +4357,7 @@ document.addEventListener('DOMContentLoaded',function(){
  async function fetchUniswapLP() {
  try {
  const data = '0x99fbab88' + padUint(LP_TOKEN_ID);
- const raw = await ethCall(ETH_RPC, UNI_NFT, data);
+ const raw = await ethCall(BASE_RPC, UNI_NFT, data);
  const liquidity = decUint(raw, 7);
  const isActive = liquidity > 0n;
  console.log(`[UNI] LP #${LP_TOKEN_ID} liquidity: ${liquidity}, active: ${isActive}`);
