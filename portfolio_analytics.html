@@ -1204,8 +1204,8 @@ body, input, button, select, textarea {
 
   <div style="background:var(--surface);padding:20px 18px;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Pools — Taxas Brutas</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--green);line-height:1;">$2,128</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;">Dados reais · 16 pools</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--green);line-height:1;">$2,438</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;">Dados reais · 27 pools fechadas (até 03/06/2026)</div>
   </div>
 
   <div style="background:var(--surface);padding:20px 18px;">
@@ -1438,11 +1438,11 @@ var WEEKLY_UPDATE = {
  defiIL: [ 0, 0, 0, 0, 0, 0, 0, 0], // só IL abaixo
  airdrops:[ 0, 0, 0, 40, 0, 0, 17, 0],
  // Totais DeFi (pooled — não por ativo individual)
- totalFees: 1977, // taxas acumuladas em pools (−20 PEANUT: scam, sem taxas reais)
- totalIL: -2143, // IL acumulado em pools (GRIFT: cap. real $1.170 → IL $1.850; PEANUT scam: IL $243)
+ totalFees: 1999, // taxas acumuladas em pools (−20 PEANUT scam; +22.28 WETH/USDC Base fechada 03/06/2026)
+ totalIL: -2143, // IL acumulado vs HODL (GRIFT: cap. real $1.170 → IL $1.850; PEANUT scam: IL $243). Pool Base fechada 03/06: saiu 100% WETH como entrou → IL vs HODL ≈ 0
  // Juros pagos acumulados (AAVE + Kamino borrow) — atualizar mensalmente
- // Estimativa: AAVE $747 × 3.5% avg × meses + Kamino $804 × 4% avg × meses
- jurosAcumulados: -58, // ~$58 desde abertura das posições (estimativa Abr/2026)
+ // Estimativa: AAVE ~$750 × ~3% + Kamino ~$810 × ~5% avg
+ jurosAcumulados: -70, // estimativa Jun/2026 (era −58 em Abr/2026)
  },
 
  // ── Curva de patrimônio ($) — adicione o mês atual ──
