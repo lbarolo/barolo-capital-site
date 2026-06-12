@@ -1461,9 +1461,9 @@ function toggleMobile() {
   // ── Diário DeFi NÃO altera mais as holdings ──
   // Removido o sync que somava trades do Diário (localStorage) às quantidades: o Lucas já mantém
   // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.
-  var STABLES_USD    = 2001.94;  // USDT 1700 (1300 AAVE colateral + 400 carteira) + USDS 301.94 Kamino (05/06/2026)
+  var STABLES_USD    = 1602.52;  // CoinGecko: USDT 1302.524 + USDS 300 (12/06/2026)
   var LP_POOLED      = 296;      // pool WETH/USDC Base aberta 03/06/2026: 0.18 WETH (capital $329, valor 10/06/2026)
-  var TOTAL_DEBT     = 1567.31;  // AAVE 753.28 USDC @ 2.93% + Kamino 814.03 USDC @ 5.75% (05/06/2026)
+  var TOTAL_DEBT     = 1568.70;  // AAVE 753.83 USDC @ 21.66% + Kamino 814.87 USDC @ 5.63% (12/06/2026)
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
 
@@ -1805,14 +1805,14 @@ function calculatePerformanceMetrics() {
   var years = 4 + (4 / 12); // Jan 2022 to May 2026 = 4 years 4 months
 
   // ── Capital allocation (05/06/2026 verified data) ──
-  var STABLES_DRY_POWDER = 2001.94;  // USDT 1700 + USDS 301.94 (not invested)
+  var STABLES_DRY_POWDER = 1602.52;  // CoinGecko: USDT 1302.524 + USDS 300 (not invested)
   var TOTAL_APORTED = 6784;           // Total capital aported since Jan/2022
   var CAPITAL_INVESTED = TOTAL_APORTED - STABLES_DRY_POWDER; // deployed in assets
 
   // Portfolio composition (10/06/2026)
   var SPOT_VALUE = 5698;        // Cripto holdings (preços CoinGecko 10/06/2026)
   var LP_POOLED = 296;          // pool WETH/USDC Base aberta 03/06/2026 (0.18 WETH)
-  var TOTAL_DEBT = 1567.31;     // AAVE 753.28 + Kamino 814.03 (05/06/2026)
+  var TOTAL_DEBT = 1568.70;     // AAVE 753.83 + Kamino 814.87 (12/06/2026)
   var PORTFOLIO_INVESTED_VALUE = SPOT_VALUE + LP_POOLED - TOTAL_DEBT; // 6335.38K
 
   // ── CAGR of invested capital (excluding dry powder) ──

@@ -500,15 +500,15 @@ var PORTFOLIO_DATA = [
 
 var STABLES_USD   = 1602.52;  // CoinGecko: USDT 1302.524 + USDS 300 (valor atual)
 var STABLES_COST  = 882.64;   // custo CoinGecko: USDT 582.64 (CG mostra +$719) + USDS 300
-var DEBT_TOTAL    = 1567.31;  // AAVE 753.28 + Kamino 814.03
+var DEBT_TOTAL    = 1568.70;  // AAVE 753.83 + Kamino 814.87 (12/06/2026)
 
-// Posições DeFi — constantes para yield calc (30/05/2026)
-var AAVE_ETH_QTY=2.16,   AAVE_ETH_APY=0.0250;
-var AAVE_USDT_QTY=1300,  AAVE_USDT_APY=0.0177;  // retirada $400 em 05/06/2026
-var AAVE_BORROW=753.28,  AAVE_BORROW_APY=0.0293;
-var KAM_SOL_QTY=23.30,   KAM_SOL_APY=0.1351;
-var KAM_USDS_QTY=301.94, KAM_USDS_APY=0.0451;
-var KAM_BORROW=814.03,   KAM_BORROW_APY=0.0575;
+// Posições DeFi — constantes para yield calc (12/06/2026)
+var AAVE_ETH_QTY=2.16,   AAVE_ETH_APY=0.0130;
+var AAVE_USDT_QTY=1300,  AAVE_USDT_APY=0.0170;
+var AAVE_BORROW=753.83,  AAVE_BORROW_APY=0.2166;  // spike: borrow APY USDC 2.93% -> 21.66%
+var KAM_SOL_QTY=23.33,   KAM_SOL_APY=0.0642;
+var KAM_USDS_QTY=302.06, KAM_USDS_APY=0.0472;
+var KAM_BORROW=814.87,   KAM_BORROW_APY=0.0563;
 
 var POOLS_DATA = [
   { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:0, il:0, result:0 }, // aberta 03/06/2026 — 0.18 WETH ($329), range $1.823–$2.402, fora do range (abaixo)

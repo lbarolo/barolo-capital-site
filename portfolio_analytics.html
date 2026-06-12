@@ -1077,7 +1077,7 @@ body, input, button, select, textarea {
       </div>
       <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
         <div style="font-size:9px;color:var(--muted);">AAVE Health Factor</div>
-        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpAAVEHF">6.88</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);" id="cpAAVEHF">5.00</div>
       </div>
       <div style="padding:8px;background:rgba(63,185,80,0.1);border-radius:4px;border-left:2px solid #3fb950;">
         <div style="font-size:9px;color:var(--muted);">Kamino LTV</div>
@@ -1130,7 +1130,7 @@ body, input, button, select, textarea {
       <div style="font-size:10px;font-weight:600;color:var(--text);">Status Atual</div>
       <ul style="margin:8px 0;padding-left:16px;font-size:9px;color:var(--muted);line-height:1.6;">
         <li>✅ Convexidade intencional (64% stables buffer)</li>
-        <li>✅ Risco controlado (HF 6.88, LTV 40%)</li>
+        <li>✅ Risco controlado (HF 5.0, LTV 43.7%)</li>
         <li>✅ Assimétrico a favor (optionality em bear)</li>
       </ul>
     </div>
@@ -1379,18 +1379,18 @@ var WEEKLY_UPDATE = {
  aave: {
  wethSupplied: 2.16,
  usdtSupplied: 1300,
- usdcBorrowed: 753.28,
- usdcBorrowApy: 2.93,
- healthFactor: 6.88,
+ usdcBorrowed: 753.83,
+ usdcBorrowApy: 21.66,
+ healthFactor: 5.00,
  },
  kamino: {
- solSupplied: 23.30,
- pyusdSupplied: 301.94,
- usdcBorrowed: 814.03,
- ltv: 44.91,
- solApy: 13.51,
- usdsApy: 4.51,
- usdcBorrowApy: 5.75,
+ solSupplied: 23.33,
+ pyusdSupplied: 302.06,
+ usdcBorrowed: 814.87,
+ ltv: 43.74,
+ solApy: 6.42,
+ usdsApy: 4.72,
+ usdcBorrowApy: 5.63,
  },
  uniswapLP: {
  capital: 329,
@@ -1511,9 +1511,9 @@ var LP_POOLED = (function() {
 // Card POOLS LP — mostra valor da pool (cache live do pools.html ou fallback acima)
 (function(){ var el = document.getElementById('s-pool'); if (el && LP_POOLED > 0) el.textContent = '$' + Math.round(LP_POOLED); })();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
-var AAVE_DEBT = 753.28;     // USDC @ 2.93% APY (05/06/2026)
-var KAMINO_DEBT = 814.03;   // USDC @ 5.75% APY (05/06/2026)
-var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $753.28 + $814.03 = $1,567.31
+var AAVE_DEBT = 753.83;     // USDC @ 21.66% APY (12/06/2026 — spike forte vs 2.93% anterior)
+var KAMINO_DEBT = 814.87;   // USDC @ 5.63% APY (12/06/2026)
+var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $753.83 + $814.87 = $1,568.70
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
 var liveData = {};
@@ -1864,11 +1864,11 @@ function renderUI(enriched){
    const kaminoSupplyUsd = (WEEKLY_UPDATE.defi.kamino.solSupplied * liveSol) + WEEKLY_UPDATE.defi.kamino.pyusdSupplied;
    const kaminoLTV = (kaminoDebtLive2 / kaminoSupplyUsd * 100).toFixed(1);
    // Monthly interest cost — live APYs via AAVE DataProvider + Kamino API (fallback to current rates)
-   const aaveBorrowApy  = window._liveAaveBorrowApy  || 3.72;
-   const kaminoBorrowApy= window._liveKaminoBorrowApy || 7.20;
-   const aaveUsdtApy    = window._liveAaveUsdtApy    || 0.55;
-   const kaminoSolApy   = window._liveKaminoSolApy   || 3.55;
-   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || 5.75;
+   const aaveBorrowApy  = window._liveAaveBorrowApy  || 21.66;
+   const kaminoBorrowApy= window._liveKaminoBorrowApy || 5.63;
+   const aaveUsdtApy    = window._liveAaveUsdtApy    || 1.70;
+   const kaminoSolApy   = window._liveKaminoSolApy   || 6.42;
+   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || 4.72;
    const monthlyInterest = (aaveDebtLive2 * (aaveBorrowApy/100) + kaminoDebtLive2 * (kaminoBorrowApy/100)) / 12;
    // Monthly yield from lending positions
    const aaveSupplyYield = WEEKLY_UPDATE.defi.aave.usdtSupplied * (aaveUsdtApy/100) / 12;
@@ -2247,7 +2247,7 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
   const weightedConvex = Object.keys(weights).reduce((s,t)=>s+weights[t]*convexities[t], 0);
 
   // 2. FRAGILITY INDEX (F)
-  const debt = (window._liveAaveDebt || 751.82) + (window._liveKaminoDebt || 811.35);
+  const debt = (window._liveAaveDebt || 753.83) + (window._liveKaminoDebt || 814.87);
   const leverage = debt > 0 ? grossAssets / (grossAssets - debt) : 1.0;
   const leverageComp = Math.max(0, (leverage - 1.0) * 0.3);
 
@@ -2274,7 +2274,7 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
   // Calcula margens de liquidação (dinâmico)
   const stablesPct = (window._stablesTotalUSD || 2536.40) / grossAssets;
   const aaveLTVlimit = 0.825; // 82.5% max
-  const aaveLTVcurrent = (window._liveAaveDebt || 751.82) / (window._liveAaveCollateral || 6000);
+  const aaveLTVcurrent = (window._liveAaveDebt || 753.83) / (window._liveAaveCollateral || 6000);
   const aaveMargin = ((aaveLTVlimit - aaveLTVcurrent) / aaveLTVlimit) * 100;
   const kaminoLTVlimit = 0.7722; // 77.22% liq threshold
   const kaminoMargin = ((kaminoLTVlimit - kaminoLTV) / kaminoLTV) * 100;
@@ -2291,7 +2291,7 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
 
 function buildConvexityUI(W){
   const enriched = buildEnriched();
-  const aaveHF = window._liveAaveHF || 6.88;
+  const aaveHF = window._liveAaveHF || 5.00;
   const kaminoLTV = window._liveKaminoLTV || 0.401;
   // W.holdings é objeto {ticker:qty}, não array — usa o helper de preço live
   const liveETH = getPrice('ethereum') || 1470;
