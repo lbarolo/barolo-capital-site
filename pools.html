@@ -543,13 +543,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   function calcYTD() {
     if (typeof POOLS === 'undefined') return;
     var fees2026 = 0, pnl2026 = 0, activePools = 0, dias2026 = 0;
+    var YEAR_START = new Date(2026, 0, 1); // 1º jan 2026
+    function _parseDMY(s) { var p = s.split('/'); return new Date(+p[2], +p[1] - 1, +p[0]); }
     POOLS.forEach(function(p) {
-      var is2026 = (p.open && p.open.indexOf('2026') !== -1) || p.status === 'active';
+      // Critério: fees COLETADAS em 2026 = pools fechadas (realizadas) em 2026 + pool ativa.
+      // Usa data de FECHAMENTO (coleta), não de abertura — inclui pools abertas em 2025 e encerradas em 2026.
+      var is2026 = (p.close && p.close.indexOf('2026') !== -1) || p.status === 'active';
       if (!is2026) return;
       fees2026 += p.fees || 0;
       pnl2026  += p.result || 0;
       if (p.status === 'active') activePools++;
-      dias2026 += p.days || 0;
+      // DIAS OP.: conta só a fração dentro de 2026 (não o período de 2025 de pools que cruzaram o ano).
+      var open  = (p.open  && p.open.indexOf('/')  !== -1) ? _parseDMY(p.open)  : YEAR_START;
+      var close = (p.close && p.close.indexOf('/') !== -1) ? _parseDMY(p.close) : new Date(); // ativa → hoje
+      var start = open > YEAR_START ? open : YEAR_START;
+      var d = Math.round((close - start) / 86400000);
+      if (d > 0) dias2026 += d;
     });
     var feesEl = document.getElementById('ytd-fees');
     var pnlEl  = document.getElementById('ytd-pnl');
@@ -602,7 +611,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
     <div class="spinner"></div>
     <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
   </div>
-  <iframe id="revertFrame" src="https://revert.finance/#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <iframe id="revertFrame" data-src="https://revert.finance/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
   <div id="revertFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
     <p>⚠ Revert Finance bloqueado — <a href="https://revert.finance/" target="_blank" style="color:var(--gold);">abra em nova aba →</a></p>
   </div>
@@ -631,7 +640,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
       <div class="spinner"></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
     </div>
-    <iframe id="uniswapFrame" src="https://defillama.com/yields" style="width:100%;height:100%;border:none;border-radius:8px;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" allow="*"></iframe>
+    <iframe id="uniswapFrame" data-src="https://defillama.com/yields" style="width:100%;height:100%;border:none;border-radius:8px;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" allow="*"></iframe>
     <div id="uniswapFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
       <p>⚠ DefiLlama bloqueado — <a href="https://defillama.com/yields" target="_blank" style="color:#FF007A;">abra em nova aba →</a></p>
     </div>
@@ -657,7 +666,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
       <div class="spinner"></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
     </div>
-    <iframe id="aaveFrame" src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+    <iframe id="aaveFrame" data-src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
     <div id="aaveAppFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
       <p>⚠ AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba →</a></p>
     </div>
@@ -667,7 +676,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 
 <!-- ══ RAYDIUM ══ -->
-<div id="bc-raydium-section" style="display:none;">
+<div id="bc-raydium-section">
 <div class="revert-panel" style="margin-bottom:20px;">
   <div class="revert-toolbar">
     <div class="revert-title">
@@ -684,7 +693,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
       <div class="spinner"></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
     </div>
-    <iframe id="raydiumFrame" src="https://raydium.io/liquidity-pools/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+    <iframe id="raydiumFrame" data-src="https://raydium.io/liquidity-pools/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
     <div id="raydiumFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
       <p>⚠ Raydium bloqueado — <a href="https://raydium.io/liquidity-pools/" target="_blank" style="color:#15b66a;">abra em nova aba →</a></p>
     </div>
@@ -1193,11 +1202,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  setTimeout(()=>loadNet('base'), 4000);
  setTimeout(()=>loadNet('arbitrum'), 12000);
  setTimeout(()=>loadNet('solana'), 20000);
- // Show Raydium section after page is rendered to prevent auto-scroll
- setTimeout(function() {
-   var raydiumSection = document.getElementById('bc-raydium-section');
-   if (raydiumSection) raydiumSection.style.display = '';
- }, 500);
  });
 })();
 </script>
@@ -1306,11 +1310,39 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
  const timer = setTimeout(showFallback, ms || 20000);
 }
 
-// Inicializar painéis
-initIframePanel('revertFrame', 'revertLoading', 'revertFallback', 15000);
-initIframePanel('uniswapFrame', 'uniswapLoading', 'uniswapFallback', 15000);
-initIframePanel('raydiumFrame', 'raydiumLoading', 'raydiumFallback', 15000);
-initIframePanel('aaveFrame', 'aaveAppLoading', 'aaveAppFallback', 15000);
+// Lazy-load dos iframes — só carregam quando entram na viewport.
+// Evita o "pulo" no load: dApps (Raydium/AAVE/Revert/DefiLlama) roubam o foco e
+// rolam a página até si quando carregam. Carregando só ao chegar neles, nada puxa o scroll no topo.
+(function lazyIframePanels() {
+  // Endereço da carteira fica só no JS (política de privacidade) — nunca na URL pública do markup.
+  var REVERT_ACCT = '#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6';
+  var panels = [
+    { id:'revertFrame',  loading:'revertLoading',  fallback:'revertFallback',  ms:15000, suffix:REVERT_ACCT },
+    { id:'uniswapFrame', loading:'uniswapLoading',  fallback:'uniswapFallback',  ms:15000 },
+    { id:'raydiumFrame', loading:'raydiumLoading',  fallback:'raydiumFallback',  ms:15000 },
+    { id:'aaveFrame',    loading:'aaveAppLoading',   fallback:'aaveAppFallback',   ms:15000 }
+  ];
+  function loadPanel(p) {
+    var f = document.getElementById(p.id);
+    if (!f || f.dataset.loaded || !f.dataset.src) return;
+    f.dataset.loaded = '1';
+    initIframePanel(p.id, p.loading, p.fallback, p.ms); // anexa listener + timer ANTES de atribuir o src
+    f.src = f.dataset.src + (p.suffix || '');
+  }
+  if (!('IntersectionObserver' in window)) { panels.forEach(loadPanel); return; }
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      var p = panels.find(function(x) { return document.getElementById(x.id) === e.target; });
+      if (p) loadPanel(p);
+      io.unobserve(e.target);
+    });
+  }, { rootMargin: '300px 0px' }); // começa a carregar ~300px antes de aparecer (suave)
+  panels.forEach(function(p) {
+    var f = document.getElementById(p.id);
+    if (f) io.observe(f);
+  });
+})();
 
 // ── AAVE V4 LIVE DATA ──
 (async function fetchAaveData() {
@@ -2650,7 +2682,24 @@ function buildFees(type) {
   try {
     if (charts.fees) { charts.fees.destroy(); charts.fees = null; }
     var dk = isDark(); var isLine = type === 'line';
-    var yearFees = [267, 109, 1453, 25]; var yearLabels = ['2023','2024','2025','2026 YTD'];
+    // Taxas anuais derivadas de POOLS por ANO DE REALIZAÇÃO (fechamento/coleta).
+    // Pool ativa conta no ano corrente. Mesmo critério do card "P&L 2026 YTD".
+    var _curYear = new Date().getFullYear();
+    var _feesByYear = {};
+    POOLS.forEach(function(p) {
+      var yr;
+      if (p.status === 'active') { yr = _curYear; }
+      else {
+        var src = (p.close && /\d{4}$/.test(p.close)) ? p.close : p.open;
+        var m = src && src.match(/(\d{4})$/);
+        if (!m) return;
+        yr = +m[1];
+      }
+      _feesByYear[yr] = (_feesByYear[yr] || 0) + (p.fees || 0);
+    });
+    var _yrs = Object.keys(_feesByYear).map(Number).sort(function(a,b){ return a - b; });
+    var yearLabels = _yrs.map(function(y){ return y === _curYear ? y + ' YTD' : String(y); });
+    var yearFees   = _yrs.map(function(y){ return Math.round(_feesByYear[y]); });
     var colors = yearFees.map(v => v > 1000 ? gc.green : gc.gold);
     charts.fees = new Chart(ctx, { type:isLine?'line':'bar', data:{
       labels:yearLabels, datasets:[{ label:'Taxas Anuais', data:yearFees,
