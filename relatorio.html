@@ -291,8 +291,8 @@ tr:hover td{ background:var(--surface2); }
     </div>
     <div class="kpi-cell">
       <div class="kpi-label">Dívida Total</div>
-      <div class="kpi-value neg">$1.559</div>
-      <div class="kpi-sub">AAVE $750 · Kamino $809</div>
+      <div class="kpi-value neg">$1.569</div>
+      <div class="kpi-sub">AAVE $754 · Kamino $815</div>
     </div>
     <div class="kpi-cell" style="border-left:2px solid rgba(63,185,80,0.25);">
       <div class="kpi-label">Yield Líq./Mês</div>
@@ -333,25 +333,25 @@ tr:hover td{ background:var(--surface2); }
     <div class="col-card">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">AAVE V4 · Ethereum</div>
       <table>
-        <tr><td style="color:var(--muted);">Supply WETH</td><td class="r">1.88 WETH</td><td class="r" id="r-aave-eth-usd">—</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r">1.990 USDT</td><td class="r">$1.990</td></tr>
+        <tr><td style="color:var(--muted);">Supply WETH</td><td class="r">2.16 WETH</td><td class="r" id="r-aave-eth-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r">1.300 USDT</td><td class="r">$1.300</td></tr>
         <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-aave-supply">—</td></tr>
-        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">750,16 USDC</td><td class="r" style="color:var(--red);">−$750</td></tr>
-        <tr><td style="color:var(--muted);">Health Factor</td><td></td><td class="r" style="color:var(--green);font-weight:700;">6.24</td></tr>
-        <tr><td style="color:var(--muted);">Taxa Borrow</td><td></td><td class="r">3,79% a.a.</td></tr>
-        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$2,37</td></tr>
+        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">753,94 USDC</td><td class="r" style="color:var(--red);">−$754</td></tr>
+        <tr><td style="color:var(--muted);">Health Factor</td><td></td><td class="r" style="color:var(--green);font-weight:700;">5.32</td></tr>
+        <tr><td style="color:var(--muted);">Taxa Borrow</td><td></td><td class="r">7,59% a.a.</td></tr>
+        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$4,77</td></tr>
       </table>
     </div>
     <div class="col-card">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">Kamino Finance · Solana</div>
       <table>
-        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r">20,42 SOL</td><td class="r" id="r-kam-sol-usd">—</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r">301,01 USDS</td><td class="r">$301</td></tr>
+        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r">23,33 SOL</td><td class="r" id="r-kam-sol-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r">302,06 USDS</td><td class="r">$302</td></tr>
         <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-kam-supply">—</td></tr>
-        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">808,77 USDC</td><td class="r" style="color:var(--red);">−$809</td></tr>
-        <tr><td style="color:var(--muted);">LTV Atual</td><td></td><td class="r" style="color:var(--green);font-weight:700;">40,07%</td></tr>
+        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">814,87 USDC</td><td class="r" style="color:var(--red);">−$815</td></tr>
+        <tr><td style="color:var(--muted);">LTV Atual</td><td></td><td class="r" style="color:var(--green);font-weight:700;">35,5%</td></tr>
         <tr><td style="color:var(--muted);">LTV Liquidação</td><td></td><td class="r">77,24%</td></tr>
-        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$3,13</td></tr>
+        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$3,82</td></tr>
       </table>
     </div>
   </div>
@@ -500,12 +500,12 @@ var PORTFOLIO_DATA = [
 
 var STABLES_USD   = 1602.52;  // CoinGecko: USDT 1302.524 + USDS 300 (valor atual)
 var STABLES_COST  = 882.64;   // custo CoinGecko: USDT 582.64 (CG mostra +$719) + USDS 300
-var DEBT_TOTAL    = 1568.70;  // AAVE 753.83 + Kamino 814.87 (12/06/2026)
+var DEBT_TOTAL    = 1568.81;  // AAVE 753.94 + Kamino 814.87 (13/06/2026)
 
 // Posições DeFi — constantes para yield calc (12/06/2026)
-var AAVE_ETH_QTY=2.16,   AAVE_ETH_APY=0.0130;
-var AAVE_USDT_QTY=1300,  AAVE_USDT_APY=0.0170;
-var AAVE_BORROW=753.83,  AAVE_BORROW_APY=0.2166;  // spike: borrow APY USDC 2.93% -> 21.66%
+var AAVE_ETH_QTY=2.16,   AAVE_ETH_APY=0.0136;
+var AAVE_USDT_QTY=1300,  AAVE_USDT_APY=0.0201;
+var AAVE_BORROW=753.94,  AAVE_BORROW_APY=0.0759;  // borrow APY USDC normalizado: spike 21.66% -> 7.59% (13/06/2026)
 var KAM_SOL_QTY=23.33,   KAM_SOL_APY=0.0642;
 var KAM_USDS_QTY=302.06, KAM_USDS_APY=0.0472;
 var KAM_BORROW=814.87,   KAM_BORROW_APY=0.0563;
@@ -573,7 +573,8 @@ function calcTotals() {
 
 function renderKPIs() {
   var t = calcTotals();
-  var ethPrice = PORTFOLIO_DATA[0].price, solPrice = PORTFOLIO_DATA[1].price;
+  var priceOf = function(id){ var p = PORTFOLIO_DATA.find(function(a){return a.cgId===id;}); return p ? p.price : 0; };
+  var ethPrice = priceOf('ethereum'), solPrice = priceOf('solana');
 
   // Patrimônio líquido
   document.getElementById('r-net').textContent = fmt(t.netTotal);
