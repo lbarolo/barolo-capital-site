@@ -65,7 +65,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .chart-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
 .chart-hdr h3{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;}
 .chart-hdr span{font-size:9px;color:var(--muted);letter-spacing:1px;}
-.chart-wrap{position:relative;height:360px;}
+.chart-ctrls{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.chart-hint{font-size:8.5px;color:var(--muted);letter-spacing:.04em;}
+.chart-wrap{position:relative;height:480px;cursor:grab;}
+.chart-wrap.big{height:720px;}
+.chart-wrap:active{cursor:grabbing;}
 .ov-card{padding:16px 16px;}
 .ov-card h4{font-size:12px;font-weight:600;margin-bottom:3px;}
 .ov-card p{font-size:9.5px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
@@ -174,7 +178,11 @@ footer{text-align:center;margin-top:30px;font-size:9px;letter-spacing:.2em;color
     <div class="chart-card">
       <div class="chart-hdr">
         <h3>BTC/USD · zonas de valuation</h3>
-        <span id="chart-note">linhas tracejadas = preço que dispara cada zona</span>
+        <div class="chart-ctrls">
+          <span class="chart-hint">scroll = zoom · arraste = mover</span>
+          <button class="btn-sm" onclick="resetZoom()" title="Resetar zoom">⟲ Reset</button>
+          <button class="btn-sm" id="expandBtn" onclick="toggleExpand(this)" title="Expandir gráfico">⤢ Expandir</button>
+        </div>
       </div>
       <div class="chart-wrap"><canvas id="cycleChart"></canvas></div>
     </div>
@@ -280,16 +288,11 @@ function classify(zones, v){ for(var i=0;i<zones.length;i++){ if(v<=zones[i].max
 
 /* ---------- data fetch ---------- */
 function loadCharts(cb){
-  function loadAnno(){
-    if(window['chartjs-plugin-annotation']){ cb(); return; }
-    var a=document.createElement('script');
-    a.src='https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js';
-    a.onload=cb; a.onerror=cb; document.head.appendChild(a);
-  }
-  if(window.Chart){ loadAnno(); return; }
-  var s=document.createElement('script');
-  s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
-  s.onload=loadAnno; s.onerror=loadAnno; document.head.appendChild(s);
+  function load(src, next){ var el=document.createElement('script'); el.src=src; el.onload=next; el.onerror=next; document.head.appendChild(el); }
+  function step3(){ if(window['chartjs-plugin-zoom']){ cb(); return; } load('https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js', cb); }
+  function step2(){ if(window['chartjs-plugin-annotation']){ step3(); return; } load('https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js', step3); }
+  if(window.Chart){ step2(); return; }
+  load('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js', step2);
 }
 
 function readCache(){
@@ -348,7 +351,7 @@ function buildLevels(){
     {id:'may_e0', name:'Mayer EXTREME',       price:sma*0.6,      color:COL().green,zone:'buy',  on:false},
     {id:'may_s0', name:'Mayer STRONG',        price:sma*0.8,      color:COL().green,zone:'buy',  on:true},
     {id:'may_w',  name:'Mayer WATCH (200d)',  price:sma*1.0,      color:COL().gold, zone:'watch',on:false},
-    {id:'may_hi', name:'Mayer TOPO',          price:sma*2.4,      color:COL().red,  zone:'sell', on:true}
+    {id:'may_hi', name:'Mayer TOPO',          price:sma*2.4,      color:COL().red,  zone:'sell', on:false}
   ];
 }
 
@@ -364,10 +367,13 @@ function renderOverlayList(){
 }
 function toggleOverlay(id){ var L=LEVELS.find(function(x){return x.id===id;}); if(!L)return; L.on=!L.on; renderOverlayList(); buildChart(); }
 function setAllOverlays(v){ LEVELS.forEach(function(L){ if(L.id!=='cur') L.on=v; }); renderOverlayList(); buildChart(); }
+function resetZoom(){ if(window._cycleChart && _cycleChart.resetZoom) _cycleChart.resetZoom(); }
+function toggleExpand(btn){ var w=document.querySelector('.chart-wrap'); if(!w) return; w.classList.toggle('big'); if(btn) btn.textContent = w.classList.contains('big')?'⤡ Reduzir':'⤢ Expandir'; if(window._cycleChart) requestAnimationFrame(function(){ requestAnimationFrame(function(){ _cycleChart.resize(); }); }); }
 
 /* ---------- chart ---------- */
 function buildChart(){
   var ctx=document.getElementById('cycleChart'); if(!ctx||!window.Chart||!DATA) return;
+  try{ if(window['chartjs-plugin-zoom'] && Chart.registry && !Chart.registry.plugins.get('zoom')) Chart.register(window['chartjs-plugin-zoom']); }catch(e){}
   if(_cycleChart){ _cycleChart.destroy(); _cycleChart=null; }
   var c=COL();
   var ann={};
@@ -383,7 +389,7 @@ function buildChart(){
     type:'line',
     data:{ labels:DATA.labels, datasets:[
       { label:'BTC', data:DATA.price, borderColor:c.gold, borderWidth:1.6, pointRadius:0, tension:0.15,
-        fill:true, backgroundColor:function(cx){ var g=cx.chart.ctx.createLinearGradient(0,0,0,360); g.addColorStop(0,isDark()?'rgba(201,160,80,0.18)':'rgba(138,104,32,0.12)'); g.addColorStop(1,'rgba(201,160,80,0)'); return g; } },
+        fill:true, backgroundColor:function(cx){ var h=(cx.chart&&cx.chart.height)||480; var g=cx.chart.ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,isDark()?'rgba(201,160,80,0.18)':'rgba(138,104,32,0.12)'); g.addColorStop(1,'rgba(201,160,80,0)'); return g; } },
       { label:'Realized Price', data:DATA.realized, borderColor:c.blue, borderWidth:1.2, pointRadius:0, tension:0.15, borderDash:[3,3], fill:false }
     ]},
     options:{
@@ -391,6 +397,11 @@ function buildChart(){
       plugins:{
         legend:{ display:true, position:'top', align:'end', labels:{color:c.muted,font:{family:'JetBrains Mono',size:9},boxWidth:10,boxHeight:2,padding:10} },
         annotation:{ annotations:ann },
+        zoom:{
+          pan:{ enabled:true, mode:'xy' },
+          zoom:{ wheel:{enabled:true, speed:0.08}, pinch:{enabled:true}, mode:'xy' },
+          limits:{ y:{minRange:3000} }
+        },
         tooltip:{ backgroundColor:isDark()?'rgba(22,16,30,.96)':'rgba(250,246,239,.97)', borderColor:c.gold, borderWidth:1, padding:10,
           titleColor:c.text, bodyColor:c.muted, titleFont:{family:'JetBrains Mono',size:10}, bodyFont:{family:'JetBrains Mono',size:10},
           callbacks:{ label:function(it){ return it.dataset.label+': '+fmtUsd(it.raw); } } }
