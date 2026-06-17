@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<script>
+// Theme init — runs before render to avoid flash
+(function(){ var t=localStorage.getItem('bc-theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();
+history.scrollRestoration = 'manual';
+</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Barolo Capital · Ciclo de Mercado</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+ --bg:#0d0917;--surface:#160d2c;--surface2:#1e1438;--border:rgba(180,140,240,0.09);
+ --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#4fa8ff;--wine:#8b3048;
+ --text:#ede8f8;--muted:#8a78a8;--card-shadow:0 4px 18px rgba(0,0,0,0.18);
+ --font:'Satoshi',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+[data-theme="light"]{
+ --bg:#fdf3f0;--surface:#fff8f6;--surface2:#f0ddd8;--border:rgba(120,45,55,0.1);
+ --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--blue:#2a6cc8;--wine:#7a2535;
+ --text:#1c0c10;--muted:#956a72;--card-shadow:0 1px 4px rgba(22,17,12,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh;}
+.container{max-width:1320px;margin:0 auto;padding:74px 24px 60px;}
+a{color:inherit;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(242,236,224,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+[data-theme="dark"] nav{background:rgba(13,9,23,0.96);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-links{display:flex;gap:2px;}
+.nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a.active{color:var(--accent);background:rgba(138,104,32,0.1);border:1px solid rgba(138,104,32,0.25);}
+[data-theme="dark"] .nav-links a.active{background:rgba(201,160,80,0.1);border-color:rgba(201,160,80,0.25);}
+.nav-right{display:flex;gap:6px;align-items:center;}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:all .2s;}
+.btn-sm:hover{color:var(--accent);border-color:var(--accent);}
+.nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;}
+
+/* HEADER */
+.page-head{margin:30px 0 8px;}
+.page-tag{font-family:var(--mono);font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;line-height:1.1;margin:6px 0 4px;}
+.page-sub{font-size:12px;color:var(--muted);max-width:680px;line-height:1.6;}
+.status-row{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:18px 0 26px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--card-shadow);}
+.status-item{display:flex;flex-direction:column;gap:2px;}
+.status-l{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.status-v{font-family:var(--mono);font-size:17px;font-weight:600;}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:34px 0 16px;padding:0 0 10px 14px;border-left:2px solid var(--accent);}
+
+/* CHART + OVERLAYS */
+.chart-grid{display:grid;grid-template-columns:1fr 280px;gap:16px;}
+.chart-card,.ov-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--card-shadow);}
+.chart-card{padding:16px 18px;}
+.chart-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+.chart-hdr h3{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;}
+.chart-hdr span{font-size:9px;color:var(--muted);letter-spacing:1px;}
+.chart-wrap{position:relative;height:360px;}
+.ov-card{padding:16px 16px;}
+.ov-card h4{font-size:12px;font-weight:600;margin-bottom:3px;}
+.ov-card p{font-size:9.5px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.ov-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--border);cursor:pointer;}
+.ov-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.ov-info{flex:1;min-width:0;}
+.ov-name{font-size:10.5px;font-weight:500;}
+.ov-price{font-family:var(--mono);font-size:9px;color:var(--muted);}
+.ov-sw{width:30px;height:16px;border-radius:9px;background:var(--surface2);position:relative;flex-shrink:0;transition:background .2s;border:1px solid var(--border);}
+.ov-sw::after{content:'';position:absolute;width:11px;height:11px;border-radius:50%;background:var(--muted);top:1.5px;left:2px;transition:all .2s;}
+.ov-item.on .ov-sw{background:rgba(63,185,80,0.25);border-color:rgba(63,185,80,0.4);}
+.ov-item.on .ov-sw::after{left:16px;background:var(--green);}
+.ov-mini{display:flex;gap:6px;margin-bottom:10px;}
+.ov-mini button{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:4px;font-size:8.5px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.06em;}
+.ov-mini button:hover{color:var(--accent);border-color:var(--accent);}
+
+/* INDICATOR CARDS */
+.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.ind{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 16px 18px;box-shadow:var(--card-shadow);display:flex;flex-direction:column;}
+.ind-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.ind-name{font-size:12px;font-weight:600;}
+.ind-desc{font-size:8.5px;color:var(--muted);margin-top:1px;letter-spacing:.04em;}
+.ind-zone{font-family:var(--mono);font-size:8px;font-weight:500;letter-spacing:.1em;padding:2px 7px;border-radius:4px;white-space:nowrap;}
+.z-green{background:rgba(63,185,80,0.14);color:var(--green);border:1px solid rgba(63,185,80,0.3);}
+.z-gold{background:rgba(201,160,80,0.14);color:var(--accent);border:1px solid rgba(201,160,80,0.3);}
+.z-muted{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.z-red{background:rgba(248,81,73,0.14);color:var(--red);border:1px solid rgba(248,81,73,0.3);}
+.ind-val{font-family:var(--mono);font-size:33px;font-weight:600;margin:14px 0 2px;line-height:1;}
+.ind-note{font-size:10px;color:var(--muted);min-height:14px;margin-bottom:14px;}
+.buckets{display:flex;gap:3px;margin-top:auto;}
+.bk{flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--muted);padding:5px 2px;background:var(--surface2);border:1px solid transparent;border-radius:4px;line-height:1.3;}
+.bk.active{color:var(--text);font-weight:600;border-color:var(--accent);background:rgba(201,160,80,0.08);}
+.bk.active.bk-green{border-color:var(--green);background:rgba(63,185,80,0.1);color:var(--green);}
+.bk.active.bk-red{border-color:var(--red);background:rgba(248,81,73,0.1);color:var(--red);}
+
+/* DISCLAIMER */
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:30px;box-shadow:var(--card-shadow);}
+.note-card h4{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.note-card ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;}
+.note-card li{font-size:10.5px;color:var(--muted);line-height:1.55;padding-left:14px;position:relative;}
+.note-card li::before{content:'▸';position:absolute;left:0;color:var(--accent);}
+.note-card b{color:var(--text);font-weight:600;}
+footer{text-align:center;margin-top:30px;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;}
+
+@media(max-width:880px){
+ .chart-grid{grid-template-columns:1fr;}
+ .ind-grid{grid-template-columns:1fr 1fr;}
+ .note-card ul{grid-template-columns:1fr;}
+ nav{padding:0 18px;}
+ .nav-toggle{display:block;}
+ .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:6px 0;}
+ [data-theme="dark"] .nav-links{background:rgba(13,9,23,.98);}
+ .nav-links.open{display:flex;}
+ .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+ .page-title{font-size:30px;}
+}
+@media(max-width:520px){ .ind-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+      <defs><linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="transparent"/><stop offset="18%" stop-color="#c9a050"/>
+        <stop offset="82%" stop-color="#c9a050"/><stop offset="100%" stop-color="transparent"/>
+      </linearGradient></defs>
+      <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+      <text x="105" y="20" font-family="Satoshi, Palatino Linotype, serif" font-weight="600" font-size="14" letter-spacing="3" fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+    </svg>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Início</a>
+    <a href="portfolio_analytics.html">Portfolio</a>
+    <a href="pools.html">Pools &amp; DeFi</a>
+    <a href="ciclo.html" class="active">Ciclo</a>
+    <a href="emprestimos.html">Empréstimos</a>
+    <a href="ferramentas.html">Ferramentas</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-sm" onclick="refreshAll()" id="refreshBtn" title="Atualizar dados">↻</button>
+    <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="page-head">
+    <div class="page-tag">On-Chain · Bitcoin</div>
+    <div class="page-title">Ciclo de Mercado</div>
+    <div class="page-sub">Termômetro de ciclo do Bitcoin para timing de acumulação. Os mesmos modelos de valuation on-chain que sinalizam fundos e topos de mercado — irmão do Fear &amp; Greed, mas baseado no custo real da rede, não em sentimento.</div>
+  </div>
+
+  <div class="status-row">
+    <div class="status-item"><span class="status-l">BTC Agora</span><span class="status-v" id="st-price">—</span></div>
+    <div class="status-item"><span class="status-l">Realized Price</span><span class="status-v" id="st-realized">—</span></div>
+    <div class="status-item"><span class="status-l">Posição no Ciclo</span><span class="status-v" id="st-cycle">—</span></div>
+    <div class="status-item"><span class="status-l"><span class="live-dot"></span>Atualizado</span><span class="status-v" id="st-updated" style="font-size:12px;color:var(--muted);">—</span></div>
+  </div>
+
+  <div class="section-label">Preço & Níveis de Sinal On-Chain</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-hdr">
+        <h3>BTC/USD · zonas de valuation</h3>
+        <span id="chart-note">linhas tracejadas = preço que dispara cada zona</span>
+      </div>
+      <div class="chart-wrap"><canvas id="cycleChart"></canvas></div>
+    </div>
+    <div class="ov-card">
+      <h4>Overlays On-Chain</h4>
+      <p>Ative os níveis no gráfico. Cada um mostra o preço de BTC que colocaria o indicador naquela zona.</p>
+      <div class="ov-mini"><button onclick="setAllOverlays(true)">Mostrar todos</button><button onclick="setAllOverlays(false)">Ocultar</button></div>
+      <div id="ovList"></div>
+    </div>
+  </div>
+
+  <div class="section-label">Indicadores</div>
+  <div class="ind-grid">
+    <div class="ind" id="card-mayer">
+      <div class="ind-top"><div><div class="ind-name">Mayer Multiple</div><div class="ind-desc">Preço / Média 200 dias</div></div><div class="ind-zone" id="mayer-zone">—</div></div>
+      <div class="ind-val" id="mayer-val">—</div>
+      <div class="ind-note" id="mayer-note">—</div>
+      <div class="buckets" id="mayer-bk"></div>
+    </div>
+    <div class="ind" id="card-mvrv">
+      <div class="ind-top"><div><div class="ind-name">MVRV Ratio</div><div class="ind-desc">Market Value / Realized Value</div></div><div class="ind-zone" id="mvrv-zone">—</div></div>
+      <div class="ind-val" id="mvrv-val">—</div>
+      <div class="ind-note" id="mvrv-note">—</div>
+      <div class="buckets" id="mvrv-bk"></div>
+    </div>
+    <div class="ind" id="card-realized">
+      <div class="ind-top"><div><div class="ind-name">Realized Price</div><div class="ind-desc">Custo médio on-chain da rede</div></div><div class="ind-zone" id="realized-zone">—</div></div>
+      <div class="ind-val" id="realized-val">—</div>
+      <div class="ind-note" id="realized-note">—</div>
+      <div class="buckets" id="realized-bk"></div>
+    </div>
+    <div class="ind" id="card-pvr">
+      <div class="ind-top"><div><div class="ind-name">Price vs Realized</div><div class="ind-desc">Prêmio sobre o custo base</div></div><div class="ind-zone" id="pvr-zone">—</div></div>
+      <div class="ind-val" id="pvr-val">—</div>
+      <div class="ind-note" id="pvr-note">—</div>
+      <div class="buckets" id="pvr-bk"></div>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <h4>Metodologia & Fontes</h4>
+    <ul>
+      <li><b>MVRV Ratio</b> — direto da CoinMetrics Community API (gratuita, sem key). Market cap ÷ realized cap. Abaixo de 1 = mercado abaixo do custo médio da rede (fundos históricos).</li>
+      <li><b>Realized Price</b> — derivado de <code>PriceUSD ÷ MVRV</code>. É o preço médio em que cada moeda se moveu pela última vez — o "custo base" agregado da rede.</li>
+      <li><b>Mayer Multiple</b> — calculado aqui: preço ÷ média móvel de 200 dias. &lt;0,8 historicamente é zona de compra; &gt;2,4 é sobreaquecimento.</li>
+      <li><b>Price vs Realized</b> — preço atual ÷ realized price. Por construção ≈ MVRV; mostrado pelo ângulo do prêmio/desconto sobre o custo base.</li>
+      <li><b>Lag</b> — dados on-chain são de fechamento diário (UTC), defasagem de ~1 dia. O "BTC Agora" no topo é spot ao vivo (CoinGecko).</li>
+      <li><b>Não é recomendação.</b> Thresholds são heurísticas de ciclo, não gatilhos mecânicos. Servem de contexto macro para DCA de longo prazo.</li>
+    </ul>
+  </div>
+
+  <footer>Barolo Capital · On-Chain Lab · Dados CoinMetrics Community + CoinGecko</footer>
+</div>
+
+<script>
+function toggleTheme(){
+  var html=document.documentElement;
+  html.setAttribute('data-theme',html.getAttribute('data-theme')==='light'?'dark':'light');
+  localStorage.setItem('bc-theme',html.getAttribute('data-theme'));
+  var btn=document.getElementById('themeBtn');
+  if(btn) btn.textContent = html.getAttribute('data-theme')==='dark'?'☾':'☀';
+  if(window._cycleChart){ buildChart(); }
+}
+document.getElementById('themeBtn').textContent = document.documentElement.getAttribute('data-theme')==='dark'?'☾':'☀';
+
+/* ---------- helpers ---------- */
+var isDark = function(){ return document.documentElement.getAttribute('data-theme')==='dark'; };
+var COL = function(){ return {
+  green: isDark()?'#3fb950':'#4a7c3f', red: isDark()?'#f85149':'#9c2a2a',
+  gold: isDark()?'#c9a050':'#8a6820', blue: isDark()?'#4fa8ff':'#2a6cc8',
+  muted: isDark()?'#8a78a8':'#956a72', text: isDark()?'#ede8f8':'#1c0c10',
+  grid: isDark()?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)'
+}; };
+function fmtUsd(n, dec){ if(n==null||!isFinite(n)) return '—'; dec=dec==null?0:dec; return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
+function fmtNum(n, dec){ if(n==null||!isFinite(n)) return '—'; return Number(n).toFixed(dec==null?2:dec); }
+
+/* ---------- state ---------- */
+var DATA = null;       // { labels[], price[], realized[], mvrv[], sma200, mayer, curMvrv, curRealized, curPrice }
+var LEVELS = [];       // signal level definitions
+var _cycleChart = null;
+var CACHE_KEY = 'bc-onchain-v1';
+var CACHE_TTL = 6*60*60*1000; // 6h
+
+/* ---------- zone configs ---------- */
+var MAYER_ZONES = [
+  {max:0.6,  label:'EXTREME', cls:'z-green', bk:'bk-green', note:'Fundo histórico raro — compra agressiva'},
+  {max:0.8,  label:'STRONG',  cls:'z-green', bk:'bk-green', note:'Zona de compra forte (Mayer < 0,8)'},
+  {max:1.0,  label:'WATCH',   cls:'z-gold',  bk:'',         note:'Barato — abaixo da média de 200d'},
+  {max:2.4,  label:'NORMAL',  cls:'z-muted', bk:'',         note:'Faixa justa de mercado'},
+  {max:1e9,  label:'EXTREME', cls:'z-red',   bk:'bk-red',   note:'Sobreaquecido — zona de distribuição'}
+];
+var MAYER_BK = ['< 0,6','0,6–0,8','0,8–1,0','1,0–2,4','> 2,4'];
+var MVRV_ZONES = [
+  {max:0.8,  label:'EXTREME', cls:'z-green', bk:'bk-green', note:'Abaixo do custo base — fundo de ciclo'},
+  {max:1.0,  label:'STRONG',  cls:'z-green', bk:'bk-green', note:'Subvalorizado vs realized cap'},
+  {max:1.2,  label:'WATCH',   cls:'z-gold',  bk:'',         note:'Acumulação — leve prêmio'},
+  {max:3.2,  label:'NORMAL',  cls:'z-muted', bk:'',         note:'Faixa justa de mercado'},
+  {max:1e9,  label:'EXTREME', cls:'z-red',   bk:'bk-red',   note:'Euforia — topo provável de ciclo'}
+];
+var MVRV_BK = ['< 0,8','0,8–1,0','1,0–1,2','1,2–3,2','> 3,2'];
+
+function classify(zones, v){ for(var i=0;i<zones.length;i++){ if(v<=zones[i].max) return {z:zones[i], idx:i}; } return {z:zones[zones.length-1], idx:zones.length-1}; }
+
+/* ---------- data fetch ---------- */
+function loadCharts(cb){
+  function loadAnno(){
+    if(window['chartjs-plugin-annotation']){ cb(); return; }
+    var a=document.createElement('script');
+    a.src='https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js';
+    a.onload=cb; a.onerror=cb; document.head.appendChild(a);
+  }
+  if(window.Chart){ loadAnno(); return; }
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+  s.onload=loadAnno; s.onerror=loadAnno; document.head.appendChild(s);
+}
+
+function readCache(){
+  try{ var c=JSON.parse(localStorage.getItem(CACHE_KEY)); if(c&&c.ts&&(Date.now()-c.ts<CACHE_TTL)) return c; }catch(e){}
+  return null;
+}
+function readStaleCache(){ try{ return JSON.parse(localStorage.getItem(CACHE_KEY)); }catch(e){ return null; } }
+
+async function fetchOnChain(){
+  // CoinMetrics community — MVRV + daily reference price (365d, single page)
+  var end = new Date(); var start = new Date(end.getTime()-370*86400000);
+  var iso = function(d){ return d.toISOString().slice(0,10); };
+  var url='https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=CapMVRVCur,PriceUSD&frequency=1d&page_size=10000&start_time='+iso(start)+'&end_time='+iso(end);
+  var r = await fetch(url, {headers:{Accept:'application/json'}});
+  if(!r.ok) throw new Error('CoinMetrics HTTP '+r.status);
+  var j = await r.json();
+  var rows = (j.data||[]).filter(function(d){ return d.CapMVRVCur && d.PriceUSD; });
+  if(rows.length<210) throw new Error('série on-chain insuficiente');
+  return rows.map(function(d){ return { t:d.time.slice(0,10), p:+d.PriceUSD, m:+d.CapMVRVCur }; });
+}
+
+async function fetchSpot(){
+  try{
+    var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',{headers:{Accept:'application/json'}});
+    if(!r.ok) return null; var j=await r.json(); return (j.bitcoin&&j.bitcoin.usd)||null;
+  }catch(e){ return null; }
+}
+
+function buildDATA(rows){
+  var labels=[], price=[], realized=[], mvrv=[];
+  rows.forEach(function(d){
+    var dt=new Date(d.t+'T00:00:00Z');
+    labels.push(dt.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}));
+    price.push(d.p); mvrv.push(d.m); realized.push(d.p/d.m);
+  });
+  var last=rows.length-1;
+  var sma200 = price.slice(-200).reduce(function(a,b){return a+b;},0)/200;
+  return {
+    labels:labels, price:price, realized:realized, mvrv:mvrv,
+    sma200:sma200, curPrice:price[last], curMvrv:mvrv[last], curRealized:realized[last],
+    mayer: price[last]/sma200, ts:Date.now()
+  };
+}
+
+/* ---------- signal levels ---------- */
+function buildLevels(){
+  var rp=DATA.curRealized, sma=DATA.sma200;
+  LEVELS = [
+    {id:'cur',    name:'Preço Agora',        price:DATA.curPrice, color:COL().text, zone:'now',  on:true},
+    {id:'rp',     name:'Realized Price',     price:rp,            color:COL().blue, zone:'base', on:true},
+    {id:'mvrv_e0',name:'MVRV EXTREME (fundo)',price:rp*0.8,       color:COL().green,zone:'buy',  on:true},
+    {id:'mvrv_s0',name:'MVRV STRONG (compra)',price:rp*1.0,       color:COL().green,zone:'buy',  on:true},
+    {id:'mvrv_w', name:'MVRV WATCH',          price:rp*1.2,       color:COL().gold, zone:'watch',on:false},
+    {id:'mvrv_s1',name:'MVRV STRONG (topo)',  price:rp*3.2,       color:COL().red,  zone:'sell', on:false},
+    {id:'mvrv_e1',name:'MVRV EXTREME (topo)', price:rp*3.7,       color:COL().red,  zone:'sell', on:false},
+    {id:'may_e0', name:'Mayer EXTREME',       price:sma*0.6,      color:COL().green,zone:'buy',  on:false},
+    {id:'may_s0', name:'Mayer STRONG',        price:sma*0.8,      color:COL().green,zone:'buy',  on:true},
+    {id:'may_w',  name:'Mayer WATCH (200d)',  price:sma*1.0,      color:COL().gold, zone:'watch',on:false},
+    {id:'may_hi', name:'Mayer TOPO',          price:sma*2.4,      color:COL().red,  zone:'sell', on:true}
+  ];
+}
+
+function renderOverlayList(){
+  var html='';
+  LEVELS.forEach(function(L){
+    html+='<div class="ov-item'+(L.on?' on':'')+'" onclick="toggleOverlay(\''+L.id+'\')">'+
+      '<span class="ov-dot" style="background:'+L.color+'"></span>'+
+      '<span class="ov-info"><span class="ov-name">'+L.name+'</span><br><span class="ov-price">'+fmtUsd(L.price)+'</span></span>'+
+      '<span class="ov-sw"></span></div>';
+  });
+  document.getElementById('ovList').innerHTML=html;
+}
+function toggleOverlay(id){ var L=LEVELS.find(function(x){return x.id===id;}); if(!L)return; L.on=!L.on; renderOverlayList(); buildChart(); }
+function setAllOverlays(v){ LEVELS.forEach(function(L){ if(L.id!=='cur') L.on=v; }); renderOverlayList(); buildChart(); }
+
+/* ---------- chart ---------- */
+function buildChart(){
+  var ctx=document.getElementById('cycleChart'); if(!ctx||!window.Chart||!DATA) return;
+  if(_cycleChart){ _cycleChart.destroy(); _cycleChart=null; }
+  var c=COL();
+  var ann={};
+  LEVELS.forEach(function(L){
+    if(!L.on) return;
+    ann[L.id]={ type:'line', yMin:L.price, yMax:L.price, borderColor:L.color,
+      borderWidth:L.id==='cur'?2:1, borderDash:L.id==='cur'?[]:(L.id==='rp'?[2,2]:[5,4]),
+      label:{ display:true, content:L.name+' '+fmtUsd(L.price), position: (L.zone==='sell'?'start':'end'),
+        backgroundColor:L.color, color: isDark()?'#0d0917':'#fff', font:{family:'JetBrains Mono',size:7,weight:'500'},
+        padding:{top:1,bottom:1,left:4,right:4}, borderRadius:3, yAdjust:0 } };
+  });
+  _cycleChart=new Chart(ctx,{
+    type:'line',
+    data:{ labels:DATA.labels, datasets:[
+      { label:'BTC', data:DATA.price, borderColor:c.gold, borderWidth:1.6, pointRadius:0, tension:0.15,
+        fill:true, backgroundColor:function(cx){ var g=cx.chart.ctx.createLinearGradient(0,0,0,360); g.addColorStop(0,isDark()?'rgba(201,160,80,0.18)':'rgba(138,104,32,0.12)'); g.addColorStop(1,'rgba(201,160,80,0)'); return g; } },
+      { label:'Realized Price', data:DATA.realized, borderColor:c.blue, borderWidth:1.2, pointRadius:0, tension:0.15, borderDash:[3,3], fill:false }
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{ display:true, position:'top', align:'end', labels:{color:c.muted,font:{family:'JetBrains Mono',size:9},boxWidth:10,boxHeight:2,padding:10} },
+        annotation:{ annotations:ann },
+        tooltip:{ backgroundColor:isDark()?'rgba(22,16,30,.96)':'rgba(250,246,239,.97)', borderColor:c.gold, borderWidth:1, padding:10,
+          titleColor:c.text, bodyColor:c.muted, titleFont:{family:'JetBrains Mono',size:10}, bodyFont:{family:'JetBrains Mono',size:10},
+          callbacks:{ label:function(it){ return it.dataset.label+': '+fmtUsd(it.raw); } } }
+      },
+      scales:{
+        x:{ grid:{color:c.grid}, ticks:{color:c.muted,font:{family:'JetBrains Mono',size:8},maxTicksLimit:9,autoSkip:true} },
+        y:{ grid:{color:c.grid}, ticks:{color:c.muted,font:{family:'JetBrains Mono',size:8},callback:function(v){ return '$'+(v/1000).toFixed(0)+'k'; }} }
+      }
+    }
+  });
+  window._cycleChart=_cycleChart;
+}
+
+/* ---------- indicator cards ---------- */
+function renderBuckets(elId, labels, activeIdx){
+  var act=classifyClass(activeIdx, labels.length);
+  var html='';
+  labels.forEach(function(l,i){
+    var cls='bk'+(i===activeIdx?' active '+act:'');
+    html+='<div class="'+cls+'">'+l+'</div>';
+  });
+  document.getElementById(elId).innerHTML=html;
+}
+function classifyClass(idx,len){ if(idx===0||idx===1) return 'bk-green'; if(idx===len-1) return 'bk-red'; return ''; }
+
+function renderCards(){
+  // Mayer
+  var mc=classify(MAYER_ZONES, DATA.mayer);
+  document.getElementById('mayer-val').textContent=fmtNum(DATA.mayer,2);
+  setZone('mayer-zone', mc.z);
+  document.getElementById('mayer-note').textContent=mc.z.note;
+  renderBuckets('mayer-bk', MAYER_BK, mc.idx);
+  // MVRV
+  var vc=classify(MVRV_ZONES, DATA.curMvrv);
+  document.getElementById('mvrv-val').textContent=fmtNum(DATA.curMvrv,2);
+  setZone('mvrv-zone', vc.z);
+  document.getElementById('mvrv-note').textContent=vc.z.note;
+  renderBuckets('mvrv-bk', MVRV_BK, vc.idx);
+  // Realized price (zone = premium/discount vs current)
+  var prem=(DATA.curPrice/DATA.curRealized-1)*100;
+  document.getElementById('realized-val').textContent=fmtUsd(DATA.curRealized);
+  var rZone = prem<-15?{label:'DESCONTO',cls:'z-green',note:'Preço abaixo do custo base da rede'} :
+              prem<20 ?{label:'PERTO',cls:'z-gold',note:'Preço próximo do custo base'} :
+              prem<220?{label:'PRÊMIO',cls:'z-muted',note:'Preço acima do custo base'} :
+                       {label:'PRÊMIO ALTO',cls:'z-red',note:'Prêmio elevado — euforia'};
+  setZone('realized-zone', rZone);
+  document.getElementById('realized-note').textContent=rZone.note;
+  document.getElementById('realized-bk').innerHTML=
+    '<div class="bk'+(prem<-15?' active bk-green':'')+'">Desconto</div>'+
+    '<div class="bk'+(prem>=-15&&prem<20?' active':'')+'">Perto</div>'+
+    '<div class="bk'+(prem>=20&&prem<220?' active':'')+'">Prêmio</div>'+
+    '<div class="bk'+(prem>=220?' active bk-red':'')+'">Euforia</div>';
+  // Price vs Realized
+  var pvr=DATA.curPrice/DATA.curRealized;
+  document.getElementById('pvr-val').textContent=(prem>=0?'+':'')+fmtNum(prem,0)+'%';
+  var pZone = pvr<=1?{label:'ABAIXO',cls:'z-green',note:'Mercado abaixo do custo base — raro'} :
+              pvr<=1.2?{label:'ACUMULAR',cls:'z-gold',note:'Prêmio baixo sobre o realized'} :
+              pvr<=3.2?{label:'NEUTRO',cls:'z-muted',note:'Faixa justa de prêmio'} :
+                       {label:'ESTICADO',cls:'z-red',note:'Prêmio de topo de ciclo'};
+  setZone('pvr-zone', pZone);
+  document.getElementById('pvr-note').textContent=pZone.note;
+  document.getElementById('pvr-bk').innerHTML=
+    '<div class="bk'+(pvr<=1?' active bk-green':'')+'">≤ 1.0x</div>'+
+    '<div class="bk'+(pvr>1&&pvr<=1.2?' active':'')+'">≤ 1.2x</div>'+
+    '<div class="bk'+(pvr>1.2&&pvr<=3.2?' active':'')+'">≤ 3.2x</div>'+
+    '<div class="bk'+(pvr>3.2?' active bk-red':'')+'">> 3.2x</div>';
+}
+function setZone(id, z){ var el=document.getElementById(id); el.textContent=z.label; el.className='ind-zone '+z.cls; }
+
+/* ---------- status / cycle verdict ---------- */
+function renderStatus(spot){
+  document.getElementById('st-price').textContent=fmtUsd(spot||DATA.curPrice);
+  document.getElementById('st-realized').textContent=fmtUsd(DATA.curRealized);
+  var d=new Date(DATA.ts);
+  document.getElementById('st-updated').textContent=d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  // cycle verdict from MVRV + Mayer blend
+  var m=DATA.curMvrv, y=DATA.mayer, v, cls;
+  if(m<0.9||y<0.75){ v='FUNDO / COMPRA'; cls='var(--green)'; }
+  else if(m<1.4||y<1.1){ v='ACUMULAÇÃO'; cls='var(--accent)'; }
+  else if(m<3.0&&y<2.0){ v='EXPANSÃO'; cls='var(--text)'; }
+  else { v='TOPO / EUFORIA'; cls='var(--red)'; }
+  var el=document.getElementById('st-cycle'); el.textContent=v; el.style.color=cls;
+}
+
+/* ---------- orchestration ---------- */
+async function render(spot){
+  buildLevels(); renderOverlayList(); buildChart(); renderCards(); renderStatus(spot);
+}
+async function refreshAll(){
+  var btn=document.getElementById('refreshBtn'); if(btn){ btn.style.opacity='.4'; btn.textContent='…'; }
+  try{
+    var rows=await fetchOnChain();
+    DATA=buildDATA(rows);
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:DATA.ts, rows:rows})); }catch(e){}
+    var spot=await fetchSpot();
+    await render(spot);
+  }catch(e){
+    console.warn('[ciclo] fetch falhou:', e);
+    var stale=readStaleCache();
+    if(stale&&stale.rows){ DATA=buildDATA(stale.rows); DATA.ts=stale.ts; await render(null); }
+    else { document.getElementById('st-cycle').textContent='offline'; }
+  }
+  if(btn){ btn.style.opacity='1'; btn.textContent='↻'; }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  loadCharts(async function(){
+    var cached=readCache();
+    if(cached&&cached.rows){
+      DATA=buildDATA(cached.rows); DATA.ts=cached.ts;
+      await render(null);
+      fetchSpot().then(function(s){ if(s) document.getElementById('st-price').textContent=fmtUsd(s); });
+    } else {
+      await refreshAll();
+    }
+  });
+});
+</script>
+</body>
+</html>
