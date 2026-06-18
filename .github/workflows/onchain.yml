@@ -1,0 +1,50 @@
+name: Atualizar dados on-chain (ciclo.html)
+
+# Regenera btc-onchain.json a partir da Bitcoin Lab API e commita se mudou.
+# O token NUNCA fica no repo — vem do secret RB_TOKEN.
+# Configurar em: Settings → Secrets and variables → Actions → New repository secret
+#   Name: RB_TOKEN   Value: <seu token da researchbitcoin.net>
+
+on:
+  schedule:
+    - cron: '20 9 * * *'   # ~06:20 BRT diariamente
+  workflow_dispatch:        # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: onchain-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Gerar btc-onchain.json
+        env:
+          RB_TOKEN: ${{ secrets.RB_TOKEN }}
+        run: |
+          if [ -z "$RB_TOKEN" ]; then
+            echo "::error::Secret RB_TOKEN não configurado (Settings → Secrets → Actions)."
+            exit 1
+          fi
+          node scripts/fetch-onchain.js
+
+      - name: Commit se houver mudança
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- btc-onchain.json; then
+            echo "Sem mudanças no btc-onchain.json."
+          else
+            git add btc-onchain.json
+            git commit -m "data: atualização on-chain BTC (automático)"
+            git push
+          fi
