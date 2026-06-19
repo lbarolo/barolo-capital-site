@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * fetch-onchain.js — gera btc-onchain.json para a página ciclo.html
+ * fetch-onchain.js — gera btc-onchain.json para a aba Ciclo (ferramentas.html)
  *
  * Fonte: Bitcoin Lab API (ResearchBitcoin.net) — mesma fonte do painel yldlab.xyz.
  * Token: lido de process.env.RB_TOKEN (NUNCA hardcodado / NUNCA commitado).
