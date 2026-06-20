@@ -1759,6 +1759,17 @@ body, input, button, select, textarea {
  </div>
  </div>
 
+ <div class="alert-item">
+ <label class="alert-toggle"><input type="checkbox" id="al-cycle" checked><span class="toggle-slider"></span></label>
+ <div class="alert-info">
+ <div class="alert-name" data-i18n="al-cycle-name">Regime do Ciclo (alavancagem)</div>
+ <div class="alert-desc" data-i18n="al-cycle-desc">Avisa quando o ciclo BTC muda de regime: Acumulação (compra spot, não alavanca) · Expansão (janela p/ alavancar) · Euforia (desalavanca e repaga)</div>
+ </div>
+ <div class="alert-threshold">
+ <span style="font-size:10px;color:var(--muted);">AUTO · MVRV/Mayer</span>
+ </div>
+ </div>
+
  </div>
 
  <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;">
@@ -3299,7 +3310,26 @@ function checkAlerts(verbose){
  if(liveSOL24h<thresh){showPopup('danger','','SOL em Queda Brusca',`SOL caiu ${liveSOL24h.toFixed(1)}% nas últimas 24h`);fired++;}
  }
 
+ checkCycleAlert(verbose);
  if(verbose && fired===0) showPopup('ok','','Tudo Certo',`Nenhum alerta disparado. ETH $${ethPrice.toFixed(0)} · SOL $${solPrice.toFixed(2)} · Aave HF ${aaveHF.toFixed(2)} · Kamino LTV ${kamLTV.toFixed(1)}%`);
+}
+
+// ── Alerta de Regime do Ciclo (alavancagem) — reusa Ciclo.getRegime() (mesma lógica da aba Ciclo) ──
+var _lastCycleRegime = localStorage.getItem('bc-cycle-regime');
+async function checkCycleAlert(verbose){
+ const cb=document.getElementById('al-cycle');
+ if((!cb||!cb.checked) && !verbose) return;
+ if(!window.Ciclo || !Ciclo.getRegime) return;
+ let r;
+ try{ r=await Ciclo.getRegime(); }catch(e){ return; }
+ if(!r || r.mvrv==null) return;
+ const info='MVRV '+r.mvrv.toFixed(2)+' · Mayer '+r.mayer.toFixed(2)+' · BTC $'+Math.round(r.price).toLocaleString('en-US');
+ if(r.id!==_lastCycleRegime){
+   const prev=_lastCycleRegime; _lastCycleRegime=r.id;
+   localStorage.setItem('bc-cycle-regime', r.id);
+   if(prev!==null && cb && cb.checked) showPopup(r.pop,'','Ciclo mudou de regime: '+r.label, r.action+' ('+info+')');
+ }
+ if(verbose) showPopup(r.pop,'','Regime atual: '+r.label, r.action+' ('+info+')');
 }
 
 function renderAlertLog(){
@@ -4042,6 +4072,8 @@ var LANG_STRINGS = {
   'al-aave-hf-desc':{pt:'Dispara quando o HF cair abaixo do threshold',en:'Triggers when HF drops below threshold'},
   'al-kam-ltv-name':{pt:'Kamino LTV elevado',        en:'Kamino LTV high'},
   'al-kam-ltv-desc':{pt:'Dispara quando o LTV subir acima do threshold',en:'Triggers when LTV rises above threshold'},
+  'al-cycle-name':{pt:'Regime do Ciclo (alavancagem)', en:'Cycle Regime (leverage)'},
+  'al-cycle-desc':{pt:'Avisa quando o ciclo BTC muda de regime: Acumulação (compra spot, não alavanca) · Expansão (janela p/ alavancar) · Euforia (desalavanca e repaga)', en:'Alerts when the BTC cycle changes regime: Accumulation (buy spot, no leverage) · Expansion (window to lever up) · Euphoria (deleverage & repay)'},
   'al-uni-name':   {pt:'Uniswap fora do range',      en:'Uniswap out of range'},
   'al-uni-desc':   {pt:'Dispara quando o preço ETH sair do range da pool',en:'Triggers when ETH price exits the pool range'},
   'al-eth-name':   {pt:'ETH queda brusca',            en:'ETH sharp drop'},
@@ -4429,24 +4461,33 @@ window.Ciclo = (function(){
     });
     document.getElementById('cy-indGrid').innerHTML=html;
   }
+  // ── Veredito de ciclo (compartilhado: status da aba + alerta de regime) ──
+  function verdictOf(D){
+    var sc=0;
+    if(D.curMvrv<1)sc--; if(D.curMvrv>3.2)sc++;
+    if(D.mayer<0.8)sc--; if(D.mayer>2.4)sc++;
+    if(D.curSoprLth<1)sc--; if(D.curSoprLth>2)sc++;
+    if(D.curAviv<0.8)sc--; if(D.curAviv>2.4)sc++;
+    if(D.curMvrvSth<0.9)sc--; if(D.curMvrvSth>1.4)sc++;
+    if(sc<=-3) return {id:'fundo',      v:'FUNDO / COMPRA', cls:'var(--green)'};
+    if(sc<=-1) return {id:'acumulacao', v:'ACUMULAÇÃO',     cls:'var(--accent)'};
+    if(sc<=1)  return {id:'expansao',   v:'EXPANSÃO',       cls:'var(--text)'};
+    return       {id:'euforia',    v:'TOPO / EUFORIA', cls:'var(--red)'};
+  }
+  // Mapeia o veredito para a ação de alavancagem (regimes do Lucas)
+  function regimeAction(id){
+    if(id==='euforia')  return {label:'EUFORIA / TOPO',      action:'Desalavancar e repagar a dívida — vender o tranche alavancado na força.', pop:'danger'};
+    if(id==='expansao') return {label:'EXPANSÃO CONFIRMADA', action:'Janela para alavancagem tática — tendência confirmada, ainda longe do topo.', pop:'warn'};
+    return {label:'ACUMULAÇÃO', action:'Segurar a dívida, comprar spot com fiat, NÃO alavancar mais.', pop:'ok'};
+  }
   function renderStatus(spot){
     document.getElementById('cy-st-price').textContent=fmtUsd(spot||DATA.curPrice);
     document.getElementById('cy-st-realized').textContent=fmtUsd(DATA.curRealized);
     document.getElementById('cy-st-cvdd').textContent=fmtUsd(DATA.curCvdd);
     var d=DATA.updated?new Date(DATA.updated):new Date(DATA.ts);
     document.getElementById('cy-st-updated').textContent=d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    var sc=0;
-    if(DATA.curMvrv<1)sc--; if(DATA.curMvrv>3.2)sc++;
-    if(DATA.mayer<0.8)sc--; if(DATA.mayer>2.4)sc++;
-    if(DATA.curSoprLth<1)sc--; if(DATA.curSoprLth>2)sc++;
-    if(DATA.curAviv<0.8)sc--; if(DATA.curAviv>2.4)sc++;
-    if(DATA.curMvrvSth<0.9)sc--; if(DATA.curMvrvSth>1.4)sc++;
-    var v,cls;
-    if(sc<=-3){ v='FUNDO / COMPRA'; cls='var(--green)'; }
-    else if(sc<=-1){ v='ACUMULAÇÃO'; cls='var(--accent)'; }
-    else if(sc<=1){ v='EXPANSÃO'; cls='var(--text)'; }
-    else { v='TOPO / EUFORIA'; cls='var(--red)'; }
-    var el=document.getElementById('cy-st-cycle'); el.textContent=v; el.style.color=cls;
+    var vd=verdictOf(DATA);
+    var el=document.getElementById('cy-st-cycle'); el.textContent=vd.v; el.style.color=vd.cls;
   }
   function render(spot){ buildLevels(); renderOverlayList(); buildChart(); renderCards(); renderStatus(spot); }
 
@@ -4463,6 +4504,13 @@ window.Ciclo = (function(){
     } finally { if(btn){ btn.style.opacity='1'; btn.textContent='↻'; } }
   }
 
+  // Garante DATA carregada (usa cache; faz fetch leve do JSON se preciso) — para o alerta de regime
+  async function ensureData(){
+    if(DATA) return DATA;
+    try{ var st=JSON.parse(localStorage.getItem(CACHE_KEY)); if(st&&st.series&&st.series.length>=210){ DATA=buildDATA(st); return DATA; } }catch(e){}
+    try{ var j=await fetchOnChain(); DATA=buildDATA(j); try{localStorage.setItem(CACHE_KEY,JSON.stringify(j));}catch(e2){} return DATA; }catch(e3){ return null; }
+  }
+
   return {
     open:function(){
       if(!_libsReady){ loadCharts(function(){ _libsReady=true; refreshAll(); }); return; }
@@ -4470,6 +4518,7 @@ window.Ciclo = (function(){
       else { refreshAll(); }
     },
     refresh:function(){ refreshAll(); },
+    getRegime:async function(){ var D=await ensureData(); if(!D) return null; var vd=verdictOf(D); var ra=regimeAction(vd.id); return { id:vd.id, label:ra.label, action:ra.action, pop:ra.pop, mvrv:D.curMvrv, mayer:D.mayer, sth:D.curMvrvSth, price:D.curPrice }; },
     rebuild:function(){ if(_cycleChart && DATA){ buildLevels(); renderOverlayList(); buildChart(); } },
     resetZoom:function(){ if(_cycleChart && _cycleChart.resetZoom) _cycleChart.resetZoom(); },
     toggleExpand:function(btn){ var w=document.querySelector('#panel-ciclo .cy-wrap'); if(!w) return; w.classList.toggle('big'); if(btn) btn.textContent=w.classList.contains('big')?'⤡ Reduzir':'⤢ Expandir'; if(_cycleChart) requestAnimationFrame(function(){ requestAnimationFrame(function(){ _cycleChart.resize(); }); }); },
