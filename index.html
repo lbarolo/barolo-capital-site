@@ -1463,7 +1463,7 @@ function toggleMobile() {
   // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.
   var STABLES_USD    = 1602.52;  // CoinGecko: USDT 1302.524 + USDS 300 (12/06/2026)
   var LP_POOLED      = 296;      // pool WETH/USDC Base aberta 03/06/2026: 0.18 WETH (capital $329, valor 10/06/2026)
-  var TOTAL_DEBT     = 1568.70;  // AAVE 753.83 USDC @ 21.66% + Kamino 814.87 USDC @ 5.63% (12/06/2026)
+  var TOTAL_DEBT     = 1570.62;  // AAVE 754.65 USDC @ 5.38% + Kamino 815.97 USDC @ 5.69% (20/06/2026)
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
 
@@ -1812,7 +1812,7 @@ function calculatePerformanceMetrics() {
   // Portfolio composition (10/06/2026)
   var SPOT_VALUE = 5698;        // Cripto holdings (preços CoinGecko 10/06/2026)
   var LP_POOLED = 296;          // pool WETH/USDC Base aberta 03/06/2026 (0.18 WETH)
-  var TOTAL_DEBT = 1568.70;     // AAVE 753.83 + Kamino 814.87 (12/06/2026)
+  var TOTAL_DEBT = 1570.62;     // AAVE 754.65 + Kamino 815.97 (20/06/2026)
   var PORTFOLIO_INVESTED_VALUE = SPOT_VALUE + LP_POOLED - TOTAL_DEBT; // 6335.38K
 
   // ── CAGR of invested capital (excluding dry powder) ──

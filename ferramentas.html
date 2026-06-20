@@ -851,7 +851,7 @@ body, input, button, select, textarea {
  <div>
  <div class="field"><label data-i18n="lbl-eth-col">ETH colateral (ETH)</label><input type="number" id="aave-eth" value="2.16" step="0.001" oninput="calcAave()"></div>
  <div class="field"><label data-i18n="lbl-usdt-col">USDT colateral ($)</label><input type="number" id="aave-usdt" value="1300" step="1" oninput="calcAave()"></div>
- <div class="field"><label data-i18n="lbl-usdc-debt-aave">Dívida USDC ($)</label><input type="number" id="aave-debt" value="753.83" step="1" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-debt-aave">Dívida USDC ($)</label><input type="number" id="aave-debt" value="754.65" step="1" oninput="calcAave()"></div>
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="aave-ethprice" value="2070" step="1" oninput="calcAave()"></div>
@@ -879,9 +879,9 @@ body, input, button, select, textarea {
  <div class="section-title">Kamino — Solana <span>MAIN MARKET</span></div>
  <div class="two-col">
  <div>
- <div class="field"><label data-i18n="lbl-sol-col">SOL colateral (SOL)</label><input type="number" id="kam-sol" value="23.33" step="0.1" oninput="calcKamino()"></div>
- <div class="field"><label data-i18n="lbl-usds-col">USDS colateral ($)</label><input type="number" id="kam-pyusd" value="302.06" step="1" oninput="calcKamino()"></div>
- <div class="field"><label data-i18n="lbl-usdc-debt">Dívida USDC ($)</label><input type="number" id="kam-debt" value="814.87" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-sol-col">SOL colateral (SOL)</label><input type="number" id="kam-sol" value="23.36" step="0.1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usds-col">USDS colateral ($)</label><input type="number" id="kam-pyusd" value="302.25" step="1" oninput="calcKamino()"></div>
+ <div class="field"><label data-i18n="lbl-usdc-debt">Dívida USDC ($)</label><input type="number" id="kam-debt" value="815.97" step="1" oninput="calcKamino()"></div>
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-sol-price">Preço SOL atual ($)</label><input type="number" id="kam-solprice" value="90.24" step="0.1" oninput="calcKamino()"></div>
@@ -2301,8 +2301,8 @@ var BASE = {
  ethQty:2.37632741, solQty:23.31,  // sync CoinGecko 08/06/2026
  ethPrice:1550.85, solPrice:63.01,
  altVal:150, // ADA+RDNT+ZK+etc rough
- aaveDebt:753.83, aaveUSDT:1300, aaveETH:2.16,  // 12/06/2026
- kamDebt:814.87, kamPYUSD:302.06, kamSOL:23.33,
+ aaveDebt:754.65, aaveUSDT:1300, aaveETH:2.16,  // 20/06/2026
+ kamDebt:815.97, kamPYUSD:302.25, kamSOL:23.36,
  kamLiqThresh:0.7579, aaveLiqThresh:0.86,
  uniRangeMin:1822.61, uniRangeMax:2401.90,
  totalBase:5620
@@ -2869,7 +2869,7 @@ function loadActivePoolHedge(){
  set('hd-pnow',    live.toFixed(0));
  set('hd-feeapr',  32);        // referência: fee APR realizado na pool anterior (mesmo par/range style)
  set('hd-funding', 5);
- set('hd-borrow',  21.66);     // AAVE USDC atual (12/06/2026) — spike forte vs 2.93% anterior
+ set('hd-borrow',  5.38);      // AAVE USDC atual (20/06/2026) — normalizou do spike de 21.66%
  set('hd-vol',     60);
  set('hd-pct',     0);         // default: SEM hedge (estratégia saída gradual ETH→USDC)
  var pctVal = document.getElementById('hd-pct-val');
@@ -2895,7 +2895,7 @@ function loadBaroloScenario(){
  set('lh-supapy',  1.4);       // blended WETH 1.30% + USDT 1.70% ≈ 1.4%
  set('lh-feeapr',  32);
  set('lh-il',      -12);
- set('lh-brw',     21.66);     // AAVE USDC borrow APY — spike forte (12/06/2026)
+ set('lh-brw',     5.38);      // AAVE USDC borrow APY — normalizou (20/06/2026)
  // Feedback visual
  flashHighlight(["hd-capital","hd-pmin","hd-pmax","hd-pnow","hd-feeapr","hd-funding","hd-borrow","hd-vol","hd-pct"]);
  showToast("Pool ativa carregada (WETH/USDC Base)");
@@ -3272,9 +3272,9 @@ function checkAlerts(verbose){
  const ethPrice=parseFloat(document.getElementById('aave-ethprice')?.value||liveETH);
  const solPrice=parseFloat(document.getElementById('kam-solprice')?.value||liveSOL);
  const ethCol=2.16*ethPrice+1300;
- const aaveHF=(ethCol*0.86)/753.83;
- const kamCol=23.33*solPrice+302.06;
- const kamLTV=(814.87/kamCol*100);
+ const aaveHF=(ethCol*0.86)/754.65;
+ const kamCol=23.36*solPrice+302.25;
+ const kamLTV=(815.97/kamCol*100);
  const uniIn=ethPrice>=1822.61&&ethPrice<=2401.90;
 
  let fired=0;

@@ -602,7 +602,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
  <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms" id="lp-pooled-sub">0.1800 WETH + 0.00 USDC</div></div>
  <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-apr-sub">fees / capital investido</div></div>
- <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−3.79%</div><div class="lp-ms">USDC · taxa atual</div></div>
+ <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−5.38%</div><div class="lp-ms">USDC · taxa atual</div></div>
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
 
@@ -1515,8 +1515,8 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
 (async function fetchKaminoData() {
  const SOL_WALLET_K = 'Fq1F49Vx38f8h62SSRCQpGYPxPEtarY5NZ5GhrFVnrfW';
  const MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
- const USDS_QTY   = 302.06;
- const FIXED = { solQty: 23.33, debtUsd: 814.87, liqThreshold: 0.7743, currentLtv: 0.4374 };
+ const USDS_QTY   = 302.25;
+ const FIXED = { solQty: 23.36, debtUsd: 815.97, liqThreshold: 0.7729, currentLtv: 0.4120 };
 
  const $ = id => document.getElementById(id);
  const fmt = (n, d=2) => '$' + n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -1638,7 +1638,7 @@ setTimeout(function() {
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 753.83) + (window._liveKaminoDebt || 814.87);
+ var debt = (window._liveAaveDebt || 754.65) + (window._liveKaminoDebt || 815.97);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -1776,7 +1776,7 @@ function setRef(ref){
 
   // 9. Atualiza REFS e UI
   const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  const AAVE_BORROW_RATE = 21.66; // % a.a. — taxa USDC AAVE V4 (spike forte, atualizado 12/06/26)
+  const AAVE_BORROW_RATE = 5.38; // % a.a. — taxa USDC AAVE V4 (borrow normalizou do spike de 21.66%, 20/06/26)
 
   // POOLED
   set('lp-pooled', '$'+pooledUsd.toFixed(2));
@@ -4200,7 +4200,7 @@ function buildNetRanking() {
  return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 814.87;
+ window._liveKaminoDebt = window._liveKaminoDebt || 815.97;
  return null;
  }
  }
@@ -4224,7 +4224,7 @@ function buildNetRanking() {
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
  const STABLES = 1602.52; // CoinGecko: USDT 1302.524 + USDS 300 (12/06/2026)
  const LP_POOLED = window._liveLP || 0; // pool encerrada 03/06/2026
- const DEBT = (window._liveAaveDebt || 753.83) + (window._liveKaminoDebt || 814.87);
+ const DEBT = (window._liveAaveDebt || 754.65) + (window._liveKaminoDebt || 815.97);
  const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;
  console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + lp $${LP_POOLED.toFixed(0)} − debt $${DEBT.toFixed(0)}`);
