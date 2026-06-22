@@ -580,6 +580,7 @@ body, input, button, select, textarea {
   <div class="nav-right">
     <button class="btn-sm" onclick="window.print()" title="Exportar como PDF">📄 PDF</button>
     <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
+    <button class="btn-sm" id="currencyBtn" onclick="toggleCurrency()" title="Régua de medida: USD → BRL → BTC → ETH">$ USD</button>
     <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
   </div>
 </nav>
@@ -3848,9 +3849,9 @@ async function fetchBrlRate() {
 }
 
 function toggleCurrency() {
- currentCurrency = currentCurrency === 'USD' ? 'BRL' : 'USD';
+ var _co=['USD','BRL','BTC','ETH']; currentCurrency = _co[(_co.indexOf(currentCurrency)+1)%4]; try{localStorage.setItem('bc-currency',currentCurrency);}catch(e){}
  const btn = document.getElementById('currencyBtn');
- if (btn) btn.textContent = currentCurrency === 'USD' ? '$ USD' : 'R$ BRL';
+ if (btn) btn.textContent = ({USD:'$ USD',BRL:'R$ BRL',BTC:'₿ BTC',ETH:'Ξ ETH'})[currentCurrency] || '$ USD';
  const badge = document.getElementById('brlRateBadge');
  if (badge) badge.style.display = currentCurrency === 'BRL' ? 'inline-flex' : 'none';
  const enriched = buildEnriched();
@@ -3861,14 +3862,15 @@ function toggleCurrency() {
 
 function fmtCurrency(usdValue, decimals) {
  if (decimals === undefined) decimals = 0;
+ if (currentCurrency === 'BTC' || currentCurrency === 'ETH') { const px = (currentCurrency==='BTC'?(getPrice('bitcoin')||65000):(getPrice('ethereum')||1900)); const tok = usdValue/px; const a=Math.abs(tok); const ad=a>=100?2:a>=1?3:a>=0.01?4:6; return (currentCurrency==='BTC'?'₿':'Ξ')+tok.toLocaleString('en-US',{minimumFractionDigits:ad,maximumFractionDigits:ad}); }
  const v = currentCurrency === 'BRL' ? usdValue * usdBrlRate : usdValue;
  const sym = currentCurrency === 'BRL' ? 'R$ ' : '$';
  const locale = currentCurrency === 'BRL' ? 'pt-BR' : 'en-US';
  const formatted = v.toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
  return sym + formatted;
 }
-function currSymbol() { return currentCurrency === 'BRL' ? 'R$' : '$'; }
-function toDisplay(usd) { return currentCurrency === 'BRL' ? usd * usdBrlRate : usd; }
+function currSymbol() { return currentCurrency === 'BRL' ? 'R$' : currentCurrency === 'BTC' ? '₿' : currentCurrency === 'ETH' ? 'Ξ' : '$'; }
+function toDisplay(usd) { if (currentCurrency === 'BRL') return usd * usdBrlRate; if (currentCurrency === 'BTC') return usd / (getPrice('bitcoin')||65000); if (currentCurrency === 'ETH') return usd / (getPrice('ethereum')||1900); return usd; }
 
 
 function toggleTheme(){
@@ -3917,6 +3919,9 @@ async function init(){
  // Update theme button icon
  const thBtn=document.querySelector('button[onclick="toggleTheme()"]');
  if(thBtn && saved==='dark') thBtn.textContent='◑ Tema';
+
+ // Restore régua de medida (USD/BRL/BTC/ETH)
+ (function(){ var sc=localStorage.getItem('bc-currency'); if(sc && ['USD','BRL','BTC','ETH'].indexOf(sc)>=0){ currentCurrency=sc; var cb=document.getElementById('currencyBtn'); if(cb) cb.textContent=({USD:'$ USD',BRL:'R$ BRL',BTC:'₿ BTC',ETH:'Ξ ETH'})[sc]; var bg=document.getElementById('brlRateBadge'); if(bg) bg.style.display = sc==='BRL'?'inline-flex':'none'; } })();
 
  const ls=document.getElementById('loadingScreen');
  const mc=document.getElementById('mainContent');
