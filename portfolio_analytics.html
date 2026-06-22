@@ -686,6 +686,11 @@ body, input, button, select, textarea {
  <div class="hero-meta-val acc" id="s-cagr">—</div>
  <div style="font-size:8px;color:var(--muted);" id="s-cagr-sub">ao ano · com leverage</div>
  </div>
+ <div class="hero-meta-item" title="Você está acumulando mais cripto do que se tivesse só comprado e segurado? Patrimônio líquido atual vs DCA equivalente (quantos ETH/BTC seu aporte teria comprado).">
+ <div class="hero-meta-label">vs HODL <span id="s-hodl-coin">ETH</span></div>
+ <div class="hero-meta-val" id="s-hodl">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-hodl-sub">—</div>
+ </div>
  </div>
 </div>
 
@@ -1850,6 +1855,7 @@ function renderUI(enriched){
 
  set('s-net-total', fmtCurrency(netTotal, 0));
  set('s-net-card', fmtCurrency(netTotal, 0));
+ try { updateVsHodlKpi(); } catch(e) {}
   // Update STABLES card — already calculated above as stablesTotal
   window._stablesTotalUSD = stablesTotal; // global para convexidade
   set('s-stables', fmtCurrency(stablesTotal, 0));
@@ -3428,6 +3434,58 @@ function setWealthCurrency(c, btn) {
     if (!_denomReal) loadDenomHistory().then(function(){ if (wealthCurrency === c) buildWealthEvolution(); });
   } else {
     buildWealthEvolution();
+  }
+}
+
+// ═══ vs HODL — alpha da operação ativa vs comprar e segurar ETH/BTC ═══
+// Compara seu patrimônio LÍQUIDO atual (em coin) com o DCA equivalente:
+// quantos ETH/BTC seus aportes mensais teriam comprado ao preço de cada mês.
+function computeVsHodl(coin){ // 'btc' | 'eth'
+  if (!(_livePortfolioGross > 0)) return null;
+  var W = WEEKLY_UPDATE;
+  var labels   = W.wealthCurve.labels.slice();
+  var invested = W.wealthCurve.invested.slice();
+  var nowKey = (function(){ var n=new Date(); return String(n.getMonth()+1).padStart(2,'0')+'/'+String(n.getFullYear()).slice(2); })();
+  labels.push(nowKey); invested.push(Math.round(TOTAL_INVESTED));
+  var hist = ((_denomHistory || _fallbackHistory())[coin]) || {};
+  function pxAt(lab){
+    if (lab === nowKey){ var lv = coin==='btc'?getPrice('bitcoin'):getPrice('ethereum'); if(lv) return lv; }
+    if (hist[lab] != null) return hist[lab];
+    return (coin==='btc'?getPrice('bitcoin'):getPrice('ethereum')) || null;
+  }
+  var acc = 0; // DCA equivalente acumulado (em coin)
+  for (var i=0;i<invested.length;i++){
+    var contrib = i===0 ? invested[0] : Math.max(0, invested[i]-invested[i-1]);
+    var pp = pxAt(labels[i]);
+    if (pp && isFinite(pp)) acc += contrib/pp;
+  }
+  var hodlCoin = acc;
+  var curPx = coin==='btc'?(getPrice('bitcoin')||65000):(getPrice('ethereum')||1900);
+  var liveDebt = (window._liveAaveDebt||0) + (window._liveKaminoDebt||0);
+  if (!liveDebt && typeof TOTAL_DEBT!=='undefined') liveDebt = TOTAL_DEBT;
+  var netUsd = _livePortfolioGross - liveDebt;
+  var nowCoin = netUsd / curPx;
+  var deltaCoin = nowCoin - hodlCoin;
+  var pct = hodlCoin>0 ? (deltaCoin/hodlCoin*100) : 0;
+  return { coin: coin.toUpperCase(), sym: coin==='btc'?'₿':'Ξ', hodlCoin, nowCoin, deltaCoin, pct };
+}
+
+function updateVsHodlKpi(){
+  // segue a régua quando BTC/ETH; em USD/BRL usa ETH (alvo principal de acumulação)
+  var coin = currentCurrency==='BTC' ? 'btc' : 'eth';
+  var r = computeVsHodl(coin);
+  var el = document.getElementById('s-hodl');
+  var sub = document.getElementById('s-hodl-sub');
+  var cl = document.getElementById('s-hodl-coin');
+  if (cl) cl.textContent = coin.toUpperCase();
+  if (!r){ if(el){el.textContent='—';} if(sub){sub.textContent='—';} return; }
+  var col = r.pct >= 0 ? 'var(--green)' : 'var(--red)';
+  if (el){ el.textContent = (r.pct>=0?'+':'')+r.pct.toFixed(1)+'%'; el.style.color = col; el.className='hero-meta-val'; }
+  if (sub){
+    var dec = coin==='btc'?4:3;
+    var dsign = r.deltaCoin>=0?'+':'';
+    sub.innerHTML = r.sym+r.nowCoin.toFixed(dec)+' vs '+r.sym+r.hodlCoin.toFixed(dec)+' &nbsp;('+dsign+r.sym+Math.abs(r.deltaCoin).toFixed(dec)+')';
+    sub.style.color = col;
   }
 }
 
