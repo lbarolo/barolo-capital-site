@@ -886,12 +886,14 @@ body, input, button, select, textarea {
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
   <div class="chart-title" style="margin-bottom:0;">Patrimônio vs Capital Aportado · 2022–2026</div>
   <div style="display:flex;gap:4px;">
-   <button class="chart-type-btn active" id="wealthUsdBtn" onclick="setWealthCurrency('usd',this)">USD</button>
-   <button class="chart-type-btn" id="wealthBrlBtn" onclick="setWealthCurrency('brl',this)">BRL</button>
+   <button class="chart-type-btn active" id="wealthUsdBtn" onclick="setWealthCurrency('usd',this)" title="Medir em dólar">USD</button>
+   <button class="chart-type-btn" id="wealthBtcBtn" onclick="setWealthCurrency('btc',this)" title="Medir em Bitcoin — você está batendo o BTC?">BTC</button>
+   <button class="chart-type-btn" id="wealthEthBtn" onclick="setWealthCurrency('eth',this)" title="Medir em Ether — você está acumulando mais ETH?">ETH</button>
    <a href="relatorio.html" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--accent);text-decoration:none;border:1px solid var(--border);padding:5px 10px;border-radius:3px;display:flex;align-items:center;gap:4px;">⬡ Relatório PDF</a>
   </div>
  </div>
  <canvas id="wealthEvolutionChart" style="max-height:340px;"></canvas>
+ <div id="wealthDenomNote" style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:10px;line-height:1.55;"></div>
 </div>
 
 <!-- ══ RETORNOS REAIS (DESCONTANDO INFLAÇÃO) ══ -->
@@ -3118,11 +3120,93 @@ function buildPercentGrowthChart() {
   });
 }
 
+// ──────────────────────────────────────────────────
+// DENOMINADOR DA CURVA DE PATRIMÔNIO (USD · BTC · ETH)
+// Mede o patrimônio na "régua" escolhida. Em BTC/ETH, busca o histórico
+// mensal de preço (CoinGecko, cache 24h) e divide o valor USD de cada mês
+// pelo preço da moeda naquele mês — revelando se a gestão ativa acumula
+// mais BTC/ETH do que um DCA passivo na própria moeda.
+// ──────────────────────────────────────────────────
+const DENOM_CACHE_KEY = 'bc-denom-history-v1';
+const DENOM_CACHE_TTL  = 24 * 60 * 60 * 1000;
+var _denomHistory = null;   // { btc:{'MM/YY':px}, eth:{'MM/YY':px} } (fallback + live mesclados)
+var _denomReal    = false;  // true quando o overlay de preços reais já foi aplicado
+
+// Fechamento mensal aprox. (fallback offline) alinhado a wealthCurve.labels (Jan/22→Jun/26)
+var FALLBACK_PX_BTC = [
+  38500,43200,45500,37650,31800,19900,23300,20050,19400,20490,17170,16540,
+  23130,23150,28470,29270,27220,30470,29220,25940,26960,34660,37720,42270,
+  42580,61140,71330,60640,67540,62680,64620,58970,63330,70220,96420,93430,
+  102400,84380,82550,94200,104600,107200,115000,108000,109000,110000,90000,95000,
+  88000,68000,66500,79800,74100,76000];
+var FALLBACK_PX_ETH = [
+  2680,2920,3280,2820,1940,1070,1680,1555,1330,1575,1295,1195,
+  1585,1610,1820,1900,1875,1935,1860,1645,1670,1815,2085,2295,
+  2285,3385,3505,3010,3760,3435,3230,2525,2605,2520,3705,3335,
+  3300,2240,1820,1800,2520,2440,3800,4300,4200,3900,3000,3100,
+  3000,2300,1950,2400,2050,2100];
+
+function _arrToMonthMap(arr){
+  var m = {}, L = WEEKLY_UPDATE.wealthCurve.labels;
+  for (var i = 0; i < L.length; i++) if (arr[i] != null) m[L[i]] = arr[i];
+  return m;
+}
+function _fallbackHistory(){
+  return { btc:_arrToMonthMap(FALLBACK_PX_BTC), eth:_arrToMonthMap(FALLBACK_PX_ETH) };
+}
+function _denomMonthKey(d){
+  return String(d.getMonth()+1).padStart(2,'0') + '/' + String(d.getFullYear()).slice(2);
+}
+function _dailyToMonthMap(daily){  // [[ms,price],…] ascendente → último preço de cada mês
+  var m = {}; (daily||[]).forEach(function(p){ m[_denomMonthKey(new Date(p[0]))] = p[1]; }); return m;
+}
+
+// Busca histórico real (uma vez) e mescla sobre o fallback. Nunca quebra: cai no fallback.
+async function loadDenomHistory(){
+  if (_denomReal && _denomHistory) return _denomHistory;
+  var merged = _fallbackHistory();
+  // 1) cache local
+  try {
+    var raw = localStorage.getItem(DENOM_CACHE_KEY);
+    if (raw){ var c = JSON.parse(raw);
+      if (c && c.data && (Date.now() - c.ts < DENOM_CACHE_TTL)){
+        Object.assign(merged.btc, c.data.btc); Object.assign(merged.eth, c.data.eth);
+        _denomHistory = merged; _denomReal = true; return _denomHistory;
+      }
+    }
+  } catch(e){}
+  // 2) CoinGecko (days=max → granularidade diária; pega 2022→hoje)
+  try {
+    var base = 'https://api.coingecko.com/api/v3/coins/', q = '/market_chart?vs_currency=usd&days=max';
+    var res = await Promise.all([
+      fetch(base+'bitcoin'+q,  { signal: AbortSignal.timeout(9000) }),
+      fetch(base+'ethereum'+q, { signal: AbortSignal.timeout(9000) })
+    ]);
+    if (!res[0].ok || !res[1].ok) throw new Error('http');
+    var jb = await res[0].json(), je = await res[1].json();
+    var liveBtc = _dailyToMonthMap(jb.prices), liveEth = _dailyToMonthMap(je.prices);
+    if (Object.keys(liveBtc).length < 6) throw new Error('thin');
+    Object.assign(merged.btc, liveBtc); Object.assign(merged.eth, liveEth);
+    _denomHistory = merged; _denomReal = true;
+    try { localStorage.setItem(DENOM_CACHE_KEY, JSON.stringify({ ts:Date.now(), data:{ btc:liveBtc, eth:liveEth } })); } catch(e){}
+    return _denomHistory;
+  } catch(err){
+    _denomHistory = merged;   // só fallback; _denomReal continua false p/ tentar de novo depois
+    return _denomHistory;
+  }
+}
+
 function setWealthCurrency(c, btn) {
   wealthCurrency = c;
-  document.querySelectorAll('#wealthUsdBtn,#wealthBrlBtn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('#wealthUsdBtn,#wealthBtcBtn,#wealthEthBtn').forEach(function(b){ b.classList.remove('active'); });
   if(btn) btn.classList.add('active');
-  buildWealthEvolution();
+  if (c === 'btc' || c === 'eth') {
+    if (!_denomHistory) _denomHistory = _fallbackHistory();   // render instantâneo
+    buildWealthEvolution();
+    if (!_denomReal) loadDenomHistory().then(function(){ if (wealthCurrency === c) buildWealthEvolution(); });
+  } else {
+    buildWealthEvolution();
+  }
 }
 
 function buildWealthEvolution() {
@@ -3140,25 +3224,65 @@ function buildWealthEvolution() {
     invested.push(Math.round(TOTAL_INVESTED));
   }
 
-  var rate = wealthCurrency === 'brl' ? (window._brlRate || 5.8) : 1;
-  var sym  = wealthCurrency === 'brl' ? 'R$' : '$';
-  var fmt  = function(v){ return sym + Math.round(v*rate).toLocaleString('pt-BR'); };
+  // ── Denominador: USD (1:1) ou BTC/ETH (divide cada mês pelo preço daquele mês) ──
+  var mode   = wealthCurrency;                         // 'usd' | 'btc' | 'eth'
+  var isCoin = (mode === 'btc' || mode === 'eth');
+  var unit   = mode === 'btc' ? 'BTC' : mode === 'eth' ? 'ETH' : 'USD';
+  var hist   = isCoin ? (_denomHistory || _fallbackHistory())[mode] : null;
+  var nowKey = (function(){ var n = new Date(); return String(n.getMonth()+1).padStart(2,'0') + '/' + String(n.getFullYear()).slice(2); })();
+  function pxAt(lab){
+    if (!isCoin) return 1;
+    if (lab === nowKey){ var lv = mode === 'btc' ? getPrice('bitcoin') : getPrice('ethereum'); if (lv) return lv; }
+    if (hist[lab] != null) return hist[lab];
+    return (mode === 'btc' ? getPrice('bitcoin') : getPrice('ethereum')) || null;   // último recurso
+  }
+  function conv(usd, lab){ if (!isCoin) return usd; var p = pxAt(lab); return (p && isFinite(p)) ? usd/p : null; }
+  // Gold = patrimônio valorizado na régua escolhida (valor do mês ÷ preço do mês)
+  var cValues = values.map(function(v,i){ return conv(v, labels[i]); });
+  // Tracejada = benchmark. Em USD: capital aportado acumulado. Em BTC/ETH: DCA real —
+  // cada aporte mensal compra a moeda ao preço daquele mês e ACUMULA (só cresce).
+  var cInvested;
+  if (!isCoin) {
+    cInvested = invested.slice();
+  } else {
+    cInvested = []; var acc = 0;
+    for (var _i = 0; _i < invested.length; _i++) {
+      var contrib = _i === 0 ? invested[0] : Math.max(0, invested[_i] - invested[_i-1]);
+      var pp = pxAt(labels[_i]);
+      if (pp && isFinite(pp)) acc += contrib / pp;
+      cInvested.push(acc);
+    }
+  }
 
-  var peak = Math.max.apply(null, values);
-  var peakIdx = values.indexOf(peak);
-  var current = values[values.length-1];
-  var totalInv = invested[invested.length-1];
+  function fmt(x){
+    if (x == null || !isFinite(x)) return '—';
+    if (mode === 'btc') return '₿' + x.toFixed(4);
+    if (mode === 'eth') return 'Ξ' + x.toFixed(3);
+    return '$' + Math.round(x).toLocaleString('pt-BR');
+  }
+  function fmtSigned(x){ return (x >= 0 ? '+' : '-') + fmt(Math.abs(x)); }
+  function axisFmt(v){
+    if (mode === 'btc') return '₿' + (+v).toFixed(3);
+    if (mode === 'eth') return 'Ξ' + (+v).toFixed(2);
+    return '$' + (+v).toLocaleString('pt-BR');
+  }
+
+  var _valid   = cValues.filter(function(x){ return x != null && isFinite(x); });
+  var peak     = _valid.length ? Math.max.apply(null, _valid) : 0;
+  var peakIdx  = cValues.indexOf(peak);
+  var current  = cValues[cValues.length-1];
+  var totalInv = cInvested[cInvested.length-1];
   var pl  = current - totalInv;
-  var roi = (pl / totalInv * 100).toFixed(1);
+  var roi = totalInv ? (pl / totalInv * 100).toFixed(1) : '0.0';
 
   // KPI chips
   var kpiEl = document.getElementById('wealthKpis');
   if (kpiEl) {
     var chips = [
-      { label:'Atual',          val:fmt(current),         sub:'Mar/2026',               col:'var(--accent)' },
-      { label:'Pico Histórico', val:fmt(peak),             sub:labels[peakIdx],          col:'var(--green)'  },
-      { label:'Total Investido',val:fmt(totalInv),         sub:'capital aportado',       col:'var(--muted)'  },
-      { label:'ROI Total',      val:(roi>=0?'+':'')+roi+'%', sub:'P&L: '+(pl>=0?'+':'')+fmt(pl), col:pl>=0?'var(--green)':'var(--red)' },
+      { label:'Atual',          val:fmt(current),         sub:labels[labels.length-1],  col:'var(--accent)' },
+      { label:'Pico Histórico', val:fmt(peak),             sub:labels[peakIdx] || '—',   col:'var(--green)'  },
+      { label:isCoin?'DCA equiv. ('+unit+')':'Total Investido', val:fmt(totalInv), sub:isCoin?'aporte → '+unit:'capital aportado', col:'var(--muted)' },
+      { label:'ROI Total',      val:(roi>=0?'+':'')+roi+'%', sub:'P&L: '+fmtSigned(pl), col:pl>=0?'var(--green)':'var(--red)' },
     ];
     kpiEl.innerHTML = chips.map(function(k){
       return '<div style="background:var(--surface);padding:14px 16px;">'
@@ -3167,6 +3291,19 @@ function buildWealthEvolution() {
         + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--muted);margin-top:4px;">'+k.sub+'</div>'
         + '</div>';
     }).join('');
+  }
+
+  // Nota explicativa do denominador
+  var noteEl = document.getElementById('wealthDenomNote');
+  if (noteEl) {
+    if (!isCoin) {
+      noteEl.innerHTML = 'Régua: <b>USD</b>. Linha pontilhada = capital aportado (fiat). Troque para BTC/ETH para medir o patrimônio na própria cripto.';
+    } else {
+      noteEl.innerHTML = 'Régua: <b>' + unit + '</b>. A linha pontilhada é o <b>DCA equivalente</b> — quantos ' + unit
+        + ' seu aporte teria comprado. Patrimônio <b>acima</b> dela = você está <b>batendo o ' + unit
+        + '</b>; abaixo = perdendo pra ele.'
+        + (_denomReal ? '' : ' <span style="opacity:.65">(preços aprox. — carregando histórico real…)</span>');
+    }
   }
 
   var ctx = document.getElementById('wealthEvolutionChart');
@@ -3184,8 +3321,8 @@ function buildWealthEvolution() {
       labels: labels,
       datasets: [
         {
-          label: 'Patrimônio',
-          data: values.map(function(v){ return Math.round(v*rate); }),
+          label: isCoin ? 'Patrimônio ('+unit+')' : 'Patrimônio',
+          data: cValues.map(function(x){ return x == null ? null : (isCoin ? +x.toFixed(mode==='btc'?6:5) : Math.round(x)); }),
           borderColor: '#c9a050',
           backgroundColor: function(context){
             var chart = context.chart;
@@ -3202,8 +3339,8 @@ function buildWealthEvolution() {
           pointHoverBackgroundColor: '#c9a050',
         },
         {
-          label: 'Capital Aportado',
-          data: invested.map(function(v){ return Math.round(v*rate); }),
+          label: isCoin ? 'DCA equivalente' : 'Capital Aportado',
+          data: cInvested.map(function(x){ return x == null ? null : (isCoin ? +x.toFixed(mode==='btc'?6:5) : Math.round(x)); }),
           borderColor: '#6b7280',
           backgroundColor: 'transparent',
           borderDash: [6, 4],
@@ -3225,19 +3362,19 @@ function buildWealthEvolution() {
           titleColor: dk?'#e8e0d0':'#16110c',
           bodyColor:  dk?'#8a7a60':'#7a6a50',
           callbacks: {
-            label: function(item){ return '  '+item.dataset.label+': '+sym+item.raw.toLocaleString('pt-BR'); },
+            label: function(item){ return '  '+item.dataset.label+': '+fmt(item.raw); },
             afterBody: function(items){
               var p   = 0, inv = 0;
-              items.forEach(function(i){ if(i.dataset.label==='Patrimônio') p=i.raw; else inv=i.raw; });
+              items.forEach(function(i){ if(i.datasetIndex===0) p=i.raw; else inv=i.raw; });
               var d = p - inv;
-              return ['  P&L: '+(d>=0?'+':'')+sym+Math.abs(d).toLocaleString('pt-BR')];
+              return ['  P&L: '+fmtSigned(d)];
             }
           }
         }
       },
       scales: {
         x: { ticks:{ font:{ family:'JetBrains Mono,monospace', size:8 }, color:textCol, maxRotation:45, maxTicksLimit:20 }, grid:{ color:gridCol }, border:{ display:false } },
-        y: { ticks:{ font:font9, color:textCol, callback:function(v){ return sym+v.toLocaleString('pt-BR'); } }, grid:{ color:gridCol }, border:{ display:false } }
+        y: { ticks:{ font:font9, color:textCol, callback:function(v){ return axisFmt(v); } }, grid:{ color:gridCol }, border:{ display:false } }
       }
     }
   });
