@@ -100,40 +100,44 @@ addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znu
 
 ---
 
-## Posições atuais (Abril 2026)
+## Posições atuais (baseline 20/06/2026 — snapshot `EXPORTS SEMANAIS/JUNHO/20-06-26-posicoes.json`)
 
-### Portfolio de tokens (CoinGecko)
-| Token | Quantidade | Cor no gráfico |
-|-------|-----------|----------------|
-| ETH | 2.084106 | #E8773D |
-| SOL | 20.31134268 | #14F195 |
-| ADA | 375.245 | #3773F5 |
-| EIGEN | 153.363 | #6B3FF5 |
-| RDNT | 7290.46 | #00D4FF |
-| POL | 218 | #A855F7 |
-| ZK | 876 | #1E90FF |
-| XAI | 692.86 | #F59E0B |
-| ZETA | 51.1434 | #00C896 |
+> **IMPORTANTE — metodologia de patrimônio:** o portfólio do CoinGecko (e o array `PORTFOLIO_DATA`) **já inclui** os tokens depositados como colateral na AAVE/Kamino — Lucas não separa carteira vs DeFi no CoinGecko. Portanto `Patrimônio = total CoinGecko − dívida`. **NUNCA somar o colateral AAVE/Kamino por cima do total do CoinGecko** (seria dupla contagem). O breakdown AAVE/Kamino abaixo é uma *view* do lending, não posições aditivas. (Confirmado por Lucas em 23/06/2026.)
 
-**Última compra**: +0.99907692 SOL a $78.78 = $78.71 (Abril 2026)
+### Portfolio de tokens (CoinGecko — inclui colateral DeFi)
+| Token | Quantidade | Invested | Cor no gráfico |
+|-------|-----------|----------|----------------|
+| BTC | 0.00204156 | $135.74 | #F7931A |
+| ETH | 2.37632741 | $4,880.53 | #E8773D |
+| SOL | 23.31 | $2,450.94 | #14F195 |
+| ADA | 375.245 | $530.95 | #3773F5 |
+| EIGEN | 153.363 | $45.87 | #6B3FF5 |
+| RDNT | 7290.46 | $0 (airdrop) | #00D4FF |
+| POL | 218 | $143.88 | #A855F7 |
+| ZK | 876 | $0 (airdrop) | #1E90FF |
+| XAI | 692.86 | $164.52 | #F59E0B |
+| ZETA | 51.1434 | $0 (airdrop) | #00C896 |
+| SCR | 0.0018 | $0 | #FFB800 |
 
-### AAVE V4 (pro.aave.com — migrado de V3)
-- Supply: 1.88 WETH + 1,650 USDT = ~$5.7K total
-- Borrow: **748 USDC @ 2.32%** ← refinanciado em 10/04/2026 (era GHO @ 3.84%)
-- Health Factor: 6.24 | Borrow power usado: ~18%
-- API: `getUserAccountData` + aToken `balanceOf` (on-chain, live)
+### AAVE V4 (view do lending — já contido no CoinGecko)
+- Supply: 2.16 WETH + 1,300 USDT (APY 1.36% / 1.60%)
+- Borrow: **754.65 USDC @ 5.38%** (spike de 21.66% em 12/06 normalizou: 7.59% → 5.38%)
+- Health Factor: ~5.60 | Net deposit APY: 1.42% (carry ainda levemente negativo)
 
-### Kamino Finance (Solana)
-- Supply: 19.37 SOL + 300.55 USDS = ~$2.05K total
-- Borrow: $805.70 USDC @ 4.09%
-- LTV: 39.22% | Liq. LTV: 77.20%
-- Net Value: $1.25K | Net APY: 3.83%
-- Liq. Price SOL: $35.77
+### Kamino Finance (Solana — view do lending)
+- Supply: 23.36 SOL + 302.25 USDS (APY 4.89% / 5.00%)
+- Borrow: **815.97 USDC @ 5.69%**
+- LTV: 41.20% | Liq. LTV: 77.29% | Net APY: 4.35% | Juros ganhos acum.: +$134.79
 
-### Totais
-- **STABLES**: USDT $1,650 + USDS $300.55 = **~$1,950**
-- **DÍVIDA TOTAL**: $748 USDC (AAVE) + $805.70 USDC (Kamino) = **~$1,554**
-- **PATRIMÔNIO LÍQUIDO**: ~$6,640
+### Pool ativa Uniswap V3 (WETH/USDC 0.3% · Base)
+- Capital $365 · Pooled $325 · Fees totais $21.11 (uncollected $18.62) · IL −$28.20 · PnL −$9.58 · APR 0.43% · 94 dias
+- ETH ~$1.727 < range min $1.822 → **fora do range** (100% WETH, fees ~$0/dia)
+
+### Totais (20/06/2026)
+- **STABLES**: USDT $1,302.52 + USDS $300 = **$1,602.52**
+- **DÍVIDA TOTAL**: $754.65 (AAVE) + $815.97 (Kamino) = **$1,570.62**
+- **PATRIMÔNIO LÍQUIDO**: ~$6,406 (CoinGecko $7,650.91 + LP − dívida)
+- **TOTAL INVESTIDO**: $9,954.95 | **ROI**: −23.13% | **Leverage**: 0.245x
 
 ---
 
@@ -3105,7 +3109,7 @@ Localizado em `EXPORTS SEMANAIS/JUNHO/05-06-26-posicoes.json` (array `transactio
 | AAVE Health Factor | **5.32** |
 | Kamino SOL supply | ~23.3 (após +2.88 de 05/06) |
 
-**Nota para próximas sessões**: estes valores são a baseline atual e **não devem ser re-sinalizados como anomalia**. As tabelas "Posições atuais" e os arquivos HTML (`emprestimos.html`, `portfolio_analytics.html`, `pools.html`, `relatorio.html`, `ferramentas.html`, `index.html`) ainda têm os valores antigos (WETH ~1.89-2.10, USDT ~1990-2236) hardcoded — atualizar na próxima rodada de atualização mensal de posições (seguindo `MONTHLY_UPDATE_WORKFLOW.md`).
+**Nota para próximas sessões**: ~~estes valores ainda precisam ser propagados~~ **✅ RESOLVIDO** — a atualização mensal de 20/06/2026 já propagou os valores atuais (WETH 2.16 / USDT 1.300 / AAVE borrow 754.65 / Kamino SOL 23.36) para os 6 arquivos HTML + snapshot JSON. A baseline 12/06 abaixo é **histórica**; a baseline vigente é a de 20/06 (ver seção "Posições atuais" no topo do arquivo). Não re-sinalizar como anomalia nem como pendência.
 
 ### O que ainda falta
 - Propagar WETH 2.1565 / USDT 1296.55 / USDC borrow 753.82 / Kamino SOL ~23.3 para os 6 arquivos HTML + criar snapshot JSON de 12/06
@@ -3170,7 +3174,7 @@ Valores por pool de 2026 batem entre `pools.html` (`POOLS`) e `relatorio.html` (
 - `a1eb644` — fix: fees 2026 YTD por data de coleta/fechamento + gráfico Taxas Anuais dinâmico + lazy-load dos iframes (corrige pulo no load)
 
 ### O que ainda falta
-- Propagar baseline 12/06 (WETH 2.1565 / USDT 1296.55 / USDC borrow 753.82 / Kamino SOL ~23.3) para os 6 arquivos HTML + snapshot JSON (seguir `MONTHLY_UPDATE_WORKFLOW.md`)
+- ~~Propagar baseline 12/06 para os 6 arquivos HTML~~ ✅ FEITO na atualização mensal de 20/06/2026 (baseline vigente: WETH 2.16 / USDT 1.300 / Kamino SOL 23.36)
 - **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
 - **CSVs das CEX** — custo de aquisição em BRL + base para IR
 - **i18n painel Sizing & Risk** — labels só em PT
@@ -3223,7 +3227,7 @@ Nenhum (feature nova).
 
 ### O que ainda falta
 - **Completar os outros 4 indicadores** (STH MVRV, LTH MVRV, LTH SOPR, AVIV, CVDD) — exige key BGeometrics (free tier 15 req/dia → arquitetura ideal seria snapshot JSON diário commitado no repo) ou Glassnode pago. `ciclo.html` está estruturado pra receber novos indicadores facilmente (adicionar zonas + card + nível).
-- Propagar baseline 12/06 (WETH 2.1565 / USDT 1296.55 / USDC borrow 753.82 / Kamino SOL ~23.3) para os 6 arquivos HTML + snapshot JSON (seguir `MONTHLY_UPDATE_WORKFLOW.md`)
+- ~~Propagar baseline 12/06 para os 6 arquivos HTML~~ ✅ FEITO na atualização mensal de 20/06/2026 (baseline vigente: WETH 2.16 / USDT 1.300 / Kamino SOL 23.36)
 - **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
 - **CSVs das CEX** — custo de aquisição em BRL + base para IR
 - **i18n painel Sizing & Risk** — labels só em PT
@@ -3326,7 +3330,7 @@ Nenhum (feature). Armadilhas evitadas na migração: colisões de classe (`.page
 
 ### O que ainda falta
 - **Aba Ciclo — outros indicadores/histórico**: completar séries segmentadas extras exige key/tier pago do ResearchBitcoin; histórico >365 dias idem. Thresholds de zona são heurísticas (calibrar se Lucas quiser).
-- Propagar baseline 12/06 (WETH 2.1565 / USDT 1296.55 / USDC borrow 753.82 / Kamino SOL ~23.3) para os 6 HTML + snapshot JSON (`MONTHLY_UPDATE_WORKFLOW.md`)
+- ~~Propagar baseline 12/06 para os 6 HTML~~ ✅ FEITO na atualização mensal de 20/06/2026 (baseline vigente: WETH 2.16 / USDT 1.300 / Kamino SOL 23.36)
 - **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
 - **CSVs das CEX** — custo de aquisição em BRL + base para IR
 - **i18n painel Sizing & Risk** — labels só em PT (a aba Ciclo está só em PT também, exceto o rótulo da aba)
