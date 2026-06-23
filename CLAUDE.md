@@ -3411,3 +3411,79 @@ Nenhum dado de posição alterado (todas as alterações foram estruturais e de 
 ---
 
 Atualizado: 22/06/2026 — Convexidade visual completa (4 gráficos + matriz stress), Régua global no hero (USD/BRL/BTC/ETH), KPI vs HODL benchmark final
+
+---
+
+## Sessão 23/06/2026 — Convexidade refeita (perdida por sync) + Breakdown Alpha vs HODL + Fonte única `data.js` nos 6 arquivos + revisão de dados
+
+### Contexto
+Sessão longa, 3 frentes: (1) o trabalho de Convexidade da sessão anterior tinha sido **perdido por um `pull --rebase`/sync do OneDrive** antes do commit pegar — refeito do zero e travado no remoto imediatamente; (2) revisão geral dos dados a pedido do Lucas; (3) duas melhorias escolhidas por ele: breakdown do vs HODL por ativo (item 1) + fonte única de dados (item 3).
+
+### ⚡ MUDANÇA ESTRUTURAL — `data.js` é a fonte única de posições
+
+**A atualização mensal de posições agora é UMA edição só: `data.js`** (`window.BAROLO_DATA`). Os 6 arquivos HTML carregam via `<script src="data.js">` (no `<head>`, logo após `<meta charset>`) e leem qty/invested/dívidas/APYs dele, com os valores hardcoded antigos só como **fallback**. `MONTHLY_UPDATE_WORKFLOW.md` ganhou aviso no topo.
+
+**Estrutura do `data.js`:** `asOf`, `brlRate`, `holdings[]` (ticker/cgId/qty/invested), `stables[]`, `defi.aave` (supply WETH/USDT {qty,apy} + borrow USDC {qty,apy} + healthFactor), `defi.kamino` (supply SOL/USDS + borrow USDC + ltv/liqLtv), `defi.uniswapV3`, `debt {aave,kamino,total}`, `stablesTotalUSD`, `lpPooled`.
+
+**Metodologia (registrada no `data.js`):** as quantidades de holdings **já incluem** o colateral DeFi (Lucas não separa carteira vs DeFi no CoinGecko). Patrimônio = total holdings − dívida. O bloco `defi` é uma *view* do lending — **nunca somar** ao total (dupla contagem).
+
+### Implementado
+
+#### `portfolio_analytics.html` — Convexidade Completa (refeita) — `4a5a6a0`
+`buildConvexityImpactChart(cv)` (barras top 10 por w×C[i]), `buildConvexityDecompositionChart(cv)` (pie λ₁/λ₂/λ₃), `buildConvexityHistChart(cpValue)` (série 19m + annotation alerta 0.20), `buildConvexityScenarios(cv,eth,sol)` (matriz 7 cenários). Tabela por ativo melhorada (vol de change24h, sort por impacto). Canvases: `cpImpactChart`, `cpDecompositionChart`, `cpScenariosTable`, `cpHistChart`.
+
+#### `portfolio_analytics.html` — Régua global USD/BRL/BTC/ETH — `f37d3c1`
+Botão `currencyBtn` no nav cicla 4 estados (`CURRENCY_ORDER`), salva em `localStorage['bc-currency']`, restaura no `init()`. `fmtCurrency()` com branch BTC/ETH (decimais adaptativos, símbolos ₿/Ξ). `currSymbol()`/`toDisplay()` estendidos. **Nota:** `toggleCurrency` existia mas o botão nunca tinha sido criado (estava órfã).
+
+#### `portfolio_analytics.html` — KPI "vs HODL" + Breakdown por ativo — `d271eff`, `d5824bb`, `a76171c`
+`computeVsHodl(coin)` (DCA equivalente vs patrimônio líquido em coin) + `updateVsHodlKpi()` no hero. `buildAlphaVsHodl()` + canvas `alphaHodlChart` na aba Performance: barras decompondo o vs HODL por ativo (`nowX − hodlX`, blendedEntry = TOTAL_INVESTED/hodlCoin) + linha "Alavancagem". Soma das barras reconcilia com o total. Segue a régua.
+
+#### Fonte única `data.js` (item 3) — `a10a62c`, `fc76f79`, `404a900`, `9611802`
+- `data.js` criado (baseline 20/06/2026).
+- `portfolio_analytics.html`: `applyUpdate()` (~linha 3801) lê qty+invested de `BAROLO_DATA` (fallback `WEEKLY_UPDATE`); `AAVE_DEBT`/`KAMINO_DEBT` de `BAROLO_DATA.debt`.
+- `index.html`: override `HOLDINGS` por cgId; `STABLES_USD`/`TOTAL_DEBT`/`STABLES_DRY_POWDER`.
+- `relatorio.html`: override `PORTFOLIO_DATA` por ticker; `STABLES_USD`/`DEBT_TOTAL` + 12 constantes `AAVE_*`/`KAM_*` (qty+apy) de `BAROLO_DATA.defi`.
+- `pools.html`: `STABLES` (×2), `AAVE_BORROW_RATE`, fallbacks de dívida.
+- `ferramentas.html`: override do objeto `BASE`.
+- `emprestimos.html`: `updateCollateralCards()` lê qty + dívidas de `BAROLO_DATA`.
+- Verificado ao vivo em cada página: valores aplicando, **zero erros de console**.
+
+#### Documentação — `baa039f`, `9611802`
+`CLAUDE.md` seção "Posições atuais" → baseline 20/06 + aviso de metodologia; pendência fantasma "propagar baseline 12/06" resolvida. `MONTHLY_UPDATE_WORKFLOW.md` aponta para `data.js`.
+
+### Dados atualizados
+
+**Custo de aquisição canônico — decisão do Lucas (23/06/2026):** `invested` = **USD realmente pago** (não o "custo" do CoinGecko `valor − P&L`, que tinha artefato em stablecoins — USDT aparecia com custo $582 e "+$719 de lucro").
+
+| Campo | Antes (CoinGecko-cost) | Depois (canônico) |
+|-------|----------------------|-------------------|
+| ETH invested | $4.532,01 | **$4.880,53** |
+| SOL invested | $2.435,48 | **$2.450,94** |
+| USDT invested | $582,64 | **$1.302,524** |
+| TOTAL_INVESTED | ~$8.831 | **$9.954,95** |
+| vs HODL ETH | −11.7% | **−16.4%** (honesto) |
+
+Baseline 20/06/2026 (consistente nos 6 arquivos): ETH 2.376 / SOL 23.31 / BTC 0.00204; AAVE 2.16 WETH + 1.300 USDT borrow 754.65 @ 5.38%; Kamino 23.36 SOL + 302.25 USDS borrow 815.97 @ 5.69%; stables $1.602,52; dívida $1.570,62.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Convexidade "sumiu" | `pull --rebase`/sync OneDrive sobrescreveu antes do commit | Refeito e commitado/pushado **imediatamente** após cada bloco (pull --rebase + push, verificando `origin == HEAD`) |
+| `vs HODL` com salto/pessimista | `computeVsHodl` misturava fiat aportado ($7.100) com custo-base ($9.954) → salto no último mês | Escala a série de aportes ao total canônico preservando o timing |
+| Patrimônio "subestimado $7k" (falso positivo) | Assumi CoinGecko = só carteira; Lucas esclareceu que já inclui colateral DeFi | Sem mudança de cálculo; metodologia documentada |
+| `invested` divergente (2 fontes) | `applyUpdate()` sobrescrevia com `WEEKLY_UPDATE.invested` (CoinGecko-cost) | `applyUpdate` lê de `data.js` (USD pago canônico) |
+| Edits multi-linha falhando | CRLF (Windows) | Edits de linha única |
+
+### O que ainda falta
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
+- **CSVs das CEX** — custo de aquisição em BRL + base para IR
+- **i18n painel Sizing & Risk** — labels só em PT
+- **Validar `calcLevHedge()`** com cenários reais
+- **Mentoria DeFi avançado** — Euler V2, Morpho Blue, Gearbox V3, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **Reconciliar `wealthCurve.invested`** (série mensal termina em $7.100) com o total canônico $9.954 — hoje `computeVsHodl` escala localmente; reconciliação histórica dos 53 pontos fica pendente
+- **`avgCost` do ETH** no `PORTFOLIO_DATA` — campo cosmético inconsistente (não usado em cálculo)
+
+---
+
+Atualizado: 23/06/2026 — `data.js` é a fonte única de posições (6 arquivos), Breakdown Alpha vs HODL por ativo, invested canônico = USD pago ($9.954), Convexidade refeita
