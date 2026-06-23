@@ -2,6 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 <script>
 // Theme init — runs before render to avoid flash
@@ -1631,14 +1632,14 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
 
 // ── META 5% ──
 setTimeout(function() {
- var STABLES = 1602.52; // CoinGecko: USDT 1302.524 + USDS 300 (12/06/2026)
+ var STABLES = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52; // fonte: data.js
  var ids = ['bitcoin','ethereum','solana','cardano','radiant-capital','eigenlayer','polygon-ecosystem-token','zksync','xai-blockchain','zetachain'];
  var QTYS = {bitcoin:0.00204156,ethereum:2.37632741,solana:23.31,cardano:375.245,'radiant-capital':7290.46,
  eigenlayer:153.36298802,'polygon-ecosystem-token':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
  getLivePrice(ids).then(function(prices) {
  var spot = 0;
  ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || 754.65) + (window._liveKaminoDebt || 815.97);
+ var debt = (window._liveAaveDebt || (window.BAROLO_DATA&&window.BAROLO_DATA.debt.aave) || 754.65) + (window._liveKaminoDebt || (window.BAROLO_DATA&&window.BAROLO_DATA.debt.kamino) || 815.97);
  var net = spot + STABLES - debt;
  var meta = net * 0.05;
  window._livePatrimonio = net;
@@ -1776,7 +1777,7 @@ function setRef(ref){
 
   // 9. Atualiza REFS e UI
   const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  const AAVE_BORROW_RATE = 5.38; // % a.a. — taxa USDC AAVE V4 (borrow normalizou do spike de 21.66%, 20/06/26)
+  const AAVE_BORROW_RATE = (window.BAROLO_DATA&&window.BAROLO_DATA.defi&&window.BAROLO_DATA.defi.aave.borrow.USDC.apy*100) || 5.38; // fonte: data.js
 
   // POOLED
   set('lp-pooled', '$'+pooledUsd.toFixed(2));
@@ -4200,7 +4201,7 @@ function buildNetRanking() {
  return { totalDepositUsd, totalBorrowUsd, netValue, solQty, ltv };
  } catch(e) {
  console.warn('[Kamino] failed:', e.message);
- window._liveKaminoDebt = window._liveKaminoDebt || 815.97;
+ window._liveKaminoDebt = window._liveKaminoDebt || (window.BAROLO_DATA&&window.BAROLO_DATA.debt.kamino) || 815.97;
  return null;
  }
  }
@@ -4222,9 +4223,9 @@ function buildNetRanking() {
  getLivePrice(IDS).then(prices => {
  let spot = 0;
  IDS.forEach(id => { spot += (QTYS[id]||0) * (prices?.[id]?.usd || 1); });
- const STABLES = 1602.52; // CoinGecko: USDT 1302.524 + USDS 300 (12/06/2026)
+ const STABLES = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52; // fonte: data.js
  const LP_POOLED = window._liveLP || 0; // pool encerrada 03/06/2026
- const DEBT = (window._liveAaveDebt || 754.65) + (window._liveKaminoDebt || 815.97);
+ const DEBT = (window._liveAaveDebt || (window.BAROLO_DATA&&window.BAROLO_DATA.debt.aave) || 754.65) + (window._liveKaminoDebt || (window.BAROLO_DATA&&window.BAROLO_DATA.debt.kamino) || 815.97);
  const total = spot + STABLES + LP_POOLED - DEBT;
  window._livePatrimonio = total;
  console.log(`[Patrimônio] $${total.toFixed(0)} = spot $${spot.toFixed(0)} + stables $${STABLES} + lp $${LP_POOLED.toFixed(0)} − debt $${DEBT.toFixed(0)}`);

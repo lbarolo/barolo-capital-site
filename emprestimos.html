@@ -2,6 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <script>
 // Theme init — runs before render to avoid flash
@@ -1124,8 +1125,9 @@ async function fetchPrices(){
 // ── COLLATERAL CARDS (live token values + bars) ──
 function updateCollateralCards(){
  // AAVE — WETH qty + USDT qty (stable)
- const wethQty = 2.16;
- const usdtQty = 1300;
+ const _BD=(typeof window!=='undefined')?window.BAROLO_DATA:null, _aaveDebt=(_BD&&_BD.debt.aave)||754.65, _kamDebt=(_BD&&_BD.debt.kamino)||815.97;
+ const wethQty = (_BD&&_BD.defi.aave.supply.WETH.qty) || 2.16;
+ const usdtQty = (_BD&&_BD.defi.aave.supply.USDT.qty) || 1300;
  const wethUsd = wethQty * liveEth;
  const usdtUsd = usdtQty * 1.00;
  const aaveTotal = wethUsd + usdtUsd;
@@ -1137,11 +1139,11 @@ function updateCollateralCards(){
  if(el('em-aave-supply'))    el('em-aave-supply').textContent   = '$' + Math.round(aaveTotal).toLocaleString('en-US');
  if(el('em-aave-weth-bar'))  el('em-aave-weth-bar').style.width = wethPct + '%';
  if(el('em-aave-usdt-bar'))  el('em-aave-usdt-bar').style.width = usdtPct + '%';
- if(el('em-aave-net'))       el('em-aave-net').textContent      = '$' + Math.round(aaveTotal - 754.65).toLocaleString('en-US');
+ if(el('em-aave-net'))       el('em-aave-net').textContent      = '$' + Math.round(aaveTotal - _aaveDebt).toLocaleString('en-US');
 
  // Kamino — SOL qty + USDS qty (stable)
- const solQty  = 23.36;
- const usdsQty = 302.25;
+ const solQty  = (_BD&&_BD.defi.kamino.supply.SOL.qty) || 23.36;
+ const usdsQty = (_BD&&_BD.defi.kamino.supply.USDS.qty) || 302.25;
  const solUsd  = solQty * liveSol;
  const usdsUsd = usdsQty * 1.00;
  const kaminoTotal = solUsd + usdsUsd;
@@ -1152,10 +1154,10 @@ function updateCollateralCards(){
  if(el('em-kamino-supply'))    el('em-kamino-supply').textContent    = '$' + Math.round(kaminoTotal).toLocaleString('en-US');
  if(el('em-kamino-sol-bar'))   el('em-kamino-sol-bar').style.width   = solPct + '%';
  if(el('em-kamino-usds-bar'))  el('em-kamino-usds-bar').style.width  = usdsPct + '%';
- if(el('em-kamino-net'))       el('em-kamino-net').textContent       = '$' + Math.round(kaminoTotal - 815.97).toLocaleString('en-US');
+ if(el('em-kamino-net'))       el('em-kamino-net').textContent       = '$' + Math.round(kaminoTotal - _kamDebt).toLocaleString('en-US');
 
  // Update LTV values
- const aaveLtv = (754.65 / aaveTotal * 100).toFixed(1);
+ const aaveLtv = (_aaveDebt / aaveTotal * 100).toFixed(1);
  if(el('em-aave-ltv-pct'))  el('em-aave-ltv-pct').textContent  = aaveLtv + '%';
  if(el('em-aave-ltv-lbl'))  el('em-aave-ltv-lbl').textContent  = aaveLtv + '%';
  if(el('em-aave-ltv-fill')) el('em-aave-ltv-fill').style.width = aaveLtv + '%';

@@ -2,6 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Barolo Capital — investidor independente, educação em criptoativos e finanças pessoais.">
 <meta name="robots" content="noindex, nofollow">
@@ -1457,13 +1458,15 @@ function toggleMobile() {
     { id: 'xai-blockchain', qty: 692.86,         invested: 164.52  },
     { id: 'zetachain',      qty: 51.1434,        invested: 0       },
   ];
+  // Override de qty/invested a partir da fonte única (data.js), casado por cgId.
+  (function(){ if(typeof window==='undefined'||!window.BAROLO_DATA) return; var src=(window.BAROLO_DATA.holdings||[]).concat(window.BAROLO_DATA.stables||[]); var by={}; src.forEach(function(h){ by[h.cgId]=h; }); HOLDINGS.forEach(function(h){ var b=by[h.id]; if(!b)return; if(typeof b.qty==='number')h.qty=b.qty; if(typeof b.invested==='number')h.invested=b.invested; }); })();
   var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
   // ── Diário DeFi NÃO altera mais as holdings ──
   // Removido o sync que somava trades do Diário (localStorage) às quantidades: o Lucas já mantém
   // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.
-  var STABLES_USD    = 1602.52;  // CoinGecko: USDT 1302.524 + USDS 300 (12/06/2026)
+  var STABLES_USD    = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js (fallback 12/06)
   var LP_POOLED      = 296;      // pool WETH/USDC Base aberta 03/06/2026: 0.18 WETH (capital $329, valor 10/06/2026)
-  var TOTAL_DEBT     = 1570.62;  // AAVE 754.65 USDC @ 5.38% + Kamino 815.97 USDC @ 5.69% (20/06/2026)
+  var TOTAL_DEBT     = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
 
@@ -1805,14 +1808,14 @@ function calculatePerformanceMetrics() {
   var years = 4 + (4 / 12); // Jan 2022 to May 2026 = 4 years 4 months
 
   // ── Capital allocation (05/06/2026 verified data) ──
-  var STABLES_DRY_POWDER = 1602.52;  // CoinGecko: USDT 1302.524 + USDS 300 (not invested)
+  var STABLES_DRY_POWDER = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js
   var TOTAL_APORTED = 6784;           // Total capital aported since Jan/2022
   var CAPITAL_INVESTED = TOTAL_APORTED - STABLES_DRY_POWDER; // deployed in assets
 
   // Portfolio composition (10/06/2026)
   var SPOT_VALUE = 5698;        // Cripto holdings (preços CoinGecko 10/06/2026)
   var LP_POOLED = 296;          // pool WETH/USDC Base aberta 03/06/2026 (0.18 WETH)
-  var TOTAL_DEBT = 1570.62;     // AAVE 754.65 + Kamino 815.97 (20/06/2026)
+  var TOTAL_DEBT = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
   var PORTFOLIO_INVESTED_VALUE = SPOT_VALUE + LP_POOLED - TOTAL_DEBT; // 6335.38K
 
   // ── CAGR of invested capital (excluding dry powder) ──

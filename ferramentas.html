@@ -2,6 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <script>
 // Theme init — runs before render to avoid flash
@@ -2318,6 +2319,13 @@ var BASE = {
  uniRangeMin:1822.61, uniRangeMax:2401.90,
  totalBase:5620
 };
+// Override de posições a partir da fonte única (data.js).
+(function(){ var B=(typeof window!=='undefined')?window.BAROLO_DATA:null; if(!B) return; var h={}; (B.holdings||[]).concat(B.stables||[]).forEach(function(x){h[x.ticker]=x;});
+  if(h.ETH) BASE.ethQty=h.ETH.qty; if(h.SOL) BASE.solQty=h.SOL.qty;
+  var a=B.defi&&B.defi.aave, k=B.defi&&B.defi.kamino;
+  if(a){ BASE.aaveDebt=a.borrow.USDC.qty; BASE.aaveUSDT=a.supply.USDT.qty; BASE.aaveETH=a.supply.WETH.qty; }
+  if(k){ BASE.kamDebt=k.borrow.USDC.qty; BASE.kamPYUSD=k.supply.USDS.qty; BASE.kamSOL=k.supply.SOL.qty; }
+})();
 
 function setScenario(eth,sol,btc,alt){
  document.getElementById('sc-eth').value=eth;
