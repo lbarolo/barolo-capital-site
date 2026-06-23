@@ -541,6 +541,14 @@ body, input, button, select, textarea {
 .mk-spacer{flex:1;}
 .mk-ts{padding:0 14px;font-size:7.5px;color:var(--muted);letter-spacing:.04em;}
 
+
+/* ── Polish compartilhado (combina com o index): brilho sutil no hover + fade-in ── */
+@media (prefers-reduced-motion: no-preference){
+  body{animation:bcPageFade .55s ease both}
+  .card,.stat-card,.kpi-card{transition:box-shadow .35s ease,border-color .3s ease}
+  .card:hover,.stat-card:hover,.kpi-card:hover{box-shadow:0 12px 34px -18px rgba(0,0,0,.5);border-color:rgba(201,160,80,.45)}
+}
+@keyframes bcPageFade{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
