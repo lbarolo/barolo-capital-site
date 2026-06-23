@@ -3478,7 +3478,11 @@ function computeVsHodl(coin){ // 'btc' | 'eth'
   var labels   = W.wealthCurve.labels.slice();
   var invested = W.wealthCurve.invested.slice();
   var nowKey = (function(){ var n=new Date(); return String(n.getMonth()+1).padStart(2,'0')+'/'+String(n.getFullYear()).slice(2); })();
-  labels.push(nowKey); invested.push(Math.round(TOTAL_INVESTED));
+  // Escala a série de aportes (fiat acumulado) para o total canônico (TOTAL_INVESTED),
+  // preservando o TIMING dos aportes. Evita o salto artificial no último mês.
+  var _lastInv = invested[invested.length-1] || TOTAL_INVESTED;
+  var _scale = _lastInv > 0 ? (TOTAL_INVESTED / _lastInv) : 1;
+  for (var _k=0; _k<invested.length; _k++) invested[_k] = invested[_k] * _scale;
   var hist = ((_denomHistory || _fallbackHistory())[coin]) || {};
   function pxAt(lab){
     if (lab === nowKey){ var lv = coin==='btc'?getPrice('bitcoin'):getPrice('ethereum'); if(lv) return lv; }
@@ -3799,8 +3803,9 @@ function applyUpdate() {
  perfPeriodsData.all.p = W.wealthCurve.values;
  perfPeriodsData.all.i = W.wealthCurve.invested;
  PORTFOLIO_DATA.forEach(a => {
- if (W.holdings[a.ticker] !== undefined) a.qty = W.holdings[a.ticker];
- if (W.invested[a.ticker] !== undefined) a.invested = W.invested[a.ticker];
+ var _bh = (typeof window!=='undefined' && window.BAROLO_DATA) ? (window.BAROLO_DATA.holdings||[]).concat(window.BAROLO_DATA.stables||[]).filter(function(x){return x.ticker===a.ticker;})[0] : null;
+ if (_bh && typeof _bh.qty==='number') a.qty = _bh.qty; else if (W.holdings[a.ticker] !== undefined) a.qty = W.holdings[a.ticker];
+ if (_bh && typeof _bh.invested==='number') a.invested = _bh.invested; else if (W.invested[a.ticker] !== undefined) a.invested = W.invested[a.ticker];
  });
 }
 applyUpdate();
