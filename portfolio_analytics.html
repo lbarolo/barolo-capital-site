@@ -1406,9 +1406,13 @@ body, input, button, select, textarea {
 </footer>
 </div>
 
+<!-- Fonte única de dados de posição (window.BAROLO_DATA). Fallback: valores hardcoded abaixo. -->
+<script src="data.js"></script>
 <script>
 // ══════════════════════════════════════════════════
 // DADOS DO PORTFÓLIO (atualizados 06/Mar/2026)
+// Quantidades/dívidas vêm de window.BAROLO_DATA (data.js) quando disponível;
+// os valores abaixo são fallback caso o data.js não carregue.
 // ══════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════════
 // BLOCO DE ATUALIZAÇÃO SEMANAL — Edite este bloco toda semana
@@ -1544,6 +1548,19 @@ var PORTFOLIO_DATA = [
  { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:1302.524,      invested:1302.524, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
  { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300,           invested:300,      avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
 ];
+// Override de qty/invested a partir da fonte única (data.js), casado por ticker.
+// Mantém cor/logo/avgCost inline; só as POSIÇÕES vêm do BAROLO_DATA quando presente.
+(function(){
+  if (typeof window === 'undefined' || !window.BAROLO_DATA) return;
+  var src = (window.BAROLO_DATA.holdings || []).concat(window.BAROLO_DATA.stables || []);
+  var byTicker = {}; src.forEach(function(h){ byTicker[h.ticker] = h; });
+  PORTFOLIO_DATA.forEach(function(a){
+    var h = byTicker[a.ticker];
+    if (!h) return;
+    if (typeof h.qty === 'number') a.qty = h.qty;
+    if (typeof h.invested === 'number') a.invested = h.invested;
+  });
+})();
 var PORTFOLIO = PORTFOLIO_DATA; // alias
 
 var FALLBACK_PRICES = {
@@ -1572,8 +1589,9 @@ var LP_POOLED = (function() {
 // Card POOLS LP — mostra valor da pool (cache live do pools.html ou fallback acima)
 (function(){ var el = document.getElementById('s-pool'); if (el && LP_POOLED > 0) el.textContent = '$' + Math.round(LP_POOLED); })();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
-var AAVE_DEBT = 754.65;     // USDC @ 5.38% APY (20/06/2026 — borrow normalizou do spike de 21.66%)
-var KAMINO_DEBT = 815.97;   // USDC @ 5.69% APY (20/06/2026)
+var _BD = (typeof window !== 'undefined' && window.BAROLO_DATA) ? window.BAROLO_DATA : null;
+var AAVE_DEBT = (_BD && _BD.debt && _BD.debt.aave) || 754.65;     // USDC @ 5.38% APY (fallback 20/06/2026)
+var KAMINO_DEBT = (_BD && _BD.debt && _BD.debt.kamino) || 815.97; // USDC @ 5.69% APY (fallback 20/06/2026)
 var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $754.65 + $815.97 = $1,570.62
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
