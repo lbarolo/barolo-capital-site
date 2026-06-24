@@ -2024,6 +2024,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', elegancia);
   else elegancia();
+  // Rede de segurança: nunca deixar o hero invisível se a animação de entrada travar
+  setTimeout(function(){
+    document.querySelectorAll('.hero-eyebrow,.hero-title,.hero-sub,.hero-cta,.hero-stats').forEach(function(el){
+      if (parseFloat(getComputedStyle(el).opacity) < 0.95) el.style.opacity = '1';
+    });
+  }, 1800);
 })();
 </script>
 
