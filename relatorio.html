@@ -553,21 +553,7 @@ var MONTHLY_RETURNS = {
   2026:{ Jan:-18,Feb:-22,Mar:-13.6,Apr:40.3,May:null,Jun:null,Jul:null,Aug:null,Sep:null,Oct:null,Nov:null,Dec:null },
 };
 
-// ── Hidrata pool ativa com cache live do track.html (localStorage) ──
-(function(){
-  try {
-    var raw = localStorage.getItem('bc-active-pool');
-    if (!raw) return;
-    var c = JSON.parse(raw);
-    if (!c || !c.timestamp) return;
-    if (Date.now() - c.timestamp > 24*60*60*1000) return;
-    var ap = POOLS_DATA.find(function(p){ return p.status === 'active'; });
-    if (!ap) return;
-    if (typeof c.fees   === 'number') ap.fees   = c.fees;
-    if (typeof c.il     === 'number') ap.il     = Math.abs(c.il);
-    if (typeof c.result === 'number') ap.result = c.result;
-  } catch(e) {}
-})();
+// (Hidratação via cache do track.html removida — track.html não existe mais; POOLS_DATA é a fonte estática.)
 
 // ─────────────────────────────────────────────
 // RENDER
