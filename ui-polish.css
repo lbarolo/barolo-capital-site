@@ -1,0 +1,66 @@
+/* ════════════════════════════════════════════════════════════
+   Barolo Capital — UI Polish Layer (compartilhado)
+   Modernização leve e coesa entre TODAS as páginas.
+   Inspiração: a16z (editorial) · Metrix (painéis) · WeSearch (dados ao vivo).
+   Seguro por design — só refina (scrollbar, seleção, nav, hover de cards);
+   não altera layout, paleta-base nem lógica de gráficos.
+   Linkado no <head> de index + dashboards. Vence conflitos por
+   especificidade ("nav .nav-links a…") ou !important pontual.
+   ════════════════════════════════════════════════════════════ */
+
+/* Seleção de texto dourada (toda a marca) */
+::selection{background:rgba(201,160,80,.28);color:inherit}
+::-moz-selection{background:rgba(201,160,80,.28);color:inherit}
+
+/* Scrollbar fina dourada — toque premium em todas as páginas */
+*{scrollbar-width:thin;scrollbar-color:rgba(201,160,80,.45) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,rgba(201,160,80,.55),rgba(154,114,40,.5));
+  border-radius:10px;border:2px solid transparent;background-clip:padding-box;
+}
+::-webkit-scrollbar-thumb:hover{background:rgba(201,160,80,.85);background-clip:padding-box}
+
+/* Nav: underline dourado que aparece no hover (eco do index) */
+nav .nav-links a{
+  transition:color .2s, border-bottom-color .28s cubic-bezier(.2,.7,.2,1) !important;
+}
+nav .nav-links a:hover{border-bottom-color:rgba(201,160,80,.5) !important}
+
+/* Cards de KPI/painel: leve elevação + brilho dourado no hover (Metrix) */
+.stat-card,.metric-card,.defi-card,.hero-card{
+  transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .25s ease, box-shadow .3s ease !important;
+}
+.stat-card:hover,.metric-card:hover,.defi-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(201,160,80,.45) !important;
+  box-shadow:0 16px 38px -22px rgba(0,0,0,.6) !important;
+}
+.hero-card:hover{
+  border-color:rgba(201,160,80,.5) !important;
+  box-shadow:0 18px 44px -26px rgba(0,0,0,.55) !important;
+}
+[data-theme="light"] .stat-card:hover,
+[data-theme="light"] .metric-card:hover,
+[data-theme="light"] .defi-card:hover,
+[data-theme="light"] .hero-card:hover{
+  box-shadow:0 14px 30px -20px rgba(120,96,40,.32) !important;
+}
+
+/* hero-card (painel principal) ganha o mesmo top-accent dourado dos stat-cards */
+.hero-card{position:relative}
+.hero-card::after{
+  content:'';position:absolute;top:0;left:18px;right:18px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(201,160,80,.6),transparent);
+  pointer-events:none;
+}
+
+/* Botões pequenos — transição mais suave + foco dourado */
+.btn-sm{transition:all .22s cubic-bezier(.2,.7,.2,1) !important}
+.btn-sm:hover{border-color:rgba(201,160,80,.5) !important;color:var(--accent) !important}
+
+@media (prefers-reduced-motion:reduce){
+  .stat-card,.metric-card,.defi-card,.hero-card{transition:none !important}
+  .stat-card:hover,.metric-card:hover,.defi-card:hover{transform:none !important}
+}

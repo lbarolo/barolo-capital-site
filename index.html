@@ -7,6 +7,7 @@
 <meta name="description" content="Barolo Capital — investidor independente, educação em criptoativos e finanças pessoais.">
 <meta name="robots" content="noindex, nofollow">
 <title>Barolo Capital</title>
+<link rel="stylesheet" href="ui-polish.css"><!-- camada de polish compartilhada (scrollbar, seleção, hover) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -119,6 +120,7 @@ nav{
   justify-content:center;
 }
 .nav-links a{
+  position:relative;
   font-family:'JetBrains Mono',monospace;
   font-size:9px;
   letter-spacing:.22em;
@@ -127,9 +129,15 @@ nav{
   text-decoration:none;
   padding:6px 14px;
   border-radius:2px;
-  transition:color .2s,background .2s;
+  transition:color .2s;
 }
-.nav-links a:hover,.nav-links a.active{color:var(--gold);background:rgba(201,160,80,.07)}
+.nav-links a::after{
+  content:'';position:absolute;left:14px;right:14px;bottom:3px;height:1px;
+  background:var(--gold);opacity:.85;transform:scaleX(0);transform-origin:left;
+  transition:transform .26s cubic-bezier(.2,.7,.2,1);
+}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
 .nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .nav-input{
   background:var(--surface2);
@@ -163,25 +171,50 @@ nav{
 /* ── Hero ── */
 .hero{
   min-height:calc(100vh - 92px);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:80px 48px 80px;
+  display:grid;
+  grid-template-columns:1.05fr 0.95fr;
+  align-items:center;
+  gap:56px;
+  padding:64px 48px;
   position:relative;
   overflow:hidden;
+  /* spotlight dourado que segue o cursor (--mx/--my setados via JS) */
+  background:radial-gradient(circle 420px at var(--mx,72%) var(--my,42%), rgba(201,160,80,.07), transparent 64%);
+  transition:background .25s ease-out;
 }
 .hero::before{
   content:'';
   position:absolute;
   inset:-25%;
   background:
-    radial-gradient(ellipse 50% 45% at 70% 45%, rgba(201,160,80,.075) 0%, transparent 70%),
-    radial-gradient(ellipse 38% 55% at 22% 32%, rgba(201,160,80,.05) 0%, transparent 62%),
-    radial-gradient(ellipse 32% 42% at 86% 82%, rgba(154,114,40,.04) 0%, transparent 60%);
+    radial-gradient(ellipse 50% 45% at 72% 42%, rgba(201,160,80,.085) 0%, transparent 70%),
+    radial-gradient(ellipse 38% 55% at 18% 30%, rgba(201,160,80,.05) 0%, transparent 62%),
+    radial-gradient(ellipse 32% 42% at 88% 84%, rgba(154,114,40,.045) 0%, transparent 60%);
   pointer-events:none;
   animation:auroraDrift 22s ease-in-out infinite alternate;
   will-change:transform,opacity;
 }
+/* Modular grid overlay (a16z editorial) — fades out toward edges */
+.hero::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size:66px 66px;
+  -webkit-mask-image:radial-gradient(ellipse 78% 72% at 46% 42%, #000 0%, transparent 76%);
+  mask-image:radial-gradient(ellipse 78% 72% at 46% 42%, #000 0%, transparent 76%);
+  opacity:.55;
+  transform:translate(var(--gx,0px), var(--gy,0px));
+  transition:transform .3s ease-out;
+  will-change:transform;
+}
+.hero-lead{position:relative;z-index:2}
+/* Caret do efeito de digitação */
+.type-caret{display:inline-block;width:2px;height:.82em;margin-left:4px;vertical-align:-.04em;background:var(--gold);animation:caretBlink .9s steps(1) infinite}
+@keyframes caretBlink{50%{opacity:0}}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) scale(1);opacity:.8}
   50%{transform:translate3d(2.5%,-2%,0) scale(1.1);opacity:1}
@@ -208,12 +241,12 @@ nav{
 }
 .hero-title{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(48px,6vw,88px);
+  font-size:clamp(42px,4.8vw,74px);
   font-weight:300;
-  line-height:1.06;
+  line-height:1.05;
   color:var(--cream);
-  max-width:720px;
-  margin-bottom:32px;
+  max-width:600px;
+  margin-bottom:30px;
   letter-spacing:-.01em;
 }
 .hero-title em{
@@ -264,37 +297,86 @@ nav{
   cursor:pointer;
 }
 .btn-ghost:hover{border-color:var(--gold2);color:var(--gold)}
-.hero-stats{
-  position:absolute;
-  right:48px;
-  bottom:80px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  text-align:right;
+/* ── Hero live data panel (Metrix + WeSearch) ── */
+.hero-panel{
+  position:relative;
+  z-index:2;
+  border:1px solid var(--border2);
+  border-radius:16px;
+  overflow:hidden;
+  background:linear-gradient(180deg, rgba(26,22,16,.62), rgba(18,18,22,.42));
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  box-shadow:0 36px 90px -46px rgba(0,0,0,.78), inset 0 1px 0 rgba(201,160,80,.10);
 }
-.hero-stat-val{
-  font-family:'Cormorant Garamond',serif;
-  font-size:36px;
-  font-weight:300;
-  color:var(--cream);
-  line-height:1;
+[data-theme="light"] .hero-panel{
+  background:linear-gradient(180deg, rgba(255,253,248,.72), rgba(240,235,224,.5));
+  box-shadow:0 30px 70px -42px rgba(120,96,40,.4), inset 0 1px 0 rgba(255,255,255,.5);
 }
-[data-theme="light"] .hero-stat-val{color:var(--dark)}
-.hero-stat-lbl{
-  font-family:'JetBrains Mono',monospace;
-  font-size:8px;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-top:4px;
+.hp-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);
 }
-.hero-divider{
-  width:1px;
-  height:48px;
-  background:var(--border2);
-  margin:4px auto;
+.hp-head-title{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--muted);
 }
+.hp-live{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--green);
+}
+.hp-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  animation:hpPulse 2.2s ease-out infinite;
+}
+@keyframes hpPulse{
+  0%{box-shadow:0 0 0 0 rgba(63,185,80,.5)}
+  70%{box-shadow:0 0 0 7px rgba(63,185,80,0)}
+  100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}
+}
+.hp-market{padding:4px 0}
+.hp-row{
+  display:grid;grid-template-columns:1fr 46px auto 56px;
+  align-items:center;gap:12px;padding:10px 18px;
+  transition:background .2s;
+}
+.hp-row:hover{background:rgba(201,160,80,.045)}
+.hp-spark{width:46px;height:20px;display:block;opacity:.92;align-self:center}
+@media(max-width:420px){ .hp-spark{display:none} .hp-row{grid-template-columns:1fr auto 56px} }
+.hp-asset{display:flex;align-items:center;gap:10px;min-width:0}
+.hp-coin{width:18px;height:18px;border-radius:50%;flex-shrink:0}
+.hp-sym{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--text)}
+.hp-name{font-size:10px;color:var(--muted);margin-left:1px}
+.hp-price{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--cream);text-align:right;white-space:nowrap}
+[data-theme="light"] .hp-price{color:var(--dark)}
+.hp-chg{font-family:'JetBrains Mono',monospace;font-size:10px;text-align:right;white-space:nowrap}
+.hp-chg.up{color:var(--green)}
+.hp-chg.dn{color:var(--red)}
+.hp-stats{display:grid;grid-template-columns:1fr 1fr}
+.hp-stat{
+  padding:17px 18px;
+  border-top:1px solid var(--border);
+  border-right:1px solid var(--border);
+}
+.hp-stat:nth-child(2n){border-right:none}
+.hp-stat-val{
+  font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;
+  line-height:1;color:var(--cream);letter-spacing:-.01em;
+}
+[data-theme="light"] .hp-stat-val{color:var(--dark)}
+.hp-stat-val.pos{color:var(--green)}
+.hp-stat-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:8px;
+}
+.hp-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;border-top:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+}
+.hp-foot .hp-foot-accent{color:var(--gold)}
 
 /* ── Sections ── */
 section{
@@ -305,13 +387,17 @@ section{
 .container{max-width:1100px;margin:0 auto}
 .section-num{
   position:absolute;
-  right:48px;
-  top:28px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:10px;
-  letter-spacing:.2em;
+  right:44px;
+  top:40px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:62px;
+  font-weight:300;
+  line-height:1;
+  letter-spacing:0;
   color:var(--border2);
+  opacity:.55;
   user-select:none;
+  pointer-events:none;
 }
 .section-tag{
   font-family:'JetBrains Mono',monospace;
@@ -508,6 +594,16 @@ section{
   transition:opacity .2s,transform .2s;
   flex-shrink:0;
 }
+/* Live market board (crypto-native) */
+.token-spark{width:52px;height:22px;flex-shrink:0;display:block;opacity:.92}
+.token-quote{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;min-width:58px}
+.token-price{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cream);line-height:1.1;white-space:nowrap}
+[data-theme="light"] .token-price{color:var(--dark)}
+.token-chg{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.02em;white-space:nowrap}
+.token-chg.up{color:var(--green)}
+.token-chg.dn{color:var(--red)}
+.token-chg.flat{color:var(--muted)}
+@media(max-width:680px){ .token-spark{display:none} .token-quote{min-width:50px} }
 
 /* Protocol cards (full-width row) */
 .protocol-grid{
@@ -882,9 +978,11 @@ footer span{
 footer span:first-of-type{margin-right:auto}
 
 /* ── Responsive ── */
+@media(max-width:980px){
+  .hero{grid-template-columns:1fr;gap:40px;padding:56px 24px;min-height:auto}
+  .hero-panel{max-width:520px}
+}
 @media(max-width:900px){
-  .hero{padding:60px 24px}
-  .hero-stats{display:none}
   section{padding:72px 24px}
   nav{padding:0 20px}
   .sobre-grid,.access-wrap{grid-template-columns:1fr;gap:40px}
@@ -904,6 +1002,7 @@ footer span:first-of-type{margin-right:auto}
 @media(max-width:600px){
   .hero-title{font-size:clamp(38px,8vw,56px)}
   .token-grid{grid-template-columns:repeat(2,1fr)}
+  .section-num{font-size:38px;right:20px;top:24px}
 }
 
 /* ════ Elegância viva — movimento sutil ════ */
@@ -918,11 +1017,11 @@ footer span:first-of-type{margin-right:auto}
 @keyframes goldShimmer{0%,100%{background-position:135% 0}50%{background-position:-35% 0}}
 
 /* Entrada escalonada do hero */
-.hero-eyebrow,.hero-title,.hero-sub,.hero-cta,.hero-stats{opacity:0;animation:riseIn .9s cubic-bezier(.2,.7,.2,1) forwards}
+.hero-eyebrow,.hero-title,.hero-sub,.hero-cta,.hero-panel{opacity:0;animation:riseIn .9s cubic-bezier(.2,.7,.2,1) forwards}
 .hero-title{animation-delay:.12s}
 .hero-sub{animation-delay:.26s}
 .hero-cta{animation-delay:.4s}
-.hero-stats{animation-delay:.56s}
+.hero-panel{animation-delay:.34s}
 @keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
 /* Scroll-reveal global */
@@ -930,7 +1029,9 @@ footer span:first-of-type{margin-right:auto}
 .reveal.in{opacity:1;transform:none}
 
 /* Hover refinado */
-.strat-card{transition:background .25s ease,transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease,border-color .25s ease}
+.strat-card{position:relative;transition:background .25s ease,transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease,border-color .25s ease}
+.strat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2) 60%,transparent);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.strat-card:hover::before{transform:scaleX(1)}
 .strat-card:hover{transform:translateY(-4px);box-shadow:0 18px 42px -20px rgba(0,0,0,.55);border-color:var(--gold2)}
 .token-card{transition:background .22s ease,transform .3s cubic-bezier(.2,.7,.2,1),border-color .22s ease}
 .token-card:hover{transform:translateY(-3px);border-color:var(--gold2)}
@@ -948,9 +1049,11 @@ body::after{
 }
 
 @media (prefers-reduced-motion:reduce){
-  .hero::before,.hero-title em,.section-title em{animation:none!important}
-  .hero-eyebrow,.hero-title,.hero-sub,.hero-cta,.hero-stats,.reveal{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
+  .hero::before,.hero-title em,.section-title em,.hp-dot,.type-caret{animation:none!important}
+  .hero-eyebrow,.hero-title,.hero-sub,.hero-cta,.hero-panel,.reveal{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
   .hero-title em,.section-title em{-webkit-text-fill-color:var(--gold);color:var(--gold)}
+  .type-caret{display:none!important}
+  .hero::after{transform:none!important;transition:none!important}
 }
 </style>
 <script>
@@ -1000,39 +1103,64 @@ body::after{
 <!-- HERO -->
 <section id="home" style="border-top:none;padding:0">
   <div class="hero">
-    <div class="hero-eyebrow" data-i18n="eyebrow">Strategic Capital Management</div>
-    <h1 class="hero-title" data-i18n="hero-title">Wealth built with <em>consistency</em>, not haste.</h1>
-    <p class="hero-sub" data-i18n="hero-sub">Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.</p>
-    <div class="hero-cta">
-      <a href="#sobre" class="btn-primary" data-i18n="cta-about">About</a>
-      <a href="#portfolio" class="btn-ghost" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'});return false;" data-i18n="cta-portfolio">Portfolio</a>
-    </div>
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-val">2021</div>
-        <div class="hero-stat-lbl">Since</div>
-      </div>
-      <div class="hero-divider"></div>
-      <div>
-        <div class="hero-stat-val count-up" id="heroCAGR">+63.7%</div>
-        <div class="hero-stat-lbl">CAGR 2022–2026</div>
-      </div>
-      <div class="hero-divider"></div>
-      <div>
-        <div class="hero-stat-val count-up" id="heroCAGRYTD">+14.2%</div>
-        <div class="hero-stat-lbl">Retorno Anual (TIR)</div>
-      </div>
-      <div class="hero-divider"></div>
-      <div>
-        <div class="hero-stat-val count-up" id="heroRealReturn">+621.7%</div>
-        <div class="hero-stat-lbl">Track Record (real)</div>
-      </div>
-      <div class="hero-divider"></div>
-      <div>
-        <div class="hero-stat-val">DeFi</div>
-        <div class="hero-stat-lbl">Focus</div>
+    <div class="hero-lead">
+      <div class="hero-eyebrow" data-i18n="eyebrow">Strategic Capital Management</div>
+      <h1 class="hero-title" data-i18n="hero-title">Wealth built with <em>consistency</em>, not haste.</h1>
+      <p class="hero-sub" data-i18n="hero-sub">Barolo Capital is the independent management of private crypto capital — run with discipline, a long-term horizon and preservation as its foundation.</p>
+      <div class="hero-cta">
+        <a href="#sobre" class="btn-primary" data-i18n="cta-about">About</a>
+        <a href="#portfolio" class="btn-ghost" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'});return false;" data-i18n="cta-portfolio">Portfolio</a>
       </div>
     </div>
+
+    <aside class="hero-panel" aria-label="Live market & track record">
+      <div class="hp-head">
+        <span class="hp-head-title">Barolo · Live</span>
+        <span class="hp-live"><span class="hp-dot"></span>Market</span>
+      </div>
+      <div class="hp-market">
+        <div class="hp-row">
+          <div class="hp-asset"><span class="hp-coin" style="background:#F7931A"></span><span class="hp-sym">BTC</span><span class="hp-name">Bitcoin</span></div>
+          <svg class="hp-spark" data-cg="bitcoin" viewBox="0 0 52 22"></svg>
+          <div class="hp-price" id="hm-btc">—</div>
+          <div class="hp-chg" id="hm-btc-c">—</div>
+        </div>
+        <div class="hp-row">
+          <div class="hp-asset"><span class="hp-coin" style="background:#627EEA"></span><span class="hp-sym">ETH</span><span class="hp-name">Ethereum</span></div>
+          <svg class="hp-spark" data-cg="ethereum" viewBox="0 0 52 22"></svg>
+          <div class="hp-price" id="hm-eth">—</div>
+          <div class="hp-chg" id="hm-eth-c">—</div>
+        </div>
+        <div class="hp-row">
+          <div class="hp-asset"><span class="hp-coin" style="background:#14F195"></span><span class="hp-sym">SOL</span><span class="hp-name">Solana</span></div>
+          <svg class="hp-spark" data-cg="solana" viewBox="0 0 52 22"></svg>
+          <div class="hp-price" id="hm-sol">—</div>
+          <div class="hp-chg" id="hm-sol-c">—</div>
+        </div>
+      </div>
+      <div class="hp-stats">
+        <div class="hp-stat">
+          <div class="hp-stat-val pos count-up" id="heroCAGR">+63.7%</div>
+          <div class="hp-stat-lbl" data-i18n="hp-cagr">CAGR 2022–2026</div>
+        </div>
+        <div class="hp-stat">
+          <div class="hp-stat-val pos count-up" id="heroRealReturn">+621.7%</div>
+          <div class="hp-stat-lbl" data-i18n="hp-track">Track Record (real)</div>
+        </div>
+        <div class="hp-stat">
+          <div class="hp-stat-val pos count-up" id="heroCAGRYTD">+14.2%</div>
+          <div class="hp-stat-lbl" data-i18n="hp-irr">Retorno Anual (TIR)</div>
+        </div>
+        <div class="hp-stat">
+          <div class="hp-stat-val">DeFi</div>
+          <div class="hp-stat-lbl" data-i18n="hp-focus">Focus</div>
+        </div>
+      </div>
+      <div class="hp-foot">
+        <span data-i18n="hp-foot-since">Desde 2021 · Gestão privada</span>
+        <span class="hp-foot-accent">●&nbsp;noindex</span>
+      </div>
+    </aside>
   </div>
 </section>
 
@@ -1044,9 +1172,9 @@ body::after{
     <h2 class="section-title" data-i18n="about-title">A <em>different</em> approach to the crypto market</h2>
     <div class="sobre-grid">
       <div class="sobre-text">
-        <p class="lead" data-i18n="about-lead">Barolo Capital is an independent firm focused on strategic capital management in the crypto market.</p>
+        <p class="lead" data-i18n="about-lead">Barolo Capital is the independent, individual management of its own capital in the crypto market — built as proof of competence, run privately for the long term.</p>
         <p data-i18n="about-p1">We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, we act selectively — focusing only on opportunities where we have genuine conviction.</p>
-        <p data-i18n="about-p2">We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols as tools for generating yield, managing risk and expanding positions in assets we believe in.</p>
+        <p data-i18n="about-p2">We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols to generate yield, manage risk and keep accumulating the assets we believe in. The aim is for that yield to sustain the journey while the capital stays at work — success measured in assets accumulated, not short-term price.</p>
       </div>
       <div class="beliefs-grid">
         <div class="belief-item">
@@ -1092,7 +1220,7 @@ body::after{
         <div class="strat-icon">⬡</div>
         <div class="strat-name" data-i18n="strat2-tag">Lending</div>
         <div class="strat-title" data-i18n="strat2-title">Collateralised Borrowing</div>
-        <div class="strat-desc" data-i18n="strat2-desc">Supply ETH and stablecoins as collateral on AAVE V4 and Kamino Finance, borrowing USDC at strategic rates to optimise capital efficiency.</div>
+        <div class="strat-desc" data-i18n="strat2-desc">Supply ETH and stablecoins as collateral on AAVE V4 and Kamino, borrowing USDC conservatively so that fee income — not fresh capital — services the debt. Leverage used defensively and counter-cyclically, never to chase risk.</div>
         <div class="strat-tags">
           <span class="strat-tag">AAVE V4</span>
           <span class="strat-tag">Kamino</span>
@@ -1123,6 +1251,15 @@ body::after{
 
     <!-- Token grid — 3 columns, clean rows -->
     <div class="token-grid">
+
+      <a href="https://bitcoin.org" target="_blank" rel="noopener" class="token-card">
+        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png" alt="BTC" onerror="this.style.display='none'">
+        <div class="token-info">
+          <div class="token-name">Bitcoin</div>
+          <div class="token-ticker">BTC</div>
+        </div>
+        <span class="token-arrow">↗</span>
+      </a>
 
       <a href="https://ethereum.org" target="_blank" rel="noopener" class="token-card">
         <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png" alt="ETH" onerror="this.style.display='none'">
@@ -1156,15 +1293,6 @@ body::after{
         <div class="token-info">
           <div class="token-name">EigenLayer</div>
           <div class="token-ticker">EIGEN</div>
-        </div>
-        <span class="token-arrow">↗</span>
-      </a>
-
-      <a href="https://radiant.capital" target="_blank" rel="noopener" class="token-card">
-        <img class="token-logo" src="https://coin-images.coingecko.com/coins/images/26536/large/Radiant-Logo-200x200.png" alt="RDNT" onerror="this.style.display='none'">
-        <div class="token-info">
-          <div class="token-name">Radiant</div>
-          <div class="token-ticker">RDNT</div>
         </div>
         <span class="token-arrow">↗</span>
       </a>
@@ -1265,7 +1393,7 @@ body::after{
         </div>
       </div>
       <div class="perf-note" data-i18n="perf-note">
-        <strong>Metodologia:</strong> Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH. <a href="portfolio_analytics.html" style="color:var(--accent);text-decoration:underline;">Ver análise completa →</a>
+        <strong>Methodology:</strong> monthly DCA since Dec 2021; performance series measured from Jan 2022. IRR accounts for the timing of contributions. Benchmark: 50% BTC + 50% ETH. <a href="portfolio_analytics.html" style="color:var(--accent);text-decoration:underline;">View full analysis →</a>
       </div>
     </div>
 
@@ -1309,7 +1437,7 @@ body::after{
     <div class="section-tag" data-i18n="contact-tag">Contact</div>
     <h2 class="section-title" data-i18n="contact-title">Get in <em>touch</em></h2>
     <div class="contact-block">
-      <p data-i18n="contact-desc">For partnerships, questions or collaboration opportunities — reach out directly.</p>
+      <p data-i18n="contact-desc">For questions or a direct conversation — reach out.</p>
       <a href="mailto:contato@barolocapital.com.br" class="contact-email">contato@barolocapital.com.br</a>
     </div>
   </div>
@@ -1368,13 +1496,13 @@ var INDEX_LANG_STRINGS = {
     'btn-enter': 'Enter',
     'eyebrow': 'Strategic Capital Management',
     'hero-title': 'Wealth built with <em>consistency</em>, not haste.',
-    'hero-sub': 'Barolo Capital is an independent asset manager focused on capital strategies in the crypto market — with discipline, long-term vision and preservation as foundation.',
+    'hero-sub': 'Barolo Capital is the independent management of private crypto capital — run with discipline, a long-term horizon and preservation as its foundation.',
     'cta-about': 'About', 'cta-portfolio': 'Portfolio',
     'about-tag': 'About',
     'about-title': 'A <em>different</em> approach to the crypto market',
-    'about-lead': 'Barolo Capital is an independent firm focused on strategic capital management in the crypto market.',
+    'about-lead': 'Barolo Capital is the independent, individual management of its own capital in the crypto market — built as proof of competence, run privately for the long term.',
     'about-p1': 'We believe wealth is not built with haste, but with consistency, discipline and long-term vision. In an environment marked by volatility and information overload, we act selectively — focusing only on opportunities where we have genuine conviction.',
-    'about-p2': 'We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols as tools for generating yield, managing risk and expanding positions in assets we believe in.',
+    'about-p2': 'We operate at the intersection of active DeFi strategies and long-term accumulation, using decentralized protocols to generate yield, manage risk and keep accumulating the assets we believe in. The aim is for that yield to sustain the journey while the capital stays at work — success measured in assets accumulated, not short-term price.',
     'belief-1': 'Real wealth is built with consistency, not haste.',
     'belief-2': 'We do not seek the largest gain — we seek the sustainable gain.',
     'belief-3': 'Concentration in what we understand is better than diversification in what we do not.',
@@ -1384,13 +1512,13 @@ var INDEX_LANG_STRINGS = {
     'strat1-tag': 'Active Liquidity', 'strat1-title': 'Concentrated Liquidity Pools',
     'strat1-desc': 'Concentrated liquidity positions on DEXs like Uniswap V3, used both to capture fees and as a disciplined exit strategy on selected positions.',
     'strat2-tag': 'Lending', 'strat2-title': 'Collateralised Borrowing',
-    'strat2-desc': 'Supply ETH and stablecoins as collateral on AAVE V4 and Kamino Finance, borrowing USDC at strategic rates to optimise capital efficiency.',
+    'strat2-desc': 'Supply ETH and stablecoins as collateral on AAVE V4 and Kamino, borrowing USDC conservatively so that fee income — not fresh capital — services the debt. Leverage used defensively and counter-cyclically, never to chase risk.',
     'strat3-tag': 'Accumulation', 'strat3-title': 'Long-Term Conviction',
     'strat3-desc': 'Monthly DCA into ETH, SOL and ADA with a 10+ year horizon. Bear markets are treated as accumulation phases, not reasons to exit.',
     'port-tag': 'DeFi Ecosystem', 'port-title': 'Portfolio <em>Assets</em>',
     'perf-track': 'Track Record', 'perf-return': 'Total Return', 'perf-annual': 'Annualized',
     'perf-volatility': 'Volatility', 'perf-maxdd': 'Max Drawdown',
-    'perf-note': 'Methodology: Total return based on monthly DCA (Dollar Cost Averaging). IRR includes aporte timing. Benchmark: 50% BTC + 50% ETH.',
+    'perf-note': '<strong>Methodology:</strong> monthly DCA since Dec 2021; performance series measured from Jan 2022. IRR accounts for the timing of contributions. Benchmark: 50% BTC + 50% ETH. <a href="portfolio_analytics.html" style="color:var(--accent);text-decoration:underline;">View full analysis →</a>',
     'perf-analysis-label': 'Performance Metrics',
     'perf-cagr-label': 'CAGR (Annualized)',
     'perf-irr-label': 'IRR (Time-Weighted)',
@@ -1405,23 +1533,26 @@ var INDEX_LANG_STRINGS = {
     'nav-contact': 'Contact',
     'contact-tag': 'Contact',
     'contact-title': 'Get in <em>touch</em>',
-    'contact-desc': 'For partnerships, questions or collaboration opportunities — reach out directly.',
+    'contact-desc': 'For questions or a direct conversation — reach out.',
     'perf-invested-label': 'Capital Invested',
     'perf-drybowl-label': 'Dry Powder',
     'perf-invested-return-label': 'Return (Invested)',
+    'hp-cagr': 'CAGR 2022–2026', 'hp-track': 'Track Record (real)',
+    'hp-irr': 'Annual Return (IRR)', 'hp-focus': 'Focus',
+    'hp-foot-since': 'Since 2021 · Private management',
   },
   pt: {
     'nav-home': 'Início', 'nav-sobre': 'Sobre', 'nav-strat': 'Estratégias', 'nav-port': 'Portfólio',
     'btn-enter': 'Entrar',
     'eyebrow': 'Gestão Estratégica de Capital',
     'hero-title': 'Patrimônio construído com <em>consistência</em>, não pressa.',
-    'hero-sub': 'Barolo Capital é uma gestora independente focada em estratégias de capital no mercado cripto — com disciplina, visão de longo prazo e preservação como base.',
+    'hero-sub': 'Barolo Capital é a gestão independente de capital próprio em cripto — conduzida com disciplina, visão de longo prazo e preservação como base.',
     'cta-about': 'Sobre', 'cta-portfolio': 'Portfólio',
     'about-tag': 'Sobre',
     'about-title': 'Uma abordagem <em>diferente</em> do mercado cripto',
-    'about-lead': 'Barolo Capital é uma firma independente focada em gestão estratégica de capital no mercado de criptoativos.',
+    'about-lead': 'Barolo Capital é a gestão independente e individual de capital próprio no mercado de criptoativos — feita como prova de competência, conduzida de forma privada e para o longo prazo.',
     'about-p1': 'Acreditamos que patrimônio não é construído com pressa, mas com consistência, disciplina e visão de longo prazo. Em um ambiente marcado por volatilidade e excesso de informação, atuamos de forma seletiva — focando apenas nas oportunidades onde temos convicção genuína.',
-    'about-p2': 'Operamos na interseção entre estratégias DeFi ativas e acumulação de longo prazo, usando protocolos descentralizados como ferramentas de geração de yield, gestão de risco e expansão de posições nos ativos em que acreditamos.',
+    'about-p2': 'Operamos na interseção entre estratégias DeFi ativas e acumulação de longo prazo, usando protocolos descentralizados para gerar yield, gerir risco e seguir acumulando os ativos em que acreditamos. A meta é que esse yield sustente o caminho enquanto o capital permanece trabalhando — sucesso medido em ativos acumulados, não no preço de curto prazo.',
     'belief-1': 'Patrimônio real é construído com consistência, não com pressa.',
     'belief-2': 'Não buscamos o maior ganho — buscamos o ganho sustentável.',
     'belief-3': 'Concentração no que entendemos é melhor do que diversificação no que não entendemos.',
@@ -1431,13 +1562,13 @@ var INDEX_LANG_STRINGS = {
     'strat1-tag': 'Liquidez Ativa', 'strat1-title': 'Pools de Liquidez Concentrada',
     'strat1-desc': 'Posições de liquidez concentrada em DEXs como Uniswap V3, usadas tanto para capturar taxas quanto como estratégia de saída disciplinada em posições selecionadas.',
     'strat2-tag': 'Lending', 'strat2-title': 'Empréstimos Colateralizados',
-    'strat2-desc': 'Supply de ETH e stablecoins como colateral no AAVE V4 e Kamino Finance, tomando USDC emprestado a taxas estratégicas para otimizar a eficiência de capital.',
+    'strat2-desc': 'Supply de ETH e stablecoins como colateral no AAVE V4 e Kamino, tomando USDC de forma conservadora para que a renda de taxas — e não capital novo — pague a dívida. Alavancagem usada de forma defensiva e anticíclica, nunca para perseguir risco.',
     'strat3-tag': 'Acumulação', 'strat3-title': 'Convicção de Longo Prazo',
     'strat3-desc': 'DCA mensal em ETH, SOL e ADA com horizonte de 10+ anos. Bear markets são tratados como fases de acumulação, não razão para sair.',
     'port-tag': 'Ecossistema DeFi', 'port-title': 'Ativos do <em>Portfólio</em>',
     'perf-track': 'Track Record', 'perf-return': 'Retorno Total', 'perf-annual': 'Anualizado',
     'perf-volatility': 'Volatilidade', 'perf-maxdd': 'Máx. Drawdown',
-    'perf-note': 'Metodologia: Retorno total com base em DCA mensal (Dollar Cost Averaging). IRR inclui timing dos aportes. Benchmark: 50% BTC + 50% ETH.',
+    'perf-note': '<strong>Metodologia:</strong> DCA mensal desde dez/2021; série de performance medida a partir de jan/2022. A TIR considera o timing dos aportes. Benchmark: 50% BTC + 50% ETH. <a href="portfolio_analytics.html" style="color:var(--accent);text-decoration:underline;">Ver análise completa →</a>',
     'perf-analysis-label': 'Métricas de Desempenho',
     'perf-cagr-label': 'CAGR (Anualizado)',
     'perf-irr-label': 'TIR (Ponderada no Tempo)',
@@ -1452,10 +1583,13 @@ var INDEX_LANG_STRINGS = {
     'nav-contact': 'Contato',
     'contact-tag': 'Contato',
     'contact-title': 'Entre em <em>contato</em>',
-    'contact-desc': 'Para parcerias, dúvidas ou oportunidades de colaboração — fale diretamente.',
+    'contact-desc': 'Para dúvidas ou uma conversa direta — fale diretamente.',
     'perf-invested-label': 'Capital Investido',
     'perf-drybowl-label': 'Caixa de Oportunidade',
     'perf-invested-return-label': 'Retorno (Investido)',
+    'hp-cagr': 'CAGR 2022–2026', 'hp-track': 'Track Record (real)',
+    'hp-irr': 'Retorno Anual (TIR)', 'hp-focus': 'Foco',
+    'hp-foot-since': 'Desde 2021 · Gestão privada',
   }
 };
 
@@ -1542,6 +1676,101 @@ function toggleMobile() {
     var html = items.join('') + items.join('');
     var track = document.getElementById('tickerTrack');
     if (track) track.innerHTML = html;
+    renderHeroMarket(prices);
+    renderTokenBoard(prices);
+  }
+
+  // ── Live market board: preço + variação 24h + sparkline 7d em cada asset ──
+  var TICKER_TO_CG = { BTC:'bitcoin', ETH:'ethereum', SOL:'solana', ADA:'cardano', EIGEN:'eigenlayer', POL:'polygon-ecosystem-token', ZK:'zksync', XAI:'xai-blockchain', ZETA:'zetachain' };
+  var boardIds = [];
+  function buildTokenBoard() {
+    document.querySelectorAll('.token-grid .token-card').forEach(function(card) {
+      var tkEl = card.querySelector('.token-ticker');
+      var tk = ((tkEl && tkEl.textContent) || '').trim().toUpperCase();
+      var id = TICKER_TO_CG[tk];
+      if (!id) return;
+      card.dataset.cg = id;
+      boardIds.push(id);
+      if (card.querySelector('.token-quote')) return;
+      var arrow = card.querySelector('.token-arrow');
+      var spark = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      spark.setAttribute('class', 'token-spark');
+      spark.setAttribute('viewBox', '0 0 52 22');
+      var quote = document.createElement('div');
+      quote.className = 'token-quote';
+      quote.innerHTML = '<div class="token-price">—</div><div class="token-chg">—</div>';
+      if (arrow) { card.insertBefore(spark, arrow); card.insertBefore(quote, arrow); }
+      else { card.appendChild(spark); card.appendChild(quote); }
+    });
+    boardIds = Array.from(new Set(boardIds));
+  }
+  function renderTokenBoard(prices) {
+    document.querySelectorAll('.token-card[data-cg]').forEach(function(card) {
+      var id = card.dataset.cg, p = prices[id], ch = prices[id + '_change'];
+      var pe = card.querySelector('.token-price'), ce = card.querySelector('.token-chg');
+      if (pe && p) pe.textContent = fmt(p);
+      if (ce && typeof ch === 'number') {
+        ce.textContent = (ch >= 0 ? '+' : '') + ch.toFixed(2) + '%';
+        ce.className = 'token-chg ' + (ch > 0 ? 'up' : ch < 0 ? 'dn' : 'flat');
+      }
+    });
+  }
+  function drawSparkline(svg, arr) {
+    if (!svg || !arr || arr.length < 2) return;
+    var w = 52, h = 22, pad = 2;
+    var min = Math.min.apply(null, arr), max = Math.max.apply(null, arr);
+    var range = (max - min) || 1, n = arr.length;
+    var pts = arr.map(function(p, i) {
+      var x = (i / (n - 1)) * w;
+      var y = h - pad - ((p - min) / range) * (h - 2 * pad);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    var up = arr[n - 1] >= arr[0], col = up ? '#3fb950' : '#f85149';
+    svg.innerHTML = '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>';
+  }
+  function applySparks(map) {
+    document.querySelectorAll('.token-card[data-cg]').forEach(function(card) {
+      var svg = card.querySelector('.token-spark');
+      if (svg && map[card.dataset.cg]) drawSparkline(svg, map[card.dataset.cg]);
+    });
+    // sparklines do painel do hero (BTC/ETH/SOL)
+    document.querySelectorAll('.hp-spark[data-cg]').forEach(function(svg) {
+      if (map[svg.dataset.cg]) drawSparkline(svg, map[svg.dataset.cg]);
+    });
+  }
+  var SPARK_KEY = 'bc-index-spark-cache', SPARK_TTL = 10 * 60 * 1000;
+  async function fetchSparklines() {
+    if (!boardIds.length) return;
+    try { var c = JSON.parse(localStorage.getItem(SPARK_KEY) || 'null'); if (c && Date.now() - c.ts < SPARK_TTL) { applySparks(c.data); return; } } catch(e) {}
+    try {
+      var r = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=' + boardIds.join(',') + '&sparkline=true&price_change_percentage=24h', { signal: AbortSignal.timeout(9000) });
+      var d = await r.json();
+      var map = {};
+      (Array.isArray(d) ? d : []).forEach(function(coin) { map[coin.id] = (coin.sparkline_in_7d && coin.sparkline_in_7d.price) || []; });
+      try { localStorage.setItem(SPARK_KEY, JSON.stringify({ ts: Date.now(), data: map })); } catch(e) {}
+      applySparks(map);
+    } catch(e) {
+      try { var c2 = JSON.parse(localStorage.getItem(SPARK_KEY) || 'null'); if (c2) applySparks(c2.data); } catch(_) {}
+    }
+  }
+
+  // Painel ao vivo do hero (BTC/ETH/SOL) — mesma fonte do ticker
+  function renderHeroMarket(prices) {
+    [{ id:'bitcoin', el:'hm-btc' }, { id:'ethereum', el:'hm-eth' }, { id:'solana', el:'hm-sol' }].forEach(function(r) {
+      var p  = prices[r.id] || FALLBACK[r.id];
+      var ch = prices[r.id + '_change'];
+      var pe = document.getElementById(r.el);
+      var ce = document.getElementById(r.el + '-c');
+      if (pe && p) pe.textContent = fmt(p);
+      if (ce) {
+        if (typeof ch === 'number') {
+          ce.textContent = (ch >= 0 ? '+' : '') + ch.toFixed(2) + '%';
+          ce.className = 'hp-chg ' + (ch >= 0 ? 'up' : 'dn');
+        } else {
+          ce.textContent = '—'; ce.className = 'hp-chg';
+        }
+      }
+    });
   }
 
   var INITIAL_CAPITAL = 1061; // primeiro capital registrado (Jan/2022, wealthCurve.invested[0])
@@ -1622,6 +1851,9 @@ function toggleMobile() {
     }
   }
 
+  // Constrói o market board (injeta sparkline + cotação em cada asset) antes do 1º render
+  buildTokenBoard();
+
   // Serve cache imediato se < 2 min (carregamento instantâneo do ticker)
   var _ic = loadIndexCache();
   if (_ic && (Date.now() - _ic.ts < INDEX_CACHE_TTL)) {
@@ -1631,7 +1863,9 @@ function toggleMobile() {
     renderTicker({});
   }
   fetchTicker();
+  fetchSparklines();
   setInterval(fetchTicker, 60000);
+  setInterval(fetchSparklines, 10 * 60 * 1000);
 })();
 
 // ══════════════════════════════════
@@ -2026,10 +2260,78 @@ document.addEventListener('DOMContentLoaded', function() {
   else elegancia();
   // Rede de segurança: nunca deixar o hero invisível se a animação de entrada travar
   setTimeout(function(){
-    document.querySelectorAll('.hero-eyebrow,.hero-title,.hero-sub,.hero-cta,.hero-stats').forEach(function(el){
+    document.querySelectorAll('.hero-eyebrow,.hero-title,.hero-sub,.hero-cta,.hero-panel').forEach(function(el){
       if (parseFloat(getComputedStyle(el).opacity) < 0.95) el.style.opacity = '1';
     });
   }, 1800);
+})();
+</script>
+
+<!-- ════ Hero vivo: efeito de digitação no título + aurora/grid que segue o cursor ════ -->
+<script>
+(function(){
+  var hero = document.querySelector('.hero');
+  if (!hero) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Efeito de digitação no título (preserva o <em> dourado) ──
+  (function(){
+    if (reduce) return;
+    var el = hero.querySelector('.hero-title');
+    if (!el) return;
+    var full = el.innerHTML;
+    var tmp = document.createElement('div'); tmp.innerHTML = full;
+    var seq = [];
+    Array.prototype.forEach.call(tmp.childNodes, function(node){
+      var isEm = node.nodeName && node.nodeName.toLowerCase() === 'em';
+      var text = node.textContent || '';
+      for (var i = 0; i < text.length; i++) seq.push({ c: text[i], em: isEm });
+    });
+    if (!seq.length) return;
+    function esc(c){ return c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c; }
+    el.innerHTML = '';  // esvazia já (sem flicker) e começa a digitar após a entrada do hero
+    var i = 0;
+    function step(){
+      if (i >= seq.length) { el.innerHTML = full; return; }
+      var html = '', inEm = false;
+      for (var j = 0; j <= i; j++) {
+        var s = seq[j];
+        if (s.em && !inEm) { html += '<em>'; inEm = true; }
+        else if (!s.em && inEm) { html += '</em>'; inEm = false; }
+        html += esc(s.c);
+      }
+      if (inEm) html += '</em>';
+      el.innerHTML = html + '<span class="type-caret"></span>';
+      i++;
+      setTimeout(step, 28);
+    }
+    setTimeout(step, 280);
+  })();
+
+  // ── Aurora/grid + spotlight que seguem o cursor ──
+  if (!reduce) {
+    var raf = null, lastE = null;
+    hero.addEventListener('pointermove', function(e){
+      lastE = e;
+      if (raf) return;
+      raf = requestAnimationFrame(function(){
+        raf = null;
+        var r = hero.getBoundingClientRect();
+        var px = (lastE.clientX - r.left) / r.width;   // 0..1
+        var py = (lastE.clientY - r.top) / r.height;
+        hero.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+        hero.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+        hero.style.setProperty('--gx', ((px - 0.5) * -10).toFixed(1) + 'px');
+        hero.style.setProperty('--gy', ((py - 0.5) * -10).toFixed(1) + 'px');
+      });
+    });
+    hero.addEventListener('pointerleave', function(){
+      hero.style.setProperty('--mx', '72%');
+      hero.style.setProperty('--my', '42%');
+      hero.style.setProperty('--gx', '0px');
+      hero.style.setProperty('--gy', '0px');
+    });
+  }
 })();
 </script>
 
