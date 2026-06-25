@@ -20,21 +20,21 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --gold:#c9a050; --gold2:#8a6820; --green:#3fb950; --red:#f85149;
-  --bg:#0d0917; --surface:#160d2c; --surface2:#1e1438;
-  --border:rgba(180,140,240,0.09); --text:#ede8f8; --muted:#8a78a8; --accent:#c9a050;
-  --card-shadow:0 4px 18px rgba(0,0,0,0.18);
+  --bg:#0e0e12; --surface:#141418; --surface2:#1a1a20;
+  --border:#2a2620; --border2:#3a3228; --text:#e8dfc8; --muted:#8a7a62; --accent:#c9a050;
+  --card-shadow:0 4px 18px rgba(0,0,0,0.28);
 }
 [data-theme="light"]{
-  --bg:#fdf3f0; --surface:#fff8f6; --surface2:#f0ddd8;
-  --border:rgba(120,45,55,0.1); --text:#1c0c10; --muted:#956a72; --accent:#8a6820;
-  --card-shadow:0 1px 4px rgba(22,17,12,0.08);
+  --bg:#f5f0e8; --surface:#faf6ee; --surface2:#f0ebe0;
+  --border:#ddd4c0; --border2:#ccc2a8; --text:#2a1e0e; --muted:#7a6a52; --accent:#8a6820;
+  --card-shadow:0 1px 4px rgba(120,96,40,0.08);
 }
 body{
   font-family:'Satoshi',sans-serif; background:var(--bg); color:var(--text);
   font-size:13px; line-height:1.55;
 }
 nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(242,236,224,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
-[data-theme="dark"] nav{background:rgba(13,9,23,0.96);}
+[data-theme="dark"] nav{background:rgba(14,14,18,0.96);}
 .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .nav-links{display:flex;gap:2px;}
 .nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;}
@@ -185,13 +185,13 @@ tr:hover td{ background:var(--surface2); }
 @media print {
   @page{ size:A4; margin:14mm 14mm 14mm 14mm; }
   * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-  body{ background:#0d0917 !important; color:#e8e4da !important; font-size:11px; }
+  body{ background:#0e0e12 !important; color:#e8e4da !important; font-size:11px; }
 
   .screen-bar{ display:none !important; }
   .report{ max-width:100%; margin:0; padding:0 0 20px; }
 
   :root, [data-theme="dark"],[data-theme="light"]{
-    --bg:#0d0917; --surface:#14102b; --surface2:#1a1533;
+    --bg:#0e0e12; --surface:#141418; --surface2:#1a1a20;
     --border:#2a2244; --text:#e8e4da; --muted:#8a7a62; --accent:#c9a050;
     --green:#3fb950; --red:#f85149;
   }

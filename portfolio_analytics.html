@@ -26,15 +26,15 @@ window.addEventListener('error',function(e){if(!e.message||e.message.includes('S
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
- --bg:#0d0917;--surface:#160d2c;--surface2:#1e1438;--border:rgba(180,140,240,0.09);
+ --bg:#0e0e12;--surface:#141418;--surface2:#1a1a20;--border:#2a2620;--border2:#3a3228;
  --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--orange:#db6d28;
- --text:#ede8f8;--muted:#8a78a8;--stable:#3fb950;--card-shadow:0 4px 18px rgba(0,0,0,0.18);
+ --text:#e8dfc8;--muted:#8a7a62;--stable:#3fb950;--card-shadow:0 4px 18px rgba(0,0,0,0.28);
 }
 [data-theme="light"]{
- --bg:#fdf3f0;--surface:#fff8f6;--surface2:#f0ddd8;--border:rgba(120,45,55,0.1);
+ --bg:#f5f0e8;--surface:#faf6ee;--surface2:#f0ebe0;--border:#ddd4c0;--border2:#ccc2a8;
  --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--orange:#9c4a1a;
- --text:#1c0c10;--muted:#956a72;--stable:#3a6030;
- --card-shadow:0 1px 4px rgba(22,17,12,0.08);
+ --text:#2a1e0e;--muted:#7a6a52;--stable:#3a6030;
+ --card-shadow:0 1px 4px rgba(120,96,40,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Satoshi',sans-serif;font-size:13px;min-height:100vh;}
@@ -50,7 +50,7 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 32px;
 }
-[data-theme="dark"] nav { background: rgba(13,9,23,0.96); }
+[data-theme="dark"] nav { background: rgba(14,14,18,0.96); }
 
 .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 
@@ -239,7 +239,7 @@ body.hide-values .sensitive{filter:blur(5px);user-select:none;}
 .ticker-logo{width:16px;height:16px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 
 /* PRINT */
-@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}body{background:#0d0917!important;color:#e8e4da!important;}:root,[data-theme="dark"],[data-theme="light"]{--bg:#0d0917;--surface:#14102b;--surface2:#1a1533;--border:#2a2244;--text:#e8e4da;--muted:#8a7a62;--accent:#c9a050;--green:#3fb950;--red:#f85149;}nav,#loadingScreen,.btn-sm,.perf-controls,.ref-toggle,.chart-type-btn,.tabs{display:none!important;}.container{max-width:100%!important;padding:10px;overflow:hidden!important;box-sizing:border-box;}.tab-pane{display:block!important;}canvas{max-width:100%!important;width:100%!important;height:auto!important;}.charts-row,.charts-row-3,.defi-summary,.stats-row,.hero-stats{grid-template-columns:1fr!important;}}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}body{background:#0e0e12!important;color:#e8dfc8!important;}:root,[data-theme="dark"],[data-theme="light"]{--bg:#0e0e12;--surface:#141418;--surface2:#1a1a20;--border:#2a2620;--text:#e8dfc8;--muted:#8a7a62;--accent:#c9a050;--green:#3fb950;--red:#f85149;}nav,#loadingScreen,.btn-sm,.perf-controls,.ref-toggle,.chart-type-btn,.tabs{display:none!important;}.container{max-width:100%!important;padding:10px;overflow:hidden!important;box-sizing:border-box;}.tab-pane{display:block!important;}canvas{max-width:100%!important;width:100%!important;height:auto!important;}.charts-row,.charts-row-3,.defi-summary,.stats-row,.hero-stats{grid-template-columns:1fr!important;}}
 
 /* LIGHT MODE — wine label aesthetic */
 [data-theme="light"] .hero-card{
@@ -290,7 +290,7 @@ h1, h2, .section-label, .hero-value,
 @media(max-width:768px){
  .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
  background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
- [data-theme="dark"] .nav-links{background:rgba(23,23,31,.98);}
+ [data-theme="dark"] .nav-links{background:rgba(20,20,24,.98);}
  .nav-links.open{display:flex;}
  .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
  .nav-links a:last-child{border-bottom:none;}
