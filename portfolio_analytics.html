@@ -597,7 +597,7 @@ body, input, button, select, textarea {
 <div class="market-ticker" id="mkTicker">
  <div class="mk-gas" title="Gas ETH (Gwei)">
   <svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 13V3a1 1 0 011-1h6a1 1 0 011 1v3l1 1v3l-1 1v2"/><path d="M5 6h2"/></svg>
-  <span id="mkGasVal" style="font-weight:700;color:var(--text);font-size:10px;">—</span>
+  <span id="mkGasVal" style="font-weight:700;color:var(--accent);font-size:10px;">—</span>
   <span class="gas-unit">gwei</span>
  </div>
  <div class="mk-item">
@@ -618,7 +618,6 @@ body, input, button, select, textarea {
   <span class="mk-price" id="mkSolPrice">—</span>
   <span class="mk-chg" id="mkSolChg">—</span>
  </div>
- <div class="mk-ts" id="mkTs"></div>
 </div>
 
 <div class="container" id="mainContent" style="display:none;">
@@ -809,6 +808,23 @@ body, input, button, select, textarea {
 
 </div>
 
+<!-- ══ EVOLUÇÃO PATRIMONIAL ══ -->
+<div class="section-label">Evolução Patrimonial — Histórico Completo</div>
+<div id="wealthKpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:14px;"></div>
+<div class="card" style="margin-bottom:12px;">
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+  <div class="chart-title" style="margin-bottom:0;">Patrimônio vs Capital Aportado · 2022–2026</div>
+  <div style="display:flex;gap:4px;">
+   <button class="chart-type-btn active" id="wealthUsdBtn" onclick="setWealthCurrency('usd',this)" title="Medir em dólar">USD</button>
+   <button class="chart-type-btn" id="wealthBtcBtn" onclick="setWealthCurrency('btc',this)" title="Medir em Bitcoin — você está batendo o BTC?">BTC</button>
+   <button class="chart-type-btn" id="wealthEthBtn" onclick="setWealthCurrency('eth',this)" title="Medir em Ether — você está acumulando mais ETH?">ETH</button>
+   <a href="relatorio.html" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--accent);text-decoration:none;border:1px solid var(--border);padding:5px 10px;border-radius:3px;display:flex;align-items:center;gap:4px;">⬡ Relatório PDF</a>
+  </div>
+ </div>
+ <canvas id="wealthEvolutionChart" style="max-height:340px;"></canvas>
+ <div id="wealthDenomNote" style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:10px;line-height:1.55;"></div>
+</div>
+
 <!-- ══ RETORNO ANUAL ══ -->
 
 
@@ -891,23 +907,6 @@ body, input, button, select, textarea {
 <div class="card" style="margin-bottom:12px;">
  <div class="chart-title">Investido vs Valor de Mercado</div>
  <canvas id="dcaTracking" style="max-height:210px;"></canvas>
-</div>
-
-<!-- ══ EVOLUÇÃO PATRIMONIAL ══ -->
-<div class="section-label">Evolução Patrimonial — Histórico Completo</div>
-<div id="wealthKpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:14px;"></div>
-<div class="card" style="margin-bottom:12px;">
- <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-  <div class="chart-title" style="margin-bottom:0;">Patrimônio vs Capital Aportado · 2022–2026</div>
-  <div style="display:flex;gap:4px;">
-   <button class="chart-type-btn active" id="wealthUsdBtn" onclick="setWealthCurrency('usd',this)" title="Medir em dólar">USD</button>
-   <button class="chart-type-btn" id="wealthBtcBtn" onclick="setWealthCurrency('btc',this)" title="Medir em Bitcoin — você está batendo o BTC?">BTC</button>
-   <button class="chart-type-btn" id="wealthEthBtn" onclick="setWealthCurrency('eth',this)" title="Medir em Ether — você está acumulando mais ETH?">ETH</button>
-   <a href="relatorio.html" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--accent);text-decoration:none;border:1px solid var(--border);padding:5px 10px;border-radius:3px;display:flex;align-items:center;gap:4px;">⬡ Relatório PDF</a>
-  </div>
- </div>
- <canvas id="wealthEvolutionChart" style="max-height:340px;"></canvas>
- <div id="wealthDenomNote" style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:10px;line-height:1.55;"></div>
 </div>
 
 <!-- ══ ALPHA vs HODL POR ATIVO ══ -->
@@ -5445,12 +5444,11 @@ function toggleLang() {
           signal: AbortSignal.timeout(5000)
         }).then(r => r.json());
         if (gasRes.result) {
-          var gwei = Math.round(parseInt(gasRes.result, 16) / 1e9);
-          setEl('mkGasVal', gwei);
+          var gwei = parseInt(gasRes.result, 16) / 1e9;
+          setEl('mkGasVal', gwei < 10 ? gwei.toFixed(2) : gwei.toFixed(1));
         }
       } catch(e) {}
 
-      setEl('mkTs', new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }));
     } catch(e) { console.warn('mk-ticker failed', e); }
   }
 

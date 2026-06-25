@@ -17,12 +17,12 @@
    Baseline: 20/06/2026 (snapshot EXPORTS SEMANAIS/JUNHO/20-06-26-posicoes.json)
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-06-20',
+  asOf: '2026-06-24',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
-    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00204156, invested:135.74  },
+    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.0026964,  invested:174.58  },
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:23.31,      invested:2450.94 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
