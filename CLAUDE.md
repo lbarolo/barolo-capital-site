@@ -3487,3 +3487,107 @@ Baseline 20/06/2026 (consistente nos 6 arquivos): ETH 2.376 / SOL 23.31 / BTC 0.
 ---
 
 Atualizado: 23/06/2026 — `data.js` é a fonte única de posições (6 arquivos), Breakdown Alpha vs HODL por ativo, invested canônico = USD pago ($9.954), Convexidade refeita
+
+---
+
+## Sessão 24–25/06/2026 — Redesign UX (a16z/WeSearch/Metrix) + market board cripto + razão áurea (φ) + revisão de copy + paleta unificada + BTC update
+
+Sessão longa, multi-frente. Lucas pediu redesign da UX inspirado em **a16z.com**, **wesearchdao.xyz** e **metrix.finance**. Via `AskUserQuestion` escolheu: escopo **Landing + dashboards**, direção **dark + ouro modernizado** (manter identidade, evoluir layout/tipografia/grid/motion). Toda a verificação foi via preview local (`barolo-site` em launch.json); o `preview_screenshot` trava nas páginas longas/animadas (ambiental) — verificação feita por `preview_eval` lendo o DOM/computed styles. **Zero erros de console** em todas as páginas ao final.
+
+### Implementado
+
+#### `index.html` — Hero editorial 2 colunas + painel "Barolo · Live" (a16z + Metrix + WeSearch)
+- `.hero` virou **grid 2 colunas**; `.hero-lead` (texto) à esquerda, `<aside class="hero-panel">` à direita.
+- **Painel de dados ao vivo** `.hero-panel`: header "Barolo · Live" + dot verde pulsante (`.hp-dot` / `@keyframes hpPulse`); mini-tabela de mercado (`.hp-row`: `.hp-coin` + `.hp-sym` + `.hp-name` + `.hp-spark` + `.hp-price` + `.hp-chg`); grid 2×2 de stats (`.hp-stat`: CAGR/Track Record/Retorno Anual/Foco — IDs `heroCAGR`, `heroRealReturn`, `heroCAGRYTD` preservados p/ o count-up); rodapé `.hp-foot` ("Desde 2021 · Gestão privada" + "● noindex").
+- **Overlay de grade modular** (`.hero::after`, `background-size` Fibonacci, mask radial que desbota nas bordas).
+- **Numerais editoriais de seção** (`.section-num`) ampliados (Cormorant, 89px) como watermark.
+- **Nav**: underline dourado animado no hover/ativo (`.nav-links a::after` scaleX); `.strat-card::before` top-accent dourado que cresce no hover.
+- **Plumbing reaproveitado**: `renderTicker(prices)` agora também chama `renderHeroMarket(prices)` (popula `hm-btc/eth/sol` + `-c`) — mesma fonte do ticker, zero requisição extra. Strings i18n novas (`hp-cagr/track/irr/focus/foot-since`) em EN e PT. Animação de entrada (`riseIn`), reduced-motion e safety-net atualizados para incluir `.hero-panel` (removido `.hero-stats`).
+
+#### `ui-polish.css` (NOVO) — camada de polish compartilhada
+- Linkado no `<head>` de index + portfolio + pools + emprestimos + ferramentas + relatorio (`<link rel="stylesheet" href="ui-polish.css">`).
+- Conteúdo: `::selection` dourada; **scrollbar fina dourada** (webkit + firefox); **nav underline** no hover (`nav .nav-links a:hover` border-bottom, vence por especificidade); **hover de cards** (`.stat-card/.metric-card/.defi-card/.hero-card` → translateY + glow, `!important` p/ vencer `box-shadow:none`); **top-accent dourado** no `.hero-card::after`; `.btn-sm` hover; `@media reduced-motion`.
+- Seguro por design (só refina; não altera layout/paleta-base/lógica de gráficos).
+
+#### `index.html` — Market board cripto-nativo nos assets
+- **BTC adicionado** (lidera o token-grid) · **RADIANT removido** do quadro visível (RDNT continua no cálculo interno via data.js).
+- Cada `.token-card` ganhou, via JS, **preço ao vivo + variação 24h colorida + sparkline 7d**: `buildTokenBoard()` (lê `.token-ticker`, mapeia `TICKER_TO_CG`, injeta `.token-quote` + `<svg.token-spark>` antes da seta), `renderTokenBoard(prices)` (reaproveita fetch do ticker), `drawSparkline(svg,arr)` (polyline normalizada, verde/vermelho por tendência 7d), `fetchSparklines()` (CoinGecko `/coins/markets?sparkline=true`, cache `bc-index-spark-cache` 10 min, fallback gracioso), `applySparks(map)` (desenha em `.token-spark[data-cg]` E `.hp-spark[data-cg]`).
+- CSS: `.token-spark`, `.token-quote`, `.token-price`, `.token-chg.up/.dn`; sparkline some em ≤680px.
+
+#### `index.html` — Hero "mais vivo" (escolha do Lucas via AskUserQuestion)
+- **Sparklines no painel do hero** (BTC/ETH/SOL): `<svg class="hp-spark" data-cg="...">` em cada `.hp-row`; grid da row ajustado p/ `1fr 46px auto 56px`.
+- **Título com efeito de digitação**: IIFE no script "Hero vivo" — captura `innerHTML`, esvazia, digita char-a-char preservando o `<em>` dourado + `.type-caret` piscando; roda 1× no load; respeita reduced-motion; não roda no toggle de idioma.
+- **Aurora/grid/spotlight que seguem o cursor**: `pointermove` (rAF-throttled) seta `--mx/--my` (spotlight radial no `.hero` background) e `--gx/--gy` (translate do `.hero::after`); `pointerleave` reseta.
+
+#### `index.html` — Razão áurea (φ) como sistema de design (escolha: "Sistema φ na landing + motivo")
+- Tokens no `:root`: `--phi:1.618`, `--inv-phi:0.618`, `--fib-1..6` (8·13·21·34·55·89).
+- **Proporção**: `.hero` grid `1.618fr 1fr` (= 61.8% / 38.2%, medido 642/397px); `hero-sub` max-width ≈ `610×1/φ`.
+- **Escala/ritmo Fibonacci**: hero-title `clamp(34px,6vw,89px)`; section-title `clamp(34px,4vw,55px)`; section-num 89px (55→34 responsivo); paddings/gaps/margens em 21/34/55/89; grid modular `55×55`.
+- **Espiral áurea (assinatura)**: `<svg class="phi-spiral">` no hero, path gerado por JS (log-spiral cresce ×φ por quarto de volta, centro na linha áurea 61.8%), opacity .13 ouro, **desenha ao carregar** (stroke-dashoffset 2.6s), reduced-motion-guard.
+- **Selo** no rodapé: `phi-note` "Designed on the golden ratio · φ 1.618" / "Projetado na proporção áurea" (EN/PT).
+
+#### `index.html` — Reordenação de seções
+- Nova ordem: **Sobre (01) → Portfolio (02: Ativos + Track Record + Inflação) → Selective Strategies (03) → Contato (04)** (Portfolio subiu antes de Strategies). Numerais renumerados; **nav reordenado** (Home · About · Portfolio · Strategies · Contact).
+
+#### `index.html` — Widget de gwei fixo + logos no painel
+- **Widget de gas fixo** no canto inferior direito (`position:fixed`, `.gwei-widget` / `#gweiVal`): pílula dourada com dot verde, valor ao vivo via **Alchemy `eth_gasPrice`** (`/1e9`, decimais), atualiza a cada 45s. "Rola junto com a página" (sempre visível).
+- Painel "Barolo · Live": **bolinhas coloridas (`<span.hp-coin>`) → logos dos tokens** (`<img.hp-coin>` BTC/ETH/SOL do CoinGecko, com `onerror` que restaura a cor de fundo). `.hp-coin` ganhou `object-fit:cover` + borda.
+
+#### Paleta unificada nos dashboards (warm da index, mesmo layout)
+- `:root` (dark) de **portfolio, pools, emprestimos, ferramentas, relatorio** trocado de roxo → warm: `--bg:#0e0e12 --surface:#141418 --surface2:#1a1a20 --border:#2a2620 --border2:#3a3228 --text:#e8dfc8 --muted:#8a7a62` (accent/green/red/yellow/orange/token-colors preservados). Light alinhado à index (`--bg:#f5f0e8 --surface:#faf6ee --surface2:#f0ebe0 --border:#ddd4c0 --text:#2a1e0e --muted:#7a6a52`).
+- **Nav backgrounds** (eram `rgba(13,9,23,0.96)` roxo) → `rgba(14,14,18,0.96)`; dropdown mobile `rgba(...)` → `rgba(20,20,24,.98)`.
+- **Blocos `@media print`** e literais hardcoded warmificados (`#0d0917→#0e0e12`, `#14102b→#141418`, `#1a1533→#1a1a20`, `#2a2244→#2a2620`).
+- `ferramentas.html`: vars extras (`--s1/--s2/--s3/--dim`) warmificadas; `--purple`/`--orange`/`--border2`(gold) mantidos (funcionais). "Refinando as bordas" = de roxo translúcido `rgba(180,140,240,0.09)` → bordas warm definidas `#2a2620`.
+
+#### `portfolio_analytics.html` — Evolução Patrimonial reordenada
+- Bloco **"Evolução Patrimonial — Histórico Completo"** (`#wealthKpis` + `#wealthEvolutionChart` + botões USD/BTC/ETH + link Relatório PDF) **movido para logo abaixo** de "Curva de Patrimônio & Benchmark" (antes ficava após Heatmap/Drawdown/Análise/P&L/DCA). Sem duplicação (1 chart, 4 KPIs).
+
+#### `portfolio_analytics.html` + `pools.html` — Ticker do rodapé
+- **Relógio removido** (`#mkTs` / `#tickerTs` deletados do HTML + `setEl(...toLocaleTimeString...)` removido do JS).
+- **Gwei corrigido**: era `Math.round(parseInt(result,16)/1e9)` → mostrava "0 gwei" p/ gás < 1 gwei. Agora `gwei < 10 ? toFixed(2) : toFixed(1)` e cor **dourada** (`--accent`), igual ao widget da index. Obs.: o gwei do ticker depende do fetch de preços (CoinGecko) rodar antes — no navegador do Lucas os preços carregam, então exibe certo.
+
+#### Revisão de copy EN/PT (alinhamento com a filosofia)
+- **Posicionamento → indivíduo / prova de competência** (Lucas escolheu via AskUserQuestion): removido tom de "firma/empresa que capta cliente". Reescritos `hero-sub`, `about-lead` ("gestão independente e individual de capital próprio… prova de competência, privada"), `about-p2` (injetado **yield paga a vida / capital fica trabalhando** + **sucesso medido em ativos acumulados, não no preço** — lógica Barsi/tokens-não-dólar), `strat2-desc` (**alavancagem defensiva e anticíclica**, renda de taxas paga a dívida), `contact-desc` (tirou "parcerias/colaboração").
+- `ferramentas.html` aba **Crenças**: "uma empresa independente" → "gestão independente e individual de capital próprio… não um serviço vendido a terceiros". `relatorio.html`: rótulo "borrow colateralizado **defensivo**".
+- **Bug**: string EN do `perf-note` dizia "aporte" (português) → "the timing of contributions"; e o `perf-note` agora carrega em **EN no load** (antes vinha PT) com **negrito + link preservados nos dois idiomas** (markup movido p/ os valores i18n).
+
+### Dados atualizados
+
+**Data de fundação confirmada = 2021** (Lucas mandou print: 1ª compra ETH **13/12/2021** 0.0130 ETH @ $4.002,90 e **16/12/2021** 0.0084 ETH @ $3.979). "Desde 2021" canônico; série de performance medida de **jan/2022** (1º mês completo). `perf-note` agora explicita "DCA mensal desde dez/2021; série medida a partir de jan/2022" — resolve a aparente contradição com "CAGR 2022–2026". Memória `project_founding_date.md` criada (+ índice MEMORY.md).
+
+**Compra de BTC (24/06/2026)** — print CoinGecko, atualizado em `data.js`:
+| Campo | Antes | Depois |
+|---|---|---|
+| BTC qty | 0.00204156 | **0.0026964** (+0.00065484) |
+| BTC invested | $135,74 | **$174,58** (+$38,84) |
+| TOTAL_INVESTED | $9.954,95 | **≈$9.993,79** |
+| `asOf` | 2026-06-20 | **2026-06-24** |
+
+Diário NÃO duplica: o sync de trades foi removido de index e portfolio ("Diário DeFi NÃO altera mais as holdings") — é só log pessoal; o site lê da base (`data.js`).
+
+### Bugs corrigidos
+| Bug | Causa | Fix |
+|-----|-------|-----|
+| Ticker rodapé "0 gwei" | `Math.round` arredondava gás < 0,5 gwei para 0 | `toFixed(2/1)` (decimais) + cor dourada |
+| `perf-note` EN com "aporte" (PT) e carregando em PT no load | string i18n EN tinha palavra PT; HTML estático do perf-note era PT | "timing of contributions"; HTML default → EN; markup (bold+link) movido p/ i18n EN e PT |
+| Nav dos dashboards continuava roxo após trocar `:root` | nav bg era `rgba(13,9,23,..)` hardcoded (não usava var) | replace_all p/ `rgba(14,14,18,..)` |
+| `preview_screenshot` timeout em páginas longas/animadas | Ambiental (compositor ocupado com aurora/espiral/ticker) | Verificação via `preview_eval` (DOM/computed styles) |
+
+### Commits (push direto na main)
+- `5010c79` — redesign UX (landing + dashboards) + market board ao vivo + revisão de copy
+- `7c8cc8b` — landing redesenhada sobre a razão áurea (φ)
+- `9b1f7ac` — index (reorder seções + gwei fixo + logos no painel) + paleta unificada nos dashboards
+- `4e0daef` — BTC update (24/06) + reorder Evolução Patrimonial + ticker (sem relógio, gwei decimal)
+
+### O que ainda falta
+- **Sistema φ nos dashboards** — Lucas pode querer levar as proporções/escala áurea pros painéis (avaliado, ficou de fora por ser mais arriscado nos gráficos).
+- **Gwei do ticker desacoplado do fetch de preços** — hoje o gwei do rodapé só aparece se o fetch CoinGecko rodar antes; na index o gwei é independente. Se rate-limit do CoinGecko atrapalhar, considerar desacoplar (como na index).
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
+- **CSVs das CEX** — custo de aquisição em BRL + base para IR
+- **i18n painel Sizing & Risk** (ferramentas) — labels só em PT
+- **Mentoria DeFi avançado** — Euler V2, Morpho Blue, Gearbox V3, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **CLAUDE.md topo "desde 2022"** — desatualizado; o correto é 2021 (ver memória `project_founding_date.md`)
+
+---
+
+Atualizado: 25/06/2026 — Redesign UX completo (hero 2-col + market board + sistema φ na landing), `ui-polish.css` compartilhado, paleta warm unificada nos 5 dashboards, copy EN/PT alinhado (individual/prova de competência), "Desde 2021" confirmado (1ª compra ETH dez/2021), BTC atualizado (compra 24/06)
