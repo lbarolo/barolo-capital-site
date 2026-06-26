@@ -1107,8 +1107,12 @@ body::after{
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 30" width="195" height="22" style="display:block;">
+  <div class="nav-logo" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})" style="display:flex;align-items:center;gap:11px;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 78" width="30" height="21" style="display:block;flex-shrink:0;" aria-hidden="true">
+      <polygon points="14,62 44,18 74,62" fill="#9a7228"></polygon>
+      <polygon points="46,62 70,30 94,62" fill="#c9a050"></polygon>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 30" width="178" height="20" style="display:block;">
       <text x="0" y="22" font-family="Cormorant Garamond, Georgia, serif" font-size="21" font-weight="500" fill="#c9a050" letter-spacing="5">BAROLO CAPITAL</text>
     </svg>
   </div>
@@ -1239,6 +1243,49 @@ body::after{
   <div class="container">
     <div class="section-tag" data-i18n="port-tag">DeFi Ecosystem</div>
     <h2 class="section-title" data-i18n="port-title">Portfolio <em>Assets</em></h2>
+
+    <!-- ══ LIVE WALLET DASHBOARD ══ -->
+    <div class="wallet-dash" style="margin-bottom:55px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;">
+          <span style="display:inline-flex;align-items:center;gap:7px;color:var(--green);"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:hpPulse 2.2s ease-out infinite;"></span></span>
+          Carteira ao vivo
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);">alocação · % da carteira</div>
+      </div>
+
+      <!-- KPI strip -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);">
+        <div style="background:var(--surface);padding:20px 22px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">P&amp;L não realizado</div>
+          <div id="dashPnl" style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--green);line-height:1;">—</div>
+          <div id="dashPnlSub" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:9px;">—</div>
+        </div>
+        <div style="background:var(--surface);padding:20px 22px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Health Factor · AAVE</div>
+          <div id="dashHf" style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--cream);line-height:1;">—</div>
+          <div id="dashHfSub" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:9px;">—</div>
+        </div>
+        <div style="background:var(--surface);padding:20px 22px;border-left:2px solid rgba(201,160,80,.35);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">CAGR desde 2022</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--gold);line-height:1;">+63,7%</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:9px;">ao ano · com leverage</div>
+        </div>
+      </div>
+
+      <!-- Allocation donut + legend -->
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;border:1px solid var(--border);border-top:none;background:var(--surface);padding:26px 24px;">
+        <div style="position:relative;width:186px;height:186px;flex-shrink:0;">
+          <svg id="dashDonut" viewBox="0 0 160 160" style="width:186px;height:186px;transform:rotate(-90deg);display:block;"></svg>
+          <div id="dashDonutCenter" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 20px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);" id="dashDonutTop">Alocação</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--cream);line-height:1;margin:5px 0;" id="dashDonutBig">—</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);" id="dashDonutSub">passe o mouse</div>
+          </div>
+        </div>
+        <div id="dashLegend" style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px 28px;"></div>
+      </div>
+    </div>
 
     <!-- Token grid — 3 columns, clean rows -->
     <div class="token-grid">
@@ -1379,7 +1426,7 @@ body::after{
         </div>
         <div class="perf-card">
           <div class="perf-title" data-i18n="perf-maxdd">Max Drawdown</div>
-          <div class="perf-value">-50.9%</div>
+          <div class="perf-value neg">-50.9%</div>
           <div class="perf-sub">Peak to trough (Mar 2022)</div>
         </div>
       </div>
@@ -1473,12 +1520,12 @@ body::after{
     <h2 class="section-title" data-i18n="contact-title">Get in <em>touch</em></h2>
     <div class="contact-block">
       <p data-i18n="contact-desc">For questions or a direct conversation — reach out.</p>
-      <a href="mailto:contato@barolocapital.com.br" class="contact-email">contato@barolocapital.com.br</a>
+      <a href="/cdn-cgi/l/email-protection#54373b3a2035203b143635263b383b3735243d2035387a373b397a3626" class="contact-email"><span class="__cf_email__" data-cfemail="680b07061c091c07280a091a0704070b0918011c0904460b0705460a1a">[email&#160;protected]</span></a>
     </div>
   </div>
 </section>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ══════════════════════════════════
 // LOGIN
 // ══════════════════════════════════
@@ -2118,9 +2165,10 @@ function updateInflationStats(currency) {
   var pctAboveInfl = ((endVal / capNeeded) - 1) * 100;
   var cgrReal = pctAboveInfl / years;
 
-  document.getElementById('inflStatReal').textContent = (isUSD ? '$' : 'R$') + realGain.toLocaleString('en-US', {maximumFractionDigits: 0});
-  document.getElementById('inflStatPct').textContent = '+' + pctAboveInfl.toFixed(1) + '%';
-  document.getElementById('inflStatAnnual').textContent = '+' + cgrReal.toFixed(2) + '%';
+  var _setTxt = function(id, val){ var e = document.getElementById(id); if (e) e.textContent = val; };
+  _setTxt('inflStatReal', (isUSD ? '$' : 'R$') + realGain.toLocaleString('en-US', {maximumFractionDigits: 0}));
+  _setTxt('inflStatPct', '+' + pctAboveInfl.toFixed(1) + '%');
+  _setTxt('inflStatAnnual', '+' + cgrReal.toFixed(2) + '%');
 }
 
 // ══════════════════════════════════
@@ -2436,6 +2484,220 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   fetchGwei();
   setInterval(fetchGwei, 45000);
+})();
+</script>
+
+<!-- ── Interactive annual→month drill-down chart (home) ── -->
+<script>
+(function(){
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded',fn); }
+  ready(function(){
+    if(typeof Chart==='undefined') return;
+    var canvas=document.getElementById('annualHomeChart');
+    if(!canvas) return;
+    var statsEl=document.getElementById('annualHomeStats');
+    var titleEl=document.getElementById('annualHomeTitle');
+    var subEl=document.getElementById('annualHomeSub');
+    var backBtn=document.getElementById('annualHomeBack');
+
+    var MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var MR={
+      2022:[-2,4,13,6,-10,-50,30,13,-20,22,-20,5],
+      2023:[50,9,14,11,2,6,7,-9,1,17,16,17],
+      2024:[14,22,29,-5,21,-7,16,-13,-2,17,36,6],
+      2025:[-1,-8,-17,-8,29,4,12,-11,2,21,12,-7],
+      2026:[-18,-22,-13.6,40.3,null,null,null,null,null,null,null,null]
+    };
+    var YEARS=[2022,2023,2024,2025,2026];
+    var GOLD='#c9a050', GREEN='#3fb950', RED='#f85149';
+    var inst=null, view='yearly', curYear=null;
+
+    function css(v,f){ var c=getComputedStyle(document.documentElement).getPropertyValue(v).trim(); return c||f; }
+    function txt(){ return css('--muted','#8a7a62'); }
+    function grid(){ return css('--border','#2a2620'); }
+    function fmt(v){ return (v>=0?'+':'')+v.toFixed(1)+'%'; }
+    function annualOf(y){ var a=1,has=false; MR[y].forEach(function(m){ if(m!=null){a*=(1+m/100);has=true;} }); return has?(a-1)*100:null; }
+    function tip(){ return { backgroundColor:'rgba(14,14,18,.96)', borderColor:GOLD, borderWidth:1, titleColor:'#e8dfc8', bodyColor:'#e8dfc8', titleFont:{family:'JetBrains Mono',size:11}, bodyFont:{family:'JetBrains Mono',size:11}, padding:10, displayColors:false, cornerRadius:4 }; }
+    function statCard(label,val,sub,color){ return '<div class="infl-stat-card"><div class="infl-stat-label">'+label+'</div><div class="infl-stat-value" style="color:'+(color||GREEN)+'">'+val+'</div><div class="infl-stat-sub">'+sub+'</div></div>'; }
+
+    function buildYears(){
+      view='yearly'; curYear=null;
+      backBtn.style.display='none';
+      titleEl.textContent='Retorno Anual do Portfólio';
+      subEl.textContent='Passe o mouse para detalhes — clique numa barra de ano para abrir os meses daquele ano.';
+      var vals=YEARS.map(annualOf);
+      if(inst) inst.destroy();
+      inst=new Chart(canvas,{ type:'bar',
+        data:{ labels:YEARS.map(String), datasets:[{ data:vals,
+          backgroundColor:vals.map(function(v){return v==null?'transparent':(v>=0?'rgba(63,185,80,.78)':'rgba(248,81,73,.78)');}),
+          borderColor:vals.map(function(v){return v==null?'transparent':(v>=0?GREEN:RED);}),
+          borderWidth:1, borderRadius:5, hoverBackgroundColor:GOLD }]},
+        options:{ responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{display:false}, tooltip:Object.assign(tip(),{callbacks:{
+            title:function(c){return c[0].label+' — clique para ver os meses';},
+            label:function(c){ return ' Retorno: '+(c.raw==null?'—':fmt(c.raw)); } }}) },
+          onHover:function(e,el){ if(e.native) e.native.target.style.cursor=el.length?'pointer':'default'; },
+          onClick:function(e,el){ if(el.length) buildMonths(YEARS[el[0].index]); },
+          scales:{ x:{ticks:{color:txt(),font:{size:12,weight:'600'}},grid:{display:false},border:{display:false}},
+            y:{ticks:{color:txt(),callback:function(v){return v+'%';},font:{size:10}},grid:{color:grid(),lineWidth:.5},border:{display:false}} }
+        }
+      });
+      var nn=vals.filter(function(v){return v!=null;});
+      var best=Math.max.apply(null,nn), worst=Math.min.apply(null,nn);
+      var pos=nn.filter(function(v){return v>=0;}).length;
+      statsEl.innerHTML = statCard('Melhor ano',fmt(best),String(YEARS[vals.indexOf(best)]),GREEN)
+        + statCard('Pior ano',fmt(worst),String(YEARS[vals.indexOf(worst)]),RED)
+        + statCard('Anos positivos',pos+' / '+nn.length,'desde 2022',GOLD);
+    }
+
+    function buildMonths(y){
+      view='months'; curYear=y;
+      backBtn.style.display='';
+      titleEl.textContent='Retorno Mensal · '+y;
+      subEl.textContent='Barras = retorno do mês · linha dourada = acumulado no ano.';
+      var vals=MR[y].slice();
+      var cum=[],c=0;
+      vals.forEach(function(v){ if(v!=null){ c=(1+c/100)*(1+v/100)*100-100; cum.push(+c.toFixed(1)); } else cum.push(null); });
+      if(inst) inst.destroy();
+      inst=new Chart(canvas,{
+        data:{ labels:MES, datasets:[
+          { type:'bar', label:'Mês', data:vals, yAxisID:'y', order:2, borderWidth:1, borderRadius:4,
+            backgroundColor:vals.map(function(v){return v==null?'transparent':(v>=0?'rgba(63,185,80,.7)':'rgba(248,81,73,.7)');}),
+            borderColor:vals.map(function(v){return v==null?'transparent':(v>=0?GREEN:RED);}) },
+          { type:'line', label:'Acumulado', data:cum, yAxisID:'y2', order:1, borderColor:GOLD, borderWidth:2, fill:false, tension:.4, pointRadius:3, pointBackgroundColor:GOLD, spanGaps:true }
+        ]},
+        options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+          plugins:{ legend:{display:true,labels:{color:txt(),font:{size:10},boxWidth:8,usePointStyle:true}},
+            tooltip:Object.assign(tip(),{callbacks:{
+              title:function(c){return MES[c[0].dataIndex]+' '+y;},
+              label:function(c){ if(c.dataset.label==='Mês') return ' Mês: '+(c.raw==null?'—':fmt(c.raw)); return ' Acumulado: '+(c.raw==null?'—':fmt(c.raw)); } }}) },
+          scales:{ x:{ticks:{color:txt(),font:{size:10}},grid:{display:false},border:{display:false}},
+            y:{ticks:{color:txt(),callback:function(v){return v+'%';},font:{size:10}},grid:{color:grid(),lineWidth:.5},border:{display:false}},
+            y2:{position:'right',ticks:{color:GOLD,callback:function(v){return v+'%';},font:{size:10}},grid:{display:false},border:{display:false}} }
+        }
+      });
+      var nn=vals.filter(function(v){return v!=null;});
+      var best=Math.max.apply(null,nn), worst=Math.min.apply(null,nn);
+      var tot=cum.filter(function(v){return v!=null;}).pop();
+      statsEl.innerHTML = statCard('Acumulado '+y,tot==null?'—':fmt(tot),nn.length+' meses',tot>=0?GREEN:RED)
+        + statCard('Melhor mês',fmt(best),MES[vals.indexOf(best)],GREEN)
+        + statCard('Pior mês',fmt(worst),MES[vals.indexOf(worst)],RED);
+    }
+
+    window.annualHomeBackFn=buildYears;
+    buildYears();
+    var themeBtn=document.getElementById('themeToggle');
+    if(themeBtn) themeBtn.addEventListener('click',function(){ setTimeout(function(){ view==='months'?buildMonths(curYear):buildYears(); },70); });
+  });
+})();
+</script>
+
+<!-- ── Live wallet dashboard (KPIs + currency toggle + interactive allocation donut) ── -->
+<style>
+@media(max-width:900px){
+  .wallet-dash > div:nth-child(2){grid-template-columns:repeat(2,1fr)!important;}
+  .wallet-dash > div:nth-child(3){grid-template-columns:1fr!important;justify-items:center;text-align:center;}
+  .wallet-dash #dashLegend{grid-template-columns:repeat(2,1fr)!important;}
+}
+</style>
+<script>
+(function(){
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded',fn); }
+  ready(function(){
+    var D = window.BAROLO_DATA || {};
+    if(!document.getElementById('dashDonut')) return;
+    var brlRate = D.brlRate || 4.95;
+    var debt = (D.debt && D.debt.total) || 1572.07;
+    var hf = (D.defi && D.defi.aave && D.defi.aave.healthFactor) || 4.0;
+    var holdings = D.holdings || [];
+    var stables = D.stables || [];
+    var META = {
+      bitcoin:{t:'BTC',n:'Bitcoin'}, ethereum:{t:'ETH',n:'Ethereum'}, solana:{t:'SOL',n:'Solana'},
+      cardano:{t:'ADA',n:'Cardano'}, eigenlayer:{t:'EIGEN',n:'EigenLayer'}, 'radiant-capital':{t:'RDNT',n:'Radiant'},
+      'polygon-ecosystem-token':{t:'POL',n:'Polygon'}, zksync:{t:'ZK',n:'ZKsync'}, 'xai-blockchain':{t:'XAI',n:'Xai'},
+      zetachain:{t:'ZETA',n:'ZetaChain'}, scroll:{t:'SCR',n:'Scroll'}
+    };
+    var FB = { bitcoin:101000, ethereum:3150, solana:158, cardano:0.62, eigenlayer:1.45, 'radiant-capital':0.045, 'polygon-ecosystem-token':0.42, zksync:0.085, 'xai-blockchain':0.18, zetachain:0.45, scroll:0.5, tether:1, 'usds-stablecoin':1 };
+    var PAL = ['#c9a050','#4f9d8a','#5f86c4','#c2727f','#d98b4a','#9486bf','#6f8f6a'];
+    var cur = localStorage.getItem('bc-dash-denom') || 'brl';
+    var hoverIdx = null;
+    var NS = 'http://www.w3.org/2000/svg';
+
+    function prices(){
+      var p = {};
+      try { var c = JSON.parse(localStorage.getItem('bc-index-prices-cache')||'null'); if(c){ Object.keys(c).forEach(function(k){ if(typeof c[k]==='number') p[k]=c[k]; }); } } catch(e){}
+      return p;
+    }
+    function priceOf(id,p){ return p[id] || FB[id] || 0; }
+    function fmtMoney(usd){
+      if(cur==='usd') return 'US$ '+Math.round(usd).toLocaleString('en-US');
+      if(cur==='brl') return 'R$ '+Math.round(usd*brlRate).toLocaleString('pt-BR');
+      var btc = priceOf('bitcoin',prices())||101000; return '\u20BF '+(usd/btc).toFixed(3);
+    }
+    function compute(){
+      var p = prices(), assets=[], holdVal=0, holdInv=0;
+      holdings.forEach(function(h){ var v=h.qty*priceOf(h.cgId,p); holdVal+=v; holdInv+=(h.invested||0); var m=META[h.cgId]||{t:h.ticker,n:h.ticker}; assets.push({t:m.t,n:m.n,val:v}); });
+      var stVal=0; stables.forEach(function(s){ stVal += s.qty*(priceOf(s.cgId,p)||1); });
+      var gross = holdVal + stVal, nav = gross - debt, pnl = holdVal - holdInv, pnlPct = holdInv>0?(pnl/holdInv*100):0;
+      assets.sort(function(a,b){return b.val-a.val;});
+      var alloc=[]; assets.slice(0,5).forEach(function(a){ alloc.push({name:a.n,t:a.t,val:a.val}); });
+      var rest = assets.slice(5).reduce(function(s,a){return s+a.val;},0);
+      if(stVal>0) alloc.push({name:'Stablecoins',t:'USDT\u00B7USDS',val:stVal});
+      if(rest>0) alloc.push({name:'Outros',t:(assets.length-5)+' ativos',val:rest});
+      var tot = alloc.reduce(function(s,a){return s+a.val;},0)||1;
+      alloc.forEach(function(a,i){ a.pct=a.val/tot*100; a.color=PAL[i%PAL.length]; });
+      return { nav:nav, gross:gross, pnl:pnl, pnlPct:pnlPct, alloc:alloc };
+    }
+    function setText(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+    function renderDonut(alloc){
+      var svg=document.getElementById('dashDonut'); if(!svg) return;
+      var C=2*Math.PI*58, off=0; svg.innerHTML='';
+      alloc.forEach(function(a,i){
+        var len=C*a.pct/100, c=document.createElementNS(NS,'circle');
+        c.setAttribute('cx',80); c.setAttribute('cy',80); c.setAttribute('r',58); c.setAttribute('fill','none');
+        c.setAttribute('stroke',a.color); c.setAttribute('stroke-width', hoverIdx===i?22:15);
+        c.setAttribute('stroke-dasharray', len.toFixed(2)+' '+(C-len).toFixed(2));
+        c.setAttribute('stroke-dashoffset', (-off).toFixed(2));
+        c.style.opacity=(hoverIdx===null||hoverIdx===i)?1:0.3; c.style.transition='stroke-width .2s,opacity .2s'; c.style.cursor='pointer';
+        c.addEventListener('mouseenter',function(){ hoverIdx=i; renderAll(); });
+        c.addEventListener('mouseleave',function(){ hoverIdx=null; renderAll(); });
+        svg.appendChild(c); off+=len;
+      });
+      if(hoverIdx===null){ setText('dashDonutTop','Alocação'); setText('dashDonutBig',String(alloc.length)); setText('dashDonutSub','ativos'); }
+      else { setText('dashDonutTop',alloc[hoverIdx].name); setText('dashDonutBig',alloc[hoverIdx].pct.toFixed(1).replace('.',',')+'%'); setText('dashDonutSub',alloc[hoverIdx].t); }
+    }
+    function renderLegend(alloc){
+      var el=document.getElementById('dashLegend'); if(!el) return; el.innerHTML='';
+      alloc.forEach(function(a,i){
+        var row=document.createElement('div');
+        row.style.cssText='display:flex;align-items:center;gap:10px;font-family:JetBrains Mono,monospace;font-size:11px;color:var(--cream);cursor:pointer;padding:3px 4px;border-radius:3px;transition:opacity .15s,background .15s;'+(hoverIdx===i?'background:rgba(201,160,80,.09);':'')+(hoverIdx!==null&&hoverIdx!==i?'opacity:.45;':'');
+        row.innerHTML='<span style="width:9px;height:9px;border-radius:2px;background:'+a.color+';flex-shrink:0;"></span><span style="flex:1;">'+a.name+'</span><span style="color:var(--muted);">'+a.pct.toFixed(1).replace('.',',')+'%</span>';
+        row.addEventListener('mouseenter',function(){ hoverIdx=i; renderAll(); });
+        row.addEventListener('mouseleave',function(){ hoverIdx=null; renderAll(); });
+        el.appendChild(row);
+      });
+    }
+    function renderDenomBtns(){
+      var box=document.getElementById('dashDenom'); if(!box) return;
+      Array.prototype.forEach.call(box.querySelectorAll('button'),function(b){
+        var on=b.getAttribute('data-cur')===cur;
+        b.style.background=on?'var(--gold)':'transparent'; b.style.color=on?'#0e0e12':'var(--muted)'; b.style.fontWeight=on?'700':'400';
+      });
+    }
+    function renderAll(){
+      var m=compute();
+      var pnlEl=document.getElementById('dashPnl');
+      if(pnlEl){ pnlEl.textContent=(m.pnlPct>=0?'+':'\u2212')+Math.abs(m.pnlPct).toFixed(1).replace('.',',')+'%'; pnlEl.style.color=m.pnlPct>=0?'var(--green)':'var(--red)'; }
+      setText('dashPnlSub', 'sobre o capital investido');
+      setText('dashHf', hf.toFixed(2).replace('.',','));
+      setText('dashHfSub', hf>=2?'zona segura · liq. < 1,0':'atenção');
+      renderDonut(m.alloc); renderLegend(m.alloc); renderDenomBtns();
+    }
+    var box=document.getElementById('dashDenom');
+    if(box) box.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; cur=b.getAttribute('data-cur'); try{localStorage.setItem('bc-dash-denom',cur);}catch(_){} renderAll(); });
+    renderAll();
+    setInterval(renderAll, 6000);
+  });
 })();
 </script>
 

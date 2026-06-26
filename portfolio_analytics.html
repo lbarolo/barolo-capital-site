@@ -561,7 +561,7 @@ body, input, button, select, textarea {
 
 <nav>
   <a class="nav-brand" href="index.html">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 30" width="148" height="21" style="display:block;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-44 0 254 30" width="148" height="21" style="display:block;">
       <defs>
         <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stop-color="transparent"/>
@@ -570,7 +570,7 @@ body, input, button, select, textarea {
           <stop offset="100%" stop-color="transparent"/>
         </linearGradient>
       </defs>
-      <line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+      <polygon points="-34,25 -22,7 -10,25" fill="#9a7228"/><polygon points="-25,25 -16,13 -7,25" fill="#c9a050"/><line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
       <text x="105" y="20"
         font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
         font-weight="600" font-size="14" letter-spacing="3"
@@ -623,13 +623,13 @@ body, input, button, select, textarea {
 <div class="container" id="mainContent" style="display:none;">
 
 <!-- ══ EXECUTIVE SUMMARY BAR ══ -->
-<div id="execBar" style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:20px;">
-  <div style="background:var(--surface);padding:14px 16px;">
+<div id="execBar" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:20px;">
+  <div style="background:var(--surface);padding:14px 16px;display:none;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Patrimônio Líquido</div>
     <div id="ev-net" class="sensitive" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;">—</div>
     <div id="ev-net-sub" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">—</div>
   </div>
-  <div style="background:var(--surface);padding:14px 16px;">
+  <div style="background:var(--surface);padding:14px 16px;display:none;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Dívida Total</div>
     <div id="ev-debt" class="sensitive" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;color:var(--red);">—</div>
     <div id="ev-lev" style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">—</div>
@@ -669,7 +669,7 @@ body, input, button, select, textarea {
   </div>
  </div>
  <div class="hero-meta">
- <div class="hero-meta-item">
+ <div class="hero-meta-item" style="display:none;">
  <div class="hero-meta-label">VARIAÇÃO 24h</div>
  <div class="hero-meta-val sensitive" id="s-24h">—</div>
  <div style="font-size:8px;color:var(--muted);" id="s-24h-sub">—</div>
@@ -683,7 +683,7 @@ body, input, button, select, textarea {
  <div class="hero-meta-label">TOTAL INVESTIDO</div>
  <div class="hero-meta-val acc sensitive" id="s-invested">—</div>
  </div>
- <div class="hero-meta-item">
+ <div class="hero-meta-item" style="display:none;">
  <div class="hero-meta-label">MELHOR 24h</div>
  <div class="hero-meta-val pos" id="s-best24h">—</div>
  <div style="font-size:8px;color:var(--muted);" id="s-best24h-sub">—</div>
@@ -1251,11 +1251,15 @@ body, input, button, select, textarea {
     </div>
 
     <!-- Scale bar -->
-    <div style="flex-shrink:0;min-width:140px;">
-      <div style="height:6px;width:100%;border-radius:3px;background:linear-gradient(90deg,#b22222,#cd5c5c,#daa520,#3cb371,#228b22);margin-bottom:6px;position:relative;">
-        <div id="fg-needle" style="position:absolute;top:-3px;width:2px;height:12px;background:var(--text);border-radius:1px;transform:translateX(-50%);transition:left .6s ease;left:50%;"></div>
+    <div style="flex-shrink:0;min-width:170px;">
+      <div style="position:relative;height:16px;margin-bottom:3px;">
+        <div id="fg-chip" style="position:absolute;top:0;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--text);transition:left .6s ease;white-space:nowrap;">—</div>
       </div>
-      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);">
+      <div style="height:8px;width:100%;border-radius:4px;background:linear-gradient(90deg,#c0392b,#e67e22,#f1c40f,#2ecc71,#27ae60);position:relative;">
+        <div id="fg-needle" style="position:absolute;top:-7px;left:50%;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--text);transform:translateX(-50%);transition:left .6s ease;"></div>
+        <div id="fg-dot" style="position:absolute;top:50%;left:50%;width:12px;height:12px;border-radius:50%;background:#c0392b;border:2px solid var(--surface);transform:translate(-50%,-50%);transition:left .6s ease,background .3s;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);margin-top:5px;">
         <span>Medo Ext.</span><span>Neutro</span><span>Ganância Ext.</span>
       </div>
       <div style="margin-top:10px;">
@@ -1370,25 +1374,25 @@ body, input, button, select, textarea {
 
   <div style="background:var(--surface);padding:18px 16px;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Ethereum Mainnet</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">~$270</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--green);line-height:1;">~$270</div>
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:5px;">AAVE supply/borrow/repay + pools ETH</div>
   </div>
 
   <div style="background:var(--surface);padding:18px 16px;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Arbitrum / L2s</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">~$50</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--green);line-height:1;">~$50</div>
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:5px;">Pools ARB + swaps + Base + zkSync</div>
   </div>
 
   <div style="background:var(--surface);padding:18px 16px;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Solana</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">~$3</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--green);line-height:1;">~$3</div>
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:5px;">Kamino + Raydium + swaps</div>
   </div>
 
-  <div style="background:var(--surface);padding:18px 16px;border-left:2px solid rgba(185,64,64,0.4);">
+  <div style="background:var(--surface);padding:18px 16px;border-left:2px solid rgba(63,185,80,0.4);">
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Total Gas Pago</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red);line-height:1;">~$353</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--green);line-height:1;">~$353</div>
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:5px;">Estimativa · ~2022–2026</div>
   </div>
 
@@ -2184,59 +2188,49 @@ function buildAllocationChart(enriched, totalVal){
   const total = allItems.reduce((s,a)=>s+a.currentValue, 0);
   const items = allItems;
 
-  // Chart
-  allocChartInst = new Chart(canvas, {
-    type: 'doughnut',
-    data: {
-      labels: items.map(a=>a.ticker),
-      datasets:[{
-        data: items.map(a=>a.currentValue),
-        backgroundColor: items.map(a=>a.color),
-        borderColor: dk ? '#1a1a24' : '#f5f0e8',
-        borderWidth: 2,
-        hoverOffset: 8,
-      }]
-    },
-    options:{
-      responsive: false,
-      maintainAspectRatio: false,
-      cutout: '66%',
-      plugins:{
-        legend:{ display:false },
-        tooltip:{
-          callbacks:{
-            label: ctx => {
-              const item = items[ctx.dataIndex];
-              const pct = (ctx.raw/total*100).toFixed(1);
-              const usdLine = ` ${ctx.label}: ${fmtCurrency(ctx.raw,0)} (${pct}%)`;
-              if (!item || item.qty == null) return usdLine;
-              const q = item.qty;
-              const dec = q < 1 ? 6 : q < 100 ? 4 : q < 10000 ? 2 : 0;
-              const qFmt = q.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
-              return [usdLine, `  ${qFmt} ${ctx.label}`];
-            }
-          },
-          backgroundColor: dk?'rgba(22,22,32,.96)':'rgba(250,246,239,.97)',
-          borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
-          borderWidth:1, padding:10,
-          titleColor:dk?'#e8e0d0':'#16110c',
-          bodyColor:dk?'#8a7a60':'#7a6a50',
-        }
-      }
-    }
+  // ── Interactive SVG donut (estilo index: centro com nome+% e hover que destaca) ──
+  const host = canvas.parentElement || document.getElementById('allocChartHost');
+  if(host){ host.id = 'allocChartHost'; }
+  const R=58, C=2*Math.PI*R; let off=0; let circles='';
+  items.forEach((a,i)=>{
+    const len = C*a.currentValue/total;
+    circles += `<circle data-i="${i}" cx="80" cy="80" r="${R}" fill="none" stroke="${a.color}" stroke-width="15" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" style="transition:stroke-width .2s,opacity .2s;cursor:pointer;"></circle>`;
+    off += len;
   });
+  if(host){
+    host.style.position='relative'; host.style.width='160px'; host.style.height='160px'; host.style.flexShrink='0';
+    host.innerHTML = `<svg id="allocDonut" viewBox="0 0 160 160" width="160" height="160" style="transform:rotate(-90deg);display:block;">${circles}</svg>`
+      + `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:0 14px;">`
+      + `<div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);" id="allocTop">Aloca\u00e7\u00e3o</div>`
+      + `<div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);line-height:1;margin:3px 0;" id="allocBig">${items.length}</div>`
+      + `<div style="font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);" id="allocSub">ativos</div></div>`;
+  }
 
-  // Legend — CoinGecko style: dot · name (flex-1) · bold%
+  // Legend — dot · nome (flex-1) · bold% (com hover sincronizado)
   const leg = document.getElementById('allocLegend');
-  if(!leg) return;
-  leg.innerHTML = items.map(a => {
-    const pct = (a.currentValue/total*100).toFixed(1);
-    return `<div style="display:flex;align-items:center;gap:8px;padding:4.5px 0;border-bottom:1px solid var(--border);">
-      <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);flex:1;">${a.ticker}</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--text);">${pct}%</span>
-    </div>`;
-  }).join('');
+  if(leg){
+    leg.innerHTML = items.map((a,i) => {
+      const pct = (a.currentValue/total*100).toFixed(1);
+      return `<div data-i="${i}" class="alloc-leg-row" style="display:flex;align-items:center;gap:8px;padding:4.5px 4px;border-bottom:1px solid var(--border);cursor:pointer;border-radius:3px;transition:background .15s,opacity .15s;">`
+        + `<div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0;"></div>`
+        + `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.name||a.ticker}</span>`
+        + `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--text);">${pct}%</span></div>`;
+    }).join('');
+  }
+
+  function allocHover(idx){
+    const svg=document.getElementById('allocDonut'); if(!svg) return;
+    svg.querySelectorAll('circle').forEach(c=>{ const ci=+c.getAttribute('data-i'); c.setAttribute('stroke-width', ci===idx?22:15); c.style.opacity=(idx===null||ci===idx)?1:0.3; });
+    const top=document.getElementById('allocTop'), big=document.getElementById('allocBig'), sub=document.getElementById('allocSub');
+    if(top&&big&&sub){
+      if(idx===null){ top.textContent='Aloca\u00e7\u00e3o'; big.textContent=items.length; big.style.fontSize='26px'; sub.textContent='ativos'; }
+      else { const a=items[idx]; top.textContent=a.name||a.ticker; big.textContent=(a.currentValue/total*100).toFixed(1).replace('.',',')+'%'; big.style.fontSize='23px'; sub.textContent=a.ticker; }
+    }
+    if(leg) leg.querySelectorAll('.alloc-leg-row').forEach(r=>{ const ri=+r.getAttribute('data-i'); r.style.background=ri===idx?'rgba(201,160,80,.10)':'transparent'; r.style.opacity=(idx===null||ri===idx)?1:0.45; });
+  }
+  const _svg=document.getElementById('allocDonut');
+  if(_svg) _svg.querySelectorAll('circle').forEach(c=>{ const i=+c.getAttribute('data-i'); c.addEventListener('mouseenter',()=>allocHover(i)); c.addEventListener('mouseleave',()=>allocHover(null)); });
+  if(leg) leg.querySelectorAll('.alloc-leg-row').forEach(r=>{ const i=+r.getAttribute('data-i'); r.addEventListener('mouseenter',()=>allocHover(i)); r.addEventListener('mouseleave',()=>allocHover(null)); });
 }
 
 // ──────────────────────────────────────────────────
@@ -4605,47 +4599,63 @@ function buildAccChart() {
 
   const labels = ACC_MONTHLY.map(r => r[0]);
   const isEth = accToken === 'eth';
-  const data = ACC_MONTHLY.map(r => isEth ? r[1] : r[2]);
+  const cum = ACC_MONTHLY.map(r => isEth ? r[1] : r[2]);
+  const delta = cum.map((v,i)=> i===0 ? v : +(v - cum[i-1]).toFixed(6));
   const color = isEth ? '#627EEA' : '#9945ff';
-  const label = isEth ? 'ETH acumulado' : 'SOL acumulado';
+  const unit = isEth ? 'Ξ' : '◎';
+  const sym = isEth ? 'ETH' : 'SOL';
+  const price = isEth ? (window._liveEthPrice || 2079) : (window._liveSolPrice || 87);
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const gridC = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
   const textC = isDark ? '#8b7d6b' : '#7a6a50';
 
+  const grad = ctx.getContext('2d').createLinearGradient(0, 0, 0, 210);
+  grad.addColorStop(0, color + '55');
+  grad.addColorStop(1, color + '00');
+  const maxDelta = Math.max.apply(null, delta.map(Math.abs)) || 1;
+  const lastPts = cum.map((_,i)=> i===cum.length-1 ? 4 : 0);
+
   accChart = new Chart(ctx, {
-    type: 'line',
     data: {
       labels,
-      datasets: [{
-        label,
-        data,
-        borderColor: color,
-        backgroundColor: color + '18',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.35,
-        pointRadius: 3,
-        pointBackgroundColor: color,
-      }]
+      datasets: [
+        {
+          type: 'bar', label: 'Ganho no mês', data: delta, yAxisID: 'y2', order: 2,
+          backgroundColor: color + '30', borderColor: color + '70', borderWidth: 1,
+          borderRadius: 3, maxBarThickness: 14,
+        },
+        {
+          type: 'line', label: 'Acumulado', data: cum, yAxisID: 'y', order: 1,
+          borderColor: color, backgroundColor: grad, borderWidth: 2.5, fill: true,
+          tension: 0.4, pointRadius: lastPts, pointHoverRadius: 5,
+          pointBackgroundColor: color, pointBorderColor: isDark ? '#16110c' : '#fff', pointBorderWidth: 1.5,
+        }
+      ]
     },
     options: {
       responsive: true,
-      animation: { duration: 400 },
+      interaction: { mode: 'index', intersect: false },
+      animation: { duration: 500 },
       plugins: {
-        legend: { display: false },
+        legend: { display: true, labels: { color: textC, font: { size: 9 }, boxWidth: 8, usePointStyle: true } },
         tooltip: {
+          backgroundColor: isDark ? 'rgba(22,22,32,.96)' : 'rgba(250,246,239,.97)',
+          borderColor: color, borderWidth: 1, padding: 10, cornerRadius: 6,
+          titleColor: isDark ? '#e8e0d0' : '#16110c', bodyColor: isDark ? '#b9ad97' : '#7a6a50',
           callbacks: {
-            label: c => ` ${c.parsed.y.toFixed(4)} ${isEth ? 'ETH' : 'SOL'}`
+            label: c => {
+              const y = c.parsed.y || 0;
+              if (c.dataset.label === 'Ganho no mês') return '  +' + y.toFixed(4) + ' ' + sym + ' no mês';
+              return '  ' + y.toFixed(4) + ' ' + sym + '  ·  ≈ ' + fmtCurrency(y * price, 0);
+            }
           }
         }
       },
       scales: {
-        x: { ticks: { font: { size: 8 }, color: textC, maxRotation: 30 }, grid: { color: gridC }, border: { display: false } },
-        y: {
-          ticks: { font: { family: 'JetBrains Mono, monospace', size: 8 }, color: textC, callback: v => v.toFixed(3) + (isEth ? ' Ξ' : ' ◎') },
-          grid: { color: gridC }, border: { display: false }
-        }
+        x: { ticks: { font: { size: 8 }, color: textC, maxRotation: 30 }, grid: { display: false }, border: { display: false } },
+        y: { position: 'left', ticks: { font: { family: 'JetBrains Mono, monospace', size: 8 }, color: textC, callback: v => v.toFixed(3) + ' ' + unit }, grid: { color: gridC }, border: { display: false } },
+        y2: { position: 'right', max: maxDelta * 3.4, min: 0, ticks: { display: false }, grid: { display: false }, border: { display: false } }
       }
     }
   });
@@ -5349,16 +5359,19 @@ function toggleLang() {
     return 'Ganância Extrema';
   }
   function updateNeedle(val) {
-    // val 0-100 → rotation -90° (left) to +90° (right)
-    var deg = (val / 100) * 180 - 90;
+    var pct = Math.max(0, Math.min(100, val));
+    var col = fgColor(val);
     var needle = document.getElementById('fg-needle');
-    if (needle) needle.setAttribute('transform', 'rotate(' + deg + ',55,55)');
-    // Arc: total arc length ≈ 141.37 (half circle), fill proportionally
+    if (needle) needle.style.left = pct + '%';
+    var dot = document.getElementById('fg-dot');
+    if (dot) { dot.style.left = pct + '%'; dot.style.background = col; }
+    var chip = document.getElementById('fg-chip');
+    if (chip) { chip.style.left = pct + '%'; chip.textContent = val; chip.style.color = col; }
     var arc = document.getElementById('fg-arc');
     if (arc) {
       var filled = (val / 100) * 141.37;
       arc.setAttribute('stroke-dasharray', filled + ' ' + (141.37 - filled));
-      arc.setAttribute('stroke', fgColor(val));
+      arc.setAttribute('stroke', col);
     }
   }
   function setEl(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
@@ -5395,9 +5408,9 @@ function toggleLang() {
       .then(function(d) { if (d && d.data && d.data.length >= 7) render(d.data); })
       .catch(function() {
         // Static fallback — current known value (Fear)
-        updateNeedle(30);
-        setEl('fg-value', 30); setColor('fg-value', fgColor(30));
-        setEl('fg-label', 'Medo'); setColor('fg-label', fgColor(30));
+        updateNeedle(13);
+        setEl('fg-value', 13); setColor('fg-value', fgColor(13));
+        setEl('fg-label', 'Medo Extremo'); setColor('fg-label', fgColor(13));
         setEl('fg-updated', 'Dados estáticos');
       });
   }
