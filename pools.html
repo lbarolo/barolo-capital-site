@@ -1778,7 +1778,7 @@ function setRef(ref){
 
   // 9. Atualiza REFS e UI
   const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  const AAVE_BORROW_RATE = (window.BAROLO_DATA&&window.BAROLO_DATA.defi&&window.BAROLO_DATA.defi.aave.borrow.USDC.apy*100) || 5.38; // fonte: data.js
+  const AAVE_BORROW_RATE = (window.BAROLO_DATA&&window.BAROLO_DATA.defi&&window.BAROLO_DATA.defi.aave.borrow.USDC.apy*100) || 3.63; // fonte: data.js
 
   // POOLED
   set('lp-pooled', '$'+pooledUsd.toFixed(2));

@@ -14,10 +14,10 @@
    Portanto Patrimônio = total holdings − dívida. O bloco `defi` abaixo é uma
    VIEW do lending (não posições aditivas) — NUNCA somar ao total de holdings.
 
-   Baseline: 20/06/2026 (snapshot EXPORTS SEMANAIS/JUNHO/20-06-26-posicoes.json)
+   Baseline: 26/06/2026 (prints CoinGecko + AAVE V4 + Kamino)
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-06-24',
+  asOf: '2026-06-26',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -26,7 +26,7 @@ window.BAROLO_DATA = {
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:23.31,      invested:2450.94 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
-    { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.36298802, invested:45.87 },
+    { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
     { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:218,        invested:143.88  },
     { ticker:'ZK',    cgId:'zksync',                   qty:876,        invested:0       },
@@ -44,14 +44,14 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.16, apy:0.0136 }, USDT:{ qty:1300, apy:0.0160 } },
-      borrow: { USDC:{ qty:754.65, apy:0.0538 } },
-      healthFactor: 5.60
+      supply: { WETH:{ qty:2.16, apy:0.0137 }, USDT:{ qty:1300, apy:0.0141 } },
+      borrow: { USDC:{ qty:755.28, apy:0.0363 } },
+      healthFactor: 4.00
     },
     kamino: {
-      supply: { SOL:{ qty:23.36, apy:0.0489 }, USDS:{ qty:302.25, apy:0.0500 } },
-      borrow: { USDC:{ qty:815.97, apy:0.0569 } },
-      ltv: 0.4120, liqLtv: 0.7729
+      supply: { SOL:{ qty:23.38, apy:0.0428 }, USDS:{ qty:302.41, apy:0.0368 } },
+      borrow: { USDC:{ qty:816.79, apy:0.0578 } },
+      ltv: 0.4286, liqLtv: 0.7738
     },
     uniswapV3: {
       pool:'WETH/USDC 0.3%', network:'Base', status:'active',
@@ -61,7 +61,7 @@ window.BAROLO_DATA = {
   },
 
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:754.65, kamino:815.97, total:1570.62 },
+  debt:   { aave:755.28, kamino:816.79, total:1572.07 },
   stablesTotalUSD: 1602.52,   // USDT 1302.52 + USDS 300
   lpPooled: 365
 };

@@ -516,12 +516,12 @@ var DEBT_TOTAL    = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_
 // Posições DeFi — constantes para yield calc (12/06/2026)
 var _bdA=(window.BAROLO_DATA&&window.BAROLO_DATA.defi&&window.BAROLO_DATA.defi.aave)||null;
 var _bdK=(window.BAROLO_DATA&&window.BAROLO_DATA.defi&&window.BAROLO_DATA.defi.kamino)||null;
-var AAVE_ETH_QTY=(_bdA&&_bdA.supply.WETH.qty)||2.16,   AAVE_ETH_APY=(_bdA&&_bdA.supply.WETH.apy)||0.0136;
-var AAVE_USDT_QTY=(_bdA&&_bdA.supply.USDT.qty)||1300,  AAVE_USDT_APY=(_bdA&&_bdA.supply.USDT.apy)||0.0160;
-var AAVE_BORROW=(_bdA&&_bdA.borrow.USDC.qty)||754.65,  AAVE_BORROW_APY=(_bdA&&_bdA.borrow.USDC.apy)||0.0538;
-var KAM_SOL_QTY=(_bdK&&_bdK.supply.SOL.qty)||23.36,    KAM_SOL_APY=(_bdK&&_bdK.supply.SOL.apy)||0.0489;
-var KAM_USDS_QTY=(_bdK&&_bdK.supply.USDS.qty)||302.25, KAM_USDS_APY=(_bdK&&_bdK.supply.USDS.apy)||0.0500;
-var KAM_BORROW=(_bdK&&_bdK.borrow.USDC.qty)||815.97,   KAM_BORROW_APY=(_bdK&&_bdK.borrow.USDC.apy)||0.0569;
+var AAVE_ETH_QTY=(_bdA&&_bdA.supply.WETH.qty)||2.16,   AAVE_ETH_APY=(_bdA&&_bdA.supply.WETH.apy)||0.0137;
+var AAVE_USDT_QTY=(_bdA&&_bdA.supply.USDT.qty)||1300,  AAVE_USDT_APY=(_bdA&&_bdA.supply.USDT.apy)||0.0141;
+var AAVE_BORROW=(_bdA&&_bdA.borrow.USDC.qty)||755.28,  AAVE_BORROW_APY=(_bdA&&_bdA.borrow.USDC.apy)||0.0363;
+var KAM_SOL_QTY=(_bdK&&_bdK.supply.SOL.qty)||23.38,    KAM_SOL_APY=(_bdK&&_bdK.supply.SOL.apy)||0.0428;
+var KAM_USDS_QTY=(_bdK&&_bdK.supply.USDS.qty)||302.41, KAM_USDS_APY=(_bdK&&_bdK.supply.USDS.apy)||0.0368;
+var KAM_BORROW=(_bdK&&_bdK.borrow.USDC.qty)||816.79,   KAM_BORROW_APY=(_bdK&&_bdK.borrow.USDC.apy)||0.0578;
 
 var POOLS_DATA = [
   { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:0, il:0, result:0 }, // aberta 03/06/2026 — 0.18 WETH ($329), range $1.823–$2.402, fora do range (abaixo)

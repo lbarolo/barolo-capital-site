@@ -731,10 +731,10 @@ body, input, button, select, textarea {
       <div style="margin-bottom:14px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
           <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">↑ Recebidos (Supply)</span>
-          <span id="aave-supply-yield" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--green);">+$16.97</span>
+          <span id="aave-supply-yield" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--green);">+$22.30</span>
         </div>
         <div style="font-size:8px;color:var(--muted);">
-          <span id="aave-supply-yield-detail">2.16 WETH @ 1.36% + 1,300 USDT @ 1.60%</span>
+          <span id="aave-supply-yield-detail">+0.0079 WETH ($12.33) · +9.99 USDT</span>
         </div>
       </div>
 
@@ -743,10 +743,10 @@ body, input, button, select, textarea {
       <div style="margin-bottom:6px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
           <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">↓ Pagos (Borrow)</span>
-          <span id="aave-borrow-cost" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--red);">−$3.22</span>
+          <span id="aave-borrow-cost" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--red);">−$7.22</span>
         </div>
         <div style="font-size:8px;color:var(--muted);">
-          <span id="aave-borrow-cost-detail">754.65 USDC @ 5.38%</span>
+          <span id="aave-borrow-cost-detail">755.22 USDC atual · principal 748.00</span>
         </div>
       </div>
       </div>
@@ -756,8 +756,8 @@ body, input, button, select, textarea {
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">NET LÍQUIDO</span>
         <div style="text-align:right;">
-          <div id="aave-net-monthly" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--green);line-height:1;">+$13.75</div>
-          <div style="font-size:8px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace;">APY: <span id="aave-net-apy">0.49%</span></div>
+          <div id="aave-net-monthly" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--green);line-height:1;">+$15.08</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace;">APY: <span id="aave-net-apy">0.32%</span></div>
         </div>
       </div>
       </div>
@@ -1245,9 +1245,9 @@ function updateLiqPrices(){
 // ── JUROS ACUMULADOS (ao vivo — diferença vs principal do ciclo) ──
 // Princípios: valor depositado/emprestado no início do ciclo, sem juros
 // Atualizar aqui quando houver novo depósito ou novo ciclo
-const AAVE_WETH_PRINCIPAL = 1.880;   // WETH depositado (sem juros)
-const AAVE_USDT_PRINCIPAL = 1700;    // USDT depositado (sem juros) — saída $300 em 03/06/2026
-const AAVE_USDC_PRINCIPAL = 748.00;  // USDC emprestado inicial — refinanciamento 10/04/2026
+const AAVE_WETH_PRINCIPAL = 2.1497;  // WETH net depositado (cost basis) — 1.88 + 0.27 (05/06/2026); earnings AAVE 0.0079 ETH
+const AAVE_USDT_PRINCIPAL = 1287.33; // USDT net depositado (soma da Activity) — saídas −$300 (03/06) e −$400 (05/06); earnings AAVE 9.99 USDT
+const AAVE_USDC_PRINCIPAL = 748.00;  // USDC emprestado inicial — refinanciamento 10/04/2026; fees pagas 7.22 USDC
 const KAMINO_SOL_PRINCIPAL  = 20.39; // SOL depositado (sem juros) — último depósito 24/04/2026
 const KAMINO_USDS_PRINCIPAL = 300.78;// USDS depositado (sem juros)
 const KAMINO_USDC_PRINCIPAL = 807.49;// USDC emprestado inicial Kamino K4
@@ -1259,11 +1259,11 @@ function updateYieldCards(){
 
  // ── AAVE — juros acumulados reais ──
  // Quantidade atual (ao vivo do GQL) vs principal (depósito original sem juros)
- const aaveWethNow  = window._liveAaveWethQty  || 1.884;
- const aaveUsdtNow  = window._liveAaveUsdtQty  || 2000;
- const aaveUsdcNow  = window._liveAaveUsdcDebt || 754.65;
- const aaveWethApy  = window._liveAaveWethApy  || 1.09;
- const aaveUsdtApy  = window._liveAaveUsdtApy  || 0.55;
+ const aaveWethNow  = window._liveAaveWethQty  || 2.16;
+ const aaveUsdtNow  = window._liveAaveUsdtQty  || 1300;
+ const aaveUsdcNow  = window._liveAaveUsdcDebt || 755.28;
+ const aaveWethApy  = window._liveAaveWethApy  || 1.37;
+ const aaveUsdtApy  = window._liveAaveUsdtApy  || 1.41;
 
  // Juros recebidos = (atual - principal) × preço
  const aaveWethEarningsTokens = Math.max(0, aaveWethNow - AAVE_WETH_PRINCIPAL);
