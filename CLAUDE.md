@@ -3590,4 +3590,38 @@ Diário NÃO duplica: o sync de trades foi removido de index e portfolio ("Diár
 
 ---
 
-Atualizado: 25/06/2026 — Redesign UX completo (hero 2-col + market board + sistema φ na landing), `ui-polish.css` compartilhado, paleta warm unificada nos 5 dashboards, copy EN/PT alinhado (individual/prova de competência), "Desde 2021" confirmado (1ª compra ETH dez/2021), BTC atualizado (compra 24/06)
+## Sessão 01/07/2026 — Compra BTC computada no data.js
+
+### Implementado
+- Lucas mandou print de transação CoinGecko (compra BTC, 01/07/2026 10:59AM): **+0.00164555 BTC @ $58.272,31 = $95,89** (taxa $0,00).
+- `data.js` — único arquivo editado (fonte única de posições, ver sessão 23/06):
+  - `holdings[0]` (BTC): `qty` `0.0026964 → 0.00434195` (+0.00164555) · `invested` `$174,58 → $270,47` (+$95,89)
+  - `asOf`: `2026-06-26 → 2026-07-01`
+  - Comentário de baseline no topo do arquivo atualizado com a nota da compra
+- Verificado no preview local (`preview_start` porta 8080 + `preview_eval`): `window.BAROLO_DATA.holdings` reflete o BTC novo; zero erros de console.
+- Commit `b8913b5` → `git pull --rebase origin main` (remoto tinha 4 commits novos da Action diária `data: atualização on-chain BTC (automático)`, sem conflito) → push `39e4451` direto na main.
+
+### Dados atualizados
+| Campo | Antes | Depois |
+|---|---|---|
+| BTC qty | 0.0026964 | **0.00434195** (+0.00164555) |
+| BTC invested | $174,58 | **$270,47** (+$95,89) |
+| `asOf` (data.js) | 2026-06-26 | **2026-07-01** |
+
+Como o `data.js` é a fonte única (desde 23/06/2026), nenhum outro arquivo HTML precisou ser tocado — os 6 arquivos leem esse valor automaticamente.
+
+### Bugs corrigidos
+Nenhum nesta sessão.
+
+### O que ainda falta
+- **Sistema φ nos dashboards** — avaliado, ficou de fora por ser mais arriscado nos gráficos
+- **Gwei do ticker desacoplado do fetch de preços** (pools/portfolio) — hoje depende do CoinGecko rodar antes; na index é independente
+- **`monthlyReturns[2026].Abr`** — preencher quando metodologia confirmada
+- **CSVs das CEX** — custo de aquisição em BRL + base para IR
+- **i18n painel Sizing & Risk** (ferramentas) — labels só em PT
+- **Mentoria DeFi avançado** — Euler V2, Morpho Blue, Gearbox V3, Drift basis trade, Hyperliquid HLP, Pendle PT
+- **CLAUDE.md topo "desde 2022"** — desatualizado; o correto é 2021 (ver memória `project_founding_date.md`)
+
+---
+
+Atualizado: 01/07/2026 — Compra BTC (+0.00164555 @ $58.272,31) computada via `data.js`, push direto na main
