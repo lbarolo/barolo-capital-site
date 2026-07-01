@@ -181,19 +181,29 @@ nav {
 .period-sep{color:var(--border);padding:0 4px;}
 
 /* ASSET TABLE */
-.asset-table{width:100%;border-collapse:collapse;font-size:11px;}
-.asset-table th{padding:8px 10px;text-align:left;font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
-.asset-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
-.asset-table tr:hover td{background:rgba(138,104,32,0.04);}
+.asset-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;}
+.asset-table th{padding:11px 14px;text-align:left;font-size:9.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;border-bottom:1px solid var(--border2);white-space:nowrap;font-weight:600;}
+.asset-table td{padding:14px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+/* numeric columns: right-align + tabular mono for easy scanning */
+.asset-table th:nth-child(n+2):nth-child(-n+9),
+.asset-table td:nth-child(n+2):nth-child(-n+9){text-align:right;}
+.asset-table td.num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:12.5px;}
+.asset-table td.num-strong{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:14.5px;font-weight:700;color:var(--text);}
+.asset-table td.num-pl{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:600;}
+.asset-table tr:hover td{background:rgba(138,104,32,0.05);}
 .asset-table tr:last-child td{border-bottom:none;}
-.coin-cell{display:flex;align-items:center;gap:8px;}
-.coin-logo{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--surface2);object-fit:cover;}
-.coin-logo-fallback{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;font-family:'Satoshi',sans-serif;}
-.coin-name{font-weight:500;font-size:12px;}
-.coin-ticker{font-size:9px;color:var(--muted);margin-top:1px;}
-.mini-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:3px;overflow:hidden;}
+.coin-cell{display:flex;align-items:center;gap:11px;}
+.coin-logo{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:var(--surface2);object-fit:cover;}
+.coin-logo-fallback{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;font-family:'Satoshi',sans-serif;}
+.coin-name{font-weight:600;font-size:13.5px;}
+.coin-ticker{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.06em;}
+.mini-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:6px;overflow:hidden;}
 .mini-bar-fill{height:100%;border-radius:2px;}
 .sparkline-cell{line-height:0;}
+
+/* HEATMAP — realce dourado no hover, igual ao resto da página */
+#heatmapGrid td[title]{position:relative;}
+#heatmapGrid td[title]:hover{box-shadow:0 0 0 2px var(--accent);transform:scale(1.08);z-index:3;}
 
 /* ANNUAL RETURN TOGGLE */
 .chart-type-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
@@ -833,10 +843,10 @@ body, input, button, select, textarea {
 <div class="card" style="margin-bottom:12px;padding:18px 20px;">
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
  <div class="chart-title" style="margin-bottom:0;">Retorno Mês a Mês — Portfólio</div>
- <div style="display:flex;align-items:center;gap:12px;font-size:9px;color:var(--muted);">
- <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#b92d2d;border-radius:2px;display:inline-block;"></span>Queda forte</span>
- <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--border);border-radius:2px;display:inline-block;"></span>Neutro</span>
- <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#2a7c3f;border-radius:2px;display:inline-block;"></span>Alta forte</span>
+ <div style="display:flex;align-items:center;gap:16px;font-size:10px;color:var(--muted);letter-spacing:.02em;">
+ <span style="display:flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;background:#b92d2d;border-radius:3px;display:inline-block;"></span>Queda forte</span>
+ <span style="display:flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;background:var(--border2);border-radius:3px;display:inline-block;"></span>Neutro</span>
+ <span style="display:flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;background:#2a7c3f;border-radius:3px;display:inline-block;"></span>Alta forte</span>
  </div>
  </div>
  <div id="heatmapGrid" style="overflow-x:auto;"></div>
@@ -1549,13 +1559,13 @@ var PORTFOLIO_DATA = [
  { cgId:'ethereum',      ticker:'ETH',  name:'Ethereum',  qty:2.37632741,    invested:4880.53, avgCost:1917.43, color:'#E8773D', logo:'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
  { cgId:'solana',        ticker:'SOL',  name:'Solana',    qty:23.31,         invested:2450.94, avgCost:107.87,  color:'#14F195', logo:'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
  { cgId:'cardano',       ticker:'ADA',  name:'Cardano',   qty:375.245,       invested:530.95,  avgCost:1.31,    color:'#3773F5', logo:'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
- { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo.png' },
+ { cgId:'radiant-capital',ticker:'RDNT',name:'Radiant',   qty:7290.46,       invested:0,       avgCost:null,    color:'#00D4FF', logo:'https://coin-images.coingecko.com/coins/images/26536/small/Radiant-Logo-200x200.png' },
  { cgId:'eigenlayer',    ticker:'EIGEN',name:'EigenLayer', qty:153.36298802,  invested:45.87,   avgCost:0.2991,  color:'#6B3FF5', logo:'https://coin-images.coingecko.com/coins/images/37441/large/eigencloud.jpg' },
  { cgId:'polygon-ecosystem-token', ticker:'POL',  name:'POL',       qty:218,           invested:143.88,  avgCost:0.66,    color:'#A855F7', logo:'https://coin-images.coingecko.com/coins/images/32440/small/polygon.png' },
  { cgId:'zksync',        ticker:'ZK',   name:'ZKsync',    qty:876,           invested:0,       avgCost:null,    color:'#1E90FF', logo:'https://coin-images.coingecko.com/coins/images/38043/small/ZKTokenBlack.png' },
  { cgId:'xai-blockchain',ticker:'XAI',  name:'Xai',       qty:692.86,        invested:164.52,  avgCost:0.2375,  color:'#F59E0B', logo:'https://coin-images.coingecko.com/coins/images/34258/small/xai.png' },
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/large/Twitter_icon.png' },
- { cgId:'scroll',        ticker:'SCR',  name:'Scroll',    qty:0.0018,        invested:0,       avgCost:null,    color:'#FFB800', logo:'https://coin-images.coingecko.com/coins/images/24783/small/scroll.jpg' },
+ { cgId:'scroll',        ticker:'SCR',  name:'Scroll',    qty:0.0018,        invested:0,       avgCost:null,    color:'#FFB800', logo:'https://coin-images.coingecko.com/coins/images/50571/small/scroll.jpg' },
  { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:1302.524,      invested:1302.524, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
  { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300,           invested:300,      avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
 ];
@@ -1570,6 +1580,10 @@ var PORTFOLIO_DATA = [
     if (!h) return;
     if (typeof h.qty === 'number') a.qty = h.qty;
     if (typeof h.invested === 'number') a.invested = h.invested;
+    // Preço médio derivado da fonte única (investido ÷ qtd) — mantém coerência a cada nova compra.
+    if (!a.isStable && typeof h.qty === 'number' && h.qty > 0 && typeof h.invested === 'number' && h.invested > 0) {
+      a.avgCost = h.invested / h.qty;
+    }
   });
 })();
 var PORTFOLIO = PORTFOLIO_DATA; // alias
@@ -2135,16 +2149,16 @@ function renderTable(enriched, totalVal){
  <div><div class="coin-name" style="color:${a.color}">${a.name}</div><div class="coin-ticker">${a.ticker}</div></div>
  </div>
  </td>
- <td style="color:var(--muted);font-size:9px;" class="sensitive">${a.qty.toLocaleString('en-US',{maximumFractionDigits:4})}</td>
- <td style="font-size:10px;">${priceStr}</td>
- <td class="sensitive"><strong>${fmtCurrency(a.currentValue, 2)}</strong></td>
- <td style="color:var(--muted);font-size:10px;" class="sensitive">${a.isStable?'—':fmtCurrency(a.invested,2)}</td>
- <td style="font-size:10px;color:var(--muted);">${avgStr}</td>
- <td class="${pnlCls} sensitive">${a.isStable?'—':(a.pnl>=0?'+':'-')+fmtCurrency(Math.abs(a.pnl),2)}</td>
- <td class="${roiCls}">${roi}</td>
- <td class="${c24>=0?'pos':'neg'}">${a.isStable?'—':(c24>=0?'+':'')+c24.toFixed(2)+'%'}</td>
- <td><canvas id="${sparkId}" width="80" height="30"></canvas></td>
- <td>${pct}%<div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%;background:${a.color};"></div></div></td>
+ <td class="num sensitive" style="color:var(--muted);">${a.qty.toLocaleString('en-US',{maximumFractionDigits:4})}</td>
+ <td class="num">${priceStr}</td>
+ <td class="num-strong sensitive">${fmtCurrency(a.currentValue, 2)}</td>
+ <td class="num sensitive" style="color:var(--muted);">${a.isStable?'—':fmtCurrency(a.invested,2)}</td>
+ <td class="num" style="color:var(--muted);">${avgStr}</td>
+ <td class="num-pl ${pnlCls} sensitive">${a.isStable?'—':(a.pnl>=0?'+':'-')+fmtCurrency(Math.abs(a.pnl),2)}</td>
+ <td class="num-pl ${roiCls}">${roi}</td>
+ <td class="num ${c24>=0?'pos':'neg'}">${a.isStable?'—':(c24>=0?'+':'')+c24.toFixed(2)+'%'}</td>
+ <td><canvas id="${sparkId}" width="90" height="34"></canvas></td>
+ <td class="num" style="text-align:right;">${pct}%<div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%;background:${a.color};"></div></div></td>
  </tr>`;
  });
 
@@ -2241,12 +2255,52 @@ function setupChartDefaults(){
  Chart.defaults.color = dark?'#8b7d6b':'#7a6a50';
  Chart.defaults.borderColor = dark?'#2a2520':'#d5c9a5';
  Chart.defaults.font.family = 'Satoshi';
- Chart.defaults.font.size = 10;
+ Chart.defaults.font.size = 11.5;
+ // ── Tooltip global: bolinha preenchida na cor da série em TODOS os gráficos ──
+ const tp = Chart.defaults.plugins.tooltip;
+ tp.usePointStyle = true;
+ tp.callbacks.labelColor = ttLabelColor;
+ tp.boxPadding = 6;
+ tp.cornerRadius = 9;
+ tp.caretSize = 6;
+ tp.titleFont = { family:'Satoshi', size:12, weight:'700' };
+ tp.bodyFont = { family:'JetBrains Mono,monospace', size:11.5 };
+ tp.titleMarginBottom = 8;
+ tp.bodySpacing = 6;
 }
 var tt=()=>{
  const dark=document.documentElement.getAttribute('data-theme')!=='light';
- return {backgroundColor:dark?'#1c2128':'#faf6ef',borderColor:dark?'#2a2520':'#d5c9a5',borderWidth:1,titleColor:dark?'#e6edf3':'#16110c',bodyColor:dark?'#8b7d6b':'#7a6a50',padding:10,cornerRadius:6,titleFont:{size:11,weight:'500'},bodyFont:{size:10}};
+ return {
+  backgroundColor:dark?'rgba(22,22,28,0.96)':'rgba(250,246,239,0.98)',
+  borderColor:dark?'rgba(201,160,80,0.28)':'rgba(138,104,32,0.22)',
+  borderWidth:1,
+  titleColor:dark?'#e8dfc8':'#2a1e0e',
+  bodyColor:dark?'#c9b99a':'#4a3520',
+  padding:{top:11,right:14,bottom:11,left:12},
+  cornerRadius:9,
+  caretSize:6,
+  caretPadding:8,
+  titleFont:{family:'Satoshi',size:12,weight:'700'},
+  bodyFont:{family:'JetBrains Mono,monospace',size:11.5},
+  titleMarginBottom:8,
+  bodySpacing:6,
+  boxPadding:6,
+  usePointStyle:true,
+  displayColors:true,
+  callbacks:{ labelColor: ttLabelColor }
+ };
 };
+// bolinha 100% preenchida na cor da série (sem miolo branco)
+function ttLabelColor(ctx){
+ var bg = ctx.dataset.backgroundColor;
+ var bc = ctx.dataset.borderColor;
+ var c;
+ if (Array.isArray(bg)) c = bg[ctx.dataIndex];              // pizza/rosca ou barras com cor por item
+ else if (Array.isArray(bc)) c = bc[ctx.dataIndex];
+ else if (bc && bc !== 'transparent') c = bc;               // linha: usa a cor da linha
+ else c = bg;                                               // barra sólida
+ return { backgroundColor:c, borderColor:c, borderWidth:0, borderRadius:6 };
+}
 
 // ──────────────────────────────────────────────────
 // LIVE CHARTS (P&L, ROI)
@@ -2262,8 +2316,8 @@ function buildLiveCharts(enriched, totalVal){
  try{
  pnlChartInst = new Chart(document.getElementById('pnlByAsset'),{
  type:'bar',
- data:{labels:withInv.map(a=>a.ticker),datasets:[{label:'P&L',data:withInv.map(a=>a.pnl),backgroundColor:withInv.map(a=>a.pnl>=0?'rgba(63,185,80,0.7)':'rgba(248,81,73,0.7)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:14}]},
- options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:10},callback:v=>'$'+v},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}}}}
+ data:{labels:withInv.map(a=>a.ticker),datasets:[{label:'P&L',data:withInv.map(a=>a.pnl),backgroundColor:withInv.map(a=>a.pnl>=0?'rgba(63,185,80,0.85)':'rgba(248,81,73,0.85)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:20}]},
+ options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>'$'+v},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:12,weight:'600'}},grid:{display:false},border:{display:false}}}}
  });
  }catch(e){}
 
@@ -2271,8 +2325,8 @@ function buildLiveCharts(enriched, totalVal){
  try{
  roiChartInst = new Chart(document.getElementById('roiByAsset'),{
  type:'bar',
- data:{labels:withROI.map(a=>a.ticker),datasets:[{label:'ROI%',data:withROI.map(a=>((a.pnl/a.invested)*100).toFixed(1)),backgroundColor:withROI.map(a=>a.pnl>=0?'rgba(63,185,80,0.7)':'rgba(248,81,73,0.7)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:14}]},
- options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:10},callback:v=>v+'%'},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:10}},grid:{display:false},border:{display:false}}}}
+ data:{labels:withROI.map(a=>a.ticker),datasets:[{label:'ROI%',data:withROI.map(a=>((a.pnl/a.invested)*100).toFixed(1)),backgroundColor:withROI.map(a=>a.pnl>=0?'rgba(63,185,80,0.85)':'rgba(248,81,73,0.85)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:20}]},
+ options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>v+'%'},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:12,weight:'600'}},grid:{display:false},border:{display:false}}}}
  });
  }catch(e){}
 }
@@ -3150,12 +3204,12 @@ function buildBenchmarkChart(){
  benchChartInst = new Chart(ctx, {
  type:'line',
  data:{ labels:lbl, datasets:[
- {label:'Portfólio',data:port,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.06)',borderWidth:2.5,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
- {label:'BTC', data:btc, borderColor:'#F7931A',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
- {label:'ETH', data:eth, borderColor:'#627EEA',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
- {label:'S&P 500', data:sp, borderColor:'#3fb950',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[5,3]},
- {label:'CDI', data:cdi, borderColor:'#a78bfa',borderWidth:1.5,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[3,3]},
- {label:'Ibovespa', data:ibov,borderColor:'#38bdf8',borderWidth:1.5,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,2]},
+ {label:'Portfólio',data:port,borderColor:'#c9a050',backgroundColor:'rgba(201,160,80,0.08)',borderWidth:3,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
+ {label:'BTC', data:btc, borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+ {label:'ETH', data:eth, borderColor:'#627EEA',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+ {label:'S&P 500', data:sp, borderColor:'#3fb950',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,4]},
+ {label:'CDI', data:cdi, borderColor:'#E85D9E',borderWidth:1.8,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[2,3]},
+ {label:'Ibovespa', data:ibov,borderColor:'#14C8D4',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[9,4]},
  ]},
  options:{
  responsive:true,
@@ -3164,6 +3218,7 @@ function buildBenchmarkChart(){
  tooltip:{
  callbacks:{
  title:ctx=>ctx[0].label,
+ labelColor: ttLabelColor,
  label:ctx=>{
  const v=ctx.raw;
  const prev=ctx.dataset.data[ctx.dataIndex-1]||100;
@@ -3176,13 +3231,16 @@ function buildBenchmarkChart(){
  return ['────────────',`Portfólio: ${pct>=0?'+':''}${pct}% vs base`];
  }
  },
- backgroundColor: dk?'rgba(30,30,40,0.95)':'rgba(250,246,239,0.97)',
- borderColor: dk?'rgba(201,160,80,0.3)':'rgba(138,104,32,0.2)',
- borderWidth:1, titleColor:dk?'#e8e0d0':'#16110c',
- bodyColor:dk?'#8a7a60':'#7a6a50', padding:10,
+ backgroundColor: dk?'rgba(22,22,28,0.96)':'rgba(250,246,239,0.98)',
+ borderColor: dk?'rgba(201,160,80,0.28)':'rgba(138,104,32,0.22)',
+ borderWidth:1, titleColor:dk?'#e8dfc8':'#2a1e0e',
+ bodyColor:dk?'#c9b99a':'#4a3520',
+ padding:{top:11,right:14,bottom:11,left:12}, cornerRadius:9, caretSize:6, caretPadding:8,
+ titleFont:{family:'Satoshi',size:12,weight:'700'}, bodyFont:{family:'JetBrains Mono,monospace',size:11.5},
+ titleMarginBottom:8, bodySpacing:6, boxPadding:6, usePointStyle:true,
  },
  legend:{
- labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6,padding:12},
+ labels:{color:Chart.defaults.color,font:{size:11,weight:'500'},boxWidth:10,usePointStyle:true,pointStyleWidth:12,padding:14},
  onClick:(e,item,legend)=>{
  const ci=legend.chart;
  const meta=ci.getDatasetMeta(item.datasetIndex);
@@ -3191,9 +3249,9 @@ function buildBenchmarkChart(){
  }
  },
  scales:{
- x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
- y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
- title:{display:true,text:'Base 100',color:Chart.defaults.color,font:{size:8}}}
+ x:{ticks:{color:Chart.defaults.color,font:{size:11},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
+ y:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
+ title:{display:true,text:'Base 100',color:Chart.defaults.color,font:{size:10}}}
  }
  }
  });
@@ -3669,10 +3727,10 @@ function buildWealthEvolution() {
       { label:'ROI Total',      val:(roi>=0?'+':'')+roi+'%', sub:'P&L: '+fmtSigned(pl), col:pl>=0?'var(--green)':'var(--red)' },
     ];
     kpiEl.innerHTML = chips.map(function(k){
-      return '<div style="background:var(--surface);padding:14px 16px;">'
-        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+k.label+'</div>'
-        + '<div class="sensitive" style="font-family:\'JetBrains Mono\',monospace;font-size:18px;font-weight:700;color:'+k.col+';">'+k.val+'</div>'
-        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--muted);margin-top:4px;">'+k.sub+'</div>'
+      return '<div style="background:var(--surface);padding:16px 18px;">'
+        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">'+k.label+'</div>'
+        + '<div class="sensitive" style="font-family:\'JetBrains Mono\',monospace;font-variant-numeric:tabular-nums;font-size:23px;font-weight:700;color:'+k.col+';line-height:1.05;">'+k.val+'</div>'
+        + '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--muted);margin-top:6px;">'+k.sub+'</div>'
         + '</div>';
     }).join('');
   }
@@ -3909,15 +3967,16 @@ function buildPerfChart(period){
  perfChartInst = new Chart(document.getElementById('perfChart'),{
  type:'line',
  data:{labels:d.labels, datasets:[
- {label:'Portfólio',data:d.p,borderColor:'#b8963a',backgroundColor:'rgba(184,150,58,0.07)',fill:true,tension:0.4,borderWidth:2,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#b8963a',pointHoverBorderColor:'#fff',pointHoverBorderWidth:2},
- {label:'Investido', data:d.i,borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.5,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#8b5cf6'},
- {label:'Meta $15K', data:d.p.map(()=>15000),borderColor:'#d29922',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
+ {label:'Portfólio',data:d.p,borderColor:'#c9a050',backgroundColor:'rgba(201,160,80,0.09)',fill:true,tension:0.4,borderWidth:2.8,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#c9a050',pointHoverBorderColor:'#fff',pointHoverBorderWidth:2},
+ {label:'Investido', data:d.i,borderColor:'#8b5cf6',backgroundColor:'transparent',fill:false,tension:0.3,borderWidth:1.8,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#8b5cf6'},
+ {label:'Meta $15K', data:d.p.map(()=>15000),borderColor:'#f85149',borderWidth:1.2,borderDash:[4,4],pointRadius:0,fill:false}
  ]},
  options:{
  responsive:true,
  interaction:{mode:'index',intersect:false},
  plugins:{
  tooltip:{...tt(),callbacks:{
+ labelColor: ttLabelColor,
  title: items => items[0]?.label ? (period==='24h'?'Hora ':period==='7d'?'Dia ':'Mês ') + items[0].label : '',
  label: ctx=>` ${ctx.dataset.label}: $${Math.round(ctx.raw).toLocaleString('en-US')}`,
  afterBody: items => {
@@ -3930,11 +3989,11 @@ function buildPerfChart(period){
            ` ROI: ${pnl>=0?'+':''}${roi}%`];
  }
  }},
- legend:{labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}}
+ legend:{labels:{color:Chart.defaults.color,font:{size:11,weight:'500'},boxWidth:10,usePointStyle:true,pointStyleWidth:12,padding:14}}
  },
  scales:{
- x:{ticks:{color:Chart.defaults.color,font:{size:9},maxRotation:30},grid:{display:false},border:{display:false}},
- y:{ticks:{color:Chart.defaults.color,font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
+ x:{ticks:{color:Chart.defaults.color,font:{size:11},maxRotation:30},grid:{display:false},border:{display:false}},
+ y:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>'$'+v.toLocaleString()},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}}
  }
  }
  });
@@ -3944,7 +4003,7 @@ function buildPerfChart(period){
  let _runPk=d.p[0], _maxDD=0;
  for(let i=1;i<d.p.length;i++){ if(d.p[i]>_runPk) _runPk=d.p[i]; const _c=(d.p[i]-_runPk)/_runPk*100; if(_c<_maxDD) _maxDD=_c; }
  const dd=_maxDD.toFixed(1);
- const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px;text-align:center;"><div style="font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;">${lbl}</div><div style="font-size:14px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
+ const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center;"><div style="font-size:8.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px;">${lbl}</div><div style="font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:18px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
  // Para período ALL: substitui Variação por Lifetime Return (denominador = capital inicial real, não primeiro patrimônio)
  let retCard;
  if (period === 'all') {
@@ -4170,14 +4229,15 @@ function buildHeatmap() {
  }
  }
 
- const CELL = 'padding:7px 4px;text-align:center;border-radius:5px;font-size:9.5px;font-weight:600;font-family:JetBrains Mono,monospace;min-width:48px;transition:opacity .15s;cursor:default;';
- const LABEL = 'padding:7px 8px;text-align:right;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:500;white-space:nowrap;';
+ const CELL = "padding:9px 6px;text-align:center;border-radius:6px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;min-width:56px;transition:transform .12s,box-shadow .12s;cursor:default;";
+ const LABEL = "padding:9px 12px 9px 4px;text-align:right;font-size:12px;color:var(--text);letter-spacing:.03em;font-weight:600;font-family:'JetBrains Mono',monospace;white-space:nowrap;";
+ const HEAD = "padding:8px 6px;text-align:center;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface2);min-width:56px;font-family:'JetBrains Mono',monospace;";
 
- let html = `<table style="border-collapse:separate;border-spacing:3px;width:100%;">`;
+ let html = `<table style="border-collapse:separate;border-spacing:4px;width:100%;">`;
  // Header row
- html += `<tr><td style="${LABEL}">ANO</td>`;
- MONTHS.forEach(m => { html += `<td style="${CELL}color:var(--muted);background:var(--surface2);font-size:8px;">${m}</td>`; });
- html += `<td style="${CELL}color:var(--accent);background:var(--surface2);font-size:8px;min-width:44px;">ANUAL</td></tr>`;
+ html += `<tr><td style="${LABEL}color:var(--muted);font-size:10px;letter-spacing:.12em;">ANO</td>`;
+ MONTHS.forEach(m => { html += `<td style="${HEAD}">${m}</td>`; });
+ html += `<td style="${HEAD}color:var(--accent);min-width:52px;border-left:2px solid var(--border2);">ANUAL</td></tr>`;
 
  YEARS.forEach(yr => {
  const row = data[yr];
@@ -4188,17 +4248,18 @@ function buildHeatmap() {
  html += `<tr><td style="${LABEL}">${yr}</td>`;
  row.forEach((v, mi) => {
  if (v === -99) {
- html += `<td style="${CELL}"></td>`;
+ html += `<td style="${CELL}background:${document.documentElement.getAttribute('data-theme')==='dark'?'rgba(255,255,255,0.025)':'rgba(0,0,0,0.02)'};color:var(--muted);opacity:.5;">·</td>`;
  } else {
  const bg = heatColor(v);
- const tc = document.documentElement.getAttribute('data-theme') === 'dark' ? '#e6edf3' : '#16110c';
+ const tc = document.documentElement.getAttribute('data-theme') === 'dark' ? '#f0e9d6' : '#16110c';
  const sign = v > 0 ? '+' : '';
- html += `<td style="${CELL}background:${bg};color:${Math.abs(v) > 8 ? tc : 'var(--muted)'};" title="${yr} ${MONTHS[mi]}: ${sign}${v.toFixed(1)}%">${sign}${v.toFixed(1)}%</td>`;
+ html += `<td style="${CELL}background:${bg};color:${tc};" title="${yr} ${MONTHS[mi]}: ${sign}${v.toFixed(1)}%">${sign}${v.toFixed(1)}%</td>`;
  }
  });
  const annualBg = annual !== null ? heatColor(annual) : 'transparent';
  const annualText = annual !== null ? (annual >= 0 ? '+' : '') + annual.toFixed(0) + '%' : '—';
- html += `<td style="${CELL}background:${annualBg};border:1px solid var(--border);font-weight:700;">${annualText}</td>`;
+ const annualTc = document.documentElement.getAttribute('data-theme') === 'dark' ? '#f0e9d6' : '#16110c';
+ html += `<td style="${CELL}background:${annualBg};color:${annual!==null?annualTc:'var(--muted)'};border-left:2px solid var(--border2);font-weight:700;font-size:12.5px;">${annualText}</td>`;
  html += `</tr>`;
  });
  html += `</table>`;
@@ -4538,6 +4599,7 @@ function buildDebtChart(mode) {
  }
 }
 
+try{ setupChartDefaults(); }catch(e){}
 buildDebtChart('stacked');
 
 document.addEventListener('DOMContentLoaded', init);
