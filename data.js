@@ -15,14 +15,15 @@
    VIEW do lending (não posições aditivas) — NUNCA somar ao total de holdings.
 
    Baseline: 26/06/2026 (prints CoinGecko + AAVE V4 + Kamino)
+   + compra BTC 01/07/2026 (0.00164555 BTC @ $58.272,31 = $95,89)
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-06-26',
+  asOf: '2026-07-01',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
-    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.0026964,  invested:174.58  },
+    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:23.31,      invested:2450.94 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
