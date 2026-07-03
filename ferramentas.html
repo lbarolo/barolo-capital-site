@@ -2610,7 +2610,7 @@ function calcHedge(){
 
  // Outputs
  var irEl = document.getElementById('hd-inrange');
- irEl.textContent = inRange ? 'IN-RANGE' : 'FORA DO RANGE';
+ irEl.textContent = inRange ? tStr('sz-hd-status-in','IN-RANGE') : tStr('sz-hd-status-out','FORA DO RANGE');
  irEl.style.color = inRange ? 'var(--green)' : 'var(--red)';
 
  document.getElementById('hd-delta').textContent = (ethValShare*100).toFixed(1)+'% ETH';
@@ -2771,19 +2771,19 @@ function calcLevHedge(){
 
  // Aviso Barolo — hedge anula estratégia de saída
  var note = document.getElementById('lh-note');
- var baseNote = 'Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.';
+ var baseNote = tStr('sz-lh-note');
  // Sanity check: colateral vs borrow. AAVE LT médio ~80%.
  var borrowedUsd = lp * brwPct;
  var maxBorrow = capital * 0.80;
  var warnings = [];
  if (borrowedUsd > maxBorrow) {
-   warnings.push('⚠ Borrow ('+Math.round(borrowedUsd)+') excede capacidade do colateral ('+Math.round(maxBorrow)+' @ 80% LT). Cenário inviável.');
+   warnings.push(tStr('sz-lh-warn-maxborrow').replace('{borrowed}', Math.round(borrowedUsd)).replace('{max}', Math.round(maxBorrow)));
  }
  if (hPct > 0.7 && best.name.charAt(0) === 'C') {
-   warnings.push('⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC. Use só para pools de captura pura de fees.');
+   warnings.push(tStr('sz-lh-warn-hedge'));
  }
  if (brwPct > 0.8 && borrowedUsd <= maxBorrow) {
-   warnings.push('⚠ Borrow >80% do LP: próximo do limite de liquidação. Monitorar HF.');
+   warnings.push(tStr('sz-lh-warn-borrow80'));
  }
  note.innerHTML = warnings.length
    ? baseNote + '<br><span style="color:var(--yellow);">' + warnings.join('<br>') + '</span>'
@@ -2837,54 +2837,7 @@ function showToast(message, duration){
   }, duration);
 }
 
-
-// ── Helper: Feedback Visual ──
-function flashHighlight(elementIds, duration){
-  duration = duration || 800;
-  elementIds.forEach(function(id){
-    var el = document.getElementById(id);
-    if(!el) return;
-    el.classList.add('preset-highlight');
-    setTimeout(function(){ el.classList.remove('preset-highlight'); }, duration);
-  });
-}
-
-function showToast(message, duration){
-  duration = duration || 2500;
-  var toast = document.createElement('div');
-  toast.className = 'toast-notification';
-  toast.innerHTML = '<span class="toast-icon">✓</span><span>'+message+'</span>';
-  document.body.appendChild(toast);
-  setTimeout(function(){
-    toast.classList.add('hide');
-    setTimeout(function(){ document.body.removeChild(toast); }, 300);
-  }, duration);
-}
-
 // ── Presets: carregar pool ativa / cenário Barolo ──
-
-// ── Helper: Feedback Visual ──
-function flashHighlight(elementIds, duration){
-  duration = duration || 800;
-  elementIds.forEach(function(id){
-    var el = document.getElementById(id);
-    if(!el) return;
-    el.classList.add('preset-highlight');
-    setTimeout(function(){ el.classList.remove('preset-highlight'); }, duration);
-  });
-}
-
-function showToast(message, duration){
-  duration = duration || 2500;
-  var toast = document.createElement('div');
-  toast.className = 'toast-notification';
-  toast.innerHTML = '<span class="toast-icon">�u2713</span><span>'+message+'</span>';
-  document.body.appendChild(toast);
-  setTimeout(function(){
-    toast.classList.add('hide');
-    setTimeout(function(){ document.body.removeChild(toast); }, 300);
-  }, duration);
-}
 
 // Fonte de verdade: pool ativa WETH/USDC 0.30% Base aberta em 03/06/2026 (verificada on-chain 10/06/2026).
 function loadActivePoolHedge(){
@@ -2923,9 +2876,6 @@ function loadBaroloScenario(){
  set('lh-feeapr',  32);
  set('lh-il',      -12);
  set('lh-brw',     5.38);      // AAVE USDC borrow APY — normalizou (20/06/2026)
- // Feedback visual
- flashHighlight(["hd-capital","hd-pmin","hd-pmax","hd-pnow","hd-feeapr","hd-funding","hd-borrow","hd-vol","hd-pct"]);
- showToast("Pool ativa carregada (WETH/USDC Base)");
  set('lh-fund',    5);
  set('lh-delta',   50);        // in-range ≈ 50/50 no centro
  set('lh-hpct',    0);         // Barolo não hedgeia — saída gradual
@@ -4221,6 +4171,12 @@ var LANG_STRINGS = {
   'sz-lh-c-net':   {pt:'$ líquido/ano',                       en:'$ net/year'},
   'sz-lh-note':    {pt:'Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.',
                     en:'Sharpe = APR / strategy_vol. Annual 1σ drawdown = 1 expected standard deviation. Higher Sharpe = better risk-return ratio.'},
+  'sz-lh-warn-maxborrow': {pt:'⚠ Borrow ({borrowed}) excede capacidade do colateral ({max} @ 80% LT). Cenário inviável.',
+                           en:'⚠ Borrow ({borrowed}) exceeds collateral capacity ({max} @ 80% LT). Scenario is not viable.'},
+  'sz-lh-warn-hedge':     {pt:'⚠ Hedge >70% anula estratégia de saída gradual ETH→USDC. Use só para pools de captura pura de fees.',
+                           en:'⚠ Hedge >70% cancels the gradual ETH→USDC exit strategy. Use only for pure fee-capture pools.'},
+  'sz-lh-warn-borrow80':  {pt:'⚠ Borrow >80% do LP: próximo do limite de liquidação. Monitorar HF.',
+                           en:'⚠ Borrow >80% of LP: close to the liquidation limit. Monitor HF.'},
   // Notas/fundamentos
   'sz-notes-title':{pt:'Notas',                               en:'Notes'},
   'sz-notes-badge':{pt:'FUNDAMENTOS',                         en:'FUNDAMENTALS'},
@@ -4263,6 +4219,8 @@ var LANG_STRINGS = {
   'sz-km-n-cal':   {pt:'LTV atual próximo do ótimo Half-Kelly. Boa relação risco/retorno.',
                     en:'Current LTV near Half-Kelly optimum. Good risk/reward ratio.'},
   // Vereditos dinâmicos — Hedge LP
+  'sz-hd-status-in':  {pt:'IN-RANGE',        en:'IN-RANGE'},
+  'sz-hd-status-out': {pt:'FORA DO RANGE',   en:'OUT OF RANGE'},
   'sz-hd-v-no':    {pt:'SEM HEDGE — exposição direcional total', en:'NO HEDGE — full directional exposure'},
   'sz-hd-n-no':    {pt:'Você captura toda valorização do ETH mas absorve todo IL e drawdown. Apropriado se a pool faz parte de estratégia de saída gradual.',
                     en:'You capture all ETH upside but absorb all IL and drawdown. Appropriate if the pool is part of a gradual exit strategy.'},
@@ -4310,6 +4268,12 @@ function applyLang(lang) {
       el.textContent = s[lang];
     }
   });
+  // Recalcula os painéis do Sizing & Risk — os vereditos/notas são gerados via JS (tStr)
+  // e ficam presos no idioma anterior até o próximo input se não forem recalculados aqui.
+  if (document.getElementById('kp-p')) calcKellyPool();
+  if (document.getElementById('km-apr')) calcKellyMerton();
+  if (document.getElementById('hd-capital')) calcHedge();
+  if (document.getElementById('lh-capital')) calcLevHedge();
 }
 
 function toggleLang() {

@@ -2,7 +2,7 @@
 
 ## O que é este projeto
 
-Dashboard DeFi pessoal e institucional de **Lucas (Barolo Capital)** — gestora individual de capital em criptoativos desde 2022. Filosofia: acumulação de longo prazo (+10 anos), DCA mensal em ETH/SOL/ADA, uso de DeFi como ferramenta de yield e estratégia de saída.
+Dashboard DeFi pessoal e institucional de **Lucas (Barolo Capital)** — gestora individual de capital em criptoativos desde 2021 (1ª compra ETH em 13/12/2021). Filosofia: acumulação de longo prazo (+10 anos), DCA mensal em ETH/SOL/ADA, uso de DeFi como ferramenta de yield e estratégia de saída.
 
 Todas as páginas são **HTML estático puro** (sem framework, sem build step). Hospedado no GitHub e aberto diretamente como `file://` ou via servidor local simples.
 
@@ -3625,3 +3625,65 @@ Nenhum nesta sessão.
 ---
 
 Atualizado: 01/07/2026 — Compra BTC (+0.00164555 @ $58.272,31) computada via `data.js`, push direto na main
+
+---
+
+## Sessão 03/07/2026 — Pendências fechadas: monthlyReturns Mai/Jun, CSVs CEX localizados, i18n Sizing & Risk (bug real) + validação calcLevHedge
+
+### Contexto
+Sessão de limpeza de pendências acumuladas: `monthlyReturns[2026].Abr`, CSVs das CEX, i18n do painel Sizing & Risk, validação de `calcLevHedge()`, e o "desde 2022" no topo deste arquivo (já corrigido acima).
+
+### Implementado
+
+#### `portfolio_analytics.html` — monthlyReturns 2026 completo até Jun
+- **Abr/2026 já estava preenchido (+40,3%)** desde sessão anterior não registrada — verificado batendo com TWR: `(9206−266−6371)/6371 = 40,3%` (266 = aporte novo no mês). A nota "preencher quando metodologia confirmada" era stale.
+- **Mai/2026 e Jun/2026 preenchidos** usando a mesma metodologia TWR (remove aportes novos antes de calcular o retorno do mês):
+  - Mai/26: `(7392−266−9206)/9206 = −22,6%`
+  - Jun/26: `(7651−150−7392)/7392 = +1,5%`
+- Array: `2026: [-18.0,-22.0,-13.6,+40.3,-22.6,+1.5,null,null,null,null,null,null]`
+
+#### CSVs das CEX — encontrados e localizados
+- Não eram CSVs soltos — **já haviam sido consolidados em 11/05/2026** em `Custo_Aquisicao_BRL_Lucas.xlsx` e `Custo_BRL_Consolidado_Lucas.xlsx` (raiz do projeto), com histórico completo Binance + OKX de out/2021 a jun/2026.
+- **Total BRL investido em cripto: R$ 35.498,19** (Binance R$ 29.664,20 + OKX R$ 5.065,50 — só conversões fiat→cripto/stable, sem duplicar compras já no CoinGecko).
+- Câmbio médio de entrada por token disponível na aba "Resumo" do consolidado (ex: BTC R$ 296.174/BTC, ETH R$ 15.096/ETH blended).
+- **Não foi integrado a nenhuma página** — os arquivos existem mas nunca foram usados para gerar uma seção de custo BRL/IR no site. Fica como próximo passo se Lucas quiser essa view.
+
+#### `ferramentas.html` — i18n Sizing & Risk: labels já estavam OK; bug real era nos vereditos dinâmicos
+- Auditoria mostrou que **os 111 `data-i18n` do painel já tinham PT+EN completos** desde alguma sessão não registrada (`sz-header-*`, `sz-kp-*`, `sz-km-*`, `sz-hd-*`, `sz-lh-*`, `sz-notes-*`) — a nota "labels só em PT" também era stale.
+- **Bug real encontrado**: `toggleLang()`/`applyLang()` só atualiza elementos `[data-i18n]` estáticos — os vereditos das 4 calculadoras (`kp-verdict`, `km-verdict`, `hd-verdict`, `lh-verdict`, notas e avisos) são gerados via JS (`tStr()`) e ficavam presos no idioma anterior até o próximo input. **Fix**: `applyLang()` agora chama `calcKellyPool()`, `calcKellyMerton()`, `calcHedge()`, `calcLevHedge()` (com guard `document.getElementById`) depois de trocar o idioma.
+- **`hd-inrange`** ("IN-RANGE"/"FORA DO RANGE") não usava `tStr` — hardcoded PT. Adicionadas chaves `sz-hd-status-in`/`sz-hd-status-out` e trocado para `tStr(...)`.
+- **`lh-note`** (baseNote + 3 avisos de `calcLevHedge`) estava 100% hardcoded em PT dentro do JS, ignorando o idioma. Adicionadas chaves `sz-lh-warn-maxborrow`, `sz-lh-warn-hedge`, `sz-lh-warn-borrow80`; JS trocado para `tStr(...).replace(...)`.
+- Verificado no preview (`applyLang('en')` / `applyLang('pt')`): todos os vereditos e avisos alternam corretamente nos dois idiomas, sem stale text.
+
+#### `ferramentas.html` — bugs de corrupção/duplicação encontrados e corrigidos (achados ao validar `calcLevHedge`)
+- **`flashHighlight`/`showToast` duplicadas 4× no arquivo** (redeclaração de função). A última cópia (que prevalece em JS) tinha o ícone corrompido: `'<span class="toast-icon">�u2713</span>'` em vez de `✓`. Removidas as 3 cópias redundantes, mantida 1 versão limpa.
+- **`loadBaroloScenario()`** tinha um bloco de feedback visual órfão no meio da função — `flashHighlight([...IDs do painel Hedge LP...])` + `showToast("Pool ativa carregada...")` (texto e IDs errados, copiados de `loadActivePoolHedge()`) entre `set('lh-brw', ...)` e `set('lh-fund', ...)`. Removido; o `flashHighlight`/`showToast` corretos (com IDs `lh-*` e texto "Cenário Barolo carregado...") já existiam no final da função.
+
+#### Validação de `calcLevHedge()` — 3 cenários testados manualmente
+1. **Real (Cenário Barolo, `loadBaroloScenario()`)**: capital $5.040, LP $385, 100% borrow, sem hedge → A +1,53%/Sh 0,67, B=C +2,52%/Sh 1,10 (B=C esperado, pois `hPct=0` anula o efeito do hedge). Matemática bate 100% com a fórmula manualmente recalculada.
+2. **Hipotético $2.000 com hedge 100%**: capital $6.000, LP $2.000, 50% borrow, hedge 100% → C domina (APR +12,10%, DD 0%, Sharpe ∞) por IL residual e DD zerados pelo hedge total. Decomposição (fees $640, supply $90, IL $0, borrow −$54, funding +$50, net $726) confere linha a linha.
+3. **Extremo super-alavancado ($8.000 LP sobre $6.000 capital, 100% borrow)**: sanity check corretamente dispara aviso "Borrow (8000) excede capacidade do colateral (4800 @ 80% LT). Cenário inviável." — o modelo não trava nem gera NaN/Infinity, apenas avisa.
+- **Nota de modelagem** (não é bug): o drawdown de A/B usa `lp×delta×vol / capital` — não escala com `brwPct` diretamente, pois mede a exposição direcional em $ da própria posição LP (fixa), não o risco de solvência da alavancagem. O risco de solvência é coberto separadamente pelo aviso de "borrow excede capacidade do colateral".
+- **Conclusão: `calcLevHedge()` está matematicamente correto** nos 3 cenários testados; os únicos problemas encontrados na área foram os bugs de UI/i18n acima, não a lógica de cálculo.
+
+#### CLAUDE.md — "desde 2022" corrigido
+- Linha 5 (abertura do arquivo): `desde 2022` → `desde 2021 (1ª compra ETH em 13/12/2021)`.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Vereditos do Sizing & Risk presos no idioma anterior após toggle | `applyLang()` só atualizava `[data-i18n]` estáticos, não recalculava as 4 calculadoras | `applyLang()` chama `calcKellyPool/calcKellyMerton/calcHedge/calcLevHedge` após trocar idioma |
+| `hd-inrange` e avisos de `lh-note` hardcoded em PT | Strings direto no JS, sem `tStr()` | Chaves novas em `LANG_STRINGS` + `tStr(...)` nos dois lugares |
+| Ícone de toast corrompido (`�u2713`) | 4 cópias duplicadas de `flashHighlight`/`showToast`; a última (vencedora) estava corrompida | 3 cópias redundantes removidas, mantida 1 limpa com `✓` |
+| `loadBaroloScenario()` mostrava toast/flash errado ("Pool ativa carregada" com IDs do Hedge LP) no meio da execução | Bloco copiado de `loadActivePoolHedge()` colado por engano | Bloco órfão removido; o flash/toast correto do final da função permanece |
+
+### O que ainda falta
+- **CSVs CEX → integração no site** — dados consolidados existem (`Custo_*_Lucas.xlsx`) mas não viram uma seção/página; avaliar se Lucas quer uma view de custo BRL/IR em `relatorio.html` ou nova página
+- **Sistema φ nos dashboards** — avaliado, ficou de fora por ser mais arriscado nos gráficos
+- **Gwei do ticker desacoplado do fetch de preços** (pools/portfolio)
+- **Mentoria DeFi avançado** — Euler V2, Morpho Blue, Gearbox V3, Drift basis trade, Hyperliquid HLP, Pendle PT
+
+---
+
+Atualizado: 03/07/2026 — monthlyReturns Mai/Jun preenchidos, CSVs CEX localizados (R$ 35.498,19 consolidado), i18n Sizing & Risk corrigido (vereditos dinâmicos + bugs de duplicação/corrupção), calcLevHedge() validado em 3 cenários, cabeçalho "desde 2021" corrigido
