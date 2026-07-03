@@ -16,6 +16,7 @@
 
    Baseline: 26/06/2026 (prints CoinGecko + AAVE V4 + Kamino)
    + compra BTC 01/07/2026 (0.00164555 BTC @ $58.272,31 = $95,89)
+   + defi.aave/defi.kamino atualizados 03/07/2026 (prints AAVE + Kamino)
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
   asOf: '2026-07-01',
@@ -45,14 +46,18 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.16, apy:0.0137 }, USDT:{ qty:1300, apy:0.0141 } },
-      borrow: { USDC:{ qty:755.28, apy:0.0363 } },
-      healthFactor: 4.00
+      supply: { WETH:{ qty:2.16, apy:0.0142 }, USDT:{ qty:1300, apy:0.0328 } },
+      borrow: { USDC:{ qty:756.06, apy:0.0358 } },
+      healthFactor: 5.48   // estimado via CF (WETH 83% / USDT 78%) — AAVE não expôs o HF direto no print
     },
     kamino: {
-      supply: { SOL:{ qty:23.38, apy:0.0428 }, USDS:{ qty:302.41, apy:0.0368 } },
-      borrow: { USDC:{ qty:816.79, apy:0.0578 } },
-      ltv: 0.4286, liqLtv: 0.7738
+      // ATENÇÃO: APY do SOL supply saltou de 4.28%→22.51% no print de 03/07 — provável
+      // blend com incentivos/pontos KMNO (há reward KMNO $3.17 claimable no mesmo print),
+      // não yield puro de lending. Mantido como está no dashboard; revisar se distorcer
+      // o "Yield DeFi/Mês" do exec bar.
+      supply: { SOL:{ qty:23.41, apy:0.2251 }, USDS:{ qty:302.63, apy:0.0414 } },
+      borrow: { USDC:{ qty:818.06, apy:0.0638 } },
+      ltv: 0.3668, liqLtv: 0.7704
     },
     uniswapV3: {
       pool:'WETH/USDC 0.3%', network:'Base', status:'active',
@@ -62,7 +67,7 @@ window.BAROLO_DATA = {
   },
 
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:755.28, kamino:816.79, total:1572.07 },
+  debt:   { aave:756.06, kamino:818.06, total:1574.12 },
   stablesTotalUSD: 1602.52,   // USDT 1302.52 + USDS 300
   lpPooled: 365
 };
