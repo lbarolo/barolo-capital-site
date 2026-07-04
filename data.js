@@ -17,9 +17,10 @@
    Baseline: 26/06/2026 (prints CoinGecko + AAVE V4 + Kamino)
    + compra BTC 01/07/2026 (0.00164555 BTC @ $58.272,31 = $95,89)
    + defi.aave/defi.kamino atualizados 03/07/2026 (prints AAVE + Kamino)
+   + AAVE: +300 USDT supply de volta (deposit 04/07/2026, APY 3.21%)
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-07-01',
+  asOf: '2026-07-04',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -46,7 +47,7 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.16, apy:0.0142 }, USDT:{ qty:1300, apy:0.0328 } },
+      supply: { WETH:{ qty:2.16, apy:0.0142 }, USDT:{ qty:1600, apy:0.0321 } },
       borrow: { USDC:{ qty:756.06, apy:0.0358 } },
       healthFactor: 5.48   // estimado via CF (WETH 83% / USDT 78%) — AAVE não expôs o HF direto no print
     },
