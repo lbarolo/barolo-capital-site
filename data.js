@@ -18,6 +18,8 @@
    + compra BTC 01/07/2026 (0.00164555 BTC @ $58.272,31 = $95,89)
    + defi.aave/defi.kamino atualizados 03/07/2026 (prints AAVE + Kamino)
    + AAVE: +300 USDT supply de volta (deposit 04/07/2026, APY 3.21%)
+   + Kamino: +0.66 SOL supply (compra da semana anterior, deposit 04/07/2026
+     12:02 · $53,92) + AAVE/Kamino refresh completo via print 04/07/2026
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
   asOf: '2026-07-04',
@@ -27,7 +29,7 @@ window.BAROLO_DATA = {
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
-    { ticker:'SOL',   cgId:'solana',                   qty:23.31,      invested:2450.94 },
+    { ticker:'SOL',   cgId:'solana',                   qty:23.97,      invested:2504.86 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
@@ -48,17 +50,16 @@ window.BAROLO_DATA = {
   defi: {
     aave: {
       supply: { WETH:{ qty:2.16, apy:0.0142 }, USDT:{ qty:1600, apy:0.0321 } },
-      borrow: { USDC:{ qty:756.06, apy:0.0358 } },
+      borrow: { USDC:{ qty:756.12, apy:0.0363 } },
       healthFactor: 5.48   // estimado via CF (WETH 83% / USDT 78%) — AAVE não expôs o HF direto no print
     },
     kamino: {
-      // ATENÇÃO: APY do SOL supply saltou de 4.28%→22.51% no print de 03/07 — provável
-      // blend com incentivos/pontos KMNO (há reward KMNO $3.17 claimable no mesmo print),
-      // não yield puro de lending. Mantido como está no dashboard; revisar se distorcer
-      // o "Yield DeFi/Mês" do exec bar.
-      supply: { SOL:{ qty:23.41, apy:0.2251 }, USDS:{ qty:302.63, apy:0.0414 } },
-      borrow: { USDC:{ qty:818.06, apy:0.0638 } },
-      ltv: 0.3668, liqLtv: 0.7704
+      // APY do SOL supply confirmado em 12.74% no print de 04/07 (o 22.51% de 03/07 era
+      // blend transitório com incentivos KMNO — rewards agora claimable à parte: USDS
+      // $1.59, PYUSD $0.07, KMNO $3.14).
+      supply: { SOL:{ qty:24.07, apy:0.1274 }, USDS:{ qty:302.66, apy:0.0403 } },
+      borrow: { USDC:{ qty:818.18, apy:0.0614 } },
+      ltv: 0.3602, liqLtv: 0.7700
     },
     uniswapV3: {
       pool:'WETH/USDC 0.3%', network:'Base', status:'active',
@@ -68,7 +69,7 @@ window.BAROLO_DATA = {
   },
 
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:756.06, kamino:818.06, total:1574.12 },
+  debt:   { aave:756.12, kamino:818.18, total:1574.30 },
   stablesTotalUSD: 1602.52,   // USDT 1302.52 + USDS 300
   lpPooled: 365
 };
