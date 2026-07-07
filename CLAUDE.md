@@ -3687,3 +3687,81 @@ Sessão de limpeza de pendências acumuladas: `monthlyReturns[2026].Abr`, CSVs d
 ---
 
 Atualizado: 03/07/2026 — monthlyReturns Mai/Jun preenchidos, CSVs CEX localizados (R$ 35.498,19 consolidado), i18n Sizing & Risk corrigido (vereditos dinâmicos + bugs de duplicação/corrupção), calcLevHedge() validado em 3 cenários, cabeçalho "desde 2021" corrigido
+
+---
+
+## Sessão 06/07/2026 — Design system (tentado e revertido) + limpezas invisíveis + Design.md + tooltip "bolinha" nos gráficos
+
+### Arco da sessão
+Pedido inicial: transformar a UX num **design system compartilhado** (worktree, agentes paralelos, biblioteca de componentes). Executei por completo — e **Lucas rejeitou** ("não gostei nada do que foi feito, pode voltar ao normal a UX"). **Revertido 100%, nada foi para a main.** Em seguida fizemos só melhorias invisíveis, criamos o `Design.md`, e por fim a mudança de tooltip dos gráficos.
+
+### Implementado
+
+#### 1. Design system compartilhado — TENTADO e REVERTIDO (⚠️ NÃO está no repo)
+- Worktree `worktree-design-system`. Criei `design-system/{tokens.css,components.css,ui.js}` + `GOAL.md` + `README.md`; migrei `relatorio.html` (referência) + `index/portfolio/pools/ferramentas` via **4 agentes Sonnet paralelos** (background), tudo validado no browser. Decisão de escopo escolhida por Lucas na hora: "canônico + variantes".
+- **Lucas rejeitou a mudança de UX.** `ExitWorktree` com `remove` descartou os 5 commits e todo o `design-system/`. **Nada foi pushado.**
+- **Lição (registrar):** Lucas quer **zero mudança de UX/design**. Não impor refactor visual. Preferir mudanças invisíveis e, quando houver risco visual, **perguntar antes** (usei `AskUserQuestion`).
+
+#### 2. ⚠️ DESCOBERTA — `emprestimos.html` é um BUNDLE (não é editável à mão)
+- O arquivo root (884 KB, 178 linhas) é um **artefato de build minificado**: shell `__bundler_loading` / `__bundler_thumbnail` / `__bundler_placeholder` + payload **base64/gzip** (`H4sI…`) numa única linha de 729 KB.
+- **NÃO tem** `:root`/nav/CSS/`ui-polish`/`BAROLO_DATA`/`fetchAave` legíveis — tudo está comprimido dentro do bundle.
+- **Consequência (importante p/ próximas sessões):** não editar `emprestimos.html` diretamente. Mudança de design/JS nele exige o **código-fonte original + rebuild**. Fica fora de escopo de qualquer edição inline (design system, tooltip, etc.).
+- Contradiz a premissa "HTML estático puro, sem build step" — provavelmente algum experimento/tool sobrescreveu o fonte no root em algum momento.
+
+#### 3. Melhorias invisíveis — commit `6dbba00` (pushado)
+Lucas pediu "o que for para melhorar apenas, sem mudar a UX". Escolheu 4 via `AskUserQuestion`; fiz 3 e pulei a 4ª:
+- **Limpeza de worktrees:** 27 worktrees obsoletos removidos de `.claude/worktrees/` (`git worktree remove` sem `--force`). O OneDrive sincronizava ~29 cópias inteiras do site. **2 preservados** por terem trabalho não-commitado: `fervent-boyd-3709cc`, `upbeat-edison-4705fd`.
+- **CSS duplicado (`ferramentas.html`):** removidas 3 de 4 cópias byte-idênticas do bloco "FEEDBACK VISUAL: Highlight + Toast" (`highlightFlash`/`toastSlideIn`/`.toast-notification`, ~85 linhas). 1 cópia mantida. Renderização idêntica.
+- **HTML malformado (`portfolio_analytics.html`):** removido o `</head>` **prematuro** (linha 21). Os `<script>` do Chart.js + o `<style>` principal ficavam depois dele; o `</head>` real é o da linha 563 (antes do `<body>`). Browsers já processavam esse conteúdo como head → renderização idêntica. Verificado: 32 canvases OK, 0 erros.
+- **#4 Centralizar tokens — PULADO (decisão do Lucas):** análise (script) mostrou que os tokens **divergiram** muito entre páginas; só **16 props** são idênticas nas 5 (9 no `:root`, 7 no `[data-theme=light]`). Detalhe na tabela de divergência do `Design.md §2.2`. Risco (quebrar `:root` = perder cores) > ganho.
+
+#### 4. `Design.md` criado na raiz — commit `3e0589d` (pushado)
+Mapa único de UX/design para atualizar a interface sem ler o código todo. Seções:
+- **§0** regras invioláveis (privacidade, JetBrains Mono nos números, `data.js` fonte de posições, `emprestimos` é bundle, sem build).
+- **§1** tabela "Quero mudar X → vá aqui".
+- **§2** tokens (paleta canônica de 16 props + **tabela de divergência por página** — não há fonte única de cor).
+- **§3** tipografia · **§4** componentes (nav + 2 variantes, ticker, botões, cards, tabs) · **§5** interações JS por página · **§6** mapa das 6 páginas · **§7** testar/deploy · **§8** pegadinhas.
+- Reflete a **realidade inline atual** (cada página autossuficiente; a lib compartilhada foi descartada).
+
+#### 5. Tooltip dos gráficos → "bolinha" cheia — commit `dee156e` (pushado)
+- Pedido: no hover, mostrar **bolinha (círculo) cheia da cor da série, sem borda** em vez do quadrado padrão do Chart.js (referência: gráficos da aba Performance do Portfolio).
+- **Implementação global** via `Chart.defaults`, num `<script>` inline logo após o `<script src=…chart.umd…>` no `<head>` de cada página com gráficos: `portfolio_analytics`, `pools`, `ferramentas`, `index`, `relatorio`:
+  ```js
+  Chart.defaults.plugins.tooltip.usePointStyle = true;
+  Chart.defaults.plugins.tooltip.callbacks.labelPointStyle = () => ({ pointStyle:'circle', rotation:0 });
+  Chart.defaults.plugins.tooltip.callbacks.labelColor = (ctx) => {
+    const ds=ctx.dataset||{}, at=v=>Array.isArray(v)?v[ctx.dataIndex]:v;
+    const c=[at(ds.borderColor),at(ds.pointBackgroundColor),at(ds.backgroundColor)].find(x=>typeof x==='string'&&x)||'#c9a050';
+    return { borderColor:c, backgroundColor:c, borderWidth:0 };
+  };
+  ```
+- Guardado com `if(window.Chart)`; os loaders lazy de pools (`loadChartJs`) e ferramentas (`loadCharts`) têm `if(window.Chart)` → os defaults do `<head>` persistem. Não precisou tocar em cada gráfico. `emprestimos` fora (bundle).
+- Documentado em `Design.md §4.6` (como trocar formato/reativar borda).
+- Validado no browser nas 5 páginas: `usePointStyle=true`, `labelColor`/`labelPointStyle` são funções, swatch computado `{ backgroundColor==borderColor, borderWidth:0 }` (bolinha cheia, sem borda), gráficos renderizam (portfolio 31, pools 9, relatorio 2, ferramentas/index OK), **0 erros de console**.
+
+### Dados atualizados
+Nenhum dado de posição alterado — só estrutura/UI/docs. `data.js` e valores intocados.
+
+### Bugs corrigidos
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| `portfolio_analytics.html` com `</head>` duplicado | `</head>` prematuro na linha 21; scripts Chart.js + `<style>` caíam depois | Removido o prematuro; `<head>` vai até a linha 563 (antes do `<body>`). Zero mudança de render. |
+| `ferramentas.html` com 4 cópias idênticas do CSS de toast | Duplicação acumulada em sessões antigas | Mantida 1, removidas 3 (~85 linhas) |
+| ~29 worktrees obsoletos sincronizando no OneDrive | Sobras de sessões antigas em `.claude/worktrees/` | 27 removidos (`git worktree remove`); 2 com trabalho pendente preservados |
+| Tooltip dos gráficos mostrava quadrado | Default do Chart.js | `Chart.defaults` global → bolinha cheia da cor, sem borda |
+
+### O que ainda falta
+- **`emprestimos.html`** — é bundle; qualquer mudança (design system, tooltip, dados de display) só via **fonte original + rebuild**. Não editar o artefato. (O `M emprestimos.html` no working tree é uma alteração **pré-existente do Lucas**, não-commitada — preservada em todos os pushes via `git stash`; não mexer.)
+- **Design system compartilhado** — Lucas **rejeitou**; só refazer se ele pedir explicitamente **e** sem mudança de UX.
+- **Centralizar tokens (fonte única de cor)** — pulado; tokens divergiram (só 16 props comuns). Se um dia quiser, reconciliar a `Design.md §2.2`.
+- **`Design.md`** — manter atualizado ao mexer em UX (é o mapa de referência agora).
+- Pendências antigas mantidas: integração dos CSVs CEX (custo BRL/IR), mentoria DeFi avançado (Euler V2, Morpho, Gearbox, Drift, Hyperliquid HLP, Pendle PT).
+
+### Commits (pushados direto na main)
+- `6dbba00` — limpezas invisíveis (worktrees, CSS dup em ferramentas, `</head>` em portfolio)
+- `3e0589d` — `Design.md` (mapa de UX/design)
+- `dee156e` — tooltip bolinha cheia da cor da série em todos os gráficos
+
+---
+
+Atualizado: 06/07/2026 — Design system compartilhado **tentado e revertido** (Lucas rejeitou; nada na main); descoberto que **`emprestimos.html` é um bundle** (não editável à mão); limpezas invisíveis (27 worktrees, CSS dup, `</head>`); **`Design.md`** criado (mapa de UX); **tooltip dos gráficos vira bolinha cheia sem borda** (global via `Chart.defaults`, 5 páginas)
