@@ -38,6 +38,7 @@
 | **Botões pequenos** | `.btn-sm` no `<style>` de cada página | Ver §4.3 (valores divergem por página). |
 | **Cards (KPI/stat/métrica)** | classes por página (`.stat-card`, `.kpi-card`, `.metric-card`, `.card`…) | Ver §4.4. |
 | **Abas (tabs)** | `switchTab(...)` + `.tab` + painéis `#panel-*`/`.tab-pane` | Ver §4.5 e §6. Assinaturas diferem por página. |
+| **Tooltip dos gráficos** (bolinha vs quadrado) | `Chart.defaults` inline logo após o Chart.js no `<head>` de cada página | Ver §4.6. Padrão = bolinha cheia da cor, sem borda. Global — não mexer em cada gráfico. |
 | **Toggle de tema / idioma / moeda** | funções JS inline (`toggleTheme`, `toggleLang`/`toggleIndexLang`, `toggleCurrency`) | Ver §5. |
 | **Conteúdo/estrutura de uma página** | o próprio arquivo (ver mapa em §6) | Cada página é autossuficiente. |
 | **Textos EN/PT** | atributos `data-i18n="chave"` + objeto de strings no JS (`INDEX_LANG_STRINGS`/`LANG_STRINGS`) | index tem toggle EN/PT; dashboards são PT. |
@@ -123,6 +124,28 @@ Contagem de definições por página (vocabulário próprio de cada uma): `portf
 - **portfolio_analytics** — `switchTab(name, btn)`; abas: `Ativos · Performance · Métricas · Risco & Convexidade · DeFi & Mercado`. Aba salva em `localStorage['bc-active-tab']`.
 - **ferramentas** — `switchTab(id, btn)` (assinatura diferente!); 10 abas: `Crenças · Liquidação · Cenários · Sizing & Risk · Diário DeFi · Alertas · Evolução · Pools APY · Ciclo · Semanal`. Painéis: `#panel-*`.
 - ⚠️ As duas `switchTab` têm **assinaturas diferentes** — não copie de uma pra outra.
+
+### 4.6 Tooltips de gráfico (Chart.js) — bolinha cheia da cor da série
+Padrão do site: ao passar o mouse, o indicador de cor no tooltip é uma **bolinha (círculo)
+cheia da cor da série, sem borda** — não o quadrado padrão do Chart.js.
+
+Aplicado **globalmente** via `Chart.defaults`, num `<script>` inline logo **após o
+`<script src=…chart.umd…>`** no `<head>` de cada página com gráficos
+(`portfolio_analytics`, `pools`, `ferramentas`, `index`, `relatorio`). Um único ponto por
+página — **não** precisa tocar em cada gráfico:
+```js
+Chart.defaults.plugins.tooltip.usePointStyle = true;
+Chart.defaults.plugins.tooltip.callbacks.labelPointStyle = () => ({ pointStyle:'circle', rotation:0 });
+Chart.defaults.plugins.tooltip.callbacks.labelColor = (ctx) => {
+  const ds=ctx.dataset||{}, at=v=>Array.isArray(v)?v[ctx.dataIndex]:v;
+  const c=[at(ds.borderColor),at(ds.pointBackgroundColor),at(ds.backgroundColor)]
+            .find(x=>typeof x==='string'&&x) || '#c9a050';
+  return { borderColor:c, backgroundColor:c, borderWidth:0 }; // mesma cor = sem borda
+};
+```
+- Trocar o formato (quadrado/triângulo/…): mudar `pointStyle`. Reativar borda: `borderWidth>0` + `borderColor` diferente.
+- Um gráfico só volta ao quadrado se ele **sobrescrever** `usePointStyle:false` ou `callbacks.labelColor` no próprio config.
+- `emprestimos.html` (bundle) não recebe — seus gráficos estão dentro do bundle.
 
 ---
 

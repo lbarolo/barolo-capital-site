@@ -425,6 +425,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>/* tooltip padrão (Design.md §4.6): bolinha cheia da cor da série, sem borda */
+if(window.Chart){
+  Chart.defaults.plugins.tooltip.usePointStyle=true;
+  Chart.defaults.plugins.tooltip.callbacks.labelPointStyle=function(){return{pointStyle:'circle',rotation:0};};
+  Chart.defaults.plugins.tooltip.callbacks.labelColor=function(ctx){
+    var ds=ctx.dataset||{},i=ctx.dataIndex,at=function(v){return Array.isArray(v)?v[i]:v;};
+    var c=[at(ds.borderColor),at(ds.pointBackgroundColor),at(ds.backgroundColor)].find(function(x){return typeof x==='string'&&x;})||'#c9a050';
+    return{borderColor:c,backgroundColor:c,borderWidth:0};
+  };
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 </head>

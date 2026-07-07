@@ -13,6 +13,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>/* tooltip padrão (Design.md §4.6): bolinha cheia da cor da série, sem borda */
+if(window.Chart){
+  Chart.defaults.plugins.tooltip.usePointStyle=true;
+  Chart.defaults.plugins.tooltip.callbacks.labelPointStyle=function(){return{pointStyle:'circle',rotation:0};};
+  Chart.defaults.plugins.tooltip.callbacks.labelColor=function(ctx){
+    var ds=ctx.dataset||{},i=ctx.dataIndex,at=function(v){return Array.isArray(v)?v[i]:v;};
+    var c=[at(ds.borderColor),at(ds.pointBackgroundColor),at(ds.backgroundColor)].find(function(x){return typeof x==='string'&&x;})||'#c9a050';
+    return{borderColor:c,backgroundColor:c,borderWidth:0};
+  };
+}
+</script>
 <script>
 (function(){
   var t=localStorage.getItem('bc-theme')||'dark';

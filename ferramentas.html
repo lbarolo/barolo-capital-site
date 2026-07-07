@@ -25,6 +25,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>/* tooltip padrão (Design.md §4.6): bolinha cheia da cor da série, sem borda */
+if(window.Chart){
+  Chart.defaults.plugins.tooltip.usePointStyle=true;
+  Chart.defaults.plugins.tooltip.callbacks.labelPointStyle=function(){return{pointStyle:'circle',rotation:0};};
+  Chart.defaults.plugins.tooltip.callbacks.labelColor=function(ctx){
+    var ds=ctx.dataset||{},i=ctx.dataIndex,at=function(v){return Array.isArray(v)?v[i]:v;};
+    var c=[at(ds.borderColor),at(ds.pointBackgroundColor),at(ds.backgroundColor)].find(function(x){return typeof x==='string'&&x;})||'#c9a050';
+    return{borderColor:c,backgroundColor:c,borderWidth:0};
+  };
+}
+</script>
 <style>
 :root{
  --bg:#0e0e12;--surface:#141418;--s1:#141418;--s2:#1a1a20;--s3:#221e16;
