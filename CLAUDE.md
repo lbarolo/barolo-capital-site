@@ -3765,3 +3765,57 @@ Nenhum dado de posição alterado — só estrutura/UI/docs. `data.js` e valores
 ---
 
 Atualizado: 06/07/2026 — Design system compartilhado **tentado e revertido** (Lucas rejeitou; nada na main); descoberto que **`emprestimos.html` é um bundle** (não editável à mão); limpezas invisíveis (27 worktrees, CSS dup, `</head>`); **`Design.md`** criado (mapa de UX); **tooltip dos gráficos vira bolinha cheia sem borda** (global via `Chart.defaults`, 5 páginas)
+
+---
+
+## Sessão 08/07/2026 — Revisão geral de erros: e-mail de contato restaurado (Cloudflare cfemail) + HTML malformado + JS duplicado
+
+### Contexto
+Lucas pediu: "revise todos os modelos, pode ficar à vontade para fazer o que bem entender, revise os erros, adeque o que precisar" — mantendo a regra estabelecida de **zero mudança de UX/visual**. Varredura completa das 6 páginas: análise estática (script Node: balanceamento de tags, chaves/parênteses por `<script>`, funções duplicadas) + navegador via preview (console, rede, interações) + consistência do `data.js`.
+
+### Implementado
+
+#### `index.html` — E-mail de contato restaurado (bug REAL em produção, o mais grave)
+- **Sintoma:** todo visitante via "**[email protected]**" com link morto na seção Contato (04).
+- **Causa raiz:** em algum momento o HTML foi salvo através de um **proxy Cloudflare**, que ofuscou o e-mail: o `<a href="mailto:...">` virou `<a href="/cdn-cgi/l/email-protection#54...">` + `<span data-cfemail="680b...">[email protected]</span>` + `<script src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">`. Esse decodificador **não existe no GitHub Pages** → 404 → o e-mail nunca era decodificado.
+- **Fix:** decodificado o payload `data-cfemail` (XOR com chave `0x68`) → confirmado `contato@barolocapital.com.br` (bate com o log da sessão 09/04/2026). Restaurado `<a href="mailto:contato@barolocapital.com.br" class="contact-email">contato@barolocapital.com.br</a>` e removido o `<script>` do email-decode.
+- **Também:** `index.html` terminava **sem `</body></html>`** (arquivo truncado no fim do último `</script>`) — tags adicionadas.
+
+#### `ferramentas.html` — `</head>` prematuro + funções duplicadas
+- **`</head>` prematuro na linha 19** (mesmo bug corrigido no `portfolio_analytics.html` em 06/07): fonts, Chart.js e o `<style>` principal ficavam "fora" do head; o verdadeiro `</head>` é o da linha ~642 (antes do `<body>`). Removido o prematuro. Zero mudança de render (browsers já toleravam).
+- **`flashHighlight`/`showToast` duplicadas no escopo global** (linhas 2718 e 2742, byte-idênticas — a 2ª sobrescrevia a 1ª silenciosamente). Sobrou da limpeza de 03/07 que removeu 3 de 4 cópias mas deixou 2. Removida a 2ª cópia; agora exatamente 1 definição de cada.
+
+#### `Design.md` — §8 pegadinhas atualizada
+- Nova linha: **nunca salvar HTML via proxy Cloudflare** (ofusca e-mails em `data-cfemail` + script `/cdn-cgi/` que não existe no GitHub Pages).
+
+### Verificado e OK (sem mexer)
+- **0 erros de console nas 5 páginas editáveis** (index, portfolio, pools, ferramentas, relatorio); gráficos renderizam (portfolio 18+, pools 9, relatorio 2); toast/tabs/gwei/tickers/login funcionam; tooltip bolinha (06/07) ativo.
+- **Links internos** entre páginas todos resolvem; **noindex** presente nas 6 páginas; **`data.js` consistente** (debt.total 1.574,30 = 756,12 AAVE + 818,18 Kamino ✓; stablesTotalUSD 1.602,52 = USDT 1.302,524 + USDS 300 ✓).
+- **Falsos positivos do parser descartados** (não são bugs): "duplicatas" `fmt`/`ready` (index), `pxAt`/`setEl` (portfolio), `setLive` (pools) estão em escopos IIFE/função separados — legítimas. "Imbalance" de `<script>` counts = `</script>` dentro de strings JS. `parens=-1` em portfolio script#5 / pools script#8 = template literals (falso positivo já conhecido do CLAUDE.md).
+
+### Dados atualizados
+Nenhum. `data.js` intocado (asOf 2026-07-04, com os refreshes automáticos da Action).
+
+### Bugs corrigidos
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| E-mail de contato "[email protected]" com link morto (produção) | HTML salvo via proxy Cloudflare → `data-cfemail` + `/cdn-cgi/email-decode.min.js` que 404a no GitHub Pages | Payload decodificado (XOR 0x68) → `mailto:contato@barolocapital.com.br` restaurado; script morto removido |
+| `index.html` sem `</body></html>` | Truncado em alguma edição antiga | Tags adicionadas ao final |
+| `ferramentas.html` com `</head>` duplicado | `</head>` prematuro na linha 19 (mesmo padrão do portfolio) | Removido; head real fecha antes do `<body>` |
+| `flashHighlight`/`showToast` definidas 2× no escopo global (ferramentas) | Limpeza de 03/07 deixou 2 das 4 cópias | 2ª cópia (byte-idêntica) removida |
+
+### Avisos registrados (decisão do Lucas, NÃO mexido)
+- **Tabela "Registro Histórico" de pools não existe mais no HTML** — só `buildPoolTable()` sobrou (código morto, guardado com `if(!tbody) return`, não dá erro). Aparentemente ligado à remoção intencional do `track.html` (comentários no código: "track.html não existe mais"). **Se Lucas quiser a tabela das 28 pools de volta, reconstruir.**
+- **CoinGecko em rajada no load do portfolio** (~5 requests simultâneos) — falhou no ambiente de preview (cache segurou); na máquina do Lucas funciona. Consolidável no futuro se incomodar.
+
+### Commits (pushados direto na main)
+- `62f5423` — fix: revisão geral — e-mail de contato restaurado + HTML malformado + JS duplicado
+
+### O que ainda falta
+- **Registro Histórico em pools.html** — decidir se reconstrói a tabela (28 pools) ou remove `buildPoolTable()` de vez
+- **`emprestimos.html`** — segue bundle (não editável à mão); a alteração local não-commitada do Lucas segue preservada no working tree
+- Pendências antigas: integração dos CSVs CEX (custo BRL/IR), mentoria DeFi avançado (Euler V2, Morpho, Gearbox, Drift, Hyperliquid HLP, Pendle PT)
+
+---
+
+Atualizado: 08/07/2026 — Revisão geral: **e-mail de contato do index restaurado** (corrompido por proxy Cloudflare — visitantes viam "[email protected]"), `</body></html>` faltando no index, `</head>` prematuro em ferramentas, `flashHighlight`/`showToast` dedup; 0 erros de console nas 5 páginas; avisos: tabela Registro Histórico (pools) não existe mais no HTML
