@@ -2457,14 +2457,14 @@ body, input, button, select, textarea {
  }
 
  // Fetch prices for all needed tokens
- getLivePrice(['ethereum','solana','tether','usds-stablecoin'])
+ getLivePrice(['ethereum','solana','tether','usds'])
  .then(prices => {
  renderFeeTable(prices);
  renderCollateralTable(prices);
  })
  .catch(() => {
  renderFeeTable({});
- renderCollateralTable({ ethereum:{usd:2074.75}, solana:{usd:86.84}, tether:{usd:1}, 'usds-stablecoin':{usd:1} });
+ renderCollateralTable({ ethereum:{usd:2074.75}, solana:{usd:86.84}, tether:{usd:1}, 'usds':{usd:1} });
  });
 })();
 </script>

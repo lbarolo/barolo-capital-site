@@ -1,0 +1,20 @@
+{
+ "methodology": "netWorth = holdings×preço (inclui colateral DeFi) + stables + LP(pooled+unc fees) − dívida · qty/dívida/LP do data.js · preços CoinGecko",
+ "history": [
+  {
+   "date": "2026-07-08",
+   "netWorth": 6728.96,
+   "gross": 6358.38,
+   "stables": 1601.26,
+   "lp": 343.62,
+   "debt": 1574.3,
+   "dataAsOf": "2026-07-04",
+   "prices": {
+    "BTC": 62019,
+    "ETH": 1730.4,
+    "SOL": 76.84
+   }
+  }
+ ],
+ "updated": "2026-07-08T18:40:42.370Z"
+}

@@ -43,7 +43,7 @@ window.BAROLO_DATA = {
   // Stablecoins (também já no total CoinGecko).
   stables: [
     { ticker:'USDT', cgId:'tether',           qty:1302.524, invested:1302.524 },
-    { ticker:'USDS', cgId:'usds-stablecoin',  qty:300,      invested:300      }
+    { ticker:'USDS', cgId:'usds',  qty:300,      invested:300      }
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).

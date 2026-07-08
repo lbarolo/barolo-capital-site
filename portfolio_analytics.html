@@ -1608,7 +1608,7 @@ var PORTFOLIO_DATA = [
  { cgId:'zetachain',     ticker:'ZETA', name:'ZetaChain',  qty:51.1434,       invested:0,       avgCost:null,    color:'#00C896', logo:'https://coin-images.coingecko.com/coins/images/26718/large/Twitter_icon.png' },
  { cgId:'scroll',        ticker:'SCR',  name:'Scroll',    qty:0.0018,        invested:0,       avgCost:null,    color:'#FFB800', logo:'https://coin-images.coingecko.com/coins/images/50571/small/scroll.jpg' },
  { cgId:'tether',        ticker:'USDT', name:'Tether',    qty:1302.524,      invested:1302.524, avgCost:1.00,    color:'#26A17B', logo:'https://coin-images.coingecko.com/coins/images/325/small/Tether.png',    isStable:true },
- { cgId:'usds-stablecoin',ticker:'USDS',name:'USDS',      qty:300,           invested:300,      avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
+ { cgId:'usds',ticker:'USDS',name:'USDS',      qty:300,           invested:300,      avgCost:1.00,    color:'#5B8EF0', logo:'https://coin-images.coingecko.com/coins/images/39926/small/usds.webp',    isStable:true },
 ];
 // Override de qty/invested a partir da fonte única (data.js), casado por ticker.
 // Mantém cor/logo/avgCost inline; só as POSIÇÕES vêm do BAROLO_DATA quando presente.
@@ -1633,12 +1633,12 @@ var FALLBACK_PRICES = {
  // Preços dos prints (Mar/2026) — atualizados ao vivo pelo CoinGecko
  'bitcoin':67053.75,'ethereum':1906.77,'solana':75.71,'cardano':0.2617,'eigenlayer':0.1870,
  'polygon-ecosystem-token':0.09693,'xai-blockchain':0.01102,'zksync':0.01914,
- 'radiant-capital':0.005543,'zetachain':0.05045,'tether':1,'usds-stablecoin':1,
+ 'radiant-capital':0.005543,'zetachain':0.05045,'tether':1,'usds':1,
 };
 var FALLBACK_24H = {
  'ethereum':6.9,'solana':4.5,'cardano':6.9,'eigenlayer':3.8,
  'polygon-ecosystem-token':-3.2,'xai-blockchain':-3.2,'zksync':0.5,
- 'radiant-capital':2.9,'zetachain':-0.7,'tether':0,'usds-stablecoin':0
+ 'radiant-capital':2.9,'zetachain':-0.7,'tether':0,'usds':0
 };
 
 // Pool WETH/USDC ativa — sincroniza com pools.html via localStorage (TTL 30min)

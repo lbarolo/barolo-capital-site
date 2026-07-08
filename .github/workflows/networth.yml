@@ -1,0 +1,42 @@
+name: Snapshot diário do patrimônio (networth-history.json)
+
+# Calcula o patrimônio líquido do dia (preços CoinGecko × posições do data.js)
+# e commita 1 ponto/dia em networth-history.json. Sem secrets — APIs públicas.
+
+on:
+  schedule:
+    - cron: '40 9 * * *'   # ~06:40 BRT diariamente (após o onchain das 09:20 UTC)
+  workflow_dispatch:        # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: networth-update
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Gerar snapshot do patrimônio
+        run: node scripts/fetch-networth.js
+
+      - name: Commit se houver mudança
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- networth-history.json; then
+            echo "Sem mudanças no networth-history.json."
+          else
+            git add networth-history.json
+            git commit -m "data: snapshot diário do patrimônio (automático)"
+            git pull --rebase origin main
+            git push
+          fi
