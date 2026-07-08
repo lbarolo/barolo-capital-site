@@ -199,4 +199,5 @@ Anti-flash de tema: IIFE inline no `<head>` de cada página lê `bc-theme` e apl
 - `toggleTheme` de **portfolio** e **ferramentas** reconstrói gráficos — não simplificar.
 - Screenshots de `index`/dashboards podem travar por causa das animações (aurora/espiral/typing) — é ambiental, não erro da página.
 - Ao editar JS inline: conferir chaves balanceadas (`depth==0`) e nenhuma função duplicada (histórico de corrupção em `CLAUDE.md`).
+- **Nunca salvar HTML via proxy Cloudflare** — ele ofusca e-mails em `data-cfemail` + script `/cdn-cgi/email-decode` que não existe no GitHub Pages → visitante vê "[email protected]" (aconteceu no contato do index; corrigido 08/07/2026).
 - Este doc descreve a **realidade inline atual**. Se um dia o site adotar uma biblioteca compartilhada (`tokens.css`/`components.css`), atualize este arquivo primeiro.
