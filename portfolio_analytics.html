@@ -1323,6 +1323,37 @@ body, input, button, select, textarea {
   * AAVE e Kamino são estimativas baseadas em APY médio × período · Pools são valores reais dos diários · Não inclui IL ou custo de dívida nas pools
 </div>
 
+<!-- ══ RENDA PASSIVA REALIZADA (livro-razão mensal) ══ -->
+<div class="section-label">Renda Passiva Realizada — 2026 mês a mês</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:1px;">
+  <div style="background:var(--surface);padding:20px 18px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Renda YTD Realizada</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--green);line-height:1;" id="rp-ytd">—</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;" id="rp-ytd-sub">fees LP coletadas + lending líquido</div>
+  </div>
+  <div style="background:var(--surface);padding:20px 18px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Média / Mês</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--text);line-height:1;" id="rp-avg">—</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;" id="rp-avg-sub">meses fechados de 2026</div>
+  </div>
+  <div style="background:var(--surface);padding:20px 18px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Mês Atual (run-rate)</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);line-height:1;" id="rp-now">—</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;" id="rp-now-sub">lending ao vivo · fees pendentes à parte</div>
+  </div>
+  <div style="background:var(--surface);padding:20px 18px;border-left:2px solid var(--accent);">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Cobertura dos Juros</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;line-height:1;" id="rp-cover">—</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;" id="rp-cover-sub">renda média ÷ juros da dívida/mês</div>
+  </div>
+</div>
+<div style="background:var(--surface);border:1px solid var(--border);border-top:none;padding:18px;margin-bottom:14px;">
+  <div style="position:relative;height:150px;"><canvas id="rendaChart"></canvas></div>
+</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:28px;">
+  * LP = fees <b>realizadas na coleta</b> (fechamento da pool, mesmo critério do P&L YTD) · Lending = posição × APY documentado no mês (estimativa) − juros de borrow · Mês corrente = run-rate ao vivo (marcado *) · Fees não coletadas da pool ativa <b>não</b> entram até a coleta
+</div>
+
 <!-- ══ ACUMULAÇÃO DE TOKENS ══ -->
 <div class="section-label">Acumulação de Tokens — Yield & Fees (em tokens, não em dólar)</div>
 
@@ -2946,6 +2977,89 @@ function renderPerformanceMetrics(metrics) {
  document.getElementById('m-irr-sub').textContent = 'IRR aproximado (como TWR)';
 }
 
+// ── RENDA PASSIVA REALIZADA — livro-razão mensal 2026 ─────────────────────
+// lp = fees LP realizadas na coleta (fechamento da pool — mesmo critério do P&L YTD de pools.html)
+// lend = lending líquido estimado do mês: posição × APY documentado − juros de borrow (fontes: snapshots mensais no CLAUDE.md)
+var RENDA_2026 = [
+ { m:'Jan', lp:57.00, lend:8.0  },  // SOL/USDC $23 (20/01) + ETH/USDT $34 (30/01)
+ { m:'Fev', lp:17.00, lend:8.0  },  // SOL/USDT $1 (07/02) + ETH/USDC Base $16 (24/02)
+ { m:'Mar', lp:0,     lend:8.0  },
+ { m:'Abr', lp:0,     lend:8.4  },  // refi AAVE 2.32%
+ { m:'Mai', lp:0,     lend:11.1 },  // APYs de supply subiram
+ { m:'Jun', lp:22.28, lend:7.9  }   // WETH/USDC $22.28 (03/06) · spike borrow 12/06
+];
+function buildRendaPassiva(){
+ var canvas=document.getElementById('rendaChart');
+ if(!canvas||typeof Chart==='undefined')return;
+ var prev=Chart.getChart(canvas); if(prev)prev.destroy();
+
+ // ── run-rate do mês corrente (lending ao vivo via data.js + preços live) ──
+ var julLend=null, jurosMes=null, uncFees=0;
+ try{
+   var D=window.BAROLO_DATA&&window.BAROLO_DATA.defi;
+   if(D){
+     var ep=window._liveEthPrice||2079, sp=window._liveSolPrice||87;
+     var aaveApy=function(o){return o.qty*o.apy;};
+     var supplyY=(D.aave.supply.WETH.qty*ep*D.aave.supply.WETH.apy)
+               +aaveApy(D.aave.supply.USDT)
+               +(D.kamino.supply.SOL.qty*sp*D.kamino.supply.SOL.apy)
+               +aaveApy(D.kamino.supply.USDS);
+     var borrowY=aaveApy(D.aave.borrow.USDC)+aaveApy(D.kamino.borrow.USDC);
+     julLend=(supplyY-borrowY)/12;
+     jurosMes=borrowY/12;
+     uncFees=(D.uniswapV3&&D.uniswapV3.uncollectedFees)||0;
+   }
+ }catch(e){}
+
+ // ── KPIs ──
+ var s=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
+ var fmt=function(v){return (v<0?'−$':'+$')+Math.abs(v).toFixed(2);};
+ var ytd=RENDA_2026.reduce(function(a,r){return a+r.lp+r.lend;},0);
+ var avg=ytd/RENDA_2026.length;
+ s('rp-ytd',fmt(ytd));
+ s('rp-ytd-sub','$'+RENDA_2026.reduce(function(a,r){return a+r.lp;},0).toFixed(2)+' LP + $'+RENDA_2026.reduce(function(a,r){return a+r.lend;},0).toFixed(2)+' lending');
+ s('rp-avg',fmt(avg));
+ s('rp-avg-sub',RENDA_2026.length+' meses fechados de 2026');
+ if(julLend!=null){
+   s('rp-now',fmt(julLend));
+   s('rp-now-sub','lending ao vivo · +$'+uncFees.toFixed(2)+' fees pendentes na pool');
+ }
+ if(jurosMes!=null&&jurosMes>0){
+   var cover=avg/jurosMes*100;
+   s('rp-cover',cover.toFixed(0)+'%');
+   var cEl=document.getElementById('rp-cover');
+   if(cEl)cEl.style.color=cover>=100?'var(--green)':'var(--red)';
+   s('rp-cover-sub','renda $'+avg.toFixed(2)+' ÷ juros $'+jurosMes.toFixed(2)+'/mês');
+ }
+
+ // ── gráfico: barras empilhadas LP (ouro) + lending (verde), Jul* = run-rate ──
+ var labels=RENDA_2026.map(function(r){return r.m;});
+ var lpData=RENDA_2026.map(function(r){return r.lp;});
+ var lendData=RENDA_2026.map(function(r){return r.lend;});
+ if(julLend!=null){labels.push('Jul*');lpData.push(0);lendData.push(julLend);}
+ var dark=document.documentElement.getAttribute('data-theme')==='dark';
+ var grid=dark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
+ var tick=dark?'#8a7a62':'#7a6a52';
+ new Chart(canvas,{
+   type:'bar',
+   data:{labels:labels,datasets:[
+     {label:'Fees LP (realizado)',data:lpData,backgroundColor:'#c9a050',borderRadius:3,stack:'r'},
+     {label:'Lending líquido',data:lendData,backgroundColor:'rgba(63,185,80,0.75)',borderRadius:3,stack:'r'}
+   ]},
+   options:{
+     responsive:true,maintainAspectRatio:false,
+     plugins:{
+       legend:{labels:{color:tick,font:{family:"'JetBrains Mono',monospace",size:9},boxWidth:8,usePointStyle:true,pointStyle:'circle'}},
+       tooltip:{callbacks:{footer:function(items){var t=items.reduce(function(a,i){return a+i.parsed.y;},0);return 'Total: '+(t<0?'−$':'+$')+Math.abs(t).toFixed(2);}}}
+     },
+     scales:{
+       x:{stacked:true,grid:{display:false},ticks:{color:tick,font:{family:"'JetBrains Mono',monospace",size:9}}},
+       y:{stacked:true,grid:{color:grid},ticks:{color:tick,font:{family:"'JetBrains Mono',monospace",size:9},callback:function(v){return '$'+v;}}}
+     }
+   }
+ });
+}
+
 function buildStaticCharts(){
  setupChartDefaults();
  destroyStatic();
@@ -2962,6 +3076,7 @@ function buildStaticCharts(){
  try{ buildDrawdown(); }catch(e){}
  try{ buildPnlOrigin(); }catch(e){}
  try{ buildRiskBubble(); }catch(e){}
+ try{ buildRendaPassiva(); }catch(e){}
 }
 
 // ── ANNUAL RETURN (Artemis-style, monthly granularity) ──
