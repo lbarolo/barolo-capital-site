@@ -3776,6 +3776,24 @@ function buildAlphaVsHodl(){
   });
 }
 
+// ── Benchmark renda fixa: CDI e IPCA (média mensal aproximada por ano, % a.m.) ──
+// Fontes: B3/BCB (CDI acumulado 2022 12,4% · 2023 13,0% · 2024 10,9% · 2025 ~14,2%)
+// e IBGE (IPCA 2022 5,79% · 2023 4,62% · 2024 4,83% · 2025 ~4,7%). 2026 = estimativa corrente.
+var CDI_MONTHLY_BY_YEAR  = { 2022:0.98, 2023:1.03, 2024:0.87, 2025:1.11, 2026:1.10 };
+var IPCA_MONTHLY_BY_YEAR = { 2022:0.47, 2023:0.38, 2024:0.39, 2025:0.39, 2026:0.36 };
+// Simula os MESMOS aportes mensais rendendo à taxa: b_t = (b_{t-1} + aporte_t) × (1 + i_mês)
+function _fixedIncomeSeries(labels, invested, ratesByYear) {
+  var out = [], bal = 0;
+  for (var i = 0; i < invested.length; i++) {
+    var contrib = i === 0 ? invested[0] : Math.max(0, invested[i] - invested[i-1]);
+    var yr = 2000 + parseInt(labels[i].slice(3), 10);
+    var rate = (ratesByYear[yr] != null ? ratesByYear[yr] : 1.0) / 100;
+    bal = (bal + contrib) * (1 + rate);
+    out.push(bal);
+  }
+  return out;
+}
+
 function buildWealthEvolution() {
   var W = WEEKLY_UPDATE;
   var labels   = W.wealthCurve.labels.slice();
@@ -3821,6 +3839,13 @@ function buildWealthEvolution() {
     }
   }
 
+  // ── Benchmark renda fixa (só na régua USD — em BTC/ETH não faz sentido) ──
+  var cdiSeries = null, ipcaSeries = null;
+  if (!isCoin) {
+    cdiSeries  = _fixedIncomeSeries(labels, invested, CDI_MONTHLY_BY_YEAR);
+    ipcaSeries = _fixedIncomeSeries(labels, invested, IPCA_MONTHLY_BY_YEAR);
+  }
+
   function fmt(x){
     if (x == null || !isFinite(x)) return '—';
     if (mode === 'btc') return '₿' + x.toFixed(4);
@@ -3864,7 +3889,15 @@ function buildWealthEvolution() {
   var noteEl = document.getElementById('wealthDenomNote');
   if (noteEl) {
     if (!isCoin) {
-      noteEl.innerHTML = 'Régua: <b>USD</b>. Linha pontilhada = capital aportado (fiat). Troque para BTC/ETH para medir o patrimônio na própria cripto.';
+      var cdiLast  = cdiSeries  ? cdiSeries[cdiSeries.length-1]   : null;
+      var ipcaLast = ipcaSeries ? ipcaSeries[ipcaSeries.length-1] : null;
+      var vsCdi = (cdiLast && current != null) ? (current / cdiLast - 1) * 100 : null;
+      noteEl.innerHTML = 'Régua: <b>USD</b>. Pontilhada cinza = capital aportado. '
+        + '<span style="color:#3a7ec8;">Azul = mesmos aportes no <b>CDI</b></span>'
+        + (cdiLast ? ' (hoje ' + fmt(cdiLast) + (vsCdi != null ? ' · você está <b style="color:' + (vsCdi >= 0 ? 'var(--green)' : 'var(--red)') + ';">' + (vsCdi >= 0 ? '+' : '') + vsCdi.toFixed(0) + '%</b> vs CDI' : '') + ')' : '')
+        + ' · <span style="color:#a855f7;">roxa = aportes corrigidos pelo <b>IPCA</b></span>'
+        + (ipcaLast ? ' (' + fmt(ipcaLast) + ')' : '')
+        + '. Taxas médias mensais por ano (B3/IBGE), câmbio constante — aproximação. Troque para BTC/ETH para medir na própria cripto.';
     } else {
       noteEl.innerHTML = 'Régua: <b>' + unit + '</b>. A linha pontilhada é o <b>DCA equivalente</b> — quantos ' + unit
         + ' seu aporte teria comprado. Patrimônio <b>acima</b> dela = você está <b>batendo o ' + unit
@@ -3914,7 +3947,23 @@ function buildWealthEvolution() {
           fill: false, tension: 0.25, borderWidth: 1.5,
           pointRadius: 0, pointHoverRadius: 4,
         },
-      ]
+      ].concat(!isCoin && cdiSeries ? [
+        {
+          label: 'CDI (mesmos aportes)',
+          data: cdiSeries.map(function(x){ return Math.round(x); }),
+          borderColor: '#3a7ec8', backgroundColor: 'transparent',
+          fill: false, tension: 0.25, borderWidth: 1.5,
+          pointRadius: 0, pointHoverRadius: 4,
+        },
+        {
+          label: 'IPCA (aportes corrigidos)',
+          data: ipcaSeries.map(function(x){ return Math.round(x); }),
+          borderColor: '#a855f7', backgroundColor: 'transparent',
+          borderDash: [3, 3],
+          fill: false, tension: 0.25, borderWidth: 1.2,
+          pointRadius: 0, pointHoverRadius: 4,
+        }
+      ] : [])
     },
     options: {
       responsive: true, animation: { duration: 500 },
