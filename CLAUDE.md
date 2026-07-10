@@ -3819,3 +3819,69 @@ Nenhum. `data.js` intocado (asOf 2026-07-04, com os refreshes automáticos da Ac
 ---
 
 Atualizado: 08/07/2026 — Revisão geral: **e-mail de contato do index restaurado** (corrompido por proxy Cloudflare — visitantes viam "[email protected]"), `</body></html>` faltando no index, `</head>` prematuro em ferramentas, `flashHighlight`/`showToast` dedup; 0 erros de console nas 5 páginas; avisos: tabela Registro Histórico (pools) não existe mais no HTML
+
+---
+
+## Sessão 08–10/07/2026 — Dashboard PF: 4 módulos novos (Renda Passiva, Snapshot diário, CDI/IPCA, aba Fiscal) + fix cgId USDS
+
+### Contexto
+Lucas pediu recomendações pensando "dashboard de portfólio cripto de investidor PF". Recomendei 6; ele escolheu: fazer **2 (Renda Passiva)** na hora, deixar 1/3/5 para depois — em seguida **removeu o 3 (alertas Telegram — não fazer)** e mandou executar **4 (Snapshot diário)**, **5 (CDI/IPCA)** e **1 (Fiscal)** na sequência. Tudo implementado, validado no browser e pushado.
+
+### Implementado
+
+#### 1. `portfolio_analytics.html` — Renda Passiva Realizada (livro-razão mensal) — commit `fbd3e48`
+- **Onde:** aba DeFi & Mercado, entre "Taxas & Yield Recebidos" (agregado vitalício) e "Acumulação de Tokens".
+- **4 KPIs:** Renda YTD Realizada (**+$147,68** = $96,28 LP ✓ bate com P&L YTD de pools + $51,40 lending) · Média/Mês (+$24,61) · Mês Atual run-rate **ao vivo** via `BAROLO_DATA.defi` + preços live (+$26,37, com nota dos $18,62 fees pendentes) · **Cobertura dos Juros** (380% verde — renda média ÷ juros/mês da dívida).
+- **Gráfico:** barras empilhadas Jan–Jun + Jul* (run-rate): ouro = fees LP realizadas na coleta, verde = lending líquido estimado; tooltip com total do mês.
+- **Dados:** array `RENDA_2026` — LP por **data de fechamento** (Jan $57 = SOL/USDC $23 + ETH/USDT $34 · Fev $17 = SOL/USDT $1 + ETH/USDC $16 · Jun $22,28 = WETH/USDC), lending = posição × APY documentado do mês (Jan–Mar 8,0 · Abr 8,4 · Mai 11,1 · Jun 7,9).
+- **Função:** `buildRendaPassiva()` (auto-destrutiva via `Chart.getChart`), chamada em `buildStaticCharts()` → reconstrói no toggle de tema.
+- **Manutenção:** a cada fechamento de mês, adicionar 1 linha no `RENDA_2026` (candidato a entrar no fluxo do `/fecharmes`).
+
+#### 2. Snapshot diário automático do patrimônio — commit `9417e15`
+- **`scripts/fetch-networth.js`**: patrimônio líquido do dia = Σ holdings×preço CoinGecko (já inclui colateral DeFi) + stables + LP (pooled+unc fees) − dívida — **posições/dívida/LP do `data.js`** (decisão: zero deps de AAVE/Kamino API num cron não-assistido; deriva de juros ~$4/mês é aceitável). Upsert 1 ponto/dia em `networth-history.json`, retry backoff p/ 429 (30/60/90s), sanity check de faixa ($1k–$1M). **Sem secrets.**
+- **`.github/workflows/networth.yml`**: cron `40 9 * * *` (~06:40 BRT, após o onchain) + `workflow_dispatch`; commit→rebase→push se mudou. **Action confirmada rodando** (commits automáticos "data: snapshot diário do patrimônio" já no histórico).
+- **`networth-history.json`** semeado: 08/07/2026 → **$6.728,96** (gross $6.358,38 + stables $1.601,26 + lp $343,62 − debt $1.574,30), preços BTC/ETH/SOL gravados junto.
+- **Testado:** rodado 2× local — retry recuperou de 429; upsert não duplica o mesmo dia.
+- **Próximo passo (registrado):** com ~2 semanas de pontos, plugar a curva diária na Evolução Patrimonial (drawdown/vol reais; aposenta o print mensal p/ curva).
+
+#### 3. `portfolio_analytics.html` — Benchmark CDI/IPCA na Evolução Patrimonial — commit `59a73e6`
+- **2 linhas novas no gráfico (só na régua USD):** azul = os **mesmos aportes mensais** rendendo CDI (`b_t = (b_{t-1}+aporte_t)×(1+i_mês)`); roxa tracejada = aportes corrigidos pelo IPCA. Em BTC/ETH as linhas **somem** (validado).
+- **Taxas:** `CDI_MONTHLY_BY_YEAR` = {2022:0.98, 2023:1.03, 2024:0.87, 2025:1.11, 2026:1.10} %a.m. · `IPCA_MONTHLY_BY_YEAR` = {0.47, 0.38, 0.39, 0.39, 0.36} (médias mensais por ano, B3/BCB/IBGE). **Manutenção: 1 linha/ano.**
+- **Nota dinâmica** sob o gráfico responde "estou batendo a renda fixa?": CDI hoje **$12.764** vs patrimônio → **−36% vs CDI**; IPCA $11.011. Aproximação documentada (câmbio constante — CDI é BRL, curva é USD).
+- **Nota técnica:** a série herda o salto do ponto ao vivo do Capital Aportado (gap conhecido wealthCurve $7.100 vs canônico ~$10k) — consistente com a linha cinza exibida; direção conservadora.
+- Helper: `_fixedIncomeSeries(labels, invested, ratesByYear)` antes de `buildWealthEvolution()`.
+
+#### 4. `ferramentas.html` — Aba Fiscal (custo em BRL & IR) — commit `f83636b`
+- **Dados extraídos das planilhas** `Custo_BRL_Consolidado_Lucas.xlsx` / `Custo_Aquisicao_BRL_Lucas.xlsx` (lidas via Python/openpyxl): total fiat→cripto **R$ 35.498,19** (Binance 29.664,20 + OKX 5.065,50), por token: BTC 0,00337 @ R$ 296.174/un · ETH 0,3872 @ R$ 15.096 · SOL 1,012 @ R$ 903,63 · ADA 307,99 @ R$ 12,06 · XAI 79 @ R$ 1,29 · USDT 2.576,24 @ R$ 5,41 · USDC 531,13 @ R$ 5,46 · BUSD 1.231,66 @ R$ 5,22 · DOT 2,97 · BNB 0,1115. Câmbio médio de entrada via stables: **R$ 5,36/USD**.
+- **Aba nova** entre Ciclo e Semanal (11 abas agora): 4 KPIs (aportado R$ 35.498 · câmbio entrada 5,36 · patrimônio hoje em BRL **ao vivo** · resultado em BRL) + tabela de entradas por token + bloco IR (Bens e Direitos grupo 08 códigos 01/02/03, declarar pelo custo, obrigatório ≥ R$ 5k por tipo; isenção R$ 35k/mês nacional; Lei 14.754/2023 15% exterior; IN 1888 > R$ 30k/mês; permuta cripto↔cripto conta como alienação) + disclaimer.
+- **JS:** IIFE `window.Fiscal` lazy (`Fiscal.open()` no `switchTab`, padrão do Ciclo) — `FISCAL_ENTRADAS`/`APORTADO_BRL` estáticos + fetch CoinGecko `usd,brl` (cache 5min `bc-fiscal-prices`; câmbio = tether.brl/tether.usd; retry na próxima abertura se falhar). i18n `tab-fiscal` (Fiscal/Tax).
+- **Achado da validação:** patrimônio R$ 35.387 ($6.907 × câmbio 5,12) → **−0,3% em BRL** — em reais Lucas está no break-even (entrou a câmbio 5,36, dólar caiu p/ 5,12 amortecendo o bear em USD).
+- **Manutenção:** novos extratos das CEX → atualizar `FISCAL_ENTRADAS` + `APORTADO_BRL`.
+
+### Dados atualizados
+Nenhuma posição alterada. Novos dados derivados: `networth-history.json` (série diária, cresce sozinho via Action) e constantes históricas (RENDA_2026, CDI/IPCA, FISCAL_ENTRADAS).
+
+### Bugs corrigidos
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| USDS sem preço ao vivo em todo o site (fallback fixo $1 — **depeg ficaria invisível**) | CoinGecko **renomeou** o ID `usds-stablecoin` → `usds`; o antigo não retorna nada | `sed` em `data.js`, `index.html`, `pools.html`, `portfolio_analytics.html` (7 ocorrências) — commit `9417e15` |
+| Workflow networth: `git pull --rebase` após `git add` falharia com staged changes | Ordem errada no yml | Reordenado: add → commit → pull --rebase → push |
+| Script networth 429 na primeira execução | Burst do free tier CoinGecko | `fetchPrices` com retry/backoff 30/60/90s |
+
+### Observações operacionais
+- **Screenshots de index/portfolio/ferramentas via preview travam** (timeout 30s) — ambiental (animações); validar via JS/DOM em vez de screenshot.
+- Agora são **duas Actions commitando de manhã** (onchain 09:20 UTC + networth 09:40 UTC) → **sempre `git pull --rebase` antes de trabalhar local** (padrão já usado: stash do emprestimos.html → rebase → push → pop).
+- Ambiente de preview mudou entre retomadas de sessão (`mcp__Claude_Preview__*` → `mcp__Claude_Browser__*` na porta dinâmica).
+
+### O que ainda falta
+- **Curva diária na Evolução Patrimonial** — plugar `networth-history.json` quando houver ~2 semanas de pontos
+- **`RENDA_2026`** — adicionar linha a cada fechamento de mês (considerar incluir no `/fecharmes`)
+- **`CDI_MONTHLY_BY_YEAR`/`IPCA_MONTHLY_BY_YEAR`** — atualizar 1×/ano (e a estimativa 2026 no fim do ano)
+- **`FISCAL_ENTRADAS`/`APORTADO_BRL`** — atualizar ao importar novos extratos das CEX
+- **Registro Histórico em pools.html** — decidir se reconstrói a tabela (28 pools) ou remove `buildPoolTable()` de vez (pendência da revisão de 08/07)
+- **`emprestimos.html`** — segue bundle (não editável à mão); edição local do Lucas preservada não-commitada
+- **Reconciliar `wealthCurve.invested`** ($7.100) com o total canônico (~$10k) — afeta a precisão do último ponto do CDI/IPCA e do Capital Aportado
+
+---
+
+Atualizado: 10/07/2026 — **4 módulos novos de dashboard PF**: Renda Passiva Realizada (livro-razão mensal + cobertura dos juros 380%), Snapshot diário automático do patrimônio (Action `networth.yml` → `networth-history.json`, 1º ponto $6.728,96), Benchmark CDI/IPCA na Evolução Patrimonial (−36% vs CDI), aba **Fiscal** em ferramentas (R$ 35.498 aportados, câmbio entrada 5,36, **−0,3% em BRL** = break-even em reais); fix cgId `usds-stablecoin`→`usds` (depeg ficaria invisível); item 3 (Telegram) removido por decisão do Lucas
