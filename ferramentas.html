@@ -701,6 +701,7 @@ body, input, button, select, textarea {
  <button class="tab" onclick="switchTab('evolucao',this)" data-i18n="tab-evolucao">Evolução</button>
  <button class="tab" onclick="switchTab('apyscanner',this)" data-i18n="tab-apy">Pools APY</button>
  <button class="tab" onclick="switchTab('ciclo',this)" data-i18n="tab-ciclo">Ciclo</button>
+ <button class="tab" onclick="switchTab('fiscal',this)" data-i18n="tab-fiscal">Fiscal</button>
  <button class="tab" onclick="switchTab('semanal',this)" data-i18n="tab-semanal">Semanal</button>
  </div>
 
@@ -1945,6 +1946,84 @@ body, input, button, select, textarea {
 </div>
 
 <!-- ══════════════════════════════════════════════
+     TAB — FISCAL (custo em BRL + IR)
+     ══════════════════════════════════════════════ -->
+<div class="panel" id="panel-fiscal">
+  <div style="margin:6px 0 8px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);">Imposto de Renda · Base BRL</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;line-height:1.1;margin:6px 0 4px;">Fiscal — Custo em Reais &amp; IR</div>
+    <div style="font-size:12px;color:var(--muted);max-width:760px;line-height:1.6;">Consolidação das conversões fiat→cripto (Binance + OKX, out/2021 → mai/2026) — o custo de aquisição <b>em reais</b> que a Receita enxerga. Fonte: extratos das CEX consolidados em 11/05/2026.</div>
+  </div>
+
+  <!-- KPIs -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin:18px 0 1px;">
+    <div style="background:var(--surface);padding:20px 18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Capital Fiat Aportado</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);line-height:1;">R$ 35.498</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;">Binance R$ 29.664 + OKX R$ 5.066 · até 08/05/26</div>
+    </div>
+    <div style="background:var(--surface);padding:20px 18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Câmbio Médio de Entrada</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--text);line-height:1;">R$ 5,36</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;">por USD · via stables (USDT/BUSD/USDC)</div>
+    </div>
+    <div style="background:var(--surface);padding:20px 18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Patrimônio Hoje (BRL)</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);line-height:1;" id="fx-now">—</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;" id="fx-now-sub">carregando preços…</div>
+    </div>
+    <div style="background:var(--surface);padding:20px 18px;border-left:2px solid var(--accent);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Resultado em BRL</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;line-height:1;" id="fx-result">—</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;" id="fx-result-sub">patrimônio − capital aportado</div>
+    </div>
+  </div>
+
+  <!-- Tabela de entradas por token -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-top:none;padding:18px;margin-bottom:14px;overflow-x:auto;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Entradas fiat→cripto por token (custo de aquisição em BRL)</div>
+    <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11px;">
+      <thead><tr style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.12em;">
+        <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);">Token</th>
+        <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);">Qty comprada</th>
+        <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);">BRL gasto</th>
+        <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);">Preço médio (BRL)</th>
+      </tr></thead>
+      <tbody id="fx-table"><!-- populado via JS (FISCAL_ENTRADAS) --></tbody>
+    </table>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:10px;line-height:1.6;">
+      * Só conversões <b>fiat→cripto</b> (BRL saindo do banco). Compras cripto↔cripto não geram custo novo em BRL — o custo migra da stable usada.<br>
+      * BUSD/DOT/BNB não estão mais em carteira (convertidos depois) — o custo deles migrou para os ativos atuais via trades.
+    </div>
+  </div>
+
+  <!-- Bloco IR -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Declaração anual — Bens e Direitos</div>
+      <ul style="font-size:11.5px;line-height:1.8;color:var(--text);padding-left:16px;">
+        <li>Grupo <b>08 — Criptoativos</b>: código <b>01</b> BTC · <b>02</b> altcoins (ETH, SOL, ADA…) · <b>03</b> stablecoins.</li>
+        <li>Declarar pelo <b>custo de aquisição em BRL</b> — nunca pelo valor de mercado.</li>
+        <li>Discriminação sugerida: <i>"X,XX unidades de [ativo] adquiridas via [exchange], custo total R$ Y"</i>.</li>
+        <li>Obrigatório declarar cada tipo de criptoativo cujo custo ≥ <b>R$ 5.000</b>.</li>
+      </ul>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Vendas &amp; reporte mensal</div>
+      <ul style="font-size:11.5px;line-height:1.8;color:var(--text);padding-left:16px;">
+        <li>Alienações até <b>R$ 35 mil/mês</b> (exchange nacional/autocustódia): ganho <b>isento</b>; acima, GCAP 15%+.</li>
+        <li><b>Lei 14.754/2023</b>: cripto em exchange <b>estrangeira</b> → 15% anual sobre o ganho, sem isenção mensal (a partir de 2024).</li>
+        <li><b>IN 1888</b>: exchange nacional reporta sozinha; operações no exterior/P2P &gt; <b>R$ 30 mil/mês</b> → você reporta via e-CAC.</li>
+        <li>Permuta cripto↔cripto <b>conta</b> como alienação para a Receita.</li>
+      </ul>
+    </div>
+  </div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:28px;">
+    * Conteúdo informativo — não é aconselhamento fiscal. Confirme regras vigentes com contador. Dados das planilhas Custo_*.xlsx (raiz do repo); ao importar novos extratos das CEX, atualizar FISCAL_ENTRADAS no script desta aba.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
      TAB 8 — DIÁRIO SEMANAL DE GESTÃO
      ══════════════════════════════════════════════ -->
 <div class="panel" id="panel-semanal">
@@ -2093,7 +2172,89 @@ function switchTab(id, btn){
  if(id==='evolucao') setTimeout(renderEvoChart,100);
  if(id==='semanal') swInitWeek();
  if(id==='ciclo' && window.Ciclo) Ciclo.open();
+ if(id==='fiscal' && window.Fiscal) Fiscal.open();
 }
+
+// ══════════════════════════════════════════════
+// FISCAL — custo em BRL & IR (aba Fiscal)
+// Fonte estática: Custo_BRL_Consolidado_Lucas.xlsx (Resumo, 11/05/2026).
+// Ao importar novos extratos das CEX, atualizar FISCAL_ENTRADAS + APORTADO_BRL.
+// ══════════════════════════════════════════════
+window.Fiscal = (function(){
+  var APORTADO_BRL = 35498.19;   // total Binance 29.664,20 + OKX 5.065,50 (fiat→cripto)
+  var FISCAL_ENTRADAS = [
+    { t:'BTC',  qty:'0,00337',    brl:998.11,   avg:'296.174,15' },
+    { t:'ETH',  qty:'0,3872',     brl:5844.80,  avg:'15.096,18'  },
+    { t:'SOL',  qty:'1,012',      brl:914.48,   avg:'903,63'     },
+    { t:'ADA',  qty:'307,99',     brl:3713.84,  avg:'12,06'      },
+    { t:'XAI',  qty:'79',         brl:101.52,   avg:'1,29'       },
+    { t:'USDT', qty:'2.576,24',   brl:13931.79, avg:'5,41'       },
+    { t:'USDC', qty:'531,13',     brl:2900.35,  avg:'5,46'       },
+    { t:'BUSD', qty:'1.231,66',   brl:6433.55,  avg:'5,22'       },
+    { t:'DOT',  qty:'2,97',       brl:352.77,   avg:'118,78'     },
+    { t:'BNB',  qty:'0,1115',     brl:306.99,   avg:'2.754,33'   }
+  ];
+  var _opened = false;
+  function renderTable(){
+    var tb = document.getElementById('fx-table');
+    if(!tb) return;
+    var fmtBrl = function(v){ return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+    var html = FISCAL_ENTRADAS.map(function(r){
+      return '<tr>'
+        + '<td style="padding:6px 8px;border-bottom:1px solid var(--border);font-weight:700;">'+r.t+'</td>'
+        + '<td style="padding:6px 8px;border-bottom:1px solid var(--border);text-align:right;">'+r.qty+'</td>'
+        + '<td style="padding:6px 8px;border-bottom:1px solid var(--border);text-align:right;">'+fmtBrl(r.brl)+'</td>'
+        + '<td style="padding:6px 8px;border-bottom:1px solid var(--border);text-align:right;color:var(--muted);">R$ '+r.avg+'</td>'
+        + '</tr>';
+    }).join('');
+    html += '<tr><td style="padding:8px;font-weight:700;color:var(--accent);">TOTAL</td><td></td>'
+      + '<td style="padding:8px;text-align:right;font-weight:700;color:var(--accent);">'+fmtBrl(APORTADO_BRL)+'</td><td></td></tr>';
+    tb.innerHTML = html;
+  }
+  async function fetchBrlNetWorth(){
+    var B = window.BAROLO_DATA;
+    if(!B) return;
+    var assets = B.holdings.concat(B.stables);
+    var ids = assets.map(function(a){ return a.cgId; }).filter(function(v,i,arr){ return arr.indexOf(v)===i; });
+    // cache 5 min (compartilha rate-limit com o resto da página)
+    var cache = null;
+    try{ cache = JSON.parse(localStorage.getItem('bc-fiscal-prices')||'null'); }catch(e){}
+    var prices;
+    if(cache && Date.now()-cache.ts < 5*60*1000){ prices = cache.data; }
+    else {
+      var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids.join(',')+'&vs_currencies=usd,brl');
+      if(!r.ok) throw new Error('CoinGecko '+r.status);
+      prices = await r.json();
+      try{ localStorage.setItem('bc-fiscal-prices', JSON.stringify({ts:Date.now(),data:prices})); }catch(e){}
+    }
+    var usdt = prices['tether']||{};
+    var rate = (usdt.brl && usdt.usd) ? usdt.brl/usdt.usd : (B.brlRate||4.95);
+    var grossUsd = assets.reduce(function(s,a){ var p=prices[a.cgId]; return s + (p&&p.usd ? a.qty*p.usd : 0); }, 0);
+    var uni = (B.defi&&B.defi.uniswapV3)||{};
+    var netUsd = grossUsd + ((uni.pooled||0)+(uni.uncollectedFees||0)) - B.debt.total;
+    var netBrl = netUsd * rate;
+    var s = function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+    var fmtBrl0 = function(v){ return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); };
+    s('fx-now', fmtBrl0(netBrl));
+    s('fx-now-sub', '$'+Math.round(netUsd).toLocaleString('pt-BR')+' × câmbio R$ '+rate.toFixed(2));
+    var res = netBrl - APORTADO_BRL;
+    var pct = res/APORTADO_BRL*100;
+    var el = document.getElementById('fx-result');
+    if(el){ el.textContent = (res>=0?'+':'−')+fmtBrl0(Math.abs(res)); el.style.color = res>=0?'var(--green)':'var(--red)'; }
+    s('fx-result-sub', (pct>=0?'+':'')+pct.toFixed(1)+'% sobre R$ 35.498 aportados');
+  }
+  function open(){
+    if(_opened){ return; }
+    _opened = true;
+    renderTable();
+    fetchBrlNetWorth().catch(function(e){
+      var s=document.getElementById('fx-now-sub');
+      if(s) s.textContent='preços indisponíveis — recarregue a aba';
+      _opened = false; // permite retry na próxima abertura
+    });
+  }
+  return { open:open };
+})();
 
 // ══════════════════════════════════════════════
 // LIVE PRICES
@@ -3881,6 +4042,7 @@ var LANG_STRINGS = {
   'tab-evolucao':  {pt:'Evolução',    en:'Evolution'},
   'tab-apy':       {pt:'Pools APY',   en:'Pools APY'},
   'tab-ciclo':     {pt:'Ciclo',       en:'Cycle'},
+  'tab-fiscal':    {pt:'Fiscal',      en:'Tax'},
   // liquidação — AAVE labels
   'lbl-eth-col':   {pt:'ETH colateral (ETH)',  en:'ETH collateral (ETH)'},
   'lbl-usdt-col':  {pt:'USDT colateral ($)',   en:'USDT collateral ($)'},

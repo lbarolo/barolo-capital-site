@@ -122,7 +122,7 @@ Contagem de definições por página (vocabulário próprio de cada uma): `portf
 
 ### 4.5 Abas (tabs)
 - **portfolio_analytics** — `switchTab(name, btn)`; abas: `Ativos · Performance · Métricas · Risco & Convexidade · DeFi & Mercado`. Aba salva em `localStorage['bc-active-tab']`.
-- **ferramentas** — `switchTab(id, btn)` (assinatura diferente!); 10 abas: `Crenças · Liquidação · Cenários · Sizing & Risk · Diário DeFi · Alertas · Evolução · Pools APY · Ciclo · Semanal`. Painéis: `#panel-*`.
+- **ferramentas** — `switchTab(id, btn)` (assinatura diferente!); 11 abas: `Crenças · Liquidação · Cenários · Sizing & Risk · Diário DeFi · Alertas · Evolução · Pools APY · Ciclo · Fiscal · Semanal`. Painéis: `#panel-*`. Aba **Fiscal**: custo BRL + IR — dados estáticos `FISCAL_ENTRADAS`/`APORTADO_BRL` no IIFE `window.Fiscal` (fonte: planilhas `Custo_*.xlsx` na raiz; atualizar ao importar novos extratos das CEX); patrimônio em BRL ao vivo via `Fiscal.open()`.
 - ⚠️ As duas `switchTab` têm **assinaturas diferentes** — não copie de uma pra outra.
 
 ### 4.6 Tooltips de gráfico (Chart.js) — bolinha cheia da cor da série
@@ -175,7 +175,7 @@ Anti-flash de tema: IIFE inline no `<head>` de cada página lê `bc-theme` e apl
 | **index.html** | Landing pública (EN padrão, toggle PT) | âncoras + hamburger | Hero editorial 2 colunas + painel "Barolo · Live" (φ/razão áurea, espiral, aurora, efeito de digitação), token board com sparklines, widget de gwei fixo, seções `01 Sobre · 02 Portfolio · 03 Strategies · 04 Contact`. JS: `initTicker`, `toggleIndexLang`, sparklines, φ-spiral. |
 | **portfolio_analytics.html** | Dashboard principal (PT) | dashboard | Exec bar, abas (Ativos/Performance/Métricas/Risco & Convexidade/DeFi & Mercado), donut de alocação, curva de patrimônio, heatmap, drawdown, DCA, Evolução Patrimonial (com **benchmark CDI/IPCA** — `CDI_MONTHLY_BY_YEAR`/`IPCA_MONTHLY_BY_YEAR` + `_fixedIncomeSeries()`, só na régua USD; atualizar as taxas 1×/ano), **Renda Passiva Realizada** (livro-razão mensal, `RENDA_2026` + `buildRendaPassiva()`, aba DeFi & Mercado), régua USD/BRL/BTC/ETH, KPI "vs HODL", ~32 canvases Chart.js. `toggleTheme` reconstrói gráficos. |
 | **pools.html** | Pools de liquidez + DeFi (PT) | dashboard (**2 navs**) | Meta 5%, P&L YTD, card pool ativa (WETH/USDC **Base**), gráficos, iframes lazy (Revert/GeckoTerminal/AAVE), explorador de APR. Array `POOLS`. |
-| **ferramentas.html** | Ferramentas + Diário (PT, toggle EN) | dashboard | 10 abas (calculadoras Kelly/Merton/Hedge/LevHedge, Liquidação, Cenários, Diário, Alertas, **Ciclo** on-chain BTC). `window.Ciclo`, `switchTab(id,btn)`. |
+| **ferramentas.html** | Ferramentas + Diário (PT, toggle EN) | dashboard | 11 abas (calculadoras Kelly/Merton/Hedge/LevHedge, Liquidação, Cenários, Diário, Alertas, **Ciclo** on-chain BTC, **Fiscal** custo BRL/IR). `window.Ciclo`, `window.Fiscal`, `switchTab(id,btn)`. |
 | **relatorio.html** | Relatório/PDF (PT) | dashboard (compacto, `no-print`) | Resumo executivo, tabela de ativos, posições DeFi, evolução, `window.print()` com `@media print`. Menor/mais limpo. |
 | **emprestimos.html** | Lending AAVE/Kamino | (no bundle) | ⚠️ **Bundle minificado** — não editar aqui. Fonte + rebuild. |
 
