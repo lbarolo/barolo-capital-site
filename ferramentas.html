@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
+<script src="diario.js"></script><!-- cópia git-tracked do Diário DeFi (window.BAROLO_DIARY); merge com localStorage no load -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <script>
 // Theme init — runs before render to avoid flash
@@ -1456,6 +1457,7 @@ body, input, button, select, textarea {
 
  <div style="display:flex;gap:8px;">
  <button class="btn btn-primary" onclick="saveEntry()" data-i18n="btn-save-entry">Salvar entrada</button>
+          <button class="btn" onclick="exportDiaryToFile()" style="color:var(--accent);border-color:var(--accent);" title="Copia o diário para colar no chat do Claude e salvar em diario.js — permite acesso por tarefas automatizadas (ex: standup diário)">📤 Sincronizar</button>
           <button class="btn" onclick="clearAllDiary()" style="color:var(--red);border-color:var(--red);" title="Apagar todas as entradas do diário" data-i18n="btn-clear-history">Limpar histórico</button>
  <button class="btn btn-sm" style="background:none;border:1px solid var(--border);color:var(--muted);" onclick="clearForm()" data-i18n="btn-clear">Limpar</button>
  </div>
@@ -2133,7 +2135,19 @@ var STORAGE_SNAP = 'bc-snapshots-v2';
 var STORAGE_ALERTS= 'bc-alerts-v2';
 var STORAGE_ALOG = 'bc-alert-log-v2';
 
-var diaryEntries = JSON.parse(localStorage.getItem(STORAGE_DIARY)||'[]');
+var diaryEntries = (function(){
+ // Merge diario.js (cópia git-tracked, lida por sessões sem browser) com o
+ // localStorage (armazenamento vivo). localStorage vence em conflito de id.
+ var fileEntries = (window.BAROLO_DIARY || []);
+ var localEntries = JSON.parse(localStorage.getItem(STORAGE_DIARY)||'[]');
+ var map = {};
+ fileEntries.forEach(function(e){ map[e.id] = e; });
+ localEntries.forEach(function(e){ map[e.id] = e; });
+ var merged = Object.keys(map).map(function(k){ return map[k]; });
+ merged.sort(function(a,b){ return b.id - a.id; });
+ localStorage.setItem(STORAGE_DIARY, JSON.stringify(merged));
+ return merged;
+})();
 var snapshots = JSON.parse(localStorage.getItem(STORAGE_SNAP)||'[]');
 var alertLog = JSON.parse(localStorage.getItem(STORAGE_ALOG)||'[]');
 var currentDiaryFilter = 'all';
@@ -3012,6 +3026,34 @@ function toggleExtraFields(type) {
  const tf = document.getElementById('trade-fields');
  if (lf) lf.style.display = type === 'lending' ? 'block' : 'none';
  if (tf) tf.style.display = type === 'trade'   ? 'block' : 'none';
+}
+
+function exportDiaryToFile(){
+ var sorted = diaryEntries.slice().sort(function(a,b){ return a.id - b.id; });
+ var header = "/* diario.js — Diário DeFi (fonte compartilhada, git-tracked)\n"
+   + "   Sincronizado via botão \"Sincronizar\" em ferramentas.html em "
+   + new Date().toLocaleString('pt-BR') + ".\n"
+   + "   Cole este conteúdo no chat do Claude Code e peça para salvar/commitar\n"
+   + "   em diario.js na raiz do repo — assim tarefas automatizadas (ex: o\n"
+   + "   standup diário) conseguem ler o Diário DeFi sem acesso ao navegador. */\n";
+ var content = header + "window.BAROLO_DIARY = " + JSON.stringify(sorted, null, 2) + ";\n";
+ var done = function(msg){ if (typeof showToast === 'function') showToast(msg, 3500); else alert(msg); };
+ if (navigator.clipboard && navigator.clipboard.writeText) {
+   navigator.clipboard.writeText(content).then(function(){
+     done('📋 Diário copiado — cole no chat para o Claude salvar em diario.js');
+   }).catch(function(){ downloadDiaryFile(content, done); });
+ } else {
+   downloadDiaryFile(content, done);
+ }
+}
+
+function downloadDiaryFile(content, done){
+ var blob = new Blob([content], {type:'text/javascript'});
+ var url = URL.createObjectURL(blob);
+ var a = document.createElement('a');
+ a.href = url; a.download = 'diario.js'; a.click();
+ URL.revokeObjectURL(url);
+ done('💾 Clipboard indisponível — diario.js baixado, mande o arquivo pro Claude');
 }
 
 function clearAllDiary(){

@@ -3885,3 +3885,33 @@ Nenhuma posição alterada. Novos dados derivados: `networth-history.json` (sér
 ---
 
 Atualizado: 10/07/2026 — **4 módulos novos de dashboard PF**: Renda Passiva Realizada (livro-razão mensal + cobertura dos juros 380%), Snapshot diário automático do patrimônio (Action `networth.yml` → `networth-history.json`, 1º ponto $6.728,96), Benchmark CDI/IPCA na Evolução Patrimonial (−36% vs CDI), aba **Fiscal** em ferramentas (R$ 35.498 aportados, câmbio entrada 5,36, **−0,3% em BRL** = break-even em reais); fix cgId `usds-stablecoin`→`usds` (depeg ficaria invisível); item 3 (Telegram) removido por decisão do Lucas
+
+---
+
+## Sessão 11/07/2026 — `diario.js`: Diário DeFi acessível fora do navegador (standup automatizado)
+
+### Contexto
+O standup diário automatizado (`daily-standup-barolo`, roda sem o Lucas presente) tentou preencher a seção "REGISTRO" com o Diário DeFi e não conseguiu: as entradas do Diário DeFi (`ferramentas.html`) só existem no `localStorage` do navegador do Lucas — inacessível a uma sessão automatizada rodando no filesystem/CLI. Lucas pediu explicitamente para dar acesso a isso.
+
+### Implementado
+
+#### `diario.js` (NOVO, raiz do repo) — cópia git-tracked do Diário DeFi
+- Mesmo padrão do `data.js`: `window.BAROLO_DIARY = [...]`, carregado via `<script src="diario.js">` (funciona em `file://` e `https://`, ao contrário de `fetch()` que quebra por CORS em `file://`).
+- Começa **vazio** (`[]`) — não havia como extrair as entradas já existentes no `localStorage` do Lucas a partir de uma sessão sem navegador dele. Passa a ser preenchido dali pra frente via sincronização manual (abaixo).
+
+#### `ferramentas.html` — merge automático + botão "📤 Sincronizar"
+- `<script src="diario.js"></script>` adicionado no `<head>`, logo após `data.js`.
+- **Merge no load** (`diaryEntries`, linha ~2136): combina `window.BAROLO_DIARY` (arquivo) com `localStorage['bc-diary-v2']` (navegador) por `id`; **localStorage vence em conflito** (é sempre a versão mais recente); resultado ordenado (mais novo primeiro) e persistido de volta no `localStorage`. Zero mudança de comportamento pro Lucas — ele continua só usando o Diário normalmente.
+- **Botão "📤 Sincronizar"** (ao lado de "Salvar entrada"/"Limpar histórico"): `exportDiaryToFile()` serializa `diaryEntries` (ordenado por id crescente) no formato `window.BAROLO_DIARY = [...]` com um cabeçalho de instrução, copia para o clipboard (`showToast` de confirmação) com fallback de download do arquivo se o clipboard falhar (`downloadDiaryFile()`).
+- **Fluxo de sincronização (manual, como os prints de CEX/CoinGecko já funcionam neste projeto):** Lucas clica "Sincronizar" → cola o conteúdo copiado no chat do Claude Code → Claude salva/commita em `diario.js`. Testado no preview: merge dedupe/precedência OK, export gera o JS válido, zero erros de console.
+
+### ⚡ Instrução permanente para sessões futuras (inclusive automatizadas)
+**A partir de agora, para responder sobre o Diário DeFi (trades, decisões, observações — ex: seção REGISTRO do standup), leia `diario.js` na raiz do repo.** Se o Lucas não tiver sincronizado recentemente, o arquivo pode estar desatualizado ou vazio — nesse caso, diga isso explicitamente em vez de reportar "sem dados" sem explicação, e sugira que ele clique em "Sincronizar" na aba Diário DeFi.
+
+### O que ainda falta
+- **`diario.js` está vazio** — só passa a ter conteúdo real após o Lucas clicar em "Sincronizar" pela primeira vez e colar o resultado no chat
+- Pendências antigas mantidas (ver sessão 10/07): curva diária na Evolução Patrimonial, `RENDA_2026`, CDI/IPCA anual, `FISCAL_ENTRADAS`, Registro Histórico em pools.html, `emprestimos.html` bundle, reconciliar `wealthCurve.invested`
+
+---
+
+Atualizado: 11/07/2026 — `diario.js` criado (Diário DeFi git-tracked, padrão `data.js`); `ferramentas.html` faz merge automático arquivo+localStorage e ganhou botão "📤 Sincronizar"; sessões automatizadas (ex: standup diário) devem ler `diario.js` para a seção de registro/trades
