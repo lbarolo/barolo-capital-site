@@ -3888,6 +3888,67 @@ Atualizado: 10/07/2026 — **4 módulos novos de dashboard PF**: Renda Passiva R
 
 ---
 
+## Sessão 13/07/2026 — Mobile responsivo (1ª passada): 5 páginas sem overflow horizontal + nav mobile funcional
+
+### Contexto
+Mobile era o item historicamente adiado ("adiado por decisão do usuário" em várias sessões). Lucas pediu para **iniciar**. Regra inegociável combinada: **desktop 100% intocado** — tudo via `@media(max-width:768px)` (ou `auto-fit`/`minmax`, que preservam o desktop). Ele escolheu: fazer a **nav mobile dos dashboards** (item 1) e depois **seguir página por página** (opção "a"), commitando e validando cada uma. Validação via `mcp__Claude_Browser__*` no viewport `mobile` (375×812) — **screenshots travam** nessas páginas (animações), então medi tudo por JS/DOM (`scrollWidth−clientWidth`, culpados por `getBoundingClientRect`).
+
+### Diagnóstico inicial (@375px)
+- **portfolio**: overflow +329px, **nav quebrada** (links `display:none`, sem hambúrguer → não dá pra navegar). **index**: +301px, hambúrguer existe mas `nav-right` (login) estoura.
+- **Padrão descoberto**: os 4 dashboards têm o **CSS do hambúrguer** (dropdown + `@media(min-width:769px){.nav-hamburger{display:none}}`) mas **falta o elemento `<div class="nav-hamburger">` no markup** e não há função de toggle → hambúrguer morto. `relatorio` não tinha **nada** de nav mobile.
+
+### Implementado (fix comum: hambúrguer com toggle inline, sem depender de função JS)
+`<div class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">` — usa o CSS `.nav-links.open{display:flex}` que já existia.
+
+#### `index.html` (passo 1 · commit `9f763b6`)
+- `@media(max-width:600px)`: esconde os 2 inputs de login + Enter do topo (`.nav-right .nav-input,.nav-right .nav-btn{display:none}`) — a landing é pública e os dashboards abrem por URL (login é atalho de desktop). Mantém logo + PT + tema + hambúrguer (já existia no index).
+- `.token-grid`: `repeat(2,minmax(0,1fr))` + `min-width:0` nos cards — corrige **blowout clássico** (card forçava coluna 249px num container de 327px, 2ª col cortada).
+- Resultado: overflow 329→**0** (real, medido sem o guard), 0 cards cortados.
+
+#### `portfolio_analytics.html` (passo 2 · commit `1f6fcf9`)
+- Nav: hambúrguer adicionado ao markup (o CSS/dropdown já existia). `.nav-right .btn-sm:not(#currencyBtn):not(#themeBtn){display:none}` esconde PDF/Relatório no mobile.
+- Conteúdo: `.container,#mainContent{max-width:100vw;overflow-x:hidden}`; `.card` e `#heatmapGrid` rolam internamente (`overflow-x:auto`); `#perfStats` 5→2 col. Driver real do overflow era a **tabela do heatmap** (834px) — agora comprime pra caber sem perder meses.
+- Resultado: as **5 abas com `pageScrollsX=0`**.
+
+#### `pools.html` (passo 3 · commit `f3da1fe`)
+- 🐛 **BUG corrigido**: pools tinha **DOIS `<nav>` idênticos** empilhados em `position:fixed;top:0` (sobrepostos — visualmente 1, mas 2 no DOM; quebrava o `querySelector('.nav-links')` do toggle). **Removido o duplicado** — desktop inalterado (já se via só um).
+- Nav: hambúrguer no nav único; esconde PDF/Relatório. Container recorta; `.card/.pool-card/tabelas` rolam internamente. Overflow real **0**.
+
+#### `ferramentas.html` (passo 4 · commit `c6a438c`)
+- Nav: hambúrguer + esconde PDF/Relatório.
+- **`.tabs` (11 abas)**: `overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none` — rolam horizontalmente em vez de estourar.
+- **Fiscal**: os grids inline `repeat(4,1fr)` (KPIs) e `1fr 1fr` (IR) → `repeat(auto-fit,minmax(150px/260px,1fr))` — colapsam sozinhos no mobile e ficam **idênticos no desktop** (media query não sobrescreve `style` inline; `auto-fit` resolve sem `!important`).
+- Resultado: **todas as 11 abas com overflow 0**.
+
+#### `relatorio.html` (passo 5 · commit `4a8da24`)
+- Não tinha nav mobile nenhum (só `@media print`). Adicionado o padrão completo (CSS do hambúrguer + markup + toggle) adaptado ao **nav variante** (50px fixo).
+- Tabelas largas: `div:has(> table){overflow-x:auto}` — o **parent** rola e a tabela mantém o alinhamento das colunas (melhor que `display:block` na table). A tabela de retornos (596px) rola internamente. `@media print`/layout A4 preservados.
+
+### Bugs corrigidos
+| Bug | Causa | Fix |
+|-----|-------|-----|
+| Dashboards sem navegação no mobile | CSS do hambúrguer existia mas o `<div class="nav-hamburger">` faltava no markup (e sem toggle) | Adicionado o elemento + toggle inline nos 4 dashboards |
+| `pools.html` com 2 `<nav>` idênticos empilhados | Duplicação acidental (ambos `fixed;top:0`, sobrepostos) | Removido o duplicado (desktop já mostrava só um) |
+| Overflow horizontal em todas as páginas no mobile | grids `repeat(N,1fr)` com blowout, tabelas largas, nav-right largo, 11 abas sem wrap | `minmax(0,1fr)`/`auto-fit`, scroll interno de tabelas/cards, esconder itens não-essenciais do nav, `.tabs` com scroll-x |
+
+### Dados atualizados
+Nenhum dado de posição — só CSS/markup responsivo. `data.js` intocado.
+
+### O que ainda falta
+- **2ª passada de polimento mobile** (a combinar): tamanhos de fonte/espaçamento afinados pra tela pequena, altura dos gráficos otimizada, alvos de toque maiores, e decidir o **login no mobile** (hoje escondido no index — dashboards abrem por URL).
+- **`emprestimos.html`** — segue bundle (não editável à mão); ficou de fora do mobile.
+- Pendências antigas mantidas: curva diária na Evolução Patrimonial (~2 semanas de pontos), Registro Histórico de pools (reconstruir tabela das 28 ou aposentar `buildPoolTable()`), integração CSVs CEX já feita na aba Fiscal.
+- **Observação de ambiente**: `mcp__Claude_Preview__*` virou `mcp__Claude_Browser__*` (porta dinâmica); `computer{action:screenshot}` trava (30s) nessas páginas — validar via `javascript_tool`/DOM.
+
+### Commits (pushados direto na main)
+`9f763b6` index · `1f6fcf9` portfolio · `f3da1fe` pools (+ remove nav duplicado) · `c6a438c` ferramentas · `4a8da24` relatorio
+
+---
+
+Atualizado: 13/07/2026 — **Mobile 1ª passada**: 5 páginas (index + 4 dashboards) sem overflow horizontal no mobile (medido real, `pageScrollsX=0`), **nav mobile funcional** (hambúrguer morto ressuscitado nos 4 dashboards + criado no relatorio), 11 abas do ferramentas rolam, tabelas/heatmap rolam internamente, Fiscal com `auto-fit`; **bug corrigido**: `pools.html` tinha 2 `<nav>` duplicados. Desktop 100% intocado (`@media(max-width:768px)`). Falta 2ª passada de polimento fino; `emprestimos` (bundle) fora
+
+---
+
 ## Sessão 11/07/2026 — `diario.js`: Diário DeFi acessível fora do navegador (standup automatizado)
 
 ### Contexto
