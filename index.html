@@ -1048,6 +1048,16 @@ footer span:first-of-type{margin-right:auto}
   .hero-title{font-size:clamp(38px,8vw,56px)}
   .token-grid{grid-template-columns:repeat(2,1fr)}
   .section-num{font-size:34px;right:21px;top:21px}
+  /* nav mobile: esconde login do topo (landing pública; dashboards acessíveis por URL) — mantém PT + tema + menu */
+  nav{padding:0 14px;gap:8px}
+  .nav-right{gap:6px}
+  .nav-right .nav-input,.nav-right .nav-btn{display:none}
+  /* grid de tokens: minmax(0,1fr) evita blowout (card forçava coluna > container) */
+  .token-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .token-card{min-width:0}
+  .token-card .token-info,.token-card .token-name,.token-card .token-quote{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  /* guarda contra scroll horizontal no mobile */
+  html,body{overflow-x:hidden}
 }
 
 /* ════ Elegância viva — movimento sutil ════ */
