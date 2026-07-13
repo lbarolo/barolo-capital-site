@@ -202,6 +202,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
  .nav-links a:last-child{border-bottom:none;}
  .nav-hamburger{display:flex;}
+ /* nav mobile: mantém só tema + menu (PDF/Relatório são conveniênc. de desktop) */
+ .nav-right .btn-sm:not(#themeBtn){display:none;}
+ nav{padding:0 14px;}
+ html,body{overflow-x:hidden;}
+ .container{max-width:100vw;overflow-x:hidden;}
+ /* cards e tabelas largas rolam internamente em vez de esticar a página */
+ .card,.pool-card,.uni-pools-wrap,table{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 }
 @media(min-width:769px){
  .nav-hamburger{display:none!important;}
@@ -472,37 +479,8 @@ if(window.Chart){
     <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
     <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
   </div>
-</nav>
-<nav>
-  <a class="nav-brand" href="index.html">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-44 0 254 30" width="148" height="21" style="display:block;">
-      <defs>
-        <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="transparent"/>
-          <stop offset="18%" stop-color="#c9a050"/>
-          <stop offset="82%" stop-color="#c9a050"/>
-          <stop offset="100%" stop-color="transparent"/>
-        </linearGradient>
-      </defs>
-      <polygon points="-34,25 -22,7 -10,25" fill="#9a7228"/><polygon points="-25,25 -16,13 -7,25" fill="#c9a050"/><line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
-      <text x="105" y="20"
-        font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
-        font-weight="600" font-size="14" letter-spacing="3"
-        fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
-      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
-    </svg>
-  </a>
-  <div class="nav-links">
-    <a href="index.html" data-i18n="nav-home">Início</a>
-    <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
-    <a href="pools.html" class="active" data-i18n="nav-pools">Pools &amp; DeFi</a>
-    <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
-    <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
-  </div>
-  <div class="nav-right">
-    <button class="btn-sm" onclick="window.print()" title="Exportar como PDF">📄 PDF</button>
-    <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
-    <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
+  <div class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu" title="Menu">
+    <span></span><span></span><span></span>
   </div>
 </nav>
 
