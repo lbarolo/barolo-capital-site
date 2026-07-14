@@ -578,21 +578,21 @@ if(window.Chart){
  <!-- Toolbar -->
  <div class="revert-toolbar">
  <div class="revert-title">
- <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ WETH/USDC</span>
- <span style="font-size:9px;color:var(--muted);">0.30% · Base</span>
- <span class="badge-warn">○ OUT-OF-RANGE</span>
+ <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ WETH/USDG</span>
+ <span style="font-size:9px;color:var(--muted);">0.01% · Robinhood Chain</span>
+ <span class="badge-green">● IN-RANGE</span>
  </div>
  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
- <a class="btn-open" href="https://revert.finance/" target="_blank" rel="noopener">
- ↗ Abrir Revert
+ <a class="btn-open" href="https://app.uniswap.org/positions" target="_blank" rel="noopener">
+ ↗ Abrir Uniswap
  </a>
  </div>
  </div>
 
  <!-- LP metrics bar — APR líquido pós-AAVE -->
  <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
- <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">—</div><div class="lp-ms" id="lp-pooled-sub">0.1800 WETH + 0.00 USDC</div></div>
- <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-apr-sub">fees / capital investido</div></div>
+ <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$338.91</div><div class="lp-ms" id="lp-pooled-sub">0.178 WETH + 8.67 USDG</div></div>
+ <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">111.83%</div><div class="lp-ms" id="lp-apr-sub">APR da pool · fee 0.01%</div></div>
  <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−5.38%</div><div class="lp-ms">USDC · taxa atual</div></div>
  <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
  </div>
@@ -605,6 +605,19 @@ if(window.Chart){
   <iframe id="revertFrame" data-src="https://revert.finance/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
   <div id="revertFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
     <p>⚠ Revert Finance bloqueado — <a href="https://revert.finance/" target="_blank" style="color:var(--gold);">abra em nova aba →</a></p>
+  </div>
+</div>
+
+<!-- Uniswap (posição ativa · Robinhood Chain) — abaixo do Revert -->
+<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:6px;">↓ Uniswap · interface da posição</div>
+<div class="iframe-wrap" id="uniActiveWrap" style="height:960px;border:1px solid var(--border);border-radius:8px;">
+  <div class="iframe-loading" id="uniActiveLoading" style="border-radius:8px;">
+    <div class="spinner"></div>
+    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
+  </div>
+  <iframe id="uniActiveFrame" data-src="https://app.uniswap.org/positions" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <div id="uniActiveFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+    <p>⚠ Uniswap bloqueia o embed (X-Frame-Options) — <a href="https://app.uniswap.org/positions" target="_blank" style="color:var(--gold);">abra em nova aba →</a></p>
   </div>
 </div>
 
@@ -1309,6 +1322,7 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
   var REVERT_ACCT = '#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6';
   var panels = [
     { id:'revertFrame',  loading:'revertLoading',  fallback:'revertFallback',  ms:15000, suffix:REVERT_ACCT },
+    { id:'uniActiveFrame', loading:'uniActiveLoading', fallback:'uniActiveFallback', ms:15000 },
     { id:'uniswapFrame', loading:'uniswapLoading',  fallback:'uniswapFallback',  ms:15000 },
     { id:'raydiumFrame', loading:'raydiumLoading',  fallback:'raydiumFallback',  ms:15000 },
     { id:'aaveFrame',    loading:'aaveAppLoading',   fallback:'aaveAppFallback',   ms:15000 }
@@ -1664,6 +1678,11 @@ function setRef(ref){
 
 // ── UNISWAP V3 LP LIVE DATA ──
 (async function fetchUniswapLPData() {
+  // ⚠ Pool Base DESMONTADA em 06/07/2026 → remontada na Robinhood Chain (WETH/USDG 0.01%).
+  // Fetch on-chain DESATIVADO: card estático (chain nova, sem RPC público/CORS confiável).
+  // Valores no HTML (lp-pooled/lp-apr) e em data.js uniswapV3. Reativar quando houver RPC + contratos.
+  return;
+  // eslint-disable-next-line no-unreachable
   // Pool ATIVA: WETH/USDC 0.30% na BASE (chain_id=8453) — aberta em 03/06/2026 (rollover da anterior)
   const NFT_MGR  = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base Uniswap V3 NonfungiblePositionManager
   const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
@@ -1916,6 +1935,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 .pbadge-base{background:rgba(79,168,255,0.15);color:#4fa8ff;}
 .pbadge-arb{background:rgba(88,130,210,0.15);color:#5882d2;}
 .pbadge-sol{background:rgba(20,241,149,0.15);color:#14F195;}
+.pbadge-rh{background:rgba(0,200,5,0.15);color:#00C805;}
 .pbadge-pol{background:rgba(168,85,247,0.15);color:#a855f7;}
 .pbadge-zk{background:rgba(128,128,255,0.15);color:#8080ff;}
 .pbadge-muted{background:rgba(128,128,128,0.1);color:var(--muted);}
@@ -2567,18 +2587,20 @@ var POOLS = [
   { pair:'RDNT/ETH 0.3%',  net:'Arbitrum', open:'06/12/2023', close:'27/12/2023', days:21,  capital:884,  fees:90,   il:0,   result:90,   status:'closed', lvr:0,    fcr:177.5, invGrowth:10.2, obs:'3345.90 RDNT entrada ($883.69). Mono ativo RDNT. 08/12: +48 RDNT + 0.0058 WETH. Mercado disparou 11/12, saiu do range. Compound 273.52 RDNT.' },
   // ── ATIVA ──
   { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'03/06/2026', days:99,  capital:365, fees:22.28, il:6.55, result:15.73, status:'closed', lvr:0,   fcr:30.9,  invGrowth:-0.57, obs:'Saiu do range em 03/06 com preço $1.821,67 < min $1.855,72 (100% WETH). Coletadas taxas e encerrada. Fee APR 32% realizado. il = fees − result (Revert 03/06).' },
+  // ── fechada 14/07/2026 — remontada na Robinhood ──
+  { pair:'WETH/USDC 0.3%', net:'Base', open:'03/06/2026', close:'14/07/2026', days:41, capital:329, fees:8.62, il:0, result:8.62, status:'closed', lvr:0, fcr:23.3, invGrowth:0, obs:'Desmontada 14/07/2026: remove liquidity → 0.1717 ETH + 47.22 USDC; USDC trocado por 0.0255 ETH (Uniswap V4); ~0.197 ETH bridgeado (Across V2) p/ a Robinhood Chain e remontado lá. Entrou 100% WETH na queda, acumulou ETH. Result = fees (valorização do ETH pertence ao holding, não à pool); fees ≈ última leitura uncollected.' },
   // ── ATIVA ──
-  { pair:'WETH/USDC 0.3%', net:'Base', open:'03/06/2026', close:'—', days:(function(){var d=new Date()-new Date('2026-06-03');return Math.max(1,Math.floor(d/86400000));})(), capital:329, fees:0, il:0, result:0, status:'active', lvr:0, fcr:0, invGrowth:0, obs:'Rollover da pool anterior no mesmo dia: entrada 0.18 WETH ($329 @ ETH $1.828) na borda inferior do range $1.822,61–$2.401,90. Saída gradual ETH→USDC; preço médio efetivo de saída ≈ $2.092. Abriu praticamente fora do range — só gera fees quando ETH > $1.823.' },
+  { pair:'WETH/USDG 0.01%', net:'Robinhood', open:'14/07/2026', close:'—', days:(function(){var d=new Date()-new Date('2026-07-14');return Math.max(1,Math.floor(d/86400000));})(), capital:340, fees:0.04, il:0, result:0, status:'active', lvr:0, fcr:0, invGrowth:0, obs:'Remontagem na Robinhood Chain (bridge Across V2 da Base, entrada 0.183 ETH ≈ $340). Posição 0.178 WETH + 8.67 USDG ($338,91). Range $1.852,38–$2.166,83, in-range. Fee tier 0.01% mas APR da pool ~112% e 1D/VOL ~30. Saída gradual ETH→USDG.' },
 ];
 
 // (Hidratação via cache do track.html removida — track.html não existe mais; POOLS é a fonte estática.)
 
 // ── Chart data derived from POOLS (single source of truth) ─────────────────
-var _netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff', Polygon:'#A855F7', ZkSync:'#8080ff' };
+var _netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff', Polygon:'#A855F7', ZkSync:'#8080ff', Robinhood:'#00C805' };
 var _poolLabel = function(p) {
   var yr = p.open.slice(-2);
   var base = p.pair.split(' ')[0];
-  var na = { Arbitrum:'ARB', Ethereum:'ETH', Solana:'SOL', Base:'BASE', Polygon:'POL', ZkSync:'ZKS' };
+  var na = { Arbitrum:'ARB', Ethereum:'ETH', Solana:'SOL', Base:'BASE', Polygon:'POL', ZkSync:'ZKS', Robinhood:'RH' };
   return base + '\n' + (na[p.net]||p.net.slice(0,3).toUpperCase()) + ' ' + yr;
 };
 var _chron = POOLS.slice().sort(function(a,b){
@@ -2622,7 +2644,7 @@ var _TOKEN_COLORS = {
 };
 var _NET_BADGE = {
   'Base':'pbadge-base','Ethereum':'pbadge-eth','Arbitrum':'pbadge-arb',
-  'Solana':'pbadge-sol','Polygon':'pbadge-pol','ZkSync':'pbadge-zk'
+  'Solana':'pbadge-sol','Polygon':'pbadge-pol','ZkSync':'pbadge-zk','Robinhood':'pbadge-rh'
 };
 
 function ttOpts() {
@@ -3131,7 +3153,7 @@ var _TOKEN_COLORS = {
 };
 var _NET_BADGE = {
   'Base':'pbadge-base','Ethereum':'pbadge-eth','Arbitrum':'pbadge-arb',
-  'Solana':'pbadge-sol','Polygon':'pbadge-pol','ZkSync':'pbadge-zk'
+  'Solana':'pbadge-sol','Polygon':'pbadge-pol','ZkSync':'pbadge-zk','Robinhood':'pbadge-rh'
 };
 
 function buildPoolCards() {
@@ -3409,7 +3431,7 @@ function buildFCR() {
     label: _poolLabel(p), fees: p.fees, capital: p.capital, days: p.days, net: p.net, fcr: p.fcr
   })).sort((a, b) => b.fcr - a.fcr);
 
-  const netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff' };
+  const netColors = { Arbitrum:'#5882d2', Solana:'#14F195', Ethereum:'#E8773D', Base:'#4fa8ff', Robinhood:'#00C805' };
   const colors = pools_fcr.map(p =>
     p.fees === 0 ? (dk?'rgba(248,81,73,0.6)':'rgba(185,45,45,0.5)') :
     (p.net === 'Solana' ? '#14F195' + 'bb' : (netColors[p.net]||'#888') + 'cc')
@@ -3911,6 +3933,8 @@ function buildNetRanking() {
 
  // ── Uniswap V3 position — composição real via RPC (BASE) ────────
  async function fetchUniswapLP() {
+ // ⚠ Pool remontada na Robinhood Chain (WETH/USDG) — fetch on-chain Base desativado; card estático.
+ return;
  try {
  const POOL_WETH_USDC = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // WETH/USDC 0.3% Base (token0=WETH, token1=USDC)
  const Q96 = 2n ** 96n;

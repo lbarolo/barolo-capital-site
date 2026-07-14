@@ -129,9 +129,10 @@ addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znu
 - Borrow: **815.97 USDC @ 5.69%**
 - LTV: 41.20% | Liq. LTV: 77.29% | Net APY: 4.35% | Juros ganhos acum.: +$134.79
 
-### Pool ativa Uniswap V3 (WETH/USDC 0.3% · Base)
-- Capital $365 · Pooled $325 · Fees totais $21.11 (uncollected $18.62) · IL −$28.20 · PnL −$9.58 · APR 0.43% · 94 dias
-- ETH ~$1.727 < range min $1.822 → **fora do range** (100% WETH, fees ~$0/dia)
+### Pool ativa Uniswap V3 (WETH/USDG 0.01% · Robinhood Chain) — remontada 14/07/2026
+- Capital ~$340 (0.183 ETH) · Pooled $338.91 (0.178 WETH + 8.67 USDG) · **in-range** · APR da pool ~112% · fee tier 0.01%
+- Range $1.852,38–$2.166,83 · market $1.859,53 · saída gradual ETH→USDG (entra ~100% WETH)
+- Migrada da Base (WETH/USDC 0.3%) via bridge Across V2. Card **ESTÁTICO** (chain nova, sem fetch on-chain) — ver seção "Pool ATIVA — Dados completos".
 
 ### Totais (20/06/2026)
 - **STABLES**: USDT $1,302.52 + USDS $300 = **$1,602.52**
@@ -145,7 +146,8 @@ addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znu
 
 | Par | Rede | Dias | Capital | Taxas | IL | Resultado | Status |
 |-----|------|------|---------|-------|-----|-----------|--------|
-| WETH/USDC 0.3% | **Base** | 17 | $365 | $9 | $0 | $1 | **ATIVA** |
+| WETH/USDG 0.01% | **Robinhood** | 1 | $340 | $0 | $0 | $0 | **ATIVA** |
+| WETH/USDC 0.3% | Base | 41 | $329 | $9 | $0 | $9 | fechada 14/07 |
 | ETH/USDC BASE | Base | 25 | $453 | $16 | $0 | $16 | fechada |
 | ETH/USDT 0.05% | Arbitrum | 105 | $277 | $34 | $0 | $34 | fechada |
 | SOL/USDC 0.04% | Solana | 93 | $660 | $23 | $0 | $23 | fechada |
@@ -161,32 +163,31 @@ addr1q8cqzzh3t03xvkw7tmzz3jx5nm0spk8ftly7huaj7s6nr4jhy6r0hzw7ygs9ccu6clqqrkm6znu
 
 **Totais**: Taxas brutas $2,128 | P&L líquido -$1,021
 
-### Pool ATIVA — Dados completos (verificados on-chain em 10/06/2026)
+### Pool ATIVA — Dados completos (remontada 14/07/2026 · Robinhood Chain)
 
-**NUNCA assumir Ethereum — esta pool está na Base.**
+**A pool ativa MIGRA DE REDE — SEMPRE ler esta seção antes de qualquer registro/chamada on-chain. NÃO assumir Base nem Ethereum.** Histórico de rede: Ethereum/Arbitrum (2024–25) → Base (fev–jul/2026) → **Robinhood Chain (atual)**.
 
-A pool anterior (token ID 4694262, range $1,855.72–$3,146.36, aberta 24/02/2026) foi **encerrada em 03/06/2026** (saiu por baixo do range; fees $22.28, result +$15.73) e substituída no mesmo dia por uma nova posição:
+Em **14/07/2026** a pool da Base (WETH/USDC 0.3%) foi **desmontada e remontada na Robinhood Chain** como WETH/USDG 0.01%. Sequência on-chain (prints do Lucas): remove liquidity Base (0.1717 ETH + 47.22 USDC) → swap USDC → 0.0255 ETH (Uniswap V4) → bridge ~0.197 ETH via **Across V2** → add liquidity Robinhood (0.183 ETH).
 
 | Campo | Valor |
 |---|---|
-| Par | WETH/USDC 0.30% |
+| Par | WETH/USDG 0.01% |
 | Protocolo | Uniswap V3 |
-| **Rede** | **Base** (chain_id=8453) |
-| Carteira | `0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6` |
-| Token ID | **5247352** |
-| Pool contract | `0x6c561B446416E1A00E8E93E221854d6eA4171372` (token0=WETH, token1=USDC) |
-| Abertura | 03/06/2026 (17:20 UTC) |
-| Capital entrada | 0.18 WETH ($329 @ ETH $1,828) — **100% WETH, zero USDC** |
-| Range mínimo | **$1,822.61** (tick -201240) |
-| Range máximo | **$2,401.90** (tick -198480) |
-| Preço médio efetivo de saída | **$2,092** (√(1822.61 × 2401.90)) |
-| Estratégia | Saída gradual ETH→USDC: entra 100% WETH, sai 100% USDC ao atingir $2,402 |
-| Estado 10/06/2026 | ETH ~$1,630 → **FORA DO RANGE (abaixo)** — 100% WETH, fees $0 |
-| Monitorar em | https://revert.finance/ |
+| **Rede** | **Robinhood Chain** |
+| Abertura | 14/07/2026 |
+| Capital entrada | 0.183 ETH (~$340) — via bridge Across V2 da Base |
+| Posição | $338.91 — 0.178 WETH ($330.24) + 8.67 USDG (~97% WETH) |
+| Range | **$1.852,38 – $2.166,83** (in-range; market $1.859,53) |
+| APR da pool | ~111.83% · fee tier 0.01% · 1D/VOL ~30 |
+| Estratégia | Saída gradual ETH→USDG: entra ~100% WETH, sai USDG conforme ETH sobe |
+| Card no site | **ESTÁTICO** — sem fetch on-chain (chain nova, sem RPC público/CORS confiável). Atualizar via `data.js` → `defi.uniswapV3` quando Lucas mandar print. |
+| Monitorar em | https://app.uniswap.org/positions |
 
 **Referência: sempre em USD** — não usar HOLD nem ETH como referência de performance.
 
-**Para buscar dados on-chain:** usar Base RPC público (`https://mainnet.base.org`, `https://base.drpc.org`) — a key Alchemy do projeto NÃO tem Base habilitada. Nunca Ethereum.
+**Pool anterior (Base · WETH/USDC 0.3%):** encerrada 14/07/2026 · fees ≈ $8.62 · result +$8.62 (a valorização do ETH pertence ao holding, não à pool). Contratos Base (descontinuados para esta posição): NFT_MGR `0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1`, POOL `0x6c561B446416E1A00E8E93E221854d6eA4171372`.
+
+**Fetch on-chain desativado:** em `pools.html`, as funções `fetchUniswapLPData()` e `fetchUniswapLP()` (Base) têm `return` no topo. O token ID da NFT Robinhood não está persistido no repo (política de privacidade — não expor identificadores únicos). Para reativar o fetch: obter RPC + NonfungiblePositionManager + pool WETH/USDG + token ID da Robinhood Chain.
 
 ### Evento especial — Hack Radiant Capital (2025)
 - 1,079.17 ARB em stake desde 25/03/2024 — perdidos no hack

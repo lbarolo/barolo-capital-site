@@ -441,7 +441,7 @@ tr:hover td{ background:var(--surface2); }
       </tr>
       <tr>
         <td style="color:var(--muted);padding-bottom:12px;">Pool Ativa</td>
-        <td style="padding-bottom:12px;">WETH/USDC 0.3% · Base · desde 24/02/2026</td>
+        <td style="padding-bottom:12px;">WETH/USDG 0.01% · Robinhood Chain · desde 14/07/2026</td>
       </tr>
       <tr>
         <td style="color:var(--muted);padding-bottom:12px;">Última Compra</td>
@@ -556,7 +556,8 @@ var KAM_USDS_QTY=(_bdK&&_bdK.supply.USDS.qty)||302.41, KAM_USDS_APY=(_bdK&&_bdK.
 var KAM_BORROW=(_bdK&&_bdK.borrow.USDC.qty)||816.79,   KAM_BORROW_APY=(_bdK&&_bdK.borrow.USDC.apy)||0.0578;
 
 var POOLS_DATA = [
-  { pair:'WETH/USDC 0.3%', net:'Base',     status:'active',  fees:0, il:0, result:0 }, // aberta 03/06/2026 — 0.18 WETH ($329), range $1.823–$2.402, fora do range (abaixo)
+  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'active',  fees:0.04, il:0, result:0 }, // remontada 14/07/2026 — bridge Across da Base, entrada 0.183 ETH; 0.178 WETH + 8.67 USDG ($338.91), range $1.852–$2.167, in-range, APR pool ~112%
+  { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:8.62, il:0, result:8.62 }, // desmontada 14/07/2026 (remove 0.1717 ETH + 47.22 USDC → ~0.197 ETH bridgeado); result = fees
   { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:22.28, il:6.55, result:15.73 }, // encerrada 03/06/2026 — dados finais Revert
   { pair:'ETH/USDC 0.3%',  net:'Base',     status:'closed',  fees:16,  il:0,  result:16   },
   { pair:'ETH/USDT 0.05%', net:'Arbitrum', status:'closed',  fees:34,  il:0,  result:34   },

@@ -62,9 +62,18 @@ window.BAROLO_DATA = {
       ltv: 0.3602, liqLtv: 0.7700
     },
     uniswapV3: {
-      pool:'WETH/USDC 0.3%', network:'Base', status:'active',
-      capital:365, pooled:325, totalFees:21.11, uncollectedFees:18.62,
-      il:-28.20, pnl:-9.58, apr:0.43, daysOpen:94
+      pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
+      capital:340, pooled:338.91, totalFees:0.0353, uncollectedFees:0.0353,
+      il:0, pnl:-1.09, apr:0.6, daysOpen:1, openDate:'2026-07-14',
+      rangeMin:1852.38, rangeMax:2166.83, poolApr:111.83,
+      // Pool Base (WETH/USDC 0.3%) DESMONTADA em 14/07/2026: remove → 0.1717 ETH + 47.22 USDC;
+      // USDC trocado por 0.0255 ETH (Uniswap V4); ~0.197 ETH bridgeado (Across V2) para a
+      // Robinhood Chain; add liquidity com 0.183 ETH (~$340) → nova posição WETH/USDG 0.01%.
+      // Fee tier menor mas APR da pool ~112% e alta rotatividade (1D/VOL ~30).
+      // Posição atual: 0.178 WETH ($330,24) + 8.67 USDG. Range $1.852,38–$2.166,83, in-range.
+      // Estratégia mantida: saída gradual ETH→USDG. Card ESTÁTICO (chain nova, sem fetch
+      // on-chain) — Lucas envia valores por print.
+      note:'WETH/USDG 0.01% · Robinhood Chain · in-range · APR pool ~112%'
     }
   },
 
