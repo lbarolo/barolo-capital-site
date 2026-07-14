@@ -609,17 +609,19 @@ if(window.Chart){
 </div>
 
 <!-- Uniswap (posição ativa · Robinhood Chain) — abaixo do Revert -->
-<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:6px;">↓ Uniswap · interface da posição</div>
-<div class="iframe-wrap" id="uniActiveWrap" style="height:960px;border:1px solid var(--border);border-radius:8px;">
-  <div class="iframe-loading" id="uniActiveLoading" style="border-radius:8px;">
-    <div class="spinner"></div>
-    <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
+<!-- A Uniswap bloqueia embed em iframe (X-Frame-Options: DENY / CSP frame-ancestors 'self').
+     Não há como embutir — card estático com link direto em vez de mostrar "recusou a conexão". -->
+<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:6px;">↓ Uniswap · posição ativa</div>
+<a href="https://app.uniswap.org/positions" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;border:1px solid var(--border);border-radius:8px;text-decoration:none;background:var(--surface);transition:border-color .2s,transform .2s;" onmouseover="this.style.borderColor='#FF007A';this.style.transform='translateY(-1px)';" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none';">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span style="font-size:22px;color:#FF007A;">⬡</span>
+    <div>
+      <div style="font-size:13px;color:var(--text);font-weight:700;font-family:'Satoshi',sans-serif;">Ver posição no Uniswap</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;">WETH/USDG 0.01% · Robinhood Chain · app.uniswap.org/positions</div>
+    </div>
   </div>
-  <iframe id="uniActiveFrame" data-src="https://app.uniswap.org/positions" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
-  <div id="uniActiveFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
-    <p>⚠ Uniswap bloqueia o embed (X-Frame-Options) — <a href="https://app.uniswap.org/positions" target="_blank" style="color:var(--gold);">abra em nova aba →</a></p>
-  </div>
-</div>
+  <span style="font-size:11px;color:#FF007A;font-weight:600;white-space:nowrap;">Abrir ↗</span>
+</a>
 
 </div><!-- end bc-lp-active-section -->
 
@@ -1322,7 +1324,6 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
   var REVERT_ACCT = '#/account/0x5Ff957C19A03aF57B5098F3F395A578E394aE4B6';
   var panels = [
     { id:'revertFrame',  loading:'revertLoading',  fallback:'revertFallback',  ms:15000, suffix:REVERT_ACCT },
-    { id:'uniActiveFrame', loading:'uniActiveLoading', fallback:'uniActiveFallback', ms:15000 },
     { id:'uniswapFrame', loading:'uniswapLoading',  fallback:'uniswapFallback',  ms:15000 },
     { id:'raydiumFrame', loading:'raydiumLoading',  fallback:'raydiumFallback',  ms:15000 },
     { id:'aaveFrame',    loading:'aaveAppLoading',   fallback:'aaveAppFallback',   ms:15000 }
