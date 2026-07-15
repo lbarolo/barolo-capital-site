@@ -92,6 +92,8 @@ window.BAROLO_DATA = {
 
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:756.12, kamino:819.67, total:1575.79 },
-  stablesTotalUSD: 1622.99,   // USDT 1302.52 + USDS 320.47
-  lpPooled: 365
+  stablesTotalUSD: 1622.99   // USDT 1302.52 + USDS 320.47
+  // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
+  // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
+  // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
 };

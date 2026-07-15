@@ -1,0 +1,54 @@
+name: Briefing diário de mercado (mercado.html)
+
+# Regenera briefing.json (preços + on-chain + posição + notícias + narrativa) e commita.
+# Roda DEPOIS do onchain.yml (09:20) para já usar o btc-onchain.json do dia.
+#
+# A narrativa é OPCIONAL e precisa do secret ANTHROPIC_API_KEY:
+#   Settings → Secrets and variables → Actions → New repository secret
+#     Name: ANTHROPIC_API_KEY   Value: <sua key de console.anthropic.com>
+# Sem o secret o job NÃO falha: grava tudo menos a narrativa e a página omite a faixa
+# de texto. Custo estimado com Haiku: < $1/mês.
+
+on:
+  schedule:
+    - cron: '50 9 * * *'   # ~06:50 BRT — após onchain (09:20) e networth (09:40)
+  workflow_dispatch:        # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: briefing-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Gerar briefing.json
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::warning::Secret ANTHROPIC_API_KEY não configurado — briefing sai só com dados, sem narrativa."
+          fi
+          node scripts/fetch-briefing.js
+
+      - name: Commit se houver mudança
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add briefing.json
+          if git diff --staged --quiet; then
+            echo "Sem mudanças no briefing.json."
+            exit 0
+          fi
+          git commit -m "data: briefing diário de mercado (automático)"
+          git pull --rebase origin main
+          git push

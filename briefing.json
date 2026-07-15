@@ -1,0 +1,366 @@
+{
+ "updated": "2026-07-15T20:59:18.681Z",
+ "date": "2026-07-15",
+ "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
+ "market": {
+  "btc": {
+   "price": 64934,
+   "d24": 0.63,
+   "d7": 4.52,
+   "d30": -2.43,
+   "ath": 126080,
+   "athPct": -48.5,
+   "athDate": "2025-10-06",
+   "mcap": 1302331665924,
+   "vol": 28813528047
+  },
+  "eth": {
+   "price": 1922.84,
+   "d24": 2.57,
+   "d7": 10.61,
+   "d30": 5.67,
+   "ath": 4946.05,
+   "athPct": -61.1,
+   "athDate": "2025-08-24",
+   "mcap": 232046299455,
+   "vol": 12101539978
+  },
+  "sol": {
+   "price": 77.37,
+   "d24": 0.37,
+   "d7": 0.33,
+   "d30": 2.68,
+   "ath": 293.31,
+   "athPct": -73.6,
+   "athDate": "2025-01-19",
+   "mcap": 45061135741,
+   "vol": 2017046435
+  }
+ },
+ "fng": {
+  "value": 25,
+  "label": "Extreme Fear",
+  "prev": 22
+ },
+ "onchain": {
+  "t": "2026-07-14",
+  "price": 63358.86,
+  "mvrv": 1.221638,
+  "mvrv_sth": 0.949392,
+  "mvrv_lth": 1.295053,
+  "realized": 52908.33,
+  "realized_sth": 68080.24,
+  "realized_lth": 49909.04,
+  "sopr_lth": 0.73478,
+  "aviv": 0.84704,
+  "cvdd": 47389.85,
+  "sma200": 73689.66,
+  "mayer": 0.86
+ },
+ "risk": {
+  "score": 0.109,
+  "label": "fundo / capitulação",
+  "components": [
+   {
+    "key": "MVRV",
+    "v": 1.221638,
+    "s": 0.145
+   },
+   {
+    "key": "Mayer",
+    "v": 0.86,
+    "s": 0.144
+   },
+   {
+    "key": "STH MVRV",
+    "v": 0.949392,
+    "s": 0.082
+   },
+   {
+    "key": "AVIV",
+    "v": 0.84704,
+    "s": 0.174
+   },
+   {
+    "key": "SOPR LTH",
+    "v": 0.73478,
+    "s": 0
+   }
+  ]
+ },
+ "portfolio": {
+  "netWorth": 7261.08,
+  "gross": 6875.83,
+  "stables": 1622.09,
+  "lp": 338.95,
+  "debt": 1575.79,
+  "invested": 10143.6,
+  "roi": -28.4,
+  "move24": 132.1,
+  "move24Pct": 1.85,
+  "aave": {
+   "hf": 6.17,
+   "collateral": 5753.79,
+   "debt": 756.12,
+   "ltv": 13.1,
+   "liqEth": null,
+   "dropToLiq": null
+  },
+  "kamino": {
+   "ltv": 37.4,
+   "liqLtv": 77,
+   "collateral": 2189.84,
+   "debt": 819.67,
+   "liqSol": 28.86,
+   "dropToLiq": 62.7
+  },
+  "carry": {
+   "monthlyInterest": 6.11,
+   "monthlySupply": 20.41
+  },
+  "dataAsOf": "2026-07-15"
+ },
+ "news": [
+  {
+   "source": "Decrypt",
+   "title": "OpenAI Uses AI Red Team to Strengthen GPT-5.6 Against Prompt Injection Attacks",
+   "url": "https://decrypt.co/373613/openai-ai-red-team-strengthen-gpt-5-6-prompt-injection-attacks",
+   "ts": 1784148611000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Coinbase's Jesse Pollak steps back from Base app leadership after admitting his crypto social strategy failed",
+   "url": "https://www.coindesk.com/business/2026/07/15/coinbase-s-jesse-pollak-steps-back-from-base-app-leadership-after-admitting-his-crypto-social-strategy-failed",
+   "ts": 1784146682000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Here’s what happened in crypto today",
+   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784146409000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Stanford study says 5-minute Bitcoin prediction markets enable settlement manipulation",
+   "url": "<![CDATA[https://cointelegraph.com/news/stanford-study-5-minute-bitcoin-prediction-markets-enable-settlement-manipulation?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784145908000
+  },
+  {
+   "source": "The Block",
+   "title": "&#8216;Hugely positive&#8217; meeting on Thursday with Trump to discuss ethics raises hopes for passage of sweeping crypto legislation",
+   "url": "https://www.theblock.co/post/408517/hugely-positive-meeting-thursday-trump-ethics-raises-hopes-passage-crypto-legislation?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784145809000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Meet Bonsai: The First 27B AI Model That Fits on Your Phone",
+   "url": "https://decrypt.co/373578/meet-bonsai-first-27b-ai-model-fits-phone",
+   "ts": 1784145341000
+  },
+  {
+   "source": "The Block",
+   "title": "Benchmark says Securitize investors should &#8216;strip out the noise&#8217; after post-SPAC selloff",
+   "url": "https://www.theblock.co/post/408511/benchmark-says-securitize-investors-strip-out-noise-after-post-spac-selloff?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784144990000
+  },
+  {
+   "source": "Decrypt",
+   "title": "What Is BIP-110 and Why Is It Dividing the Bitcoin Community?",
+   "url": "https://decrypt.co/373577/what-is-bip-110-why-dividing-bitcoin-community",
+   "ts": 1784144590000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Revolut receives in-principle approval from UAE authorities for crypto services",
+   "url": "<![CDATA[https://cointelegraph.com/news/revolut-approval-uae-crypto-services?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784144079000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Base Creator Jesse Pollak Steps Back From App Leadership After Admitting Social Bet 'Was Wrong'",
+   "url": "https://decrypt.co/373574/base-jesse-pollak-steps-back-social-bet-wrong",
+   "ts": 1784141455000
+  },
+  {
+   "source": "Decrypt",
+   "title": "BlackRock, Goldman, and JP Morgan Will Give Tokenized Stocks a Try",
+   "url": "https://decrypt.co/373571/blackrock-goldman-sachs-jp-morgan-dtcc-tokenized-stocks",
+   "ts": 1784138526000
+  },
+  {
+   "source": "The Block",
+   "title": "Coinbase&#8217;s Jesse Pollak hands Base app leadership to Cobie after admitting social bets fell short",
+   "url": "https://www.theblock.co/post/408504/coinbases-jesse-pollak-hands-base-app-leadership-cobie-social-bets-fell-short?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784138329000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "US Senator blasts AG pick for ‘dismantling’ crypto unit, Trump’s CZ pardon",
+   "url": "<![CDATA[https://cointelegraph.com/news/todd-blanche-hearing-dismantling-justice-crypto-unit-donald-trumps-pardon?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784138160000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Ostium pauses trading as security firms report multimillion-dollar oracle exploit",
+   "url": "<![CDATA[https://cointelegraph.com/news/ostium-pauses-trading-as-security-firms-report-multimillion-dollar-oracle-exploit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784135661000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "DTCC moves tokenized securities into live trading, marking a milestone for Wall Street's blockchain push",
+   "url": "https://www.coindesk.com/business/2026/07/15/dtcc-moves-tokenized-securities-into-live-trading-marking-a-milestone-for-wall-street-s-blockchain-push",
+   "ts": 1784134942000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Another DeFi Exploit: Perp DEX Ostium Loses $18 Million in Oracle Attack",
+   "url": "https://decrypt.co/373566/defi-exploit-ostium-oracle-hack",
+   "ts": 1784134885000
+  },
+  {
+   "source": "The Block",
+   "title": "BlackRock outlines vision for crypto-TradFi convergence as product pipeline grows",
+   "url": "https://www.theblock.co/post/408436/blackrock-outlines-vision-crypto-tradfi-convergence-product-pipeline-grows?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784134566000
+  },
+  {
+   "source": "Decrypt",
+   "title": "US Treasury Freezes $131 Million in Iran-Linked Crypto Wallets",
+   "url": "https://decrypt.co/373565/us-treasury-freezes-131-million-iran-crypto",
+   "ts": 1784134454000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Cantor and Securitize collaborate on blockchain-based IPOs",
+   "url": "https://www.coindesk.com/business/2026/07/15/cantor-and-securitize-collaborate-on-blockchain-based-ipos",
+   "ts": 1784134348000
+  },
+  {
+   "source": "The Block",
+   "title": "Crypto clearinghouse Glacis Labs raises $6.8 million seed to expand ZeroDelta platform",
+   "url": "https://www.theblock.co/post/408490/crypto-clearinghouse-glacis-labs-zerodelta-funding?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784133787000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Aave launches V4 on Avalanche, laying groundwork for tokenized credit markets",
+   "url": "<![CDATA[https://cointelegraph.com/news/aave-brings-v4-to-avalanche-laying-groundwork-for-tokenized-asset-lending?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784132979000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin Breaks Heavy Resistance—But Death Cross Looms: Analysis",
+   "url": "https://decrypt.co/373545/bitcoin-price-heavy-resistance-death-cross-looms",
+   "ts": 1784131519000
+  },
+  {
+   "source": "The Block",
+   "title": "Kraken Institutional taps Upshift to build vaults that earn yield on idle bitcoin, ETH and stablecoins",
+   "url": "https://www.theblock.co/post/408448/kraken-institutional-taps-upshift-to-build-vaults-that-earn-yield-on-idle-bitcoin-eth-and-stablecoins?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784131502000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Securitize, Cantor target tokenized IPOs for public markets",
+   "url": "<![CDATA[https://cointelegraph.com/news/securitize-cantor-target-tokenized-ipos-for-public-markets?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784131176000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin Giant Strategy Isn't Panicking—Unless BTC Crashes to $10K: CEO",
+   "url": "https://decrypt.co/373544/bitcoin-giant-strategy-isnt-panicking-unless-btc-crashes-to-10k-ceo",
+   "ts": 1784131021000
+  },
+  {
+   "source": "The Block",
+   "title": "&#8216;Bull markets everywhere&#8217;: Bitwise says crypto equities beat every major asset class but emerging markets in H1 2026",
+   "url": "https://www.theblock.co/post/408449/bull-markets-everywhere-bitwise-crypto-equities-beat-major-asset-class-h1?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784130636000
+  },
+  {
+   "source": "The Block",
+   "title": "Ostium pauses trading after apparent $18 million vault exploit",
+   "url": "https://www.theblock.co/post/408450/ostium-pauses-trading-after-apparent-18-million-vault-exploit?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784130472000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Ostium suffers $18 million exploit as oracle attack wave continues to hit DeFi",
+   "url": "https://www.coindesk.com/business/2026/07/15/ostium-suffers-usd18-million-exploit-as-oracle-attack-wave-continues-to-hit-defi",
+   "ts": 1784129263000
+  },
+  {
+   "source": "The Block",
+   "title": "William Blair cuts Coinbase forecasts but says crypto downturn nearing a bottom",
+   "url": "https://www.theblock.co/post/408423/blair-cuts-coinbase-forecasts-but-crypto-downturn-nearing-bottom?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784128580000
+  },
+  {
+   "source": "The Block",
+   "title": "Stani Kulechov on Aave V4, Avalanche, and why RWAs will hit $100 billion this year",
+   "url": "https://www.theblock.co/post/408366/stani-kulechov-on-aave-v4-avalanche-and-why-rwas-will-hit-100-billion-this-year?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784127809000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "The privacy paradox of protecting kids online",
+   "url": "https://www.coindesk.com/opinion/2026/07/14/the-privacy-paradox-of-protecting-kids-online",
+   "ts": 1784127530000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto Long & Short: To ETH or not to ETH — is SOL the better diversifier?",
+   "url": "https://www.coindesk.com/coindesk-indices/2026/07/15/crypto-long-and-short-to-eth-or-not-to-eth-is-sol-the-better-diversifier",
+   "ts": 1784127489000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin hits $65.5K as more surprise US inflation data sparks three-week BTC price high",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-hits-655k-as-more-surprise-us-inflation-data-sparks-three-week-btc-price-high?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784126728000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "President Trump expected to meet with senators to work on ethics concerns in crypto bill",
+   "url": "https://www.coindesk.com/policy/2026/07/15/high-level-white-house-meeting-said-to-be-planned-to-hash-out-clarity-act-ethics-section",
+   "ts": 1784126256000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "South Korea to modify 76-year-old law to classify cryptocurrencies as national assets",
+   "url": "https://www.coindesk.com/policy/2026/07/15/south-korea-to-modify-76-year-old-law-to-classify-cryptocurrencies-as-national-assets",
+   "ts": 1784126126000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Open USD poses biggest threat yet to Circle's USDC, CoinShares says",
+   "url": "https://www.coindesk.com/business/2026/07/15/open-usd-poses-biggest-threat-yet-to-circle-s-usdc-coinshares-says",
+   "ts": 1784124234000
+  },
+  {
+   "source": "The Block",
+   "title": "DTCC begins first tokenized stock and Treasury production trades involving JPMorgan, BlackRock and Goldman",
+   "url": "https://www.theblock.co/post/408419/dtcc-begins-first-tokenized-stock-and-treasury-production-trades-involving-jpmorgan-blackrock-and-goldman-wsj?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784123662000
+  },
+  {
+   "source": "The Block",
+   "title": "Core Scientific&#8217;s 75% return on AI deal isn&#8217;t the template for bitcoin miners, Bernstein says",
+   "url": "https://www.theblock.co/post/408412/core-scientific-return-on-ai-deal-isnt-template-for-bitcoin-miners-bernstein-says?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784122736000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Is Robinhood Chain’s success bullish or bearish for ETH the asset?",
+   "url": "<![CDATA[https://cointelegraph.com/features/has-robinhoods-layer-2-given-eth-a-new-bull-case?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784122200000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "A timeline of the Ethereum Foundation's ongoing shakeup",
+   "url": "https://www.coindesk.com/tech/2026/07/15/a-timeline-of-the-ethereum-foundation-s-ongoing-shakeup",
+   "ts": 1784121588000
+  }
+ ],
+ "narrative": null
+}

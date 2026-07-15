@@ -610,6 +610,7 @@ body, input, button, select, textarea {
   <div class="nav-links">
     <a href="index.html" data-i18n="nav-home">Início</a>
     <a href="portfolio_analytics.html" class="active" data-i18n="nav-portfolio">Portfolio</a>
+    <a href="mercado.html">Mercado</a>
     <a href="pools.html" data-i18n="nav-pools">Pools &amp; DeFi</a>
     <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
     <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
@@ -1662,7 +1663,11 @@ var LP_POOLED = (function() {
       return cached.value;
     }
   } catch(e) {}
-  return 296; // pool WETH/USDC Base aberta 03/06/2026: 0.18 WETH (capital $329, valor 10/06/2026)
+  // Fallback: pool ativa do data.js (pooled + fees não coletadas). A pool MIGRA de rede
+  // — não hardcodar valor aqui, senão o card congela numa pool que já foi desmontada.
+  var _u = (typeof window !== 'undefined' && window.BAROLO_DATA && window.BAROLO_DATA.defi)
+    ? window.BAROLO_DATA.defi.uniswapV3 : null;
+  return _u ? (_u.pooled || 0) + (_u.uncollectedFees || 0) : 0;
 })();
 // Card POOLS LP — mostra valor da pool (cache live do pools.html ou fallback acima)
 (function(){ var el = document.getElementById('s-pool'); if (el && LP_POOLED > 0) el.textContent = '$' + Math.round(LP_POOLED); })();
