@@ -26,6 +26,9 @@
      CoinGecko não vinha acompanhando. Total agora 24.390234 SOL, batendo com o
      supply da Kamino (24.39) — ou seja, todo o SOL está depositado como colateral.
      `invested` inalterado de propósito: juro é renda, não aporte.
+     NÃO É ERRO o total bater exatamente com o supply da Kamino: os ~0.04996 SOL
+     de gas na carteira (≈$3,88 · 0,05% do patrimônio) ficam fora da contabilidade
+     por decisão do Lucas (15/07/2026). Não "reconciliar" isso.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
   asOf: '2026-07-15',
