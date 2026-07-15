@@ -20,9 +20,10 @@
    + AAVE: +300 USDT supply de volta (deposit 04/07/2026, APY 3.21%)
    + Kamino: +0.66 SOL supply (compra da semana anterior, deposit 04/07/2026
      12:02 · $53,92) + AAVE/Kamino refresh completo via print 04/07/2026
+   + Kamino: +0.236808947 SOL supply (deposit 15/07/2026 00:17 UTC · $18,38)
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-07-04',
+  asOf: '2026-07-15',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -57,9 +58,10 @@ window.BAROLO_DATA = {
       // APY do SOL supply confirmado em 12.74% no print de 04/07 (o 22.51% de 03/07 era
       // blend transitório com incentivos KMNO — rewards agora claimable à parte: USDS
       // $1.59, PYUSD $0.07, KMNO $3.14).
-      supply: { SOL:{ qty:24.07, apy:0.1274 }, USDS:{ qty:302.66, apy:0.0403 } },
+      // +0.236808947 SOL de supply (deposit 15/07/2026 00:17 UTC · $18,38 · tx K9W5Ku…zvsK)
+      supply: { SOL:{ qty:24.31, apy:0.1274 }, USDS:{ qty:302.66, apy:0.0403 } },
       borrow: { USDC:{ qty:818.18, apy:0.0614 } },
-      ltv: 0.3602, liqLtv: 0.7700
+      ltv: 0.3573, liqLtv: 0.7700   // LTV estimado: colateral +$18,38, dívida inalterada
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
