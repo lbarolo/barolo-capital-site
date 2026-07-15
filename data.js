@@ -29,6 +29,10 @@
      NÃO É ERRO o total bater exatamente com o supply da Kamino: os ~0.04996 SOL
      de gas na carteira (≈$3,88 · 0,05% do patrimônio) ficam fora da contabilidade
      por decisão do Lucas (15/07/2026). Não "reconciliar" isso.
+   + USDS reconciliado em 15/07/2026 (mesma lógica do SOL): 300 → 320.47 =
+     303.03 de supply na Kamino + 17.44 na carteira. Os +20.47 são rendimento
+     (custo zero), então `invested` fica em 300 — o USDS passa a exibir P&L
+     +$20,47 / ROI +6,8%, o que é correto: é yield, não desvio de peg.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
   asOf: '2026-07-15',
@@ -52,7 +56,7 @@ window.BAROLO_DATA = {
   // Stablecoins (também já no total CoinGecko).
   stables: [
     { ticker:'USDT', cgId:'tether',           qty:1302.524, invested:1302.524 },
-    { ticker:'USDS', cgId:'usds',  qty:300,      invested:300      }
+    { ticker:'USDS', cgId:'usds',            qty:320.47,   invested:300      }
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
@@ -88,6 +92,6 @@ window.BAROLO_DATA = {
 
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:756.12, kamino:819.67, total:1575.79 },
-  stablesTotalUSD: 1602.52,   // USDT 1302.52 + USDS 300
+  stablesTotalUSD: 1622.99,   // USDT 1302.52 + USDS 320.47
   lpPooled: 365
 };
