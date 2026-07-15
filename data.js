@@ -21,6 +21,11 @@
    + Kamino: +0.66 SOL supply (compra da semana anterior, deposit 04/07/2026
      12:02 · $53,92) + AAVE/Kamino refresh completo via print 04/07/2026
    + Kamino: +0.236808947 SOL supply (deposit 15/07/2026 00:17 UTC · $18,38)
+   + SOL reconciliado com o CoinGecko em 15/07/2026: +0.84026 SOL lançados como
+     transferência de entrada (custo $0) = juros acumulados da Kamino que o
+     CoinGecko não vinha acompanhando. Total agora 24.390234 SOL, batendo com o
+     supply da Kamino (24.39) — ou seja, todo o SOL está depositado como colateral.
+     `invested` inalterado de propósito: juro é renda, não aporte.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
   asOf: '2026-07-15',
@@ -30,7 +35,7 @@ window.BAROLO_DATA = {
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
-    { ticker:'SOL',   cgId:'solana',                   qty:23.97,      invested:2504.86 },
+    { ticker:'SOL',   cgId:'solana',                   qty:24.390234,  invested:2504.86 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
@@ -55,13 +60,12 @@ window.BAROLO_DATA = {
       healthFactor: 5.48   // estimado via CF (WETH 83% / USDT 78%) — AAVE não expôs o HF direto no print
     },
     kamino: {
-      // APY do SOL supply confirmado em 12.74% no print de 04/07 (o 22.51% de 03/07 era
-      // blend transitório com incentivos KMNO — rewards agora claimable à parte: USDS
-      // $1.59, PYUSD $0.07, KMNO $3.14).
-      // +0.236808947 SOL de supply (deposit 15/07/2026 00:17 UTC · $18,38 · tx K9W5Ku…zvsK)
-      supply: { SOL:{ qty:24.31, apy:0.1274 }, USDS:{ qty:302.66, apy:0.0403 } },
-      borrow: { USDC:{ qty:818.18, apy:0.0614 } },
-      ltv: 0.3573, liqLtv: 0.7700   // LTV estimado: colateral +$18,38, dívida inalterada
+      // Print 15/07/2026: SOL supply 24.39 @ 6.41% (o 12.74% de 04/07 e o 22.51% de 03/07
+      // eram blends transitórios com incentivos KMNO — rewards são claimable à parte).
+      // Supplied $2.19K (SOL $1.89K + USDS $303) · Borrowing $819.51.
+      supply: { SOL:{ qty:24.39, apy:0.0641 }, USDS:{ qty:303.03, apy:0.0450 } },
+      borrow: { USDC:{ qty:819.67, apy:0.0560 } },
+      ltv: 0.3733, liqLtv: 0.7700   // 819.51 / (1892.19 + 303.03)
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
@@ -80,7 +84,7 @@ window.BAROLO_DATA = {
   },
 
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:756.12, kamino:818.18, total:1574.30 },
+  debt:   { aave:756.12, kamino:819.67, total:1575.79 },
   stablesTotalUSD: 1602.52,   // USDT 1302.52 + USDS 300
   lpPooled: 365
 };
