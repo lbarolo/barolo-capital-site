@@ -58,9 +58,20 @@ async function get(url, { json = true, tries = 4, timeout = 12000, headers = {} 
 }
 
 // ── 1. MERCADO ───────────────────────────────────────────────────────────────
+// Reduz a série do sparkline (7d ≈ 168 pontos horários) para ~42 pontos — leve no JSON,
+// suave o bastante pro traço. Guarda o último ponto real no fim.
+function downsample(arr, n) {
+  if (!Array.isArray(arr) || arr.length <= n) return (arr || []).map(v => num(v, 2));
+  const step = arr.length / n, out = [];
+  for (let i = 0; i < n; i++) out.push(num(arr[Math.floor(i * step)], 2));
+  out.push(num(arr[arr.length - 1], 2));
+  return out;
+}
+
 async function fetchMarket() {
+  // tether + usd-coin entram só para somar o supply de stablecoins (não viram card)
   const rows = await get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd' +
-    '&ids=bitcoin,ethereum,solana&price_change_percentage=24h,7d,30d');
+    '&ids=bitcoin,ethereum,solana,tether,usd-coin&price_change_percentage=24h,7d,30d&sparkline=true');
   const pick = id => {
     const c = rows.find(x => x.id === id);
     if (!c) return null;
@@ -73,10 +84,29 @@ async function fetchMarket() {
       athPct:  num(c.ath_change_percentage, 1),
       athDate: c.ath_date ? c.ath_date.slice(0, 10) : null,
       mcap:    c.market_cap,
-      vol:     c.total_volume
+      vol:     c.total_volume,
+      spark:   (c.sparkline_in_7d && c.sparkline_in_7d.price) ? downsample(c.sparkline_in_7d.price, 42) : null
     };
   };
-  return { btc: pick('bitcoin'), eth: pick('ethereum'), sol: pick('solana') };
+  const stableMcap = ['tether', 'usd-coin'].reduce((s, id) => {
+    const c = rows.find(x => x.id === id); return s + (c && c.market_cap ? c.market_cap : 0);
+  }, 0);
+  return { btc: pick('bitcoin'), eth: pick('ethereum'), sol: pick('solana'), stableMcap: stableMcap || null };
+}
+
+// Mercado amplo: dominância, mcap total e volume (CoinGecko /global)
+async function fetchGlobal() {
+  try {
+    const d = await get('https://api.coingecko.com/api/v3/global');
+    const g = d.data;
+    return {
+      btcDom:        num(g.market_cap_percentage.btc, 1),
+      ethDom:        num(g.market_cap_percentage.eth, 1),
+      totalMcap:     g.total_market_cap.usd,
+      totalVol:      g.total_volume.usd,
+      mcapChange24h: num(g.market_cap_change_percentage_24h_usd, 2)
+    };
+  } catch (e) { console.log('global indisponível:', e.message); return null; }
 }
 
 async function fetchFng() {
@@ -313,6 +343,7 @@ Responda SOMENTE com JSON válido, sem cercas de código, neste formato:
   if (!market.btc || !market.eth || !market.sol) throw new Error('CoinGecko não retornou os 3 ativos');
 
   const fng     = await fetchFng();
+  const global  = await fetchGlobal();
   const onchain = readOnchain();
   const risk    = riskIndex(onchain);
   const portfolio = await buildPortfolio(B, market);
@@ -322,7 +353,19 @@ Responda SOMENTE com JSON válido, sem cercas de código, neste formato:
     throw new Error('Sanity: netWorth fora da faixa plausível: ' + portfolio.netWorth);
   }
 
-  const payload = { market, fng, onchain, risk, portfolio, news };
+  // Mercado amplo: junta /global + razão ETH/BTC + supply de stablecoins num objeto só
+  const broad = (global || market.stableMcap) ? {
+    btcDom:        global ? global.btcDom : null,
+    ethDom:        global ? global.ethDom : null,
+    altDom:        global ? num(100 - global.btcDom - global.ethDom, 1) : null,
+    totalMcap:     global ? global.totalMcap : null,
+    totalVol:      global ? global.totalVol : null,
+    mcapChange24h: global ? global.mcapChange24h : null,
+    ethBtc:        (market.eth.price && market.btc.price) ? num(market.eth.price / market.btc.price, 5) : null,
+    stableMcap:    market.stableMcap || null
+  } : null;
+
+  const payload = { market, fng, broad, onchain, risk, portfolio, news };
   const narrative = await fetchNarrative(payload).catch(e => {
     console.log('Narrativa falhou (segue sem ela):', e.message); return null;
   });

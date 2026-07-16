@@ -1,365 +1,511 @@
 {
- "updated": "2026-07-16T11:22:00.680Z",
+ "updated": "2026-07-16T19:18:04.192Z",
  "date": "2026-07-16",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 64088,
-   "d24": -0.81,
-   "d7": 2.19,
-   "d30": -3.59,
+   "price": 64204,
+   "d24": -0.9,
+   "d7": 1.66,
+   "d30": -2.41,
    "ath": 126080,
-   "athPct": -49.2,
+   "athPct": -49.1,
    "athDate": "2025-10-06",
-   "mcap": 1285212497148,
-   "vol": 32342628064
+   "mcap": 1287667610898,
+   "vol": 27989228837,
+   "spark": [
+    63076.73,
+    63233.96,
+    63681.17,
+    64060.62,
+    64344.58,
+    64442.52,
+    63799.6,
+    63955.87,
+    63983.97,
+    64125.94,
+    64104.14,
+    64188.71,
+    64263.64,
+    64303.19,
+    64083.9,
+    63941.15,
+    63922.04,
+    63985.72,
+    64037.39,
+    63892.4,
+    63421.28,
+    62728.01,
+    63038.52,
+    62252.29,
+    61911.94,
+    62037.37,
+    62468.13,
+    62638.25,
+    62556.17,
+    63763.76,
+    64603.15,
+    64622.47,
+    64621.5,
+    64863.53,
+    64611.48,
+    65025.32,
+    65013.33,
+    64760.9,
+    64722.65,
+    64871.04,
+    64027.96,
+    64313.79,
+    64462.13
+   ]
   },
   "eth": {
-   "price": 1883.51,
-   "d24": 0.27,
-   "d7": 7.4,
-   "d30": 5.32,
+   "price": 1873.5,
+   "d24": -2.48,
+   "d7": 7.25,
+   "d30": 4.18,
    "ath": 4946.05,
-   "athPct": -61.9,
+   "athPct": -62.1,
    "athDate": "2025-08-24",
-   "mcap": 227276609806,
-   "vol": 12542490840
+   "mcap": 226114410996,
+   "vol": 10080209762,
+   "spark": [
+    1746.78,
+    1747.1,
+    1766.35,
+    1777.48,
+    1791.12,
+    1802.91,
+    1787.87,
+    1792.86,
+    1788.6,
+    1798.09,
+    1795.44,
+    1800.92,
+    1822.91,
+    1822.69,
+    1805.41,
+    1802.71,
+    1801.46,
+    1805.05,
+    1817.38,
+    1811.44,
+    1806.26,
+    1779.6,
+    1784.11,
+    1769.58,
+    1756.02,
+    1759.78,
+    1783.04,
+    1784.75,
+    1783.97,
+    1868.66,
+    1869.98,
+    1874.58,
+    1868.75,
+    1879.84,
+    1878.22,
+    1922.53,
+    1926.13,
+    1919.96,
+    1921.86,
+    1923.93,
+    1882.6,
+    1880.3,
+    1878.3
+   ]
   },
   "sol": {
-   "price": 76.05,
-   "d24": -1.73,
-   "d7": -2.55,
-   "d30": 1.53,
+   "price": 75.63,
+   "d24": -2.27,
+   "d7": -3.03,
+   "d30": 2.19,
    "ath": 293.31,
-   "athPct": -74.1,
+   "athPct": -74.2,
    "athDate": "2025-01-19",
-   "mcap": 44291920442,
-   "vol": 1988396685
-  }
+   "mcap": 44054299226,
+   "vol": 1710874701,
+   "spark": [
+    78,
+    77.96,
+    79.2,
+    79.12,
+    79.21,
+    79,
+    77.59,
+    77.92,
+    77.6,
+    77.78,
+    77.8,
+    78.15,
+    78,
+    78.21,
+    76.76,
+    76.42,
+    76.71,
+    77.17,
+    77.36,
+    77.05,
+    76.65,
+    76.32,
+    76.57,
+    75.27,
+    74.82,
+    74.27,
+    75.25,
+    75.29,
+    74.97,
+    76.83,
+    77.14,
+    77.16,
+    77.33,
+    77.96,
+    77.39,
+    77.94,
+    77.78,
+    77.32,
+    77,
+    77.4,
+    75.99,
+    76.26,
+    76.23
+   ]
+  },
+  "stableMcap": 257266676383
  },
  "fng": {
   "value": 25,
   "label": "Extreme Fear",
   "prev": 25
  },
+ "broad": {
+  "btcDom": 56.3,
+  "ethDom": 9.9,
+  "altDom": 33.8,
+  "totalMcap": 2286881494183.322,
+  "totalVol": 64526598964.67062,
+  "mcapChange24h": -1.14,
+  "ethBtc": 0.02918,
+  "stableMcap": 257266676383
+ },
  "onchain": {
-  "t": "2026-07-15",
-  "price": 64838.34,
-  "mvrv": 1.22551,
-  "mvrv_sth": 0.951953,
-  "mvrv_lth": 1.299179,
-  "realized": 52894.66,
-  "realized_sth": 68094.73,
-  "realized_lth": 49895.34,
-  "sopr_lth": 0.739765,
-  "aviv": 0.849766,
-  "cvdd": 47403,
-  "sma200": 73576.55,
-  "mayer": 0.881
+  "t": "2026-07-14",
+  "price": 63358.86,
+  "mvrv": 1.221638,
+  "mvrv_sth": 0.949392,
+  "mvrv_lth": 1.295053,
+  "realized": 52908.33,
+  "realized_sth": 68080.24,
+  "realized_lth": 49909.04,
+  "sopr_lth": 0.73478,
+  "aviv": 0.84704,
+  "cvdd": 47389.85,
+  "sma200": 73689.66,
+  "mayer": 0.86
  },
  "risk": {
-  "score": 0.113,
+  "score": 0.109,
   "label": "fundo / capitulação",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.22551,
-    "s": 0.147
+    "v": 1.221638,
+    "s": 0.145
    },
    {
     "key": "Mayer",
-    "v": 0.881,
-    "s": 0.156
+    "v": 0.86,
+    "s": 0.144
    },
    {
     "key": "STH MVRV",
-    "v": 0.951953,
-    "s": 0.087
+    "v": 0.949392,
+    "s": 0.082
    },
    {
     "key": "AVIV",
-    "v": 0.849766,
-    "s": 0.175
+    "v": 0.84704,
+    "s": 0.174
    },
    {
     "key": "SOPR LTH",
-    "v": 0.739765,
+    "v": 0.73478,
     "s": 0
    }
   ]
  },
  "portfolio": {
-  "netWorth": 7128.79,
-  "gross": 6743.76,
-  "stables": 1621.87,
+  "netWorth": 7096.19,
+  "gross": 6711.08,
+  "stables": 1621.96,
   "lp": 338.95,
   "debt": 1575.79,
   "invested": 10143.6,
-  "roi": -29.7,
-  "move24": -22.34,
-  "move24Pct": -0.31,
+  "roi": -30,
+  "move24": -159.15,
+  "move24Pct": -2.19,
   "aave": {
-   "hf": 6.08,
-   "collateral": 5668.38,
+   "hf": 6.06,
+   "collateral": 5646.76,
    "debt": 756.12,
-   "ltv": 13.3,
+   "ltv": 13.4,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 38,
+   "ltv": 38.2,
    "liqLtv": 77,
-   "collateral": 2157.65,
+   "collateral": 2147.65,
    "debt": 819.67,
    "liqSol": 28.86,
-   "dropToLiq": 62
+   "dropToLiq": 61.8
   },
   "carry": {
    "monthlyInterest": 6.11,
-   "monthlySupply": 20.14
+   "monthlySupply": 20.06
   },
   "dataAsOf": "2026-07-15"
  },
  "news": [
   {
-   "source": "Decrypt",
-   "title": "Feds Arrest Florida Man Over Video Game Malware That Stole $220K in Crypto",
-   "url": "https://decrypt.co/373631/feds-arrest-florida-man-over-video-game-malware-that-stole-220k-in-crypto",
-   "ts": 1784199248000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin pulls back to $64,000 after hitting monthly high as bears take control",
-   "url": "https://www.coindesk.com/markets/2026/07/16/bitcoin-pulls-back-to-usd64-000-after-hitting-monthly-high-as-bears-take-control",
-   "ts": 1784198156000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Autonomous AI agent economy faces infrastructure gaps: Visa, Artemis",
-   "url": "<![CDATA[https://cointelegraph.com/news/autonomous-ai-agent-economy-infrastructure-gaps-visa-artemis?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784198014000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Tether invests $20 million in Argentine neobank Ualá as it expands Latin America push",
-   "url": "https://www.coindesk.com/business/2026/07/16/tether-invests-usd20-million-in-argentine-neobank-uala-as-it-expands-latin-america-push",
-   "ts": 1784196725000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "U.S. adds four Iran central bank crypto wallets to sanctions, Tether freezes $131 million of contents",
-   "url": "https://www.coindesk.com/business/2026/07/16/u-s-adds-four-iran-central-bank-crypto-wallets-to-sanctions-tether-freezes-usd131-million-of-contents",
-   "ts": 1784196426000
-  },
-  {
-   "source": "The Block",
-   "title": "Volvo Group tests proprietary cryptocurrency for supplier transactions in blockchain push",
-   "url": "https://www.theblock.co/post/408586/volvo-group-tests-proprietary-cryptocurrency?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784195809000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "US Senate unanimously adopts resolution opposing clemency for SBF",
-   "url": "<![CDATA[https://cointelegraph.com/news/senate-adopts-resolution-opposing-clemency-sbf-ftx?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784193971000
-  },
-  {
-   "source": "The Block",
-   "title": "Lummis, Gallego secure unanimous Senate approval opposing Sam Bankman-Fried clemency",
-   "url": "https://www.theblock.co/post/408581/lummis-gallego-secure-unanimous-senate-approval-opposing-sam-bankman-fried-clemency?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784193669000
-  },
-  {
-   "source": "Decrypt",
-   "title": "US Senate Unanimously Opposes Sam Bankman-Fried Pardon",
-   "url": "https://decrypt.co/373629/us-senate-unanimously-opposes-sam-bankman-fried-pardon",
-   "ts": 1784190843000
-  },
-  {
-   "source": "The Block",
-   "title": "Visa says stablecoins will power micro-commerce in AI agentic economy",
-   "url": "https://www.theblock.co/post/408574/visa-stablecoins-agentic-ai-commerce?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784190558000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Tether invests $20M into Argentine neobank Ualá",
-   "url": "<![CDATA[https://cointelegraph.com/news/tether-invests-20m-argentine-neobank-uala?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784190451000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bitcoin $107K buyers providing ‘early signals’ of 2026 bear-market bottom: Glassnode",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-107-buyers-providing-early-signals-of-2026-bear-market-bottom-glassnode?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784189485000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Robinhood Chain memecoin launchpad Vlad.fun halts after ‘internal integrity’ issue",
-   "url": "<![CDATA[https://cointelegraph.com/news/robinhood-chain-memecoin-vladfun-halts-integrity?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784187825000
-  },
-  {
-   "source": "The Block",
-   "title": "Bitcoin whale moves $383 million in BTC after 8 years of dormancy: onchain data",
-   "url": "https://www.theblock.co/post/408570/bitcoin-whale-moves-8-years?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784184848000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Hyperion DeFi to deploy 500K HYPE for Hyperliquid HIP-3 markets",
-   "url": "<![CDATA[https://cointelegraph.com/news/hyperion-defi-to-deploy-500k-hype-for-hyperliquid-hip-3-markets?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784184074000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Live updates: ZachXBT calls hardware wallets complete garbage; BTC steady after Korea rate hike",
-   "url": "https://www.coindesk.com/markets/2026/07/16/live-updates-zachxbt-calls-hardware-wallets-complete-garbage-btc-steady-near-usd65-000",
-   "ts": 1784182800000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "U.S. Senate unanimously opposes clemency for FTX founder Sam Bankman-Fried",
-   "url": "https://www.coindesk.com/policy/2026/07/16/u-s-senate-unanimously-opposes-clemency-for-ftx-founder-sam-bankman-fried",
-   "ts": 1784181643000
-  },
-  {
    "source": "Cointelegraph",
    "title": "Here’s what happened in crypto today",
    "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784181348000
+   "ts": 1784228660000
   },
   {
-   "source": "CoinDesk",
-   "title": "A bitcoin wallet dormant since the 2017 peak just moved $383 million",
-   "url": "https://www.coindesk.com/markets/2026/07/16/a-bitcoin-wallet-dormant-since-the-2017-peak-just-moved-usd383-million",
-   "ts": 1784178746000
+   "source": "Decrypt",
+   "title": "Bitcoin Q-Day Recovery Proposal Aims to Let Users Prove Ownership After Quantum Attack",
+   "url": "https://decrypt.co/373666/bitcoin-q-day-recovery-proposal-prove-ownership-quantum-attack",
+   "ts": 1784228432000
   },
   {
-   "source": "CoinDesk",
-   "title": "Ether outruns bitcoin as ETF money returns, almost all of from BlackRock's fund",
-   "url": "https://www.coindesk.com/markets/2026/07/16/ether-outruns-bitcoin-as-etf-money-returns-almost-all-of-from-blackrock-s-fund",
-   "ts": 1784177775000
+   "source": "The Block",
+   "title": "&#8216;We&#8217;re going to get it done&#8217;: Crypto bill faces what could be final test over Trump conflicts of interest",
+   "url": "https://www.theblock.co/post/408706/were-going-get-it-done-crypto-bill-faces-could-be-final-test-trump-conflicts-interest?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784227877000
   },
   {
    "source": "Cointelegraph",
-   "title": "Trump to meet with senators over CLARITY Act on Thursday: Politico",
-   "url": "<![CDATA[https://cointelegraph.com/news/trump-to-meet-with-senators-over-clarity-act-on-thursday-politico?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784175509000
+   "title": "BitPay secures Dutch licensing under MiCA, plans to expand stablecoin payments",
+   "url": "<![CDATA[https://cointelegraph.com/news/bitpay-licensing-mica-stablecoin-payments?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784227525000
   },
   {
    "source": "CoinDesk",
-   "title": "Two groups of bitcoin investors sell on the rise as U.S. inflation lifts prices to nearly $65,000",
-   "url": "https://www.coindesk.com/markets/2026/07/16/two-groups-of-bitcoin-investors-sell-on-the-rise-as-inflation-lifts-prices-to-nearly-usd65-000",
-   "ts": 1784174950000
-  },
-  {
-   "source": "The Block",
-   "title": "California pair charged with laundering crypto proceeds from darknet fentanyl sales",
-   "url": "https://www.theblock.co/post/408560/california-duo-darknet-drug-crypto-money-laundering?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784168614000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Base’s social bet left it trailing in prediction markets and perps: Pollak",
-   "url": "<![CDATA[https://cointelegraph.com/news/bases-social-bet-left-it-trailing-in-prediction-markets-and-perps-pollak?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784164498000
-  },
-  {
-   "source": "The Block",
-   "title": "From Perpetual Swaps to Perpetual CFDs: The Regulated Evolution",
-   "url": "https://www.theblock.co/post/408553/from-perpetual-swaps-to-perpetual-cfds-the-regulated-evolution?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784157540000
-  },
-  {
-   "source": "The Block",
-   "title": "Stripe-PayPal deal could accelerate shift to blockchain-based money, Polygon exec says",
-   "url": "https://www.theblock.co/post/408525/stripe-paypal-deal-accelerate-stablecoins-blockchain?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784151667000
+   "title": "$1.9 trillion asset manager T. Rowe Price bets on active management with first multi-token crypto ETF",
+   "url": "https://www.coindesk.com/markets/2026/07/16/usd1-9-trillion-asset-manager-t-rowe-price-bets-on-active-management-with-first-multi-token-crypto-etf",
+   "ts": 1784227093000
   },
   {
    "source": "Decrypt",
-   "title": "Why Analysts Aren’t Worried About Coinbase’s 30% Drop",
-   "url": "https://decrypt.co/373615/analysts-arent-worried-coinbase-drop",
-   "ts": 1784151523000
-  },
-  {
-   "source": "The Block",
-   "title": "Public Hyperliquid treasury firm Hyperion enters into new 500k HYPE bond agreement with Skew",
-   "url": "https://www.theblock.co/post/408538/hyperliquid-treasury-firm-hyperion-new-500k-hype-bond-skew?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784151192000
-  },
-  {
-   "source": "The Block",
-   "title": "Strategy CEO says company isn&#8217;t going anywhere as bitcoin buyer, sees debt concerns only below $10,000 BTC",
-   "url": "https://www.theblock.co/post/408532/strategy-ceo-bitcoin-debt-concerns-btc-interview?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784149685000
-  },
-  {
-   "source": "Decrypt",
-   "title": "OpenAI Uses AI Red Team to Strengthen GPT-5.6 Against Prompt Injection Attacks",
-   "url": "https://decrypt.co/373613/openai-ai-red-team-strengthen-gpt-5-6-prompt-injection-attacks",
-   "ts": 1784148611000
+   "title": "Mira Murati Drops Her First AI Model After Leaving OpenAI—And It's Fully Open Source",
+   "url": "https://decrypt.co/373671/mira-murati-inkling-ai-model-openai-open-source",
+   "ts": 1784226431000
   },
   {
    "source": "CoinDesk",
-   "title": "Coinbase's Jesse Pollak steps back from Base app leadership after admitting his crypto social strategy failed",
-   "url": "https://www.coindesk.com/business/2026/07/15/coinbase-s-jesse-pollak-steps-back-from-base-app-leadership-after-admitting-his-crypto-social-strategy-failed",
-   "ts": 1784146682000
+   "title": "Citadel Securities invests $400 million in Crypto.com, valuing exchange at $20 billion",
+   "url": "https://www.coindesk.com/business/2026/07/16/citadel-securities-invests-usd400-million-in-crypto-com-valuing-exchange-at-usd20-billion",
+   "ts": 1784224800000
+  },
+  {
+   "source": "The Block",
+   "title": "Citadel Securities invests $400 million in Crypto.com at $20 billion valuation",
+   "url": "https://www.theblock.co/post/408688/citadel-securities-invests-400-million-crypto-com-20-billion-valuation?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784224800000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Visa Unveils Stablecoin Platform for Banks and Fintech Companies",
+   "url": "https://decrypt.co/373668/visa-stablecoin-platform-banks-fintech-open-usd",
+   "ts": 1784224677000
+  },
+  {
+   "source": "The Block",
+   "title": "Trump&#8217;s longtime teleprompter operator accused of using insider knowledge to place bets on Kalshi: ABC News",
+   "url": "https://www.theblock.co/post/408692/trump-longtime-teleprompter-operator-accused-insider-knowledge-place-bets-kalshi-abc-news?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784222689000
   },
   {
    "source": "Cointelegraph",
-   "title": "Stanford study says 5-minute Bitcoin prediction markets enable settlement manipulation",
-   "url": "<![CDATA[https://cointelegraph.com/news/stanford-study-5-minute-bitcoin-prediction-markets-enable-settlement-manipulation?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784145908000
-  },
-  {
-   "source": "The Block",
-   "title": "&#8216;Hugely positive&#8217; meeting on Thursday with Trump to discuss ethics raises hopes for passage of sweeping crypto legislation",
-   "url": "https://www.theblock.co/post/408517/hugely-positive-meeting-thursday-trump-ethics-raises-hopes-passage-crypto-legislation?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784145809000
+   "title": "Bitcoin price dips on US stocks sell-off as Micron losses pass 30%",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-price-dips-with-us-stocks-as-tech-sell-off-as-micron-losses-pass-30?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784221082000
   },
   {
    "source": "Decrypt",
-   "title": "Meet Bonsai: The First 27B AI Model That Fits on Your Phone",
-   "url": "https://decrypt.co/373578/meet-bonsai-first-27b-ai-model-fits-phone",
-   "ts": 1784145341000
-  },
-  {
-   "source": "The Block",
-   "title": "Benchmark says Securitize investors should &#8216;strip out the noise&#8217; after post-SPAC selloff",
-   "url": "https://www.theblock.co/post/408511/benchmark-says-securitize-investors-strip-out-noise-after-post-spac-selloff?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784144990000
-  },
-  {
-   "source": "Decrypt",
-   "title": "What Is BIP-110 and Why Is It Dividing the Bitcoin Community?",
-   "url": "https://decrypt.co/373577/what-is-bip-110-why-dividing-bitcoin-community",
-   "ts": 1784144590000
+   "title": "XRP Can't Keep Up as Bitcoin Takes a Breather: Analysis",
+   "url": "https://decrypt.co/373649/xrp-price-cant-keep-up-bitcoin-takes-breather",
+   "ts": 1784221014000
   },
   {
    "source": "Cointelegraph",
-   "title": "Revolut receives in-principle approval from UAE authorities for crypto services",
-   "url": "<![CDATA[https://cointelegraph.com/news/revolut-approval-uae-crypto-services?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1784144079000
+   "title": "Ethics in crypto market structure ‘really not our concern,’ says Blockchain Association CEO",
+   "url": "<![CDATA[https://cointelegraph.com/news/ethics-crypto-market-structure-concerns-blockchain-ceo?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784220429000
   },
   {
-   "source": "Decrypt",
-   "title": "Base Creator Jesse Pollak Steps Back From App Leadership After Admitting Social Bet 'Was Wrong'",
-   "url": "https://decrypt.co/373574/base-jesse-pollak-steps-back-social-bet-wrong",
-   "ts": 1784141455000
+   "source": "CoinDesk",
+   "title": "Stripe’s $53 billion PayPal bid is a high-stakes play to own the future of digital payments",
+   "url": "https://www.coindesk.com/business/2026/07/16/stripe-s-usd53-billion-paypal-bid-is-a-high-stakes-play-to-own-the-future-of-digital-payments",
+   "ts": 1784219836000
   },
   {
-   "source": "Decrypt",
-   "title": "BlackRock, Goldman, and JP Morgan Will Give Tokenized Stocks a Try",
-   "url": "https://decrypt.co/373571/blackrock-goldman-sachs-jp-morgan-dtcc-tokenized-stocks",
-   "ts": 1784138526000
+   "source": "Cointelegraph",
+   "title": "Morgan Stanley’s E*TRADE launches spot crypto trading through Zero Hash",
+   "url": "<![CDATA[https://cointelegraph.com/news/morgan-stanleys-etrade-rolls-out-spot-crypto-trading-for-retail-investors?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784219521000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Tradable’s $1B Stellar deal adds to institutional tokenization boom",
+   "url": "<![CDATA[https://cointelegraph.com/news/tradables-1b-stellar-deal-adds-to-institutional-tokenization-boom?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784218756000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Visa backs Open USD with new stablecoin platform as Circle faces fresh competition",
+   "url": "https://www.coindesk.com/business/2026/07/16/visa-backs-open-usd-with-new-stablecoin-platform-as-circle-faces-fresh-competition",
+   "ts": 1784218470000
   },
   {
    "source": "The Block",
-   "title": "Coinbase&#8217;s Jesse Pollak hands Base app leadership to Cobie after admitting social bets fell short",
-   "url": "https://www.theblock.co/post/408504/coinbases-jesse-pollak-hands-base-app-leadership-cobie-social-bets-fell-short?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1784138329000
+   "title": "$1.9 trillion asset manager T. Rowe Price launches first actively managed multi-token crypto ETF",
+   "url": "https://www.theblock.co/post/408667/t-rowe-price-launches-first-actively-managed-multi-token-crypto-etf?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784218155000
+  },
+  {
+   "source": "The Block",
+   "title": "Multicoin Capital makes first Hyperliquid ecosystem investment in Trasia, an Asia-focused trading platform",
+   "url": "https://www.theblock.co/post/408670/multicoin-capital-hyperliquid-ecosystem-investment-trasia?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784217602000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Dormant Bitcoin Whale Moves $383 Million After More Than 8 Years",
+   "url": "https://decrypt.co/373646/bitcoin-whale-moves-383-million-after-eight-years",
+   "ts": 1784216623000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Keyrock acquires BlockFills trading assets to expand institutional crypto business",
+   "url": "https://www.coindesk.com/business/2026/07/16/keyrock-acquires-blockfills-trading-assets-to-expand-institutional-crypto-business",
+   "ts": 1784215575000
+  },
+  {
+   "source": "The Block",
+   "title": "Visa launching internal stablecoin platform for clients that provides access to OUSD: report",
+   "url": "https://www.theblock.co/post/408645/visa-launching-internal-stablecoin-platform-provides-access-ousd-fortune?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784214928000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "The Clarity Act is the most important consumer protection effort in years",
+   "url": "https://www.coindesk.com/opinion/2026/07/16/the-clarity-act-is-the-most-important-consumer-protection-effort-in-years",
+   "ts": 1784214450000
+  },
+  {
+   "source": "The Block",
+   "title": "US jury indicts South Dakota crypto investor on 29 counts over alleged $20 million investor fraud",
+   "url": "https://www.theblock.co/post/408654/us-jury-indicts-south-dakota-crypto-investor-29-counts-alleged-20m-investor-fraud?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784214374000
+  },
+  {
+   "source": "The Block",
+   "title": "SBI extends onchain finance push with Ondo deal to tokenize Japanese stocks",
+   "url": "https://www.theblock.co/post/408633/sbi-extends-onchain-finance-push-with-ondo-deal-tokenize-japanese-stocks?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784213942000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto for Advisors: Strengthening defenses against AI fraud",
+   "url": "https://www.coindesk.com/coindesk-indices/2026/07/16/crypto-for-advisors-strengthening-defenses-against-ai-fraud",
+   "ts": 1784213651000
+  },
+  {
+   "source": "The Block",
+   "title": "Keyrock closes deal for BlockFills’ institutional trading and brokerage assets",
+   "url": "https://www.theblock.co/post/408639/keyrock-closes-deal-blockfill-institutional-trading-brokerage-assets?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784212946000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto brokerage firm Alpaca raises $135 million for tokenized stock infrastructure",
+   "url": "https://www.coindesk.com/business/2026/07/16/crypto-brokerage-firm-alpaca-raises-usd135-million-for-tokenized-stock-infrastructure",
+   "ts": 1784211572000
+  },
+  {
+   "source": "The Block",
+   "title": "Polygon Labs announces second round of layoffs in 2026 as firm looks to finalize Coinme acquisition",
+   "url": "https://www.theblock.co/post/408625/polygon-labs-second-round-of-layoffs-2026-finalize-coinme-acquisition?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784209671000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Alpaca raises $135M to fund tokenized agent-first infrastructure",
+   "url": "<![CDATA[https://cointelegraph.com/news/alpaca-raises-135m-to-fund-tokenized-agent-first-infrastructure?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784208859000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Gambling on random Pokémon cards: Onchain gagcha hits record high as crypto sinks",
+   "url": "<![CDATA[https://cointelegraph.com/features/pokemon-cards-as-rwas-gacha-spending-hits-records-as-crypto-sinks?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784208600000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Prediction markets defy crypto downturn with record Q2 volume: CoinGecko",
+   "url": "<![CDATA[https://cointelegraph.com/news/crypto-cool-q2-prediction-markets-hit-records-coingecko?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784207109000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Ledger wants AI agents to manage crypto without holding your keys",
+   "url": "https://www.coindesk.com/tech/2026/07/15/ledger-wants-ai-agents-to-manage-crypto-without-holding-your-keys",
+   "ts": 1784206800000
+  },
+  {
+   "source": "The Block",
+   "title": "Ledger unveils hardware-backed Agent Stack to prevent rogue AI transactions",
+   "url": "https://www.theblock.co/post/408549/ledger-unveils-hardware-backed-agent-stack?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784206800000
+  },
+  {
+   "source": "The Block",
+   "title": "MoonPay acquires Y Combinator-backed crypto deposits startup Glide in all-equity deal",
+   "url": "https://www.theblock.co/post/408603/moonpay-acquires-y-combinator-crypto-glide-all-equity-deal?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1784206800000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "MoonPay buys Glide to bolster crypto deposits infrastructure",
+   "url": "<![CDATA[https://cointelegraph.com/news/moonpay-acquires-glide-strengthen-crypto-deposits?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784206800000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Tokenized stocks market cap gains to record $2.3B",
+   "url": "<![CDATA[https://cointelegraph.com/news/tokenized-stocks-rise-23b-all-time-high?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784205352000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "FATF urges faster crypto AML enforcement as stablecoin crime increases",
+   "url": "<![CDATA[https://cointelegraph.com/news/fatf-urges-crypto-aml-enforcement-stablecoin-crime?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1784203545000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Morning Minute: Base Hands Its App Over to Cobie",
+   "url": "https://decrypt.co/373636/morning-minute-base-hands-its-app-over-to-cobie",
+   "ts": 1784203408000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Galaxy targets institutional stablecoin yield with new DeFi vaults",
+   "url": "https://www.coindesk.com/tech/2026/07/16/galaxy-targets-institutional-stablecoin-yield-with-new-defi-vaults",
+   "ts": 1784203200000
   }
  ],
  "narrative": null

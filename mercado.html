@@ -19,14 +19,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
  --bg:#0e0e12;--surface:#141418;--surface2:#1a1a20;--border:#2a2620;--border2:#3a3228;
- --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--wine:#8b3048;
+ --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--orange:#d2792a;--lime:#7cb342;--wine:#8b3048;
  --text:#e8dfc8;--muted:#8a7a62;--card-shadow:0 4px 18px rgba(0,0,0,0.28);
  --font:'Satoshi',sans-serif;--mono:'JetBrains Mono',monospace;
  --btc:#F7931A;--eth:#627EEA;--sol:#14F195;
 }
 [data-theme="light"]{
  --bg:#f5f0e8;--surface:#faf6ee;--surface2:#f0ebe0;--border:#ddd4c0;--border2:#ccc2a8;
- --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--wine:#7a2535;
+ --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--orange:#b5641c;--lime:#5a8a3f;--wine:#7a2535;
  --text:#2a1e0e;--muted:#7a6a52;--card-shadow:0 1px 4px rgba(120,96,40,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -62,14 +62,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .lede-head{font-size:17px;font-weight:600;margin-bottom:8px;line-height:1.3;}
 .lede-body{font-size:13.5px;line-height:1.65;color:var(--text);opacity:.9;}
 .lede-body b{color:var(--accent);font-weight:600;}
-.lede-empty{font-size:12px;color:var(--muted);line-height:1.6;}
-.lede-empty code{font-family:var(--mono);font-size:11px;background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--accent);}
+.lede-tag{margin-top:10px;font-size:10.5px;color:var(--muted);font-style:italic;}
 
 /* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 26px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px;}
 .chip{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:11px;color:var(--muted);}
-.chip b{font-family:var(--mono);font-weight:500;}
-.chip .up{color:var(--green);} .chip .dn{color:var(--red);}
+
+/* SECTION LABEL */
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:6px 0 18px;padding:0 0 10px 14px;border-left:2px solid var(--accent);font-weight:400;}
 
 /* CARDS DE ATIVO */
 .asset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:26px;}
@@ -79,16 +79,53 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .asset-mark{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:#0e0e12;background:var(--tint);flex-shrink:0;}
 .asset-name{font-size:15px;font-weight:600;}
 .asset-note{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.04em;margin-top:1px;}
-.asset-price{font-family:var(--mono);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1;margin-bottom:6px;}
-.asset-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:16px;min-height:13px;}
+.asset-topline{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+.asset-price{font-family:var(--mono);font-size:32px;font-weight:500;letter-spacing:-.02em;line-height:1;margin-bottom:6px;}
+.asset-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:14px;min-height:13px;}
+.spark{width:112px;height:40px;flex-shrink:0;margin-bottom:8px;}
 .asset-metrics{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
 .am{background:var(--surface);padding:9px 11px;}
 .am-l{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
 .am-v{font-family:var(--mono);font-size:12.5px;font-weight:500;}
 .up{color:var(--green);} .dn{color:var(--red);} .neu{color:var(--muted);} .gold{color:var(--accent);}
 
+/* MERCADO AMPLO */
+.broad-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:34px;}
+.broad-item{background:var(--surface);padding:12px 15px;}
+.broad-l{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.broad-v{font-family:var(--mono);font-size:15px;font-weight:500;}
+.broad-sub{font-family:var(--mono);font-size:9px;margin-top:2px;}
+
+/* GAUGES */
+.gauge-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.gauge-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--card-shadow);}
+.gauge-head{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.gauge{width:100%;max-width:230px;height:auto;display:block;margin:4px auto 0;}
+.gauge-read{text-align:center;margin-top:2px;}
+.gauge-num{font-family:var(--mono);font-size:32px;font-weight:500;line-height:1;}
+.gauge-lbl{font-size:12px;color:var(--text);margin-top:3px;text-transform:capitalize;}
+.gauge-delta{font-family:var(--mono);font-size:10px;margin-top:4px;}
+.gauge-na{color:var(--muted);font-size:12px;text-align:center;padding:36px 0;}
+.risk-zones{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin:8px 2px 14px;}
+.risk-comps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.rc{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 9px;}
+.rc-bar{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden;}
+.rc-fill{height:100%;background:var(--accent);border-radius:2px;}
+.gauge-foot{font-size:10px;color:var(--muted);line-height:1.5;margin-top:12px;}
+
+/* FAIXA ON-CHAIN */
+.band-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:34px;box-shadow:var(--card-shadow);}
+.band-note{font-size:12.5px;color:var(--text);opacity:.88;line-height:1.55;margin:6px 0 8px;}
+.band-track{position:relative;height:14px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);margin:48px 0 12px;}
+.band-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:linear-gradient(90deg,rgba(63,185,80,.35),var(--accent));min-width:6px;}
+.band-real{position:absolute;top:-5px;width:2px;height:24px;background:var(--muted);transform:translateX(-50%);}
+.band-real-cap{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8.5px;color:var(--muted);white-space:nowrap;}
+.band-dot{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--accent);transform:translate(-50%,-50%);}
+.band-price{position:absolute;top:-36px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;font-weight:500;color:var(--accent);white-space:nowrap;}
+.band-ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--muted);}
+
 /* FAIXA "PRA MIM" */
-.me-band{background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--border2);border-radius:12px;padding:20px 22px;margin-bottom:26px;box-shadow:var(--card-shadow);}
+.me-band{background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--border2);border-radius:12px;padding:20px 22px;margin-bottom:34px;box-shadow:var(--card-shadow);}
 .me-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;}
 .me-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:2px 7px;}
 .me-title{font-size:13px;font-weight:600;}
@@ -96,19 +133,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .me-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
 .me-cell{background:var(--surface);padding:11px 13px;}
 .me-cell .am-v{font-size:15px;}
-
-/* RISCO */
-.risk-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:26px;box-shadow:var(--card-shadow);}
-.risk-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
-.risk-score{font-family:var(--mono);font-size:30px;font-weight:500;}
-.risk-label{font-size:12px;color:var(--muted);}
-.risk-track{height:8px;border-radius:4px;background:linear-gradient(90deg,#3fb950,#d29922,#f85149);position:relative;margin:12px 0 6px;opacity:.85;}
-.risk-mark{position:absolute;top:-4px;width:3px;height:16px;background:var(--text);border-radius:2px;box-shadow:0 0 0 2px var(--surface);}
-.risk-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
-.risk-comps{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:16px;}
-.rc{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px 11px;}
-.rc-bar{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden;}
-.rc-fill{height:100%;background:var(--accent);border-radius:2px;}
 
 /* NOTÍCIAS */
 .news-list{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
@@ -118,7 +142,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .news-title{font-size:12px;line-height:1.4;flex:1;}
 .news-time{font-family:var(--mono);font-size:9px;color:var(--muted);flex-shrink:0;}
 
-.section-label{font-family:var(--mono);font-size:9px;letter-spacing:.30em;text-transform:uppercase;color:var(--muted);margin:36px 0 20px;padding:0 0 12px 14px;border-left:2px solid var(--accent);font-weight:400;}
 .foot{margin-top:44px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 .disclaim{font-size:10.5px;color:var(--muted);line-height:1.6;margin-top:14px;font-family:var(--font);text-transform:none;letter-spacing:0;}
 
@@ -133,6 +156,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  .page-title{font-size:32px;}
  .asset-grid{grid-template-columns:minmax(0,1fr);}
  .asset-price{font-size:28px;}
+ .gauge-grid{grid-template-columns:minmax(0,1fr);}
+ .risk-comps{grid-template-columns:repeat(3,1fr);}
  .news-src{width:66px;}
 }
 @media print{ nav,.btn-sm,.nav-hamburger{display:none!important;} .container{padding-top:10px;} }
@@ -192,39 +217,54 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
     <div class="lede-body" id="mk-lede-body">Carregando briefing…</div>
   </div>
 
-  <!-- CHIPS -->
-  <div class="chips" id="mk-chips"></div>
+  <!-- CHIPS (fatos do dia, quando a IA roda) -->
+  <div class="chips" id="mk-chips" style="display:none;"></div>
 
-  <!-- CARDS DE ATIVO -->
+  <!-- ATIVOS -->
+  <div class="section-label">Ativos · preço, tendência 7d e recorde</div>
   <div class="asset-grid" id="mk-assets"></div>
 
-  <!-- FAIXA PRA MIM -->
+  <!-- MERCADO AMPLO -->
+  <div class="broad-strip" id="mk-broad"></div>
+
+  <!-- SENTIMENTO & CICLO -->
+  <div class="section-label">Sentimento &amp; ciclo</div>
+  <div class="gauge-grid">
+    <div class="gauge-card">
+      <div class="gauge-head">Fear &amp; Greed · sentimento do mercado</div>
+      <div id="mk-fng"></div>
+    </div>
+    <div class="gauge-card">
+      <div class="gauge-head">Risco de ciclo · BTC on-chain</div>
+      <div id="mk-risk"></div>
+      <div class="risk-zones"><span>Fundo</span><span>De-risking</span><span>Acumulação</span><span>Expansão</span><span>Topo</span></div>
+      <div class="risk-comps" id="mk-risk-comps"></div>
+      <div class="gauge-foot">Composto próprio a partir de MVRV, Mayer, STH MVRV, AVIV e SOPR LTH — <b style="color:var(--accent);">não é o Risk Index da Glassnode</b>. 0 = fundo/capitulação · 1 = topo/euforia.</div>
+    </div>
+  </div>
+
+  <!-- FAIXA ON-CHAIN BTC -->
+  <div class="band-card" id="mk-band">
+    <div class="gauge-head">Valuation on-chain do BTC · onde o preço está no ciclo</div>
+    <div class="band-note" id="mk-band-note">—</div>
+    <div class="band-track">
+      <div class="band-fill" id="mk-band-fill"></div>
+      <div class="band-real" id="mk-band-real"><span class="band-real-cap" id="mk-band-real-cap"></span></div>
+      <div class="band-dot" id="mk-band-dot"></div>
+      <div class="band-price" id="mk-band-price"></div>
+    </div>
+    <div class="band-ends"><span id="mk-band-floor">—</span><span id="mk-band-top">—</span></div>
+  </div>
+
+  <!-- PRA MIM -->
+  <div class="section-label">E daí, pra mim?</div>
   <div class="me-band" id="mk-me">
     <div class="me-head">
-      <span class="me-tag">E daí, pra mim?</span>
-      <span class="me-title" id="mk-me-title">Leitura da posição</span>
+      <span class="me-tag">Posição</span>
+      <span class="me-title" id="mk-me-title">Leitura da carteira hoje</span>
     </div>
     <div class="me-note" id="mk-me-note">—</div>
     <div class="me-grid" id="mk-me-grid"></div>
-  </div>
-
-  <!-- RISCO DE CICLO -->
-  <div class="section-label">Índice de Risco de Ciclo · BTC on-chain</div>
-  <div class="risk-wrap">
-    <div class="risk-top">
-      <div>
-        <div class="risk-score" id="mk-risk-score">—</div>
-        <div class="risk-label" id="mk-risk-label">—</div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);max-width:440px;line-height:1.55;">
-        Composto próprio a partir de MVRV, Mayer, STH MVRV, AVIV e SOPR LTH.
-        <b style="color:var(--accent);">Não é o Risk Index da Glassnode</b> — é construído com os dados
-        que a casa já coleta diariamente. 0 = fundo/capitulação · 1 = topo/euforia.
-      </div>
-    </div>
-    <div class="risk-track"><div class="risk-mark" id="mk-risk-mark" style="left:0%;"></div></div>
-    <div class="risk-scale"><span>Fundo</span><span>De-risking</span><span>Acumulação</span><span>Expansão</span><span>Topo</span></div>
-    <div class="risk-comps" id="mk-risk-comps"></div>
   </div>
 
   <!-- NOTÍCIAS -->
@@ -262,63 +302,194 @@ function cls(v){ return v>0?'up':v<0?'dn':'neu'; }
 function esc(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; }
 function ago(ts){ if(!ts) return ''; var m=Math.floor((Date.now()-ts)/60000);
   if(m<60) return m+'min'; var h=Math.floor(m/60); if(h<24) return h+'h'; return Math.floor(h/24)+'d'; }
-function compact(v){ if(v==null) return '—';
-  if(v>=1e9) return 'US$ '+(v/1e9).toFixed(1)+' bi';
-  if(v>=1e6) return 'US$ '+(v/1e6).toFixed(0)+' mi'; return usd(v); }
+function compact(v){ if(v==null||!isFinite(v)) return '—';
+  if(v>=1e12) return 'US$ '+(v/1e12).toFixed(2)+' tri';
+  if(v>=1e9)  return 'US$ '+(v/1e9).toFixed(1)+' bi';
+  if(v>=1e6)  return 'US$ '+(v/1e6).toFixed(0)+' mi'; return usd(v); }
+function kUsd(v){ if(v==null||!isFinite(v)) return '—';
+  return v>=1000 ? '$'+(v/1000).toFixed(1)+'k' : '$'+Math.round(v); }
+function clampPct(v){ return Math.max(0,Math.min(100,v)); }
 
-// ── render ──
+// ── SVG: sparkline ──
+function spark(arr, up){
+  if(!arr) return '';
+  arr = arr.filter(function(v){ return typeof v==='number' && isFinite(v); });
+  if(arr.length<2) return '';
+  var w=112, h=40, min=Math.min.apply(null,arr), max=Math.max.apply(null,arr), rng=(max-min)||1;
+  var pts = arr.map(function(v,i){ return [ (i/(arr.length-1))*w, (h-3) - ((v-min)/rng)*(h-6) ]; });
+  var line = pts.map(function(p,i){ return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1); }).join(' ');
+  var area = line + ' L '+w+' '+h+' L 0 '+h+' Z';
+  var col = up ? 'var(--green)' : 'var(--red)';
+  var gid = 'sg'+Math.floor(Math.random()*1e6);
+  return '<svg class="spark" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none">'
+    + '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="'+col+'" stop-opacity="0.30"/>'
+    + '<stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
+    + '<path d="'+area+'" fill="url(#'+gid+')"/>'
+    + '<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>'
+    + '</svg>';
+}
+
+// ── SVG: semicircle gauge ──
+function polar(cx,cy,r,frac){ var a=Math.PI*(1-frac); return [cx+r*Math.cos(a), cy-r*Math.sin(a)]; }
+function garc(cx,cy,r,f0,f1){
+  var p0=polar(cx,cy,r,f0), p1=polar(cx,cy,r,f1), large=(f1-f0)>0.5?1:0;
+  return 'M '+p0[0].toFixed(1)+' '+p0[1].toFixed(1)+' A '+r+' '+r+' 0 '+large+' 1 '+p1[0].toFixed(1)+' '+p1[1].toFixed(1);
+}
+function gauge(frac, segs){
+  frac = Math.max(0, Math.min(1, frac));
+  var cx=110, cy=114, r=90, sw=14;
+  var track = segs.map(function(s){
+    return '<path d="'+garc(cx,cy,r,s[0],s[1])+'" fill="none" stroke="'+s[2]+'" stroke-width="'+sw+'" opacity="0.9"/>';
+  }).join('');
+  var np = polar(cx,cy,r-24,frac);
+  return '<svg class="gauge" viewBox="0 0 220 126">'
+    + track
+    + '<line x1="'+cx+'" y1="'+cy+'" x2="'+np[0].toFixed(1)+'" y2="'+np[1].toFixed(1)+'" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="var(--text)"/>'
+    + '</svg>';
+}
+
+// ── render: narrativa (com fallback data-driven — nunca mostra erro de config) ──
+function fallbackNarrative(b){
+  var m=b.market||{}, r=b.risk, f=b.fng, btc=m.btc;
+  var head = r ? ('Ciclo em ' + r.label) : (f ? ('Mercado em ' + f.label.toLowerCase()) : 'Panorama do dia');
+  head = head.charAt(0).toUpperCase()+head.slice(1);
+  var parts=[];
+  if(btc) parts.push('BTC '+usd(btc.price,0)+' ('+pct(btc.d24)+' 24h, '+pct(btc.athPct,0)+' do topo)');
+  if(m.eth) parts.push('ETH '+usd(m.eth.price,0)+' ('+pct(m.eth.d24)+')');
+  if(m.sol) parts.push('SOL '+usd(m.sol.price,0)+' ('+pct(m.sol.d24)+')');
+  if(f) parts.push('Fear & Greed '+f.value+' · '+f.label.toLowerCase());
+  if(r) parts.push('risco de ciclo '+r.score.toFixed(2)+' ('+r.label+')');
+  return { headline: head, lede: parts.join(' · ') + '.', _fallback:true };
+}
+function renderNarrative(b){
+  var n = (b.narrative && b.narrative.headline) ? b.narrative : fallbackNarrative(b);
+  $('mk-headline').textContent = n.headline || '—';
+  $('mk-lede-body').textContent = n.lede || '';
+  if(n.backdrop){
+    $('mk-lede-body').innerHTML += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);">'
+      + '<b style="color:var(--accent);">Pano de fundo:</b> ' + esc(n.backdrop) + '</div>';
+  }
+  var extra=[];
+  if(n.macroDriver) extra.push('Driver macro: <b>'+esc(n.macroDriver)+'</b>');
+  if(n.regulation)  extra.push('Regulação: <b>'+esc(n.regulation)+'</b>');
+  if(extra.length){
+    $('mk-lede-body').innerHTML += '<div style="margin-top:8px;font-size:11.5px;color:var(--muted);">'+extra.join(' · ')+'</div>';
+  }
+  if(n._fallback){
+    $('mk-lede-body').innerHTML += '<div class="lede-tag">Síntese automática a partir dos números do dia — a leitura editorial entra quando a IA processa o briefing.</div>';
+  }
+}
+
+function renderChips(b){
+  var chips = (b.narrative && b.narrative.chips) ? b.narrative.chips : [];
+  if(!chips.length){ $('mk-chips').style.display='none'; return; }
+  $('mk-chips').style.display='flex';
+  $('mk-chips').innerHTML = chips.map(function(x){ return '<div class="chip">'+esc(x)+'</div>'; }).join('');
+}
+
 function renderAssets(b){
   var defs = [
-    { k:'btc', sym:'₿', name:'Bitcoin', tint:'var(--btc)', note:b.narrative&&b.narrative.btcNote },
+    { k:'btc', sym:'₿', name:'Bitcoin',  tint:'var(--btc)', note:b.narrative&&b.narrative.btcNote },
     { k:'eth', sym:'Ξ', name:'Ethereum', tint:'var(--eth)', note:b.narrative&&b.narrative.ethNote },
-    { k:'sol', sym:'◎', name:'Solana',  tint:'var(--sol)', note:b.narrative&&b.narrative.solNote }
+    { k:'sol', sym:'◎', name:'Solana',   tint:'var(--sol)', note:b.narrative&&b.narrative.solNote }
   ];
-  var oc = b.onchain || {};
   $('mk-assets').innerHTML = defs.map(function(d){
     var m = b.market && b.market[d.k]; if(!m) return '';
-    var extra;
-    if(d.k==='btc'){
-      extra = [['Realized Price', oc.realized?usd(oc.realized):'—', 'gold'],
-               ['Piso CVDD',      oc.cvdd?usd(oc.cvdd):'—', 'gold']];
-    } else if(d.k==='eth'){
-      extra = [['30 dias', pct(m.d30,1), cls(m.d30)],
-               ['Volume 24h', compact(m.vol), 'neu']];
-    } else {
-      extra = [['30 dias', pct(m.d30,1), cls(m.d30)],
-               ['Volume 24h', compact(m.vol), 'neu']];
-    }
     return '<div class="asset-card" style="--tint:'+d.tint+'">'
       + '<div class="asset-head"><div class="asset-mark">'+d.sym+'</div>'
       + '<div><div class="asset-name">'+d.name+'</div>'
       + '<div class="asset-note">'+esc(d.note||(d.k.toUpperCase()+' · spot'))+'</div></div></div>'
-      + '<div class="asset-price">'+usd(m.price, m.price<200?2:0)+'</div>'
-      + '<div class="asset-sub">topo '+usd(m.ath,0)+' em '+(m.athDate||'—')+'</div>'
+      + '<div class="asset-topline">'
+      +   '<div><div class="asset-price">'+usd(m.price, m.price<200?2:0)+'</div>'
+      +   '<div class="asset-sub">topo '+usd(m.ath,0)+' · '+(m.athDate||'—')+'</div></div>'
+      +   spark(m.spark, (m.d7||0)>=0)
+      + '</div>'
       + '<div class="asset-metrics">'
       +   '<div class="am"><div class="am-l">24 horas</div><div class="am-v '+cls(m.d24)+'">'+pct(m.d24)+'</div></div>'
       +   '<div class="am"><div class="am-l">7 dias</div><div class="am-v '+cls(m.d7)+'">'+pct(m.d7,1)+'</div></div>'
+      +   '<div class="am"><div class="am-l">30 dias</div><div class="am-v '+cls(m.d30)+'">'+pct(m.d30,1)+'</div></div>'
       +   '<div class="am"><div class="am-l">vs. recorde</div><div class="am-v dn">'+pct(m.athPct,1)+'</div></div>'
       +   '<div class="am"><div class="am-l">market cap</div><div class="am-v neu">'+compact(m.mcap)+'</div></div>'
-      +   '<div class="am"><div class="am-l">'+extra[0][0]+'</div><div class="am-v '+extra[0][2]+'">'+extra[0][1]+'</div></div>'
-      +   '<div class="am"><div class="am-l">'+extra[1][0]+'</div><div class="am-v '+extra[1][2]+'">'+extra[1][1]+'</div></div>'
+      +   '<div class="am"><div class="am-l">volume 24h</div><div class="am-v neu">'+compact(m.vol)+'</div></div>'
       + '</div></div>';
   }).join('');
 }
 
-function renderChips(b){
-  var c = [], m = b.market || {};
-  if(m.btc) c.push(['Bitcoin', pct(m.btc.d24), cls(m.btc.d24)]);
-  if(m.eth) c.push(['Ether',   pct(m.eth.d24), cls(m.eth.d24)]);
-  if(m.sol) c.push(['Solana',  pct(m.sol.d24), cls(m.sol.d24)]);
-  if(b.fng) c.push(['Fear &amp; Greed', b.fng.value+' · '+esc(b.fng.label), b.fng.value<25?'dn':b.fng.value>75?'up':'neu']);
-  if(b.risk) c.push(['Risco de ciclo', b.risk.score.toFixed(2)+' · '+esc(b.risk.label), 'gold']);
-  (b.narrative && b.narrative.chips ? b.narrative.chips : []).forEach(function(x){ c.push([esc(x), '', 'neu']); });
-  $('mk-chips').innerHTML = c.map(function(x){
-    return '<div class="chip">'+x[0]+(x[1]?' <b class="'+x[2]+'">'+x[1]+'</b>':'')+'</div>'; }).join('');
+function renderBroad(b){
+  var x = b.broad; if(!x){ $('mk-broad').style.display='none'; return; }
+  var items = [
+    ['Dominância BTC', x.btcDom!=null?x.btcDom+'%':'—', ''],
+    ['Dominância ETH', x.ethDom!=null?x.ethDom+'%':'—', ''],
+    ['Altcoins', x.altDom!=null?x.altDom+'%':'—', ''],
+    ['ETH / BTC', x.ethBtc!=null?x.ethBtc.toFixed(5):'—', ''],
+    ['Mcap total', compact(x.totalMcap), x.mcapChange24h!=null?pct(x.mcapChange24h)+' 24h':''],
+    ['Supply stablecoins', compact(x.stableMcap), '']
+  ];
+  $('mk-broad').innerHTML = items.map(function(it){
+    return '<div class="broad-item"><div class="broad-l">'+it[0]+'</div>'
+      + '<div class="broad-v">'+it[1]+'</div>'
+      + (it[2] ? '<div class="broad-sub '+(it[0]==='Mcap total'?cls(x.mcapChange24h):'neu')+'">'+it[2]+'</div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+function renderGauges(b){
+  // Fear & Greed
+  var f = b.fng;
+  var fgSeg = [[0,.25,'var(--red)'],[.25,.45,'var(--orange)'],[.45,.55,'var(--yellow)'],[.55,.75,'var(--lime)'],[.75,1,'var(--green)']];
+  if(f){
+    var col = f.value<25?'var(--red)':f.value<45?'var(--orange)':f.value<55?'var(--yellow)':f.value<75?'var(--lime)':'var(--green)';
+    var delta = f.prev!=null ? (f.value-f.prev) : null;
+    $('mk-fng').innerHTML = gauge(f.value/100, fgSeg)
+      + '<div class="gauge-read"><div class="gauge-num" style="color:'+col+'">'+f.value+'</div>'
+      + '<div class="gauge-lbl">'+esc(f.label)+'</div>'
+      + (delta!=null ? '<div class="gauge-delta '+cls(delta)+'">'+(delta>=0?'+':'')+delta+' vs ontem</div>' : '')
+      + '</div>';
+  } else { $('mk-fng').innerHTML = '<div class="gauge-na">Fear &amp; Greed indisponível</div>'; }
+
+  // Risco de ciclo
+  var r = b.risk;
+  var rkSeg = [[0,.2,'var(--green)'],[.2,.4,'var(--lime)'],[.4,.6,'var(--yellow)'],[.6,.8,'var(--orange)'],[.8,1,'var(--red)']];
+  if(r){
+    var rcol = r.score<0.4?'var(--green)':r.score<0.7?'var(--yellow)':'var(--red)';
+    $('mk-risk').innerHTML = gauge(r.score, rkSeg)
+      + '<div class="gauge-read"><div class="gauge-num" style="color:'+rcol+'">'+r.score.toFixed(2)+'</div>'
+      + '<div class="gauge-lbl">'+esc(r.label)+'</div></div>';
+    $('mk-risk-comps').innerHTML = (r.components||[]).map(function(c){
+      return '<div class="rc"><div class="am-l">'+esc(c.key)+'</div>'
+        + '<div class="am-v">'+(typeof c.v==='number'?c.v.toFixed(3):'—')+'</div>'
+        + '<div class="rc-bar"><div class="rc-fill" style="width:'+((c.s||0)*100).toFixed(0)+'%"></div></div></div>';
+    }).join('');
+  } else {
+    $('mk-risk').innerHTML = '<div class="gauge-na">On-chain indisponível</div>';
+    $('mk-risk-comps').innerHTML = '';
+  }
+}
+
+function renderBand(b){
+  var oc=b.onchain, btc=b.market&&b.market.btc;
+  if(!oc || !btc || !oc.cvdd || !oc.realized || !btc.ath){ $('mk-band').style.display='none'; return; }
+  $('mk-band').style.display='block';
+  var floor=oc.cvdd, top=btc.ath, price=btc.price, real=oc.realized, span=(top-floor)||1;
+  var P=clampPct((price-floor)/span*100), R=clampPct((real-floor)/span*100);
+  $('mk-band-fill').style.width = P+'%';
+  $('mk-band-dot').style.left = P+'%';
+  $('mk-band-price').style.left = P+'%';
+  $('mk-band-price').textContent = usd(price,0)+' · agora';
+  $('mk-band-real').style.left = R+'%';
+  $('mk-band-real-cap').textContent = 'Realized '+kUsd(real);
+  $('mk-band-floor').textContent = 'Piso CVDD '+kUsd(floor);
+  $('mk-band-top').textContent = 'Topo '+kUsd(top);
+  $('mk-band-note').textContent = 'O BTC está a ' + P.toFixed(0) + '% do caminho entre o piso histórico ('+kUsd(floor)+') e o topo do ciclo ('+kUsd(top)+') — '
+    + Math.abs(btc.athPct).toFixed(0) + '% abaixo do recorde.';
 }
 
 function renderMe(b){
   var p = b.portfolio; if(!p){ $('mk-me').style.display='none'; return; }
   var n = b.narrative;
+  var carry = p.carry.monthlySupply - p.carry.monthlyInterest;
   $('mk-me-note').textContent = (n && n.meNote) ? n.meNote
     : 'Patrimônio de ' + usd(p.netWorth) + ' com ' + usd(p.debt) + ' de dívida. '
       + (p.kamino.liqSol ? 'O SOL liquidaria em ' + usd(p.kamino.liqSol) + ' — uma queda de ' + Math.abs(p.kamino.dropToLiq).toFixed(0) + '% do nível atual.' : 'Nenhuma posição em risco de liquidação no nível atual.')
@@ -329,29 +500,15 @@ function renderMe(b){
     ['AAVE · Health Factor', p.aave.hf!=null?p.aave.hf.toFixed(2):'—', p.aave.hf>3?'up':p.aave.hf>1.5?'gold':'dn'],
     ['Kamino · LTV', p.kamino.ltv!=null?p.kamino.ltv.toFixed(1)+'%':'—', p.kamino.ltv<50?'up':p.kamino.ltv<65?'gold':'dn'],
     ['SOL liquida em', p.kamino.liqSol?usd(p.kamino.liqSol):'sem risco', p.kamino.liqSol?'gold':'up'],
-    ['Carry mensal', (p.carry.monthlySupply-p.carry.monthlyInterest>=0?'+':'−')+usd(Math.abs(p.carry.monthlySupply-p.carry.monthlyInterest),2), (p.carry.monthlySupply-p.carry.monthlyInterest)>=0?'up':'dn']
+    ['Carry mensal', (carry>=0?'+':'−')+usd(Math.abs(carry),2), carry>=0?'up':'dn']
   ];
   $('mk-me-grid').innerHTML = cells.map(function(c){
     return '<div class="me-cell"><div class="am-l">'+c[0]+'</div><div class="am-v '+c[2]+'">'+c[1]+'</div></div>'; }).join('');
 }
 
-function renderRisk(b){
-  var r = b.risk;
-  if(!r){ $('mk-risk-score').textContent='—'; return; }
-  $('mk-risk-score').textContent = r.score.toFixed(3);
-  $('mk-risk-score').className = 'risk-score ' + (r.score<0.4?'up':r.score<0.7?'gold':'dn');
-  $('mk-risk-label').textContent = r.label;
-  $('mk-risk-mark').style.left = 'calc(' + (r.score*100).toFixed(1) + '% - 1.5px)';
-  $('mk-risk-comps').innerHTML = (r.components||[]).map(function(c){
-    return '<div class="rc"><div class="am-l">'+esc(c.key)+'</div>'
-      + '<div class="am-v">'+(typeof c.v==='number'?c.v.toFixed(3):'—')+'</div>'
-      + '<div class="rc-bar"><div class="rc-fill" style="width:'+(c.s*100).toFixed(0)+'%"></div></div></div>'; }).join('');
-}
-
 function renderNews(b){
   var n = b.news || [];
   if(!n.length){ $('mk-news').innerHTML = '<div class="news-item"><span class="news-title" style="color:var(--muted)">Sem manchetes no briefing de hoje.</span></div>'; return; }
-  // rel=noopener + target=_blank: links de terceiros
   $('mk-news').innerHTML = n.slice(0,14).map(function(x){
     return '<a class="news-item" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer nofollow">'
       + '<span class="news-src">'+esc(x.source)+'</span>'
@@ -359,53 +516,27 @@ function renderNews(b){
       + '<span class="news-time">'+ago(x.ts)+'</span></a>'; }).join('');
 }
 
-function renderNarrative(b){
-  var n = b.narrative;
-  if(n && n.headline){
-    $('mk-headline').textContent = n.headline;
-    $('mk-lede-body').textContent = n.lede || '';
-    if(n.backdrop){
-      $('mk-lede-body').innerHTML += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);">'
-        + '<b style="color:var(--accent);">Pano de fundo:</b> ' + esc(n.backdrop) + '</div>';
-    }
-    var extra = [];
-    if(n.macroDriver) extra.push('Driver macro: <b>'+esc(n.macroDriver)+'</b>');
-    if(n.regulation)  extra.push('Regulação: <b>'+esc(n.regulation)+'</b>');
-    if(extra.length){
-      $('mk-lede-body').innerHTML += '<div style="margin-top:8px;font-size:11.5px;color:var(--muted);">'+extra.join(' · ')+'</div>';
-    }
-  } else {
-    // Sem ANTHROPIC_API_KEY: os dados aparecem, só o texto editorial não.
-    $('mk-headline').textContent = 'Briefing sem narrativa';
-    $('mk-lede-body').innerHTML = '<div class="lede-empty">Os dados abaixo estão ao vivo. A síntese editorial precisa do '
-      + 'secret <code>ANTHROPIC_API_KEY</code> configurado em Settings → Secrets and variables → Actions. '
-      + 'Sem ele a Action grava o briefing só com números — nada quebra.</div>';
-  }
-}
-
 function render(b){
   document.title = 'Barolo Capital · Mercado' + (b.market && b.market.btc ? ' · BTC ' + usd(b.market.btc.price,0) : '');
   var d = b.date ? b.date.split('-').reverse().join('/') : '—';
   $('mk-eyebrow').textContent = 'Briefing · ' + d;
   if(b.onchain && b.onchain.t){
-    $('mk-sub').textContent = 'Preço ao vivo · on-chain de ' + b.onchain.t.split('-').reverse().join('/') + ' · posição de ' + (b.portfolio ? b.portfolio.dataAsOf.split('-').reverse().join('/') : '—');
+    $('mk-sub').textContent = 'Preço + on-chain de ' + b.onchain.t.split('-').reverse().join('/') + ' · posição de ' + (b.portfolio ? b.portfolio.dataAsOf.split('-').reverse().join('/') : '—');
   }
-  renderNarrative(b); renderChips(b); renderAssets(b); renderMe(b); renderRisk(b); renderNews(b);
+  renderNarrative(b); renderChips(b); renderAssets(b); renderBroad(b);
+  renderGauges(b); renderBand(b); renderMe(b); renderNews(b);
   if(b.source) $('mk-foot-src').textContent = 'Fontes: ' + b.source;
   $('mk-foot-upd').textContent = 'Atualizado ' + new Date(b.updated).toLocaleString('pt-BR');
 }
 
 function loadBriefing(bust){
-  // cache:'reload' em vez de ?t=… — o servidor estático local trata a query string
-  // como parte do nome do arquivo e devolve 404
   fetch('briefing.json', { cache: bust ? 'reload' : 'default' })
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(render)
     .catch(function(e){
       $('mk-headline').textContent = 'Briefing indisponível';
-      $('mk-lede-body').innerHTML = '<div class="lede-empty">Não foi possível carregar <code>briefing.json</code> ('
-        + esc(e.message) + '). Ele é gerado pela Action <code>briefing.yml</code> todo dia às ~06:50 BRT — '
-        + 'rode <code>node scripts/fetch-briefing.js</code> para gerar localmente.</div>';
+      $('mk-lede-body').innerHTML = '<div class="lede-tag">Não foi possível carregar <code>briefing.json</code> ('
+        + esc(e.message) + '). Ele é gerado pela Action <code>briefing.yml</code> todo dia às ~06:50 BRT.</div>';
       console.debug('[briefing]', e);
     });
 }
