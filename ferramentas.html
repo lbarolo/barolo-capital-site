@@ -3318,10 +3318,10 @@ function renderDiary(){
  <button class="del-btn" onclick="deleteEntry(${e.id})"></button>
  </div>
  </div>
- <div class="entry-title">${e.title}</div>
+ <div class="entry-title">${escHtml(e.title||'')}</div>
  ${structBadge}
- ${e.body?`<div class="entry-body">${e.body}</div>`:''}
- ${e.tags.length?`<div class="entry-meta">${e.tags.map(t=>`<span class="entry-tag">${t}</span>`).join('')}</div>`:''}
+ ${e.body?`<div class="entry-body">${escHtml(e.body)}</div>`:''}
+ ${(e.tags&&e.tags.length)?`<div class="entry-meta">${e.tags.map(t=>`<span class="entry-tag">${escHtml(String(t))}</span>`).join('')}</div>`:''}
  </div>`;
  }).join('');
 }
