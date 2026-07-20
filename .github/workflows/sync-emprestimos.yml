@@ -1,0 +1,47 @@
+name: Sincroniza data.js embutido no emprestimos.html
+
+# emprestimos.html é um bundle com o data.js embutido (congelado no build).
+# Toda vez que o data.js muda, este workflow regrava o asset embutido para
+# a página não travar numa data antiga. Dispara SÓ quando data.js muda no
+# push (não entra em loop: o commit altera emprestimos.html, não data.js).
+# Sem secrets — só Node + zlib.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data.js'
+  workflow_dispatch:   # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-emprestimos
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regravar data.js embutido no bundle
+        run: node scripts/refresh-emprestimos-data.js
+
+      - name: Commit se houver mudança
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- emprestimos.html; then
+            echo "emprestimos.html já sincronizado com data.js."
+          else
+            git add emprestimos.html
+            git commit -m "data: sincroniza data.js embutido no emprestimos.html (automático)"
+            git pull --rebase origin main
+            git push
+          fi
