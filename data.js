@@ -72,7 +72,7 @@ window.BAROLO_DATA = {
       // Supplied $2.19K (SOL $1.89K + USDS $303) · Borrowing $819.51.
       supply: { SOL:{ qty:24.39, apy:0.0641 }, USDS:{ qty:303.03, apy:0.0450 } },
       borrow: { USDC:{ qty:819.67, apy:0.0560 } },
-      ltv: 0.3733, liqLtv: 0.7700   // 819.51 / (1892.19 + 303.03)
+      ltv: 0.3734, liqLtv: 0.7700   // 819.67 / (1892.19 + 303.03)
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
