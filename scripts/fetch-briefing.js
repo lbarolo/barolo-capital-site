@@ -309,7 +309,8 @@ Responda SOMENTE com JSON válido, sem cercas de código, neste formato:
   "regulation": "até 40 caracteres — regulação em destaque, ou null se não houver",
   "chips": ["3 a 5 fatos curtos do dia, até 34 caracteres cada"],
   "backdrop": "1 frase: o pano de fundo estrutural por trás do ruído do dia",
-  "meNote": "1 a 2 frases: o que isso significa PARA ESTA POSIÇÃO especificamente (patrimônio, dívida, margem de liquidação, carry). Factual, sem recomendar compra ou venda."
+  "meNote": "1 a 2 frases: o que isso significa PARA ESTA POSIÇÃO especificamente (patrimônio, dívida, margem de liquidação, carry). Factual, sem recomendar compra ou venda.",
+  "headlinesPt": ["tradução da manchete 1 para português do Brasil, estilo jornalístico, natural — não é tradução literal palavra por palavra; preserve nomes próprios, tickers e números", "tradução da manchete 2", "... uma entrada para CADA manchete numerada na lista acima, na MESMA ordem, mesma quantidade"]
 }`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -317,7 +318,7 @@ Responda SOMENTE com JSON válido, sem cercas de código, neste formato:
     headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1400,
+      max_tokens: 2400,
       messages: [{ role: 'user', content: prompt }]
     })
   });
@@ -369,6 +370,18 @@ Responda SOMENTE com JSON válido, sem cercas de código, neste formato:
   const narrative = await fetchNarrative(payload).catch(e => {
     console.log('Narrativa falhou (segue sem ela):', e.message); return null;
   });
+
+  // Traduções vêm embutidas na mesma resposta da narrativa (headlinesPt, mesma ordem
+  // das manchetes enviadas ao prompt). Aplica em news[i].titlePt e remove do objeto
+  // narrative pra não duplicar o dado no JSON. Se a narrativa falhar/vier sem essa
+  // chave, titlePt fica ausente e a página cai para o título original (mesmo padrão
+  // "opcional, nunca quebra" da narrativa).
+  if (narrative && Array.isArray(narrative.headlinesPt)) {
+    narrative.headlinesPt.forEach((t, i) => {
+      if (news[i] && typeof t === 'string' && t.trim()) news[i].titlePt = t.trim();
+    });
+    delete narrative.headlinesPt;
+  }
 
   const doc = {
     updated: new Date().toISOString(),

@@ -512,7 +512,7 @@ function renderNews(b){
   $('mk-news').innerHTML = n.slice(0,14).map(function(x){
     return '<a class="news-item" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer nofollow">'
       + '<span class="news-src">'+esc(x.source)+'</span>'
-      + '<span class="news-title">'+esc(x.title)+'</span>'
+      + '<span class="news-title">'+esc(x.titlePt||x.title)+'</span>'
       + '<span class="news-time">'+ago(x.ts)+'</span></a>'; }).join('');
 }
 
