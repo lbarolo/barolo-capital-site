@@ -500,40 +500,42 @@ body, input, button, select, textarea {
 
 
 /* ══ DIÁRIO SEMANAL ══ */
-#panel-semanal{max-width:760px;margin-left:auto;margin-right:auto;}
-#panel-semanal .two-col{grid-template-columns:1fr;gap:14px;}
-.sw-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
-.sw-week-label{font-family:var(--font-mono);font-size:13px;color:var(--text);letter-spacing:1px;}
-.sw-week-sub{font-size:10px;color:var(--muted);letter-spacing:1px;}
-.sw-status{font-size:9px;letter-spacing:2px;padding:3px 8px;border-radius:4px;font-family:var(--font-mono);}
+#panel-semanal{max-width:1180px;margin-left:auto;margin-right:auto;}
+#panel-semanal .two-col{grid-template-columns:1.35fr 1fr;gap:26px;align-items:start;}
+@media(max-width:900px){#panel-semanal .two-col{grid-template-columns:1fr;gap:18px;}}
+.sw-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
+.sw-week-label{font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--text);letter-spacing:.5px;}
+.sw-week-sub{font-size:12px;color:var(--muted);letter-spacing:.5px;}
+.sw-status{font-size:10px;letter-spacing:1.5px;padding:4px 10px;border-radius:4px;font-family:var(--font-mono);}
 .sw-status.saved{background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.3);}
 .sw-status.unsaved{background:rgba(201,160,80,.12);color:var(--accent);border:1px solid rgba(201,160,80,.3);}
 .sw-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}
-.sw-nav{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
-.sw-nav button{background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.sw-nav{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.sw-nav button{background:none;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
 .sw-nav button:hover{color:var(--text);border-color:var(--accent);}
-.sw-section-hd{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:9px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
-.sw-section-hd .sw-icon{font-size:12px;}
-.sw-question{margin-bottom:8px;}
-.sw-question label{display:block;font-size:10.5px;color:var(--text);margin-bottom:3px;line-height:1.4;}
-.sw-question label span{color:var(--muted);font-size:9.5px;font-family:var(--font-mono);}
-.sw-question textarea{width:100%;box-sizing:border-box;background:var(--s2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:11.5px;line-height:1.55;padding:7px 10px;resize:vertical;min-height:48px;transition:border-color .2s;}
+.sw-section-hd{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:1.8px;color:var(--accent);text-transform:uppercase;margin:26px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);}
+.sw-section-hd:first-child{margin-top:0;}
+.sw-section-hd .sw-icon{font-size:15px;}
+.sw-question{margin-bottom:18px;}
+.sw-question label{display:block;font-size:13px;color:var(--text);margin-bottom:7px;line-height:1.5;}
+.sw-question label span{color:var(--accent);font-size:11.5px;font-family:var(--font-mono);font-weight:600;}
+.sw-question textarea{width:100%;box-sizing:border-box;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13.5px;line-height:1.65;padding:11px 14px;resize:vertical;min-height:66px;transition:border-color .2s;}
 .sw-question textarea:focus{outline:none;border-color:var(--accent);}
 .sw-question textarea::placeholder{color:var(--muted);opacity:.6;}
-.sw-history-item{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;}
-.sw-history-hd{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;background:var(--s2);user-select:none;}
+.sw-history-item{border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;}
+.sw-history-hd{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;background:var(--s2);user-select:none;}
 .sw-history-hd:hover{background:var(--s1);}
-.sw-history-hd .sw-hw{font-family:var(--font-mono);font-size:11px;color:var(--text);}
-.sw-history-hd .sw-hdate{font-size:10px;color:var(--muted);}
-.sw-history-hd .sw-htoggle{margin-left:auto;color:var(--muted);font-size:12px;transition:transform .2s;}
+.sw-history-hd .sw-hw{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--text);}
+.sw-history-hd .sw-hdate{font-size:11.5px;color:var(--muted);}
+.sw-history-hd .sw-htoggle{margin-left:auto;color:var(--muted);font-size:13px;transition:transform .2s;}
 .sw-history-hd.open .sw-htoggle{transform:rotate(180deg);}
-.sw-history-body{display:none;padding:16px;border-top:1px solid var(--border);}
+.sw-history-body{display:none;padding:18px;border-top:1px solid var(--border);}
 .sw-history-body.open{display:block;}
-.sw-history-q{margin-bottom:12px;}
-.sw-history-q .sw-hq-label{font-size:9px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:var(--font-mono);}
-.sw-history-q .sw-hq-text{font-size:12px;color:var(--text);line-height:1.6;white-space:pre-wrap;}
-.sw-history-q .sw-hq-empty{font-size:11px;color:var(--muted);font-style:italic;}
-.sw-copy-notice{font-size:10px;color:var(--green);display:none;margin-left:8px;}
+.sw-history-q{margin-bottom:16px;}
+.sw-history-q .sw-hq-label{font-size:10.5px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;font-family:var(--font-mono);font-weight:600;}
+.sw-history-q .sw-hq-text{font-size:13.5px;color:var(--text);line-height:1.65;white-space:pre-wrap;}
+.sw-history-q .sw-hq-empty{font-size:12.5px;color:var(--muted);font-style:italic;}
+.sw-copy-notice{font-size:11px;color:var(--green);display:none;margin-left:8px;}
 @media print {
   * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   body > *:not(#print-semanal){display:none !important;}
@@ -2067,9 +2069,9 @@ body, input, button, select, textarea {
     </div>
     <span class="sw-status unsaved" id="sw-status">NÃO SALVO</span>
     <div class="sw-actions">
-      <button class="btn btn-primary" onclick="swSave()" style="font-size:10px;padding:7px 14px;">SALVAR SEMANA</button>
-      <button class="btn" onclick="swExportPDF()" style="font-size:10px;padding:7px 14px;">EXPORTAR PDF</button>
-      <button class="btn" onclick="swCopyForClaude()" id="sw-copy-btn" style="font-size:10px;padding:7px 14px;" title="Copia a entrada formatada para colar no chat com Claude">COPIAR P/ CLAUDE</button>
+      <button class="btn btn-primary" onclick="swSave()" style="padding:9px 16px;">SALVAR SEMANA</button>
+      <button class="btn" onclick="swExportPDF()" style="padding:9px 16px;">EXPORTAR PDF</button>
+      <button class="btn" onclick="swCopyForClaude()" id="sw-copy-btn" style="padding:9px 16px;" title="Copia a entrada formatada para colar no chat com Claude">COPIAR P/ CLAUDE</button>
       <span class="sw-copy-notice" id="sw-copy-notice">✓ copiado!</span>
     </div>
   </div>
@@ -2133,9 +2135,9 @@ body, input, button, select, textarea {
         <textarea id="sw-q9" placeholder="Quando todo mundo está confortável, o risco é maior..."></textarea>
       </div>
 
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button class="btn btn-primary" onclick="swSave()" style="font-size:10px;">SALVAR SEMANA</button>
-        <button class="btn" onclick="swClear()" style="font-size:10px;color:var(--muted);">LIMPAR</button>
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="btn btn-primary" onclick="swSave()">SALVAR SEMANA</button>
+        <button class="btn" onclick="swClear()" style="color:var(--muted);">LIMPAR</button>
       </div>
     </div>
 
