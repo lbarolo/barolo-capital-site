@@ -769,6 +769,82 @@ body, input, button, select, textarea {
 <!-- ══ TAB: ATIVOS ══ -->
 <div id="tab-ativos" class="tab-pane">
 
+<!-- ══ CICLO DE BAIXA — CONTAGEM DE DIAS ══ -->
+<div class="section-label" style="margin-top:8px;">Ciclo de Baixa — Contagem de Dias</div>
+<div class="card" id="bearCycleCard" style="margin-bottom:14px;padding:22px 24px;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:8px;">
+    <div>
+      <div class="chart-title" style="margin-bottom:8px;">Mercado de baixa atual</div>
+      <div style="display:flex;align-items:baseline;gap:10px;">
+        <span id="bearDays" style="font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:600;color:var(--accent);line-height:1;">—</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);">dias desde o topo</span>
+      </div>
+      <div id="bearTopRef" style="font-size:10px;color:var(--muted);margin-top:9px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em;">topo em — · —</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="chart-title" style="margin-bottom:8px;">Fundos de ciclos passados</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--green);line-height:1;">363–406</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:7px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em;">dias após o topo</div>
+    </div>
+  </div>
+
+  <!-- barra de progresso do ciclo -->
+  <div style="position:relative;margin:44px 0 0;">
+    <!-- label flutuante: hoje -->
+    <div id="bearHojeLabel" style="position:absolute;top:-30px;left:0;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--text);white-space:nowrap;">hoje</div>
+    <!-- trilho -->
+    <div style="position:relative;height:14px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);overflow:hidden;">
+      <!-- zona de fundos históricos -->
+      <div id="bearBand" style="position:absolute;top:0;bottom:0;left:0;width:0;background:repeating-linear-gradient(45deg,rgba(63,185,80,.24),rgba(63,185,80,.24) 6px,rgba(63,185,80,.10) 6px,rgba(63,185,80,.10) 12px);border-left:1px dashed var(--green);border-right:1px dashed var(--green);"></div>
+      <!-- preenchimento até hoje -->
+      <div id="bearFill" style="position:absolute;top:0;bottom:0;left:0;width:0;background:linear-gradient(90deg,var(--accent),#e0b968);border-radius:7px 0 0 7px;"></div>
+    </div>
+    <!-- marcador vertical: hoje -->
+    <div id="bearMarker" style="position:absolute;top:-7px;bottom:-7px;left:0;width:2px;background:var(--text);"></div>
+  </div>
+
+  <!-- eixo -->
+  <div style="display:flex;justify-content:space-between;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--muted);">
+    <span>DIA 0 · TOPO</span>
+    <span style="color:var(--green);">FUNDOS 363–406&nbsp;D</span>
+  </div>
+
+  <div id="bearNote" style="margin-top:18px;font-size:11px;line-height:1.65;color:var(--muted);border-top:1px solid var(--border);padding-top:14px;">—</div>
+</div>
+<script>
+(function(){
+  var TOP_DATE = new Date(2025, 9, 6);          // 06/10/2025 — pico histórico ($12.312)
+  var TOP_LABEL = '06/10/2025', TOP_VALUE = '$12.312';
+  var BOTTOM_MIN = 363, BOTTOM_MAX = 406;
+  var days = Math.floor((Date.now() - TOP_DATE.getTime()) / 86400000);
+  var scaleMax = Math.max(BOTTOM_MAX + 24, days + 30);
+  var pct = function(d){ return Math.max(0, Math.min(100, d / scaleMax * 100)); };
+  var todayPct = pct(days), bandL = pct(BOTTOM_MIN), bandR = pct(BOTTOM_MAX);
+  var byId = function(id){ return document.getElementById(id); };
+  var setStyle = function(id, p, v){ var e = byId(id); if(e) e.style[p] = v; };
+  var setTxt = function(id, v){ var e = byId(id); if(e) e.textContent = v; };
+
+  setTxt('bearDays', days.toLocaleString('pt-BR'));
+  setTxt('bearTopRef', 'topo em ' + TOP_LABEL + ' · ' + TOP_VALUE);
+  setStyle('bearFill', 'width', todayPct + '%');
+  setStyle('bearBand', 'left', bandL + '%');
+  setStyle('bearBand', 'width', (bandR - bandL) + '%');
+  setStyle('bearMarker', 'left', todayPct + '%');
+  setStyle('bearHojeLabel', 'left', todayPct + '%');
+  setTxt('bearHojeLabel', 'hoje · dia ' + days);
+
+  var note;
+  if (days < BOTTOM_MIN) {
+    note = 'Se a história rimar, o fundo dos ciclos anteriores veio entre os dias <b style="color:var(--green)">' + BOTTOM_MIN + '</b> e <b style="color:var(--green)">' + BOTTOM_MAX + '</b> após o topo — faltariam de <b>' + (BOTTOM_MIN - days) + '</b> a <b>' + (BOTTOM_MAX - days) + '</b> dias. Não é previsão: o fundo só é cronometrado no retrovisor.';
+  } else if (days <= BOTTOM_MAX) {
+    note = 'Estamos <b style="color:var(--green)">dentro da janela histórica de fundo</b> (dias ' + BOTTOM_MIN + '–' + BOTTOM_MAX + '). A zona de maior assimetria dos ciclos passados — momento de acumulação, não de previsão.';
+  } else {
+    note = 'Já passamos da janela histórica de fundo (dias ' + BOTTOM_MIN + '–' + BOTTOM_MAX + '). Cada ciclo tem seu ritmo — a referência serve de contexto, não de gatilho.';
+  }
+  var n = byId('bearNote'); if(n) n.innerHTML = note;
+})();
+</script>
+
 <!-- ══ ALOCAÇÃO ATUAL ══ -->
 <div class="section-label">Alocação Atual</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
