@@ -29,4 +29,17 @@
    ('bc-diary-v2') — id, date, type (pool|lending|trade|insight|risk),
    title, body, pnl, tags[], e opcionalmente lending{} ou trade{}.
    ════════════════════════════════════════════════════════════════════ */
-window.BAROLO_DIARY = [];
+window.BAROLO_DIARY = [
+  {
+    id: 1785456000000,
+    date: '2026-07-31',
+    type: 'insight',
+    title: 'Fechamento Julho/2026 — patrimônio $7.031 (−8,1% no mês)',
+    body: 'Patrimônio líquido $7.031 (Jun $7.651 → −$620 / −8,1% em USD). Retorno mensal −10,1% (TWR). ROI total ~−30,7% sobre $10.143 investidos; em BRL amortecido pelo câmbio (~4,95).\n\n'
+      + 'POSITIVO: pool WETH/USDG (Robinhood) fee APR 68,86%, in-range, +$10,85 de fees em 17 dias (PnL real fees−IL = +$6,54); Kamino juros acumulados +$150,03; alavancagem defensiva mantida (dívida/patrimônio 22,5%, HF AAVE ~5,5, Kamino LTV 39,1% vs liq. 77,2%); DCA no bear (BTC +$95,89, SOL +$53,92).\n\n'
+      + 'ATENÇÃO: carry AAVE apertando (borrow subiu p/ 3,97% vs net deposit APY 1,89%); pool a só +1,3% do piso do range (market $1.877 vs mín $1.852) — se ETH cair sai do range por baixo (vira 100% WETH, sem conversão ETH→USDG ainda); carry Kamino justo (borrow 5,56% vs supply blend ~4,85%).\n\n'
+      + 'PRÓXIMO MÊS: decidir range da pool se ETH seguir no piso (reposicionar ou aceitar acumular 100% WETH); vigiar borrow AAVE (reduzir dívida se subir mais); monitorar spread Kamino.',
+    pnl: -620,
+    tags: ['fechamento-mensal', 'review', 'defi', 'julho-2026']
+  }
+];

@@ -1,52 +1,68 @@
 # Fechamento Mensal — Barolo Capital
 
-Executa o fechamento mensal completo do portfolio.
+Executa o fechamento mensal completo do portfolio. Rodar no último dia do mês.
+
+> Arquitetura atual (desde 23/06/2026): **`data.js` é a fonte única de posições**.
+> Os 6 HTMLs leem de `window.BAROLO_DATA` (valores hardcoded são só fallback).
+> O `fechar_mes.py` foi APOSENTADO — não existe mais; editar `data.js` direto.
 
 ## O que fazer
 
-1. Verifique se o usuario ja enviou os prints (CoinGecko, AAVE V4, Kamino, Revert Finance). Se nao enviou, peca agora antes de continuar.
+1. Verifique se o usuário já enviou os prints (CoinGecko, AAVE V4, Kamino, Revert Finance). Se não enviou, peça agora antes de continuar.
 
-2. Com os prints em maos, extraia todos os valores:
-   - **CoinGecko**: qty e preco de cada token (ETH, SOL, USDT, USDS, ADA, EIGEN, POL, ZK, RDNT, XAI, ZETA)
-   - **AAVE V4**: WETH qty + APY, USDT qty + APY, USDC borrow qty + APY
-   - **Kamino**: SOL qty + APY, USDS qty + APY, USDC borrow qty + APY, LTV%
-   - **Revert Finance (pool WETH/USDC Base)**: fees totais ($), divergence loss ($), pooled assets ($)
+2. `git pull --rebase origin main` primeiro (as Actions diárias commitam `briefing.json`, `btc-onchain.json`, `networth-history.json`). Preserve alterações locais não-commitadas (ex.: `emprestimos.html`) com `git stash` → rebase → `git stash pop`.
 
-3. Calcule os campos derivados:
-   - `stables_usd` = USDT qty + USDS qty
-   - `total_debt` = AAVE borrow + Kamino borrow
-   - `wealth_curve_value` = CoinGecko total + pool pooled - total_debt (arredondar para inteiro)
+3. Extraia os valores dos prints:
+   - **CoinGecko**: qty e preço de cada token (BTC, ETH, SOL, USDT, USDS, ADA, EIGEN, POL, ZK, RDNT, XAI, ZETA, SCR) + saldo total, mudança 24h, ganho/perda total
+   - **AAVE V4**: WETH qty + APY, USDT qty + APY, USDC borrow qty + APY, borrowing power
+   - **Kamino**: SOL qty + APY, USDS qty + APY, USDC borrow qty + APY, LTV%, liq LTV%, juros ganhos
+   - **Revert Finance (pool ativa)**: pooled assets ($), fees não coletadas ($), divergence loss/IL ($), PnL ($), fee APR, dias, composição de tokens
+     - ⚠️ A pool **MIGRA DE REDE** — hoje é **WETH/USDG na Robinhood Chain** (não mais Base). Sempre ler o print, nunca assumir a rede.
 
-4. Crie o arquivo de dados no formato correto em EXPORTS SEMANAIS/{MES}/DD-MM-AA-dados.json usando a estrutura do dados_TEMPLATE.json como base.
+4. **Atualize `data.js`** (único arquivo de posições):
+   - `asOf`, `holdings[].qty/invested`, `stables[].qty`
+   - `defi.aave` (supply WETH/USDT {qty,apy}, borrow {qty,apy}, healthFactor)
+   - `defi.kamino` (supply SOL/USDS {qty,apy}, borrow {qty,apy}, ltv, liqLtv)
+   - `defi.uniswapV3` (pooled, totalFees, uncollectedFees, il, pnl, apr, daysOpen, note + comentário com composição)
+   - `debt {aave,kamino,total}`, `stablesTotalUSD`
+   - Atualize o bloco de comentário do topo com o refresh do mês
+   - Metodologia: `invested` = USD realmente pago (não muda sem compra nova); holdings JÁ incluem colateral DeFi; juro/rendimento é renda, não aporte.
+   - Valide: `node -e "global.window={}; require('./data.js'); console.log(window.BAROLO_DATA.asOf)"`
 
-5. Execute o script Python com dry-run primeiro:
-   python fechar_mes.py "EXPORTS SEMANAIS/{MES}/DD-MM-AA-dados.json" --dry-run
+5. **Fechamento em `portfolio_analytics.html`** (`WEEKLY_UPDATE`):
+   - `wealthCurve`: adicione o ponto do mês (label `MM/AA`) em `labels`, `values` e `invested` (as 3 séries têm que ter o mesmo tamanho)
+     - `value` = CoinGecko total + pool pooled − dívida total (arredondar p/ inteiro)
+     - `invested` = invested do mês anterior + aportes novos do mês (BTC/SOL/etc.)
+   - `monthlyReturns[ANO][mês]`: retorno via **TWR** = `(valor_mês − aportes_do_mês − valor_mês_anterior) / valor_mês_anterior × 100` (remove os aportes novos antes de medir)
+   - `pnlOrigin.jurosAcumulados`: atualize a estimativa (+~$5/mês)
 
-   Confirme que todos os 6 arquivos mostram checkmark. Se algum falhar, investigue e corrija.
+6. **Snapshot JSON** em `EXPORTS SEMANAIS/{MÊS}/DD-MM-AA-posicoes.json` (a pasta é gitignored — fica só local, é registro histórico). Use a estrutura do último snapshot como base.
 
-6. Se o dry-run estiver OK, execute de verdade com push:
-   python fechar_mes.py "EXPORTS SEMANAIS/{MES}/DD-MM-AA-dados.json" --push ghp_TOKEN
+7. **Análise mensal** (escreva você mesmo, não precisa de agente):
+   - O que foi positivo no mês
+   - Problemas/atenção (spreads/carry negativos, APYs, pool próxima do piso, alavancagem, HF/LTV)
+   - Pontos de atenção para o próximo mês
 
-   Peca o token ao usuario se necessario.
+8. **Registre a análise no Diário DeFi** (`diario.js`) — passo fixo, pedido pelo Lucas em 31/07/2026 para ter controle histórico mês a mês:
+   - Adicione uma entrada em `window.BAROLO_DIARY` com formato `{ id: <epoch ms único>, date:'AAAA-MM-DD', type:'insight', title:'Fechamento {Mês}/{Ano} — patrimônio $X (±Y% no mês)', body:'<resumo positivo/atenção/próximo mês>', pnl:<variação do mês em USD>, tags:['fechamento-mensal','review','defi','{mes}-{ano}'] }`
+   - O `ferramentas.html` faz merge automático (arquivo + localStorage) no load; id novo não conflita.
+   - Valide: `node -e "global.window={}; require('./diario.js'); console.log(window.BAROLO_DIARY.length)"`
 
-7. Apos o push, gere a analise mensal com um agente:
-   - O que foi positivo no mes
-   - Problemas identificados (spreads negativos, APYs, pool proxima do piso)
-   - Pontos de atencao para o proximo mes
+9. **Commit + push direto na main** (workflow do Lucas — sem PR):
+   - `git add data.js portfolio_analytics.html diario.js`
+   - commit `data: fechamento mensal {Mês}/{Ano} (...)` com `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`
+   - `git pull --rebase origin main` → `git push origin main`
+   - O site atualiza em 1-2 min em barolocapital.com.br
 
-## Arquivos que o script atualiza
+## Verificação (preview local, porta 8080)
 
-- index.html: ETH qty, STABLES_USD, TOTAL_DEBT
-- portfolio_analytics.html: WEEKLY_UPDATE defi, AAVE_DEBT, KAMINO_DEBT, APY fallbacks, wealthCurve
-- emprestimos.html: display HTML, updateCollateralCards, updateLiqPrices, fallbacks
-- ferramentas.html: BASE simulator
-- relatorio.html: APY constants
-- pools.html: pool ativa (fees/il/result), ETH qty, debt fallbacks, AAVE_BORROW_RATE
+- `data.js` parseia e `window.BAROLO_DATA.asOf` é a data nova; portfolio carrega sem erro de console
+- `wealthCurve` labels/values/invested com mesmo comprimento; último label = mês novo
+- entrada do Diário aparece no `window.BAROLO_DIARY` e faz merge no localStorage
 
 ## Notas importantes
 
-- A pool ativa WETH/USDC esta na Base (chain_id=8453), NAO na Ethereum mainnet
-- Performance da pool sempre em USD — nunca usar HODL ou ETH como referencia
-- PnL real da pool = fees - il (nao o numero "vs HODL" do Revert)
-- wealthCurve: se o mes ja tem ponto do inicio, atualizar com valor do fechamento
-- Apos o push, o site atualiza em 1-2 minutos em barolocapital.com.br
+- Pool ativa: **WETH/USDG na Robinhood Chain** (card ESTÁTICO, sem fetch on-chain). NUNCA assumir Base nem Ethereum.
+- Performance da pool sempre em **USD** — nunca usar HODL ou ETH como referência.
+- PnL real da pool = **fees − IL** (não o número "vs HODL"/PnL total do Revert, que embute valorização do ETH).
+- NUNCA somar colateral AAVE/Kamino por cima do total do CoinGecko (dupla contagem) — `defi` é view, não posição aditiva.
