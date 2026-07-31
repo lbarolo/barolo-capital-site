@@ -719,7 +719,7 @@ if(window.Chart){
 <div class="apr-section-header">
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <span class="apr-section-title">DEX — Melhores APRs</span>
-    <span class="apr-section-badge">ETH · Base · ARB · SOL</span>
+    <span class="apr-section-badge">ETH · Base · ARB · SOL · Robinhood</span>
     <span style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;" id="uni-status">
       <span class="apr-live-dot"></span>carregando…
     </span>
@@ -806,17 +806,18 @@ if(window.Chart){
 (function() {
  // Endereços WETH por rede
  const WETH = {
- eth:      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
- base:     '0x4200000000000000000000000000000000000006',
- arbitrum: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
- solana:   'So11111111111111111111111111111111111111112'
+ eth:        '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+ base:       '0x4200000000000000000000000000000000000006',
+ arbitrum:   '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+ solana:     'So11111111111111111111111111111111111111112',
+ robinhood:  '0x0000000000000000000000000000000000000000' // WETH na Robinhood Chain — placeholder, ajustar com o endereço correto
  };
  // Stables conhecidas (lowercase)
  const STABLES = new Set([
  'usdc','usdt','dai','usds','usdbc','usdc.e','frax','lusd','crvusd','pyusd','usde','susde','rlusd'
  ]);
  // Cores por rede
- const NET_COLOR = { eth:'#627EEA', base:'#4fa8ff', arbitrum:'#5882d2', solana:'#14F195' };
+ const NET_COLOR = { eth:'#627EEA', base:'#4fa8ff', arbitrum:'#5882d2', solana:'#14F195', robinhood:'#c9a050' };
  // Links Uniswap por rede
  const UNI_LINK = {
  eth:      'https://app.uniswap.org/explore/pools/ethereum/',
@@ -836,7 +837,7 @@ if(window.Chart){
  function saveFavs() { localStorage.setItem('bc-fav-pools', JSON.stringify([..._favs])); }
  function isFav(net, addr) { return _favs.has(net+':'+addr); }
  // Labels e cores curtos por rede
- const NET_SHORT = { eth:'ETH', base:'BASE', arbitrum:'ARB', solana:'SOL' };
+ const NET_SHORT = { eth:'ETH', base:'BASE', arbitrum:'ARB', solana:'SOL', robinhood:'ROBIN' };
 
  // Portfolio token addresses per network
  const PORTFOLIO_ADDRS = {
@@ -848,7 +849,8 @@ if(window.Chart){
    arbitrum: [
      { sym:'RDNT', addr:'0x3082cc23568ea640225c2467653db90e9250aaa0' },
      { sym:'XAI',  addr:'0x4cb9a7ae498cedcbb5eae9f25736ae7d428c9d66' },
-   ]
+   ],
+   robinhood: []  // busca todas as pools Uniswap V3/V4 em Robinhood
  };
 
  function fmtM(n) {
@@ -1201,6 +1203,7 @@ if(window.Chart){
  setTimeout(()=>loadNet('base'), 4000);
  setTimeout(()=>loadNet('arbitrum'), 12000);
  setTimeout(()=>loadNet('solana'), 20000);
+ setTimeout(()=>loadNet('robinhood'), 28000);
  };
 
  document.addEventListener('DOMContentLoaded', function() {
@@ -1209,6 +1212,7 @@ if(window.Chart){
  setTimeout(()=>loadNet('base'), 4000);
  setTimeout(()=>loadNet('arbitrum'), 12000);
  setTimeout(()=>loadNet('solana'), 20000);
+ setTimeout(()=>loadNet('robinhood'), 28000);
  });
 })();
 </script>
