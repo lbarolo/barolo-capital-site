@@ -1,25 +1,19 @@
 {
- "updated": "2026-08-01T11:06:29.065Z",
- "date": "2026-08-01",
+ "updated": "2026-08-02T11:07:31.552Z",
+ "date": "2026-08-02",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 62991,
-   "d24": -1,
-   "d7": -1.5,
-   "d30": 3,
+   "price": 63125,
+   "d24": 0.2,
+   "d7": -2.1,
+   "d30": 2.4,
    "ath": 126080,
-   "athPct": -50,
+   "athPct": -49.9,
    "athDate": "2025-10-06",
-   "mcap": 1263859612513,
-   "vol": 22692044819,
+   "mcap": 1266470332713,
+   "vol": 15484443091,
    "spark": [
-    64010.36,
-    64137.57,
-    64373.24,
-    64358.53,
-    64453.93,
-    64404.14,
     64467.76,
     64673.19,
     64676.54,
@@ -55,27 +49,27 @@
     63065.59,
     62904.77,
     63001.84,
-    63021.66,
-    63003.45
+    63021.78,
+    62993.66,
+    63061.43,
+    62529.31,
+    62798.37,
+    63388,
+    63429.64,
+    63216.01
    ]
   },
   "eth": {
-   "price": 1865.31,
-   "d24": -0.8,
-   "d7": 0.4,
-   "d30": 13.6,
+   "price": 1866.76,
+   "d24": 0.1,
+   "d7": -0.8,
+   "d30": 8.2,
    "ath": 4946.05,
    "athPct": -62.3,
    "athDate": "2025-08-24",
-   "mcap": 225108679072,
-   "vol": 6701005096,
+   "mcap": 225250701078,
+   "vol": 5353763208,
    "spark": [
-    1858.05,
-    1865.75,
-    1874.98,
-    1874.9,
-    1878.98,
-    1884.51,
     1885.2,
     1896.58,
     1912.73,
@@ -111,27 +105,27 @@
     1870.83,
     1861.08,
     1866.32,
-    1868.8,
-    1866.34
+    1868.67,
+    1865.36,
+    1871.99,
+    1836.07,
+    1846.9,
+    1875.72,
+    1875.88,
+    1869.2
    ]
   },
   "sol": {
-   "price": 72.77,
-   "d24": -0.9,
-   "d7": -1.6,
-   "d30": -8.3,
+   "price": 73.21,
+   "d24": 0.7,
+   "d7": -2.4,
+   "d30": -9.6,
    "ath": 293.31,
-   "athPct": -75.2,
+   "athPct": -75,
    "athDate": "2025-01-19",
-   "mcap": 42284471427,
-   "vol": 1225989485,
+   "mcap": 42532462395,
+   "vol": 1301140193,
    "spark": [
-    73.92,
-    73.97,
-    74.64,
-    74.44,
-    74.87,
-    75.07,
     75.08,
     75.01,
     75.32,
@@ -167,106 +161,220 @@
     73.08,
     72.82,
     73.01,
-    72.93,
-    72.81
+    72.92,
+    72.74,
+    72.92,
+    71.16,
+    71.98,
+    73.14,
+    73.39,
+    73.32
    ]
   },
-  "stableMcap": 255222857486
+  "stableMcap": 255259811510
  },
  "fng": {
   "value": 27,
   "label": "Fear",
-  "prev": 25
+  "prev": 27
  },
  "broad": {
   "btcDom": 56.3,
   "ethDom": 10,
   "altDom": 33.7,
-  "totalMcap": 2245973778386.3213,
-  "totalVol": 51868898209.94749,
-  "mcapChange24h": -1.04,
-  "ethBtc": 0.02961,
-  "stableMcap": 255222857486
+  "totalMcap": 2251909996893.474,
+  "totalVol": 38695766291.70746,
+  "mcapChange24h": 0.28,
+  "ethBtc": 0.02957,
+  "stableMcap": 255259811510
  },
  "onchain": {
-  "t": "2026-07-31",
-  "price": 63506.73,
-  "mvrv": 1.18953,
-  "mvrv_sth": 0.927174,
-  "mvrv_lth": 1.259929,
-  "realized": 52865.73,
-  "realized_sth": 67824.81,
-  "realized_lth": 49911.86,
-  "sopr_lth": 0.998155,
-  "aviv": 0.825634,
-  "cvdd": 47669.05,
-  "sma200": 71526.63,
-  "mayer": 0.888
+  "t": "2026-08-01",
+  "price": 62885.94,
+  "mvrv": 1.188542,
+  "mvrv_sth": 0.927448,
+  "mvrv_lth": 1.259845,
+  "realized": 52816.12,
+  "realized_sth": 67684.83,
+  "realized_lth": 49826.89,
+  "sopr_lth": 0.833701,
+  "aviv": 0.825509,
+  "cvdd": 47740.9,
+  "sma200": 71378.51,
+  "mayer": 0.881
  },
  "risk": {
-  "score": 0.118,
+  "score": 0.1,
   "label": "fundo / capitulação",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.18953,
+    "v": 1.188542,
     "s": 0.134
    },
    {
     "key": "Mayer",
-    "v": 0.888,
-    "s": 0.16
+    "v": 0.881,
+    "s": 0.156
    },
    {
     "key": "STH MVRV",
-    "v": 0.927174,
-    "s": 0.045
+    "v": 0.927448,
+    "s": 0.046
    },
    {
     "key": "AVIV",
-    "v": 0.825634,
+    "v": 0.825509,
     "s": 0.163
    },
    {
     "key": "SOPR LTH",
-    "v": 0.998155,
-    "s": 0.089
+    "v": 0.833701,
+    "s": 0
    }
   ]
  },
  "portfolio": {
-  "netWorth": 6998.08,
-  "gross": 6605.57,
-  "stables": 1618.89,
+  "netWorth": 7019.24,
+  "gross": 6626.67,
+  "stables": 1618.95,
   "lp": 354.08,
   "debt": 1580.46,
   "invested": 10143.6,
-  "roi": -31,
-  "move24": -78.19,
-  "move24Pct": -1.1,
+  "roi": -30.8,
+  "move24": 23.53,
+  "move24Pct": 0.34,
   "aave": {
-   "hf": 6.01,
-   "collateral": 5629.07,
+   "hf": 6.02,
+   "collateral": 5632.2,
    "debt": 758.8,
    "ltv": 13.5,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 39.5,
+   "ltv": 39.3,
    "liqLtv": 77.2,
-   "collateral": 2082.1,
+   "collateral": 2092.85,
    "debt": 821.66,
    "liqSol": 28.88,
-   "dropToLiq": 60.3
+   "dropToLiq": 60.6
   },
   "carry": {
    "monthlyInterest": 6.32,
-   "monthlySupply": 17.3
+   "monthlySupply": 17.35
   },
   "dataAsOf": "2026-07-31"
  },
  "news": [
+  {
+   "source": "Cointelegraph",
+   "title": "Trump Media sells another 2,628 BTC, holdings fall to 4,261 BTC",
+   "url": "<![CDATA[https://cointelegraph.com/news/trump-media-2628-btc-crypto-com-4261-btc-holdings?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1785662955000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Coldcard hack sparks biggest sub-1 BTC move since FTX: CryptoQuant",
+   "url": "<![CDATA[https://cointelegraph.com/news/coldcard-biggest-sub-1-btc-transfer-ftx-cryptoquant?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1785657896000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Strategy holds STRC dividend at 12%",
+   "url": "https://www.coindesk.com/markets/2026/08/01/strategy-holds-strc-dividend-at-12",
+   "ts": 1785621717000
+  },
+  {
+   "source": "The Block",
+   "title": "Iran-linked exchange sent $676 million to Binance in alleged sanctions-evasion operation: Reuters",
+   "url": "https://www.theblock.co/post/410355/iran-linked-exchange-sent-676-million-to-binance-in-alleged-sanctions-evasion-operation-reuters?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1785619125000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Onchain, in court: What happened in crypto legal news this week",
+   "url": "<![CDATA[https://cointelegraph.com/news/on-chain-in-court-crypto-legal-news4?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1785618879000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin cold-wallet attack spreads to 4,500 addresses as losses near $89 million",
+   "url": "https://www.coindesk.com/tech/2026/08/02/bitcoin-cold-wallet-attack-spreads-to-4-500-addresses-as-losses-near-usd89-million",
+   "ts": 1785615054000
+  },
+  {
+   "source": "The Block",
+   "title": "BNB Chain &#8216;pursuing legal action&#8217; against former employee over memecoin launched from tutorial wallet",
+   "url": "https://www.theblock.co/post/410351/bnb-chain-pursuing-legal-action-against-former-employee-over-memecoin-launched-from-tutorial-wallet?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1785611397000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Minnesota crypto ATM ban goes into effect after reported $1M losses",
+   "url": "<![CDATA[https://cointelegraph.com/news/minnesota-crypto-atm-ban-losses-scams?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1785607637000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Tokenized stock trading surged 288% in July, but one QQQ token drove most of it",
+   "url": "https://www.coindesk.com/markets/2026/08/01/tokenized-stock-trading-surged-288-in-july-but-one-qqq-token-drove-most-of-it",
+   "ts": 1785603095000
+  },
+  {
+   "source": "The Block",
+   "title": "Russian decree bans crypto mining across Moscow region through 2032",
+   "url": "https://www.theblock.co/post/410345/russian-decree-bans-crypto-mining-across-moscow-region-through-2032?utm_source=rss&amp;utm_medium=rss",
+   "ts": 1785600555000
+  },
+  {
+   "source": "Decrypt",
+   "title": "CZ Warns Bitcoin Holders After $70 Million Wallet Exploit: 'Nothing Is 100%'",
+   "url": "https://decrypt.co/374810/cz-warns-bitcoin-holders-70-million-coldcard-wallet-exploit",
+   "ts": 1785600077000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bank of Italy research suggests stablecoins aren't necessarily cheaper for remittances",
+   "url": "https://www.coindesk.com/business/2026/08/01/bank-of-italy-research-suggests-stablecoins-aren-t-necessarily-cheaper-for-remittances",
+   "ts": 1785600000000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin mining difficulty shrinks 14% from this year's high as plunging revenues force operators to pivot",
+   "url": "https://www.coindesk.com/business/2026/08/01/bitcoin-mining-difficulty-shrinks-14-from-this-year-s-high-as-plunging-revenues-force-operators-to-pivot",
+   "ts": 1785599470000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "SEC to review Nasdaq bitcoin options approval after CME challenge",
+   "url": "https://www.coindesk.com/policy/2026/08/01/sec-to-review-nasdaq-bitcoin-options-approval-after-cme-challenge",
+   "ts": 1785599307000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Crypto PAC pours another $1M into Michigan House race",
+   "url": "<![CDATA[https://cointelegraph.com/news/crypto-pac-michigan-thanedar-mckinney?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1785599042000
+  },
+  {
+   "source": "Decrypt",
+   "title": "The More Americans Know About AI, the Less They Like It: Gallup",
+   "url": "https://decrypt.co/374794/more-americans-know-about-ai-less-they-like-gallup",
+   "ts": 1785596469000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Solana Foundation's new CISO warns AI is making crypto scams more convincing",
+   "url": "https://www.coindesk.com/tech/2026/07/31/solana-foundation-s-new-ciso-warns-ai-is-making-crypto-scams-more-convincing",
+   "ts": 1785589200000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Everyone has the perps convergence backwards",
+   "url": "https://www.coindesk.com/opinion/2026/08/01/everyone-has-the-perps-convergence-backwards",
+   "ts": 1785589200000
+  },
   {
    "source": "Cointelegraph",
    "title": "Russia expands crypto mining ban to Moscow through 2032",
@@ -358,12 +466,6 @@
    "ts": 1785525379000
   },
   {
-   "source": "CoinDesk",
-   "title": "Tether posts $1.5 billion operating profit in Q2 as reserve buffer falls by half",
-   "url": "https://www.coindesk.com/business/2026/07/31/tether-posts-usd1-5-billion-operating-profit-in-q2-as-reserve-buffer-falls-by-half",
-   "ts": 1785522295000
-  },
-  {
    "source": "Cointelegraph",
    "title": "Here’s what happened in crypto today",
    "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
@@ -374,12 +476,6 @@
    "title": "Tether’s excess reserves fall by more than $4 billion amid weaker Q2 financial results",
    "url": "https://www.theblock.co/post/410305/tethers-excess-reserves-fall-by-more-than-4-billion-amid-weaker-q2-financial-results?utm_source=rss&amp;utm_medium=rss",
    "ts": 1785520727000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "The good and the bad of perps, according to crypto traders",
-   "url": "https://www.coindesk.com/business/2026/07/31/the-good-and-the-bad-of-perps-according-to-crypto-traders",
-   "ts": 1785520439000
   },
   {
    "source": "The Block",
@@ -394,12 +490,6 @@
    "ts": 1785517849000
   },
   {
-   "source": "CoinDesk",
-   "title": "Coldcard's $38 million (so far) exploit shakes faith in self-custody, may push investors to ETFs",
-   "url": "https://www.coindesk.com/business/2026/07/31/coldcard-s-usd38-million-so-far-exploit-shakes-faith-in-self-custody-may-push-investors-to-etfs",
-   "ts": 1785517650000
-  },
-  {
    "source": "Cointelegraph",
    "title": "Ex-FTX users report funds being released in $900M distribution round",
    "url": "<![CDATA[https://cointelegraph.com/news/ftx-users-funds-released-fifth-distribution-round?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
@@ -412,100 +502,10 @@
    "ts": 1785516516000
   },
   {
-   "source": "Cointelegraph",
-   "title": "Tether earns $1.5B in Q2 as US Treasury holdings fuel profits",
-   "url": "<![CDATA[https://cointelegraph.com/news/tether-q2-profit-us-treasury-holdings-usdt-supply?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1785515147000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bybit adds tokenized Nvidia, Apple, Tesla stocks as loan collateral",
-   "url": "<![CDATA[https://cointelegraph.com/news/bybit-tokenized-stocks-collateral-margin-loans?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1785515001000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "US Treasury yields rise as TIPS challenge the inflation narrative",
-   "url": "<![CDATA[https://cointelegraph.com/markets/us-treasury-yields-rise-as-tips-challenge-the-inflation-narrative?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1785514459000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bitcoin price sinks to 2-week lows as US stocks fail to copy Asia rebound",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-two-week-lows-us-stocks-fail-copy-asia-rebound?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1785513423000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Quantum computing nears commercial breakthrough, IBM CEO says",
-   "url": "https://www.coindesk.com/markets/2026/07/31/quantum-computing-nears-commercial-breakthrough-ibm-ceo-says",
-   "ts": 1785512370000
-  },
-  {
    "source": "Decrypt",
    "title": "Circle Lands New York Trust Charter as Stablecoin Issuer Expands Regulatory Footprint",
    "url": "https://decrypt.co/374791/circle-new-york-trust-charter-stablecoin-issuer",
    "ts": 1785511922000
-  },
-  {
-   "source": "Decrypt",
-   "title": "US Treasury Sanctions Iranian Firms Taking Bitcoin for Hormuz Passage",
-   "url": "https://decrypt.co/374789/us-treasury-sanctions-iranian-firms-taking-bitcoin-for-hormuz-passage",
-   "ts": 1785510343000
-  },
-  {
-   "source": "Decrypt",
-   "title": "XDC AI and the Rise of Agentic Finance: When AI Agents Learn to Pay",
-   "url": "https://decrypt.co/374741/xdc-ai-and-the-rise-of-agentic-finance-when-ai-agents-learn-to-pay",
-   "ts": 1785510064000
-  },
-  {
-   "source": "The Block",
-   "title": "Uniswap launches &#8216;Earn&#8217; with Morpho to let users earn yield on idle crypto assets",
-   "url": "https://www.theblock.co/post/410286/uniswap-morpho-earn-yield-gauntlet-vaults?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1785510052000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Crypto faces 3 barriers to next bull run, STS Digital CEO says",
-   "url": "https://www.coindesk.com/markets/2026/07/31/crypto-faces-3-barriers-to-next-bull-run-sts-digital-ceo-says",
-   "ts": 1785510000000
-  },
-  {
-   "source": "The Block",
-   "title": "Ethereum&#8217;s 43-day staking queue isn&#8217;t a clean demand signal, Sygnum says",
-   "url": "https://www.theblock.co/post/410285/ethereum-43-day-staking-queue-isnt-clean-demand-signal-sygnum?utm_source=rss&amp;utm_medium=rss",
-   "ts": 1785508511000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "ECB says digital euro app will exceed EU accessibility standards",
-   "url": "<![CDATA[https://cointelegraph.com/news/ecb-digital-euros-accessibility-payment-providers?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1785506725000
-  },
-  {
-   "source": "Decrypt",
-   "title": "AI Company Sues Town for Trying to Block Data Center Near National Park",
-   "url": "https://decrypt.co/374764/ai-company-sues-town-data-center-national-park",
-   "ts": 1785506463000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Claude Hacked Three Companies in Internal Testing: Anthropic",
-   "url": "https://decrypt.co/374784/claude-hacked-three-companies-in-internal-testing-anthropic",
-   "ts": 1785505674000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Circle secures New York trust charter as crypto regulatory push accelerates",
-   "url": "https://www.coindesk.com/policy/2026/07/31/circle-secures-new-york-trust-charter-as-crypto-regulatory-push-accelerates",
-   "ts": 1785504917000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Coinbase's weak quarter leaves Wall Street split on timing of a recovery",
-   "url": "https://www.coindesk.com/markets/2026/07/31/coinbase-s-weak-quarter-leaves-wall-street-split-on-timing-of-a-recovery",
-   "ts": 1785504045000
   }
  ],
  "narrative": null
