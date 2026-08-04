@@ -430,6 +430,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   .charts-row, .defi-summary, .pool-grid, .lp-metrics-grid,
   .summary-grid, .charts-row-3 { grid-template-columns:1fr !important; }
 }
+/* ── "E daí, pra mim?" — leitura da carteira (portada de mercado.html) ── */
+.me-band{background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--border2);border-radius:12px;padding:20px 22px;margin-top:32px;margin-bottom:8px;box-shadow:var(--card-shadow);}
+.me-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;}
+.me-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:2px 7px;}
+.me-title{font-size:13px;font-weight:600;}
+.me-note{font-size:12.5px;line-height:1.6;color:var(--text);opacity:.88;margin-bottom:16px;}
+.me-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.me-cell{background:var(--surface);padding:11px 13px;}
+.me-cell .am-l{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.me-cell .am-v{font-family:var(--mono);font-size:15px;font-weight:500;}
+.me-cell .up{color:var(--green);} .me-cell .dn{color:var(--red);} .me-cell .neu{color:var(--muted);} .me-cell .gold{color:var(--accent);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>/* tooltip padrão (Design.md §4.6): bolinha cheia da cor da série, sem borda */
@@ -470,7 +481,6 @@ if(window.Chart){
   <div class="nav-links">
     <a href="index.html" data-i18n="nav-home">Início</a>
     <a href="portfolio_analytics.html" data-i18n="nav-portfolio">Portfolio</a>
-    <a href="mercado.html">Mercado</a>
     <a href="pools.html" class="active" data-i18n="nav-pools">Pools &amp; DeFi</a>
     <a href="emprestimos.html" data-i18n="nav-loans">Empréstimos</a>
     <a href="ferramentas.html" data-i18n="nav-tools">Ferramentas</a>
@@ -486,6 +496,55 @@ if(window.Chart){
 </nav>
 
 <div class="container">
+
+<!-- ══ E DAÍ, PRA MIM? — leitura da carteira (dados do briefing.json, ex-mercado.html) ══ -->
+<div class="me-band" id="pl-me-band">
+  <div class="me-head">
+    <span class="me-tag">Posição</span>
+    <span class="me-title">Leitura da carteira hoje</span>
+  </div>
+  <div class="me-note" id="pl-me-note">—</div>
+  <div class="me-grid" id="pl-me-grid"></div>
+</div>
+<script>
+(function(){
+  function usd(v,d){ if(v==null||!isFinite(v)) return '—';
+    return 'US$ ' + Number(v).toLocaleString('pt-BR',{minimumFractionDigits:d==null?0:d,maximumFractionDigits:d==null?0:d}); }
+  function pct(v,d){ if(v==null||!isFinite(v)) return '—';
+    return (v>=0?'+':'') + Number(v).toFixed(d==null?2:d) + '%'; }
+  function cls(v){ return v>0?'up':v<0?'dn':'neu'; }
+
+  function renderMe(b){
+    var wrap = document.getElementById('pl-me-band');
+    var p = b && b.portfolio;
+    if(!p){ if(wrap) wrap.style.display='none'; return; }
+    var n = b.narrative;
+    var carry = p.carry.monthlySupply - p.carry.monthlyInterest;
+    document.getElementById('pl-me-note').textContent = (n && n.meNote) ? n.meNote
+      : 'Patrimônio de ' + usd(p.netWorth) + ' com ' + usd(p.debt) + ' de dívida. '
+        + (p.kamino.liqSol ? 'O SOL liquidaria em ' + usd(p.kamino.liqSol) + ' — uma queda de ' + Math.abs(p.kamino.dropToLiq).toFixed(0) + '% do nível atual.' : 'Nenhuma posição em risco de liquidação no nível atual.')
+        + ' O yield de supply cobre ' + (p.carry.monthlyInterest>0 ? (p.carry.monthlySupply/p.carry.monthlyInterest*100).toFixed(0) : '—') + '% dos juros da dívida.';
+    var cells = [
+      ['Patrimônio', usd(p.netWorth), 'neu'],
+      ['Movimento 24h', (p.move24>=0?'+':'−')+usd(Math.abs(p.move24))+' · '+pct(p.move24Pct), cls(p.move24)],
+      ['AAVE · Health Factor', p.aave.hf!=null?p.aave.hf.toFixed(2):'—', p.aave.hf>3?'up':p.aave.hf>1.5?'gold':'dn'],
+      ['Kamino · LTV', p.kamino.ltv!=null?p.kamino.ltv.toFixed(1)+'%':'—', p.kamino.ltv<50?'up':p.kamino.ltv<65?'gold':'dn'],
+      ['SOL liquida em', p.kamino.liqSol?usd(p.kamino.liqSol):'sem risco', p.kamino.liqSol?'gold':'up'],
+      ['Carry mensal', (carry>=0?'+':'−')+usd(Math.abs(carry),2), carry>=0?'up':'dn']
+    ];
+    document.getElementById('pl-me-grid').innerHTML = cells.map(function(c){
+      return '<div class="me-cell"><div class="am-l">'+c[0]+'</div><div class="am-v '+c[2]+'">'+c[1]+'</div></div>'; }).join('');
+  }
+
+  fetch('briefing.json').then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(renderMe)
+    .catch(function(e){
+      var wrap = document.getElementById('pl-me-band');
+      if(wrap) wrap.style.display='none';
+      console.debug('[pools/leitura-carteira]', e);
+    });
+})();
+</script>
 
 <div id="bc-meta-ytd-section">
 <!-- ══ CAPITAL OPERACIONAL · P&L YTD ══ -->

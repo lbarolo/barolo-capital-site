@@ -3977,3 +3977,28 @@ O standup diário automatizado (`daily-standup-barolo`, roda sem o Lucas present
 ---
 
 Atualizado: 11/07/2026 — `diario.js` criado (Diário DeFi git-tracked, padrão `data.js`); `ferramentas.html` faz merge automático arquivo+localStorage e ganhou botão "📤 Sincronizar"; sessões automatizadas (ex: standup diário) devem ler `diario.js` para a seção de registro/trades
+
+---
+
+## Sessão 04/08/2026 — Card "E daí, pra mim?" portado para pools.html + `mercado.html` removida
+
+### Contexto
+Entre a sessão anterior (que só adicionou instruções de briefing ao daily standup) e esta, uma execução automatizada não logada aqui criou `mercado.html` (briefing diário completo: preços/ATH/dominância, Fear&Greed, risco de ciclo on-chain, faixa de valuation BTC, card de posição "E daí, pra mim?", manchetes RSS) + pipeline própria (`scripts/fetch-briefing.js` + `.github/workflows/briefing.yml`, cron ~06:50 BRT, gera `briefing.json` na raiz). Lucas pediu para portar só o card de posição para `pools.html` (acima da Meta de Alocação) e remover a página `mercado.html` do site, mantendo-a recuperável.
+
+### Implementado
+- **`pools.html`** — card `.me-band` "Leitura da carteira hoje" inserido logo após `<div class="container">`, acima de `#bc-meta-ytd-section` (Meta de Alocação). CSS portado de `mercado.html` (`.me-band/.me-head/.me-tag/.me-title/.me-note/.me-grid/.me-cell`, cores `.up/.dn/.gold/.neu` escopadas em `.me-cell` para não colidir com outras classes do arquivo). JS: IIFE que faz `fetch('briefing.json')` e renderiza a nota + 6 células (Patrimônio, Movimento 24h, AAVE HF, Kamino LTV, SOL liquida em, Carry mensal) — mesma lógica de `renderMe()` do `mercado.html`. Se o fetch falhar, o card se esconde (`display:none`) em vez de mostrar dado quebrado.
+- **`mercado.html` removida** via `git rm` (fica recuperável no histórico do git — não foi deletada do GitHub, só tirada da árvore de trabalho/site publicado).
+- **Nav "Mercado" removido** de `pools.html`, `ferramentas.html`, `portfolio_analytics.html`, `relatorio.html` (as 4 páginas que linkavam pra ela; `index.html` e o bundle `emprestimos.html` nunca tiveram o link).
+- **`.github/workflows/briefing.yml`** — comentário atualizado avisando que o workflow **continua necessário** mesmo sem `mercado.html`: o campo `portfolio` de `briefing.json` agora alimenta o card novo em `pools.html`. Não desativar.
+- Verificado no preview: card renderiza com dados ao vivo do `briefing.json` (patrimônio $7.048, HF AAVE 6.08, LTV Kamino 39.1%, SOL liquida em $29, carry +$13,68/mês), posicionado acima da Meta de Alocação, zero erros de console, nav sem link morto.
+
+### Bugs corrigidos
+Nenhum — feature nova + remoção limpa.
+
+### O que ainda falta
+- Se um dia quiser voltar com `mercado.html`: `git log --oneline -- mercado.html` (último commit antes da remoção) + restaurar o arquivo + religar os 4 links de nav + `.github/workflows/briefing.yml`/`fetch-briefing.js` já estão intactos e continuam gerando `briefing.json` normalmente.
+- Pendências antigas mantidas (ver sessão 10/07): curva diária na Evolução Patrimonial, `RENDA_2026`, CDI/IPCA anual, `FISCAL_ENTRADAS`, Registro Histórico em pools.html, `emprestimos.html` bundle, reconciliar `wealthCurve.invested`
+
+---
+
+Atualizado: 04/08/2026 — Card "E daí, pra mim?" (patrimônio/HF AAVE/LTV Kamino/liquidação SOL/carry mensal) portado de `mercado.html` para `pools.html` (acima da Meta de Alocação), lendo `briefing.json` ao vivo; `mercado.html` removida do site (`git rm`, recuperável no histórico) e nav limpo nas 4 páginas que linkavam pra ela; pipeline `briefing.yml`/`fetch-briefing.js` mantida rodando (agora alimenta o card de pools, não só a página removida)

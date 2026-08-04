@@ -1,7 +1,12 @@
-name: Briefing diário de mercado (mercado.html)
+name: Briefing diário de mercado
 
 # Regenera briefing.json (preços + on-chain + posição + notícias + narrativa) e commita.
 # Roda DEPOIS do onchain.yml (09:20) para já usar o btc-onchain.json do dia.
+#
+# mercado.html (a página que consumia isso) foi removida do site em 04/08/2026 (git rm,
+# recuperável no histórico) — mas este workflow CONTINUA necessário: o campo `portfolio`
+# de briefing.json alimenta o card "E daí, pra mim?" em pools.html (acima da Meta de
+# Alocação). NÃO desativar este workflow.
 #
 # A narrativa é OPCIONAL e precisa do secret ANTHROPIC_API_KEY:
 #   Settings → Secrets and variables → Actions → New repository secret
