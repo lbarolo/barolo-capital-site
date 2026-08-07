@@ -40,16 +40,25 @@
      Pool WETH/USDG (Robinhood, NFT 116561, 17 dias): pooled $343.23, fees
      $10.85 (uncollected), PnL +$15.13, IL $4.31, APR 96.01% / fee APR 68.86%,
      in-range (market $1.877,01), 0.167 WETH + 29.79 USDG.
+   + Compra SOL 05/08/2026 16:18 (+0.374988 SOL @ $76,01 = $28,50) — total
+     24.765222 SOL, bate exato com CoinGecko/Kamino supply. Refresh completo
+     07/08/2026 (prints CoinGecko + AAVE V4 + Kamino + Uniswap):
+     AAVE WETH 2.16 @1.79% / USDT 1600 @2.65% · borrow 759.46 USDC @4.00% ·
+     Collateral $4.705 (print direto) → HF≈6,20; Kamino SOL 24.46 @4.49% /
+     USDS 303.83 @4.00% · borrow 822.62 USDC @5.94% · LTV 38.95% · Liq.LTV
+     77.16% · juros ganhos +$151.56; Pool WETH/USDG (Robinhood, 24 dias):
+     pooled $351.18 (0.132 WETH + 96.01 USDG), fees $12.85 (uncollected),
+     in-range (market $1.932,34, range $1.852,38–$2.166,83).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-07-31',
+  asOf: '2026-08-07',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
-    { ticker:'SOL',   cgId:'solana',                   qty:24.390234,  invested:2504.86 },
+    { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
@@ -69,38 +78,39 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.16, apy:0.0174 }, USDT:{ qty:1600, apy:0.0228 } },
-      borrow: { USDC:{ qty:758.80, apy:0.0397 } },
-      healthFactor: 5.48   // estimado via CF (WETH 83% / USDT 78%) — AAVE não expôs o HF direto no print (colateral $5.652 / borrow power $3.852,88)
+      supply: { WETH:{ qty:2.16, apy:0.0179 }, USDT:{ qty:1600, apy:0.0265 } },
+      borrow: { USDC:{ qty:759.46, apy:0.0400 } },
+      healthFactor: 6.20   // = Collateral $4.705,00 (valor direto do print AAVE) / Borrow $759,46
     },
     kamino: {
-      // Print 31/07/2026: SOL supply 24.44 @ 4.95% / USDS 303.60 @ 4.27% (rewards KMNO
-      // claimable à parte: USDS $1.59, PYUSD $0.07, KMNO $3.09). Net APY 4.39% · juros
-      // ganhos acumulados +$150.03. Supplied $2.10K (SOL $1.80K + USDS $303,60) · Borrowing $821,48.
-      supply: { SOL:{ qty:24.44, apy:0.0495 }, USDS:{ qty:303.60, apy:0.0427 } },
-      borrow: { USDC:{ qty:821.66, apy:0.0556 } },
-      ltv: 0.3913, liqLtv: 0.7717   // print Kamino 31/07/2026
+      // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
+      // à parte: USDS $1.59, PYUSD $0.07, KMNO $3.24). Net APY 3.45% · juros ganhos
+      // acumulados +$151.56. Supplied $2.11K (SOL $1.81K + USDS $303,83) · Borrowing $822,48.
+      supply: { SOL:{ qty:24.46, apy:0.0449 }, USDS:{ qty:303.83, apy:0.0400 } },
+      borrow: { USDC:{ qty:822.62, apy:0.0594 } },
+      ltv: 0.3895, liqLtv: 0.7716   // print Kamino 07/08/2026
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
-      capital:343, pooled:343.23, totalFees:10.85, uncollectedFees:10.85,
-      il:4.31, pnl:15.13, apr:96.01, daysOpen:17, openDate:'2026-07-14',
-      rangeMin:1852.38, rangeMax:2166.83, poolApr:96.01, feeApr:68.86,
+      capital:343, pooled:351.18, totalFees:12.85, uncollectedFees:12.85,
+      il:0, pnl:21.03, apr:93.26, daysOpen:24, openDate:'2026-07-14',
+      rangeMin:1852.38, rangeMax:2166.83, poolApr:93.26, feeApr:56.98,
       // Pool Base (WETH/USDC 0.3%) DESMONTADA em 14/07/2026: remove → 0.1717 ETH + 47.22 USDC;
       // USDC trocado por 0.0255 ETH (Uniswap V4); ~0.197 ETH bridgeado (Across V2) para a
       // Robinhood Chain; add liquidity com 0.183 ETH (~$340) → nova posição WETH/USDG 0.01%.
-      // Print Revert 31/07/2026 (NFT 116561 · 17 dias): pooled $343,23, uncollected fees
-      // $10,85 (0.00287731 WETH + 5.4555 USDG), PnL +$15,13, IL $4,31, ROI 4,46%, gas $0,03.
-      // Posição atual: 0.16702321 WETH ($313,44) + 29.7912001 USDG ($29,79). Market $1.877,01,
-      // range $1.852,38–$2.166,83, in-range. Fee APR 68,86% · total APR 96,01%.
+      // Print Uniswap 07/08/2026 (24 dias): position $351,18 = 0.132 WETH ($255,17) + 96.01
+      // USDG ($96,01). Fees earned $12,85 (uncollected) = 0.003 WETH ($6,48) + 6.37 USDG
+      // ($6,37). Market $1.932,34, range $1.852,38–$2.166,83, in-range. PnL total (pooled+
+      // fees−capital) = +$21,03; pooled > capital, então sem IL líquido neste corte (il:0 —
+      // campo apenas descritivo, não usado em cálculo de nenhuma página).
       // Estratégia mantida: saída gradual ETH→USDG. Card ESTÁTICO (chain nova, sem fetch
       // on-chain) — Lucas envia valores por print.
-      note:'WETH/USDG 0.01% · Robinhood Chain · in-range · fee APR 68,86% · total APR 96,01%'
+      note:'WETH/USDG 0.01% · Robinhood Chain · in-range · fee APR 56,98% · total APR 93,26%'
     }
   },
 
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:758.80, kamino:821.66, total:1580.46 },
+  debt:   { aave:759.46, kamino:822.62, total:1582.08 },
   stablesTotalUSD: 1619.96   // USDT 1302.52 + USDS 317.44
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
