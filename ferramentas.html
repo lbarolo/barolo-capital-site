@@ -3278,6 +3278,10 @@ function filterDiary(f, btn){
  renderDiary();
 }
 
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
 function renderDiary(){
  const list=document.getElementById('diary-list');
  let items=diaryEntries.slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -4001,10 +4005,6 @@ function swToggleHist(hd, i) {
   var body = document.getElementById('sw-hb-' + i);
   hd.classList.toggle('open');
   body.classList.toggle('open');
-}
-
-function escHtml(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
 
 function swLoadEntry(key) {

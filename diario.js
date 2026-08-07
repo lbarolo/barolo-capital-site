@@ -41,5 +41,18 @@ window.BAROLO_DIARY = [
       + 'PRÓXIMO MÊS: decidir range da pool se ETH seguir no piso (reposicionar ou aceitar acumular 100% WETH); vigiar borrow AAVE (reduzir dívida se subir mais); monitorar spread Kamino.',
     pnl: -620,
     tags: ['fechamento-mensal', 'review', 'defi', 'julho-2026']
+  },
+  {
+    id: 1785957480000,
+    date: '2026-08-05',
+    type: 'trade',
+    title: 'Compra SOL (DCA) — 0,374988 SOL @ $76,01',
+    body: 'Compra de +0,374988 SOL @ $76,01 = $28,50 (05/08 16:18). Total agora 24,765222 SOL — bate exato com o supply da Kamino, ou seja, todo o SOL segue depositado como colateral (nenhum extra na carteira livre).\n\n'
+      + 'Briefing semanal (07/08/2026): patrimônio líquido ≈$7.220 (carteira $8.438,04 + LP $364,03 − dívida $1.582,08), semana levemente positiva (+~$100 a +$170 vs 7d atrás) e mês +~6% (vs 30d atrás). BTC $65.034 (+1,7% 7d) · ETH $1.924,87 (+1,5% 7d) · SOL $73,72 (0,0% 7d). Fear&Greed 29 (Fear), melhorando (era 25 há 7 dias). MVRV 1,22 / Mayer 0,915 / STH MVRV 0,95 — zona neutra/acumulação, sem sinal de topo.\n\n'
+      + 'Posições seguras: AAVE HF 6,20 (WETH 2,16 @1,79% + USDT 1.600 @2,65% · borrow 759,46 USDC @4,00%); Kamino LTV 38,95% vs liq. 77,16% (SOL 24,46 @4,49% + USDS 303,83 @4,00% · borrow 822,62 USDC @5,94%; SOL precisaria cair a ~$31 pra risco de liquidação). Pool WETH/USDG (Robinhood) in-range, 24 dias, $351,18 + $12,85 fees não coletadas, fee APR ~57% (desacelerando um pouco vs semanas anteriores, ainda saudável).\n\n'
+      + 'Nota: registrado via Claude a pedido do Lucas — ainda não lançado manualmente na aba Diário DeFi (fazer isso mais tarde faz o Sync puxar/mesclar este id, sem duplicar).',
+    pnl: null,
+    tags: ['trade', 'sol', 'dca', 'briefing-semanal'],
+    trade: { token: 'SOL', side: 'buy', qty: 0.374988, totalCost: 28.50 }
   }
 ];
