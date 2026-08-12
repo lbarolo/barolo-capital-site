@@ -1,25 +1,19 @@
 {
- "updated": "2026-08-11T10:35:28.608Z",
- "date": "2026-08-11",
+ "updated": "2026-08-12T10:43:59.088Z",
+ "date": "2026-08-12",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 64210,
-   "d24": -1.4,
-   "d7": 1.1,
-   "d30": 0.4,
+   "price": 64091,
+   "d24": -0.1,
+   "d7": 0,
+   "d30": 1.4,
    "ath": 126080,
-   "athPct": -49.1,
+   "athPct": -49.2,
    "athDate": "2025-10-06",
-   "mcap": 1288596628363,
-   "vol": 20696178414,
+   "mcap": 1286143396642,
+   "vol": 22048745537,
    "spark": [
-    63500.19,
-    63631.07,
-    63985.86,
-    64108.73,
-    64328.94,
-    64265.07,
     64089.29,
     64280.41,
     64712.04,
@@ -55,27 +49,27 @@
     63898.85,
     63937.8,
     64015.78,
-    63943.63,
-    64078.13
+    63932.99,
+    64238.96,
+    64181.06,
+    63557.53,
+    63709.93,
+    63785.14,
+    63782.07,
+    63733.95
    ]
   },
   "eth": {
-   "price": 1884.55,
-   "d24": -2.2,
-   "d7": 1.4,
-   "d30": 4.3,
+   "price": 1910.16,
+   "d24": 1.4,
+   "d7": 1.9,
+   "d30": 6.4,
    "ath": 4946.05,
-   "athPct": -61.9,
+   "athPct": -61.4,
    "athDate": "2025-08-24",
-   "mcap": 227415295786,
-   "vol": 7261426787,
+   "mcap": 230500963555,
+   "vol": 7032613138,
    "spark": [
-    1855.65,
-    1859.78,
-    1870.34,
-    1868.36,
-    1873.01,
-    1870.89,
     1870.05,
     1873.19,
     1915.39,
@@ -111,27 +105,27 @@
     1872.64,
     1873.29,
     1876.9,
-    1872.52,
-    1877.58
+    1871.47,
+    1883.71,
+    1888.87,
+    1863.13,
+    1884.4,
+    1884.6,
+    1889.82,
+    1889.18
    ]
   },
   "sol": {
-   "price": 75.86,
-   "d24": -1.5,
-   "d7": 3.4,
-   "d30": -1.2,
+   "price": 76.74,
+   "d24": 1.1,
+   "d7": 3.6,
+   "d30": 0,
    "ath": 293.31,
-   "athPct": -74.1,
+   "athPct": -73.8,
    "athDate": "2025-01-19",
-   "mcap": 44187755084,
-   "vol": 1376761710,
+   "mcap": 44695342570,
+   "vol": 1346311207,
    "spark": [
-    73.16,
-    73.52,
-    73.82,
-    73.96,
-    74.12,
-    74.03,
     73.96,
     73.77,
     74.52,
@@ -167,345 +161,351 @@
     75.92,
     76.25,
     76.04,
-    75.74,
-    75.87
+    75.7,
+    75.86,
+    75.99,
+    75.18,
+    76.58,
+    76.4,
+    76.26,
+    76.11
    ]
   },
-  "stableMcap": 255217192752
+  "stableMcap": 255123129084
  },
  "fng": {
-  "value": 29,
+  "value": 27,
   "label": "Fear",
-  "prev": 30
+  "prev": 29
  },
  "broad": {
-  "btcDom": 56.5,
-  "ethDom": 10,
-  "altDom": 33.5,
-  "totalMcap": 2278736356563.569,
-  "totalVol": 51681757607.40269,
-  "mcapChange24h": -1.01,
-  "ethBtc": 0.02935,
-  "stableMcap": 255217192752
+  "btcDom": 56.3,
+  "ethDom": 10.1,
+  "altDom": 33.6,
+  "totalMcap": 2282949201311.347,
+  "totalVol": 53502339734.57041,
+  "mcapChange24h": 0.19,
+  "ethBtc": 0.0298,
+  "stableMcap": 255123129084
  },
  "onchain": {
-  "t": "2026-08-10",
-  "price": 64670.97,
-  "mvrv": 1.212547,
-  "mvrv_sth": 0.948402,
-  "mvrv_lth": 1.287367,
-  "realized": 52748.24,
-  "realized_sth": 67439.43,
-  "realized_lth": 49682.56,
-  "sopr_lth": 0.903373,
-  "aviv": 0.843008,
-  "cvdd": 47924.81,
-  "sma200": 70066.91,
-  "mayer": 0.923
+  "t": "2026-08-11",
+  "price": 63861.46,
+  "mvrv": 1.206077,
+  "mvrv_sth": 0.943833,
+  "mvrv_lth": 1.280426,
+  "realized": 52736.81,
+  "realized_sth": 67389.77,
+  "realized_lth": 49674.61,
+  "sopr_lth": 0.864436,
+  "aviv": 0.83853,
+  "cvdd": 47933.95,
+  "sma200": 69938.77,
+  "mayer": 0.913
  },
  "risk": {
-  "score": 0.115,
+  "score": 0.111,
   "label": "fundo / capitulação",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.212547,
-    "s": 0.142
+    "v": 1.206077,
+    "s": 0.14
    },
    {
     "key": "Mayer",
-    "v": 0.923,
-    "s": 0.179
+    "v": 0.913,
+    "s": 0.174
    },
    {
     "key": "STH MVRV",
-    "v": 0.948402,
-    "s": 0.081
+    "v": 0.943833,
+    "s": 0.073
    },
    {
     "key": "AVIV",
-    "v": 0.843008,
-    "s": 0.172
+    "v": 0.83853,
+    "s": 0.169
    },
    {
     "key": "SOPR LTH",
-    "v": 0.903373,
-    "s": 0.003
+    "v": 0.864436,
+    "s": 0
    }
   ]
  },
  "portfolio": {
-  "netWorth": 7167.25,
-  "gross": 6766.43,
-  "stables": 1618.87,
+  "netWorth": 7246.36,
+  "gross": 6845.55,
+  "stables": 1618.85,
   "lp": 364.03,
   "debt": 1582.08,
   "invested": 10172.1,
-  "roi": -29.5,
-  "move24": -103.85,
-  "move24Pct": -1.43,
+  "roi": -28.8,
+  "move24": 84.3,
+  "move24Pct": 1.18,
   "aave": {
-   "hf": 6.05,
-   "collateral": 5670.63,
+   "hf": 6.11,
+   "collateral": 5725.23,
    "debt": 759.46,
-   "ltv": 13.4,
+   "ltv": 13.3,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 38.1,
+   "ltv": 37.7,
    "liqLtv": 77.2,
-   "collateral": 2159.37,
+   "collateral": 2180.65,
    "debt": 822.62,
    "liqSol": 28.9,
-   "dropToLiq": 61.9
+   "dropToLiq": 62.3
   },
   "carry": {
    "monthlyInterest": 6.6,
-   "monthlySupply": 17.56
+   "monthlySupply": 17.72
   },
   "dataAsOf": "2026-08-07"
  },
  "news": [
   {
-   "source": "CoinDesk",
-   "title": "Live updates: Bitcoin slips as corporate BTC enthusiasm moves to AI",
-   "url": "https://www.coindesk.com/tech/2026/08/11/live-updates-bitcoin-slips-as-corporate-btc-enthusiasm-moves-to-ai",
-   "ts": 1786444492000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "FlightAware sues Kalshi over bets on flight cancellations",
-   "url": "https://www.coindesk.com/policy/2026/08/11/kalshi-faces-new-lawsuit-flightaware-accuses-it-of-using-its-data-for-flight-cancellation-betting",
-   "ts": 1786444457000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Software stocks break away from bitcoin: What the rare divergence means for crypto",
-   "url": "https://www.coindesk.com/markets/2026/08/11/software-stocks-break-away-from-bitcoin-what-the-rare-divergence-means-for-crypto",
-   "ts": 1786444286000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Luke Dashjr removed as Bitcoin BIP editor after controversial BIP-110 fork stalls",
-   "url": "https://www.coindesk.com/tech/2026/08/11/luke-dashjr-removed-as-bitcoin-bip-editor-after-controversial-bip-110-fork-stalls",
-   "ts": 1786444099000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Coldcard hack losses: How investigators trace stolen Bitcoin",
-   "url": "<![CDATA[https://cointelegraph.com/news/coldcard-losses-how-investigators-trace-stolen-bitcoin?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786443279000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Nvidia’s $500 billion AI infrastructure push leaves crypto compute further behind",
-   "url": "https://www.coindesk.com/tech/2026/08/11/nvidia-wants-to-turn-its-ai-chips-into-an-investable-asset-class",
-   "ts": 1786443036000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "UK lawmakers question lenders over lack of banking for the country’s crypto firms",
-   "url": "https://www.coindesk.com/policy/2026/08/11/uk-lawmakers-question-lenders-over-lack-of-banking-for-the-country-s-crypto-firms",
-   "ts": 1786442799000
+   "source": "The Block",
+   "title": "Bitcoin market in &#8216;hibernation&#8217; as perp trading activity sinks to three-year low ahead of US CPI release: K33",
+   "url": "https://www.theblock.co/news/markets/2026-08-12-bitcoin-perp-trading-activity-three-year-low-us-cpi-k33-411545",
+   "ts": 1786531256000
   },
   {
    "source": "Decrypt",
-   "title": "Coinbase Opens UK Derivatives Trading With Up to 50x Leverage",
-   "url": "https://decrypt.co/375301/coinbase-opens-uk-derivatives-trading-with-up-to-50x-leverage",
-   "ts": 1786442324000
+   "title": "Harmony's ONE Sinks 37% After Attacker Mints 4 Billion Tokens",
+   "url": "https://decrypt.co/375390/harmonys-one-sinks-37-after-attacker-mints-4-billion-tokens",
+   "ts": 1786531086000
   },
   {
    "source": "CoinDesk",
-   "title": "Riot Platforms surges 20% in pre-market trading on $9.1 billion Anthropic deal",
-   "url": "https://www.coindesk.com/business/2026/08/11/riot-platforms-surges-20-in-pre-market-trading-on-usd9-1-billion-anthropic-deal",
-   "ts": 1786441056000
+   "title": "Bitcoin holds near $64,000 as U.S. inflation data looms, Harmony exploit rattles altcoins",
+   "url": "https://www.coindesk.com/markets/2026/08/12/bitcoin-holds-near-usd64-000-as-u-s-inflation-data-looms-harmony-exploit-rattles-altcoins",
+   "ts": 1786530610000
   },
   {
    "source": "Cointelegraph",
-   "title": "Keel shuts US Bitcoin mining operations as Q2 revenue falls 50%",
-   "url": "<![CDATA[https://cointelegraph.com/news/keel-shuts-bitcoin-mining-ai-pivot-revenue-falls?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786440255000
+   "title": "Binance, RedotPay clash over fate of Singapore lawsuit",
+   "url": "<![CDATA[https://cointelegraph.com/news/binance-redotpay-clash-singapore-lawsuit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786529898000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bank of England to test stablecoin, digital currency use in cross-border finance",
+   "url": "https://www.coindesk.com/business/2026/08/12/bank-of-england-to-test-stablecoin-digital-currency-use-in-cross-border-finance",
+   "ts": 1786529825000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin miners earn under 0.7% of revenue from fees in new 10-year low",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-miners-earn-under-07-of-revenue-from-fees-in-new-10-year-low?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786529165000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "CoreWeave surges 16% on $2.58 billion revenue quarter as AI infrastructure demand eclipses crypto",
+   "url": "https://www.coindesk.com/markets/2026/08/12/coreweave-surges-16-on-usd2-58-billion-revenue-quarter-as-ai-infrastructure-demand-eclipses-crypto",
+   "ts": 1786527712000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Fidelity moves to add staking, quarterly payouts to near $900 million ether ETF",
+   "url": "https://www.coindesk.com/business/2026/08/12/fidelity-moves-to-add-staking-quarterly-payouts-to-near-usd900-million-ether-etf",
+   "ts": 1786527020000
   },
   {
    "source": "Decrypt",
-   "title": "UK Lawmakers Write to Bank CEOs Over Crypto Account Refusals",
-   "url": "https://decrypt.co/375294/uk-lawmakers-write-to-bank-ceos-over-crypto-account-refusals",
-   "ts": 1786437677000
+   "title": "CFTC Invokes Emergency Powers to Keep Kalshi Trading Despite New York Suit",
+   "url": "https://decrypt.co/375387/cftc-invokes-emergency-powers-to-keep-kalshi-trading-despite-new-york-suit",
+   "ts": 1786526532000
   },
   {
    "source": "Cointelegraph",
-   "title": "Anthropic strikes $9B compute deal with Bitcoin miner Riot: Report",
-   "url": "<![CDATA[https://cointelegraph.com/news/anthropic-9b-deal-bitcoin-miner-riot?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786435226000
+   "title": "Crypto companies urge AI firms to give Bitcoin developers early access",
+   "url": "<![CDATA[https://cointelegraph.com/news/crypto-companies-ai-firms-bitcoin-developers-access?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786525381000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "One overlooked group has added $1.78 billion of selling pressure to bitcoin market",
+   "url": "https://www.coindesk.com/markets/2026/08/12/one-overlooked-group-has-added-usd1-78-billion-of-selling-pressure-to-bitcoin-market",
+   "ts": 1786524803000
   },
   {
    "source": "The Block",
-   "title": "Coinbase rolls out derivatives for UK professional investors",
-   "url": "https://www.theblock.co/news/business/2026-08-11-coinbase-expands-uk-derivatives-411380",
-   "ts": 1786435200000
+   "title": "Australian regulator takes down Yepbit websites as investors report blocked withdrawals",
+   "url": "https://www.theblock.co/news/regulation/2026-08-12-australian-regulator-takes-down-yepbit-websites-411538",
+   "ts": 1786523181000
+  },
+  {
+   "source": "The Block",
+   "title": "FlightAware drops lawsuit against Kalshi one day after filing",
+   "url": "https://www.theblock.co/news/business/2026-08-12-flightaware-drops-kalshi-lawsuit-411534",
+   "ts": 1786521034000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Inside the fake crypto startup that fooled North Korean IT workers",
+   "url": "<![CDATA[https://cointelegraph.com/magazine/fake-crypto-startup-fooled-north-korean-it-workers?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786520098000
   },
   {
    "source": "CoinDesk",
-   "title": "A $2 trillion asset class is getting a new blockchain rail",
-   "url": "https://www.coindesk.com/markets/2026/08/11/emb-7-00-utc-a-usd2-trillion-asset-class-is-getting-a-new-blockchain-rail",
-   "ts": 1786432749000
+   "title": "Live updates: Bitcoin at $63,600 as Japan's Metaplanet moves 3,881 BTC between wallets",
+   "url": "https://www.coindesk.com/tech/2026/08/12/live-updates-bitcoin-at-usd63-600-as-japan-s-metaplanet-moves-3-881-btc-between-wallets",
+   "ts": 1786518293000
   },
   {
    "source": "The Block",
-   "title": "FlightAware sues Kalshi over alleged unauthorized data use for flight cancellation markets",
-   "url": "https://www.theblock.co/news/business/2026-08-11-flightaware-sues-kalshi-411370",
-   "ts": 1786431993000
-  },
-  {
-   "source": "The Block",
-   "title": "Zama brings its blockchain-privacy token to Revolut&#8217;s 70 million users",
-   "url": "https://www.theblock.co/news/markets/2026-08-11-zama-brings-blockchain-privacy-token-to-revoluts-70-million-users-411290",
-   "ts": 1786431903000
-  },
-  {
-   "source": "The Block",
-   "title": "Broadridge&#8217;s Distributed Ledger Repo platform processes $8 trillion in July volume",
-   "url": "https://www.theblock.co/news/business/2026-08-11-broadridge-8-trillion-july-411365",
-   "ts": 1786429882000
+   "title": "Harmony confirms exploit involving unauthorized minting of 4 billion ONE tokens",
+   "url": "https://www.theblock.co/news/defi/2026-08-12-harmony-confirms-exploit-one-token-411527",
+   "ts": 1786515879000
   },
   {
    "source": "Cointelegraph",
-   "title": "South Korea drops Travel Rule threshold for crypto transfers",
-   "url": "<![CDATA[https://cointelegraph.com/news/south-korea-travel-rule-threshold-crypto-transfers?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786429696000
+   "title": "Harmony considers rollback after suspected exploit inflates ONE supply",
+   "url": "<![CDATA[https://cointelegraph.com/news/armony-rollback-alleged-one-token-mint?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786514572000
   },
   {
    "source": "CoinDesk",
-   "title": "BTCPay offers $190,000 bounty after bitcoin payment servers drained in exploit",
-   "url": "https://www.coindesk.com/markets/2026/08/11/btcpay-offers-usd190-000-bounty-after-bitcoin-payment-servers-drained-in-exploit",
-   "ts": 1786429147000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Payments platform Decta explores stablecoin-enabled treasury settlement",
-   "url": "<![CDATA[https://cointelegraph.com/news/payments-platform-decta-explores-stablecoin-enabled-treasury-settlement?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786428000000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Here’s what happened in crypto today",
-   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786426771000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin’s BIP-110 fork is 300 blocks behind BTC and six years from fixing itself",
-   "url": "https://www.coindesk.com/tech/2026/08/11/bitcoin-s-bip-110-fork-is-300-blocks-behind-btc-and-six-years-from-fixing-itself",
-   "ts": 1786425997000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Luke Dashjr removed as Bitcoin Improvement Proposal editor",
-   "url": "<![CDATA[https://cointelegraph.com/news/luke-dashjr-removed-as-bitcoin-proposal-editor?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786424055000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "XRP, ether lead crypto losses as traders eye $70,000 bitcoin next",
-   "url": "https://www.coindesk.com/markets/2026/08/11/xrp-ether-lead-crypto-losses-as-traders-eye-usd70-000-bitcoin-next",
-   "ts": 1786423823000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "White House vows to get CLARITY across ‘finish line’ in September",
-   "url": "<![CDATA[https://cointelegraph.com/news/white-house-clarity-across-finish-line-september?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786421578000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "U.S. SEC sets meeting to propose Reg Crypto to support certain digital assets offerings",
-   "url": "https://www.coindesk.com/policy/2026/08/11/u-s-sec-sets-meeting-to-propose-reg-crypto-to-support-certain-digital-assets-offerings",
-   "ts": 1786421268000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Trump Media to revamp crypto treasury strategy after $238M Q2 loss",
-   "url": "<![CDATA[https://cointelegraph.com/news/trump-media-crypto-treasury-strategy-after-238m-loss?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786418487000
+   "title": "Crypto.com rolls out tokenized stock derivatives as crypto exchanges push into equities",
+   "url": "https://www.coindesk.com/business/2026/08/12/crypto-com-rolls-out-tokenized-stock-derivatives-as-crypto-exchanges-push-into-equities",
+   "ts": 1786514400000
   },
   {
    "source": "The Block",
-   "title": "Riot Platforms stock jumps 25% after-hours on $9.1 billion AI deal reportedly with Anthropic",
-   "url": "https://www.theblock.co/news/business/2026-08-10-riot-platforms-ai-deal-anthropic-411358",
-   "ts": 1786414950000
+   "title": "Bitwise cuts 14% of staff as crypto layoffs mount during market downturn",
+   "url": "https://www.theblock.co/news/business/2026-08-12-bitwise-layoffs-411522",
+   "ts": 1786513979000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Here's what bitcoin and ether traders are doing ahead of the binary U.S. CPI print",
+   "url": "https://www.coindesk.com/business/2026/08/12/here-s-what-bitcoin-and-ether-traders-are-doing-ahead-of-the-binary-u-s-cpi-print",
+   "ts": 1786512415000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Harmony’s ONE dives 40% after an attack appears to mint tokens equal to quarter of supply",
+   "url": "https://www.coindesk.com/markets/2026/08/12/harmony-s-one-falls-26-after-attacker-allegedly-mints-4-billion-tokens",
+   "ts": 1786511920000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Dogecoin and BNB lead majors higher as bitcoin slips near $63,700",
+   "url": "https://www.coindesk.com/markets/2026/08/12/dogecoin-and-bnb-lead-majors-higher-as-bitcoin-slips-near-usd63-700",
+   "ts": 1786510426000
   },
   {
    "source": "Cointelegraph",
-   "title": "Thailand’s 0% crypto tax. Bitcoin Red Team forced to use Chinese AI: Asia Express",
-   "url": "<![CDATA[https://cointelegraph.com/magazine/thailands-0-crypto-tax-bitcoin-red-team-forced-to-use-chinese-ai-asia-express?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786414116000
+   "title": "CFTC invokes emergency powers to keep Kalshi operating in New York fight",
+   "url": "<![CDATA[https://cointelegraph.com/news/cftc-kalshi-emergency-order-new-york-lawsuit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786510406000
   },
   {
-   "source": "Decrypt",
-   "title": "Vitalik Buterin Says Ethereum Is Betting Its Future on Quantum Security and AI",
-   "url": "https://decrypt.co/375285/vitalik-buterin-ethereum-betting-future-quantum-ai",
-   "ts": 1786398502000
+   "source": "CoinDesk",
+   "title": "XRP bridge drained for $200,000 after software mistook fake deposits for real ones",
+   "url": "https://www.coindesk.com/tech/2026/08/12/xrp-bridge-drained-for-usd200-000-after-software-mistook-fake-deposits-for-real-ones",
+   "ts": 1786509205000
   },
   {
-   "source": "Decrypt",
-   "title": "Bitcoin ATMs Pulled in Australia as Regulators Signal Wider Crackdown",
-   "url": "https://decrypt.co/375282/bitcoin-atms-pulled-australia-regulators-crackdown",
-   "ts": 1786395763000
+   "source": "Cointelegraph",
+   "title": "Ravencoin hits record low as network exploit puts transactions at risk",
+   "url": "<![CDATA[https://cointelegraph.com/markets/ravencoin-rvn-record-low-consensus-exploit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786497111000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "SEC, CFTC sue Goliath Ventures over $400M crypto Ponzi scheme",
+   "url": "<![CDATA[https://cointelegraph.com/news/sec-cftc-sue-goliath-ventures-400m-crypto-ponzi?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786493261000
   },
   {
    "source": "The Block",
-   "title": "BTCPay Server supporters offer up to 3 BTC for recovery bounty after critical exploit",
-   "url": "https://www.theblock.co/news/ecosystems/2026-08-10-btcpay-server-supporters-offer-3-btc-recovery-bounty-critical-exploit-411353",
-   "ts": 1786395597000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Judge stays CFTC’s case against US soldier over prediction market bets",
-   "url": "<![CDATA[https://cointelegraph.com/news/cftc-us-solider-insider-trading-polymarket-nicolas-maduro?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786395059000
+   "title": "Robinhood Chain hits 11.6 million daily transactions as USDe fuels TVL growth",
+   "url": "https://www.theblock.co/news/ecosystems/2026-08-11-robinhood-chain-hits-11-6-million-daily-transactions-as-usde-fuels-tvl-growth-411310",
+   "ts": 1786487162000
   },
   {
    "source": "Decrypt",
-   "title": "Hidden Text in PDFs Is Hijacking This AI Assistant",
-   "url": "https://decrypt.co/375269/hidden-text-pdfs-hijacking-ai-assistant-prompt-injection",
-   "ts": 1786391810000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Tron USDT supply hits $87.9B as transfers reach $2.1T in Q2: Messari",
-   "url": "<![CDATA[https://cointelegraph.com/news/tron-usdt-supply-hits-879b-as-transfers-reach-21t-in-q2-messari?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1786391221000
+   "title": "Another OpenAI Exec Quits in Leadership Shake-Up as AI Giant Eyes IPO",
+   "url": "https://decrypt.co/375381/openai-exec-brad-lightcap-quits-leadership-shake-up-ipo",
+   "ts": 1786485846000
   },
   {
    "source": "The Block",
-   "title": "BlackRock says bitcoin sentiment is turning as decoupling from stocks takes hold",
-   "url": "https://www.theblock.co/news/markets/2026-08-10-blackrock-says-bitcoin-sentiment-turning-decoupling-stocks-takes-hold-411333",
-   "ts": 1786390216000
+   "title": "CFTC flexes emergency authority to keep Kalshi operating amid New York lawsuit",
+   "url": "https://www.theblock.co/news/regulation/2026-08-11-cftc-flexes-emergency-authority-kalshi-operating-amid-new-york-lawsuit-411507",
+   "ts": 1786485630000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin stuck as ETF inflows offset selling, but inflation data could spark a move",
+   "url": "https://www.coindesk.com/markets/2026/08/11/bitcoin-stuck-as-etf-inflows-offset-selling-but-inflation-data-could-spark-a-move",
+   "ts": 1786484293000
   },
   {
    "source": "Decrypt",
-   "title": "Another Dormant Bitcoin Wallet Holding Millions Wakes Up After 12 Years",
-   "url": "https://decrypt.co/375266/dormant-bitcoin-wallet-millions-wakes-up-12-years",
-   "ts": 1786389192000
+   "title": "BTCPay Backers Offer Bitcoin Bounty After Wallet Exploit",
+   "url": "https://decrypt.co/375376/btcpay-bitcoin-bounty-critical-wallet-exploit",
+   "ts": 1786482963000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "SEC to address crypto regulations in absence of CLARITY passage",
+   "url": "<![CDATA[https://cointelegraph.com/news/sec-crypto-regulations-absence-clarity-act?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786481947000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Itaú joins Brazil tokenization pilot with OpenAssets",
+   "url": "<![CDATA[https://cointelegraph.com/news/ita-joins-brazil-tokenization-pilot-with-openassets-brief?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786481758000
   },
   {
    "source": "Decrypt",
-   "title": "Wall Street Is Starting to Treat Data Center Backlash as a Credit Risk",
-   "url": "https://decrypt.co/375237/wall-street-data-centers-backlash-credit-risk",
-   "ts": 1786386666000
+   "title": "The Bull and Bear Case for Solana’s Next Price Move",
+   "url": "https://decrypt.co/375364/solana-price-death-cross-bull-bear-case-next-move",
+   "ts": 1786481164000
+  },
+  {
+   "source": "The Block",
+   "title": "Florida man charged by CFTC over $397 million crypto Ponzi scheme",
+   "url": "https://www.theblock.co/news/regulation/2026-08-11-florida-man-charged-by-cftc-over-397-million-crypto-ponzi-scheme-411491",
+   "ts": 1786479295000
   },
   {
    "source": "Decrypt",
-   "title": "Brazil's $319B Crypto Market Faces October Licensing Deadline: CertiK",
-   "url": "https://decrypt.co/375249/brazils-319b-crypto-market-faces-october-licensing-deadline-certik",
-   "ts": 1786384264000
+   "title": "SEC Prepares Escape Hatch From Securities Registration for Crypto Projects",
+   "url": "https://decrypt.co/375375/sec-prepares-escape-hatch-securities-registration-crypto-projects",
+   "ts": 1786479000000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "MoneyGram expands crypto cash ramps to Solana",
+   "url": "<![CDATA[https://cointelegraph.com/news/moneygram-expands-crypto-cash-ramps-to-solana?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786477982000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Following Senate delay, crypto bill has narrow window to become law",
+   "url": "<![CDATA[https://cointelegraph.com/news/clarity-act-senate-delay-window-become-law-midterm-elections?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1786477328000
   },
   {
    "source": "Decrypt",
-   "title": "Bitcoin Rally Fades—Where Does Price Go Next?",
-   "url": "https://decrypt.co/375238/bitcoin-rally-stalls-price-next-prediction-market",
-   "ts": 1786382329000
+   "title": "AI Agent Hacks a Gym—And the Tech World Wonders What's Next",
+   "url": "https://decrypt.co/375358/ai-agent-hacks-gym-membership-tech-world-reacts",
+   "ts": 1786474563000
+  },
+  {
+   "source": "The Block",
+   "title": "ENS Foundation takes administrative control of $65 million Endowment following tokenholder vote",
+   "url": "https://www.theblock.co/news/ecosystems/2026-08-11-ens-foundation-administrative-control-65-million-endowment-tokenholder-vote-411464",
+   "ts": 1786474187000
   }
  ],
  "narrative": null
