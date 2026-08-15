@@ -139,6 +139,20 @@ window.BAROLO_DATA = {
   // seção JUROS EM TEMPO REAL do emprestimos.html: juros = atual − principal.
   // ATUALIZAR quando houver novo depósito/saque/reempréstimo — senão o depósito novo
   // aparece como se fosse juros ganho (foi o bug encontrado em 14/08/2026).
+  //
+  // ⚠️ AS DUAS ARMADILHAS (as duas já aconteceram — 14/08/2026):
+  //   1. NUNCA fazer `principal = supply do print`. Na Kamino/AAVE o yield COMPÕE
+  //      dentro do saldo, então o supply do print SEMPRE inclui juros. Igualar os
+  //      dois zera o juro acumulado exibido no site.
+  //   2. NUNCA esquecer de somar um depósito. Se o Lucas aporta e o principal fica
+  //      parado, o aporte novo aparece como "juros ganhos" (foi assim que o site
+  //      chegou a mostrar +316 USDT e +4,09 SOL de juros que não existiam).
+  //
+  // MANUTENÇÃO: o Lucas avisa por print toda vez que deposita/saca. Basta somar ou
+  // subtrair o valor informado aqui. NÃO é preciso o CSV toda semana — ele só serve
+  // para auditar/reconstruir o baseline se houver suspeita de drift (ou no fim do
+  // ano, para o IR). O baseline abaixo foi cravado com o CSV de 15/07/2026.
+  //
   principals: {
     aave:   {
       WETH: 2.15,     // 2,16 depositado − 0,01 earnings (print AAVE 14/08/2026)
