@@ -49,9 +49,16 @@
      77.16% · juros ganhos +$151.56; Pool WETH/USDG (Robinhood, 24 dias):
      pooled $351.18 (0.132 WETH + 96.01 USDG), fees $12.85 (uncollected),
      in-range (market $1.932,34, range $1.852,38–$2.166,83).
+   + Fechamento + reabertura da pool 07/08/2026: Lucas removeu a liquidez
+     (posição fechava com $349,15 pooled + $13,04 fees = ~$362,19 realizado)
+     tentando migrar pra outra pool v4, mas não conseguiu abrir a nova — voltou
+     e reabriu a MESMA pool v3 WETH/USDG (Robinhood, mesmo range). Nova posição
+     $364,28 = 0,150 WETH ($287,73) + 76,55 USDG ($76,55), fees ~$0 (recém
+     aberta). Capital/openDate resetados; ciclo anterior fechado no histórico
+     (pools.html POOLS + relatorio.html POOLS_DATA) com fees $13,04.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-07',
+  asOf: '2026-08-14',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -78,39 +85,82 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.16, apy:0.0179 }, USDT:{ qty:1600, apy:0.0265 } },
-      borrow: { USDC:{ qty:759.46, apy:0.0400 } },
-      healthFactor: 6.20   // = Collateral $4.705,00 (valor direto do print AAVE) / Borrow $759,46
+      supply: { WETH:{ qty:2.16, apy:0.0183 }, USDT:{ qty:1600, apy:0.0217 } },
+      borrow: { USDC:{ qty:760.17, apy:0.0379 } },
+      healthFactor: 6.08   // = Collateral $4.622,00 (valor direto do print AAVE) / Borrow $760,02
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
       // à parte: USDS $1.59, PYUSD $0.07, KMNO $3.24). Net APY 3.45% · juros ganhos
       // acumulados +$151.56. Supplied $2.11K (SOL $1.81K + USDS $303,83) · Borrowing $822,48.
-      supply: { SOL:{ qty:24.46, apy:0.0449 }, USDS:{ qty:303.83, apy:0.0400 } },
-      borrow: { USDC:{ qty:822.62, apy:0.0594 } },
-      ltv: 0.3895, liqLtv: 0.7716   // print Kamino 07/08/2026
+      supply: { SOL:{ qty:24.48, apy:0.0447 }, USDS:{ qty:304.07, apy:0.0406 } },
+      borrow: { USDC:{ qty:823.63, apy:0.0592 } },
+      ltv: 0.3846, liqLtv: 0.7713   // print Kamino 14/08/2026
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
-      capital:343, pooled:351.18, totalFees:12.85, uncollectedFees:12.85,
-      il:0, pnl:21.03, apr:93.26, daysOpen:24, openDate:'2026-07-14',
-      rangeMin:1852.38, rangeMax:2166.83, poolApr:93.26, feeApr:56.98,
-      // Pool Base (WETH/USDC 0.3%) DESMONTADA em 14/07/2026: remove → 0.1717 ETH + 47.22 USDC;
-      // USDC trocado por 0.0255 ETH (Uniswap V4); ~0.197 ETH bridgeado (Across V2) para a
-      // Robinhood Chain; add liquidity com 0.183 ETH (~$340) → nova posição WETH/USDG 0.01%.
-      // Print Uniswap 07/08/2026 (24 dias): position $351,18 = 0.132 WETH ($255,17) + 96.01
-      // USDG ($96,01). Fees earned $12,85 (uncollected) = 0.003 WETH ($6,48) + 6.37 USDG
-      // ($6,37). Market $1.932,34, range $1.852,38–$2.166,83, in-range. PnL total (pooled+
-      // fees−capital) = +$21,03; pooled > capital, então sem IL líquido neste corte (il:0 —
-      // campo apenas descritivo, não usado em cálculo de nenhuma página).
-      // Estratégia mantida: saída gradual ETH→USDG. Card ESTÁTICO (chain nova, sem fetch
-      // on-chain) — Lucas envia valores por print.
-      note:'WETH/USDG 0.01% · Robinhood Chain · in-range · fee APR 56,98% · total APR 93,26%'
+      capital:364.28, pooled:358.14, totalFees:1.81, uncollectedFees:1.81,
+      il:0, pnl:-4.33, apr:64.57, daysOpen:7, openDate:'2026-08-07',
+      rangeMin:1852.38, rangeMax:2166.83, poolApr:64.57, feeApr:50.91,
+      // Ciclo anterior (aberto 14/07/2026) fechado em 07/08/2026: pooled $349,15
+      // + fees $13,04 = ~$362,19 realizado (capital de entrada $343 → ganho
+      // ~$19,19). Lucas tentou migrar para outra pool v4 mas não conseguiu abrir
+      // — voltou e reabriu a MESMA pool v3 WETH/USDG (Robinhood, mesmo range),
+      // redepositando o proveniente do fechamento. Ver histórico (fechado) em
+      // pools.html POOLS + relatorio.html POOLS_DATA.
+      // Print Uniswap 07/08/2026: nova posição $364,28 = 0,150 WETH ($287,73) +
+      // 76,55 USDG ($76,55), fees $0,000001 (recém aberta, arredondado p/ 0).
+      // Market $1.913,30, range $1.852,38–$2.166,83, in-range. Estratégia mantida:
+      // saída gradual ETH→USDG. Card ESTÁTICO (chain nova, sem fetch on-chain) —
+      // Lucas envia valores por print.
+      // ── Print Revert 14/08/2026 ──────────────────────────────────────────
+      // ATENÇÃO (metodologia): a Revert trata isto como UMA posição contínua
+      // desde 14/07/2026 (mesma NFT — o "fechamento" de 07/08 foi remove+add
+      // liquidity na MESMA posição, não uma NFT nova): 30,9 dias de idade,
+      // fees lifetime $14,72 = $12,90 coletadas (ciclo 1, já lançadas como
+      // pool FECHADA em pools.html/relatorio.html com $13,04) + $1,81 não
+      // coletadas (ciclo 2, desde 07/08). PnL lifetime $18,84 · ROI 2,68%.
+      // Os campos de ESTOQUE abaixo (pooled/fees/pnl/daysOpen) são do CICLO 2
+      // apenas, para não duplicar o ciclo 1 que já está no histórico.
+      // Os campos de TAXA (apr/poolApr/feeApr) usam os números lifetime da
+      // Revert (64,57% / 50,91%): taxa é melhor estimada na amostra longa —
+      // anualizar 7 dias daria ruído (o PnL −$4,33 do ciclo 2 é só o ETH
+      // caindo de $1.913,30 → $1.876,06, não performance da pool).
+      // Composição agora: 0,17501149 WETH ($328,24) + 29,9106110 USDG ($29,90).
+      // Entrou 0,150 WETH + 76,55 USDG → girou pra mais WETH na queda (compra
+      // automática na baixa dentro do range, como a estratégia prevê).
+      // IL do ciclo 2 ≈ 0 (HODL da cesta de entrada valeria $357,96 vs pooled
+      // $358,14). Gas lifetime 0,00003943 ETH ($0,07). In-range.
+      note:'WETH/USDG 0.01% · Robinhood Chain · in-range · fee APR 50,91% · total APR 64,57%'
     }
   },
 
+  // Cost basis do lending (principal depositado/emprestado, SEM juros). Usado pela
+  // seção JUROS EM TEMPO REAL do emprestimos.html: juros = atual − principal.
+  // ATUALIZAR quando houver novo depósito/saque/reempréstimo — senão o depósito novo
+  // aparece como se fosse juros ganho (foi o bug encontrado em 14/08/2026).
+  principals: {
+    aave:   {
+      WETH: 2.15,     // 2,16 depositado − 0,01 earnings (print AAVE 14/08/2026)
+      USDT: 1587.65,  // 1.604 depositado − 16,35 earnings (print AAVE 14/08/2026)
+      USDC: 748.00    // borrow inicial (refin. 10/04/2026). Confere: 760,17 − 748 =
+                      // 12,17 = exatamente o 'fees paid' do print AAVE.
+    },
+    kamino: {
+      SOL:  22.44,    // PROVISÓRIO — ver nota abaixo
+      USDS: 300.78,   // USDS depositado (sem juros)
+      USDC: 807.49    // borrow inicial do ciclo K4
+    }
+    // NOTA kamino.SOL: não dá para derivar exato dos prints — a Kamino só reporta
+    // 'Interest Earned' agregado em USD (+$153,62 em 14/08/2026), sem separar SOL
+    // de USDS. 22,44 = 24,486 supply − 2,046 SOL ($153,62 ÷ $75,08), ou seja assume
+    // que o juro reportado é todo em SOL. Fecha em ~$157 contra os $153,62 da
+    // Kamino (erro ~2%). Para cravar: Kamino → aba Transaction History → somar os
+    // depósitos de SOL. Antes desta correção o site mostrava +4,09 SOL (~$308) de
+    // 'juros', que na verdade eram depósitos novos contados como rendimento.
+  },
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:759.46, kamino:822.62, total:1582.08 },
+  debt:   { aave:760.17, kamino:823.63, total:1583.80 },
   stablesTotalUSD: 1619.96   // USDT 1302.52 + USDS 317.44
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o

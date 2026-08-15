@@ -651,10 +651,10 @@ if(window.Chart){
 
  <!-- LP metrics bar — APR líquido pós-AAVE -->
  <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
- <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$338.91</div><div class="lp-ms" id="lp-pooled-sub">0.178 WETH + 8.67 USDG</div></div>
- <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">111.83%</div><div class="lp-ms" id="lp-apr-sub">APR da pool · fee 0.01%</div></div>
- <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−5.38%</div><div class="lp-ms">USDC · taxa atual</div></div>
- <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv" id="lp-apr-net">—</div><div class="lp-ms" id="lp-apr-net-sub">bruto − custo borrow</div></div>
+ <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$358.14</div><div class="lp-ms" id="lp-pooled-sub">0.1750 WETH + 29.91 USDG</div></div>
+ <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">50.91%</div><div class="lp-ms" id="lp-apr-sub">fee APR (Revert 14/08) · total 64.57%</div></div>
+ <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−3.79%</div><div class="lp-ms">USDC · taxa atual</div></div>
+ <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv pos" id="lp-apr-net">+47.12%</div><div class="lp-ms" id="lp-apr-net-sub">50.91% − 3.79%</div></div>
  </div>
 
 <div class="iframe-wrap" id="iframeWrap" style="height:960px;margin-top:16px;border:1px solid var(--border);border-radius:8px;">
@@ -2654,8 +2654,10 @@ var POOLS = [
   { pair:'WETH/USDC 0.3%', net:'Base', open:'24/02/2026', close:'03/06/2026', days:99,  capital:365, fees:22.28, il:6.55, result:15.73, status:'closed', lvr:0,   fcr:30.9,  invGrowth:-0.57, obs:'Saiu do range em 03/06 com preço $1.821,67 < min $1.855,72 (100% WETH). Coletadas taxas e encerrada. Fee APR 32% realizado. il = fees − result (Revert 03/06).' },
   // ── fechada 14/07/2026 — remontada na Robinhood ──
   { pair:'WETH/USDC 0.3%', net:'Base', open:'03/06/2026', close:'14/07/2026', days:41, capital:329, fees:8.62, il:0, result:8.62, status:'closed', lvr:0, fcr:23.3, invGrowth:0, obs:'Desmontada 14/07/2026: remove liquidity → 0.1717 ETH + 47.22 USDC; USDC trocado por 0.0255 ETH (Uniswap V4); ~0.197 ETH bridgeado (Across V2) p/ a Robinhood Chain e remontado lá. Entrou 100% WETH na queda, acumulou ETH. Result = fees (valorização do ETH pertence ao holding, não à pool); fees ≈ última leitura uncollected.' },
+  // ── fechada 07/08/2026 — reaberta na mesma pool (tentativa de migrar p/ v4 falhou) ──
+  { pair:'WETH/USDG 0.01%', net:'Robinhood', open:'14/07/2026', close:'07/08/2026', days:24, capital:343, fees:13.04, il:0, result:13.04, status:'closed', lvr:0, fcr:37.6, invGrowth:0, obs:'Remontagem na Robinhood Chain (bridge Across V2 da Base, entrada 0.183 ETH ≈ $340). Fechada 07/08/2026: pooled $349,15 + fees $13,04 = ~$362,19 realizado. Lucas tentou migrar p/ outra pool v4, não conseguiu abrir, e reabriu a mesma pool v3. Result = fees (valorização do ETH pertence ao holding, não à pool).' },
   // ── ATIVA ──
-  { pair:'WETH/USDG 0.01%', net:'Robinhood', open:'14/07/2026', close:'—', days:(function(){var d=new Date()-new Date('2026-07-14');return Math.max(1,Math.floor(d/86400000));})(), capital:340, fees:0.04, il:0, result:0, status:'active', lvr:0, fcr:0, invGrowth:0, obs:'Remontagem na Robinhood Chain (bridge Across V2 da Base, entrada 0.183 ETH ≈ $340). Posição 0.178 WETH + 8.67 USDG ($338,91). Range $1.852,38–$2.166,83, in-range. Fee tier 0.01% mas APR da pool ~112% e 1D/VOL ~30. Saída gradual ETH→USDG.' },
+  { pair:'WETH/USDG 0.01%', net:'Robinhood', open:'07/08/2026', close:'—', days:(function(){var d=new Date()-new Date('2026-08-07');return Math.max(1,Math.floor(d/86400000));})(), capital:364.28, fees:1.81, il:0, result:1.81, status:'active', lvr:0, fcr:5.0, invGrowth:0, obs:'Reaberta 07/08/2026 na mesma pool v3 WETH/USDG (Robinhood), mesmo range $1.852,38–$2.166,83, com o proveniente do fechamento do ciclo anterior. Entrou 0,150 WETH + 76,55 USDG ($364,28). Print Revert 14/08/2026 (7 dias deste ciclo): pooled $358,14 = 0,1750 WETH + 29,91 USDG, fees não coletadas $1,81, in-range (market $1.876,06). Girou pra mais WETH na queda (compra automática na baixa dentro do range). IL≈0. NOTA: a Revert conta como UMA posição contínua desde 14/07 (mesma NFT, 30,9 dias, fees lifetime $14,72) — aqui o ciclo 1 está separado como fechado p/ não duplicar. Saída gradual ETH→USDG.' },
 ];
 
 // (Hidratação via cache do track.html removida — track.html não existe mais; POOLS é a fonte estática.)
