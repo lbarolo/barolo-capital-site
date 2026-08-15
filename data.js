@@ -147,17 +147,27 @@ window.BAROLO_DATA = {
                       // 12,17 = exatamente o 'fees paid' do print AAVE.
     },
     kamino: {
-      SOL:  22.44,    // PROVISÓRIO — ver nota abaixo
-      USDS: 300.78,   // USDS depositado (sem juros)
-      USDC: 807.49    // borrow inicial do ciclo K4
+      SOL:  23.274227,   // 29,405908 depositados − 6,131681 sacados (CSV Kamino)
+      USDS: 300.392689,  // depósito único 19/03/2026 (CSV Kamino)
+      USDC: 754.183048   // 1.807,089 emprestados − 1.052,905 repagos (CSV Kamino)
     }
-    // NOTA kamino.SOL: não dá para derivar exato dos prints — a Kamino só reporta
-    // 'Interest Earned' agregado em USD (+$153,62 em 14/08/2026), sem separar SOL
-    // de USDS. 22,44 = 24,486 supply − 2,046 SOL ($153,62 ÷ $75,08), ou seja assume
-    // que o juro reportado é todo em SOL. Fecha em ~$157 contra os $153,62 da
-    // Kamino (erro ~2%). Para cravar: Kamino → aba Transaction History → somar os
-    // depósitos de SOL. Antes desta correção o site mostrava +4,09 SOL (~$308) de
-    // 'juros', que na verdade eram depósitos novos contados como rendimento.
+    // ── Kamino: derivados do CSV oficial (Transaction History), 65 movimentos
+    //    01/02/2025 → 15/07/2026. Cobrem a obrigação INTEIRA (ciclos K1–K4), não
+    //    só o ciclo corrente — por isso USDC 754,18 e não os 807,49 do K4 isolado.
+    //    Confere com o print de 14/08/2026:
+    //      SOL   24,48   − 23,274227  = +1,2058 SOL retidos (~$90,53)
+    //      USDS  304,07  − 300,392689 = +3,68 USDS retidos
+    //      USDC  823,63  − 754,183048 = 69,45 USDC de juros já pagos
+    //
+    //    ATENÇÃO — não bate (e não deve bater) com o "Interest Earned +$153,62" que a
+    //    Kamino mostra: aquilo é juro ACUMULADO DE TODA A VIDA, incluindo o que já foi
+    //    sacado. Dos 6,13 SOL sacados ao longo de 2025, parte era juro realizado. O que
+    //    o site calcula (atual − principal ≈ $94) é o juro AINDA RETIDO na posição, que
+    //    é a métrica certa para "juros acumulados" de uma posição aberta.
+
+    //    O SOL comprado em 05/08/2026 (+0,374988) NÃO foi depositado — ficou na carteira
+    //    (holdings 24,765222 vs supply 24,48). Por isso o CSV termina em 15/07 e continua
+    //    completo.
   },
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:760.17, kamino:823.63, total:1583.80 },

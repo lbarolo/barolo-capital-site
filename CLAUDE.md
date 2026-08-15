@@ -3703,7 +3703,11 @@ Pedido inicial: transformar a UX num **design system compartilhado** (worktree, 
 - **Lucas rejeitou a mudança de UX.** `ExitWorktree` com `remove` descartou os 5 commits e todo o `design-system/`. **Nada foi pushado.**
 - **Lição (registrar):** Lucas quer **zero mudança de UX/design**. Não impor refactor visual. Preferir mudanças invisíveis e, quando houver risco visual, **perguntar antes** (usei `AskUserQuestion`).
 
-#### 2. ⚠️ DESCOBERTA — `emprestimos.html` é um BUNDLE (não é editável à mão)
+#### 2. ⚠️ DESCOBERTA — `emprestimos.html` é um BUNDLE — **CONCLUSÃO ABAIXO ESTÁ ERRADA (corrigida em 14/08/2026)**
+
+> **⚠️ NÃO SIGA o que está escrito nesta subseção.** É verdade que o arquivo é um bundle, mas a conclusão ("não editar, precisa de fonte original + rebuild") é falsa e já fez o Claude responder errado ao Lucas mais de uma vez. O correto:
+> - **Atualizar dados = editar SÓ o `data.js` e dar push.** A Action `.github/workflows/sync-emprestimos.yml` (dispara em `paths: [data.js]`) roda `scripts/refresh-emprestimos-data.js`, que regrava o `data.js` embutido no manifest e commita sozinha. Manual: `node scripts/refresh-emprestimos-data.js`.
+> - **O shell do bundle (~149 KB) é texto puro editável** — CSS, HTML e todo o JS (`fetchAave`, `updateYieldCards`, `runFetch`…) ficam legíveis nele; só o `data.js` embutido é gzip+base64. Está dentro de uma string JS, então quebras de linha são `\n` literal e aspas são `\"`; dá pra editar por substituição de string exata **desde que o texto novo não contenha aspas nem quebras de linha reais**. Os outros 23 assets do manifest são fontes/binários.
 - O arquivo root (884 KB, 178 linhas) é um **artefato de build minificado**: shell `__bundler_loading` / `__bundler_thumbnail` / `__bundler_placeholder` + payload **base64/gzip** (`H4sI…`) numa única linha de 729 KB.
 - **NÃO tem** `:root`/nav/CSS/`ui-polish`/`BAROLO_DATA`/`fetchAave` legíveis — tudo está comprimido dentro do bundle.
 - **Consequência (importante p/ próximas sessões):** não editar `emprestimos.html` diretamente. Mudança de design/JS nele exige o **código-fonte original + rebuild**. Fica fora de escopo de qualquer edição inline (design system, tooltip, etc.).
@@ -4002,3 +4006,124 @@ Nenhum — feature nova + remoção limpa.
 ---
 
 Atualizado: 04/08/2026 — Card "E daí, pra mim?" (patrimônio/HF AAVE/LTV Kamino/liquidação SOL/carry mensal) portado de `mercado.html` para `pools.html` (acima da Meta de Alocação), lendo `briefing.json` ao vivo; `mercado.html` removida do site (`git rm`, recuperável no histórico) e nav limpo nas 4 páginas que linkavam pra ela; pipeline `briefing.yml`/`fetch-briefing.js` mantida rodando (agora alimenta o card de pools, não só a página removida)
+
+---
+
+## Sessão 14/08/2026 — Refresh semanal + CORREÇÃO sobre `emprestimos.html` + fix dos juros acumulados (CSV Kamino)
+
+### ⚡ CORREÇÃO — desfaz a "descoberta" de 06/07/2026 sobre `emprestimos.html`
+
+A sessão de 06/07 concluiu que o arquivo "não é editável à mão" e que qualquer mudança
+exigiria "código-fonte original + rebuild". **Isso está errado em dois pontos** e me fez
+responder duas perguntas do Lucas incorretamente antes de eu verificar o repo.
+
+**1. A atualização de dados É AUTOMÁTICA — só editar `data.js`.** Existe desde ~20/07/2026:
+- `scripts/refresh-emprestimos-data.js` — acha o asset do `data.js` dentro do
+  `<script type="__bundler/manifest">` (descomprime cada asset e procura `window.BAROLO_DATA`,
+  sem depender do UUID) e regrava só ele. Idempotente.
+- `.github/workflows/sync-emprestimos.yml` — dispara no push da `main` quando `data.js` muda
+  (`paths: [data.js]`) e commita `emprestimos.html`. Sem secrets, não entra em loop.
+
+**Fluxo real: editar `data.js` → push → pronto.** As 5 páginas normais leem via
+`<script src="data.js">`; a de empréstimos recebe pela Action.
+
+**2. O SHELL do bundle (~149 KB) é texto puro editável.** Só o `data.js` embutido é
+gzip+base64. CSS, HTML e todo o JS (`fetchAave`, `updateYieldCards`, `runFetch`…) são
+legíveis. Está dentro de uma string JS → quebras de linha viram `\n` literal e aspas `\"`.
+Editável por substituição de string exata **se o texto novo não tiver aspas nem quebras**.
+
+### Refresh de posições (prints CoinGecko + AAVE V4 + Kamino + Revert)
+
+Holdings e stables **sem alteração** — só APYs, juros e a pool se moveram.
+
+| Campo | Antes (07/08) | Depois (14/08) |
+|---|---|---|
+| AAVE WETH / USDT apy | 1.79% / 2.65% | **1.83% / 2.17%** |
+| AAVE borrow | 759.46 @ 4.00% | **760.17 @ 3.79%** |
+| AAVE HF | 6.20 | **6.08** (Collateral $4.622 ÷ borrow $760,02) |
+| Kamino SOL / USDS | 24.46 @4.49% / 303.83 @4.00% | **24.48 @4.47% / 304.07 @4.06%** |
+| Kamino borrow | 822.62 @ 5.94% | **823.63 @ 5.92%** |
+| Kamino LTV / LiqLTV | 38.95% / 77.16% | **38.46% / 77.13%** |
+| Dívida total | $1.582,08 | **$1.583,80** |
+
+**Pool WETH/USDG (Robinhood):** pooled $358,14 (0,1750 WETH + 29,91 USDG), fees não coletadas
+$1,81, in-range (market $1.876,06). Card **estático** de `pools.html` atualizado — estava
+congelado nos valores de 14/07 ($338,91 / 111,83% / borrow −5,38%).
+
+**Metodologia da pool:** a Revert trata como **UMA posição contínua desde 14/07** (mesma NFT —
+o "fechamento" de 07/08 foi *remove + add liquidity na mesma posição*): 30,9 dias, fees
+lifetime $14,72 = $12,90 coletadas + $1,81 não coletadas. No site o ciclo 1 continua lançado
+como **fechado** ($13,04) e o card ativo carrega só o ciclo 2 — assim o YTD não duplica. Campos
+de **estoque** (pooled/fees/pnl/daysOpen) = ciclo 2; campos de **taxa** (apr/feeApr) = lifetime
+da Revert (64,57% / 50,91%), porque anualizar 7 dias vira ruído.
+YTD confere: 96,28 + 8,62 + 13,04 + 1,81 = **$119,75 ≈ $120**.
+
+### 🐛 Bug corrigido — "JUROS EM TEMPO REAL" contava DEPÓSITO como RENDIMENTO
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| Cards de juros congelados nos fallbacks de maio/2026 mesmo com o fetch ao vivo OK | `runFetch()` terminava chamando `updateYieldSection()` — **nunca** `updateYieldCards()` (funções diferentes, nomes parecidos) | `updateYieldCards()` adicionado ao fim do `runFetch()` |
+| Fallbacks e os 6 `*_PRINCIPAL` eram constantes fixas no shell, invisíveis ao `data.js` | Nunca foram ligados à fonte única | Todos leem de `window.BAROLO_DATA` (novo bloco **`principals`**), com o valor antigo como fallback |
+| **Aporte novo aparecia como juros ganho** | `AAVE_USDT_PRINCIPAL` (1287.33) e `KAMINO_SOL_PRINCIPAL` (20.39) estavam meses defasados | Corrigidos — ver abaixo |
+
+Antes do fix o site dizia **+316 USDT** e **+4,09 SOL (~$308)** de juros ganhos.
+
+**Os principals da Kamino vieram do CSV oficial** (Transaction History, 65 movimentos,
+01/02/2025 → 15/07/2026) — cobrem a obrigação inteira (K1–K4), não só o ciclo corrente:
+
+| | Principal líquido | Posição hoje | Juros retidos |
+|---|---|---|---|
+| SOL | **23,274227** (29,405908 dep − 6,131681 saq) | 24,48 | +1,21 SOL (~$91) |
+| USDS | **300,392689** (depósito único 19/03/2026) | 304,07 | +3,70 USDS |
+| USDC | **754,183048** (1.807,089 borrow − 1.052,905 repay) | 823,63 | −69,46 pagos |
+
+Os da AAVE saíram do próprio campo *earnings* do print: WETH **2,15**, USDT **1587,65**,
+USDC **748,00** (este confere sozinho: 760,17 − 748 = 12,17 = o "fees paid" do print).
+
+**Resultado (bate com os prints):**
+
+| | Site | Print |
+|---|---|---|
+| AAVE pagos | −$12,22 | fees paid **12,17 USDC** ✓ |
+| AAVE recebidos | +0,0122 WETH · +16,11 USDT | **0,01 ETH · 16,35 USDT** ✓ |
+| AAVE net | **+$26,80** | — |
+| Kamino recebidos | +1,2121 SOL ($91,49) · +3,70 USDS | — |
+| Kamino pagos | −$69,46 | — |
+| Kamino net | **+$25,74** | — |
+
+**Por que NÃO bate com o "Interest Earned +$153,62" da Kamino (e não deve bater):** aquilo é
+juro acumulado de toda a vida, **incluindo o que já foi sacado** — dos 6,13 SOL sacados em 2025,
+parte era juro realizado. O site calcula `atual − principal` = juro **ainda retido** na posição,
+que é a métrica certa para uma posição aberta. (Numa etapa intermediária desta sessão eu havia
+estimado `kamino.SOL = 22,44` justamente forçando o encaixe nos $153,62 — o CSV mostrou que
+errava em 0,83 SOL. Não repetir esse atalho.)
+
+### ⚠️ Manutenção nova (não esquecer)
+
+`data.js` → bloco **`principals`** é *cost basis* (principal depositado/emprestado, **sem** juros).
+**Atualizar sempre que houver depósito, saque ou reempréstimo** — senão o aporte novo volta a
+aparecer como rendimento. É exatamente o bug de 14/08. Fonte: CSV do Transaction History da
+Kamino / campo *earnings* do print da AAVE.
+
+### Divergência conhecida (não corrigida)
+
+`data.js` grava `healthFactor: 6.08` pela convenção documentada (Collateral ÷ Borrow, do print),
+mas o fetch ao vivo do `portfolio_analytics.html` mostra **5.00** — é o HF real da Aave
+(colateral × *liquidation threshold* ÷ dívida). Fórmulas diferentes; o ao vivo é o correto quando
+disponível. Pré-existente, só registrado aqui.
+
+### Commits
+- `e49f5ab` — data: refresh semanal 14/08/2026 (AAVE + Kamino + pool) e fix dos juros acumulados
+
+### O que ainda falta
+- Pendências antigas: curva diária na Evolução Patrimonial, `RENDA_2026`, CDI/IPCA anual,
+  `FISCAL_ENTRADAS`, Registro Histórico em `pools.html`, reconciliar `wealthCurve.invested`
+
+---
+
+Atualizado: 14/08/2026 — Refresh semanal (AAVE/Kamino/pool) via `data.js`; **corrigida a
+informação errada de 06/07 sobre `emprestimos.html`** (a atualização é automática via
+`sync-emprestimos.yml`, e o shell do bundle é editável); **bug dos juros acumulados corrigido**
+— `updateYieldCards` nunca rodava após o fetch e 2 principals defasados contavam depósito como
+rendimento; principals da Kamino agora derivados do CSV oficial (SOL 23,274227 · USDS 300,392689
+· USDC 754,183048)
