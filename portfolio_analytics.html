@@ -714,6 +714,7 @@ body, input, button, select, textarea {
  <div class="hero-meta-item">
  <div class="hero-meta-label">TOTAL INVESTIDO</div>
  <div class="hero-meta-val acc sensitive" id="s-invested">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-invested-sub" title="Custo de aquisição soma todas as compras, incluindo as feitas com capital reciclado (vendas, rotações) — não é o mesmo que aporte líquido (dinheiro que efetivamente entrou). O ROI em destaque (card P&amp;L Total) usa aporte líquido.">—</div>
  </div>
  <div class="hero-meta-item" style="display:none;">
  <div class="hero-meta-label">MELHOR 24h</div>
@@ -2021,10 +2022,15 @@ function renderUI(enriched){
  // Patrimônio Líquido = CoinGecko total − Dívida total (card próprio; a dívida aparece SÓ aqui)
  const netTotal = _livePortfolioGross - (aaveDebtLive + kaminoDebtLive);
  const totalPnL = _livePortfolioGross - TOTAL_DEBT - TOTAL_INVESTED;
- // P&L TOTAL espelha o CoinGecko: valor das holdings − custo de aquisição, SEM descontar dívida
- // (a alavancagem/dívida não entra aqui — ela já está refletida no card Patrimônio Líquido).
+ // Custo de aquisição (inclui capital reciclado de vendas/rotações — não é aporte líquido)
  const realPnL = _livePortfolioGross - TOTAL_INVESTED;
- const roi = (realPnL / TOTAL_INVESTED)*100;
+ const roiCostBasis = (realPnL / TOTAL_INVESTED)*100;
+ // ROI em destaque: patrimônio líquido (pós-dívida) sobre aporte líquido real (dinheiro que
+ // efetivamente entrou), não sobre custo de aquisição — TOTAL_INVESTED soma compras feitas com
+ // dinheiro reciclado (vendas/rotações), o que infla o denominador e distorce o ROI para baixo.
+ const aporteLiquido = WEEKLY_UPDATE.wealthCurve.invested.slice(-1)[0] || TOTAL_INVESTED;
+ const netPnL = netTotal - aporteLiquido;
+ const roi = aporteLiquido > 0 ? (netPnL / aporteLiquido) * 100 : 0;
  // 24h: variação de todos os ativos em portfolio (LP já incluído em enriched via CoinGecko)
  const ch24 = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0);
 
@@ -2045,8 +2051,9 @@ function renderUI(enriched){
  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
 
  const pnlEl = document.getElementById('s-pnl');
- if(pnlEl){ const pabs=Math.abs(realPnL); pnlEl.textContent=(realPnL>=0?'+':'-')+fmtCurrency(pabs,0); pnlEl.className='hero-meta-val sensitive '+(realPnL>=0?'pos':'neg'); }
+ if(pnlEl){ const pabs=Math.abs(netPnL); pnlEl.textContent=(netPnL>=0?'+':'-')+fmtCurrency(pabs,0); pnlEl.className='hero-meta-val sensitive '+(netPnL>=0?'pos':'neg'); }
  set('s-pnl-sub', 'ROI: '+(roi>=0?'+':'')+roi.toFixed(1)+'%');
+ set('s-invested-sub', 'ROI custo aquisição: '+(roiCostBasis>=0?'+':'')+roiCostBasis.toFixed(1)+'% · base IR');
 
  const ch24El = document.getElementById('s-24h');
  if(ch24El){ const c24abs=Math.abs(ch24); ch24El.textContent=(ch24>=0?'+':'-')+fmtCurrency(c24abs,0); ch24El.className='hero-meta-val sensitive '+(ch24>=0?'pos':'neg'); }
