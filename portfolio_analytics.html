@@ -888,7 +888,7 @@ body, input, button, select, textarea {
 <!-- ══ BENCHMARK ══ -->
 <div class="card" style="margin-bottom:0;">
  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
- <div class="chart-title" style="margin-bottom:0;">Portfólio vs BTC vs ETH vs S&P 500 vs CDI vs Ibovespa</div>
+ <div class="chart-title" style="margin-bottom:0;">Benchmark de aporte equivalente — Portfólio vs 100% ETH vs 100% BTC vs CDI</div>
  <div style="display:flex;gap:3px;" id="benchPeriodBtns">
  <button class="chart-type-btn" onclick="setBenchPeriod('1m',this)">1M</button>
  <button class="chart-type-btn" onclick="setBenchPeriod('3m',this)">3M</button>
@@ -897,7 +897,7 @@ body, input, button, select, textarea {
  <button class="chart-type-btn active" onclick="setBenchPeriod('all',this)">Total</button>
  </div>
  </div>
- <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-align:right;margin-bottom:6px;" id="benchBaseLabel">BASE 100 · Jan/2022</div>
+ <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-align:right;margin-bottom:6px;" id="benchBaseLabel">mesmos aportes, mesmas datas — o que teria acontecido em cada alternativa</div>
  <canvas id="benchmarkChart" style="max-height:260px;"></canvas>
 </div>
 
@@ -1545,6 +1545,8 @@ body, input, button, select, textarea {
 
 <!-- Fonte única de dados de posição (window.BAROLO_DATA). Fallback: valores hardcoded abaixo. -->
 <script src="data.js"></script>
+<!-- Preços mensais reais BTC/ETH (Binance) + CDI (BCB SGS) para o benchmark de aporte equivalente -->
+<script src="benchmark-data.js"></script>
 <script>
 // ══════════════════════════════════════════════════
 // DADOS DO PORTFÓLIO (atualizados 06/Mar/2026)
@@ -1644,16 +1646,9 @@ var WEEKLY_UPDATE = {
  invested:[1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418,6684,6950,7100,7250],
  },
 
- // ── Benchmark (base 100 = Jan/2022) ──
- benchmark: {
- labels: ['Jan/22','Mai/22','Set/22','Jan/23','Mai/23','Set/23','Jan/24','Mai/24','Set/24','Jan/25','Mai/25','Set/25','Jan/26','Mar/26','Abr/26','Mai/26'],
- portfolio: [100, 54, 74, 131, 196, 229, 347, 602, 608, 1007, 947, 1264, 1116, 754, 1079, 899],
- btc: [100, 72, 56, 100, 119, 117, 205, 222, 216, 285, 210, 185, 256, 175, 210, 195],
- eth: [100, 55, 51, 91, 112, 103, 171, 176, 165, 217, 185, 164, 200, 55, 118, 98],
- sp500: [100, 84, 88, 97, 104, 107, 118, 120, 121, 128, 130, 128, 126, 119, 120, 121],
- cdi: [100, 107, 113, 120, 128, 136, 143, 150, 157, 165, 172, 179, 186, 192, 195, 198],
- ibov: [100, 91, 95, 96, 97, 98, 105, 106, 108, 115, 110, 108, 112, 114, 115, 116],
- },
+ // ── Benchmark: dados reais (BTC/ETH/CDI) vivem em benchmark-data.js (window.BENCHMARK_DATA),
+ // alinhados a wealthCurve.labels. O gráfico simula "mesmo aporte, mesma data" — ver
+ // buildBenchmarkChart() e calculatePerformanceMetrics().
 };
 
 // ── applyUpdate() é chamado depois que todos os dados estão declarados ──
@@ -2857,7 +2852,7 @@ function calculatePerformanceMetrics() {
  const labels = wc.labels;
  const values = wc.values;
  const invested = wc.invested;
- const bench = WEEKLY_UPDATE.benchmark;
+ const bench = window.BENCHMARK_DATA || null;
 
  const metrics = {
   twr: 0,
@@ -2928,16 +2923,16 @@ function calculatePerformanceMetrics() {
   metrics.roic = ((finalValue - totalInvested) / avgInvested) * 100;
  }
 
- // ── Benchmark Return (50% BTC + 50% ETH, annualized) ──
- if (bench.btc && bench.eth && bench.btc.length > 0 && bench.eth.length > 0) {
+ // ── Benchmark Return (50% BTC + 50% ETH, annualized) — preços reais de benchmark-data.js ──
+ if (bench && bench.btcUsd && bench.ethUsd && bench.btcUsd.length > 0 && bench.ethUsd.length > 0) {
   const startIdx = 0;
-  const endIdx = bench.btc.length - 1;
-  const btcReturn = (bench.btc[endIdx] - bench.btc[startIdx]) / bench.btc[startIdx];
-  const ethReturn = (bench.eth[endIdx] - bench.eth[startIdx]) / bench.eth[startIdx];
+  const endIdx = bench.btcUsd.length - 1;
+  const btcReturn = (bench.btcUsd[endIdx] - bench.btcUsd[startIdx]) / bench.btcUsd[startIdx];
+  const ethReturn = (bench.ethUsd[endIdx] - bench.ethUsd[startIdx]) / bench.ethUsd[startIdx];
   const benchReturn = 0.5 * btcReturn + 0.5 * ethReturn; // 50/50 mix
 
-  // Annualize (using approximate time span from benchmark labels)
-  const benchYears = 4.33; // Jan 2022 to May 2026
+  // Annualize (span calculado de bench.labels — não mais hardcoded)
+  const benchYears = bench.labels.length / 12;
   metrics.benchmarkReturn = (Math.pow(1 + benchReturn, 1 / benchYears) - 1) * 100;
 
   // Alpha = Portfolio TWR - Benchmark Return
@@ -3300,96 +3295,68 @@ function buildAnnualChartWrapped(){
  }
 }
 
-// ── BENCHMARK (dados reais atualizados) ──
-// Base 100 = Jan 2022
-// Dados reais: BTC, S&P 500, CDI, Ibovespa + estimativas do portfólio
-// Fontes: slickcharts.com, investidor10.com.br, statusinvest.com.br (Mar 2026)
-function compoundIndex(monthlyPcts) {
- let idx=100; const out=[100];
- monthlyPcts.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
+// ── BENCHMARK DE APORTE EQUIVALENTE ──
+// Preços reais de BTC/ETH (Binance) e CDI (BCB SGS) vivem em benchmark-data.js (window.BENCHMARK_DATA).
+// Simula "o mesmo aporte, na mesma data" em cada alternativa — ver simulateDcaEquivalent/
+// simulateCdiEquivalent logo abaixo.
+var isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+
+// Simula: compra o ativo (prices[i]) com cada aporte do mês (invested[i]-invested[i-1]),
+// acumula unidades, marca a mercado no preço do mês. "O mesmo aporte, no mesmo mês, 100% neste ativo."
+function simulateDcaEquivalent(prices, invested){
+ var units = 0, out = [];
+ for (var i=0;i<invested.length;i++){
+ var c = i===0 ? invested[0] : Math.max(0, invested[i]-invested[i-1]);
+ if (prices[i] > 0) units += c/prices[i];
+ out.push(units*(prices[i]||0));
+ }
  return out;
 }
-var isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+// Simula: capitaliza o saldo pela taxa do mês e soma o aporte do mês (CDI).
+function simulateCdiEquivalent(cdiPct, invested){
+ var bal = 0, out = [];
+ for (var i=0;i<invested.length;i++){
+ var c = i===0 ? invested[0] : Math.max(0, invested[i]-invested[i-1]);
+ bal = bal*(1+(cdiPct[i]||0)/100) + c;
+ out.push(bal);
+ }
+ return out;
+}
 
 function buildBenchmarkChart(){
  try{
- // Monthly labels Jan/22 → Mar/26 (51 months)
- const labels=['Jan/22','Fev/22','Mar/22','Abr/22','Mai/22','Jun/22',
- 'Jul/22','Ago/22','Set/22','Out/22','Nov/22','Dez/22',
- 'Jan/23','Fev/23','Mar/23','Abr/23','Mai/23','Jun/23',
- 'Jul/23','Ago/23','Set/23','Out/23','Nov/23','Dez/23',
- 'Jan/24','Fev/24','Mar/24','Abr/24','Mai/24','Jun/24',
- 'Jul/24','Ago/24','Set/24','Out/24','Nov/24','Dez/24',
- 'Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25',
- 'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
- 'Jan/26','Fev/26','Mar/26'];
+ var bd = window.BENCHMARK_DATA;
+ var wc = WEEKLY_UPDATE.wealthCurve;
+ if (!bd || !bd.btcUsd || !bd.ethUsd || !bd.cdiMonthlyPct) { console.warn('benchmarkChart: BENCHMARK_DATA indisponivel'); return; }
 
- // portM derivado do wealthCurve real — reflete picos e quedas mensais reais
- // portM[0]=0 (Jan/22 = base); portM[i] = retorno mensal real mês i
- var _wc = WEEKLY_UPDATE.wealthCurve.values;
- var portM = [0];
- for (var _pi = 1; _pi < _wc.length; _pi++) {
-   portM.push(_wc[_pi-1]>0 ? parseFloat(((_wc[_pi]/_wc[_pi-1]-1)*100).toFixed(4)) : 0);
- }
- const btcM =[-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,
- 8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,
- 7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,
- -0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,
- -6.14,-6.14,-6.14];
- const ethM =[-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,
- 6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,
- 4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,
- -3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,
- -15.0,-15.0,-15.0];
- const spM =[-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,
- 1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,
- 1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,
- 1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,
- -2.41,-2.41,-2.41];
- const cdiM =[0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,
- 0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
- 0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,
- 1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,
- 0.7,0.7,0.7];
- const ibovM=[-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,
- 0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
- -1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,
- 1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,
- 1.24,1.24,1.24];
+ // Labels vem de wealthCurve.labels (fonte unica - nunca mais desalinhado com o benchmark)
+ const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+ const labels = wc.labels.map(function(lbl){
+ var parts = lbl.split('/');
+ return meses[parseInt(parts[0],10)-1] + '/' + parts[1];
+ });
 
- // ── Period filter ─────────────────────────────────────────────
- const PERIOD_MONTHS = { '1m':1,'3m':3,'6m':6,'1a':12,'all':51 };
+ // 4 series em USD absoluto - "o mesmo aporte, na mesma data, em cada alternativa"
+ const portSeries = wc.values.slice();
+ const ethSeries = simulateDcaEquivalent(bd.ethUsd, wc.invested);
+ const btcSeries = simulateDcaEquivalent(bd.btcUsd, wc.invested);
+ const cdiSeries = simulateCdiEquivalent(bd.cdiMonthlyPct, wc.invested);
+
+ // -- Period filter --
+ const PERIOD_MONTHS = { '1m':1,'3m':3,'6m':6,'1a':12,'all':labels.length };
  let currentPeriod = 'all';
 
- function sliceData(monthlyArr, n) {
- const slice = n >= monthlyArr.length ? monthlyArr : monthlyArr.slice(-n);
- let idx=100, out=[100];
- slice.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
- return out;
- }
-
-
- function getBenchLabels(n) {
- const sl = n >= labels.length ? labels : labels.slice(-n);
- return ['Base', ...sl];
+ function sliceData(arr, n) {
+ return n >= arr.length ? arr : arr.slice(-n);
  }
 
  function buildChart(n) {
- const lbl = getBenchLabels(n);
- const port = sliceData(portM, n);
- const btc = sliceData(btcM, n);
- const eth = sliceData(ethM, n);
- const sp = sliceData(spM, n);
- const cdi = sliceData(cdiM, n);
- const ibov = sliceData(ibovM, n);
+ const lbl = sliceData(labels, n);
+ const port = sliceData(portSeries, n);
+ const eth = sliceData(ethSeries, n);
+ const btc = sliceData(btcSeries, n);
+ const cdi = sliceData(cdiSeries, n);
  const dk = isDark();
- const baseLabel = n >= 51 ? 'BASE 100 · Jan/2022' :
- n === 12 ? 'BASE 100 · ' + labels[labels.length-12] :
- n === 6 ? 'BASE 100 · ' + labels[labels.length-6] :
- n === 3 ? 'BASE 100 · ' + labels[labels.length-3] :
- 'BASE 100 · ' + labels[labels.length-1];
- const baseLabelEl = document.getElementById('benchBaseLabel');
- if (baseLabelEl) baseLabelEl.textContent = baseLabel;
 
  if (benchChartInst) { benchChartInst.destroy(); benchChartInst=null; }
  const ctx = document.getElementById('benchmarkChart');
@@ -3398,11 +3365,9 @@ function buildBenchmarkChart(){
  type:'line',
  data:{ labels:lbl, datasets:[
  {label:'Portfólio',data:port,borderColor:'#c9a050',backgroundColor:'rgba(201,160,80,0.08)',borderWidth:3,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
- {label:'BTC', data:btc, borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
- {label:'ETH', data:eth, borderColor:'#627EEA',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
- {label:'S&P 500', data:sp, borderColor:'#3fb950',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,4]},
+ {label:'100% ETH', data:eth, borderColor:'#627EEA',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
+ {label:'100% BTC', data:btc, borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
  {label:'CDI', data:cdi, borderColor:'#E85D9E',borderWidth:1.8,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[2,3]},
- {label:'Ibovespa', data:ibov,borderColor:'#14C8D4',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[9,4]},
  ]},
  options:{
  responsive:true,
@@ -3412,16 +3377,13 @@ function buildBenchmarkChart(){
  callbacks:{
  title:ctx=>ctx[0].label,
  labelColor: ttLabelColor,
- label:ctx=>{
- const v=ctx.raw;
- const prev=ctx.dataset.data[ctx.dataIndex-1]||100;
- const mo=v&&prev?((v-prev)/prev*100).toFixed(1):null;
- return ` ${ctx.dataset.label}: ${v?.toFixed(1)} pts${mo?` (${mo>=0?'+':''}${mo}%)`:''}`;
- },
+ label:ctx=> ` ${ctx.dataset.label}: ${fmtCurrency(ctx.raw,0)}`,
  afterBody:items=>{
- const p=items.find(i=>i.datasetIndex===0)?.raw||100;
- const pct=(p-100).toFixed(0);
- return ['────────────',`Portfólio: ${pct>=0?'+':''}${pct}% vs base`];
+ const p=items.find(i=>i.datasetIndex===0)?.raw;
+ if (p==null) return [];
+ const alt=items.find(i=>i.datasetIndex===1)?.raw;
+ const diff = (alt!=null) ? p-alt : null;
+ return diff!=null ? ['────────────',`Portfólio vs 100% ETH: ${diff>=0?'+':''}${fmtCurrency(diff,0)}`] : [];
  }
  },
  backgroundColor: dk?'rgba(22,22,28,0.96)':'rgba(250,246,239,0.98)',
@@ -3443,14 +3405,14 @@ function buildBenchmarkChart(){
  },
  scales:{
  x:{ticks:{color:Chart.defaults.color,font:{size:11},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
- y:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
- title:{display:true,text:'Base 100',color:Chart.defaults.color,font:{size:10}}}
+ y:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>fmtCurrency(v,0)},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
+ title:{display:true,text:'USD',color:Chart.defaults.color,font:{size:10}}}
  }
  }
  });
  }
 
- // ── Period switching ──────────────────────────────────────────
+ // -- Period switching --
  window.setBenchPeriod = function(period, btn) {
  currentPeriod = period;
  document.querySelectorAll('#benchPeriodBtns button').forEach(b=>b.classList.remove('active'));
@@ -3458,7 +3420,7 @@ function buildBenchmarkChart(){
  buildChart(PERIOD_MONTHS[period]);
  };
 
- buildChart(51); // default: all time
+ buildChart(labels.length); // default: all time
 
  }catch(e){ console.warn('benchmarkChart error:',e); }
 }
