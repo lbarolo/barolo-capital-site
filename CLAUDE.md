@@ -37,6 +37,12 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
    - ❌ Datas de nascimento ou eventos pessoais
    - ✅ Dados financeiros (apenas números, sem contexto pessoal)
 
+5. **Escopo real da privacidade (decidido em 19/08/2026):** o repositório é **público** por escolha.
+   `robots.txt` e `noindex` protegem o site publicado, não o repositório — o `data.js` e todo o
+   histórico do git são legíveis por qualquer pessoa. A regra que permanece **inegociável** é a
+   outra: nunca expor endereço de carteira, NFT ID ou qualquer identificador único on-chain. Essa
+   nunca foi violada. Não reabrir a discussão de tornar o repo privado sem o Lucas pedir.
+
 ### Objetivo:
 O site é **prova de competência técnica**, não **portfolio público**. Funcionalidade sim, exposição não.
 
