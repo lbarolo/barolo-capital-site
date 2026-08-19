@@ -4137,6 +4137,151 @@ rendimento; principals da Kamino agora derivados do CSV oficial (SOL 23,274227 �
 · USDC 754,183048)
 
 ---
+
+## Sessão 19/08/2026 — ROI de destaque corrigido, retornos derivados da wealthCurve, benchmark de aporte equivalente, consolidação da KB
+
+### Contexto
+
+Lucas recebeu de outra sessão um brief de 7 passos apontando problemas de metodologia no
+`portfolio_analytics.html` e nas bases de conhecimento do repo. Antes de implementar, o brief foi
+verificado contra o código real (3 agentes de exploração em paralelo + leituras diretas): a
+realidade era mais bagunçada do que o brief supunha (5 métricas de "ROI" diferentes na página, não
+uma; o gráfico de benchmark visível não lia `WEEKLY_UPDATE.benchmark`; `MONTHLY_RETURNS_DATA` já
+era sobrescrito em runtime, só que com a fórmula errada), mas os números-alvo do brief bateram
+**exatamente** com o que os dados reais produzem, uma vez usada a fórmula certa — confirmado via
+Node antes de qualquer edição.
+
+### Implementado
+
+#### `CLAUDE.md` + `CONHECIMENTO-BAROLO.md` — consolidação da KB
+Havia duas cópias divergentes: `CONHECIMENTO-BAROLO.md` (rastreada, espelha o bloco
+`KB-START`/`KB-END` do `CLAUDE.md`) e um rascunho não versionado `CONHECIMENTOBAROLO.md` com
+seções mais novas (§3.2.1, §8.6, §16) mas cujo cabeçalho alegava — incorretamente — que o arquivo
+com hífen e o bloco `KB-START` não existiam. Fundidas as duas: conteúdo mais completo incorporado
+ao arquivo canônico, cabeçalho corrigido, ordem física de §8.5/§8.6 normalizada, tabela de
+auditoria em §16.4 corrigida. `CONHECIMENTO-BAROLO.md` regenerado a partir do `CLAUDE.md` via o
+próprio comando `sed` documentado no cabeçalho (garante espelhamento byte-a-byte). Rascunho sem
+hífen removido.
+
+#### `.gitattributes` (novo)
+`* text=auto eol=lf` — previne diffs falsos de CRLF/LF que já induziram leituras erradas do estado
+do repo em sessões anteriores. `git status` já estava limpo no momento (não havia os ~20 arquivos
+que o brief supunha), então isto é puramente preventivo.
+
+#### `portfolio_analytics.html` — ROI em destaque
+O card "P&L Total" (hero) dividia o patrimônio por `TOTAL_INVESTED` (custo de aquisição, soma
+todas as compras incluindo capital reciclado de vendas/rotações — ≈$10.172), mostrando ROI ≈ −30%.
+Trocado para: patrimônio líquido (pós-dívida) ÷ aporte líquido real
+(`WEEKLY_UPDATE.wealthCurve.invested`, último valor — ≈$7.250) − 1. O ROI sobre custo de aquisição
+continua visível, movido para sub-linha do card "TOTAL INVESTIDO", rotulado "base IR" com tooltip
+explicando a diferença.
+
+| Campo | Antes | Depois (dado ao vivo no teste) |
+|---|---|---|
+| ROI em destaque | ≈ −29,9% (custo de aquisição) | **+2,7%** (aporte líquido real) |
+| ROI custo de aquisição | (era o único, sem rótulo) | **−11,2%** · secundário, rotulado "base IR" |
+
+**Fora de escopo, flagado:** `metric-return`, `metric-roi`/`ev-growth-pct` ("Lifetime Return", usa
+capital-semente de Jan/2022 ≈$1.061) e `metric-roic` continuam com metodologias próprias — 4
+números de "retorno" diferentes ainda coexistem na página. O brief só pediu o de destaque.
+
+#### `portfolio_analytics.html` — retornos mensais/anuais 100% derivados
+`WEEKLY_UPDATE.monthlyReturns` e o literal `MONTHLY_RETURNS_DATA` (com comentários "Sum ~+68%"
+admitindo estimativa) já eram sobrescritos em runtime por `syncFromWealthCurve()`, mas com
+denominador simples (`vIni`) em vez de Modified Dietz (`vIni + 0,5×aporte`), e o agregado anual
+(`buildAnnualChart`) somava os meses aritmeticamente em vez de compor geometricamente — a
+combinação dos dois erros distorcia o resultado.
+
+Fix: `MONTHLY_RETURNS_DATA` nasce vazio, populado 100% em runtime a partir de
+`wealthCurve.labels/.values/.invested` (scaffold dinâmico de anos, sem lista hardcoded).
+`syncFromWealthCurve()` usa Modified Dietz. `buildAnnualChart()` usa compounding geométrico
+(`compoundPct()`) no agregado anual e na linha acumulada do drilldown mensal. Lista de anos do
+gráfico também é dinâmica (não mais `[2022,2023,2024,2025,2026]` hardcoded).
+`calculatePerformanceMetrics()` (TWR/alpha) recebeu o mesmo fix de denominador, para não
+contradizer o gráfico.
+
+| Métrica | Antes | Depois (validado Node + browser) |
+|---|---|---|
+| Retorno 2025 | array hardcoded (não usado de fato) | **−2,3%** |
+| Retorno 2024 | idem | **+182,2%** |
+| TWR anualizado (`calculatePerformanceMetrics`) | denominador errado, número maior em módulo | **−7,2% a.a.** |
+
+#### `portfolio_analytics.html` + `benchmark-data.js` (novo) — benchmark de aporte equivalente
+O gráfico de Benchmark comparava patrimônio bruto (inclui todos os aportes) contra índices de
+preço sintéticos (mesma taxa repetida por trimestre inteiro, sem aporte nenhum) —
+`WEEKLY_UPDATE.benchmark` nem era lido pelo gráfico visível, só alimentava um cálculo de alpha à
+parte com 16 pontos esparsos e `benchYears=4,33` hardcoded.
+
+Fix: `benchmark-data.js` traz preços mensais reais de BTC/ETH (Binance klines, campo `close`) e
+CDI (BCB SGS série 4391), alinhados a `wealthCurve.labels` (55 meses, Jan/22→Jul/26), com
+`source`/`fetchedAt`/`methodology` documentados. `buildBenchmarkChart()` reescrito: 4 curvas em USD
+absoluto — Portfólio real vs 100% ETH vs 100% BTC vs CDI — simulando "o mesmo aporte, na mesma
+data, em cada alternativa" (`simulateDcaEquivalent`/`simulateCdiEquivalent`). S&P 500 e Ibovespa
+removidos (fora do escopo pedido — só 4 curvas). `calculatePerformanceMetrics()` passou a usar os
+mesmos preços reais para `alpha`/`benchmarkReturn`, com `benchYears` calculado de
+`bench.labels.length/12` em vez de hardcoded.
+
+**Fora de escopo, flagado:** sem GitHub Action recorrente para reatualizar `benchmark-data.js` — é
+um refresh manual, como os demais dados do site hoje.
+
+#### `CLAUDE.md` — política de privacidade
+Novo item 5: o repositório é **público** por escolha (decisão verificada e confirmada pelo Lucas em
+19/08/2026) — `robots.txt`/`noindex` protegem só o site publicado, não o repositório. A regra que
+continua inegociável: nunca expor endereço de carteira, NFT ID ou identificador único on-chain.
+
+### Razão de fundo (contexto para os números acima)
+
+Duas métricas medem coisas diferentes e o dashboard estava misturando as duas: **TWR**
+(time-weighted, −7,2% a.a.) mede o *gestor* — remove de propósito o efeito de quando se aporta.
+**MWR/ROI sobre aporte líquido** (≈ 0 a 3% no teste ao vivo) mede o *poupador* — credita o timing
+dos aportes. A diferença de vários pontos por ano é o valor mensurável do DCA. Como o Lucas está em
+fase de acumulação e a estratégia dele *é* o timing do aporte, MWR/ROI sobre aporte líquido são as
+métricas corretas para destaque; TWR fica como secundária, para avaliar seleção de ativo.
+
+### Verificação
+
+Todos os passos verificados no browser (servidor local, `http://localhost:8080`) antes de cada
+commit: console sem erros, valores conferidos por `javascript_tool` contra o recomputo em Node
+(2025 −2,3%/2024 +182,2%/TWR −7,2% batem exatamente), 4 datasets do benchmark renderizando em USD,
+troca de período (1M/3M/6M/1A/Total) funcional, `git status` limpo após cada commit,
+`CONHECIMENTO-BAROLO.md` idêntico ao bloco `KB-START`/`KB-END` do `CLAUDE.md` (`diff` vazio),
+`CONHECIMENTOBAROLO.md` removido, `grep "Sum ~"` vazio na árvore rastreada.
+
+### Commits
+
+- `f20625f` — chore: normaliza fim de linha para LF (.gitattributes)
+- `11f96f2` — docs: consolida base de conhecimento (remove CONHECIMENTOBAROLO.md duplicado)
+- `b58c948` — fix: ROI em destaque usa aporte líquido real
+- `2e9d4ff` — fix: retornos mensais/anuais 100% derivados da wealthCurve
+- `abbf021` — feat: benchmark de aporte equivalente (ETH/BTC/CDI)
+- `1a4ef86` — docs: registra decisão de repositório público na política de privacidade
+
+### O que ainda falta
+
+- **4 métricas de "ROI" ainda não reconciliadas** (`metric-return`, `metric-roi`/`ev-growth-pct`,
+  `metric-roic`) — cada uma com denominador diferente do ROI de destaque corrigido nesta sessão
+- **`benchmark-data.js` sem refresh automático** — mês corrente fica defasado até o próximo
+  refresh manual (candidato a uma Action tipo `onchain.yml`/`networth.yml`)
+- **`metrics.irr` continua sendo alias de `metrics.twr`** (`portfolio_analytics.html`, comentário
+  próprio já admite "fallback to TWR for now") — IRR/MWR anualizado real (XIRR) não foi
+  implementado; fora dos critérios de aceite desta rodada
+- **`data.js → defi.aave.healthFactor` tem 3 valores em jogo** (6,04 hardcoded, 6,12 ao vivo no
+  `briefing.json`, 5,00 mencionado em nota antiga do CLAUDE.md) — não investigado nesta sessão
+- Pendências antigas mantidas: `monthlyReturns[2026]` (Ago–Dez, meses ainda não fechados),
+  `RENDA_2026`, CDI/IPCA anual, `FISCAL_ENTRADAS`, Registro Histórico em `pools.html`, reconciliar
+  `wealthCurve.invested` (série termina em 07/26, precisa de ponto novo mensal)
+
+---
+
+Atualizado: 19/08/2026 — **ROI de destaque corrigido** (custo de aquisição → aporte líquido real,
+−29,9%→ perto de zero a zero), **retornos mensais/anuais 100% derivados da wealthCurve** (Modified
+Dietz + compounding geométrico, sem array hardcoded — 2025 −2,3%, 2024 +182,2%, TWR −7,2% a.a.),
+**benchmark de aporte equivalente novo** (`benchmark-data.js` — preços reais BTC/ETH/CDI, 4 curvas
+em USD: Portfólio vs 100% ETH vs 100% BTC vs CDI), **KB consolidada** (duas cópias divergentes
+fundidas em `CONHECIMENTO-BAROLO.md`), `.gitattributes` adicionado, política de privacidade
+registra que o repo é público por escolha
+
+---
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
