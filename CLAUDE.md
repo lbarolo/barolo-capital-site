@@ -4351,8 +4351,10 @@ concordam entre si.
 - `0607d11` — fix: unifica as métricas de performance na fonte única (TWR/IRR/Sharpe/Vol/MaxDD) + XIRR real
 
 ### O que ainda falta
-- **`benchmark-data.js` sem refresh automático** — candidato a Action tipo `onchain.yml`
-- **`data.js → defi.aave.healthFactor` com 3 valores em jogo** — não investigado
+- ~~`benchmark-data.js` sem refresh automático~~ — ✅ FEITO na sessão seguinte (Action `benchmark.yml`)
+- **`data.js → defi.aave.healthFactor` com 3 valores em jogo** (6,04 hardcoded, 6,12 ao vivo no
+  `briefing.json`, 5,00 numa nota antiga do CLAUDE.md) — **deixado de propósito para depois**, a
+  pedido do Lucas em 19/08/2026. Não investigar nem corrigir sem ele pedir.
 - **`metric-return`/`metric-roic` (aba Métricas)** ainda usam suas próprias definições (retorno
   sobre capital deployado excluindo stables; ROIC médio) — são conceitos legitimamente distintos
   do ROI de destaque e do TWR/IRR, mantidos como estão, mas vale revisar se ainda fazem sentido
@@ -4369,6 +4371,67 @@ Return"/"ROI Total" corrigidos** (mesmo erro categórico do ROI de destaque — 
 (incluindo um bloco estático sem `id` na aba DeFi & Mercado), **XIRR real implementado** (bisseção
 sobre fluxo de caixa mensal, −1,37% a.a., valida contra Node) substituindo o alias de TWR — todas
 as métricas agora convergem para os mesmos números nas 5 abas onde aparecem
+
+---
+
+## Sessão 19/08/2026 (continuação 2) — Automação do refresh do benchmark-data.js
+
+### Contexto
+Último item pendente da rodada de correções de métrica: `benchmark-data.js` (preços reais de
+BTC/ETH/CDI usados no gráfico de Benchmark de aporte equivalente) tinha sido gerado uma única vez,
+manualmente, e ficaria defasado a partir do mês seguinte. Lucas pediu para automatizar o refresh
+e deixar a divergência do Health Factor (3 valores em jogo — 6,04/6,12/5,00) **explicitamente
+guardada para depois**, sem investigar agora.
+
+### Implementado
+
+#### `scripts/fetch-benchmark.js` (novo)
+Segue o mesmo padrão de `fetch-networth.js`/`fetch-onchain.js`: busca BTC/ETH via **Binance klines**
+mensais (`interval=1M`, campo `close`, sem chave) e CDI via **BCB SGS série 4391** (% a.m., sem
+chave), de Jan/2022 até o mês corrente (inclui o candle/valor parcial do mês em andamento — o
+benchmark do mês corrente fica se atualizando dia a dia até o mês fechar). Retry com backoff em
+429/5xx. Sanity checks (preço BTC/ETH dentro de faixa plausível, no máximo 2 meses faltando).
+Sobrescreve `benchmark-data.js` (`window.BENCHMARK_DATA = {...}`, mesmo formato de antes — `.js`,
+não `.json`, para funcionar em `file://` igual a `data.js`/`diario.js`).
+
+**Testado localmente**: rodou limpo, gerou 56 meses (Jan/22 → Ago/26, o mês atual incluído), preços
+batendo com o fetch manual anterior (BTC $68.220 / ETH $2.094,77 no momento do teste). Verificado
+no browser (servidor local): zero erros de console, gráfico de Benchmark renderiza normalmente com
+o arquivo regenerado.
+
+#### `.github/workflows/benchmark.yml` (novo)
+Cron diário (`0 10 * * *`, ~07:00 BRT — depois dos horários do `onchain.yml`/`networth.yml` para não
+competir por commit no mesmo minuto), mais `workflow_dispatch` para rodar manual. Sem secrets — só
+APIs públicas. `git pull --rebase origin main` antes do push (mesmo padrão defensivo do
+`networth.yml`, já que agora são 5 Actions escrevendo no repo em horários próximos). Só commita se
+`benchmark-data.js` realmente mudou (`git diff --quiet`).
+
+### Verificação
+- `node scripts/fetch-benchmark.js` rodado localmente: saída limpa, sem erros.
+- `node -c benchmark-data.js`: sintaxe válida.
+- Página `portfolio_analytics.html` recarregada no browser com o arquivo regenerado: console sem
+  erros, gráfico de Benchmark e `calculatePerformanceMetrics()` (alpha/benchmarkReturn) consomem o
+  novo arquivo normalmente.
+
+### Commits
+- (a seguir, junto com este log)
+
+### O que ainda falta
+- **`data.js → defi.aave.healthFactor` com 3 valores em jogo** — **guardado para depois a pedido
+  do Lucas**, não mexer sem ele pedir.
+- **Confirmar a Action rodando em produção** — primeira execução automática só acontece no próximo
+  horário agendado (~07:00 BRT); pode rodar manual via aba Actions → "Atualizar benchmark de aporte
+  equivalente" → Run workflow para confirmar antes disso.
+- Pendências antigas mantidas: `monthlyReturns[2026]` (Ago–Dez), `RENDA_2026`, CDI/IPCA anual,
+  `FISCAL_ENTRADAS`, Registro Histórico em `pools.html`, reconciliar `wealthCurve.invested`
+
+---
+
+Atualizado: 19/08/2026 (continuação 2) — **Refresh automático do `benchmark-data.js`**
+(`scripts/fetch-benchmark.js` + Action `benchmark.yml`, cron diário ~07:00 BRT, sem secrets — Binance
+klines + BCB SGS): último item pendente da rodada de métricas fica resolvido; **divergência do
+Health Factor (6,04/6,12/5,00) fica registrada e guardada para depois, por pedido explícito do
+Lucas** — não investigar nem corrigir sem ele pedir
 
 ---
 <!-- KB-START -->

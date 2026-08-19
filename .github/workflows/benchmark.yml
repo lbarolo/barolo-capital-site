@@ -1,0 +1,43 @@
+name: Atualizar benchmark de aporte equivalente (benchmark-data.js)
+
+# Regenera benchmark-data.js (preços mensais reais BTC/ETH via Binance + CDI via BCB SGS)
+# e commita se mudou. Sem secrets — APIs públicas. Roda diariamente para manter o mês
+# corrente (candle parcial) atualizado; o mês fecha e vira definitivo sozinho com o tempo.
+
+on:
+  schedule:
+    - cron: '0 10 * * *'   # ~07:00 BRT diariamente (depois do onchain/networth das 09:20/09:40 UTC)
+  workflow_dispatch:        # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmark-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Gerar benchmark-data.js
+        run: node scripts/fetch-benchmark.js
+
+      - name: Commit se houver mudança
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- benchmark-data.js; then
+            echo "Sem mudanças no benchmark-data.js."
+          else
+            git add benchmark-data.js
+            git commit -m "data: atualiza benchmark de aporte equivalente (automático)"
+            git pull --rebase origin main
+            git push
+          fi
