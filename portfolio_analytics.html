@@ -1621,17 +1621,6 @@ var WEEKLY_UPDATE = {
  USDS: 300,     // stablecoin 1:1
  },
 
- // ── Retornos mensais do portfólio (%) — adicione o mês atual ──
- // Formato: [Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez]
- // null = mês ainda não encerrou
- monthlyReturns: {
- 2022: [-22.0, -6.4, +12.0, -18.5, -28.0, -34.0, +58.0, -14.0, -24.0, +19.0, -18.0, +4.0],
- 2023: [+28.0, -2.5, +6.0, +2.8, +1.5, +4.2, -1.8, -9.0, +4.2, +11.2, +14.5, +18.0],
- 2024: [+1.5, +42.0, +6.0, -14.0, -22.0, +6.2, +4.0, -18.0, +10.0, -3.0, +44.0, +8.5],
- 2025: [+28.0,-12.0, +5.0, -9.0, -18.0, -6.0, +12.0, -8.0, +4.0, +6.0, +4.5, +6.0],
- 2026: [-18.0,-22.0, -13.6, +40.3, -22.6, +1.5, -10.1, null, null, null, null, null],
- },
-
  // ── P&L por origem (manual — baseado no diário) ──
  pnlOrigin: {
  // ETH SOL ADA RDNT EIGEN POL ZK XAI
@@ -2884,14 +2873,16 @@ function calculatePerformanceMetrics() {
  if (!values || values.length < 2) return metrics;
 
  // ── TWR (Time-Weighted Return) ──
- // For each month: return = (EndValue - StartValue - NetAporte) / StartValue
+ // Modified Dietz: return = (EndValue - StartValue - NetAporte) / (StartValue + 0.5*NetAporte)
+ // (assume aporte no meio do mês — mesma convenção usada em syncFromWealthCurve())
  const monthlyReturns = [];
  for (let i = 1; i < values.length; i++) {
   const startVal = values[i-1];
   const endVal = values[i];
   const netAporte = invested[i] - invested[i-1]; // aporte in this month
-  if (startVal > 0) {
-   const ret = (endVal - startVal - netAporte) / startVal;
+  const denom = startVal + 0.5 * netAporte;
+  if (denom > 0) {
+   const ret = (endVal - startVal - netAporte) / denom;
    monthlyReturns.push(ret);
   }
  }
@@ -3165,24 +3156,19 @@ function buildStaticCharts(){
 }
 
 // ── ANNUAL RETURN (Artemis-style, monthly granularity) ──
-// Monthly returns per year (Jan-Dez, estimated from known annual results)
-// Portfolio: 2022: -58%, 2023: +62%, 2024: +31%, 2025: -15%, 2026: YTD
-var MONTHLY_RETURNS_DATA = {
- // ETH+SOL heavy portfolio — 2022:down, 2023-2025:up, 2026:down YTD
- // 2022: ETH -65% | 2023: ETH/SOL rally | 2024: halving year | 2025: SOL rally Q1 | 2026: bear
- 2022: [-22.0,-6.4,+12.0,-18.5,-28.0,-34.0,+58.0,-14.0,-24.0,+19.0,-18.0,+4.0],
- // Sum ~-50% ↓
- 2023: [+28.0,-2.5,+6.0,+2.8,+1.5,+4.2,-1.8,-9.0,+4.2,+11.2,+14.5,+18.0],
- // Sum ~+68% ↑
- 2024: [+1.5,+42.0,+6.0,-14.0,-22.0,+6.2,+4.0,-18.0,+10.0,-3.0,+44.0,+8.5],
- // Sum ~+40% ↑
- 2025: [+28.0,-12.0,+5.0,-9.0,-18.0,-6.0,+12.0,-8.0,+4.0,+6.0,+4.5,+6.0],
- // Sum ~+14% ↑ (SOL peaked in Jan, pullback, recovery mid-year)
- 2026: [-18.0,-22.0,null,null,null,null,null,null,null,null,null,null],
- // Sum ~-36% ↓ YTD (ETH $3300→$2056, SOL $190→$87)
-};
+// 100% derivado de WEEKLY_UPDATE.wealthCurve em applyUpdate()/syncFromWealthCurve() — sem
+// literais escritos à mão. Anos são criados dinamicamente a partir de wealthCurve.labels.
+var MONTHLY_RETURNS_DATA = {};
 var MES_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 var MONTHLY_RETURNS = MONTHLY_RETURNS_DATA; // alias for backward compat
+
+// Compounding geométrico de uma série de retornos mensais (%), pulando null — usado no
+// agregado anual (não soma aritmética, que distorce o total quando há meses grandes).
+function compoundPct(arr){
+ var acc = 1, has = false;
+ (arr||[]).forEach(function(v){ if(v!==null && v!==undefined){ acc *= (1+v/100); has = true; } });
+ return has ? parseFloat(((acc-1)*100).toFixed(1)) : 0;
+}
 
 var annualView = 'yearly'; // 'yearly' | year num
 var annualTypeMode = 'bar';
@@ -3193,15 +3179,12 @@ function buildAnnualChart(){
  const canvas = document.getElementById('annualReturn');
 
  if(annualView === 'yearly'){
- // Yearly overview with all 5 years as bars
- const years = ['2022','2023','2024','2025','2026 YTD'];
- const totals = [
- MONTHLY_RETURNS[2022].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2023].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2024].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2025].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2026].filter(v=>v!==null).reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- ];
+ // Yearly overview — anos e totais 100% derivados de MONTHLY_RETURNS_DATA (sem hardcode).
+ // Total anual = compounding geométrico dos meses (não soma aritmética).
+ const yearKeys = Object.keys(MONTHLY_RETURNS).map(Number).sort((a,b)=>a-b);
+ const currentYear = new Date().getFullYear();
+ const years = yearKeys.map(y => (y===currentYear && MONTHLY_RETURNS[y].some(v=>v===null)) ? (y+' YTD') : String(y));
+ const totals = yearKeys.map(y => compoundPct(MONTHLY_RETURNS[y]));
  annualChartInst = new Chart(canvas,{
  type: annualTypeMode,
  data:{
@@ -3230,7 +3213,7 @@ function buildAnnualChart(){
  },
  onClick:(evt,els)=>{
  if(els.length>0){
- const yr=[2022,2023,2024,2025,2026][els[0].index];
+ const yr=yearKeys[els[0].index];
  annualView=yr; buildAnnualChart();
  }
  },
@@ -3245,9 +3228,9 @@ function buildAnnualChart(){
  const yr = annualView;
  const data = MONTHLY_RETURNS[yr];
  const vals = data.map(v=>v===null?null:parseFloat(v.toFixed(1)));
- // Build cumulative line
- let cum=0; const cumLine=[];
- vals.forEach(v=>{ if(v!==null){ cum+=v; cumLine.push(parseFloat(cum.toFixed(1))); } else cumLine.push(null); });
+ // Build cumulative line — compounding geométrico (não soma aritmética)
+ let cumFactor=1; const cumLine=[];
+ vals.forEach(v=>{ if(v!==null){ cumFactor*=(1+v/100); cumLine.push(parseFloat(((cumFactor-1)*100).toFixed(1))); } else cumLine.push(null); });
 
  annualChartInst = new Chart(canvas,{
  type:'bar',
@@ -4101,7 +4084,12 @@ var activePeriod = 'all';
 // (chamado aqui, depois de todos os const estarem declarados)
 function applyUpdate() {
  const W = WEEKLY_UPDATE;
- Object.assign(MONTHLY_RETURNS_DATA, W.monthlyReturns);
+ // MONTHLY_RETURNS_DATA é 100% derivado da wealthCurve (sem literal hardcoded — ver declaração).
+ // Scaffold: cria o array do ano (12 meses null) para cada ano presente em wealthCurve.labels.
+ W.wealthCurve.labels.forEach(function(lbl){
+   var year = 2000 + parseInt(lbl.split('/')[1], 10);
+   if (!MONTHLY_RETURNS_DATA[year]) MONTHLY_RETURNS_DATA[year] = new Array(12).fill(null);
+ });
  // Sync monthly returns from wealthCurve — ensures heatmap and annual chart stay consistent
  // with the tracked portfolio values. Jan of each year requires previous Dec, so starts at index 1.
  (function syncFromWealthCurve() {
@@ -4112,9 +4100,13 @@ function applyUpdate() {
      var year  = 2000 + parseInt(parts[1], 10);
      if (!MONTHLY_RETURNS_DATA[year]) continue;
      if (!wc.values[i-1] || wc.values[i-1] <= 0) continue;
-     // TWR: subtrai inflow (delta de invested) para neutralizar aportes do período
+     // Modified Dietz: subtrai inflow (delta de invested) do numerador e assume aporte no meio
+     // do mês (peso 0,5) no denominador — neutraliza o timing do aporte dentro do período.
      var inflow = (wc.invested[i] || 0) - (wc.invested[i-1] || 0);
-     MONTHLY_RETURNS_DATA[year][month] = parseFloat(((wc.values[i] - inflow - wc.values[i-1]) / wc.values[i-1] * 100).toFixed(1));
+     var denom = wc.values[i-1] + 0.5 * inflow;
+     MONTHLY_RETURNS_DATA[year][month] = denom > 0
+       ? parseFloat(((wc.values[i] - inflow - wc.values[i-1]) / denom * 100).toFixed(1))
+       : null;
    }
  })();
  perfPeriodsData.all.labels = W.wealthCurve.labels;
