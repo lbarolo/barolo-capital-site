@@ -1,0 +1,43 @@
+name: Fechamento mensal BTC/ETH (bench-prices.json)
+
+# Alimenta o gráfico "Aporte equivalente" (portfolio_analytics.html) com o preço real de
+# fechamento de cada mês, em vez do array aproximado escrito à mão. Sem secrets — API pública.
+# Roda no dia 1 de cada mês (o mês anterior já fechou) e sob demanda.
+
+on:
+  schedule:
+    - cron: '10 10 1 * *'   # dia 1, ~07:10 BRT
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bench-prices-update
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Buscar fechamentos mensais
+        run: node scripts/fetch-bench-prices.js
+
+      - name: Commit se houver mudança
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- bench-prices.json; then
+            echo "Sem mudanças no bench-prices.json."
+          else
+            git add bench-prices.json
+            git commit -m "data: fechamento mensal BTC/ETH (automático)"
+            git pull --rebase origin main
+            git push
+          fi

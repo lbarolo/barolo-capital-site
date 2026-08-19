@@ -185,6 +185,7 @@ async function buildPortfolio(B, mkt) {
   const debt = B.debt.total;
   const netWorth = gross + stables + lp - debt;
   const invested = [...B.holdings, ...B.stables].reduce((s, a) => s + (a.invested || 0), 0);
+  const netContributed = (typeof B.netContributed === 'number' && B.netContributed > 0) ? B.netContributed : invested;
 
   // Variação 24h em $ do patrimônio (LP entra pela parcela em WETH)
   const ethCh = ch('ethereum');
@@ -209,7 +210,13 @@ async function buildPortfolio(B, mkt) {
 
   return {
     netWorth: num(netWorth), gross: num(gross), stables: num(stables), lp: num(lp), debt: num(debt),
-    invested: num(invested), roi: num((netWorth - invested) / invested * 100, 1),
+    // invested = CUSTO DE AQUISIÇÃO (base p/ IR); netContributed = APORTE LÍQUIDO (dinheiro novo).
+    // roi usa o aporte líquido: é o retorno do dinheiro que entrou. roiCost fica como
+    // referência sobre custo de aquisição (denominador inflado por recompras/rotações).
+    invested: num(invested),
+    netContributed: num(netContributed),
+    roi: num((netWorth - netContributed) / netContributed * 100, 1),
+    roiCost: num((netWorth - invested) / invested * 100, 1),
     move24: num(move24), move24Pct: num(move24 / (netWorth - move24) * 100, 2),
     aave: {
       hf: num(aaveHF), collateral: num(aaveCol), debt: num(a.borrow.USDC.qty),
@@ -290,7 +297,7 @@ ${oc ? `MVRV ${oc.mvrv} · STH MVRV ${oc.mvrv_sth} (abaixo de 1 = holder de curt
 Índice de risco de ciclo (0 fundo → 1 topo): ${r ? r.score + ' — ' + r.label : 'n/d'}
 
 POSIÇÃO DA CASA (para a leitura "e daí, pra mim?"):
-Patrimônio líquido US$ ${p.netWorth} (${p.move24 >= 0 ? '+' : ''}US$ ${p.move24} em 24h) · ROI ${p.roi}%
+Patrimônio líquido US$ ${p.netWorth} (${p.move24 >= 0 ? '+' : ''}US$ ${p.move24} em 24h) · ROI s/ aporte ${p.roi}% (s/ custo de aquisição ${p.roiCost}%)
 Dívida US$ ${p.debt} · AAVE HF ${p.aave.hf} · Kamino LTV ${p.kamino.ltv}% (liquida em ${p.kamino.liqLtv}%)
 ${p.kamino.liqSol ? `SOL liquida em US$ ${p.kamino.liqSol} (queda de ${p.kamino.dropToLiq}% do preço atual)` : 'SOL sem risco de liquidação no nível atual'}
 Juros/mês US$ ${p.carry.monthlyInterest} vs yield de supply/mês US$ ${p.carry.monthlySupply}

@@ -711,9 +711,20 @@ body, input, button, select, textarea {
  <div class="hero-meta-val sensitive" id="s-pnl">—</div>
  <div style="font-size:8px;color:var(--muted);" id="s-pnl-sub">—</div>
  </div>
- <div class="hero-meta-item">
- <div class="hero-meta-label">TOTAL INVESTIDO</div>
+ <div class="hero-meta-item" title="Dinheiro novo que entrou (aporte líquido), da série wealthCurve.invested. Diferente do custo de aquisição, que soma também as recompras feitas com dinheiro que já estava dentro.">
+ <div class="hero-meta-label">APORTE LÍQUIDO <span style="font-size:7px;opacity:0.6;cursor:help;">ⓘ</span></div>
+ <div class="hero-meta-val acc sensitive" id="s-contrib">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-contrib-sub">—</div>
+ </div>
+ <div class="hero-meta-item" title="Patrimônio líquido (já descontada a dívida) dividido pelo aporte líquido. É o retorno do dinheiro que você efetivamente pôs.">
+ <div class="hero-meta-label">ROI S/ APORTE <span style="font-size:7px;opacity:0.6;cursor:help;">ⓘ</span></div>
+ <div class="hero-meta-val" id="s-roi-aporte">—</div>
+ <div style="font-size:8px;color:var(--muted);" id="s-roi-aporte-sub">—</div>
+ </div>
+ <div class="hero-meta-item" title="Custo de aquisição = soma de todas as compras, incluindo recompras financiadas por saída de pool/rotação. É a base para IR, não dinheiro novo.">
+ <div class="hero-meta-label">CUSTO AQUISIÇÃO <span style="font-size:7px;opacity:0.6;cursor:help;">ⓘ</span></div>
  <div class="hero-meta-val acc sensitive" id="s-invested">—</div>
+ <div style="font-size:8px;color:var(--muted);">base p/ IR</div>
  </div>
  <div class="hero-meta-item" style="display:none;">
  <div class="hero-meta-label">MELHOR 24h</div>
@@ -887,7 +898,7 @@ body, input, button, select, textarea {
 <!-- ══ BENCHMARK ══ -->
 <div class="card" style="margin-bottom:0;">
  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
- <div class="chart-title" style="margin-bottom:0;">Portfólio vs BTC vs ETH vs S&P 500 vs CDI vs Ibovespa</div>
+ <div class="chart-title" style="margin-bottom:0;">Aporte equivalente — Carteira vs ETH vs BTC vs CDI</div>
  <div style="display:flex;gap:3px;" id="benchPeriodBtns">
  <button class="chart-type-btn" onclick="setBenchPeriod('1m',this)">1M</button>
  <button class="chart-type-btn" onclick="setBenchPeriod('3m',this)">3M</button>
@@ -898,6 +909,13 @@ body, input, button, select, textarea {
  </div>
  <div style="font-size:8px;color:var(--muted);letter-spacing:1.5px;text-align:right;margin-bottom:6px;" id="benchBaseLabel">BASE 100 · Jan/2022</div>
  <canvas id="benchmarkChart" style="max-height:260px;"></canvas>
+ <div style="font-size:9px;color:var(--muted);margin-top:8px;line-height:1.5;">
+  Cada curva usa <strong>os mesmos aportes, nas mesmas datas</strong>: o que teria acontecido se todo
+  aporte tivesse ido para ETH, para BTC ou para o CDI. Preços mensais reais de BTC/ETH (CoinGecko).
+  <br>⚠️ A curva da carteira é <strong>bruta</strong> (não desconta a dívida DeFi, hoje ~$1,6k) porque não
+  existe série mensal de dívida — ela favorece a carteira no ponto final. Para a comparação estrita,
+  já com a dívida descontada, use o KPI <strong>vs HODL</strong> no topo da página.
+ </div>
 </div>
 
 </div>
@@ -1623,13 +1641,8 @@ var WEEKLY_UPDATE = {
  // ── Retornos mensais do portfólio (%) — adicione o mês atual ──
  // Formato: [Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez]
  // null = mês ainda não encerrou
- monthlyReturns: {
- 2022: [-22.0, -6.4, +12.0, -18.5, -28.0, -34.0, +58.0, -14.0, -24.0, +19.0, -18.0, +4.0],
- 2023: [+28.0, -2.5, +6.0, +2.8, +1.5, +4.2, -1.8, -9.0, +4.2, +11.2, +14.5, +18.0],
- 2024: [+1.5, +42.0, +6.0, -14.0, -22.0, +6.2, +4.0, -18.0, +10.0, -3.0, +44.0, +8.5],
- 2025: [+28.0,-12.0, +5.0, -9.0, -18.0, -6.0, +12.0, -8.0, +4.0, +6.0, +4.5, +6.0],
- 2026: [-18.0,-22.0, -13.6, +40.3, -22.6, +1.5, -10.1, null, null, null, null, null],
- },
+ // monthlyReturns REMOVIDO (19/08/2026): era uma 2ª fonte de verdade, escrita à mão e
+ // divergente da wealthCurve. Os retornos mensais agora saem só de syncFromWealthCurve().
 
  // ── P&L por origem (manual — baseado no diário) ──
  pnlOrigin: {
@@ -1647,10 +1660,19 @@ var WEEKLY_UPDATE = {
  },
 
  // ── Curva de patrimônio ($) — adicione o mês atual ──
+ // ⚠️ BASE DA SÉRIE = PATRIMÔNIO BRUTO: holdings + stables a preço de fechamento do mês
+ //    (as holdings JÁ incluem o colateral em AAVE/Kamino). NÃO inclui a pool LP e NÃO
+ //    desconta a dívida. É o "total do CoinGecko" — confere com 06/26 = 7651 vs o print
+ //    de 20/06/2026 ($7.650,91) e com o pico 10/25 = 12312 ($12.312,02 em 06/10/2025).
+ //    Manter TODA a série nessa base: misturar bruto e líquido inventa retorno.
+ //    (Bug corrigido em 19/08/2026: 07/26 tinha entrado como líquido — 7031 — e fazia
+ //     julho aparecer −10,1% quando o mês foi +6,3%.)
+ //    O patrimônio LÍQUIDO de verdade (com LP e menos dívida) é outra série: o card do
+ //    topo, ao vivo, e o histórico diário em networth-history.json (desde 08/07/2026).
  // Formato: [valor do portfólio total em USD]
  wealthCurve: {
  labels: ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26','04/26','05/26','06/26','07/26'],
- values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,7392,7651,7031],
+ values: [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,7392,7651,8284],
  invested:[1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418,6684,6950,7100,7250],
  },
 
@@ -1738,6 +1760,25 @@ var AAVE_DEBT = (_BD && _BD.debt && _BD.debt.aave) || 754.65;     // USDC @ 5.38
 var KAMINO_DEBT = (_BD && _BD.debt && _BD.debt.kamino) || 815.97; // USDC @ 5.69% APY (fallback 20/06/2026)
 var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $754.65 + $815.97 = $1,570.62
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
+// ── DOIS DENOMINADORES DIFERENTES — não confundir ──
+// TOTAL_INVESTED  = CUSTO DE AQUISIÇÃO (soma de todas as compras, incl. recompras feitas com
+//                   dinheiro que já estava dentro: saída de pool, rotação, taxas reinvestidas).
+//                   É a base para IR — NÃO é dinheiro novo aportado.
+// NET_CONTRIBUTED = APORTE LÍQUIDO (dinheiro novo que entrou), de data.js → netContributed
+//                   (fallback: último ponto de wealthCurve.invested).
+//                   É o denominador certo para "quanto rendeu o dinheiro que eu pus".
+// ROI de destaque = patrimônio líquido / aporte líquido − 1.
+var NET_CONTRIBUTED = (function(){
+  // Fonte única: data.js → netContributed. Fallback: último ponto de wealthCurve.invested.
+  try {
+    if (_BD && typeof _BD.netContributed === 'number' && _BD.netContributed > 0) return _BD.netContributed;
+  } catch(e){}
+  try {
+    var inv = WEEKLY_UPDATE.wealthCurve.invested;
+    var last = inv[inv.length-1];
+    return (typeof last === 'number' && last > 0) ? last : TOTAL_INVESTED;
+  } catch(e){ return TOTAL_INVESTED; }
+})();
 
 var liveData = {};
 var _livePortfolioGross = 0; // atualizado em renderUI a cada fetch
@@ -2024,7 +2065,11 @@ function renderUI(enriched){
  // P&L TOTAL espelha o CoinGecko: valor das holdings − custo de aquisição, SEM descontar dívida
  // (a alavancagem/dívida não entra aqui — ela já está refletida no card Patrimônio Líquido).
  const realPnL = _livePortfolioGross - TOTAL_INVESTED;
+ // ROI sobre CUSTO DE AQUISIÇÃO (espelha o CoinGecko; base p/ IR). Denominador infla com
+ // recompras feitas com dinheiro que já estava dentro — por isso NÃO é o ROI de destaque.
  const roi = (realPnL / TOTAL_INVESTED)*100;
+ // ROI de DESTAQUE: patrimônio líquido (já sem a dívida) sobre o aporte líquido.
+ const roiAporte = NET_CONTRIBUTED > 0 ? ((netTotal - NET_CONTRIBUTED) / NET_CONTRIBUTED)*100 : 0;
  // 24h: variação de todos os ativos em portfolio (LP já incluído em enriched via CoinGecko)
  const ch24 = enriched.reduce((s,a)=>s+(a.currentValue*(a.change24h/100)), 0);
 
@@ -2043,10 +2088,18 @@ function renderUI(enriched){
  // LP já incluído em _livePortfolioGross (CoinGecko total)
  set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
+ set('s-contrib', fmtCurrency(NET_CONTRIBUTED, 0));
+ set('s-contrib-sub', 'dinheiro novo aportado');
+ const roiApEl = document.getElementById('s-roi-aporte');
+ if(roiApEl){
+   roiApEl.textContent = (roiAporte>=0?'+':'')+roiAporte.toFixed(1)+'%';
+   roiApEl.className = 'hero-meta-val '+(roiAporte>=0?'pos':'neg');
+ }
+ set('s-roi-aporte-sub', 'patrimônio líq. ÷ aporte');
 
  const pnlEl = document.getElementById('s-pnl');
  if(pnlEl){ const pabs=Math.abs(realPnL); pnlEl.textContent=(realPnL>=0?'+':'-')+fmtCurrency(pabs,0); pnlEl.className='hero-meta-val sensitive '+(realPnL>=0?'pos':'neg'); }
- set('s-pnl-sub', 'ROI: '+(roi>=0?'+':'')+roi.toFixed(1)+'%');
+ set('s-pnl-sub', 'ROI s/ custo: '+(roi>=0?'+':'')+roi.toFixed(1)+'%');
 
  const ch24El = document.getElementById('s-24h');
  if(ch24El){ const c24abs=Math.abs(ch24); ch24El.textContent=(ch24>=0?'+':'-')+fmtCurrency(c24abs,0); ch24El.className='hero-meta-val sensitive '+(ch24>=0?'pos':'neg'); }
@@ -2103,7 +2156,7 @@ function renderUI(enriched){
    const netMonthly = monthlyYield - monthlyInterest;
 
    set('ev-net', fmtCurrency(netTotal, 0));
-   set('ev-net-sub', 'ROI total: '+(roi>=0?'+':'')+roi.toFixed(1)+'%');
+   set('ev-net-sub', 'ROI s/ aporte: '+(roiAporte>=0?'+':'')+roiAporte.toFixed(1)+'%');
    set('ev-debt', fmtCurrency(totalDebtLive, 0));
    set('ev-lev', 'D/Patrimônio: '+debtRatio+'%');
 
@@ -3157,23 +3210,22 @@ function buildStaticCharts(){
  try{ buildRendaPassiva(); }catch(e){}
 }
 
-// ── ANNUAL RETURN (Artemis-style, monthly granularity) ──
-// Monthly returns per year (Jan-Dez, estimated from known annual results)
-// Portfolio: 2022: -58%, 2023: +62%, 2024: +31%, 2025: -15%, 2026: YTD
+// ── RETORNO ANUAL (granularidade mensal) ──
+// Fonte ÚNICA: derivado em runtime de WEEKLY_UPDATE.wealthCurve por syncFromWealthCurve()
+// (ver applyUpdate()), via TWR mensal: (valor_fim − aporte_do_mês − valor_início) / valor_início.
+// NÃO preencher à mão: qualquer número escrito aqui é sobrescrito no load. O scaffolding abaixo
+// só declara as chaves de ano — syncFromWealthCurve() só preenche anos que já existem no objeto.
+// Jan/2022 fica null de propósito: é o 1º ponto da série, não existe mês anterior para comparar.
+function _emptyYear(){ return [null,null,null,null,null,null,null,null,null,null,null,null]; }
 var MONTHLY_RETURNS_DATA = {
- // ETH+SOL heavy portfolio — 2022:down, 2023-2025:up, 2026:down YTD
- // 2022: ETH -65% | 2023: ETH/SOL rally | 2024: halving year | 2025: SOL rally Q1 | 2026: bear
- 2022: [-22.0,-6.4,+12.0,-18.5,-28.0,-34.0,+58.0,-14.0,-24.0,+19.0,-18.0,+4.0],
- // Sum ~-50% ↓
- 2023: [+28.0,-2.5,+6.0,+2.8,+1.5,+4.2,-1.8,-9.0,+4.2,+11.2,+14.5,+18.0],
- // Sum ~+68% ↑
- 2024: [+1.5,+42.0,+6.0,-14.0,-22.0,+6.2,+4.0,-18.0,+10.0,-3.0,+44.0,+8.5],
- // Sum ~+40% ↑
- 2025: [+28.0,-12.0,+5.0,-9.0,-18.0,-6.0,+12.0,-8.0,+4.0,+6.0,+4.5,+6.0],
- // Sum ~+14% ↑ (SOL peaked in Jan, pullback, recovery mid-year)
- 2026: [-18.0,-22.0,null,null,null,null,null,null,null,null,null,null],
- // Sum ~-36% ↓ YTD (ETH $3300→$2056, SOL $190→$87)
+ 2022:_emptyYear(), 2023:_emptyYear(), 2024:_emptyYear(), 2025:_emptyYear(), 2026:_emptyYear(),
 };
+// Compõe retornos mensais geometricamente (NUNCA somar percentuais — 12 meses de −20% não são −240%).
+function compoundReturns(arr){
+ var c=1, has=false;
+ (arr||[]).forEach(function(v){ if(v!==null && isFinite(v)){ c*=(1+v/100); has=true; } });
+ return has ? (c-1)*100 : null;
+}
 var MES_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 var MONTHLY_RETURNS = MONTHLY_RETURNS_DATA; // alias for backward compat
 
@@ -3188,13 +3240,11 @@ function buildAnnualChart(){
  if(annualView === 'yearly'){
  // Yearly overview with all 5 years as bars
  const years = ['2022','2023','2024','2025','2026 YTD'];
- const totals = [
- MONTHLY_RETURNS[2022].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2023].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2024].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2025].reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- MONTHLY_RETURNS[2026].filter(v=>v!==null).reduce((s,v)=>s+(v||0),0).toFixed(1)*1,
- ];
+ // Retorno do ano = composição geométrica dos meses (não a soma dos percentuais).
+ const totals = [2022,2023,2024,2025,2026].map(function(y){
+ var r = compoundReturns(MONTHLY_RETURNS[y]);
+ return r===null ? null : parseFloat(r.toFixed(1));
+ });
  annualChartInst = new Chart(canvas,{
  type: annualTypeMode,
  data:{
@@ -3239,8 +3289,8 @@ function buildAnnualChart(){
  const data = MONTHLY_RETURNS[yr];
  const vals = data.map(v=>v===null?null:parseFloat(v.toFixed(1)));
  // Build cumulative line
- let cum=0; const cumLine=[];
- vals.forEach(v=>{ if(v!==null){ cum+=v; cumLine.push(parseFloat(cum.toFixed(1))); } else cumLine.push(null); });
+ let cumFactor=1; const cumLine=[];
+ vals.forEach(v=>{ if(v!==null){ cumFactor*=(1+v/100); cumLine.push(parseFloat(((cumFactor-1)*100).toFixed(1))); } else cumLine.push(null); });
 
  annualChartInst = new Chart(canvas,{
  type:'bar',
@@ -3310,165 +3360,134 @@ function buildAnnualChartWrapped(){
  }
 }
 
-// ── BENCHMARK (dados reais atualizados) ──
-// Base 100 = Jan 2022
-// Dados reais: BTC, S&P 500, CDI, Ibovespa + estimativas do portfólio
-// Fontes: slickcharts.com, investidor10.com.br, statusinvest.com.br (Mar 2026)
-function compoundIndex(monthlyPcts) {
- let idx=100; const out=[100];
- monthlyPcts.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
- return out;
-}
+// ── BENCHMARK — APORTE EQUIVALENTE ──
+// Pergunta que o gráfico responde: "os MESMOS aportes, nas MESMAS datas, teriam rendido mais
+// se eu tivesse comprado só ETH? só BTC? se tivesse ficado no CDI?" — a comparação certa para
+// quem está em fase de acumulação, porque credita o timing do DCA.
+//
+// Por que mudou (19/08/2026): a versão anterior comparava coisas diferentes. A curva do
+// "Portfólio" era patrimônio ÷ patrimônio inicial — ou seja, INCLUÍA os 4 anos de aporte —
+// enquanto BTC/ETH/S&P/CDI/Ibov eram índices de PREÇO, sem aporte nenhum. Isso fazia a
+// carteira parecer ~5x melhor que o ETH. Pior: aquelas séries eram um único percentual por
+// ANO repetido nos 12 meses (ex.: BTC "−8,12%" em todo mês de 2022) — não eram dados mensais.
+// S&P 500 e Ibovespa foram removidos: não há fonte real de série mensal no runtime (o fetch
+// de preços é CoinGecko, só cripto). Voltam quando houver série real, não estimada.
 var isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
 function buildBenchmarkChart(){
  try{
- // Monthly labels Jan/22 → Mar/26 (51 months)
- const labels=['Jan/22','Fev/22','Mar/22','Abr/22','Mai/22','Jun/22',
- 'Jul/22','Ago/22','Set/22','Out/22','Nov/22','Dez/22',
- 'Jan/23','Fev/23','Mar/23','Abr/23','Mai/23','Jun/23',
- 'Jul/23','Ago/23','Set/23','Out/23','Nov/23','Dez/23',
- 'Jan/24','Fev/24','Mar/24','Abr/24','Mai/24','Jun/24',
- 'Jul/24','Ago/24','Set/24','Out/24','Nov/24','Dez/24',
- 'Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25',
- 'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
- 'Jan/26','Fev/26','Mar/26'];
+  const W = WEEKLY_UPDATE;
+  const labels   = W.wealthCurve.labels.slice();
+  const values   = W.wealthCurve.values.slice();
+  const invested = W.wealthCurve.invested.slice();
+  const hist = (typeof _denomHistory !== 'undefined' && _denomHistory) ? _denomHistory : _fallbackHistory();
 
- // portM derivado do wealthCurve real — reflete picos e quedas mensais reais
- // portM[0]=0 (Jan/22 = base); portM[i] = retorno mensal real mês i
- var _wc = WEEKLY_UPDATE.wealthCurve.values;
- var portM = [0];
- for (var _pi = 1; _pi < _wc.length; _pi++) {
-   portM.push(_wc[_pi-1]>0 ? parseFloat(((_wc[_pi]/_wc[_pi-1]-1)*100).toFixed(4)) : 0);
- }
- const btcM =[-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,-8.12,
- 8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,8.34,
- 7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,7.09,
- -0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,
- -6.14,-6.14,-6.14];
- const ethM =[-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,-7.69,
- 6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,6.67,
- 4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,4.39,
- -3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,-3.59,
- -15.0,-15.0,-15.0];
- const spM =[-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,-2.02,
- 1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,1.59,
- 1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,
- 1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,1.01,
- -2.41,-2.41,-2.41];
- const cdiM =[0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,0.92,
- 0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
- 0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,
- 1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,1.06,
- 0.7,0.7,0.7];
- const ibovM=[-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,-0.34,
- 0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,0.97,
- -1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,-1.63,
- 1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,1.76,
- 1.24,1.24,1.24];
+  // Aporte de cada mês (o 1º ponto carrega o capital inicial).
+  const contrib = labels.map(function(_,i){ return i===0 ? invested[0] : Math.max(0, invested[i]-invested[i-1]); });
 
- // ── Period filter ─────────────────────────────────────────────
- const PERIOD_MONTHS = { '1m':1,'3m':3,'6m':6,'1a':12,'all':51 };
- let currentPeriod = 'all';
+  function pxAt(coin, i){
+    var h = hist[coin] || {};
+    if (h[labels[i]] != null) return h[labels[i]];
+    for (var k=i-1;k>=0;k--) if (h[labels[k]] != null) return h[labels[k]]; // último preço conhecido
+    return null;
+  }
+  // "Mesmos aportes, 100% em <coin>": compra a moeda ao preço do mês e marca a mercado.
+  function coinSeries(coin){
+    var acc=0, out=[];
+    for (var i=0;i<labels.length;i++){
+      var px = pxAt(coin,i);
+      if (px && isFinite(px) && px>0){ acc += contrib[i]/px; out.push(parseFloat((acc*px).toFixed(2))); }
+      else out.push(out.length ? out[out.length-1] : contrib[i]);
+    }
+    return out;
+  }
+  // "Mesmos aportes no CDI": capitaliza o saldo pela taxa mensal do ano.
+  function cdiSeries(){
+    var bal=0, out=[];
+    for (var i=0;i<labels.length;i++){
+      var yr = 2000 + parseInt(labels[i].split('/')[1],10);
+      var rate = (typeof CDI_MONTHLY_BY_YEAR!=='undefined' && CDI_MONTHLY_BY_YEAR[yr]!=null ? CDI_MONTHLY_BY_YEAR[yr] : 0)/100;
+      bal = (bal + contrib[i]) * (1+rate);
+      out.push(parseFloat(bal.toFixed(2)));
+    }
+    return out;
+  }
+  // Sempre em USD: este gráfico compara desfechos em dólar e não deve seguir a régua global
+  // (USD/BRL/BTC/ETH) — em BTC a curva "100% BTC" viraria uma reta e a leitura se perderia.
+  const usd = function(v){ return '$' + Math.round(v).toLocaleString('en-US'); };
+  const sBtc = coinSeries('btc'), sEth = coinSeries('eth'), sCdi = cdiSeries();
+  const sAporte = (function(){ var c=0; return contrib.map(function(v){ c+=v; return parseFloat(c.toFixed(2)); }); })();
 
- function sliceData(monthlyArr, n) {
- const slice = n >= monthlyArr.length ? monthlyArr : monthlyArr.slice(-n);
- let idx=100, out=[100];
- slice.forEach(p=>{ idx*=(1+p/100); out.push(parseFloat(idx.toFixed(2))); });
- return out;
- }
+  const PERIOD_MONTHS = { '1m':2,'3m':4,'6m':7,'1a':13,'all':labels.length };
+  var currentPeriod = 'all';
 
+  function buildChart(n){
+    const cut = (n>=labels.length) ? 0 : labels.length-n;
+    const lbl = labels.slice(cut);
+    const cutArr = function(a){ return a.slice(cut); };
+    const dk = isDark();
 
- function getBenchLabels(n) {
- const sl = n >= labels.length ? labels : labels.slice(-n);
- return ['Base', ...sl];
- }
+    const baseEl = document.getElementById('benchBaseLabel');
+    if (baseEl) baseEl.textContent = 'USD · MESMOS APORTES, MESMAS DATAS · DESDE ' + labels[cut];
 
- function buildChart(n) {
- const lbl = getBenchLabels(n);
- const port = sliceData(portM, n);
- const btc = sliceData(btcM, n);
- const eth = sliceData(ethM, n);
- const sp = sliceData(spM, n);
- const cdi = sliceData(cdiM, n);
- const ibov = sliceData(ibovM, n);
- const dk = isDark();
- const baseLabel = n >= 51 ? 'BASE 100 · Jan/2022' :
- n === 12 ? 'BASE 100 · ' + labels[labels.length-12] :
- n === 6 ? 'BASE 100 · ' + labels[labels.length-6] :
- n === 3 ? 'BASE 100 · ' + labels[labels.length-3] :
- 'BASE 100 · ' + labels[labels.length-1];
- const baseLabelEl = document.getElementById('benchBaseLabel');
- if (baseLabelEl) baseLabelEl.textContent = baseLabel;
+    if (benchChartInst){ benchChartInst.destroy(); benchChartInst=null; }
+    const ctx = document.getElementById('benchmarkChart');
+    if (!ctx) return;
+    benchChartInst = new Chart(ctx, {
+      type:'line',
+      data:{ labels:lbl, datasets:[
+        {label:'Carteira (real)', data:cutArr(values), borderColor:'#c9a050', backgroundColor:'rgba(201,160,80,0.08)', borderWidth:3, fill:true,  tension:0.3, pointRadius:0, pointHoverRadius:5},
+        {label:'100% ETH',        data:cutArr(sEth),   borderColor:'#627EEA', borderWidth:2,   fill:false, tension:0.3, pointRadius:0, pointHoverRadius:4},
+        {label:'100% BTC',        data:cutArr(sBtc),   borderColor:'#F7931A', borderWidth:2,   fill:false, tension:0.3, pointRadius:0, pointHoverRadius:4},
+        {label:'CDI',             data:cutArr(sCdi),   borderColor:'#E85D9E', borderWidth:1.8, fill:false, tension:0.1, pointRadius:0, pointHoverRadius:4, borderDash:[2,3]},
+        {label:'Aporte acumulado',data:cutArr(sAporte),borderColor:'#8a7a62', borderWidth:1.5, fill:false, tension:0.1, pointRadius:0, pointHoverRadius:4, borderDash:[6,4]},
+      ]},
+      options:{
+        responsive:true,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          tooltip:{
+            callbacks:{
+              title:c=>c[0].label,
+              labelColor: ttLabelColor,
+              label:c=>' '+c.dataset.label+': '+usd(c.raw),
+              afterBody:items=>{
+                const g=(l)=>{ const it=items.find(i=>i.dataset.label===l); return it?it.raw:null; };
+                const carteira=g('Carteira (real)'), ap=g('Aporte acumulado');
+                if(carteira==null||!ap) return [];
+                const out=['────────────','vs aporte: '+((carteira-ap)>=0?'+':'')+usd(carteira-ap)];
+                [['100% ETH','ETH'],['100% BTC','BTC'],['CDI','CDI']].forEach(function(pair){
+                  const v=g(pair[0]); if(v!=null&&v>0) out.push('vs '+pair[1]+': '+((carteira-v)>=0?'+':'')+usd(carteira-v));
+                });
+                return out;
+              }
+            },
+            backgroundColor: dk?'rgba(22,22,28,0.96)':'rgba(250,246,239,0.98)',
+          },
+          legend:{display:true,position:'bottom',labels:{color:Chart.defaults.color,usePointStyle:true,pointStyle:'circle',boxWidth:8,font:{size:10}}}
+        },
+        scales:{
+          x:{ticks:{color:Chart.defaults.color,font:{size:11},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
+          y:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>usd(v)},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
+             title:{display:true,text:'USD',color:Chart.defaults.color,font:{size:10}}}
+        }
+      }
+    });
+  }
 
- if (benchChartInst) { benchChartInst.destroy(); benchChartInst=null; }
- const ctx = document.getElementById('benchmarkChart');
- if (!ctx) return;
- benchChartInst = new Chart(ctx, {
- type:'line',
- data:{ labels:lbl, datasets:[
- {label:'Portfólio',data:port,borderColor:'#c9a050',backgroundColor:'rgba(201,160,80,0.08)',borderWidth:3,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
- {label:'BTC', data:btc, borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
- {label:'ETH', data:eth, borderColor:'#627EEA',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
- {label:'S&P 500', data:sp, borderColor:'#3fb950',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[6,4]},
- {label:'CDI', data:cdi, borderColor:'#E85D9E',borderWidth:1.8,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[2,3]},
- {label:'Ibovespa', data:ibov,borderColor:'#14C8D4',borderWidth:1.8,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4,borderDash:[9,4]},
- ]},
- options:{
- responsive:true,
- interaction:{mode:'index',intersect:false},
- plugins:{
- tooltip:{
- callbacks:{
- title:ctx=>ctx[0].label,
- labelColor: ttLabelColor,
- label:ctx=>{
- const v=ctx.raw;
- const prev=ctx.dataset.data[ctx.dataIndex-1]||100;
- const mo=v&&prev?((v-prev)/prev*100).toFixed(1):null;
- return ` ${ctx.dataset.label}: ${v?.toFixed(1)} pts${mo?` (${mo>=0?'+':''}${mo}%)`:''}`;
- },
- afterBody:items=>{
- const p=items.find(i=>i.datasetIndex===0)?.raw||100;
- const pct=(p-100).toFixed(0);
- return ['────────────',`Portfólio: ${pct>=0?'+':''}${pct}% vs base`];
- }
- },
- backgroundColor: dk?'rgba(22,22,28,0.96)':'rgba(250,246,239,0.98)',
- borderColor: dk?'rgba(201,160,80,0.28)':'rgba(138,104,32,0.22)',
- borderWidth:1, titleColor:dk?'#e8dfc8':'#2a1e0e',
- bodyColor:dk?'#c9b99a':'#4a3520',
- padding:{top:11,right:14,bottom:11,left:12}, cornerRadius:9, caretSize:6, caretPadding:8,
- titleFont:{family:'Satoshi',size:12,weight:'700'}, bodyFont:{family:'JetBrains Mono,monospace',size:11.5},
- titleMarginBottom:8, bodySpacing:6, boxPadding:6, usePointStyle:true,
- },
- legend:{
- labels:{color:Chart.defaults.color,font:{size:11,weight:'500'},boxWidth:10,usePointStyle:true,pointStyleWidth:12,padding:14},
- onClick:(e,item,legend)=>{
- const ci=legend.chart;
- const meta=ci.getDatasetMeta(item.datasetIndex);
- meta.hidden=!meta.hidden; ci.update();
- }
- }
- },
- scales:{
- x:{ticks:{color:Chart.defaults.color,font:{size:11},maxRotation:40,maxTicksLimit:13},grid:{display:false},border:{display:false}},
- y:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>v+''},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false},
- title:{display:true,text:'Base 100',color:Chart.defaults.color,font:{size:10}}}
- }
- }
- });
- }
+  window.setBenchPeriod = function(period, btn){
+    currentPeriod = period;
+    document.querySelectorAll('#benchPeriodBtns button').forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    buildChart(PERIOD_MONTHS[period]);
+  };
 
- // ── Period switching ──────────────────────────────────────────
- window.setBenchPeriod = function(period, btn) {
- currentPeriod = period;
- document.querySelectorAll('#benchPeriodBtns button').forEach(b=>b.classList.remove('active'));
- if(btn) btn.classList.add('active');
- buildChart(PERIOD_MONTHS[period]);
- };
+  buildChart(PERIOD_MONTHS[currentPeriod]);
 
- buildChart(51); // default: all time
+  // Preços reais (CoinGecko) por cima do fallback aproximado — redesenha quando chegarem.
+  if (typeof _denomReal !== 'undefined' && !_denomReal && typeof loadDenomHistory === 'function'){
+    loadDenomHistory().then(function(){ try{ buildBenchmarkChart(); }catch(e){} });
+  }
 
  }catch(e){ console.warn('benchmarkChart error:',e); }
 }
@@ -3654,19 +3673,21 @@ const DENOM_CACHE_TTL  = 24 * 60 * 60 * 1000;
 var _denomHistory = null;   // { btc:{'MM/YY':px}, eth:{'MM/YY':px} } (fallback + live mesclados)
 var _denomReal    = false;  // true quando o overlay de preços reais já foi aplicado
 
-// Fechamento mensal aprox. (fallback offline) alinhado a wealthCurve.labels (Jan/22→Jun/26)
+// Fechamento mensal (fallback offline) alinhado a wealthCurve.labels (Jan/22→Jul/26).
+// APROXIMADO até 06/26; o overlay de loadDenomHistory() substitui por preço real (CoinGecko)
+// sempre que a rede responde. 07/26 é fechamento REAL (31/07/2026): BTC 62.825,90 / ETH 1.860,66.
 var FALLBACK_PX_BTC = [
   38500,43200,45500,37650,31800,19900,23300,20050,19400,20490,17170,16540,
   23130,23150,28470,29270,27220,30470,29220,25940,26960,34660,37720,42270,
   42580,61140,71330,60640,67540,62680,64620,58970,63330,70220,96420,93430,
   102400,84380,82550,94200,104600,107200,115000,108000,109000,110000,90000,95000,
-  88000,68000,66500,79800,74100,76000];
+  88000,68000,66500,79800,74100,76000,62826];
 var FALLBACK_PX_ETH = [
   2680,2920,3280,2820,1940,1070,1680,1555,1330,1575,1295,1195,
   1585,1610,1820,1900,1875,1935,1860,1645,1670,1815,2085,2295,
   2285,3385,3505,3010,3760,3435,3230,2525,2605,2520,3705,3335,
   3300,2240,1820,1800,2520,2440,3800,4300,4200,3900,3000,3100,
-  3000,2300,1950,2400,2050,2100];
+  3000,2300,1950,2400,2050,2100,1861];
 
 function _arrToMonthMap(arr){
   var m = {}, L = WEEKLY_UPDATE.wealthCurve.labels;
@@ -3687,6 +3708,19 @@ function _dailyToMonthMap(daily){  // [[ms,price],…] ascendente → último pr
 async function loadDenomHistory(){
   if (_denomReal && _denomHistory) return _denomHistory;
   var merged = _fallbackHistory();
+  // 0) bench-prices.json — fechamento mensal REAL commitado no repo (Action mensal
+  //    bench-prices.yml). Tem prioridade sobre o array aproximado e funciona offline.
+  try {
+    var rf = await fetch('bench-prices.json', { cache:'no-cache', signal: AbortSignal.timeout(6000) });
+    if (rf.ok){
+      var bp = await rf.json();
+      if (bp && bp.btc && bp.eth && Object.keys(bp.btc).length >= 40){
+        Object.assign(merged.btc, bp.btc); Object.assign(merged.eth, bp.eth);
+        _denomHistory = merged; _denomReal = true;
+        return _denomHistory;   // dado real e versionado: não precisa bater na CoinGecko
+      }
+    }
+  } catch(e){ /* arquivo ainda não existe (a Action roda dia 1) — segue para o cache/API */ }
   // 1) cache local
   try {
     var raw = localStorage.getItem(DENOM_CACHE_KEY);
@@ -4094,7 +4128,6 @@ var activePeriod = 'all';
 // (chamado aqui, depois de todos os const estarem declarados)
 function applyUpdate() {
  const W = WEEKLY_UPDATE;
- Object.assign(MONTHLY_RETURNS_DATA, W.monthlyReturns);
  // Sync monthly returns from wealthCurve — ensures heatmap and annual chart stay consistent
  // with the tracked portfolio values. Jan of each year requires previous Dec, so starts at index 1.
  (function syncFromWealthCurve() {

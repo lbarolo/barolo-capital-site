@@ -87,7 +87,14 @@ window.BAROLO_DATA = {
     aave: {
       supply: { WETH:{ qty:2.16, apy:0.0183 }, USDT:{ qty:1600, apy:0.0217 } },
       borrow: { USDC:{ qty:760.17, apy:0.0379 } },
-      healthFactor: 6.08   // = Collateral $4.622,00 (valor direto do print AAVE) / Borrow $760,02
+      // HF REAL da Aave = colateral x liquidation threshold / divida.
+      // Colateral $5.693,72 (2,16 WETH @ ~$1.895 + 1.600 USDT) · LT ponderado 0,811
+      // (WETH 82,5% / USDT 77,5%) · borrow $760,17 -> LTV 13,4% -> HF 6,07.
+      // Confere com briefing.json -> portfolio.aave.hf (6,07).
+      // NAO usar Collateral/Borrow: daria 7,49. O antigo 6,08 so "batia" porque
+      // usava essa formula errada com um colateral defasado ($4.622) — dois erros se anulando.
+      // Fallback estatico: o valor real vem do fetch ao vivo e varia com o preco do ETH.
+      healthFactor: 6.07
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -185,7 +192,18 @@ window.BAROLO_DATA = {
   },
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:760.17, kamino:823.63, total:1583.80 },
-  stablesTotalUSD: 1619.96   // USDT 1302.52 + USDS 317.44
+  stablesTotalUSD: 1619.96,  // USDT 1302.52 + USDS 317.44
+
+  // ── APORTE LÍQUIDO (dinheiro NOVO que entrou) ──
+  // NÃO confundir com a soma de holdings[].invested (= $10.172,10), que é CUSTO DE
+  // AQUISIÇÃO: soma toda compra, inclusive recompra paga com dinheiro que já estava
+  // dentro (saída de pool, rotação, taxa reinvestida). Esse número infla sozinho a cada
+  // giro e por isso NÃO serve de denominador de ROI — serve de base para IR.
+  // Fonte: último ponto de WEEKLY_UPDATE.wealthCurve.invested (portfolio_analytics.html),
+  // atualizado no fechamento mensal. Confere com o consolidado de fiat das CEX
+  // (R$ 35.498,19 Binance+OKX ÷ 5,36 ≈ US$ 6.623 até jun/2026) + aportes seguintes.
+  // ROI de destaque = patrimônio líquido ÷ netContributed − 1.
+  netContributed: 7250
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).

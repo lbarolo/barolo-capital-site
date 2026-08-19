@@ -31,9 +31,18 @@ Executa o fechamento mensal completo do portfolio. Rodar no último dia do mês.
 
 5. **Fechamento em `portfolio_analytics.html`** (`WEEKLY_UPDATE`):
    - `wealthCurve`: adicione o ponto do mês (label `MM/AA`) em `labels`, `values` e `invested` (as 3 séries têm que ter o mesmo tamanho)
-     - `value` = CoinGecko total + pool pooled − dívida total (arredondar p/ inteiro)
+     - ⚠️ `value` = **CoinGecko total (bruto)** — holdings + stables no fechamento do mês.
+       **NÃO** somar a pool e **NÃO** descontar a dívida: a série inteira (Jan/22→hoje) está
+       nessa base, e misturar bruto com líquido cria retorno mensal falso. Foi exatamente o
+       que aconteceu em 07/2026 (entrou líquido: 7031 em vez de 8284 → julho virou −10,1%
+       quando o mês foi +6,3%). Corrigido em 19/08/2026.
+       O patrimônio líquido tem série própria: `networth-history.json` (diário, automático).
      - `invested` = invested do mês anterior + aportes novos do mês (BTC/SOL/etc.)
-   - `monthlyReturns[ANO][mês]`: retorno via **TWR** = `(valor_mês − aportes_do_mês − valor_mês_anterior) / valor_mês_anterior × 100` (remove os aportes novos antes de medir)
+     - Replicar o mesmo número em `data.js → netContributed` (é o denominador do ROI de destaque)
+   - `monthlyReturns` **não existe mais** (removido em 19/08/2026): os retornos mensais são
+     derivados em runtime da `wealthCurve` por `syncFromWealthCurve()`, via TWR
+     `(valor_mês − aportes_do_mês − valor_mês_anterior) / valor_mês_anterior × 100`.
+     Não escrever retorno à mão em lugar nenhum — atualizar a `wealthCurve` já basta.
    - `pnlOrigin.jurosAcumulados`: atualize a estimativa (+~$5/mês)
 
 6. **Snapshot JSON** em `EXPORTS SEMANAIS/{MÊS}/DD-MM-AA-posicoes.json` (a pasta é gitignored — fica só local, é registro histórico). Use a estrutura do último snapshot como base.
