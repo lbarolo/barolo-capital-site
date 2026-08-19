@@ -87,7 +87,13 @@ window.BAROLO_DATA = {
     aave: {
       supply: { WETH:{ qty:2.16, apy:0.0183 }, USDT:{ qty:1600, apy:0.0217 } },
       borrow: { USDC:{ qty:760.17, apy:0.0379 } },
-      healthFactor: 6.08   // = Collateral $4.622,00 (valor direto do print AAVE) / Borrow $760,02
+      // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
+      // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
+      // borrow $760,17, LTV 13,4% -> HF 6,04.
+      // CORRECAO 18/08/2026: o 6.08 anterior vinha de um colateral defasado ($4.622, que implica
+      // ETH a $1.399,07) combinado com a formula Collateral/Borrow, que SUPERESTIMA o HF (daria
+      // 7,44). Os dois erros quase se cancelavam. NAO usar Collateral/Borrow daqui em diante.
+      healthFactor: 6.04
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
