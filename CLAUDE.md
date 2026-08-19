@@ -4136,10 +4136,10 @@ rendimento; principals da Kamino agora derivados do CSV oficial (SOL 23,274227 �
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
 
 > **O que é isto:** consolidação, em um único bloco autocontido, de (a) **todos os estudos do Notion** do Lucas, (b) **tudo que foi aprendido com ele nas conversas** (estratégia, filosofia, mentoria, decisões), e (c) **o portfólio completo e seu histórico**.
-> **Criado em 18/08/2026.** Pode ser copiado inteiro e enviado para outro chat — não depende de nenhum outro arquivo para fazer sentido.
-> **Cópia autônoma:** `CONHECIMENTO-BAROLO.md` na raiz do repo. Fonte única = esta seção. Para regenerar a cópia:
-> `sed -n '/^<!-- KB-START -->$/,$p' CLAUDE.md > CONHECIMENTO-BAROLO.md`
-> **O que já existia no CLAUDE.md antes** (não repetido aqui em detalhe): posições atuais, tabela de 28 pools, ciclos de empréstimo, logs de sessão do site, arquitetura do dashboard. **O que é novo aqui:** todo o conteúdo do Notion + a síntese de filosofia/estratégia/decisões.
+> **Criado em 18/08/2026 · revisado e auditado em 18/08/2026** (ver §16 — auditoria contra `data.js`, `briefing.json`, `pools.html` e o Diário DeFi do Notion) **· consolidado de novo em 19/08/2026** (havia duas cópias divergentes desta KB — corrigido, ver nota abaixo).
+> **Fonte única: `CONHECIMENTO-BAROLO.md`** (com hífen) na raiz do repo — **editar aqui**. Este conteúdo também vive espelhado dentro do bloco `<!-- KB-START -->…<!-- KB-END -->` do `CLAUDE.md`; para regenerar a cópia standalone a partir do `CLAUDE.md`: `sed -n '/^<!-- KB-START -->$/,$p' CLAUDE.md > CONHECIMENTO-BAROLO.md`.
+> **Nota de 19/08/2026:** por um período coexistiram `CONHECIMENTO-BAROLO.md` (este arquivo, rastreado no git, espelhando o bloco do `CLAUDE.md`) e um rascunho não versionado `CONHECIMENTOBAROLO.md` (sem hífen) com revisões mais novas (§3.2/§3.4/§8.5 corrigidas, §3.2.1/§8.6/§16 novas) mas com um cabeçalho que alegava — **incorretamente** — que este arquivo com hífen não existia e que o bloco `KB-START`/`KB-END` não existia no `CLAUDE.md`. As duas alegações eram falsas; os dois arquivos foram fundidos nesta versão e o rascunho sem hífen foi removido.
+> **O que já existia no CLAUDE.md antes** (não repetido aqui em detalhe): posições atuais, tabela de pools, ciclos de empréstimo, logs de sessão do site, arquitetura do dashboard. **O que é novo aqui:** todo o conteúdo do Notion + a síntese de filosofia/estratégia/decisões.
 
 ---
 
@@ -4206,7 +4206,8 @@ O loop que Lucas descreve com as próprias palavras:
 ### 2.3 Pools como estratégia de saída gradual — regra inegociável
 - A pool ativa **não é só para taxas**: entra ~100% em ETH e sai em stable conforme o preço sobe. É uma **ordem de venda escalonada que paga para existir**.
 - **Referência de performance sempre em USD.** Nunca em HOLD, nunca em ETH. (Lucas foi explícito: *"essa pool é da estratégia de venda, entrei full ETH e to saindo full USDT, deve ser vista e monitorada com a referência em USD não em HOLD nem em ETH"*.)
-- A pool **migra de rede**. Histórico: Ethereum/Arbitrum (2024–25) → Base (fev–jul/2026) → **Robinhood Chain (atual)**. Nunca assumir a rede — sempre conferir antes de qualquer chamada on-chain.
+- A pool **migra de rede**. Histórico: Ethereum/Arbitrum (2024–25) → Base (fev–jul/2026) → **Robinhood Chain (desde 14/07/2026, atual)**. Nunca assumir a rede — sempre conferir em `data.js → defi.uniswapV3.network` antes de qualquer chamada on-chain.
+- ⚠️ **A posição ativa foi remontada em 07/08/2026** na MESMA pool v3 WETH/USDG (tentativa de migrar para v4 falhou). Para a Revert é **uma posição contínua desde 14/07** (mesma NFT); no site o ciclo 1 está lançado como fechado ($13,04) para não duplicar o YTD. Campos de *estoque* em `data.js` = ciclo 2; campos de *taxa* (apr/feeApr) = lifetime.
 
 ### 2.4 Playbook operacional de pools (extraído do Diário DeFi, 2024–2026)
 - **Fee tiers:** 0,01% stables · 0,05% pares estáveis · 0,3% maioria dos pares · 1% exóticos.
@@ -4242,23 +4243,46 @@ O loop que Lucas descreve com as próprias palavras:
 - **`principals`** (bloco no `data.js`) = *cost basis* do lending (principal depositado/emprestado, **sem juros**). Deve ser atualizado a cada depósito, saque ou reempréstimo — senão **aporte novo aparece como rendimento** (bug real que ocorreu em 14/08/2026).
 - **Fees de pool são contabilizadas por data de COLETA/fechamento**, não de abertura. Isso mudou o P&L 2026 YTD de ~$39 para ~$96.
 
-### 3.2 Composição (baseline 20/06/2026, ver `data.js` para o valor vivo)
-| Token | Qtd | Invested |
-|---|---|---|
-| BTC | 0,00204156 → (compras jun–jul/2026 elevaram para ~0,00434) | US$ 135,74 → ~270 |
-| ETH | 2,37632741 | US$ 4.880,53 |
-| SOL | 23,31 | US$ 2.450,94 |
-| ADA | 375,245 | US$ 530,95 |
-| EIGEN | 153,363 | US$ 45,87 |
-| RDNT | 7.290,46 | US$ 0 (airdrop) |
-| POL | 218 | US$ 143,88 |
-| ZK | 876 | US$ 0 (airdrop) |
-| XAI | 692,86 | US$ 164,52 |
-| ZETA | 51,1434 | US$ 0 (airdrop) |
-| SCR | 0,0018 | US$ 0 |
+### 3.2 Composição (baseline `data.js` asOf **14/08/2026**; valores vivos em `data.js` + `briefing.json`)
 
-**DeFi (view do lending, já contido acima):** AAVE V4 — 2,16 WETH + 1.300 USDT supply, borrow ~754 USDC, HF ~5,3–6,1. Kamino — ~23,3 SOL + ~302 USDS supply, borrow ~816 USDC, LTV ~38–41%.
-**Stables:** ~US$ 1.600 · **Dívida total:** ~US$ 1.570 · **Total investido:** ~US$ 9.955 · **Leverage:** ~0,245x.
+| Token | Qtd | Invested (US$) |
+|---|---|---|
+| BTC | 0,00434195 | 270,47 |
+| ETH | 2,37632741 | 4.880,53 |
+| SOL | 24,765222 | 2.533,36 |
+| ADA | 375,245 | 530,95 |
+| EIGEN | 153,363 | 45,87 |
+| RDNT | 7.290,46 | 0 (airdrop) |
+| POL | 218 | 143,88 |
+| ZK | 876 | 0 (airdrop) |
+| XAI | 692,86 | 164,52 |
+| ZETA | 51,1434 | 0 (airdrop) |
+| SCR | 0,0018 | 0 |
+| **USDT** | 1.302,524 | 1.302,52 |
+| **USDS** | 317,44 | 300,00 |
+
+**DeFi (view do lending — já contido acima):**
+- **AAVE V4** — supply 2,16 WETH @1,83% + 1.600 USDT @2,17% · borrow **760,17 USDC @3,79%** · colateral **US$ 5.658,25** · **HF real 6,04** · LTV 13,4%
+- **Kamino** — supply 24,48 SOL @4,47% + 304,07 USDS @4,06% · borrow **823,63 USDC @5,92%** · LTV **38,4%** vs liq. LTV **77,1%** (SOL liquidaria em ~US$ 28,90 = −61,6%)
+- **Pool ativa** — WETH/USDG 0,01% · Robinhood Chain · pooled US$ 358,14 + US$ 1,81 de fees não coletadas · in-range · fee APR 50,91% / total APR 64,57%
+
+### 3.2.1 Agregados (15/08/2026, `briefing.json`)
+
+| | |
+|---|---|
+| **Patrimônio líquido** | **US$ 7.125,72** |
+| Bruto (holdings, inclui colateral DeFi) | US$ 6.725,04 |
+| Stables | US$ 1.619,96 (USDT 1.302,52 + USDS 317,44) |
+| LP | US$ 359,95 = **5,05% do patrimônio** |
+| **Dívida total** | **US$ 1.583,80** (AAVE 760,17 + Kamino 823,63) |
+| Dívida / patrimônio | **22,2%** |
+| Custo de borrow ponderado | **4,90%** |
+| **Total investido (USD pago)** | **US$ 10.172,10** |
+| ROI | **−29,9%** em USD (≈ break-even em BRL) |
+
+**Carry da estrutura de lending:** supply yield US$ 203,59/ano − custo de borrow US$ 77,57/ano = **+US$ 126,02/ano (+US$ 10,50/mês)**. Somando a pool (US$ 360 a 32% de fee APR realizado ≈ US$ 116/ano), a máquina DeFi inteira rende **≈ US$ 242/ano = 3,4% do patrimônio**.
+
+⚠️ **A cauda de alts está praticamente zerada:** BTC+ETH+SOL = US$ 6.599,74 dos US$ 6.725,04 brutos. Os **sete alts somados (ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA) valem ~US$ 125,30**, contra **US$ 885,22 investidos** — uma perda de ~86% que já está realizada economicamente, ainda que não fiscalmente.
 
 ### 3.3 Custo de aquisição em BRL (base para IR)
 Consolidado dos extratos Binance + OKX (out/2021 → jun/2026), em `Custo_BRL_Consolidado_Lucas.xlsx`:
@@ -4268,14 +4292,34 @@ Consolidado dos extratos Binance + OKX (out/2021 → jun/2026), em `Custo_BRL_Co
 - **Achado importante:** com o dólar em ~5,12, o patrimônio em BRL fica em **~break-even (−0,3%)** — o câmbio amorteceu boa parte do drawdown em USD.
 - **IR:** Bens e Direitos grupo 08 (códigos 01/02/03), declarar pelo custo, obrigatório ≥ R$ 5k por tipo. Isenção R$ 35k/mês (nacional). Lei 14.754/2023 → 15% exterior. IN 1888 → declarar acima de R$ 30k/mês. **Permuta cripto↔cripto conta como alienação.**
 
-### 3.4 Track record de pools — resumo (28 registros completos na tabela do CLAUDE.md)
-**Taxas brutas acumuladas ~US$ 2.437 · P&L líquido ~−US$ 840 a −1.021** (dependendo do corte).
-Fees realizadas por ano (por data de coleta): **2023 ~$377 · 2024 ~$562 · 2025 ~$1.403 · 2026 YTD ~$120**.
+### 3.4 Track record de pools — **recomputado em 18/08/2026** (29 registros em `pools.html`)
 
-**Os três grandes aprendizados de pool:**
-1. **SOL/GRIFT 2% (Solana, 80 dias)** — taxas absurdas (**+$1.389**) e IL catastrófico (**$2.899**) porque o token foi a zero. Resultado **−$1.510**. *Lição registrada: "aprendi a sair mais cedo das pools"* — e a não confundir APR alto com retorno. Lucas depois vendeu o GRIFT por ~$100 já com todo o prejuízo, e **recuperou as SOL via Kamino** (lending estruturado).
-2. **PEANUT/ETH 1% (10 dias)** — −$243 de IL puro, zero taxas. Token de narrativa.
-3. **Pares "chatos" (ETH/USDC, ARB/USDC, ETH/USDT)** — quase todo o P&L positivo veio deles. Confirma a regra: *"um bom investimento é chato"*.
+Números conferidos direto do array `POOLS`, ponderados por **capital-dias** (não por número de pools):
+
+| Grupo | n | Fee APR | **P&L APR** | P&L total | W / L |
+|---|---|---|---|---|---|
+| **"Chatas"** (par com stable ou blue-chip) | 22 | 44,4% | **+44,1%** | **+US$ 1.044,39** | 22 / 0 |
+| **Narrativa** (GRIFT, PEANUT, PENG, XAI) | 7 | **610,4%** | **−798,8%** | **−US$ 1.844,00** | 1 / 6 |
+| Só pares com stablecoin | 14 | 34,1% | +33,7% | +US$ 580,39 | 14 / 0 |
+| **TODAS** | **29** | **94,7%** | **−30,8%** | **−US$ 799,61** | 23 / 6 |
+
+**Taxas brutas acumuladas: US$ 2.459,94.** Fees realizadas por ano (data de coleta/fechamento):
+**2023 US$ 377 (P&L +377) · 2024 US$ 562 (P&L +239) · 2025 US$ 1.403 (P&L −1.527) · 2026 YTD US$ 118 (P&L +111)**.
+
+**Evolução — a virada é datável em 05/05/2025 (fechamento do GRIFT):**
+
+| Período | n | Fee APR | **P&L APR** |
+|---|---|---|---|
+| Até o GRIFT fechar (≤05/2025) | 21 | 108,4% | **−41,6%** |
+| Pós-GRIFT (>05/2025) | 8 | 28,2% | **+21,9%** |
+| Só 2026 | 5 | 32,0% | **+28,6%** |
+
+**Os aprendizados de pool:**
+1. **A separação chatas × narrativa é perfeita, não é tendência** — 22 vitórias e zero derrotas nas chatas; 1 vitória e 6 derrotas nas de narrativa.
+2. **APR alto foi indicador INVERSO de retorno.** As pools de narrativa tiveram **14x** o fee APR das chatas e destruíram capital a −799%/ano. Selecionar pool por APR anda na direção errada.
+3. **SOL/GRIFT 2% (80 dias)** — taxas de +US$ 1.389 e IL de US$ 2.899 porque o token foi a zero. Resultado −US$ 1.510. O erro não foi entrar: foi **ampliar dentro da queda** (4 SOL → 10 SOL) e não sair. Lucas recuperou as SOL depois via lending na Kamino.
+4. **PEANUT/ETH 1% (10 dias)** — −US$ 243 de IL puro, zero taxas, token scam. Causa registrada no diário: ficou doente logo após montar e não conseguiu acompanhar.
+5. **Pares "chatos" (ETH/USDC, ARB/USDC, ETH/USDT)** — praticamente todo o P&L positivo veio deles. *"Um bom investimento é chato."*
 
 ### 3.5 Eventos especiais
 - **Hack da Radiant Capital (2025):** 1.079,17 ARB em stake desde 25/03/2024 perdidos. Valor na época ~US$ 971, prejuízo efetivo ~US$ 671. Reembolso de ~$300 prometido e pendente — **dado como perdido**. Não entra no P&L operacional de pools.
@@ -4513,9 +4557,59 @@ Presets: Safe (50/50, b=1,5) · Moderate (60/40, b=2) · Aggressive (70/30, b=3)
 - **AAVE:** `liqETH = (borrow − usdt_qty × USDT_LT) ÷ (weth_qty × WETH_LT)` — WETH_LT 82,5%, USDT_LT 77,5%. Se o resultado é negativo, o WETH **não pode ser liquidado** (a stable sozinha cobre a dívida).
 - **Kamino:** `liqSOL = (borrow − usds_qty × USDS_LT) ÷ (sol_qty × SOL_LT)` — SOL_LT 82%, USDS_LT 80%.
 - **Health Factor (AAVE):** < 1 = liquidação. HF 2 significa que o ativo pode cair 50% até chegar a 1.
-- ⚠️ Duas fórmulas de HF convivem no projeto: `Collateral ÷ Borrow` (do print, convenção do `data.js`) vs `colateral × liquidation threshold ÷ dívida` (o HF real da Aave, do fetch ao vivo). **O ao vivo é o correto quando disponível.**
+- ⚠️ **Duas fórmulas de HF convivem no projeto** — resolvido em 18/08/2026:
+  - `Collateral ÷ Borrow` (convenção do comentário no `data.js`) **superestima** o HF.
+  - `colateral × liquidation threshold ÷ dívida` é o **HF real da Aave**. **É este o correto** — e é o que o fetch ao vivo e o `briefing.json` reportam.
+  - Verificação em 15/08/2026: colateral real US$ 5.658,25 (2,16 WETH @ US$ 1.878,82 + 1.600 USDT), borrow US$ 760,17 → fórmula do print daria **7,44**; **HF real = 6,04** (confere exatamente com o `briefing.json`).
+  - O campo `data.js → defi.aave.healthFactor` grava **6,08**, que é ~correto **por coincidência**: o comentário deriva de um colateral defasado (US$ 4.622 ⇒ ETH a US$ 1.399), e os dois erros — fórmula que infla e colateral que deflaciona — quase se cancelam. **Não confiar no comentário; usar sempre o HF ao vivo.**
 
 ---
+
+### 8.6 Dimensionamento da pool ativa — Kelly com ramo de ruína (18/08/2026)
+
+⚠️ **Merton (§8.2) é a ferramenta ERRADA para dimensionar a pool.** Com μ = 44,1% (P&L APR realizado
+das chatas), r = 4,90% e σ_LP ≈ 0,5 × vol_ETH, `f* = (μ − r)/σ²` devolve **entre 320% e 1145%**.
+Isso não é oportunidade, é modelo inadequado: Merton assume risco gaussiano contínuo e **não enxerga
+ruína binária** (exploit de contrato, token a zero) — que é o risco nº 1 declarado pelo Lucas desde
+out/2025. Nunca usar Merton sozinho para pool.
+
+**Modelo correto — Kelly com três ramos:**
+
+```
+E[log] = (1 − z − q)·ln(1 + f·μ)  +  z·ln(1 − f·L)  +  q·ln(1 − f)
+```
+
+| Parâmetro | Valor | Origem |
+|---|---|---|
+| `μ` | **44,1%/ano** | P&L APR realizado das 22 pools chatas (capital-dias) |
+| `L` | **51% do capital** | perda média das 7 pools de narrativa (GRIFT sozinho: −194%) |
+| `r` | **4,90%** | custo de borrow ponderado (AAVE 3,79% / Kamino 5,92%) |
+| `z` | falha do filtro | histórico **24%** (7/29) · **2026: 0%** (0/5) |
+| `q` | exploit anual | premissa (1–5%) |
+
+**Quarter Kelly** (fração de segurança padrão, §8.1):
+
+| z ↓ / q → | 0,5% | 1% | 3% | 5% |
+|---|---|---|---|---|
+| 0% | 24,6% | 24,2% | 22,5% | 20,9% |
+| 10% | 24,3% | 23,6% | 21,0% | 18,7% |
+| **24% (histórico)** | 20,7% | **19,2%** | **15,1%** | **11,9%** |
+| 35% | 10,7% | 9,7% | 6,3% | 3,3% |
+
+**Break-even:** com q = 1%, o filtro precisa falhar em **menos de 44,7%** das pools (q = 3% → 41,7%).
+Histórico 24%, 2026 0% — folga confortável.
+
+> ❌ **Descartar** a estimativa de "94,8% de confiabilidade mínima do filtro" que circulou numa versão
+> intermediária desta análise: era artefato de anualizar posições de duração curta. O número válido é o
+> de break-even acima.
+
+**Resultado:** posição atual **5,05% do patrimônio (US$ 359,95)**. ¼ Kelly indica **12–15%
+(US$ 850–1.075)** — ou seja **2,3x a 3x** o tamanho atual. Não ir além de 15% enquanto a regra de saída
+não estiver escrita (ver §16.3).
+
+**Condição, não recomendação solta:** a faixa 12–15% só vale enquanto `z` continuar baixo. `z` não é
+propriedade do mercado — é propriedade do critério de entrada e saída. Sequência correta: **escrever a
+regra → depois aumentar.** Nunca o inverso.
 
 ## 9. Currículo técnico — todos os estudos de tecnologia do Notion
 
@@ -4764,11 +4858,103 @@ Dominância do BTC caindo + altcoin season index + oferta de stablecoin crescend
 2. **Para analisar um projeto novo:** seção 5 (framework) + seção 6 (métricas) + o filtro *"a receita vai para o token holder diretamente?"*.
 3. **Para dimensionar posição ou avaliar risco:** seções 7.6 e 8.
 4. **Para responder sobre o portfólio:** seção 3 + `data.js` (fonte única). **Nunca somar colateral DeFi por cima do total.**
-5. **Para o Diário DeFi (trades, decisões, observações):** ler `diario.js` na raiz do repo — se estiver vazio/desatualizado, dizer isso explicitamente e sugerir que o Lucas clique em "📤 Sincronizar" na aba Diário DeFi.
+5. **Para o Diário DeFi (trades, decisões, observações):** a fonte real e completa é a **página do Notion "📗 Diário DeFi"** (`bb704dfd-a8b0-4838-b18e-a22ab1e2557d`) — 66 seções, 2023→2026. O arquivo `diario.js` na raiz do repo é apenas um espelho parcial (em 18/08/2026 continha **2 entradas**) usado por sessões automatizadas sem acesso ao Notion. **Não tratar `diario.js` como o diário.** Ao buscar o Notion: a página vem com ~800 mil caracteres por causa das URLs assinadas das imagens — limpar `!\[\]\(https://prod-files-secure...\)` reduz para ~72 mil caracteres de texto real.
 6. **Regras que nunca podem ser quebradas:** privacidade (§1) · metodologia de patrimônio (§3.1) · referência da pool sempre em USD (§2.3) · nunca assumir a rede da pool ativa (§2.3) · nunca expor endereço de carteira em URL.
+
+
+---
+
+## 16. Leitura do Diário DeFi e auditoria de dados (18/08/2026)
+
+Análise das **66 seções** do Diário DeFi do Notion (2023→2026, ~72 mil caracteres de texto próprio),
+cruzada com `pools.html`, `data.js` e `briefing.json`.
+
+### 16.1 A curva de comportamento — sim, melhorou, e dá para datar
+
+| Ano | Posições no diário | Remontagens | Stable / Alt / Meme | Resultado |
+|---|---|---|---|---|
+| 2023 | 9 | 7 | **4 / 2 / 0** | **+US$ 377** |
+| 2024 | 49 | **75** | 2 / **21** / **7** | +US$ 239 |
+| 2025 | 4 | 34 | 2 / 1 / 1 | **−US$ 1.527** |
+| 2026 | 4 | 13 | **4 / 0 / 0** | **+US$ 111** |
+
+2024 foi o pico de *churn*: 75 remontagens para +US$ 239 de resultado. 2026 é uma operação
+qualitativamente diferente — só pares com stable, 13 remontagens, dívida dentro da decisão
+(*"vou repagar um pouco da dívida com os dolares que recebi"*) e range calibrado por método
+(*"achei que o retorno estava muito baixo pois ficou esticada demais, dessa vez vou fazer esticada mas
+pela metade, seguindo a acumulação do VPVR"*).
+
+### 16.2 Os cinco padrões que o diário revela
+
+1. **O denominador errado — a única vez em que "medir em tokens" traiu a estratégia.**
+   21 das 49 seções de 2024 são a *mesma* posição RDNT/ETH remontada. Entrou com 6.313 RDNT em janeiro,
+   saiu com 7.038 em julho: **+725 RDNT, +11,5% em tokens** — sucesso pela régua declarada. Hoje os sete
+   alts somados valem **~US$ 125** (contra US$ 885 investidos) e o protocolo Radiant foi hackeado em 2025.
+   **A regra não está errada, está incompleta:** medir em tokens só protege se o token sobrevive uma
+   década. Para ETH/SOL/BTC funciona; para um alt, o numerador crescendo *esconde* a posição morrendo.
+
+2. **A pool foi usada como anestésico de aversão à perda — cinco vezes, em cinco pools, escrito.**
+   *"Como não pretendo vender os tokens no prejuizo"* · *"Por mais que gere menos taxas não posso mais
+   sair no prejuizo"* · *"Como ainda não pretendo vender os tokens com esse prejuizo inicial, vou diminuir
+   um pouco o range"* · *"Como não pretendo realizar esse prejuizo vou remontar a pool aqui mesmo"* ·
+   *"não quero sair agora e tornar o loss permanent"*. Racionalizado é coerente (gero taxas enquanto
+   espero); na prática é **hold disfarçado de operação**, e explica os 75 remounts de 2024 melhor que
+   qualquer tese de mercado. É o efeito disposição.
+
+3. **O GRIFT foi um erro de 38 dias, não de um dia.** O diagnóstico correto está escrito em 31/01/2025
+   (*"Deveria ter retirado a posição toda quando a carteira bateu ATH em 3K dolares"*), reforçado em
+   01/02 (*"Cheguei a ter 10 SOL na pool, agora não tenho 6"*) e em 24/02 (*"Me sinto agora preso nessa
+   operação"*) — e a operação seguiu até 10/03. **O que faltava não era análise, era um gatilho de saída
+   que não dependesse de concordar com ele no momento.**
+
+4. **Indisponibilidade é fator de risco mensurável.** Dez menções a doença, gripe, viagem ou mudança,
+   coincidindo com os piores resultados. O PEANUT (−US$ 243) é literal: *"Acabei ficando doente logo
+   depois que montei essa pool e não consegui acompanhar."* Uma estratégia que exige atenção diária tem
+   custo escondido nos dias sem atenção. **Range mais largo é seguro contra gripe** — e é a variável que
+   deve moderar o aumento de tamanho indicado em §8.6.
+
+5. **A regra das 24h existe e funciona — foi violada exatamente na pool que quebrou.** *"Minha estratégia
+   continua sendo, esperar pelo menos 24h para re-montar as pools"* aparece 5 vezes. No GRIFT houve
+   remontagens no mesmo dia, repetidas vezes.
+
+### 16.3 O que falta escrever (prioridade)
+
+**Regra de SAÍDA por tempo, não de entrada.** O GRIFT prova que a entrada não mata — ficar preso mata.
+Elementos mínimos: máximo de dias fora do range antes de encerrar obrigatoriamente · teto de aportes
+adicionais dentro de uma posição perdedora (o erro 4 SOL → 10 SOL) · veto a token cujo preço é a própria
+tese · piso de TVL e razão volume/TVL · teto de tamanho por pool não-blue-chip.
+
+### 16.4 Correções de dados aplicadas nesta revisão
+
+| Item | Estava | Correto |
+|---|---|---|
+| Baseline do portfólio | 20/06/2026 | **14/08/2026** (`data.js asOf`) |
+| Total investido | ~US$ 9.955 | **US$ 10.172,10** |
+| Patrimônio líquido | não registrado | **US$ 7.125,72** (15/08/2026) |
+| Dívida total | ~US$ 1.570 | **US$ 1.583,80** |
+| Leverage | "0,245x" | **dívida/patrimônio 22,2%** |
+| Taxas brutas de pools | ~US$ 2.437 | **US$ 2.459,94** |
+| P&L líquido de pools | "−840 a −1.021" | **−US$ 799,61** (valor único, calculado) |
+| Nº de registros de pool | 28 | **29** em `pools.html` · **66 seções** no diário |
+| Fórmula de HF | "o ao vivo é o correto" (sem detalhe) | resolvido em §8.5 — HF real **6,04** |
+| Fonte do Diário DeFi | `diario.js` | **página do Notion** (`diario.js` tem 2 entradas) |
+| Duplicata desta KB | rascunho não versionado `CONHECIMENTOBAROLO.md` (sem hífen) coexistia com o canônico, com cabeçalho contendo 2 alegações falsas | **mesclado e removido em 19/08/2026** — `CONHECIMENTO-BAROLO.md` (com hífen) é a fonte única, espelhada no `CLAUDE.md` |
+
+### 16.5 Pendências abertas (dados)
+
+- **`data.js → defi.aave.healthFactor`**: o comentário deriva de colateral defasado (US$ 4.622 ⇒ ETH a
+  US$ 1.399). O colateral real é **US$ 5.658,25**. Corrigido no `data.js` em 18/08/2026 — manter a
+  convenção do HF real da Aave daqui em diante.
+- **Duas pools do diário não estão em `pools.html`**: **POPCAT/SOL 1%** e **WEN/SOL 0.16%** (mar/2024),
+  ambas memecoins na Solana. Como as duas são do grupo "narrativa", incluí-las **piora** o track record
+  agregado e eleva `z` de 24% para ~29% no histórico. Os números de §3.4 são conservadores por omissão.
+- **% do tempo em range** da pool ativa nunca foi computado. É a variável que faz o fee APR de 50,91%
+  cair para ~25% se a pool ficar metade do tempo fora. Reconstruível a partir das datas do diário.
+- **`monthlyReturns[2026]`** e reconciliação de `wealthCurve.invested` (série termina em US$ 7.100 vs
+  total canônico US$ 10.172) seguem pendentes.
 
 <!-- KB-END -->
 
 ---
 
-Atualizado: 18/08/2026 — **Base de Conhecimento Consolidada** criada (estudos do Notion + conversas + portfólio), em `CLAUDE.md` (§ KB) e em `CONHECIMENTO-BAROLO.md`
+Atualizado: 19/08/2026 — **Base de Conhecimento Consolidada.** As duas cópias divergentes (`CONHECIMENTO-BAROLO.md` rastreado + rascunho não versionado `CONHECIMENTOBAROLO.md`) foram fundidas nesta versão: §3.2/§3.2.1/§3.4 rebaselinados (`data.js` 14/08/2026, agregados de `briefing.json` 15/08/2026, track record de pools recomputado dos dados brutos — 29 registros), §8.5 com a fórmula de Health Factor resolvida, §8.6 novo (dimensionamento Kelly com ramo de ruína), §16 novo (leitura das 66 seções do Diário DeFi do Notion + tabela de correções). O rascunho `CONHECIMENTOBAROLO.md` — cujo cabeçalho alegava incorretamente que este arquivo com hífen e o bloco `KB-START`/`KB-END` não existiam — foi removido.
