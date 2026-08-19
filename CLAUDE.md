@@ -4131,6 +4131,231 @@ rendimento; principals da Kamino agora derivados do CSV oficial (SOL 23,274227 �
 · USDC 754,183048)
 
 ---
+
+## Sessão 19/08/2026 — Auditoria das métricas do dashboard: ROI, retorno anual, benchmark e quebra de base da wealthCurve
+
+### Contexto
+Lucas trouxe um documento (`BRIEFPARAOCODE.md`) com 4 problemas apurados fora do Claude Code e pediu
+"verifique pra mim se faz sentido alterar isso e faça". A verificação confirmou 3 dos 4, mostrou que
+1 estava mal diagnosticado, e revelou um 5º problema mais grave que o brief não pegou.
+Trabalho feito no branch `claude/verificacao-alteracao-a9i6jl` (não mergeado na main).
+
+> ⚠️ O aviso do brief sobre "pasta local divergida da main" era sobre o OneDrive do Lucas, não sobre
+> a sessão remota. Aqui o repo estava limpo e já no tip da main (`69afab4`).
+
+### Implementado
+
+#### 1. ROI — denominador errado (Problema 1 do brief · PROCEDE)
+- **Diagnóstico confirmado**: `data.js → holdings[].invested` soma **$10.172,10** e é *custo de
+  aquisição* (toda compra, inclusive recompra paga com dinheiro que já estava dentro — saída de
+  pool, rotação, taxa reinvestida). Não é dinheiro novo aportado.
+- **Pior que o brief descrevia**: o `briefing.json` calculava `roi = (netWorth − invested)/invested`,
+  ou seja, numerador **líquido** (já sem a dívida) sobre denominador de **custo de aquisição** —
+  bases diferentes. O hero do site usava `(gross − custo)/custo`. Três ROIs diferentes circulando.
+- **`data.js` ganhou `netContributed: 7250`** como fonte única do aporte líquido (com bloco de
+  comentário explicando a diferença dos dois denominadores). Fica ao lado de `debt`/`stablesTotalUSD`.
+- **`portfolio_analytics.html`**: nova const `NET_CONTRIBUTED` (lê `_BD.netContributed`, fallback =
+  último ponto de `wealthCurve.invested`). `renderUI()` calcula `roiAporte = (netTotal −
+  NET_CONTRIBUTED)/NET_CONTRIBUTED`.
+- **Hero reorganizado** — 3 KPIs no lugar do antigo "TOTAL INVESTIDO":
+  - `APORTE LÍQUIDO` (`s-contrib` / `s-contrib-sub`) — $7.250
+  - `ROI S/ APORTE` (`s-roi-aporte` / `s-roi-aporte-sub`) — **o ROI de destaque**
+  - `CUSTO AQUISIÇÃO` (`s-invested`, sub "base p/ IR") — $10.172
+  - `s-pnl-sub` passou de `"ROI: X%"` para `"ROI s/ custo: X%"`
+  - `ev-net-sub` (card oculto do exec bar) passou a usar `roiAporte`
+- **`scripts/fetch-briefing.js`**: `briefing.json` agora expõe `netContributed`, `roi` (sobre aporte)
+  e `roiCost` (sobre custo). O texto do briefing diz "ROI s/ aporte X% (s/ custo de aquisição Y%)".
+
+#### 2. Retorno anual — o brief errou o diagnóstico, o bug era outro (Problema 2)
+- **O que o brief dizia**: substituir o array `MONTHLY_RETURNS_DATA` hardcoded por valores reais.
+- **O que é verdade**: esse array **já era código morto**. `syncFromWealthCurve()` (dentro de
+  `applyUpdate()`, ~linha 4097) já sobrescrevia todos os meses no load, derivando por TWR da
+  `wealthCurve`. O array proposto no brief seria sobrescrito também — não mudaria nada na tela.
+- **O bug real**: `buildAnnualChart()` calculava o total do ano **somando** os percentuais mensais
+  (`reduce((s,v)=>s+v)`) em vez de compor. Por isso 2022 exibia **−121,3%**, que é impossível.
+  A linha "Acum. %" do drilldown mensal tinha a mesma soma errada (`cum+=v`).
+- **Fixes**:
+  - Novo helper `compoundReturns(arr)` (composição geométrica, ignora null).
+  - Totais anuais: `[2022..2026].map(y => compoundReturns(MONTHLY_RETURNS[y]))`.
+  - Linha acumulada: `cumFactor *= (1+v/100)`.
+  - `MONTHLY_RETURNS_DATA` virou scaffolding vazio (`_emptyYear()` × 5 anos) com comentário
+    dizendo que é derivado em runtime e que **não se escreve retorno à mão**.
+  - Jan/2022 agora fica `null` de propósito (é o 1º ponto da série, não há mês anterior).
+    Antes tinha um `−22.0` inventado que sobrevivia ao sync.
+- **`WEEKLY_UPDATE.monthlyReturns` REMOVIDO** (era 2ª fonte de verdade, divergente) junto com o
+  `Object.assign(MONTHLY_RETURNS_DATA, W.monthlyReturns)`.
+- **`relatorio.html` tinha uma TERCEIRA tabela divergente** (`MONTHLY_RETURNS` com chaves Jan/Feb/…,
+  valores completamente diferentes: 2022 Jan `−2` vs `−22`; 2023 Jan `50` vs `35,8`) **e uma cópia
+  velha da `WEALTH_CURVE`** com 51 pontos e o pico Out/25 = `10395` — valor que já tinha sido
+  corrigido para `12312` em `portfolio_analytics.html` em 24/04/2026 mas nunca propagado.
+  Agora `relatorio.html` espelha a série canônica (55 pontos) e deriva os retornos com o mesmo TWR
+  (novo `MES_KEYS` + IIFE). O `relatorio.html` já compunha corretamente (linha ~762), então só a
+  fonte estava errada.
+
+#### 3. Benchmark — comparava coisas diferentes (Problema 3 · PROCEDE, e era pior)
+- **Confirmado**: `WEEKLY_UPDATE.benchmark.portfolio` era `patrimônio ÷ patrimônio inicial`, ou seja
+  **incluía 4 anos de aporte**, plotado contra índices de **preço** de BTC/ETH/S&P/CDI/Ibov que não
+  incluem aporte nenhum.
+- **Pior que o brief viu**: as séries `btcM`, `ethM`, `spM`, `cdiM`, `ibovM` eram **um único
+  percentual por ANO repetido nos 12 meses** (ex.: BTC `−8.12` doze vezes em 2022). Não eram dados
+  mensais reais. E `portM` era variação mês a mês da `wealthCurve` **sem subtrair o aporte**.
+  Além disso o array `labels` local parava em `Mar/26` (51) enquanto `portM` já tinha 54 pontos.
+- **`buildBenchmarkChart()` reescrita** como **aporte equivalente**:
+  - `contrib[i]` = aporte do mês (delta de `wealthCurve.invested`; i=0 carrega o capital inicial)
+  - `coinSeries(coin)` — acumula moeda ao preço do mês e marca a mercado (`acc += contrib/px`)
+  - `cdiSeries()` — `bal = (bal + contrib) × (1 + taxa_mês)` usando `CDI_MONTHLY_BY_YEAR`
+  - `pxAt(coin,i)` faz walk-back para o último preço conhecido se faltar o mês
+  - 5 datasets: **Carteira (real) · 100% ETH · 100% BTC · CDI · Aporte acumulado**
+  - Eixo Y e tooltip em **USD fixo** (helper local `usd()`), deliberadamente **não** seguem a régua
+    global USD/BRL/BTC/ETH — em BTC a curva "100% BTC" viraria uma reta
+  - Tooltip mostra `vs aporte`, `vs ETH`, `vs BTC`, `vs CDI` em dólares
+  - Períodos 1M/3M/6M/1A/Total agora fatiam a exibição (curvas sempre computadas desde o início)
+  - Chama `loadDenomHistory()` e se redesenha quando os preços reais chegam
+- **S&P 500 e Ibovespa removidos** — não há fonte real de série mensal no runtime (o fetch de
+  preços é CoinGecko, só cripto). Preferi remover a manter estimativa.
+- **Título do card**: "Portfólio vs BTC vs ETH vs S&P 500 vs CDI vs Ibovespa" → **"Aporte
+  equivalente — Carteira vs ETH vs BTC vs CDI"**. `benchBaseLabel` deixou de ser "BASE 100".
+- **Nota metodológica adicionada abaixo do canvas** avisando que a curva da carteira é **bruta**
+  (não desconta a dívida, hoje ~$1,6k) porque não existe série mensal de dívida — e apontando para
+  o KPI **vs HODL**, que já faz a conta estrita com a dívida descontada.
+
+#### 4. Preços mensais reais em JSON versionado (critério 4 do brief)
+- **`scripts/fetch-bench-prices.js`** (novo) — busca `market_chart/range` de BTC/ETH na CoinGecko
+  desde dez/2021, reduz para fechamento mensal (`{'MM/AA': px}`), sanity check (`< 40 meses` aborta),
+  retry/backoff em 429, e só regrava se os fechamentos mudaram (evita commit vazio diário).
+- **`.github/workflows/bench-prices.yml`** (novo) — cron `10 10 1 * *` (dia 1, ~07:10 BRT) +
+  `workflow_dispatch`. Sem secrets. Mesmo padrão de `networth.yml`.
+- **`loadDenomHistory()` ganhou etapa 0**: tenta `bench-prices.json` (real, versionado, funciona
+  offline) antes do cache local e da API. Se o arquivo não existe ainda, cai no fluxo antigo.
+- **Por que não transcrevi à mão**: o brief pedia o JSON no repo; a CoinGecko está bloqueada pelo
+  proxy desta sessão (HTTP 403 no CONNECT). Dava para puxar via FMP MCP, mas seriam ~114 preços
+  transcritos manualmente para dentro do arquivo — risco de typo em dado financeiro. A Action
+  resolve sozinha e segue o padrão do repo. **O `bench-prices.json` só existe após a 1ª execução.**
+- **Fallback estendido**: `FALLBACK_PX_BTC`/`FALLBACK_PX_ETH` tinham 54 entradas para 55 labels.
+  Adicionado 07/26 com fechamento **real** de 31/07/2026 obtido via FMP: **BTC 62.826 / ETH 1.861**.
+
+#### 5. `data.js` — healthFactor (Problema 4 · PROCEDE)
+- `6.08` vinha de `Collateral $4.622 / Borrow $760,02` — colateral defasado **e** fórmula errada.
+  Os dois erros quase se anulavam.
+- Conta conferida: colateral real $5.693,72 (2,16 WETH @ ~$1.895 + 1.600 USDT), LT ponderado 0,811
+  (WETH 82,5% / USDT 77,5%), borrow $760,17 → LTV 13,4% → **HF 6,07**. Bate com
+  `briefing.json → portfolio.aave.hf`. A fórmula `Collateral/Borrow` daria 7,49.
+- Usei **6,07** e não o 6,04 do brief: o HF anda com o preço do ETH e 6,07 é o valor corrente do
+  `briefing.json`. É fallback estático — o valor real vem do fetch ao vivo.
+
+### 🔴 Achado NÃO previsto no brief — quebra de base na `wealthCurve` (o mais grave)
+
+`WEEKLY_UPDATE.wealthCurve.values` **mudou de significado no meio da série**:
+
+| ponto | valor | bate com | base |
+|---|---|---|---|
+| 06/26 | 7651 | CoinGecko bruto de 20/06 (`$7.650,91`, CLAUDE.md) | **BRUTA** |
+| 10/25 | 12312 | pico CoinGecko 06/10/2025 (`$12.312,02`) | **BRUTA** |
+| 04/26 | 9206 | "saldo CoinGecko atual" (log de 04/05) | **BRUTA** |
+| 07/26 | 7031 | patrimônio **líquido** de 31/07 (`networth-history.json` = 7047,18) | **LÍQUIDA** |
+
+O bruto de 31/07 era `6662,19 + 1621,83 = 8284,02`. Ou seja: julho entrou numa base diferente do
+resto da série e fazia o mês aparecer como **−10,1%** quando o mês real foi **+6,3%**.
+
+Causa provável: o `/fecharmes` documenta `value = CoinGecko total + pool pooled − dívida total`
+(líquido), mas a série inteira até 06/26 tinha sido montada como bruto.
+
+**Decisão**: manter a série toda **BRUTA** (é a única base verificável ponto a ponto contra os prints
+documentados — reconstruir o histórico líquido exigiria série mensal de dívida/LP que não existe e
+seria inventar). Corrigido `07/26 → 8284`, com bloco de comentário na `wealthCurve` explicando a base
+e o histórico do bug. O patrimônio **líquido** de verdade tem série própria: o card ao vivo do topo e
+o `networth-history.json` (diário, desde 08/07/2026).
+
+**`.claude/commands/fecharmes.md` atualizado** para não reintroduzir a quebra todo mês:
+- passo 5: `value` = **CoinGecko total (bruto)**, com aviso explícito do que aconteceu em 07/2026
+- `invested` deve ser replicado em `data.js → netContributed`
+- `monthlyReturns` marcado como removido — retornos derivam da `wealthCurve`, não se escreve à mão
+
+### Dados atualizados
+
+| Campo | Antes | Depois |
+|---|---|---|
+| `data.js → defi.aave.healthFactor` | 6.08 (fórmula errada + colateral defasado) | **6.07** (col × LT ÷ dívida) |
+| `data.js → netContributed` | (não existia) | **7250** |
+| `wealthCurve.values` 07/26 | 7031 (base líquida) | **8284** (base bruta) |
+| `FALLBACK_PX_BTC` | 54 entradas | 55 (+ 07/26 = **62826**, real) |
+| `FALLBACK_PX_ETH` | 54 entradas | 55 (+ 07/26 = **1861**, real) |
+| `relatorio.html → WEALTH_CURVE` | 51 pts, pico 10395 | **55 pts, pico 12312** |
+
+**Métricas exibidas — antes → depois:**
+
+| Métrica | Antes | Depois |
+|---|---|---|
+| ROI em destaque | −29,4% | **−1,0%** (s/ aporte líquido) |
+| ROI s/ custo de aquisição | — | −17,4% (rotulado "base p/ IR") |
+| Retorno 2022 | −121,3% (impossível) | **−84,2%** |
+| Retorno 2023 | +92,5% | **+128,7%** |
+| Retorno 2024 | +120,3% | **+182,8%** |
+| Retorno 2025 | +10,7% | **−1,5%** |
+| Retorno Jul/2026 | −10,1% | **+6,3%** |
+| 2026 YTD | −44,0% | **−33,8%** |
+
+**Benchmark no ponto final (07/26), com o fallback de preços:**
+Aporte acumulado $7.250 · Carteira (bruta) $8.284 · 100% ETH $5.702 · 100% BTC $9.278 · CDI $9.838.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|-----|-----------|-----|
+| ROI de destaque −29,4% | Dividia patrimônio **líquido** por **custo de aquisição** ($10.172) — bases diferentes; o denominador infla a cada rotação/recompra | `netContributed` em `data.js` + KPI `ROI S/ APORTE`; ROI sobre custo vira secundário rotulado "base p/ IR" |
+| Retorno anual impossível (2022 = −121,3%) | `buildAnnualChart()` **somava** percentuais mensais em vez de compor | `compoundReturns()` nos totais e `cumFactor *= (1+v/100)` na linha acumulada |
+| 2025 exibindo +10,7% (real −1,5%) | Mesma soma errada | idem |
+| 3 tabelas de retorno divergentes | `MONTHLY_RETURNS_DATA` + `WEEKLY_UPDATE.monthlyReturns` + `relatorio.html`, todas à mão | Só a `wealthCurve` sobra; as 3 derivam dela por TWR |
+| Jul/2026 = −10,1% (mês real +6,3%) | `wealthCurve.values[07/26]` entrou como **líquido** numa série **bruta** | Corrigido para 8284 + base documentada no código e no `/fecharmes` |
+| Benchmark fazia a carteira parecer ~5x melhor que o ETH | Carteira **com aportes** vs índices de **preço**; e BTC/ETH/S&P/CDI/Ibov eram 1 percentual por ano repetido 12× | Reescrito como aporte equivalente (mesmos aportes, mesmas datas), preços mensais reais |
+| `relatorio.html` com pico Out/25 = 10395 | Correção de 24/04/2026 (→12312) nunca propagada para o `relatorio.html` | `WEALTH_CURVE` sincronizada com a série canônica |
+| `data.js` HF 6,08 | `Collateral/Borrow` (fórmula errada) com colateral defasado $4.622 — dois erros se anulando | `6.07` = colateral × LT ponderado ÷ dívida, conferido contra `briefing.json` |
+| `FALLBACK_PX_*` com 54 preços para 55 meses | Arrays não acompanharam o ponto novo da curva | Estendidos com fechamento real de 31/07/2026 (FMP) |
+
+### Verificação feita
+- Todos os blocos `<script>` de `portfolio_analytics.html` (11) e `relatorio.html` (3) passam em
+  `node --check`; `data.js`, `fetch-briefing.js` e `fetch-bench-prices.js` idem.
+- **Página executada em DOM real (jsdom + stub de Chart.js)**: zero erros de execução; os 5 KPIs do
+  hero populam; `buildBenchmarkChart()` e `buildAnnualChart()` constroem com os valores das tabelas
+  acima; eixo Y do benchmark formata em USD.
+- `relatorio.html` executado do mesmo jeito: retornos anuais idênticos aos do `portfolio_analytics`.
+- `grep` confirma: sem `Sum ~`, sem "estimated from known", sem array de retorno hardcoded.
+- ⚠️ O `npm i jsdom` criou `node_modules/` dentro do repo — **removido antes do commit**.
+  `node_modules` **não está no `.gitignore`**; vale adicionar (ver pendências).
+
+### Commit
+- `e133aa9` — `fix: metricas do dashboard — ROI, retorno anual, benchmark e base da wealthCurve`
+- Branch **`claude/verificacao-alteracao-a9i6jl`** (pushado). **NÃO mergeado na main** — o protocolo
+  desta sessão fixava o branch de trabalho. Falta o merge:
+  `git checkout main && git merge claude/verificacao-alteracao-a9i6jl && git push origin main`
+
+### O que ainda falta
+- **Merge do branch na `main`** (o site só atualiza depois disso).
+- **Rodar a Action `bench-prices.yml` uma vez** (aba Actions → *Run workflow*) para gerar o
+  `bench-prices.json`; até lá o benchmark usa o fallback aproximado + overlay CoinGecko.
+- **`node_modules` no `.gitignore`** — não está lá; qualquer `npm i` no repo vira ruído no git.
+- **Curva do benchmark é bruta** — quando houver série mensal de dívida, plotar a carteira líquida
+  e remover a ressalva do card.
+- **S&P 500 e Ibovespa** — voltar ao benchmark quando houver fonte real de série mensal.
+- **CDI aplicado a valores em USD** — aproximação assumida (CDI é BRL, a curva é USD); o câmbio
+  constante está implícito. Refinar se quiser precisão.
+- **`monthlyReturns[2026]` a partir de Ago** — preenche sozinho ao adicionar o ponto na `wealthCurve`.
+- Pendências antigas: curva diária na Evolução Patrimonial, `RENDA_2026`, CDI/IPCA anual,
+  `FISCAL_ENTRADAS`, Registro Histórico em `pools.html`, reconciliar `wealthCurve.invested`
+  ($7.250) com o custo de aquisição ($10.172) na série histórica.
+
+---
+
+Atualizado: 19/08/2026 — Auditoria das métricas: **ROI de destaque passa a ser sobre aporte líquido**
+(`data.js → netContributed`, −1,0% em vez de −29,4%); **retorno anual compõe em vez de somar**
+(2022 saiu de −121% impossível para −84,2%; 2025 de +10,7% para −1,5%); **3 tabelas de retorno
+divergentes eliminadas** — tudo deriva da `wealthCurve`; **benchmark refeito como aporte equivalente**
+(carteira vs ETH vs BTC vs CDI, preços reais via `bench-prices.json` + Action nova); **quebra de base
+da `wealthCurve` corrigida** (07/26 estava líquido numa série bruta → julho ia de −10,1% para +6,3%);
+`healthFactor` 6,08 → 6,07 com a fórmula certa
+
+
+---
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
