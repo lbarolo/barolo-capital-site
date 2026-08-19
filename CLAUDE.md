@@ -4258,15 +4258,12 @@ troca de período (1M/3M/6M/1A/Total) funcional, `git status` limpo após cada c
 
 ### O que ainda falta
 
-- **4 métricas de "ROI" ainda não reconciliadas** (`metric-return`, `metric-roi`/`ev-growth-pct`,
-  `metric-roic`) — cada uma com denominador diferente do ROI de destaque corrigido nesta sessão
+- ~~4 métricas de "ROI" não reconciliadas~~ — ✅ FEITO na sessão seguinte (19/08/2026, ver abaixo)
 - **`benchmark-data.js` sem refresh automático** — mês corrente fica defasado até o próximo
   refresh manual (candidato a uma Action tipo `onchain.yml`/`networth.yml`)
-- **`metrics.irr` continua sendo alias de `metrics.twr`** (`portfolio_analytics.html`, comentário
-  próprio já admite "fallback to TWR for now") — IRR/MWR anualizado real (XIRR) não foi
-  implementado; fora dos critérios de aceite desta rodada
+- ~~`metrics.irr` alias de `metrics.twr`~~ — ✅ FEITO (XIRR real implementado, ver abaixo)
 - **`data.js → defi.aave.healthFactor` tem 3 valores em jogo** (6,04 hardcoded, 6,12 ao vivo no
-  `briefing.json`, 5,00 mencionado em nota antiga do CLAUDE.md) — não investigado nesta sessão
+  `briefing.json`, 5,00 mencionado em nota antiga do CLAUDE.md) — não investigado ainda
 - Pendências antigas mantidas: `monthlyReturns[2026]` (Ago–Dez, meses ainda não fechados),
   `RENDA_2026`, CDI/IPCA anual, `FISCAL_ENTRADAS`, Registro Histórico em `pools.html`, reconciliar
   `wealthCurve.invested` (série termina em 07/26, precisa de ponto novo mensal)
@@ -4280,6 +4277,98 @@ Dietz + compounding geométrico, sem array hardcoded — 2025 −2,3%, 2024 +182
 em USD: Portfólio vs 100% ETH vs 100% BTC vs CDI), **KB consolidada** (duas cópias divergentes
 fundidas em `CONHECIMENTO-BAROLO.md`), `.gitattributes` adicionado, política de privacidade
 registra que o repo é público por escolha
+
+---
+
+## Sessão 19/08/2026 (continuação) — Métricas de performance unificadas na fonte única + XIRR real
+
+### Contexto
+
+Lucas pediu para continuar melhorando a partir do que ficou registrado em "O que ainda falta" da
+sessão anterior. Ao investigar as "4 métricas de ROI não reconciliadas", a bagunça acabou sendo
+maior do que o esperado: havia **quatro locais diferentes** na página mostrando Sharpe/Volatilidade/
+Max Drawdown/CAGR, cada um com sua própria fórmula (às vezes hardcoded), e um painel inteiro de
+métricas que **nunca tinha sido renderizado, desde sempre**, por um bug de seletor.
+
+### Implementado (`portfolio_analytics.html`)
+
+#### Bug crítico: `renderPerformanceMetrics()` nunca renderizava
+O seletor usado para achar a aba Performance era `document.querySelector('[data-tab="performance"]')`
+— esse atributo **não existe em lugar nenhum do HTML** (o id real é `#tab-performance`). Como
+resultado, o painel inteiro de métricas (TWR/Benchmark/Alpha/Sharpe/MaxDD/ROIC/Vol/IRR, com os ids
+`m-twr`, `m-bench`, etc.) nunca foi inserido no DOM em nenhuma sessão anterior — bug presente desde
+a criação da função. Corrigido para `document.getElementById('tab-performance')`. Corrigir esse bug
+revelou um **segundo bug**: `firstCard.nextSibling` não é necessariamente filho direto de `tabPane`
+(já que `querySelector` busca descendentes, não só filhos diretos), então `insertBefore` lançava
+`NotFoundError`. Corrigido para inserir relativo a `firstCard.parentNode`.
+
+#### CAGR/"Lifetime Return"/"ROI Total" repetiam o mesmo erro do ROI de destaque
+`s-cagr` (hero), `ev-growth-pct` (exec bar, "Lifetime Return") e `metric-cagr`/`metric-roi` (aba
+Métricas) todos dividiam os ativos ao vivo pelo **capital-semente de Jan/2022** (~US$1.061) — o
+mesmo erro categórico do ROI de destaque corrigido na sessão anterior (atribuir a "performance"
+um crescimento que é majoritariamente aporte, não retorno). Unificados em:
+- `metrics.twr` (TWR anualizado, Modified Dietz) → `s-cagr`, `metric-cagr`
+- `metrics.twrCumulative` (novo campo — retorno composto desde a fundação, sem anualizar) →
+  `ev-growth-pct`, `metric-roi` (relabelado "Retorno Acumulado (TWR)")
+
+`pct-current` (texto) e o último ponto do gráfico "Evolução Patrimonial" (Série 2) também usavam
+fórmulas diferentes entre si — uma inconsistência que só aparecia em atualizações ao vivo após o
+primeiro carregamento. Unificados na mesma conta (`liveCur`, deposit-aware).
+
+#### Valores hardcoded eliminados + XIRR real implementado
+`metric-sharpe`/`metric-vol`/`metric-maxdd` (aba Métricas) tinham volatilidade **63,7% hardcoded**
+e max drawdown **50,9% hardcoded**, mais um "IRR aproximado" com fórmula própria sem sentido
+(`anos/2`). Um **quarto bloco**, estático e sem nenhum `id` (aba DeFi & Mercado, seção "Métricas"),
+repetia Sharpe/Vol/MaxDD com números igualmente desatualizados (Sharpe **−1,42** hardcoded, Vol
+**87%** hardcoded). Todos os 4 locais agora leem de uma única chamada a `calculatePerformanceMetrics()`
+no topo de `renderUI()` (variável `metrics`, computada uma vez, reusada por hero/exec bar/aba
+Métricas/aba Performance/aba DeFi).
+
+`metrics.irr` era `= metrics.twr` (alias, comentário próprio admitia "fallback to TWR for now").
+Implementado XIRR real via **bisseção** sobre o fluxo de caixa mensal (cada aporte como saída
+negativa, valor atual do portfólio como resgate positivo no último mês) — `computeXIRR(cashflows,
+times)`, robusto (não precisa de derivada), 100 iterações máx, `null` se não houver troca de sinal
+no NPV (fallback para TWR nesse caso). O card "Alpha" também usava um **MWR hardcoded (8,4%)** e um
+subtítulo com texto estático ("IRR 8.4% vs Benchmark 9.2%") — ambos agora dinâmicos, usando o
+`metrics.irr` real.
+
+| Métrica | Antes | Depois (validado Node + browser, ao vivo) |
+|---|---|---|
+| Sharpe (3 locais diferentes) | −1,42 (hardcoded) / outro cálculo / outro | **−0,14** nos 3 |
+| Volatilidade (3 locais) | 87% (hardcoded) / 63,7% (hardcoded) / outro | **65,6%** nos 3 |
+| Max Drawdown (2 locais) | 50,9% (hardcoded, coincidia por acaso) | **−50,9%** (agora real) |
+| CAGR desde 2022 (hero) | fórmula viciada (capital-semente) | **−7,2%** (= TWR) |
+| IRR / Alpha | alias de TWR / MWR 8,4% hardcoded | **XIRR −1,37% a.a.** (validado em Node) |
+
+### Verificação
+Testado no browser (tab nova, sem cache stale) em todas as 5 abas: console sem erros, `Sharpe`
+idêntico nas 3 abas onde aparece, `TWR` idêntico nas 4 (hero/exec bar/Métricas/Performance),
+`XIRR` calculado em Node contra o `wealthCurve` real bate exatamente com o valor exibido na página
+(−1,37% a.a.), gráfico "Evolução Patrimonial" (Série 2) e o texto `pct-current` agora sempre
+concordam entre si.
+
+### Commits
+- `0607d11` — fix: unifica as métricas de performance na fonte única (TWR/IRR/Sharpe/Vol/MaxDD) + XIRR real
+
+### O que ainda falta
+- **`benchmark-data.js` sem refresh automático** — candidato a Action tipo `onchain.yml`
+- **`data.js → defi.aave.healthFactor` com 3 valores em jogo** — não investigado
+- **`metric-return`/`metric-roic` (aba Métricas)** ainda usam suas próprias definições (retorno
+  sobre capital deployado excluindo stables; ROIC médio) — são conceitos legitimamente distintos
+  do ROI de destaque e do TWR/IRR, mantidos como estão, mas vale revisar se ainda fazem sentido
+  lado a lado com tantas outras métricas na mesma aba
+- Pendências antigas mantidas: `monthlyReturns[2026]` (Ago–Dez), `RENDA_2026`, CDI/IPCA anual,
+  `FISCAL_ENTRADAS`, Registro Histórico em `pools.html`, reconciliar `wealthCurve.invested`
+
+---
+
+Atualizado: 19/08/2026 (continuação) — **Painel de métricas da aba Performance renderiza pela
+primeira vez** (bug de seletor `[data-tab="performance"]` nunca existiu no DOM), **CAGR/"Lifetime
+Return"/"ROI Total" corrigidos** (mesmo erro categórico do ROI de destaque — capital-semente de
+2022 → TWR/twrCumulative), **Sharpe/Volatilidade/Max Drawdown hardcoded eliminados em 2 lugares**
+(incluindo um bloco estático sem `id` na aba DeFi & Mercado), **XIRR real implementado** (bisseção
+sobre fluxo de caixa mensal, −1,37% a.a., valida contra Node) substituindo o alias de TWR — todas
+as métricas agora convergem para os mesmos números nas 5 abas onde aparecem
 
 ---
 <!-- KB-START -->
