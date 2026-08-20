@@ -4551,11 +4551,36 @@ $2.167) para voltar a gerar. Custo de oportunidade de US$ 413 parados contra dí
 
 ### Bugs corrigidos
 
-Nenhum bug de código nesta sessão. Uma armadilha contábil **evitada**: lançar o aporte na LP sem
-subtrair o ETH vendido dos holdings teria inflado o patrimônio em US$ 18,50 (dupla contagem).
+**`benchmark.yml` falhava com HTTP 451 (Binance geo-bloqueia os runners).** A primeira execução
+agendada da Action criada em 19/08 quebrou: `api.binance.com` responde **451 Unavailable For Legal
+Reasons** para IPs dos EUA, e os runners do GitHub ficam na Azure US.
+
+⚠️ **LIÇÃO (vale para qualquer script novo de Action):** o teste local não pega isso — o sandbox do
+Claude Code sai por proxy fora dos EUA, então a Binance responde normalmente aqui e 451 lá. Ao
+escolher uma API para rodar em Action, **conferir geo-bloqueio, não só se responde no sandbox**. As
+Actions que já funcionavam (`networth.yml`, `briefing.yml`) usam CoinGecko, que não geo-bloqueia.
+
+**Fix:** `scripts/fetch-benchmark.js` agora busca em **cascata**, usando a primeira fonte que
+responder — 1) **Coinbase Exchange** (americana; candles diários agregados em fechamento mensal),
+2) **Yahoo Finance** (candles mensais direto), 3) **Binance** (fallback local, segue 451 no
+Actions). Também: `fetchWithRetry` não reinsiste em 4xx (é permanente, só gastava tempo); o step de
+commit ganhou `if: github.ref == 'refs/heads/main'` para permitir disparo manual em branch só para
+testar o fetch; `actions/checkout@v5` + `setup-node@v5` + Node 22 (elimina o aviso de deprecação do
+Node 20 que aparecia junto do erro).
+
+**Validado no ambiente que importa:** como nenhuma das fontes alternativas passa pelo proxy desta
+sessão (só Binance e BCB estão na allowlist — o inverso do runner), o teste foi feito disparando a
+própria Action via `workflow_dispatch` na branch de trabalho. Resultado: `BTC: 56 meses via Coinbase
+Exchange · ETH: 56 meses via Coinbase Exchange · OK 08/26: BTC $72645 · ETH $2338.07`, commit step
+corretamente pulado.
+
+Uma armadilha contábil **evitada** no resto da sessão: lançar o aporte na LP sem subtrair o ETH
+vendido dos holdings teria inflado o patrimônio em US$ 18,50 (dupla contagem).
 
 ### O que ainda falta
 
+- **Mergear a branch na `main`** — enquanto o fix do `benchmark.yml` não estiver lá, a execução
+  agendada (10:00 UTC) continua falhando: o cron roda sempre a partir da default branch.
 - **Confirmar se os 0,0080 ETH estavam no CoinGecko** — se não estavam, reverter `holdings.ETH`
   para 2,37632741 (condicional escrita no `data.js`).
 - **Diário DeFi → `diario.js`** — Lucas salvou no Notion e no Diário do site (localStorage). Para
@@ -4581,6 +4606,8 @@ subtrair o ETH vendido dos holdings teria inflado o patrimônio em US$ 18,50 (du
 | `95342d9` | docs: regra — fee em ETH mantida apos fechamento e holding, nao renda de pool |
 | `1a17324` | data: aporte mono-ativo de 23,78 USDG na pool ativa (decisao 20/08) |
 | `7a51113` | data: print Uniswap 20/08 — pool $413,05 (100% USDG, out of range) |
+| `d11d4b8` | docs: log sessao 20/08/2026 |
+| `1894c6c` | fix: benchmark-data.js falhava com HTTP 451 (Binance geo-bloqueia runner dos EUA) |
 
 ⚠️ **Esta sessão rodou no Claude Code na web com branch designada** — os commits foram para
 `claude/taxas-swap-usdg-calculo-kjxi4j`, **não para a `main`** (o fluxo normal do projeto é push
