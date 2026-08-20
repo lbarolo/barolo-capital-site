@@ -556,7 +556,7 @@ var KAM_USDS_QTY=(_bdK&&_bdK.supply.USDS.qty)||302.41, KAM_USDS_APY=(_bdK&&_bdK.
 var KAM_BORROW=(_bdK&&_bdK.borrow.USDC.qty)||816.79,   KAM_BORROW_APY=(_bdK&&_bdK.borrow.USDC.apy)||0.0578;
 
 var POOLS_DATA = [
-  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'active',  fees:5.28, il:0, result:5.28 }, // reaberta 07/08/2026 (mesma pool v3). 20/08/2026: fees COLETADAS $5,28 (swap 0,0023 ETH → 5,28 USDG) e posição FORA DO RANGE por cima (ETH ~$2.283 > max $2.166,83) = 100% USDG ~$406,58 (após aporte mono-ativo de $23,78 em 20/08) — saída gradual ETH→USDG completa
+  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'active',  fees:5.28, il:0, result:5.28 }, // reaberta 07/08/2026 (mesma pool v3). 20/08/2026: fees COLETADAS $5,28 (swap 0,0023 ETH → 5,28 USDG) e posição FORA DO RANGE por cima (ETH ~$2.283 > max $2.166,83) = 100% USDG $413,05 (print Uniswap 20/08, após aporte mono-ativo) — saída gradual ETH→USDG completa
   { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'closed',  fees:13.04, il:0, result:13.04 }, // fechada 07/08/2026 — pooled $349.15 + fees $13.04 = ~$362.19 realizado (aberta 14/07/2026)
   { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:8.62, il:0, result:8.62 }, // desmontada 14/07/2026 (remove 0.1717 ETH + 47.22 USDC → ~0.197 ETH bridgeado); result = fees
   { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:22.28, il:6.55, result:15.73 }, // encerrada 03/06/2026 — dados finais Revert
