@@ -4434,6 +4434,168 @@ Health Factor (6,04/6,12/5,00) fica registrada e guardada para depois, por pedid
 Lucas** — não investigar nem corrigir sem ele pedir
 
 ---
+
+## Sessão 20/08/2026 — Coleta de taxas + pool saiu do range por cima (100% USDG) + aporte mono-ativo
+
+### Contexto
+
+Dia de rally forte (BTC +11,4% / ETH +18,5% em 24h). Lucas mandou dois prints de swap na
+Robinhood Chain e pediu para computar. O que parecia ser "duas coletas de taxa" acabou sendo
+duas coisas contabilmente diferentes — e a apuração revelou que a pool ativa tinha saído do
+range por cima, completando a estratégia de saída gradual ETH→USDG.
+
+### Os dois swaps (não são a mesma coisa — não confundir de novo)
+
+| Swap | Valor | O que é | Vai para o P&L de pool? |
+|---|---|---|---|
+| 0,0023 ETH → 5,28 USDG | US$ 5,28 | Taxas do ciclo 2 da pool ativa, coletadas | **SIM** — renda realizada |
+| 0,0080 ETH → 18,50 USDG | US$ 18,50 | ETH de taxa **antiga da pool da Base**, que já estava fora da pool e só foi vendido agora ao preço-alvo | **NÃO** — rotação de holding |
+
+**REGRA registrada no `data.js`** (explicação do Lucas): as duas pools tinham o **mesmo objetivo** —
+saindo do range por cima, as fees em ETH seriam vendidas por USD de qualquer forma. Logo, manter
+fee em ETH depois do fechamento é **posição direcional, não pool**: a fee já foi lançada em USD no
+fechamento daquele registro histórico, e o que vem depois pertence ao holding. Sempre que aparecer
+um swap de "fee velha" assim, tratar como rotação de holding — nunca como renda de pool.
+
+### Implementado
+
+#### `data.js` — pool ativa (3 atualizações no mesmo dia, na ordem)
+
+1. **Coleta**: `totalFees` 1,81 → **5,28** (realizadas), `uncollectedFees` 1,81 → **0**.
+2. **Saída do range**: com ETH ~US$ 2.283 > `rangeMax` 2.166,83, a posição virou **100% USDG**.
+   Antes do print, `pooled` foi *derivado* da liquidez do print de 14/08 (L = 109,06 pelos dois
+   lados; acima do range o valor é `L × (√pb − √pa)` = 382,80).
+3. **Aporte mono-ativo + print**: Lucas devolveu os 23,78 USDG (5,28 da fee + 18,50 da venda)
+   para a **mesma posição**. Print Uniswap confirmou **US$ 413,05**.
+
+Estado final gravado:
+
+```
+capital:388.06, pooled:413.05, totalFees:5.28, uncollectedFees:0,
+il:0, pnl:30.27, daysOpen:13, openDate:'2026-08-07'
+```
+
+**Contabilidade do aporte (por que o pnl fecha dos dois lados):**
+- `capital` 364,28 → **388,06** (+23,78 aportados)
+- `totalFees` fica 5,28 — a fee já realizada, ao ser reinvestida, vira capital novo; entra nos
+  dois lados e por isso não infla o resultado
+- `pnl` = 413,05 + 5,28 − 388,06 = **30,27** ✔ — confere pelo outro lado: capital **externo**
+  364,28 + 18,50 = 382,78 → 413,05 − 382,78 = 30,27 (**+7,91% em 13 dias**)
+- `holdings.ETH` 2,37632741 → **2,36832741** (−0,0080). Sem isso o mesmo dinheiro seria contado
+  duas vezes (no ETH e na LP). `invested` do ETH **inalterado** de propósito: aquele ETH era fee,
+  custo zero. ⚠️ **Se aqueles 0,0080 ETH nunca estiveram lançados no CoinGecko, reverter para
+  2,37632741** — a condicional está escrita no `data.js`.
+- `asOf` 2026-08-14 → **2026-08-20**
+- Os 23,78 USDG **não** foram lançados em `stables`: decisão do Lucas nesta sessão (só entram
+  quando ele registrar no CoinGecko). Como foram todos para dentro da pool, o ponto virou nulo.
+
+#### `pools.html`
+- Entrada ativa do array `POOLS`: `capital` 364,28 → 388,06, `fees`/`result` 1,81 → **5,28**,
+  `fcr` 5,0 → 14,6, `obs` reescrita com a coleta + saída do range + aporte + print.
+- Card estático: badge `badge-green ● IN-RANGE` → **`badge-warn ○ FORA DO RANGE (acima) — 100%
+  USDG`** (usei a classe `badge-warn` que já existe no CSS, linha 120 — `badge-red` não existe);
+  POOLED `$358.14` → **`$413.05`** com sub-label `0 WETH + 413,05 USDG (print 20/08)`;
+  sub-label do APR agora diz `$5,28 coletados em 20/08`.
+
+#### `relatorio.html`
+- `POOLS_DATA` entrada ativa: `fees`/`result` 1,81 → **5,28** + comentário.
+- Linha de texto da posição: acrescentado `fora do range (acima) = 100% USDG $413,05`.
+
+### Dados atualizados
+
+| Campo | Antes | Depois |
+|---|---|---|
+| Pool `capital` | 364,28 | **388,06** |
+| Pool `pooled` | 358,14 | **413,05** (print) |
+| Pool `totalFees` | 1,81 (não coletadas) | **5,28** (realizadas) |
+| Pool `uncollectedFees` | 1,81 | **0** |
+| Pool `pnl` | −4,33 | **+30,27** |
+| Pool `daysOpen` | 7 | **13** |
+| Composição da pool | 0,1750 WETH + 29,91 USDG | **0 WETH + 413,05 USDG** |
+| `holdings.ETH` qty | 2,37632741 | **2,36832741** |
+| `asOf` | 2026-08-14 | **2026-08-20** |
+| **P&L 2026 YTD de pools** | US$ 119,75 | **US$ 123,22** |
+
+Print Uniswap 20/08: Position $413,05 · 0% WETH / 100% USDG · Out of range · market $2.277,72 ·
+range $1.852,38–$2.166,83 · **"Fees earned $0 — you have no earnings yet"** (confirma que a coleta
+zerou o contador, ou seja `uncollectedFees:0` está certo).
+
+### Lição técnica — derivar liquidez V3 vs. print
+
+A derivação de `pooled` feita antes do print ficou **1,59% baixa**: 413,05 − 23,78 aportados =
+389,27 real contra 382,80 estimado. **Causa:** L é calculado a partir de uma diferença de raízes
+muito próximas (`√P − √pa ≈ 0,274`), então o arredondamento do preço exibido no print de 14/08
+é amplificado. **Regra:** derivar serve para o card não congelar num valor obsoleto — mas quando
+chega print, **o print manda**, e não se deve tentar reconciliar a diferença como se fosse aporte.
+Registrado no `data.js`.
+
+### Decisão estratégica do Lucas (registrada)
+
+**Mantém a pool** e aportou o restante do USDG mono-ativo, no mesmo range. Tese: **espera novas
+quedas / capitulação até outubro** e quer a posição comprando ETH na descida.
+
+Contraponto que dei (ele decidiu ciente): o range termina em US$ 1.852,38 — a pool compra ETH de
+US$ 2.167 até US$ 1.852 e nesse ponto está 100% comprada, **sem USDG para a capitulação em si**.
+Ela captura o *caminho até* a capitulação, não a capitulação. Se o cenário for ETH a US$ 1.500,
+chega lá com preço médio de US$ 2.003 (25% acima do fundo) e sem pó seco. São US$ 413 (~5% do
+patrimônio) e ele ainda tem US$ 1.620 em stables como munição real — a pool é a compra escalonada
+da correção normal, os stables da AAVE/Kamino é que são a munição da capitulação.
+
+Também vale registrar o desvio consciente do playbook: o loop documentado (§2.2 do CONHECIMENTO)
+diz *"pool sai do range para cima → vende ETH acumulado + USD → paga a dívida"*. Ele optou por
+não abater dívida e manter a posição posicionada para recomprar.
+
+**Enquanto estiver fora do range, a pool gera taxa ZERO.** ETH precisa cair 5,1% (de ~$2.278 para
+$2.167) para voltar a gerar. Custo de oportunidade de US$ 413 parados contra dívida a 4,9% a.a.
+≈ US$ 1,69/mês.
+
+### Bugs corrigidos
+
+Nenhum bug de código nesta sessão. Uma armadilha contábil **evitada**: lançar o aporte na LP sem
+subtrair o ETH vendido dos holdings teria inflado o patrimônio em US$ 18,50 (dupla contagem).
+
+### O que ainda falta
+
+- **Confirmar se os 0,0080 ETH estavam no CoinGecko** — se não estavam, reverter `holdings.ETH`
+  para 2,37632741 (condicional escrita no `data.js`).
+- **Diário DeFi → `diario.js`** — Lucas salvou no Notion e no Diário do site (localStorage). Para
+  chegar ao repo (e ficar visível para sessões automatizadas, ex. standup) ele precisa clicar em
+  **"📤 Sincronizar"** na aba Diário DeFi e colar o resultado no chat.
+- **Monitorar o retorno ao range** — quando o ETH voltar abaixo de US$ 2.166,83 a pool volta a
+  gerar taxa e a comprar ETH. Se **furar US$ 1.852,38**, a posição fica 100% ETH e sem compra —
+  aí é reavaliar range, não adicionar mais.
+- **`RENDA_2026`** — array vai só até Jun. Faltam Jul (LP US$ 8,62, coleta da Base em 14/07) e Ago
+  (LP US$ 13,04 do ciclo 1 + US$ 5,28 desta coleta = US$ 18,32), mais o `lend` de cada mês. Ago só
+  entra no fechamento do mês (o array é de meses fechados).
+- **`data.js → defi.aave.healthFactor` com 3 valores em jogo** (6,04 / 6,12 / 5,00) — **guardado
+  para depois a pedido explícito do Lucas**, não mexer sem ele pedir.
+- Pendências antigas mantidas: `monthlyReturns[2026]` (Ago–Dez), CDI/IPCA anual, `FISCAL_ENTRADAS`,
+  Registro Histórico em `pools.html`, reconciliar `wealthCurve.invested`, `benchmark-data.js`
+  Action rodando em produção.
+
+### Commits (branch `claude/taxas-swap-usdg-calculo-kjxi4j`)
+
+| Hash | Mensagem |
+|---|---|
+| `2827f37` | data: taxas coletadas da pool ativa ($5,28) + posicao fora do range por cima |
+| `95342d9` | docs: regra — fee em ETH mantida apos fechamento e holding, nao renda de pool |
+| `1a17324` | data: aporte mono-ativo de 23,78 USDG na pool ativa (decisao 20/08) |
+| `7a51113` | data: print Uniswap 20/08 — pool $413,05 (100% USDG, out of range) |
+
+⚠️ **Esta sessão rodou no Claude Code na web com branch designada** — os commits foram para
+`claude/taxas-swap-usdg-calculo-kjxi4j`, **não para a `main`** (o fluxo normal do projeto é push
+direto na main; aqui a instrução da sessão exigia a branch). **Falta mergear na main** quando o
+Lucas quiser.
+
+---
+
+Atualizado: 20/08/2026 — Pool WETH/USDG **saiu do range por cima = 100% USDG** (US$ 413,05, print
+Uniswap), completando a saída gradual ETH→USDG: taxas do ciclo 2 coletadas (US$ 5,28) e reaportadas
+mono-ativo junto com US$ 18,50 de venda de ETH de fee antiga; **regra nova**: fee mantida em ETH
+após o fechamento é holding, não renda de pool; ciclo 2 em **+US$ 30,27 (+7,9% em 13 dias)**; Lucas
+mantém a posição esperando capitulação até outubro (taxa zero enquanto fora do range)
+
+---
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
