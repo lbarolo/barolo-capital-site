@@ -20,16 +20,20 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Gerar benchmark-data.js
         run: node scripts/fetch-benchmark.js
 
+      # Só commita quando rodando na main. Assim dá para disparar manualmente em
+      # outra branch (workflow_dispatch com ref=<branch>) só para testar o fetch,
+      # sem o job tentar commitar/rebasear na branch errada.
       - name: Commit se houver mudança
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
