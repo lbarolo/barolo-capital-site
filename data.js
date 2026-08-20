@@ -149,6 +149,13 @@ window.BAROLO_DATA = {
       //     retirado da pool antiga da Base (taxas já contabilizadas naquele
       //     registro histórico) e que o Lucas só vendeu agora, ao preço-alvo.
       //     Não lançar como renda — é rotação ETH→USDG. Registrado no Diário.
+      //     REGRA (Lucas, 20/08/2026): as duas pools tinham o MESMO objetivo —
+      //     se saíssem do range por cima, as fees em ETH seriam vendidas por
+      //     USD de qualquer jeito. Ou seja, manter fee em ETH depois do
+      //     fechamento é POSIÇÃO DIRECIONAL, não pool: a fee já foi lançada em
+      //     USD no fechamento daquele registro, e o que veio depois pertence ao
+      //     holding. Sempre que aparecer um swap de "fee velha" assim, tratar
+      //     como rotação de holding — nunca como renda de pool.
       // (c) ETH a ~$2.283–2.309 > rangeMax $2.166,83 ⇒ posição FORA DO RANGE
       //     POR CIMA = 100% USDG. A saída gradual ETH→USDG COMPLETOU.
       //     `pooled` 382,80 é DERIVADO (sem print, chain sem fetch), não chute:
