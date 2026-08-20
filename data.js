@@ -64,7 +64,7 @@ window.BAROLO_DATA = {
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.36832741, invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
@@ -105,7 +105,7 @@ window.BAROLO_DATA = {
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
-      capital:364.28, pooled:382.80, totalFees:5.28, uncollectedFees:0,
+      capital:388.06, pooled:406.58, totalFees:5.28, uncollectedFees:0,
       il:0, pnl:23.80, apr:64.57, daysOpen:13, openDate:'2026-08-07',
       rangeMin:1852.38, rangeMax:2166.83, poolApr:64.57, feeApr:50.91,
       // Ciclo anterior (aberto 14/07/2026) fechado em 07/08/2026: pooled $349,15
@@ -167,7 +167,25 @@ window.BAROLO_DATA = {
       //     Resultado do ciclo 2 em USD (a régua do Lucas): 382,80 + 5,28
       //     − 364,28 = +$23,80 (+6,53% em 13 dias). Preço médio de saída
       //     ≈ √(1852,38 × 2166,83) = $2.003.
-      note:'WETH/USDG 0.01% · Robinhood Chain · FORA DO RANGE (acima) = 100% USDG · fees $5,28 coletadas 20/08 · saída gradual completa'
+      // ── (d) 20/08/2026: APORTE MONO-ATIVO DE 23,78 USDG (decisão do Lucas) ─
+      //     Ele mantém a pool e devolveu os 23,78 USDG (5,28 da fee coletada +
+      //     18,50 da venda do ETH velho) para a MESMA posição, mono-ativo. Com
+      //     o preço acima do range a posição é 100% USDG, então dá para
+      //     adicionar só USDG. Tese: espera capitulação até outubro e quer a
+      //     posição comprando ETH na descida.
+      //     CONTABILIDADE (para não contar duas vezes):
+      //       capital 364,28 → 388,06 (+23,78 aportados)
+      //       pooled  382,80 → 406,58
+      //       totalFees fica 5,28 (fee JÁ realizada; ao ser reinvestida vira
+      //         capital novo, por isso entra nos dois lados e o pnl não muda)
+      //       pnl = 406,58 + 5,28 − 388,06 = 23,80 ✔ (idêntico ao de antes do
+      //         aporte, como tem de ser: aportar não gera lucro)
+      //       holdings.ETH 2,37632741 → 2,36832741 (−0,0080 vendidos). SEM isso
+      //         o patrimônio contaria o mesmo dinheiro no ETH e na LP.
+      //         `invested` do ETH inalterado: aquele ETH era fee (custo zero).
+      //     ⚠️ SE aqueles 0,0080 ETH nunca tiverem sido lançados no CoinGecko,
+      //        esta subtração está a mais — reverter para 2,37632741.
+      note:'WETH/USDG 0.01% · Robinhood Chain · FORA DO RANGE (acima) = 100% USDG · fees $5,28 coletadas 20/08 · saída gradual completa · +23,78 USDG aportados 20/08 (mono-ativo)'
     }
   },
 
