@@ -56,9 +56,22 @@
      $364,28 = 0,150 WETH ($287,73) + 76,55 USDG ($76,55), fees ~$0 (recém
      aberta). Capital/openDate resetados; ciclo anterior fechado no histórico
      (pools.html POOLS + relatorio.html POOLS_DATA) com fees $13,04.
+   + Refresh 21/08/2026 (prints AAVE V4 + Kamino, via check-in de mercado):
+     AAVE WETH 2.16 @1.60% / USDT 1.600 @2.88% · borrow 760.78 USDC @4.20% ·
+     Collateral $5.516,00 → HF≈7,25 (Collateral/Borrow — desta vez confere com
+     o fetch ao vivo do briefing.json de 7,26, ao contrário do caso de
+     18/08/2026); Kamino SOL 24.51 @4.61% / USDS 304.29 @2.89% · borrow 824.58
+     USDC @6.34% · LTV 32.77% · Liq.LTV 76.81% · juros ganhos (lifetime Kamino)
+     +$155.61.
+   + Pool WETH/USDG saiu do range pelo TOPO em 20/08/2026 (rali forte de ETH,
+     mercado > rangeMax $2.166,83) → posição virou 100% USDG. Coleta de fees +
+     rotação do ETH velho (já contabilizado como renda no fechamento anterior)
+     + reaporte mono-ativo de USDG na mesma posição — sequência completa e
+     validada contra print da Uniswap já documentada nos comentários dentro de
+     `defi.uniswapV3` (ver bloco "20/08/2026" ali). Não duplicar aqui.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-20',
+  asOf: '2026-08-21',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -85,28 +98,37 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.16, apy:0.0183 }, USDT:{ qty:1600, apy:0.0217 } },
-      borrow: { USDC:{ qty:760.17, apy:0.0379 } },
+      supply: { WETH:{ qty:2.16, apy:0.0160 }, USDT:{ qty:1600, apy:0.0288 } },
+      borrow: { USDC:{ qty:760.78, apy:0.0420 } },
       // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
       // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
       // borrow $760,17, LTV 13,4% -> HF 6,04.
       // CORRECAO 18/08/2026: o 6.08 anterior vinha de um colateral defasado ($4.622, que implica
       // ETH a $1.399,07) combinado com a formula Collateral/Borrow, que SUPERESTIMA o HF (daria
-      // 7,44). Os dois erros quase se cancelavam. NAO usar Collateral/Borrow daqui em diante.
-      healthFactor: 6.04
+      // 7,44). Os dois erros quase se cancelavam. NAO usar Collateral/Borrow como regra geral.
+      // Refresh 21/08/2026: print mostra "Collateral" $5.516,00 direto (já é o valor ponderado
+      // pelo Collateral Factor de cada ativo — CF WETH 83% / CF USDT 78%, conferido: 2,16 ETH
+      // @$2.372 x 0,83 + 1.600 USDT x 0,78 = ~$5.500, bate com os $5.516 do print). Collateral/
+      // Borrow = 5.516/760,78 = 7,25, e desta vez CONFERE com o fetch ao vivo do briefing.json
+      // (7,26) — ao contrário do caso de 18/08, aqui o número já vem corretamente ponderado.
+      healthFactor: 7.25
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
       // à parte: USDS $1.59, PYUSD $0.07, KMNO $3.24). Net APY 3.45% · juros ganhos
       // acumulados +$151.56. Supplied $2.11K (SOL $1.81K + USDS $303,83) · Borrowing $822,48.
-      supply: { SOL:{ qty:24.48, apy:0.0447 }, USDS:{ qty:304.07, apy:0.0406 } },
-      borrow: { USDC:{ qty:823.63, apy:0.0592 } },
-      ltv: 0.3846, liqLtv: 0.7713   // print Kamino 14/08/2026
+      // Refresh 21/08/2026: SOL 24.51 @4.61% / USDS 304.29 @2.89% (crescimento por yield
+      // composto, sem depósito novo) · borrow 824.58 USDC @6.34% · Net APY 3.46% · juros
+      // acumulados (lifetime Kamino) +$155.61 · LTV 32.77% (caiu vs semana passada por causa
+      // do rali de SOL, não por repagamento) · Liq.LTV 76.81%.
+      supply: { SOL:{ qty:24.51, apy:0.0461 }, USDS:{ qty:304.29, apy:0.0289 } },
+      borrow: { USDC:{ qty:824.58, apy:0.0634 } },
+      ltv: 0.3277, liqLtv: 0.7681   // print Kamino 21/08/2026
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
       capital:388.06, pooled:413.05, totalFees:5.28, uncollectedFees:0,
-      il:0, pnl:30.27, apr:64.57, daysOpen:13, openDate:'2026-08-07',
+      il:0, pnl:30.27, apr:64.57, daysOpen:14, openDate:'2026-08-07',
       rangeMin:1852.38, rangeMax:2166.83, poolApr:64.57, feeApr:50.91,
       // Ciclo anterior (aberto 14/07/2026) fechado em 07/08/2026: pooled $349,15
       // + fees $13,04 = ~$362,19 realizado (capital de entrada $343 → ganho
@@ -254,7 +276,7 @@ window.BAROLO_DATA = {
     //    completo.
   },
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:760.17, kamino:823.63, total:1583.80 },
+  debt:   { aave:760.78, kamino:824.58, total:1585.36 },
   stablesTotalUSD: 1619.96   // USDT 1302.52 + USDS 317.44
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o

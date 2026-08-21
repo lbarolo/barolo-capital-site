@@ -54,5 +54,16 @@ window.BAROLO_DIARY = [
     pnl: null,
     tags: ['trade', 'sol', 'dca', 'briefing-semanal'],
     trade: { token: 'SOL', side: 'buy', qty: 0.374988, totalCost: 28.50 }
+  },
+  {
+    id: 1787433600000,
+    date: '2026-08-21',
+    type: 'pool',
+    title: 'Pool WETH/USDG fora do range (100% USDG) + refresh AAVE/Kamino',
+    body: 'Rali forte de ETH (24h +8,8%, 7d +28%) empurrou o mercado da pool acima do rangeMax $2.166,83 — a posição saiu do range em 20/08/2026 e virou 100% USDG (0 WETH), exatamente como a saída gradual foi desenhada. Esse evento já foi coletado, reconciliado contra print da Uniswap e documentado em detalhe em `data.js` (bloco `defi.uniswapV3`, comentário "20/08/2026") e no log de sessão do CLAUDE.md do mesmo dia — não repetir a reconciliação aqui, só o resumo: fees coletadas $5,28 (realizadas), ETH remanescente de um fechamento anterior foi vendido (rotação de holding, não renda de pool), e $23,78 USDG foram reaportados mono-ativo na mesma posição (tese: aguardar capitulação até outubro para a posição recomprar ETH na descida). Posição atual: $413,05 pooled, 100% USDG, PnL do ciclo +$30,27 sobre $388,06 de capital.\n\n'
+      + 'Refresh de AAVE/Kamino via print de hoje (21/08): AAVE HF ≈7,25 (WETH 2,16 @1,60% + USDT 1.600 @2,88% · borrow 760,78 USDC @4,20%); Kamino LTV 32,77% (caiu por causa do rali de SOL, não repagamento) vs liq. 76,81% (SOL 24,51 @4,61% + USDS 304,29 @2,89% · borrow 824,58 USDC @6,34%).\n\n'
+      + 'Nota: registrado via Claude a partir de prints enviados pelo Lucas durante o check-in de mercado automatizado — dados já propagados para data.js.',
+    pnl: 30.27,
+    tags: ['pool', 'weth-usdg', 'saida-gradual', 'out-of-range', 'aave', 'kamino']
   }
 ];
