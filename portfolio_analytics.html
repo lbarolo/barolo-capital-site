@@ -790,6 +790,11 @@ body, input, button, select, textarea {
       </div>
     </div>
     <canvas id="annualReturn" style="max-height:200px;"></canvas>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:10px;line-height:1.55;">
+      Retorno <strong>TWR</strong>: mede quanto os ativos renderam, sem contar aporte. Um ano em que o patrimônio
+      cresce muito por aporte novo, e não por valorização, aparece perto de zero aqui — é o objetivo da métrica.
+      Passe o mouse para ver o ganho em dinheiro e o aporte do ano.
+    </div>
   </div>
 </div>
 
@@ -3155,6 +3160,28 @@ function compoundPct(arr){
 var annualView = 'yearly'; // 'yearly' | year num
 var annualTypeMode = 'bar';
 
+// Resumo em dinheiro de um ano, direto da wealthCurve: quanto entrou de aporte e quanto o
+// patrimônio de fato ganhou. Serve para o tooltip do Retorno Anual explicar o percentual —
+// um ano pode ter TWR ~0 e mesmo assim o patrimônio subir 25%, se a subida foi aporte.
+function annualCashSummary(year){
+ try{
+  const wc = WEEKLY_UPDATE.wealthCurve;
+  const yy = String(year).slice(2);
+  let iIni = -1, iFim = -1;
+  wc.labels.forEach(function(l, i){ if (l.endsWith('/' + yy)) { if (iIni < 0) iIni = i; iFim = i; } });
+  if (iFim < 0) return null;
+  // Primeiro ano da série (iIni === 0) não tem mês anterior: a base é zero, então o aporte do
+  // ano inclui o capital inicial. Nos demais, a base é o fechamento de dezembro anterior.
+  const primeiro = iIni === 0;
+  const baseVal = primeiro ? 0 : wc.values[iIni - 1];
+  const baseInv = primeiro ? 0 : wc.invested[iIni - 1];
+  const aportes = wc.invested[iFim] - baseInv;
+  const varPat  = wc.values[iFim]  - baseVal;
+  return { aportes: aportes, ganho: varPat - aportes, varPat: varPat,
+           valIni: baseVal, valFim: wc.values[iFim], completo: (iFim - iIni) === 11 };
+ }catch(e){ return null; }
+}
+
 function buildAnnualChart(){
  try{
  if(annualChartInst) annualChartInst.destroy();
@@ -3189,7 +3216,16 @@ function buildAnnualChart(){
  plugins:{
  tooltip:{...tt(),callbacks:{
  title:ctx=>`${ctx[0].label} — clique para ver meses`,
- label:ctx=>` Total: ${ctx.raw>=0?'+':''}${ctx.raw.toFixed(1)}%`
+ label:ctx=>` Retorno (TWR): ${ctx.raw>=0?'+':''}${ctx.raw.toFixed(1)}%`,
+ afterBody:items=>{
+   const c = annualCashSummary(yearKeys[items[0].dataIndex]);
+   if(!c) return [];
+   const m = v => (v>=0?'+':'−') + '$' + Math.abs(Math.round(v)).toLocaleString('en-US');
+   return ['──────────',
+           ` Patrimônio: ${m(c.varPat)}`,
+           ` Aporte no ano: ${m(c.aportes)}`,
+           ` Ganho dos ativos: ${m(c.ganho)}`];
+ }
  }},
  legend:{display:false}
  },
