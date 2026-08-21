@@ -69,6 +69,12 @@
      + reaporte mono-ativo de USDG na mesma posição — sequência completa e
      validada contra print da Uniswap já documentada nos comentários dentro de
      `defi.uniswapV3` (ver bloco "20/08/2026" ali). Não duplicar aqui.
+   + 21/08/2026: REGRA DE CONTABILIDADE CONFIRMADA PELO LUCAS — taxas recebidas
+     em ETH NÃO são lançadas no CoinGecko. Portanto, ao vender fee em ETH, NÃO
+     subtrair de `holdings`: a qty vem do print do CoinGecko e só muda quando o
+     print muda. A subtração de 0,0080 ETH feita em 20/08 foi revertida
+     (2,36832741 → 2,37632741). Detalhe e evidências no bloco (f) de
+     `defi.uniswapV3`.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
   asOf: '2026-08-21',
@@ -77,7 +83,7 @@ window.BAROLO_DATA = {
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.36832741, invested:4880.53 },
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
@@ -202,11 +208,28 @@ window.BAROLO_DATA = {
       //         capital novo, por isso entra nos dois lados e o pnl não muda)
       //       pnl = 413,05 + 5,28 − 388,06 = 30,27 ✔ (confere pelo outro lado:
       //         capital externo 364,28 + 18,50 = 382,78 → 413,05 − 382,78 = 30,27)
-      //       holdings.ETH 2,37632741 → 2,36832741 (−0,0080 vendidos). SEM isso
-      //         o patrimônio contaria o mesmo dinheiro no ETH e na LP.
-      //         `invested` do ETH inalterado: aquele ETH era fee (custo zero).
-      //     ⚠️ SE aqueles 0,0080 ETH nunca tiverem sido lançados no CoinGecko,
-      //        esta subtração está a mais — reverter para 2,37632741.
+      //       holdings.ETH: NÃO mexer (fica 2,37632741). Ver (f) abaixo.
+      // ── (f) 21/08/2026: A SUBTRAÇÃO DOS 0,0080 ETH FOI REVERTIDA ──────────
+      //     Em 20/08 os holdings.ETH foram baixados 2,37632741 → 2,36832741 por
+      //     medo de contar o mesmo dinheiro duas vezes (no ETH e na LP). ERRADO,
+      //     e a condicional que ficou escrita aqui foi resolvida em 21/08:
+      //     ⇒ REGRA CONFIRMADA PELO LUCAS (21/08/2026): ele NÃO lança no
+      //       CoinGecko as taxas recebidas em ETH das pools. Elas ficam fora da
+      //       contabilidade até virarem outra coisa. Logo o 2,37632741 do
+      //       CoinGecko NUNCA incluiu aqueles 0,0080 de fee — subtrair removeu
+      //       ETH que nunca esteve lançado (patrimônio ~$19 subestimado).
+      //     Confirmado por DUAS evidências independentes:
+      //       1. Print CoinGecko de 21/08 (DEPOIS da venda) ainda mostra
+      //          2,37632741 — o livro dele não perdeu ETH nenhum.
+      //       2. `git log` do data.js: a qty de ETH ficou parada em 2,37632741
+      //          de 23/06 a 20/08. A pool da Base fechou em 14/07 gerando fee em
+      //          ETH e a qty NÃO subiu — prova que fee em ETH nunca entra no CG.
+      //     Não há dupla contagem: os 18,50 USDG que entraram na LP vieram de um
+      //     ETH que estava FORA do CoinGecko. O patrimônio sobe 18,50 não como
+      //     ganho, mas como valor real que passou a ser rastreado.
+      //     ⇒ DAQUI EM DIANTE: ao vender fee em ETH, NÃO subtrair de holdings.
+      //       Só lançar na LP/stables o destino do dinheiro. A qty de holdings
+      //       vem do print do CoinGecko e SÓ muda quando o print muda.
       // ── (e) PRINT Uniswap 20/08/2026 (confirma o aporte, valor manda) ────
       //     Position $413,05 · 0% WETH / 100% USDG (0 WETH + 413,05 USDG) ·
       //     Out of range · market $2.277,72 · range $1.852,38–$2.166,83 ·
