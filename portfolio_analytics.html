@@ -2922,20 +2922,30 @@ function calculatePerformanceMetrics() {
   metrics.roic = ((finalValue - totalInvested) / avgInvested) * 100;
  }
 
- // ── Benchmark Return (50% BTC + 50% ETH, annualized) — preços reais de benchmark-data.js ──
+ // ── Benchmark (50% BTC + 50% ETH) — MESMOS APORTES, MESMAS DATAS ──
+ // CORREÇÃO 20/08/2026: antes isto era o retorno de PREÇO do índice (buy-and-hold desde
+ // Jan/22, sem aporte nenhum) comparado contra o IRR do portfólio, que credita o timing do
+ // DCA. Maçã com laranja — e o alpha herdava o erro. Agora o benchmark é simulado com o
+ // mesmo fluxo de caixa do portfólio (metade de cada aporte em BTC, metade em ETH) e medido
+ // com o MESMO XIRR, então benchmark e IRR são diretamente comparáveis. Mesma metodologia
+ // do gráfico "Benchmark de aporte equivalente" logo abaixo — os dois passam a concordar.
  if (bench && bench.btcUsd && bench.ethUsd && bench.btcUsd.length > 0 && bench.ethUsd.length > 0) {
-  const startIdx = 0;
-  const endIdx = bench.btcUsd.length - 1;
-  const btcReturn = (bench.btcUsd[endIdx] - bench.btcUsd[startIdx]) / bench.btcUsd[startIdx];
-  const ethReturn = (bench.ethUsd[endIdx] - bench.ethUsd[startIdx]) / bench.ethUsd[startIdx];
-  const benchReturn = 0.5 * btcReturn + 0.5 * ethReturn; // 50/50 mix
-
-  // Annualize (span calculado de bench.labels — não mais hardcoded)
-  const benchYears = bench.labels.length / 12;
-  metrics.benchmarkReturn = (Math.pow(1 + benchReturn, 1 / benchYears) - 1) * 100;
-
-  // Alpha = Portfolio TWR - Benchmark Return
-  metrics.alpha = metrics.twr - metrics.benchmarkReturn;
+  let unitsBtc = 0, unitsEth = 0;
+  const bCf = [], bT = [];
+  for (let i = 0; i < values.length; i++) {
+   const contrib = i === 0 ? invested[0] : Math.max(0, invested[i] - invested[i-1]);
+   if (bench.btcUsd[i] > 0) unitsBtc += (contrib * 0.5) / bench.btcUsd[i];
+   if (bench.ethUsd[i] > 0) unitsEth += (contrib * 0.5) / bench.ethUsd[i];
+   bCf.push(-contrib);
+   bT.push(i / 12);
+  }
+  const lastI = values.length - 1;
+  const benchFinal = unitsBtc * (bench.btcUsd[lastI] || 0) + unitsEth * (bench.ethUsd[lastI] || 0);
+  if (benchFinal > 0) {
+   bCf[bCf.length - 1] += benchFinal;
+   const bRate = computeXIRR(bCf, bT);
+   if (bRate !== null) metrics.benchmarkReturn = bRate * 100;
+  }
  }
 
  // ── IRR real (Money-Weighted Return, XIRR) ──
@@ -2951,6 +2961,10 @@ function calculatePerformanceMetrics() {
  cfCashflows[cfCashflows.length - 1] += values[values.length - 1]; // resgate no valor atual
  const xirrRate = computeXIRR(cfCashflows, cfTimes);
  metrics.irr = xirrRate !== null ? xirrRate * 100 : metrics.twr; // fallback se a bisseção falhar
+
+ // Alpha = IRR do portfólio − IRR do benchmark de aporte equivalente. Definido AQUI (e não
+ // junto do benchmark) porque depende do IRR. Uma definição só: o card lê metrics.alpha.
+ metrics.alpha = metrics.irr - metrics.benchmarkReturn;
 
  return metrics;
 }
@@ -2987,7 +3001,9 @@ function renderPerformanceMetrics(metrics) {
 
   metricsSection = document.createElement('div');
   metricsSection.id = 'performance-metrics-section';
-  metricsSection.className = 'metrics-grid';
+  // SEM class 'metrics-grid': aquela classe é um grid de 4 colunas, o que jogava o
+  // section-label numa célula ao lado dos cards. Aqui o container é bloco normal.
+  metricsSection.style.marginBottom = '12px';
   metricsSection.innerHTML = `
    <div class="section-label">MÉTRICAS DE PERFORMANCE</div>
    <div class="metrics-row">
@@ -3027,24 +3043,27 @@ function renderPerformanceMetrics(metrics) {
      <div class="metric-sub" id="m-vol-sub">Desvio padrão dos retornos</div>
     </div>
     <div class="metric-card">
-     <div class="metric-label">IRR (aprox.)</div>
+     <div class="metric-label">IRR (XIRR, ao ano)</div>
      <div class="metric-value irr" id="m-irr">—</div>
      <div class="metric-sub" id="m-irr-sub">Internal Rate of Return</div>
     </div>
    </div>
   `;
 
-  // Insert metrics section into performance tab (reuse tabPane from above).
-  // firstCard pode não ser filho direto de tabPane (querySelector busca descendentes) —
-  // insertBefore exige que o nó de referência seja filho direto de quem chama o método,
-  // então inserimos relativo ao PAI real de firstCard, não a tabPane diretamente.
-  if (tabPane) {
-   const firstCard = tabPane.querySelector('.card');
-   if (firstCard && firstCard.parentNode) {
-    firstCard.parentNode.insertBefore(metricsSection, firstCard.nextSibling);
-   } else {
-    tabPane.appendChild(metricsSection);
-   }
+  // Inserir ABAIXO da linha de gráficos, em largura total.
+  // Bug de layout (corrigido 20/08/2026): antes inseríamos depois do primeiro .card, cujo
+  // pai é o grid de 2 colunas "Desempenho Histórico | Benchmark" — o painel virava a 2ª
+  // célula do grid e empurrava o gráfico de benchmark para baixo. Agora ancoramos no PAI
+  // do grid, logo depois dele, para os dois gráficos ficarem lado a lado e as métricas
+  // ocuparem a largura inteira embaixo.
+  const firstCard = tabPane.querySelector('.card');
+  const chartsRow = firstCard && firstCard.parentNode;           // o grid 1fr 1fr
+  if (chartsRow && chartsRow !== tabPane && chartsRow.parentNode) {
+   chartsRow.parentNode.insertBefore(metricsSection, chartsRow.nextSibling);
+  } else if (firstCard && firstCard.parentNode) {
+   firstCard.parentNode.insertBefore(metricsSection, firstCard.nextSibling);
+  } else {
+   tabPane.appendChild(metricsSection);
   }
  }
 
@@ -3058,29 +3077,34 @@ function renderPerformanceMetrics(metrics) {
 
  document.getElementById('m-bench').textContent = (metrics.benchmarkReturn > 0 ? '+' : '') + metrics.benchmarkReturn.toFixed(1) + '%';
  document.getElementById('m-bench').style.color = 'var(--accent)';
- document.getElementById('m-bench-sub').textContent = '50% BTC + 50% ETH';
+ document.getElementById('m-bench-sub').textContent = 'mesmos aportes, 50% BTC + 50% ETH';
 
- // ALPHA — diferença entre IRR real (money-weighted, credita o timing do DCA) e o benchmark
- const alphaActual = metrics.irr - metrics.benchmarkReturn;
+ // ALPHA — IRR do portfólio vs IRR do benchmark de aporte equivalente (metrics.alpha).
+ const alphaActual = metrics.alpha;
  const alphaColor = alphaActual > 0 ? 'var(--green)' : 'var(--red)';
  document.getElementById('m-alpha').textContent = (alphaActual > 0 ? '+' : '') + alphaActual.toFixed(1) + '%';
  document.getElementById('m-alpha').style.color = alphaColor;
  document.getElementById('m-alpha-sub').textContent = 'IRR ' + (metrics.irr>=0?'+':'') + metrics.irr.toFixed(1) + '% vs Benchmark ' + (metrics.benchmarkReturn>=0?'+':'') + metrics.benchmarkReturn.toFixed(1) + '%';
 
+ // Cor por sinal (bug corrigido 20/08/2026): Sharpe/ROIC/IRR ficavam na cor da classe CSS
+ // (verde / dourado) mesmo quando negativos — um Sharpe de −0,14 aparecia em verde.
  document.getElementById('m-sharpe').textContent = metrics.sharpe.toFixed(2);
+ document.getElementById('m-sharpe').style.color = metrics.sharpe > 0 ? 'var(--green)' : 'var(--red)';
  document.getElementById('m-sharpe-sub').textContent = 'Índice Sharpe (ideal > 1)';
 
  document.getElementById('m-dd').textContent = metrics.maxDD.toFixed(1) + '%';
  document.getElementById('m-dd-sub').textContent = 'Máximo drawdown histórico';
 
- document.getElementById('m-roic').textContent = metrics.roic.toFixed(1) + '%';
+ document.getElementById('m-roic').textContent = (metrics.roic >= 0 ? '+' : '') + metrics.roic.toFixed(1) + '%';
+ document.getElementById('m-roic').style.color = metrics.roic >= 0 ? 'var(--green)' : 'var(--red)';
  document.getElementById('m-roic-sub').textContent = 'ROI sobre capital médio';
 
  document.getElementById('m-vol').textContent = metrics.volatility.toFixed(1) + '%';
  document.getElementById('m-vol-sub').textContent = 'Volatilidade anualizada';
 
  document.getElementById('m-irr').textContent = (metrics.irr>=0?'+':'') + metrics.irr.toFixed(1) + '%';
- document.getElementById('m-irr-sub').textContent = 'XIRR (money-weighted, real)';
+ document.getElementById('m-irr').style.color = metrics.irr >= 0 ? 'var(--green)' : 'var(--red)';
+ document.getElementById('m-irr-sub').textContent = 'money-weighted (credita o timing dos aportes)';
 }
 
 // ── RENDA PASSIVA REALIZADA — livro-razão mensal 2026 ─────────────────────
@@ -4252,11 +4276,14 @@ function buildPerfChart(period){
  for(let i=1;i<d.p.length;i++){ if(d.p[i]>_runPk) _runPk=d.p[i]; const _c=(d.p[i]-_runPk)/_runPk*100; if(_c<_maxDD) _maxDD=_c; }
  const dd=_maxDD.toFixed(1);
  const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center;"><div style="font-size:8.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px;">${lbl}</div><div style="font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:18px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
- // Para período ALL: substitui Variação por Lifetime Return (denominador = capital inicial real, não primeiro patrimônio)
+ // Para período ALL: Lifetime Return = TWR cumulativo (deposit-neutro).
+ // CORREÇÃO 20/08/2026: era (patrimônio de hoje − aporte do PRIMEIRO mês) / aporte do primeiro
+ // mês (~$1.061), o que dava +820% — o mesmo erro categórico já corrigido em s-cagr /
+ // ev-growth-pct / metric-roi em 19/08: atribui a "performance" um crescimento que é
+ // majoritariamente aporte posterior. Agora usa a mesma fonte dos outros três cards.
  let retCard;
  if (period === 'all') {
-   const initCap = (WEEKLY_UPDATE.wealthCurve.invested[0]) || 1061;
-   const lr = ((last - initCap) / initCap * 100);
+   const lr = calculatePerformanceMetrics().twrCumulative;
    retCard = cs('LIFETIME RETURN', (lr>=0?'+':'')+lr.toFixed(1)+'%', lr>=0?'var(--green)':'var(--red)');
  } else {
    const chg=(((last-first)/first)*100).toFixed(1);
