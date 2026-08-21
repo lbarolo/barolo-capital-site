@@ -505,6 +505,11 @@ body, input, button, select, textarea {
 
 
 /* ══ DIÁRIO SEMANAL ══ */
+/* Estes três painéis vivem FORA do .container (que reserva 80px no rodapé para a
+   .update-bar fixa), então precisam reservar esse espaço eles mesmos. Sem isto o último
+   elemento fica atrás da barra: medido em 21/08/2026, dos 34px do botão SALVAR SEMANA
+   só 3px ficavam clicáveis. */
+#panel-ciclo,#panel-fiscal,#panel-semanal{padding-bottom:80px;}
 #panel-semanal{max-width:1180px;margin-left:auto;margin-right:auto;}
 #panel-semanal .two-col{grid-template-columns:1.35fr 1fr;gap:26px;align-items:start;}
 @media(max-width:900px){#panel-semanal .two-col{grid-template-columns:1fr;gap:18px;}}
