@@ -58,13 +58,13 @@
      (pools.html POOLS + relatorio.html POOLS_DATA) com fees $13,04.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-14',
+  asOf: '2026-08-20',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.36832741, invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
@@ -105,8 +105,8 @@ window.BAROLO_DATA = {
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
-      capital:364.28, pooled:358.14, totalFees:1.81, uncollectedFees:1.81,
-      il:0, pnl:-4.33, apr:64.57, daysOpen:7, openDate:'2026-08-07',
+      capital:388.06, pooled:413.05, totalFees:5.28, uncollectedFees:0,
+      il:0, pnl:30.27, apr:64.57, daysOpen:13, openDate:'2026-08-07',
       rangeMin:1852.38, rangeMax:2166.83, poolApr:64.57, feeApr:50.91,
       // Ciclo anterior (aberto 14/07/2026) fechado em 07/08/2026: pooled $349,15
       // + fees $13,04 = ~$362,19 realizado (capital de entrada $343 → ganho
@@ -137,7 +137,71 @@ window.BAROLO_DATA = {
       // automática na baixa dentro do range, como a estratégia prevê).
       // IL do ciclo 2 ≈ 0 (HODL da cesta de entrada valeria $357,96 vs pooled
       // $358,14). Gas lifetime 0,00003943 ETH ($0,07). In-range.
-      note:'WETH/USDG 0.01% · Robinhood Chain · in-range · fee APR 50,91% · total APR 64,57%'
+      // ── 20/08/2026: FEES COLETADAS + POSIÇÃO SAIU DO RANGE POR CIMA ───────
+      // (a) Coleta: Lucas recolheu as taxas do ciclo 2 e trocou por USDG na
+      //     Robinhood (swap 0,0023 ETH → 5,28 USDG, gas $0,0067). Logo
+      //     totalFees do ciclo 2 = $5,28 REALIZADOS e uncollectedFees = 0.
+      //     Os 5,28 USDG ficaram na carteira (Lucas quer recomprar ETH mais
+      //     barato depois) e NÃO estão lançados em `stables` por decisão dele
+      //     — entram quando ele registrar no CoinGecko.
+      // (b) No mesmo bloco de transações houve um segundo swap (0,0080 ETH →
+      //     18,50 USDG). NÃO é taxa desta pool: é ETH que já tinha sido
+      //     retirado da pool antiga da Base (taxas já contabilizadas naquele
+      //     registro histórico) e que o Lucas só vendeu agora, ao preço-alvo.
+      //     Não lançar como renda — é rotação ETH→USDG. Registrado no Diário.
+      //     REGRA (Lucas, 20/08/2026): as duas pools tinham o MESMO objetivo —
+      //     se saíssem do range por cima, as fees em ETH seriam vendidas por
+      //     USD de qualquer jeito. Ou seja, manter fee em ETH depois do
+      //     fechamento é POSIÇÃO DIRECIONAL, não pool: a fee já foi lançada em
+      //     USD no fechamento daquele registro, e o que veio depois pertence ao
+      //     holding. Sempre que aparecer um swap de "fee velha" assim, tratar
+      //     como rotação de holding — nunca como renda de pool.
+      // (c) ETH a ~$2.283–2.309 > rangeMax $2.166,83 ⇒ posição FORA DO RANGE
+      //     POR CIMA = 100% USDG. A saída gradual ETH→USDG COMPLETOU.
+      //     `pooled` 382,80 é DERIVADO (sem print, chain sem fetch), não chute:
+      //     do print de 14/08 (0,17501149 WETH + 29,9106110 USDG @ $1.876,06)
+      //     sai L = 109,06 pelos dois lados; acima do range o valor é
+      //     L × (√pb − √pa) = 109,06 × 3,50993 = 382,80 USDG — e, por estar
+      //     100% em stable, esse número NÃO se move mais enquanto ETH ≥ $2.167.
+      //     Conferir no próximo print; se divergir, o print manda.
+      //     Resultado do ciclo 2 em USD (a régua do Lucas): 382,80 + 5,28
+      //     − 364,28 = +$23,80 (+6,53% em 13 dias). Preço médio de saída
+      //     ≈ √(1852,38 × 2166,83) = $2.003.
+      // ── (d) 20/08/2026: APORTE MONO-ATIVO DE 23,78 USDG (decisão do Lucas) ─
+      //     Ele mantém a pool e devolveu os 23,78 USDG (5,28 da fee coletada +
+      //     18,50 da venda do ETH velho) para a MESMA posição, mono-ativo. Com
+      //     o preço acima do range a posição é 100% USDG, então dá para
+      //     adicionar só USDG. Tese: espera capitulação até outubro e quer a
+      //     posição comprando ETH na descida.
+      //     CONTABILIDADE (para não contar duas vezes):
+      //       capital 364,28 → 388,06 (+23,78 aportados)
+      //       pooled  382,80 → 413,05 (PRINT Uniswap 20/08, ver (e) abaixo)
+      //       totalFees fica 5,28 (fee JÁ realizada; ao ser reinvestida vira
+      //         capital novo, por isso entra nos dois lados e o pnl não muda)
+      //       pnl = 413,05 + 5,28 − 388,06 = 30,27 ✔ (confere pelo outro lado:
+      //         capital externo 364,28 + 18,50 = 382,78 → 413,05 − 382,78 = 30,27)
+      //       holdings.ETH 2,37632741 → 2,36832741 (−0,0080 vendidos). SEM isso
+      //         o patrimônio contaria o mesmo dinheiro no ETH e na LP.
+      //         `invested` do ETH inalterado: aquele ETH era fee (custo zero).
+      //     ⚠️ SE aqueles 0,0080 ETH nunca tiverem sido lançados no CoinGecko,
+      //        esta subtração está a mais — reverter para 2,37632741.
+      // ── (e) PRINT Uniswap 20/08/2026 (confirma o aporte, valor manda) ────
+      //     Position $413,05 · 0% WETH / 100% USDG (0 WETH + 413,05 USDG) ·
+      //     Out of range · market $2.277,72 · range $1.852,38–$2.166,83 ·
+      //     "Fees earned $0 — you have no earnings yet" = confirma que a coleta
+      //     zerou o contador (uncollectedFees:0 está certo).
+      //     A derivação de $382,80 feita antes do print (via L da leitura de
+      //     14/08) ficou 1,59% BAIXA: 413,05 − 23,78 aportados = 389,27 real
+      //     contra 382,80 estimado. Causa: L vem de uma diferença de raízes
+      //     muito próximas (√P − √pa ≈ 0,274), então arredondamento do preço
+      //     exibido no print amplifica o erro. LIÇÃO: derivar L serve para não
+      //     deixar o card congelado num valor obsoleto, mas quando chegar print
+      //     o print manda — não tentar reconciliar a diferença como aporte.
+      //     Resultado do ciclo 2: +$30,27 sobre $382,78 de capital externo
+      //     (+7,91% em 13 dias). Posição agora é 100% stable, esperando o preço
+      //     voltar ao range para comprar ETH na descida (Lucas espera
+      //     capitulação até outubro). Enquanto fora do range: taxa ZERO.
+      note:'WETH/USDG 0.01% · Robinhood Chain · FORA DO RANGE (acima) = 100% USDG · fees $5,28 coletadas 20/08 · saída gradual completa · +23,78 USDG aportados 20/08 (mono-ativo)'
     }
   },
 

@@ -1063,68 +1063,90 @@ body, input, button, select, textarea {
 <!-- ══ TAB: MÉTRICAS ══ -->
 <div id="tab-metricas" class="tab-pane" style="display:none;">
 
-<div class="section-label">Performance Metrics</div>
+<div class="section-label">Métricas de Performance</div>
 
-<!-- Capital Allocation -->
+<!-- 4 grupos × 3 cards. Reorganizado em 20/08/2026: antes eram 3 fileiras soltas com o Sharpe
+     no grupo de retorno e o Retorno Acumulado no grupo de risco. Agora agrupa por significado e
+     absorve Benchmark/Alpha/ROIC, que vinham do painel duplicado da aba Performance (removido). -->
 <div class="card">
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">
+  <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);">Capital</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;">
     <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Capital Investido</div>
-      <div style="font-size:24px;font-weight:600;color:var(--text);" id="metric-invested">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Deployado em ativos</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-invested">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Deployado em ativos (aporte − dry powder)</div>
     </div>
     <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Dry Powder</div>
-      <div style="font-size:24px;font-weight:600;color:var(--text);" id="metric-dry">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Stables + oportunidades</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-dry">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Stables aguardando oportunidade</div>
     </div>
     <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Retorno (Investido)</div>
-      <div style="font-size:24px;font-weight:600;color:#3fb950;" id="metric-return">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Apreciação total</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-return">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Apreciação sobre o capital deployado</div>
     </div>
   </div>
 
-  <!-- Risk-Adjusted Metrics -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">
+  <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);">Retorno</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;">
     <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">CAGR (TWR)</div>
-      <div style="font-size:24px;font-weight:600;color:var(--text);" id="metric-cagr">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Anualizado · neutro a timing de aporte</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-cagr">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Anualizado · neutro ao timing do aporte</div>
     </div>
     <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
-      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">IRR (Money-Weighted)</div>
-      <div style="font-size:24px;font-weight:600;color:var(--text);" id="metric-irr">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">XIRR · credita o timing do DCA</div>
-    </div>
-    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
-      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Sharpe Ratio</div>
-      <div style="font-size:24px;font-weight:600;color:var(--text);" id="metric-sharpe">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Retorno ajustado ao risco</div>
-    </div>
-  </div>
-
-  <!-- Risk Metrics -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
-    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
-      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Volatilidade</div>
-      <div style="font-size:24px;font-weight:600;color:#f85149;" id="metric-vol">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Desvio padrão anualizado</div>
-    </div>
-    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
-      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Max Drawdown</div>
-      <div style="font-size:24px;font-weight:600;color:#f85149;" id="metric-maxdd">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Pior queda peak-to-trough</div>
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">IRR (XIRR)</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-irr">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Anualizado · credita o timing do DCA</div>
     </div>
     <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
       <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Retorno Acumulado (TWR)</div>
-      <div style="font-size:24px;font-weight:600;color:#3fb950;" id="metric-roi">—</div>
-      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Compounding desde jan/2022</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-roi">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Composto desde jan/2022</div>
     </div>
   </div>
 
-  <div style="font-size:11px;color:var(--muted);margin-top:20px;padding-top:14px;border-top:1px solid var(--border);line-height:1.6;">
-    <strong>Metodologia:</strong> Capital Investido = capital total aportado menos dry powder (stables). CAGR = TWR anualizado (Modified Dietz, neutro ao timing dos aportes — mede seleção de ativo). IRR = XIRR real (Money-Weighted), resolvido numericamente sobre o fluxo de caixa mensal — credita o timing do DCA. Sharpe Ratio = (retorno − 2.5% risco-free) / volatilidade. Max Drawdown = maior declínio peak-to-trough. Retorno Acumulado = TWR composto desde jan/2022 (não confundir com ROI sobre aporte líquido, no card P&L Total).
+  <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);">vs Benchmark</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;">
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Benchmark 50/50</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-bench">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Mesmos aportes em BTC/ETH · XIRR</div>
+    </div>
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Alpha</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-alpha">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">IRR do portfólio − IRR do benchmark</div>
+    </div>
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">ROIC</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-roic">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Resultado sobre capital médio empregado</div>
+    </div>
+  </div>
+
+  <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);">Risco</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;">
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Volatilidade</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-vol">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Desvio padrão anualizado dos retornos</div>
+    </div>
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Max Drawdown</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-maxdd">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Pior queda pico-a-vale</div>
+    </div>
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Sharpe Ratio</div>
+      <div style="font-size:24px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);" id="metric-sharpe">—</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:4px;">Retorno ajustado ao risco (ideal > 1)</div>
+    </div>
+  </div>
+
+  <div style="font-size:11px;color:var(--muted);margin-top:4px;padding-top:14px;border-top:1px solid var(--border);line-height:1.6;">
+    <strong>Metodologia:</strong> <strong>TWR</strong> (Modified Dietz, composto geometricamente) remove o efeito de <em>quando</em> você aportou — mede seleção de ativo. <strong>IRR</strong> é o XIRR real, resolvido por bisseção sobre o fluxo de caixa mensal — credita o timing do DCA, e é a métrica que responde "como foi o meu dinheiro". A diferença entre os dois é o valor mensurável do DCA. <strong>Benchmark</strong> = os mesmos aportes, nas mesmas datas, 50% BTC + 50% ETH, medido com o mesmo XIRR (comparável ao IRR — não é buy-and-hold). <strong>Alpha</strong> = IRR − Benchmark. <strong>ROIC</strong> = (valor final − total aportado) ÷ capital médio empregado. <strong>Sharpe</strong> = (TWR − 2% risk-free) ÷ volatilidade. <strong>Max Drawdown</strong> = maior queda pico-a-vale da curva de patrimônio. Fonte única: <code>calculatePerformanceMetrics()</code> sobre <code>wealthCurve</code> — os mesmos números aparecem no hero e na aba DeFi &amp; Mercado.
   </div>
 </div>
 
@@ -2177,12 +2199,31 @@ function renderUI(enriched){
    set('metric-dry', fmtCurrency(dryPowder, 0));
    set('metric-return', (retInvested >= 0 ? '+' : '') + retInvested.toFixed(1) + '%');
 
+   // Cor por sinal — antes as cores eram fixas no HTML (Retorno e Retorno Acumulado sempre
+   // verdes, Volatilidade sempre vermelha), então um retorno negativo aparecia em verde.
+   var signColor = function(id, v){ var e=document.getElementById(id); if(e) e.style.color = v>=0?'var(--green)':'var(--red)'; };
+   signColor('metric-return', retInvested);
+
    set('metric-cagr', (metrics.twr >= 0 ? '+' : '') + metrics.twr.toFixed(2) + '%');
    set('metric-irr', (metrics.irr >= 0 ? '+' : '') + metrics.irr.toFixed(2) + '%');
    set('metric-sharpe', (metrics.sharpe >= 0 ? '+' : '') + metrics.sharpe.toFixed(2));
-   set('metric-vol', '+' + metrics.volatility.toFixed(1) + '%');
+   set('metric-vol', metrics.volatility.toFixed(1) + '%');
    set('metric-maxdd', (metrics.maxDD >= 0 ? '+' : '−') + Math.abs(metrics.maxDD).toFixed(1) + '%');
    set('metric-roi', (metrics.twrCumulative >= 0 ? '+' : '') + metrics.twrCumulative.toFixed(0) + '%');
+   ['metric-cagr','metric-irr','metric-sharpe','metric-roi'].forEach(function(id, k){
+     signColor(id, [metrics.twr, metrics.irr, metrics.sharpe, metrics.twrCumulative][k]);
+   });
+   // Volatilidade não tem sinal bom/ruim — fica neutra. Max Drawdown é sempre negativo.
+   var _vol=document.getElementById('metric-vol'); if(_vol) _vol.style.color='var(--muted)';
+   var _mdd=document.getElementById('metric-maxdd'); if(_mdd) _mdd.style.color='var(--red)';
+
+   // Grupo "vs Benchmark" — absorvido do painel removido da aba Performance.
+   set('metric-bench', (metrics.benchmarkReturn >= 0 ? '+' : '') + metrics.benchmarkReturn.toFixed(2) + '%');
+   set('metric-alpha', (metrics.alpha >= 0 ? '+' : '') + metrics.alpha.toFixed(2) + '%');
+   set('metric-roic', (metrics.roic >= 0 ? '+' : '') + metrics.roic.toFixed(1) + '%');
+   var _b=document.getElementById('metric-bench'); if(_b) _b.style.color='var(--accent)';
+   signColor('metric-alpha', metrics.alpha);
+   signColor('metric-roic', metrics.roic);
 
    // Bloco "Métricas" estático da aba DeFi & Mercado — mesma fonte (era hardcoded: Sharpe -1.42,
    // Vol 87%, ambos desatualizados; MaxDD -50.9% já batia por coincidência).
@@ -2198,7 +2239,6 @@ function renderUI(enriched){
  buildConvexityUI(WEEKLY_UPDATE);
 
  // Render performance metrics (já computados no topo desta função, em `metrics`)
- renderPerformanceMetrics(metrics);
  console.log('[Performance Metrics]', {
   twr: metrics.twr.toFixed(2) + '%',
   benchmark: metrics.benchmarkReturn.toFixed(2) + '%',
@@ -2922,20 +2962,30 @@ function calculatePerformanceMetrics() {
   metrics.roic = ((finalValue - totalInvested) / avgInvested) * 100;
  }
 
- // ── Benchmark Return (50% BTC + 50% ETH, annualized) — preços reais de benchmark-data.js ──
+ // ── Benchmark (50% BTC + 50% ETH) — MESMOS APORTES, MESMAS DATAS ──
+ // CORREÇÃO 20/08/2026: antes isto era o retorno de PREÇO do índice (buy-and-hold desde
+ // Jan/22, sem aporte nenhum) comparado contra o IRR do portfólio, que credita o timing do
+ // DCA. Maçã com laranja — e o alpha herdava o erro. Agora o benchmark é simulado com o
+ // mesmo fluxo de caixa do portfólio (metade de cada aporte em BTC, metade em ETH) e medido
+ // com o MESMO XIRR, então benchmark e IRR são diretamente comparáveis. Mesma metodologia
+ // do gráfico "Benchmark de aporte equivalente" logo abaixo — os dois passam a concordar.
  if (bench && bench.btcUsd && bench.ethUsd && bench.btcUsd.length > 0 && bench.ethUsd.length > 0) {
-  const startIdx = 0;
-  const endIdx = bench.btcUsd.length - 1;
-  const btcReturn = (bench.btcUsd[endIdx] - bench.btcUsd[startIdx]) / bench.btcUsd[startIdx];
-  const ethReturn = (bench.ethUsd[endIdx] - bench.ethUsd[startIdx]) / bench.ethUsd[startIdx];
-  const benchReturn = 0.5 * btcReturn + 0.5 * ethReturn; // 50/50 mix
-
-  // Annualize (span calculado de bench.labels — não mais hardcoded)
-  const benchYears = bench.labels.length / 12;
-  metrics.benchmarkReturn = (Math.pow(1 + benchReturn, 1 / benchYears) - 1) * 100;
-
-  // Alpha = Portfolio TWR - Benchmark Return
-  metrics.alpha = metrics.twr - metrics.benchmarkReturn;
+  let unitsBtc = 0, unitsEth = 0;
+  const bCf = [], bT = [];
+  for (let i = 0; i < values.length; i++) {
+   const contrib = i === 0 ? invested[0] : Math.max(0, invested[i] - invested[i-1]);
+   if (bench.btcUsd[i] > 0) unitsBtc += (contrib * 0.5) / bench.btcUsd[i];
+   if (bench.ethUsd[i] > 0) unitsEth += (contrib * 0.5) / bench.ethUsd[i];
+   bCf.push(-contrib);
+   bT.push(i / 12);
+  }
+  const lastI = values.length - 1;
+  const benchFinal = unitsBtc * (bench.btcUsd[lastI] || 0) + unitsEth * (bench.ethUsd[lastI] || 0);
+  if (benchFinal > 0) {
+   bCf[bCf.length - 1] += benchFinal;
+   const bRate = computeXIRR(bCf, bT);
+   if (bRate !== null) metrics.benchmarkReturn = bRate * 100;
+  }
  }
 
  // ── IRR real (Money-Weighted Return, XIRR) ──
@@ -2951,6 +3001,10 @@ function calculatePerformanceMetrics() {
  cfCashflows[cfCashflows.length - 1] += values[values.length - 1]; // resgate no valor atual
  const xirrRate = computeXIRR(cfCashflows, cfTimes);
  metrics.irr = xirrRate !== null ? xirrRate * 100 : metrics.twr; // fallback se a bisseção falhar
+
+ // Alpha = IRR do portfólio − IRR do benchmark de aporte equivalente. Definido AQUI (e não
+ // junto do benchmark) porque depende do IRR. Uma definição só: o card lê metrics.alpha.
+ metrics.alpha = metrics.irr - metrics.benchmarkReturn;
 
  return metrics;
 }
@@ -2975,114 +3029,12 @@ function computeXIRR(cashflows, times) {
  return (lo + hi) / 2;
 }
 
-// Display performance metrics in dashboard
-function renderPerformanceMetrics(metrics) {
- // Create or update performance metrics section
- let metricsSection = document.getElementById('performance-metrics-section');
- if (!metricsSection) {
-  // Bug histórico: o seletor era [data-tab="performance"], que nunca existiu no DOM (o id
-  // real é #tab-performance) — esta seção nunca foi inserida na página até este fix.
-  const tabPane = document.getElementById('tab-performance');
-  if (!tabPane) return;
-
-  metricsSection = document.createElement('div');
-  metricsSection.id = 'performance-metrics-section';
-  metricsSection.className = 'metrics-grid';
-  metricsSection.innerHTML = `
-   <div class="section-label">MÉTRICAS DE PERFORMANCE</div>
-   <div class="metrics-row">
-    <div class="metric-card">
-     <div class="metric-label">TWR (ao ano)</div>
-     <div class="metric-value twr" id="m-twr">—</div>
-     <div class="metric-sub" id="m-twr-sub">Time-Weighted Return</div>
-    </div>
-    <div class="metric-card">
-     <div class="metric-label">Benchmark (50% BTC / 50% ETH)</div>
-     <div class="metric-value bench" id="m-bench">—</div>
-     <div class="metric-sub" id="m-bench-sub">Retorno do índice</div>
-    </div>
-    <div class="metric-card">
-     <div class="metric-label">Alpha</div>
-     <div class="metric-value alpha" id="m-alpha">—</div>
-     <div class="metric-sub" id="m-alpha-sub">Outperformance vs benchmark</div>
-    </div>
-    <div class="metric-card">
-     <div class="metric-label">Sharpe Ratio</div>
-     <div class="metric-value sharpe" id="m-sharpe">—</div>
-     <div class="metric-sub" id="m-sharpe-sub">Retorno ajustado ao risco</div>
-    </div>
-    <div class="metric-card">
-     <div class="metric-label">Max Drawdown</div>
-     <div class="metric-value dd" id="m-dd">—</div>
-     <div class="metric-sub" id="m-dd-sub">Maior queda pico-vale</div>
-    </div>
-    <div class="metric-card">
-     <div class="metric-label">ROIC</div>
-     <div class="metric-value roic" id="m-roic">—</div>
-     <div class="metric-sub" id="m-roic-sub">Retorno sobre capital investido</div>
-    </div>
-    <div class="metric-card">
-     <div class="metric-label">Volatilidade (ao ano)</div>
-     <div class="metric-value vol" id="m-vol">—</div>
-     <div class="metric-sub" id="m-vol-sub">Desvio padrão dos retornos</div>
-    </div>
-    <div class="metric-card">
-     <div class="metric-label">IRR (aprox.)</div>
-     <div class="metric-value irr" id="m-irr">—</div>
-     <div class="metric-sub" id="m-irr-sub">Internal Rate of Return</div>
-    </div>
-   </div>
-  `;
-
-  // Insert metrics section into performance tab (reuse tabPane from above).
-  // firstCard pode não ser filho direto de tabPane (querySelector busca descendentes) —
-  // insertBefore exige que o nó de referência seja filho direto de quem chama o método,
-  // então inserimos relativo ao PAI real de firstCard, não a tabPane diretamente.
-  if (tabPane) {
-   const firstCard = tabPane.querySelector('.card');
-   if (firstCard && firstCard.parentNode) {
-    firstCard.parentNode.insertBefore(metricsSection, firstCard.nextSibling);
-   } else {
-    tabPane.appendChild(metricsSection);
-   }
-  }
- }
-
- // Populate values
- // TWR — note: aportes concentrados após pico de out/25 criam TWR negativo
- const twrColor = metrics.twr > 0 ? 'var(--green)' : 'var(--red)';
- document.getElementById('m-twr').textContent = (metrics.twr > 0 ? '+' : '') + metrics.twr.toFixed(1) + '%';
- document.getElementById('m-twr').style.color = twrColor;
- const twrNote = metrics.twr < 0 ? 'removido timing dos aportes (timing desfavorável)' : 'Time-Weighted Return';
- document.getElementById('m-twr-sub').textContent = twrNote;
-
- document.getElementById('m-bench').textContent = (metrics.benchmarkReturn > 0 ? '+' : '') + metrics.benchmarkReturn.toFixed(1) + '%';
- document.getElementById('m-bench').style.color = 'var(--accent)';
- document.getElementById('m-bench-sub').textContent = '50% BTC + 50% ETH';
-
- // ALPHA — diferença entre IRR real (money-weighted, credita o timing do DCA) e o benchmark
- const alphaActual = metrics.irr - metrics.benchmarkReturn;
- const alphaColor = alphaActual > 0 ? 'var(--green)' : 'var(--red)';
- document.getElementById('m-alpha').textContent = (alphaActual > 0 ? '+' : '') + alphaActual.toFixed(1) + '%';
- document.getElementById('m-alpha').style.color = alphaColor;
- document.getElementById('m-alpha-sub').textContent = 'IRR ' + (metrics.irr>=0?'+':'') + metrics.irr.toFixed(1) + '% vs Benchmark ' + (metrics.benchmarkReturn>=0?'+':'') + metrics.benchmarkReturn.toFixed(1) + '%';
-
- document.getElementById('m-sharpe').textContent = metrics.sharpe.toFixed(2);
- document.getElementById('m-sharpe-sub').textContent = 'Índice Sharpe (ideal > 1)';
-
- document.getElementById('m-dd').textContent = metrics.maxDD.toFixed(1) + '%';
- document.getElementById('m-dd-sub').textContent = 'Máximo drawdown histórico';
-
- document.getElementById('m-roic').textContent = metrics.roic.toFixed(1) + '%';
- document.getElementById('m-roic-sub').textContent = 'ROI sobre capital médio';
-
- document.getElementById('m-vol').textContent = metrics.volatility.toFixed(1) + '%';
- document.getElementById('m-vol-sub').textContent = 'Volatilidade anualizada';
-
- document.getElementById('m-irr').textContent = (metrics.irr>=0?'+':'') + metrics.irr.toFixed(1) + '%';
- document.getElementById('m-irr-sub').textContent = 'XIRR (money-weighted, real)';
-}
-
+// NOTA (20/08/2026): renderPerformanceMetrics() foi REMOVIDA. Ela injetava um painel de 8
+// cards na aba Performance (TWR/Benchmark/Alpha/Sharpe/MaxDD/ROIC/Vol/IRR) que duplicava 5 dos
+// 9 cards que a aba Métricas já tinha, com nomes diferentes para a mesma coisa (TWR vs CAGR).
+// Os 3 exclusivos — Benchmark, Alpha e ROIC — foram absorvidos pela aba Métricas, que agora
+// concentra tudo em 4 grupos (Capital · Retorno · vs Benchmark · Risco). Fonte única continua
+// sendo calculatePerformanceMetrics(); quem popula é o bloco em renderUI().
 // ── RENDA PASSIVA REALIZADA — livro-razão mensal 2026 ─────────────────────
 // lp = fees LP realizadas na coleta (fechamento da pool — mesmo critério do P&L YTD de pools.html)
 // lend = lending líquido estimado do mês: posição × APY documentado − juros de borrow (fontes: snapshots mensais no CLAUDE.md)
@@ -4252,11 +4204,14 @@ function buildPerfChart(period){
  for(let i=1;i<d.p.length;i++){ if(d.p[i]>_runPk) _runPk=d.p[i]; const _c=(d.p[i]-_runPk)/_runPk*100; if(_c<_maxDD) _maxDD=_c; }
  const dd=_maxDD.toFixed(1);
  const cs=(lbl,val,clr)=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center;"><div style="font-size:8.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px;">${lbl}</div><div style="font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:18px;font-weight:700;color:${clr||'var(--text)'};">${val}</div></div>`;
- // Para período ALL: substitui Variação por Lifetime Return (denominador = capital inicial real, não primeiro patrimônio)
+ // Para período ALL: Lifetime Return = TWR cumulativo (deposit-neutro).
+ // CORREÇÃO 20/08/2026: era (patrimônio de hoje − aporte do PRIMEIRO mês) / aporte do primeiro
+ // mês (~$1.061), o que dava +820% — o mesmo erro categórico já corrigido em s-cagr /
+ // ev-growth-pct / metric-roi em 19/08: atribui a "performance" um crescimento que é
+ // majoritariamente aporte posterior. Agora usa a mesma fonte dos outros três cards.
  let retCard;
  if (period === 'all') {
-   const initCap = (WEEKLY_UPDATE.wealthCurve.invested[0]) || 1061;
-   const lr = ((last - initCap) / initCap * 100);
+   const lr = calculatePerformanceMetrics().twrCumulative;
    retCard = cs('LIFETIME RETURN', (lr>=0?'+':'')+lr.toFixed(1)+'%', lr>=0?'var(--green)':'var(--red)');
  } else {
    const chg=(((last-first)/first)*100).toFixed(1);
