@@ -83,10 +83,10 @@ window.BAROLO_DATA = {
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.37632741, invested:4880.53 },
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.25752,    invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
-    { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.363,    invested:45.87   },
+    { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.36298802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
     { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:218,        invested:143.88  },
     { ticker:'ZK',    cgId:'zksync',                   qty:876,        invested:0       },
@@ -227,9 +227,9 @@ window.BAROLO_DATA = {
       //     Não há dupla contagem: os 18,50 USDG que entraram na LP vieram de um
       //     ETH que estava FORA do CoinGecko. O patrimônio sobe 18,50 não como
       //     ganho, mas como valor real que passou a ser rastreado.
-      //     ⇒ DAQUI EM DIANTE: ao vender fee em ETH, NÃO subtrair de holdings.
-      //       Só lançar na LP/stables o destino do dinheiro. A qty de holdings
-      //       vem do print do CoinGecko e SÓ muda quando o print muda.
+      //     ⇒ ⚠️ REGRA REVOGADA EM 21/08/2026 — ver (f) abaixo. Ela mantinha fora da
+      //       contabilidade rendimento que existe de verdade. Vale agora a regra
+      //       unificada do SOL/USDS: yield entra como quantidade, custo zero.
       // ── (e) PRINT Uniswap 20/08/2026 (confirma o aporte, valor manda) ────
       //     Position $413,05 · 0% WETH / 100% USDG (0 WETH + 413,05 USDG) ·
       //     Out of range · market $2.277,72 · range $1.852,38–$2.166,83 ·
@@ -246,6 +246,34 @@ window.BAROLO_DATA = {
       //     (+7,91% em 13 dias). Posição agora é 100% stable, esperando o preço
       //     voltar ao range para comprar ETH na descida (Lucas espera
       //     capitulação até outubro). Enquanto fora do range: taxa ZERO.
+      // ── (f) RECONCILIAÇÃO DO ETH COM O COINGECKO (21/08/2026) ────────────
+      //     Print CoinGecko 21/08: ETH 2,25752 (era 2,37632741). O ajuste veio de
+      //     DOIS lançamentos, feitos pelo Lucas:
+      //       −0,183      saída do ETH que entrou na pool em 14/07 e hoje é USDG
+      //       +0,0642     entrada de yield a custo zero (aWETH da AAVE + taxas em
+      //                   ETH de pools que nunca tinham sido lançadas)
+      //       = 2,25752, batendo com a soma que ele fez na carteira (AAVE + wallet)
+      //     `invested` fica em 4880.53: o que saiu era LP e o que entrou é renda.
+      //
+      //     ⇒ DUAS REGRAS QUE PASSAM A VALER (substituem a de 21/08 de manhã):
+      //       1. ETH (ou qualquer token) que entra numa pool SAI do CoinGecko no
+      //          mesmo dia. A partir daí quem conta aquele valor é a LP —
+      //          Patrimônio = CoinGecko + LP − dívida, então deixar nos dois lados
+      //          é dupla contagem. Os 0,183 ficaram contados em dobro de 14/07 a
+      //          21/08 (~$434 de patrimônio inflado no pico).
+      //       2. Yield em qualquer token (aToken da AAVE que cresce sozinho, fee de
+      //          pool recebida em ETH) ENTRA no CoinGecko como quantidade, com
+      //          custo zero — mesma regra já aplicada ao SOL e ao USDS em 15/07.
+      //          O `invested` nunca sobe com yield; o ganho aparece como P&L.
+      //
+      //     O USDG da pool NÃO foi lançado no CoinGecko, e é assim que deve ser:
+      //     os $413,05 já entram pelo lado da LP (defi.uniswapV3.pooled).
+      //
+      //     ⚠️ PENDENTE: os números informados não fecham entre si — AAVE 2,16
+      //     (print, arredondado) + carteira 0,131 = 2,291, contra o total de
+      //     2,25752 que ele somou. Resíduo de 0,03348 ETH (~$79). O supply exato
+      //     do aWETH resolveria; afeta também `principals.aave.WETH` (2,15) e o
+      //     cálculo de juros acumulados do emprestimos.html.
       note:'WETH/USDG 0.01% · Robinhood Chain · FORA DO RANGE (acima) = 100% USDG · fees $5,28 coletadas 20/08 · saída gradual completa · +23,78 USDG aportados 20/08 (mono-ativo)'
     }
   },
