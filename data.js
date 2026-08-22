@@ -77,7 +77,7 @@
      `defi.uniswapV3`.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-21',
+  asOf: '2026-08-22',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -97,7 +97,7 @@ window.BAROLO_DATA = {
 
   // Stablecoins (também já no total CoinGecko).
   stables: [
-    { ticker:'USDT', cgId:'tether',           qty:1302.524, invested:1302.524 },
+    { ticker:'USDT', cgId:'tether',           qty:1487.524, invested:1487.524 },
     { ticker:'USDS', cgId:'usds',            qty:317.44,   invested:300      }
   ],
 
@@ -269,6 +269,17 @@ window.BAROLO_DATA = {
       //     O USDG da pool NÃO foi lançado no CoinGecko, e é assim que deve ser:
       //     os $413,05 já entram pelo lado da LP (defi.uniswapV3.pooled).
       //
+      //     ── REGRA REFINADA (22/08/2026) — o critério NÃO é "operação vs hold" ──
+      //     Fica FORA do CoinGecko só o que JÁ É CONTADO EM OUTRO LUGAR:
+      //       · pool/LP        → fora  (contada por defi.uniswapV3.pooled)
+      //       · caixa em corretora → DENTRO (não existe outro campo que a conte;
+      //         se sair do CoinGecko, some do patrimônio). Mesma natureza das
+      //         stables na AAVE/Kamino, que sempre estiveram lançadas.
+      //     Aplicado em 22/08: +185 USDT de caixa na corretora (ordem em aberto
+      //     para comprar BTC numa queda) lançados no CoinGecko a custo US$ 185 —
+      //     stable com custo em USD dá P&L zero, que é o correto. O custo em BRL
+      //     desse aporte vive na planilha Custo_BRL (aba Fiscal), não aqui.
+      //
       //     ⚠️ PENDENTE: os números informados não fecham entre si — AAVE 2,16
       //     (print, arredondado) + carteira 0,131 = 2,291, contra o total de
       //     2,25752 que ele somou. Resíduo de 0,03348 ETH (~$79). O supply exato
@@ -328,7 +339,7 @@ window.BAROLO_DATA = {
   },
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:760.78, kamino:824.58, total:1585.36 },
-  stablesTotalUSD: 1619.96   // USDT 1302.52 + USDS 317.44
+  stablesTotalUSD: 1804.96   // USDT 1487.52 + USDS 317.44
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
