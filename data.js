@@ -83,21 +83,21 @@ window.BAROLO_DATA = {
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.25752,    invested:4880.53 },
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.23062,    invested:4880.53 },
     { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
-    { ticker:'EIGEN', cgId:'eigenlayer',               qty:153.36298802, invested:45.87 },
+    { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
-    { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:218,        invested:143.88  },
+    { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:218.07,     invested:143.88  },
     { ticker:'ZK',    cgId:'zksync',                   qty:876,        invested:0       },
-    { ticker:'XAI',   cgId:'xai-blockchain',           qty:692.86,     invested:164.52  },
+    { ticker:'XAI',   cgId:'xai-blockchain',           qty:898.879,    invested:164.52  },
     { ticker:'ZETA',  cgId:'zetachain',                qty:51.1434,    invested:0       },
     { ticker:'SCR',   cgId:'scroll',                   qty:0.0018,     invested:0       }
   ],
 
   // Stablecoins (também já no total CoinGecko).
   stables: [
-    { ticker:'USDT', cgId:'tether',           qty:1487.524, invested:1487.524 },
+    { ticker:'USDT', cgId:'tether',           qty:1789.524, invested:1772.92  },
     { ticker:'USDS', cgId:'usds',            qty:317.44,   invested:300      }
   ],
 
@@ -364,9 +364,30 @@ window.BAROLO_DATA = {
     //    (holdings 24,765222 vs supply 24,48). Por isso o CSV termina em 15/07 e continua
     //    completo.
   },
+  // ── RECONCILIACAO COMPLETA COM O COINGECKO (22/08/2026) ──────────────────
+  // Varredura das 4 carteiras EVM + posicoes em DeFi + AAVE, cruzada token a token
+  // com o print do CoinGecko. Ajustes lancados pelo Lucas:
+  //   ETH    2,25752      -> 2,23062       (AAVE 2,1629 + carteiras 0,06595 + Yearn V3 0,0018)
+  //   EIGEN  153,36298802 -> 131,44388802  (o CoinGecko estava a mais)
+  //   XAI    692,86       -> 898,879       (estava STAKED em "unity capital X IF" —
+  //                                         por isso nao aparecia na lista de tokens)
+  //   POL    218          -> 218,07
+  //   USDT   1.487,524    -> 1.789,524     (AAVE 1.604,84 + corretora 185 + carteira 0,269)
+  // RDNT ficou de fora de proposito: a diferenca de -12,39 unidades vale 1 CENTAVO e o
+  // XAI provou que existe posicao em stake fora da lista. So mexer se aparecer numa varredura.
+  //
+  // `invested` do USDT = 1.772,92, nao 1.789,52: dos 302 que faltavam, 17,19 sao juros
+  // declarados pela propria AAVE (campo EARNINGS) e entram a custo zero; os outros 285,40
+  // sao principal que o Lucas depositou e nunca lancou — esses SIM tem custo.
+  // Os demais ajustes nao mexem em `invested`: correcao de contagem, nao operacao. O XAI
+  // extra entrou a custo zero (recompensa de staking) — confere com o GP do print.
+  //
+  // ⚠️ PENDENTE: a ORIGEM dos 285,40 USDT nao foi identificada. Se vieram de fiat, falta
+  // o custo em BRL na planilha Custo_BRL (aba Fiscal) — hoje em R$ 36.632,97.
+  //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:760.93, kamino:824.58, total:1585.51 },
-  stablesTotalUSD: 1804.96   // USDT 1487.52 + USDS 317.44
+  stablesTotalUSD: 2106.96   // USDT 1789.52 + USDS 317.44
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
