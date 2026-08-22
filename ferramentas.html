@@ -2032,7 +2032,8 @@ body, input, button, select, textarea {
     </table>
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:10px;line-height:1.6;">
       * Só conversões <b>fiat→cripto</b> (BRL saindo do banco). Compras cripto↔cripto não geram custo novo em BRL — o custo migra da stable usada.<br>
-      * BUSD/DOT/BNB não estão mais em carteira (convertidos depois) — o custo deles migrou para os ativos atuais via trades.
+      * BUSD/DOT/BNB não estão mais em carteira (convertidos depois) — o custo deles migrou para os ativos atuais via trades.<br>
+      * <b>Pendente:</b> os depósitos de julho/2026 (R$ 500 em 10/07 + R$ 450 em 14/07 = R$ 950) não aparecem como conversão USDT/BRL na janela de 3 meses do extrato — viraram compra direta em par BRL ou seguem em BRL na corretora. Falta o histórico de ordens spot em pares BRL para fechar o rastro.
     </div>
   </div>
 
@@ -2232,14 +2233,21 @@ function switchTab(id, btn){
 // Ao importar novos extratos das CEX, atualizar FISCAL_ENTRADAS + APORTADO_BRL.
 // ══════════════════════════════════════════════
 window.Fiscal = (function(){
-  var APORTADO_BRL = 35498.19;   // total Binance 29.664,20 + OKX 5.065,50 (fiat→cripto)
+  // Baseline: planilha Custo_BRL_Consolidado_Lucas.xlsx (gerada 11/05/2026) = R$ 35.498,19
+  //  + 3 conversões USDT/BRL na OKX posteriores à planilha (print de ordens 22/08/2026):
+  //      23/05  45,69601 USDT @ 5,1317 = R$   234,50
+  //      05/06  76,39353 USDT @ 5,2398 = R$   400,29
+  //      17/06  96,26852 USDT @ 5,1938 = R$   500,00
+  //    subtotal 218,35806 USDT por R$ 1.134,78 (câmbio médio 5,1969)
+  // Conferido que NÃO duplica: a planilha termina em 08/05/2026, as três são posteriores.
+  var APORTADO_BRL = 36632.97;   // Binance 29.664,20 + OKX 6.200,28 (fiat→cripto)
   var FISCAL_ENTRADAS = [
     { t:'BTC',  qty:'0,00337',    brl:998.11,   avg:'296.174,15' },
     { t:'ETH',  qty:'0,3872',     brl:5844.80,  avg:'15.096,18'  },
     { t:'SOL',  qty:'1,012',      brl:914.48,   avg:'903,63'     },
     { t:'ADA',  qty:'307,99',     brl:3713.84,  avg:'12,06'      },
     { t:'XAI',  qty:'79',         brl:101.52,   avg:'1,29'       },
-    { t:'USDT', qty:'2.576,24',   brl:13931.79, avg:'5,41'       },
+    { t:'USDT', qty:'2.794,60',   brl:15066.57, avg:'5,39'       },
     { t:'USDC', qty:'531,13',     brl:2900.35,  avg:'5,46'       },
     { t:'BUSD', qty:'1.231,66',   brl:6433.55,  avg:'5,22'       },
     { t:'DOT',  qty:'2,97',       brl:352.77,   avg:'118,78'     },
