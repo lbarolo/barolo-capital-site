@@ -104,8 +104,8 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.1629, apy:0.0160 }, USDT:{ qty:1600, apy:0.0288 } },
-      borrow: { USDC:{ qty:760.78, apy:0.0420 } },
+      supply: { WETH:{ qty:2.1629, apy:0.0221 }, USDT:{ qty:1604.84, apy:0.0310 } },
+      borrow: { USDC:{ qty:760.93, apy:0.0492 } },
       // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
       // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
       // borrow $760,17, LTV 13,4% -> HF 6,04.
@@ -117,6 +117,23 @@ window.BAROLO_DATA = {
       // @$2.372 x 0,83 + 1.600 USDT x 0,78 = ~$5.500, bate com os $5.516 do print). Collateral/
       // Borrow = 5.516/760,78 = 7,25, e desta vez CONFERE com o fetch ao vivo do briefing.json
       // (7,26) — ao contrário do caso de 18/08, aqui o número já vem corretamente ponderado.
+      // ── PRINT "POSITION DETAILS" DA AAVE (22/08/2026) — dados exatos ─────
+      //   WETH: deposited 2,16 (exato 2,1629) · APY 2,21% · earnings 0,01 ETH
+      //         ($32,07 = 0,0132 ETH) · CF 83%
+      //   USDT: deposited "1,60 mil" (ARREDONDADO) · APY 3,10% · earnings 17,19 · CF 78%
+      //   USDC borrow: 760,93 · APY 4,92% · fees paid 12,93
+      //   Borrowing Power $4.849,44 · Borrowed $761,00
+      //
+      //   ⚠️ USDT: o card arredonda para "1,60 mil", e o data.js vinha gravando 1600.
+      //   O valor real sai do principal: 1.587,65 + 17,19 de earnings = 1.604,84
+      //   (que de fato arredonda para "1,60 mil"). Corrigido — estava $4,84 a menos.
+      //   O principal 1.587,65 fica CONFIRMADO por esta conta, não muda.
+      //   O mesmo cruzamento valida o WETH: principal 2,15 + 0,0132 de earnings
+      //   = 2,1632, contra os 2,1629 informados. Bate.
+      //
+      //   HF 7,37 = (borrowing power 4.849,44 + borrowed 761,00) / 761,00 — o
+      //   numerador é o colateral JÁ PONDERADO pelo CF de cada ativo, que é o que
+      //   a Aave usa. Substitui o 6,04 de 15/08.
       // ── SUPPLY EXATO DO aWETH (22/08/2026) ────────────────────────────────
       // 2.1629 (antes 2.16, arredondado do card). Com o exato, a decomposição do
       // ETH fecha:  CoinGecko 2,25752 − AAVE 2,1629 = 0,09462 em carteira.
@@ -127,7 +144,7 @@ window.BAROLO_DATA = {
       // com uma varredura única antes de lançar; NÃO é dust desprezível (o gas de
       // 0,04996 SOL deixado fora em 15/07 valia $3,88, duas ordens de grandeza
       // menos). Enquanto não resolver, o patrimônio está ~$88 subestimado.
-      healthFactor: 7.25
+      healthFactor: 7.37
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -348,7 +365,7 @@ window.BAROLO_DATA = {
     //    completo.
   },
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:760.78, kamino:824.58, total:1585.36 },
+  debt:   { aave:760.93, kamino:824.58, total:1585.51 },
   stablesTotalUSD: 1804.96   // USDT 1487.52 + USDS 317.44
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
