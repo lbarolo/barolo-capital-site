@@ -4623,6 +4623,278 @@ após o fechamento é holding, não renda de pool; ciclo 2 em **+US$ 30,27 (+7,9
 mantém a posição esperando capitulação até outubro (taxa zero enquanto fora do range)
 
 ---
+
+## Sessão 21–22/08/2026 — Fix do benchmark.yml (451), merge na main, aba Métricas unificada, e RECONCILIAÇÃO COMPLETA do CoinGecko
+
+### Contexto
+Continuação direta da sessão de 20/08 (a pool saindo do range). Começou com o Lucas
+perguntando se a falha vermelha do `benchmark.yml` estava certa, passou por uma rodada de UI,
+e terminou numa auditoria token a token do CoinGecko que mudou 5 posições e produziu 3 regras
+novas de contabilidade.
+
+### 1. `benchmark.yml` — HTTP 451 (Binance geo-bloqueia os runners)
+
+A primeira execução agendada da Action criada em 19/08 falhou: `api.binance.com` responde
+**451 Unavailable For Legal Reasons** para IPs dos EUA, e os runners do GitHub ficam na Azure US.
+
+⚠️ **LIÇÃO (vale para qualquer script novo de Action):** o teste local não pega isso — o sandbox
+do Claude Code sai por proxy fora dos EUA, então a Binance responde normalmente aqui e 451 lá.
+Ao escolher uma API para rodar em Action, **conferir geo-bloqueio, não só se responde no
+sandbox**. As Actions que já funcionavam (`networth.yml`, `briefing.yml`) usam CoinGecko.
+
+**Fix** em `scripts/fetch-benchmark.js`: busca em **cascata**, primeira fonte que responder —
+1) **Coinbase Exchange** (americana; candles diários agregados em fechamento mensal),
+2) **Yahoo Finance** (mensais direto), 3) **Binance** (fallback local, segue 451 no Actions).
+Também: `fetchWithRetry` não reinsiste em 4xx; step de commit ganhou
+`if: github.ref == 'refs/heads/main'` (permite disparo manual em branch só para testar o fetch);
+`actions/checkout@v5` + `setup-node@v5` + Node 22 (elimina o aviso de deprecação do Node 20).
+
+**Validação:** como nenhuma fonte alternativa passa pelo proxy desta sessão (só Binance e BCB
+estão na allowlist — o inverso do runner), testei disparando a própria Action via
+`workflow_dispatch`. Verde: `BTC: 56 meses via Coinbase Exchange · ETH: 56 meses · OK 08/26`.
+
+**Merge na main** (autorizado): 9 commits da branch `claude/taxas-swap-usdg-calculo-kjxi4j`.
+O merge disparou duas Actions em cadeia — `benchmark.yml` rodou e commitou sozinha
+(`benchmark-data.js` atualizado: BTC $76.751 / ETH $2.372), e `sync-emprestimos.yml` regravou o
+bundle. A execução agendada de 21/08 de manhã ainda falhou (o fix só chegou na main depois).
+
+### 2. `portfolio_analytics.html` — layout da aba Performance + métricas
+
+**Bug de layout que EU causei em 19/08:** ao consertar o seletor de `renderPerformanceMetrics()`,
+o painel passou a ser injetado depois do primeiro `.card` — cujo pai é o grid de 2 colunas
+"Desempenho Histórico | Benchmark". Ele virava a 2ª célula e empurrava o gráfico de benchmark
+para baixo. Corrigido ancorando no **pai do grid**.
+
+**Depois disso, o painel foi REMOVIDO de vez** (~117 linhas): ele duplicava 5 dos 9 cards que a
+aba Métricas já tinha, com nomes diferentes para a mesma coisa (TWR vs CAGR, além de Sharpe,
+Max DD, Volatilidade e IRR). Os 3 exclusivos (Benchmark, Alpha, ROIC) foram absorvidos.
+
+**Aba Métricas reorganizada** — de 3 fileiras soltas para **4 grupos rotulados de 3 cards**:
+`Capital` (Investido · Dry Powder · Retorno) · `Retorno` (CAGR TWR · IRR XIRR · Retorno
+Acumulado) · `vs Benchmark` (Benchmark 50/50 · Alpha · ROIC) · `Risco` (Volatilidade · Max DD ·
+Sharpe). Antes o Sharpe estava no grupo de retorno e o Retorno Acumulado no de risco.
+
+**Correções de dado:**
+| Card | Antes | Depois |
+|---|---|---|
+| Lifetime Return | +820,2% | **−28,5%** |
+| Benchmark | +5,4% | **+2,0%** |
+| Alpha | −6,7% | **−3,4%** |
+| Sharpe | −0,14 **em verde** | vermelho |
+| ROIC / IRR negativos | dourado | vermelho |
+
+- **Lifetime Return** repetia o erro categórico já corrigido nos outros cards em 19/08: dividia o
+  patrimônio de hoje pelo aporte do **primeiro mês** (~$1.061). Agora usa `twrCumulative`.
+- **Benchmark** era retorno de PREÇO do índice (buy-and-hold desde jan/22, sem aporte) comparado
+  contra o IRR do portfólio, que credita timing — maçã com laranja, e o alpha herdava o erro.
+  Agora o 50/50 é simulado com o **mesmo fluxo de caixa** e medido com o **mesmo XIRR**. De
+  quebra corrigiu um desalinhamento de período (usava o último mês do benchmark contra o último
+  da wealthCurve, que são diferentes).
+- `metrics.alpha` tinha duas definições (twr−bench no objeto, irr−bench no card). Uma só agora.
+- Cor por sinal onde as cores eram fixas no CSS/HTML.
+
+**Retorno Anual — ganho em dinheiro no tooltip.** O Lucas estranhou 2025 aparecer negativo
+(−2,5%) num ano em que o patrimônio subiu 25,7%. **Não era erro:** dos +$2.223 de variação,
++$2.156 foram aporte — o ganho dos ativos foi **+$67**. Em 2025 o BTC fez −6,3% e o ETH −10,9%,
+o que torna ~0% coerente. O verde antigo vinha do array hardcoded (os comentários admitiam
+"Sum ~+68%"), removido em 19/08. Em vez de mascarar, o tooltip agora abre em 3 linhas —
+variação do patrimônio, aporte do ano, ganho dos ativos (helper `annualCashSummary`) — e há nota
+abaixo do gráfico explicando o que o TWR mede.
+
+Ano a ano: 2022 aporte $2.367 / ganho −$1.590 · 2023 $610 / +$1.218 · 2024 $975 / **+$5.054** ·
+2025 $2.156 / +$67 · 2026 YTD $1.142 / −$4.968.
+
+### 3. `ferramentas.html` — botões atrás da barra fixa
+
+`#panel-semanal`, `#panel-ciclo` e `#panel-fiscal` vivem **FORA do `.container`** — e é o
+container que reserva os 80px de `padding-bottom` para a `.update-bar` (`position:fixed`).
+Medido com Chromium (viewport 1600×960, página no fim): dos 34px do botão SALVAR SEMANA,
+**31px ficavam cobertos** — 3px clicáveis. Fix: `padding-bottom:80px` nos três. Depois: botão
+termina 49px acima da barra, sobreposição zero nas três abas.
+
+Falso positivo descartado: os botões 🖊️ do Diário aparecem "abaixo" da barra na medição, mas
+estão dentro de `#diary-list`, que tem `overflow-y:auto` — itens fora da lista rolável.
+
+### 4. RECONCILIAÇÃO COMPLETA DO COINGECKO (o grosso da sessão)
+
+Começou com "quanto de ETH eu vendi para lançar no CoinGecko" e virou auditoria token a token.
+
+**Sequência do ETH (3 correções em cadeia, cada uma desmentindo a anterior):**
+1. Em 20/08 eu tinha subtraído 0,0080 ETH dos holdings supondo que a fee estava lançada.
+   **Revertido em 21/08** (commit `076c053`, de outra sessão): o Lucas confirmou que não lança
+   fee em ETH no CoinGecko, com duas evidências (print pós-venda inalterado + git log da qty).
+2. Calculei que faltavam 0,183 (o que entrou na pool). **Errado** — a pool girou durante o ciclo
+   (0,183 → 0,132 → 0,175 → 0), então "o que entrou" ≠ "o que saiu".
+3. O que fecha é o outro lado: **ETH que ele tem hoje**. AAVE + carteiras + pool(0).
+
+**Os prints das 4 carteiras + posições DeFi resolveram:**
+- ETH nas carteiras: **0,06595** (somado pelos valores em USD; a notação de subscrito
+  `0.0₄6206` é ambígua em OCR)
+- **WETH 0,0018 no Yearn V3** — não aparecia na lista de tokens
+- **XAI 898,879 STAKED em "unity capital X IF"** — explica por que o XAI não aparecia nas
+  carteiras, e o CoinGecko estava **206 XAI a MENOS**, não a mais
+
+**Print "Position Details" da AAVE** trouxe os exatos:
+| | Antes (arredondado) | Depois (exato) |
+|---|---|---|
+| WETH supply | 2,16 @1,60% | **2,1629 @2,21%** |
+| USDT supply | 1.600 @2,88% | **1.604,84 @3,10%** |
+| Borrow USDC | 760,78 @4,20% | **760,93 @4,92%** |
+| Health Factor | 6,04 | **7,37** |
+
+O USDT estava **$4,84 a menos**: o card mostra "1,60 mil" arredondado, e o real sai do principal
+(1.587,65 + 17,19 de earnings = 1.604,84). **A mesma conta VALIDA os dois principals** — o
+`emprestimos.html` agora reproduz o print exatamente: juros retidos **17,19 USDT** e
+**0,0129 ETH** ($32,07). O bug de 14/08 (depósito virando rendimento) está fechado dos dois lados.
+HF 7,37 = (borrowing power 4.849,44 + borrowed 761) / 761 — numerador já ponderado pelos CFs
+(WETH 83% / USDT 78%).
+
+### Dados atualizados — ajustes lançados no CoinGecko pelo Lucas
+
+| Token | Antes | Depois | Origem |
+|---|---|---|---|
+| **ETH** | 2,25752 | **2,23062** | AAVE 2,1629 + carteiras 0,06595 + Yearn 0,0018 |
+| **EIGEN** | 153,36298802 | **131,44388802** | CoinGecko estava a mais |
+| **XAI** | 692,86 | **898,879** | estava em staking |
+| **POL** | 218 | **218,07** | — |
+| **USDT** | 1.487,524 | **1.789,524** | AAVE 1.604,84 + corretora 185 + carteira 0,269 |
+| USDT `invested` | 1.487,524 | **1.772,92** | 17,19 juro (custo 0) + 285,40 principal (com custo) |
+| stablesTotalUSD | 1.619,96 | **2.106,96** | |
+| debt.aave | 760,78 | **760,93** | |
+
+**RDNT deixado de fora de propósito:** diferença de −12,39 unidades = **1 centavo**, e o XAI
+provou que existe posição em stake fora da lista. Só mexer se aparecer numa varredura.
+
+Conferido: as 13 quantidades batem exatamente com o print. A diferença de $16,39 no total vem
+dos preços arredondados (ETH e SOL respondem por $14,27 — o preço implícito do ETH é $2.424,95,
+não os $2.428,43 exibidos).
+
+### Aba Fiscal — 3 conversões USDT/BRL de mai–jun/2026
+
+Planilha `Custo_BRL_Consolidado_Lucas.xlsx` (enviada pelo Lucas, **não está no repo** — o
+`.gitignore` bloqueia dados financeiros) foi gerada em **11/05/2026** e sua última conversão é de
+08/05. As três do print de ordens são posteriores → somar não duplica.
+
+| Data | USDT | Câmbio | BRL |
+|---|---|---|---|
+| 23/05/2026 | 45,69601 | 5,1317 | R$ 234,50 |
+| 05/06/2026 | 76,39353 | 5,2398 | R$ 400,29 |
+| 17/06/2026 | 96,26852 | 5,1938 | R$ 500,00 |
+| **Total** | **218,35806** | **5,1969** | **R$ 1.134,78** |
+
+`FISCAL_ENTRADAS` USDT: 2.576,24 → **2.794,60** un · R$ 13.931,79 → **15.066,57** · taxa 5,41 →
+**5,39**. `APORTADO_BRL`: 35.498,19 → **36.632,97**.
+
+**Planilha .xlsx atualizada foi gerada e enviada ao Lucas por arquivo** (3 linhas na aba OKX, 3 na
+Evolução BRL-USDT, Resumo recalculado, formatação preservada). ⚠️ Na primeira tentativa escrevi
+na linha do USDC em vez do USDT — refiz do original localizando a linha **pelo rótulo**, não por
+índice. Conferido: soma da aba OKX = Resumo (R$ 6.200,28).
+
+### Regras novas de contabilidade (todas gravadas no `data.js`)
+
+1. **Fora do CoinGecko só o que JÁ É CONTADO EM OUTRO LUGAR.** O critério não é "operação vs
+   hold" (a primeira formulação do Lucas). Pool/LP → fora (contada por `defi.uniswapV3.pooled`);
+   **caixa em corretora → DENTRO** (nenhum outro campo a conta; se sair, some do patrimônio).
+   Aplicado: +185 USDT de caixa (ordem em aberto para comprar BTC) lançados a custo US$ 185.
+2. **Yield entra no CoinGecko como quantidade, custo zero** — aToken que cresce sozinho, fee de
+   pool em ETH. Mesma regra já usada no SOL/USDS desde 15/07. **Isto REVOGA** a regra de 21/08 de
+   manhã ("fee em ETH não entra"), que mantinha rendimento real fora da contabilidade.
+3. **Token que entra em pool SAI do CoinGecko no mesmo dia.** Os 0,183 ficaram contados em dobro
+   de 14/07 a 21/08 (~$434 de patrimônio inflado no pico).
+4. **Custo de stable em USD, nunca em BRL** — em BRL o CoinGecko cria P&L cambial fantasma (foi o
+   artefato de 23/06, USDT com "custo $582 e +$719 de lucro"). O BRL vive na planilha/aba Fiscal.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| `benchmark.yml` falhando (451) | Binance geo-bloqueia IPs dos EUA; testei só no sandbox, que sai por proxy fora dos EUA | Cascata Coinbase → Yahoo → Binance |
+| Gráfico de benchmark empurrado para baixo | Painel de métricas injetado como 2ª célula do grid de 2 colunas | Ancorar no pai do grid |
+| Painel duplicando 5 dos 9 cards da aba Métricas | `renderPerformanceMetrics` criada sem olhar o que já existia | Função removida, 3 exclusivos absorvidos |
+| Lifetime Return +820,2% | Dividia patrimônio pelo aporte do 1º mês | `twrCumulative` |
+| Benchmark/Alpha comparando preço vs IRR | Metodologias diferentes nos dois lados | DCA equivalente medido por XIRR |
+| Sharpe −0,14 **em verde**, ROIC/IRR negativos em dourado | Cor fixa na classe CSS | Cor por sinal |
+| Botões cobertos pela barra fixa | 3 painéis fora do `.container`, que é quem reserva os 80px | `padding-bottom:80px` nos três |
+| USDT da AAVE $4,84 a menos | Card arredonda para "1,60 mil" | Derivado do principal: 1.604,84 |
+| $302 de USDT fora do CoinGecko | Depósito na AAVE nunca lançado | Lançado: 17,19 juro + 285,40 principal |
+
+### ⚠️ ACHADO DE PRIVACIDADE — endereços de carteira num repo PÚBLICO
+
+Ao checar se eu tinha os endereços, encontrei: eles estão em **arquivos rastreados** no
+repositório público `lbarolo/barolo-capital-site`.
+
+| Arquivo | Endereços de carteira |
+|---|---|
+| `CLAUDE.md` | 7 |
+| `portfolio_analytics.html` | 13 |
+| `pools.html` | 10 |
+| `emprestimos.html` | 1 |
+
+O `.gitignore` **lista** o `CLAUDE.md` na seção "Arquivos privados — nunca subir para o GitHub
+público", mas ele já estava rastreado antes disso (gitignore não afeta arquivo versionado).
+
+Isso contraria a regra que o próprio `CLAUDE.md` chama de **inegociável** e afirma que "nunca foi
+violada". Nos HTMLs o endereço precisa estar no JS para os fetches (a política permite; o que ela
+proíbe é endereço em URL pública) — o problema é o repositório inteiro ser público.
+
+**Apresentado ao Lucas com 3 caminhos (privatizar o repo / `git rm --cached CLAUDE.md` / não fazer
+nada). Ele não respondeu — NÃO EXECUTAR nada disso sem decisão dele.**
+
+### O que ainda falta
+
+- **Decisão sobre a exposição dos endereços** (acima) — pendente de resposta do Lucas.
+- **Origem dos 285,40 USDT** depositados na AAVE e nunca lançados. Se vieram de fiat, falta o
+  custo em BRL na planilha (hoje R$ 36.632,97). Procurar no extrato um depósito/conversão de
+  ~R$ 1.500 que foi direto para a AAVE.
+- **R$ 950 de julho** (depósitos de 10/07 e 14/07): o Lucas confirmou que viraram os ~185 USDT
+  parados na corretora, mas **não há conversão USDT/BRL de julho** no extrato de ordens (a janela
+  de 3 meses cobre julho). Falta o print dessa operação para lançar no `FISCAL_ENTRADAS`
+  (~185 USDT por R$ 950 = câmbio 5,1351).
+- **RDNT** −12,39 un (1 centavo) — só ajustar se aparecer stake numa varredura.
+- **SCR** (0,0018) não apareceu em print nenhum — pode estar em stake como o XAI.
+- **BTC no Simple Earn** (entrou 22/08): a recompensa vem em **outro token** com incentivo, que o
+  Lucas vai vender por BTC depois. Quando receber: entrada a custo zero; ao virar BTC, o BTC sobe
+  mas o `invested` fica travado em $270,47.
+- **Yield do USDT em corretora**: sugerido usar o Simple Earn (que ele já usa para BTC) em vez de
+  mandar os 185 USDT para a AAVE — mover não compensa (US$ 0,44/mês de yield contra US$ 0,97–14,58
+  de gas ida e volta, e perderia a ordem em aberto). Régua: só compensa a partir de ~US$ 1.000
+  parados por mais de 3 meses.
+- Pendências antigas: `monthlyReturns[2026]` (Set–Dez), `RENDA_2026` (Jul/Ago), CDI/IPCA anual,
+  Registro Histórico em `pools.html`, reconciliar `wealthCurve.invested` ($7.250) com o canônico.
+
+### Commits (todos na main)
+
+| Hash | Mensagem |
+|---|---|
+| `1894c6c` | fix: benchmark-data.js falhava com HTTP 451 |
+| `035c57d` | fix: layout da aba Performance + metricas corrigidas |
+| `316f04b` | refactor: painel de metricas sai da Performance e a aba Metricas absorve tudo |
+| `7f3915c` | Merge branch 'claude/taxas-swap-usdg-calculo-kjxi4j' |
+| `5a0e4f5` | feat: Retorno Anual mostra o ganho em dinheiro |
+| `0da817e` | fix: botoes do fim das abas Semanal/Ciclo/Fiscal atras da barra fixa |
+| `43c6061` | data: reconcilia ETH com o CoinGecko (2,25752) + regras de pool e yield |
+| `5f22edb` | data: aba Fiscal — 3 conversoes USDT/BRL (R$ 35.498 → 36.633) |
+| `056734c` | data: +185 USDT de caixa em corretora lancados no CoinGecko |
+| `c235475` | data: supply exato do aWETH (2.1629) |
+| `16519ad` | data: AAVE com os numeros exatos do print Position Details |
+| `e818ccd` | data: reconciliacao completa com o CoinGecko (print 22/08) |
+
+*(`076c053` e `575e66a`, de 21/08, vieram de outra sessão — reversão da subtração do ETH e
+refresh AAVE/Kamino via check-in de mercado.)*
+
+---
+
+Atualizado: 22/08/2026 — **`benchmark.yml` corrigido** (Binance responde 451 nos runners dos EUA;
+agora cascata Coinbase → Yahoo → Binance) e branch mergeada na main; **aba Performance com os dois
+gráficos lado a lado** e o painel duplicado removido, **aba Métricas reorganizada em 12 cards /
+4 grupos**; **Retorno Anual mostra o ganho em dinheiro** (2025: +$67 de ativos contra +$2.156 de
+aporte); botões que ficavam atrás da barra fixa em 3 abas; **RECONCILIAÇÃO COMPLETA DO COINGECKO**
+— 5 posições ajustadas (ETH, EIGEN, XAI, POL, USDT), XAI achado em staking, AAVE com números
+exatos (HF 7,37) e os principals validados contra o print; **3 regras novas de contabilidade** no
+`data.js`; ⚠️ **descoberto que os endereços de carteira estão num repositório público** — decisão
+pendente com o Lucas
+
+---
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
