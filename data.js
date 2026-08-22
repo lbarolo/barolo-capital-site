@@ -104,7 +104,7 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.16, apy:0.0160 }, USDT:{ qty:1600, apy:0.0288 } },
+      supply: { WETH:{ qty:2.1629, apy:0.0160 }, USDT:{ qty:1600, apy:0.0288 } },
       borrow: { USDC:{ qty:760.78, apy:0.0420 } },
       // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
       // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
@@ -117,6 +117,16 @@ window.BAROLO_DATA = {
       // @$2.372 x 0,83 + 1.600 USDT x 0,78 = ~$5.500, bate com os $5.516 do print). Collateral/
       // Borrow = 5.516/760,78 = 7,25, e desta vez CONFERE com o fetch ao vivo do briefing.json
       // (7,26) — ao contrário do caso de 18/08, aqui o número já vem corretamente ponderado.
+      // ── SUPPLY EXATO DO aWETH (22/08/2026) ────────────────────────────────
+      // 2.1629 (antes 2.16, arredondado do card). Com o exato, a decomposição do
+      // ETH fecha:  CoinGecko 2,25752 − AAVE 2,1629 = 0,09462 em carteira.
+      // Juros retidos = supply − principal = 2,1629 − 2,15 = 0,0129 ETH (~$31).
+      // ⚠️ PENDENTE: o Lucas somou os "farelos" das carteiras e chegou a 0,131,
+      // não 0,09462 — ou seja, faltariam 0,03638 ETH (~$88, 1% do patrimônio) no
+      // CoinGecko. As duas somas não cobriram as mesmas carteiras/redes. Resolver
+      // com uma varredura única antes de lançar; NÃO é dust desprezível (o gas de
+      // 0,04996 SOL deixado fora em 15/07 valia $3,88, duas ordens de grandeza
+      // menos). Enquanto não resolver, o patrimônio está ~$88 subestimado.
       healthFactor: 7.25
     },
     kamino: {
