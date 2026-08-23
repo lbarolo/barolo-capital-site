@@ -1,25 +1,19 @@
 {
- "updated": "2026-08-22T10:00:46.481Z",
- "date": "2026-08-22",
+ "updated": "2026-08-23T10:01:29.140Z",
+ "date": "2026-08-23",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 76989,
-   "d24": -1.7,
-   "d7": 22.5,
+   "price": 76551,
+   "d24": -0.7,
+   "d7": 21.5,
    "d30": 17.3,
    "ath": 126080,
-   "athPct": -38.9,
+   "athPct": -39.3,
    "athDate": "2025-10-06",
-   "mcap": 1545071052923,
-   "vol": 58080583115,
+   "mcap": 1536468540960,
+   "vol": 27771906220,
    "spark": [
-    62946.68,
-    62985.36,
-    63008.73,
-    63098.26,
-    63012.11,
-    63015.11,
     62928.09,
     63004.71,
     63101.04,
@@ -55,27 +49,27 @@
     77438.15,
     78409.71,
     77886.4,
-    77357.6,
-    77181.37
+    77344.53,
+    76911.76,
+    77255.95,
+    77290.11,
+    76843.64,
+    77173.8,
+    76083.99,
+    76465.85
    ]
   },
   "eth": {
-   "price": 2420.68,
-   "d24": 0.3,
-   "d7": 29.1,
-   "d30": 25.7,
+   "price": 2411.71,
+   "d24": -0.3,
+   "d7": 28.4,
+   "d30": 27.8,
    "ath": 4946.05,
-   "athPct": -51.1,
+   "athPct": -51.2,
    "athDate": "2025-08-24",
-   "mcap": 292111170492,
-   "vol": 30028590009,
+   "mcap": 291041457953,
+   "vol": 14264763911,
    "spark": [
-    1876.97,
-    1881.83,
-    1882.53,
-    1883.39,
-    1878.63,
-    1878.67,
     1878.5,
     1880.12,
     1883.48,
@@ -111,27 +105,27 @@
     2424.89,
     2524.34,
     2507.26,
-    2438.26,
-    2424.47
+    2437.5,
+    2416.1,
+    2428.09,
+    2426.99,
+    2407.79,
+    2422.62,
+    2374.12,
+    2411.52
    ]
   },
   "sol": {
-   "price": 93.83,
-   "d24": 2.2,
-   "d7": 25.1,
-   "d30": 21.2,
+   "price": 93.31,
+   "d24": -0.2,
+   "d7": 23.8,
+   "d30": 23.3,
    "ath": 293.31,
-   "athPct": -68,
+   "athPct": -68.2,
    "athDate": "2025-01-19",
-   "mcap": 54703709561,
-   "vol": 8563630396,
+   "mcap": 54418932110,
+   "vol": 4705827333,
    "spark": [
-    75.15,
-    75.5,
-    75.58,
-    75.57,
-    75.36,
-    75.31,
     75.24,
     75.23,
     75.22,
@@ -167,106 +161,184 @@
     91.84,
     94.04,
     93.86,
-    94.19,
-    94.06
+    94.13,
+    93.41,
+    94.04,
+    94.22,
+    92.76,
+    96.09,
+    92.34,
+    93.16
    ]
   },
-  "stableMcap": 256731271110
+  "stableMcap": 256736849182
  },
  "fng": {
-  "value": 71,
+  "value": 66,
   "label": "Greed",
-  "prev": 72
+  "prev": 71
  },
  "broad": {
-  "btcDom": 58.7,
-  "ethDom": 11.1,
-  "altDom": 30.2,
-  "totalMcap": 2623214633171.304,
-  "totalVol": 170153551768.36658,
-  "mcapChange24h": -1.88,
-  "ethBtc": 0.03144,
-  "stableMcap": 256731271110
+  "btcDom": 59.2,
+  "ethDom": 11.2,
+  "altDom": 29.6,
+  "totalMcap": 2588875852321.8403,
+  "totalVol": 86477125777.52733,
+  "mcapChange24h": -3.93,
+  "ethBtc": 0.0315,
+  "stableMcap": 256736849182
  },
  "onchain": {
-  "t": "2026-08-21",
-  "price": 76583.86,
-  "mvrv": 1.485722,
-  "mvrv_sth": 1.150389,
-  "mvrv_lth": 1.582888,
-  "realized": 52803.98,
-  "realized_sth": 68196.11,
-  "realized_lth": 49562.6,
-  "sopr_lth": 0.973999,
-  "aviv": 1.033062,
-  "cvdd": 48074.74,
-  "sma200": 68978.81,
-  "mayer": 1.11
+  "t": "2026-08-22",
+  "price": 77519.66,
+  "mvrv": 1.457187,
+  "mvrv_sth": 1.126788,
+  "mvrv_lth": 1.55319,
+  "realized": 52834.29,
+  "realized_sth": 68326.46,
+  "realized_lth": 49568.59,
+  "sopr_lth": 1.485792,
+  "aviv": 1.013186,
+  "cvdd": 48091.8,
+  "sma200": 68980.32,
+  "mayer": 1.124
  },
  "risk": {
-  "score": 0.254,
+  "score": 0.337,
   "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.485722,
-    "s": 0.236
+    "v": 1.457187,
+    "s": 0.227
    },
    {
     "key": "Mayer",
-    "v": 1.11,
-    "s": 0.283
+    "v": 1.124,
+    "s": 0.291
    },
    {
     "key": "STH MVRV",
-    "v": 1.150389,
-    "s": 0.417
+    "v": 1.126788,
+    "s": 0.378
    },
    {
     "key": "AVIV",
-    "v": 1.033062,
-    "s": 0.267
+    "v": 1.013186,
+    "s": 0.257
    },
    {
     "key": "SOPR LTH",
-    "v": 0.973999,
-    "s": 0.067
+    "v": 1.485792,
+    "s": 0.533
    }
   ]
  },
  "portfolio": {
-  "netWorth": 9020.72,
-  "gross": 8573.37,
-  "stables": 1619.66,
+  "netWorth": 9110.58,
+  "gross": 8176.35,
+  "stables": 2106.69,
   "lp": 413.05,
-  "debt": 1585.36,
-  "invested": 10172.1,
-  "roi": -11.3,
-  "move24": 115.32,
-  "move24Pct": 1.29,
+  "debt": 1585.51,
+  "invested": 10642.5,
+  "roi": -14.4,
+  "move24": -35.66,
+  "move24Pct": -0.39,
   "aave": {
-   "hf": 7.3,
-   "collateral": 6829.96,
-   "debt": 760.78,
-   "ltv": 11.1,
+   "hf": 7.29,
+   "collateral": 6821.13,
+   "debt": 760.93,
+   "ltv": 11.2,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 31.7,
+   "ltv": 31.8,
    "liqLtv": 76.8,
-   "collateral": 2605.29,
+   "collateral": 2591.32,
    "debt": 824.58,
    "liqSol": 28.92,
-   "dropToLiq": 69.2
+   "dropToLiq": 69
   },
   "carry": {
-   "monthlyInterest": 7.02,
-   "monthlySupply": 20.39
+   "monthlyInterest": 7.48,
+   "monthlySupply": 23.27
   },
-  "dataAsOf": "2026-08-21"
+  "dataAsOf": "2026-08-22"
  },
  "news": [
+  {
+   "source": "The Block",
+   "title": "Bitcoin and ether ETFs draw $2.6 billion in strongest inflow week since October, tripling volume",
+   "url": "https://www.theblock.co/news/markets/2026-08-22-bitcoin-and-ether-etfs-draw-2-6-billion-in-strongest-inflow-week-since-october-tripling-volume-412531",
+   "ts": 1787427095000
+  },
+  {
+   "source": "The Block",
+   "title": "Zcash hits eight-year high near $850 with futures volume near $10 billion amid Grayscale ETF push",
+   "url": "https://www.theblock.co/news/ecosystems/2026-08-22-zcash-hits-eight-year-high-near-850-with-futures-volume-near-10-billion-amid-grayscale-etf-push-412528",
+   "ts": 1787420127000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Microsoft Fixes 'Perfect 10' Exploit That Could Have Let Hackers Run Code Remotely",
+   "url": "https://decrypt.co/376287/microsoft-perfect-10-exploit-hackers-run-code",
+   "ts": 1787419863000
+  },
+  {
+   "source": "The Block",
+   "title": "Solana cuts mainnet slot time to 350 milliseconds in first step toward 200ms goal",
+   "url": "https://www.theblock.co/news/ecosystems/2026-08-22-solana-cuts-mainnet-slot-time-to-350-milliseconds-in-first-step-toward-200ms-goal-412521",
+   "ts": 1787414053000
+  },
+  {
+   "source": "Decrypt",
+   "title": "AI Has Made Bitcoin Software a Target—This Group Is Fighting Back",
+   "url": "https://decrypt.co/376296/bitcoin-target-ai-red-team-group-fighting-back",
+   "ts": 1787412664000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto exchange BitMart weighs partial restart and creditor payouts weeks after announcing shutdown",
+   "url": "https://www.coindesk.com/business/2026/08/22/crypto-exchange-bitmart-weighs-partial-restart-and-creditor-payouts-weeks-after-announcing-shutdown",
+   "ts": 1787411801000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Web3 gaming network Sandbox stops Base and BNB chain bridging after exploit",
+   "url": "https://www.coindesk.com/web3/2026/08/22/web3-gaming-network-sandbox-stops-base-and-bnb-chain-bridging-after-exploit",
+   "ts": 1787407817000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Tokenized stocks risk repeating Wall Street’s 1960s ‘paper crisis,’ Fairmint CEO says",
+   "url": "https://www.coindesk.com/tech/2026/08/22/tokenized-stocks-risk-repeating-wall-street-s-1960s-paper-crisis-fairmint-ceo-says",
+   "ts": 1787407200000
+  },
+  {
+   "source": "Decrypt",
+   "title": "A Third of the Post-ChatGPT Web Is AI-Written, Pew Finds",
+   "url": "https://decrypt.co/376271/chatgpt-web-ai-written-pew",
+   "ts": 1787405463000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Kalshi off-limits in multiple states as prediction markets, CFTC team up for battle",
+   "url": "https://www.coindesk.com/news-analysis/2026/08/21/kalshi-off-limits-in-multiple-states-as-prediction-markets-cftc-team-up-for-battle",
+   "ts": 1787405400000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "MiCA is coming for DeFi vaults, but regulation will be difficult",
+   "url": "<![CDATA[https://cointelegraph.com/magazine/mica-is-coming-for-defi-vaults-but-regulation-will-be-difficult?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1787405400000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin and Ether bears get decimated amid 'squeeze-led' rally and Musk's X wants to pay creators in stablecoins: Crypto's week in 5 stories",
+   "url": "https://www.coindesk.com/business/2026/08/22/bitcoin-and-ether-bears-get-decimated-amid-squeeze-led-rally-and-musk-s-x-wants-to-pay-creators-in-stablecoins-crypto-week-in-5-stories",
+   "ts": 1787400000000
+  },
   {
    "source": "CoinDesk",
    "title": "Zcash jumps 48% to over $800 as Grayscale spot ETF push adds to ‘next bitcoin’ buzz",
@@ -434,78 +506,6 @@
    "title": "Laser Digital gets Japan’s first crypto exchange approval in 4 years",
    "url": "<![CDATA[https://cointelegraph.com/news/nomuras-laser-digital-japans-first-crypto-exchange-4-years?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
    "ts": 1787317692000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Binance says employees questioned in UAE cleared and released",
-   "url": "<![CDATA[https://cointelegraph.com/news/binance-employees-questioned-uae-released?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1787316484000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Coldcard ships firmware after $114 million bitcoin theft; says AI helped catch more bugs",
-   "url": "https://www.coindesk.com/tech/2026/08/21/coldcard-ships-firmware-after-usd114-million-bitcoin-theft-says-ai-helped-catch-more-bugs",
-   "ts": 1787314255000
-  },
-  {
-   "source": "The Block",
-   "title": "AI adoption in crypto crime rose 40% over the past year, TRM Labs says",
-   "url": "https://www.theblock.co/news/web3/2026-08-21-ai-adoption-in-crypto-crime-trm-412297",
-   "ts": 1787313600000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Standard Chartered wavers on $100K Bitcoin year-end call, says it may be ‘too low’",
-   "url": "<![CDATA[https://cointelegraph.com/news/standard-chartered-100k-bitcoin-2026-prediction-low?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1787313490000
-  },
-  {
-   "source": "The Block",
-   "title": "Crypto is still in ‘winter’ price-wise but it’s an ‘institutional summer,’ STS Digital CEO says",
-   "url": "https://www.theblock.co/news/markets/2026-08-21-crypto-is-still-in-winter-price-wise-but-an-institutional-summer-sts-digital-ceo-says-412454",
-   "ts": 1787313486000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Analysts split on whether Bitcoin's surge past key levels signals a new bull run",
-   "url": "https://www.coindesk.com/markets/2026/08/21/analysts-split-on-whether-bitcoin-s-surge-past-key-levels-signals-a-new-bull-run",
-   "ts": 1787311890000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Most Americans Say Trump's Crypto Profits Cross the Line: Poll",
-   "url": "https://decrypt.co/376167/americans-say-trump-crypto-profits-cross-line",
-   "ts": 1787311864000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "The hard truth is that the Clarity Act is an anti-crypto bill",
-   "url": "https://www.coindesk.com/opinion/2026/08/21/the-hard-truth-is-that-the-clarity-act-is-an-anti-crypto-bill",
-   "ts": 1787311800000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin faces $80,000 test as thinner weekend liquidity looms",
-   "url": "https://www.coindesk.com/daybook-us/2026/08/21/bitcoin-faces-usd80-000-test-as-thinner-weekend-liquidity-looms",
-   "ts": 1787311587000
-  },
-  {
-   "source": "The Block",
-   "title": "Bitcoin surge toward $80K points to liquidity-driven momentum shift as ETF flows rebound: Bernstein",
-   "url": "https://www.theblock.co/news/markets/2026-08-21-bitcoin-surge-80k-liquidity-driven-momentum-shift-etf-flows-rebound-bernstein-412443",
-   "ts": 1787309874000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Nomura-backed Laser Digital wins Japan's first crypto approval in four years",
-   "url": "https://www.coindesk.com/policy/2026/08/21/nomura-backed-laser-digital-wins-japan-s-first-crypto-approval-in-four-years",
-   "ts": 1787308727000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin tops $77,000 as best week since 2023 pulls altcoins along for the ride",
-   "url": "https://www.coindesk.com/markets/2026/08/21/bitcoin-tops-usd77-000-as-best-week-since-2023-pulls-altcoins-along-for-the-ride",
-   "ts": 1787307336000
   }
  ],
  "narrative": null
