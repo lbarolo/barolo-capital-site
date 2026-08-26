@@ -77,7 +77,7 @@
      `defi.uniswapV3`.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-22',
+  asOf: '2026-08-26',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -160,9 +160,9 @@ window.BAROLO_DATA = {
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
-      capital:388.06, pooled:413.05, totalFees:5.28, uncollectedFees:0,
-      il:0, pnl:30.27, apr:64.57, daysOpen:14, openDate:'2026-08-07',
-      rangeMin:1852.38, rangeMax:2166.83, poolApr:64.57, feeApr:50.91,
+      capital:410, pooled:410, totalFees:0, uncollectedFees:0,
+      il:0, pnl:0, apr:0, daysOpen:1, openDate:'2026-08-26',
+      rangeMin:2207.95, rangeMax:2464.17, poolApr:0, feeApr:0,
       // Ciclo anterior (aberto 14/07/2026) fechado em 07/08/2026: pooled $349,15
       // + fees $13,04 = ~$362,19 realizado (capital de entrada $343 → ganho
       // ~$19,19). Lucas tentou migrar para outra pool v4 mas não conseguiu abrir
@@ -312,7 +312,39 @@ window.BAROLO_DATA = {
       //     2,25752 que ele somou. Resíduo de 0,03348 ETH (~$79). O supply exato
       //     do aWETH resolveria; afeta também `principals.aave.WETH` (2,15) e o
       //     cálculo de juros acumulados do emprestimos.html.
-      note:'WETH/USDG 0.01% · Robinhood Chain · FORA DO RANGE (acima) = 100% USDG · fees $5,28 coletadas 20/08 · saída gradual completa · +23,78 USDG aportados 20/08 (mono-ativo)'
+      // ── (g) 26/08/2026: IDA E VOLTA PARA A BASE + CICLO NOVO NA ROBINHOOD ──
+      //     Sequencia relatada pelo Lucas: a posicao (100% USDG, fora do range
+      //     por cima) foi levada para a BASE, montada la, e agora DESMONTADA:
+      //     recolheu $412 no total, dos quais $0,80 eram fees. Bridge de volta
+      //     para a Robinhood chegou com $410 e ele remontou a pool WETH/USDG
+      //     com RANGE NOVO. Decisao: fica na Robinhood ate fechar a pool.
+      //     ATRITO DE BRIDGE: $413,05 (Robinhood 20/08) -> Base -> $412 na
+      //     desmontagem -> $410 na volta. ~$3 perdidos nas duas travessias
+      //     contra $0,80 de fees ganhas na Base = ciclo Base LIQUIDO NEGATIVO
+      //     (~-$2,25). Registrado como licao, nao como erro de lancamento.
+      //     ⚠️ PENDENTE (perguntado ao Lucas em 26/08, ainda sem resposta):
+      //       data de abertura da pool na Base, par/fee tier usado la, e valor
+      //       exato que entrou. Sem isso o ciclo da Base NAO foi lancado como
+      //       linha no historico de pools.html/relatorio.html — o registro do
+      //       ciclo Robinhood 07/08-~23/08 tambem espera essa data para fechar.
+      // ── PRINT Uniswap 26/08/2026 (fonte destes numeros) ──────────────────
+      //     WETH/USDG v3 0,01% · Robinhood Chain · Out of range
+      //     Position $410,00 · 0% WETH / 100% USDG (0 WETH + 410,00 USDG)
+      //     Fees earned $0 ("you have no earnings yet" = posicao recem-aberta)
+      //     Range NOVO: min $2.207,95 / max $2.464,17 · market $2.465,15
+      //     ⇒ esta fora do range por CIMA por apenas 0,04% ($0,98). Qualquer
+      //       recuo do ETH ja poe a posicao dentro do range e ela volta a
+      //       gerar taxa. Enquanto estiver fora: taxa ZERO.
+      // ── INVERSAO DA ESTRATEGIA (registrar, muda a leitura do card) ────────
+      //     Os ciclos anteriores eram SAIDA GRADUAL ETH->USDG (entrava ~100%
+      //     WETH e vendia subindo). Este ciclo entra 100% USDG com o preco
+      //     ACIMA do range: e o inverso — ENTRADA GRADUAL USDG->ETH, comprando
+      //     ETH conforme o preco cai dentro do range. Bate com a tese do Lucas
+      //     (capitulacao ate outubro). Preco medio de compra se percorrer o
+      //     range inteiro ≈ √(2207,95 × 2464,17) = $2.332.
+      //     ⚠️ Range curto (11,6% de largura, $2.207,95-$2.464,17): se o ETH
+      //       cair forte a posicao vira 100% WETH rapido e para de comprar.
+      note:'WETH/USDG 0.01% · Robinhood Chain · CICLO NOVO desde 26/08 (range $2.207,95-$2.464,17) · 100% USDG $410 · fora do range por cima por 0,04% (market $2.465,15) · agora é ENTRADA gradual USDG->ETH: compra ETH quando o preco cair para dentro do range'
     }
   },
 
