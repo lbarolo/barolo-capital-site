@@ -556,7 +556,8 @@ var KAM_USDS_QTY=(_bdK&&_bdK.supply.USDS.qty)||302.41, KAM_USDS_APY=(_bdK&&_bdK.
 var KAM_BORROW=(_bdK&&_bdK.borrow.USDC.qty)||816.79,   KAM_BORROW_APY=(_bdK&&_bdK.borrow.USDC.apy)||0.0578;
 
 var POOLS_DATA = [
-  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'closed',  fees:6.08, il:0, result:6.08 }, // ciclo 07/08-26/08/2026. $5,28 coletados na Robinhood (20/08) + $0,80 no trecho da Base. Saida gradual ETH->USDG completa; encerrado ao voltar da Base
+  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'closed',  fees:5.28, il:0, result:5.28 }, // ciclo 07/08-24/08/2026. Fees coletadas 20/08. Encerrado 24/08 para migrar a posicao para a Base atras de APR maior
+  { pair:'WETH/USDC 0.3%',  net:'Base',     status:'closed',  fees:0.80, il:0, result:0.80 }, // desvio de 2 dias (24-26/08/2026) na Base, $411,63. APR maior nao se materializou: $0,80 de fees contra ~$3,4 de bridge = liquido negativo
   { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'active',  fees:0, il:0, result:0 }, // ciclo NOVO 26/08/2026: $410 (100% USDG), range novo $2.207,95-$2.464,17, fora do range por cima por 0,04%. Agora e ENTRADA gradual USDG->ETH
   { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'closed',  fees:13.04, il:0, result:13.04 }, // fechada 07/08/2026 — pooled $349.15 + fees $13.04 = ~$362.19 realizado (aberta 14/07/2026)
   { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:8.62, il:0, result:8.62 }, // desmontada 14/07/2026 (remove 0.1717 ETH + 47.22 USDC → ~0.197 ETH bridgeado); result = fees

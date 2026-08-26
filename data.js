@@ -312,22 +312,35 @@ window.BAROLO_DATA = {
       //     2,25752 que ele somou. Resíduo de 0,03348 ETH (~$79). O supply exato
       //     do aWETH resolveria; afeta também `principals.aave.WETH` (2,15) e o
       //     cálculo de juros acumulados do emprestimos.html.
-      // ── (g) 26/08/2026: IDA E VOLTA PARA A BASE + CICLO NOVO NA ROBINHOOD ──
-      //     Sequencia relatada pelo Lucas: a posicao (100% USDG, fora do range
-      //     por cima) foi levada para a BASE, montada la, e agora DESMONTADA:
-      //     recolheu $412 no total, dos quais $0,80 eram fees. Bridge de volta
-      //     para a Robinhood chegou com $410 e ele remontou a pool WETH/USDG
-      //     com RANGE NOVO. Decisao: fica na Robinhood ate fechar a pool.
-      //     ATRITO DE BRIDGE: $413,05 (Robinhood 20/08) -> Base -> $412 na
-      //     desmontagem -> $410 na volta. ~$3 perdidos nas duas travessias
-      //     contra $0,80 de fees ganhas na Base = ciclo Base LIQUIDO NEGATIVO
-      //     (~-$2,25). Registrado como licao, nao como erro de lancamento.
-      //     ⚠️ PENDENTE (perguntado ao Lucas em 26/08, ainda sem resposta):
-      //       data de abertura da pool na Base, par/fee tier usado la, e valor
-      //       exato que entrou. Sem isso o ciclo da Base NAO foi lancado como
-      //       linha no historico de pools.html/relatorio.html — o registro do
-      //       ciclo Robinhood 07/08-~23/08 tambem espera essa data para fechar.
-      // ── PRINT Uniswap 26/08/2026 (fonte destes numeros) ──────────────────
+      // ── (g) 24-26/08/2026: DESVIO DE 2 DIAS PARA A BASE E VOLTA ──────────
+      //     Sequencia confirmada pelo Lucas (Diario 24/08 + prints Uniswap):
+      //       24/08 (seg) — a posicao estava fora do range por cima desde 20/08 e
+      //         o preco nao voltou ao range no fim de semana. Ele decidiu remontar
+      //         e viu que o APR estava mais alto na BASE, entao desmontou na
+      //         Robinhood (~$413,05), fez bridge e montou WETH/USDC 0.3% na Base:
+      //         $411,63 = 0 WETH + 411,63 USDC, range $2.208,39-$2.460,24,
+      //         market $2.475,07 (ja entrou fora do range por cima, 0,6%).
+      //       26/08 (qua) — desmontou a Base recolhendo $412 (dos quais $0,80 de
+      //         fees), bridge de volta para a Robinhood chegando $410, e remontou
+      //         WETH/USDG 0.01% com RANGE NOVO. Decisao: fica na Robinhood ate
+      //         fechar a pool - sem mais bridges.
+      //     VEREDITO DO DESVIO (registrar, e a licao que sobra):
+      //       fees ganhas na Base .............. +$0,80 em 2 dias
+      //       atrito das duas bridges ......... ~-$3,40 ($413,05 -> $411,63 na ida,
+      //                                          $412 -> $410 na volta)
+      //       resultado liquido ............... ~-$2,60
+      //       e o range montado na Base ($2.208,39-$2.460,24) e praticamente
+      //       IDENTICO ao que ele remontou de volta na Robinhood
+      //       ($2.207,95-$2.464,17) - a viagem inteira terminou no mesmo lugar.
+      //     ⚠️ FEE TIER MAIOR != APR REALIZADO MAIOR. O que atraiu foi o 0,3% da
+      //       Base contra o 0,01% da Robinhood (30x), mas em WETH/USDC na Base o
+      //       tier de 0,3% concorre com muita liquidez e recebe pouco roteamento
+      //       de volume. Antes de migrar por APR, olhar volume/TVL do tier
+      //       especifico e descontar o custo de bridge de ida E volta.
+      //     Lancamento: os dois trechos estao como linhas SEPARADAS no historico
+      //     (pools.html POOLS + relatorio.html POOLS_DATA) - Robinhood 07/08-24/08
+      //     ($5,28) e Base 24/08-26/08 ($0,80). YTD 2026 de fees: $124,02.
+      // ── PRINT Uniswap 26/08/2026 (fonte dos numeros do ciclo atual) ──────
       //     WETH/USDG v3 0,01% · Robinhood Chain · Out of range
       //     Position $410,00 · 0% WETH / 100% USDG (0 WETH + 410,00 USDG)
       //     Fees earned $0 ("you have no earnings yet" = posicao recem-aberta)
