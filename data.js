@@ -75,9 +75,34 @@
      print muda. A subtração de 0,0080 ETH feita em 20/08 foi revertida
      (2,36832741 → 2,37632741). Detalhe e evidências no bloco (f) de
      `defi.uniswapV3`.
+   + 27/08/2026 (prints Kamino): repay parcial de 63,348964 USDC direto da
+     wallet + supply de 0,371763411 SOL na MESMA obrigação (SOL/BTC Market).
+     Estado final: SOL 24,90 @5,68% · USDS 304,44 @3,11% · borrow 762,26 USDC
+     @5,79% · LTV 25,22%. Dívida total 1.585,51 → 1.523,19.
+     `principals.kamino` ATUALIZADO junto (regra de manutenção): SOL
+     23,274227 → 23,645990 e USDC 754,183048 → 690,834084 — sem isso o
+     depósito novo apareceria como rendimento e o repay inflaria os "juros
+     pagos" (bug real de 14/08/2026).
+     ORIGEM DOS 63,348964 USDC do repay (extrato Phantom, confere exato):
+       · 17,25042 USDC — troca de 17,44514 USDS da carteira
+       · 46,09855 USDC — PAGAMENTO EXTERNO recebido (de FvUL…NYds)
+     USDS holding 317,44 → 299,99 (−17,44514 da troca, já retirado do
+     CoinGecko pelo Lucas). ⚠️ DUAS PENDÊNCIAS abertas por esta operação:
+       (a) o holding de USDS (299,99) ficou ABAIXO do supply da Kamino
+           (304,44). Como holdings incluem colateral, o piso correto seria
+           304,44 — faltam ~4,45 USDS de yield acumulado nunca lançado
+           (mesmo padrão do SOL/USDS reconciliado em 15/07). Patrimônio
+           subestimado em ~$4,45 até a próxima reconciliação.
+       (b) os 46,09855 USDC do pagamento externo são APORTE NOVO, não retorno
+           do portfólio: entraram de fora e foram direto abater dívida, sem
+           passar por `holdings`. O patrimônio sobe $46,10 corretamente, MAS o
+           capital aportado precisa subir os mesmos $46,10 — senão o ROI e o
+           TWR creditam ao gestor um dinheiro que veio de fora. Falta lançar em
+           `wealthCurve.invested` (portfolio_analytics.html) no fechamento do
+           mês. Mesma natureza dos 285,40 USDT da pendência de 22/08.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-26',
+  asOf: '2026-08-27',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -98,7 +123,7 @@ window.BAROLO_DATA = {
   // Stablecoins (também já no total CoinGecko).
   stables: [
     { ticker:'USDT', cgId:'tether',           qty:1789.524, invested:1772.92  },
-    { ticker:'USDS', cgId:'usds',            qty:317.44,   invested:300      }
+    { ticker:'USDS', cgId:'usds',            qty:299.99,   invested:300      }
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
@@ -154,9 +179,13 @@ window.BAROLO_DATA = {
       // composto, sem depósito novo) · borrow 824.58 USDC @6.34% · Net APY 3.46% · juros
       // acumulados (lifetime Kamino) +$155.61 · LTV 32.77% (caiu vs semana passada por causa
       // do rali de SOL, não por repagamento) · Liq.LTV 76.81%.
-      supply: { SOL:{ qty:24.51, apy:0.0461 }, USDS:{ qty:304.29, apy:0.0289 } },
-      borrow: { USDC:{ qty:824.58, apy:0.0634 } },
-      ltv: 0.3277, liqLtv: 0.7681   // print Kamino 21/08/2026
+      // Print 27/08/2026: repay parcial de 63,348964 USDC (wallet) + supply de
+      // 0,371763411 SOL. Debt $825,58 -> $762,23 · LTV 27,67% -> 25,22% ·
+      // Collateral $2,98K -> $3,02K · Net APY 5,28% -> 5,30% · rewards claimable
+      // a parte (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,95.
+      supply: { SOL:{ qty:24.90, apy:0.0568 }, USDS:{ qty:304.44, apy:0.0311 } },
+      borrow: { USDC:{ qty:762.26, apy:0.0579 } },
+      ltv: 0.2522, liqLtv: 0.7681   // LTV do print 27/08/2026; Liq.LTV mantido (nao exibido)
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
@@ -387,9 +416,9 @@ window.BAROLO_DATA = {
                       // 12,17 = exatamente o 'fees paid' do print AAVE.
     },
     kamino: {
-      SOL:  23.274227,   // 29,405908 depositados − 6,131681 sacados (CSV Kamino)
+      SOL:  23.645990,   // 23,274227 (CSV ate 15/07) + 0,371763411 depositados 27/08/2026
       USDS: 300.392689,  // depósito único 19/03/2026 (CSV Kamino)
-      USDC: 754.183048   // 1.807,089 emprestados − 1.052,905 repagos (CSV Kamino)
+      USDC: 690.834084   // 754,183048 (CSV ate 15/07) − 63,348964 repagos 27/08/2026
     }
     // ── Kamino: derivados do CSV oficial (Transaction History), 65 movimentos
     //    01/02/2025 → 15/07/2026. Cobrem a obrigação INTEIRA (ciclos K1–K4), não
@@ -431,8 +460,8 @@ window.BAROLO_DATA = {
   // o custo em BRL na planilha Custo_BRL (aba Fiscal) — hoje em R$ 36.632,97.
   //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:760.93, kamino:824.58, total:1585.51 },
-  stablesTotalUSD: 2106.96   // USDT 1789.52 + USDS 317.44
+  debt:   { aave:760.93, kamino:762.26, total:1523.19 },
+  stablesTotalUSD: 2089.51   // USDT 1789.52 + USDS 299.99
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
