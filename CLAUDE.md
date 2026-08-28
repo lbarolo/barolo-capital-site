@@ -4895,6 +4895,133 @@ exatos (HF 7,37) e os principals validados contra o print; **3 regras novas de c
 pendente com o Lucas
 
 ---
+
+## Sessão 28/08/2026 — SCR removido da carteira (1ª posição encerrada) + refresh completo de posições
+
+### O pedido
+Lucas: *"Tenho ativos no coingecko que vc pode ver que não tenho mais nenhum token, desses ativos,
+pode retirar da minha carteira no site, não faz sentido, só tenha os valores salvos que vendi"* +
+*"atualize os dados do site também pelos prints"*. Prints: CoinGecko, AAVE V4 Position Details,
+Kamino Loan & Market Overview, Dashboard de Staking Cardano.
+
+### ⚡ NOVO — `closedPositions` no `data.js` (posições encerradas)
+
+**Armadilha que motivou o desenho:** tirar um token de `holdings` no `data.js` **NÃO** o remove do
+site. Os overrides de `index.html`, `portfolio_analytics.html` e `relatorio.html` só **sobrescrevem**
+o que já existe no array hardcoded local — o que sumir da fonte única continua aparecendo com o
+valor antigo **congelado**. Foi preciso adicionar uma etapa de **poda**.
+
+**Estrutura** (`data.js`, logo após `stables`):
+```js
+closedPositions: [
+  { ticker:'SCR', cgId:'scroll', name:'Scroll',
+    invested:0, proceeds:50.06, qtyResidual:0.0018, closedAt:'2026-08', note:'...' }
+]
+```
+
+**Poda implementada nas 3 páginas** (IIFE logo depois do override existente): remove do array local
+toda entrada cujo `ticker` **ou** `cgId` esteja em `closedPositions`, usando `splice` in-place (não
+reatribuição — preserva referências como o alias `var PORTFOLIO = PORTFOLIO_DATA`).
+
+**⚠️ REGRA CONTÁBIL (a parte que não é óbvia):** o `invested` da posição encerrada **continua
+somando** no total investido — senão o ROI e a base de IR ficam errados (o capital foi gasto de
+verdade). Cada página acumula isso em `CLOSED_INVESTED`:
+| Arquivo | Onde entra |
+|---|---|
+| `index.html` | `TOTAL_INVESTED = HOLDINGS.reduce(...) + CLOSED_INVESTED` |
+| `portfolio_analytics.html` | idem, na linha do `PORTFOLIO.reduce` |
+| `relatorio.html` | `costTotal += CLOSED_INVESTED` dentro de `calcTotals()` |
+
+O `proceeds` **não** se soma a nada: o dinheiro da venda já está representado no token que o
+recebeu (USDT/BTC/etc.). O campo existe só para o histórico/IR.
+
+**SCR encerrado:** 0,0018 SCR = **$0,00004185** (quatro centésimos de milésimo de dólar). Airdrop,
+custo zero, GP do print +$50,06 ⇒ vendeu tudo por ~$50 e sobrou poeira. Era o único holding do
+`data.js` efetivamente zerado.
+
+### Refresh de posições (prints 28/08/2026)
+
+**CoinGecko — saldo $11.199,26.** Qty inalteradas em BTC/ETH/SOL/ADA/EIGEN/RDNT/ZK/XAI/ZETA.
+
+| Campo | Antes | Depois |
+|---|---|---|
+| POL | 218,07 | **190,13** (−27,94) |
+| USDT | 1.789,524 | **2.198,08879** (+408,56) |
+| USDT `invested` | 1.772,92 | **2.179,99** |
+| USDS | 299,99 | **300** |
+| SCR | 0,0018 | **encerrado** |
+| AAVE WETH supply | 2,1629 @2,21% | **2,2255 @1,84%** |
+| AAVE USDT supply | 1.604,84 @3,10% | **2.012,82 @3,26%** |
+| AAVE borrow USDC | 760,93 @4,92% | **761,56 @1,92%** |
+| AAVE Health Factor | 7,37 | **7,96** |
+| Kamino SOL | 24,90 @5,68% | **24,91 @8,37%** |
+| Kamino USDS | 304,44 @3,11% | **304,47 @3,44%** |
+| Kamino borrow | 762,26 @5,79% | **762,46 @6,19%** |
+| Kamino LTV / Liq.LTV | 25,22% / 76,81% | **26,11% / 76,56%** |
+| Dívida total | 1.523,19 | **1.524,02** |
+| stablesTotalUSD | 2.089,51 | **2.498,09** |
+| `principals.aave.WETH` | 2,15 | **2,2115** |
+| `principals.aave.USDT` | 1.587,65 | **1.994,72** |
+
+**Como os derivados foram fechados (o print arredonda — o histórico já custou caro aqui):**
+- **AAVE WETH 2,2255** = $5,41 mil ÷ $2.430,87 (card mostra "2,22"). Confere pelo outro lado:
+  2,2255 + wallet 0,00276 + Yearn 0,0018 = **2,23006** contra os 2,23062 do CoinGecko. ✔
+  O CoinGecko **não** mudou ⇒ foi ETH que saiu da carteira e entrou na AAVE (~0,0615), não compra.
+- **AAVE USDT 2.012,82** = CoinGecko 2.198,08879 − 185,269 (corretora + carteira). Arredonda para
+  "2,01 mil" do card. ✔ Principal = 2.012,82 − 18,10 de earnings = 1.994,72.
+- **`invested` do USDT = 2.179,99** = qty − earnings da AAVE (2.198,08879 − 18,10). Juro entra a
+  custo zero, principal tem custo (regra de 15/07). ✔
+- **`principals.aave.USDC` segue 748,00** e valida sozinho: 761,56 − 748 = **13,56** = exatamente o
+  "fees paid" do print. ✔
+- **HF 7,96** = (borrowing power 5.301,40 + borrowed 762,00) ÷ 762,00 — numerador já ponderado pelo
+  CF (WETH 83% / USDT 78%). Bate com Collateral $6.063 ÷ 762 do próprio print. **Não** usar
+  Collateral/Borrow como regra geral (erro de 18/08).
+- **Kamino:** crescimento só por yield composto (SOL +0,01, USDS +0,03, borrow +0,20), sem
+  depósito/saque ⇒ `principals.kamino` **não muda**. ✔
+
+**Observação sobre o print do CoinGecko:** a coluna "Ativos" está ~2–3% acima de `qty × preço` em
+TODAS as linhas (ETH 3,1%, BTC 2,1%, ZK 2,8%…). É defasagem de snapshot — a coluna de preço já
+atualizou com a queda de 24h e os valores não. **As quantidades estão certas**; não tentar
+reconciliar essa diferença como posição.
+
+**Cardano staking (print 4):** ₳9,8 não resgatado, ₳0,36 no mês, ₳25,07 lifetime, ROS 1,73%.
+**Não lançado** — o holding de ADA (375,245) vem do CoinGecko e ele ainda não resgatou. Pela regra
+de yield (entra como qty a custo zero), esses ₳9,8 (~$2) entram quando ele resgatar.
+
+### Números depois do refresh
+Total investido **$11.049,57** · bruto CoinGecko **$11.199,26** · LP $410 · dívida $1.524,02 ⇒
+**patrimônio ≈ $10.085**. ROI ≈ −8,7% (era ≈ −30% em 15/08 — a diferença é o rali do ETH, de
+~$1.878 para $2.430, mais os $408 de USDT novo).
+
+### Verificação
+`data.js` válido no Node; os blocos reais de `PORTFOLIO_DATA`/`HOLDINGS` + override + poda extraídos
+dos 3 arquivos e **executados** no Node: SCR ausente nas 3, POL 190,13, USDT 2.198,08879/inv
+2.179,99, `TOTAL_INVESTED` $11.049,57. Os 23 scripts inline das 3 páginas passam em `new vm.Script`
+(0 erros de sintaxe). `pools.html` e `ferramentas.html` só consomem agregados (`stablesTotalUSD`,
+`debt`, `defi`) — pegam tudo sozinhos. `emprestimos.html` é bundle e se atualiza pela Action
+`sync-emprestimos.yml` no push do `data.js`.
+
+### ⚠️ Pendências (as três são da mesma natureza — aporte externo não creditado)
+1. **~407,07 USDT (28/08)** — origem não informada. Se veio de fiat é **aporte novo** e precisa
+   entrar em `wealthCurve.invested` (`portfolio_analytics.html`); senão o ROI/TWR creditam ao
+   gestor dinheiro que veio de fora.
+2. **285,40 USDT (22/08)** — mesma coisa, segue aberta.
+3. **46,10 USDC (27/08)** — pagamento externo que foi direto abater dívida, segue aberta.
+4. **POL −27,94** — o `invested` ficou em 143,88 porque o GP do print (−123,34 = 20,54 − 143,88)
+   mostra que o CoinGecko **não** reduziu o custo ⇒ foi ajuste de saldo, não venda com baixa de
+   custo. Se foi venda de verdade, o custo tem de cair proporcionalmente. **Confirmar com o Lucas.**
+5. **USDS 300 < supply Kamino 304,47** — faltam ~4,47 USDS de yield nunca lançado (pendência (a) de
+   27/08). Patrimônio subestimado em ~$4,47.
+
+### O que ainda falta (acumulado)
+- `monthlyReturns[2026]` (Set–Dez), `RENDA_2026` (Jul/Ago), CDI/IPCA anual, `FISCAL_ENTRADAS`
+- Registro Histórico em `pools.html` (tabela das 28 pools não existe mais no HTML)
+- Reconciliar `wealthCurve.invested` com o total canônico
+- Endereços de carteira em repositório público — decisão pendente com o Lucas desde 22/08
+
+---
+
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)

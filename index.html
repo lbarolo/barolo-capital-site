@@ -1754,7 +1754,21 @@ function toggleMobile() {
   ];
   // Override de qty/invested a partir da fonte única (data.js), casado por cgId.
   (function(){ if(typeof window==='undefined'||!window.BAROLO_DATA) return; var src=(window.BAROLO_DATA.holdings||[]).concat(window.BAROLO_DATA.stables||[]); var by={}; src.forEach(function(h){ by[h.cgId]=h; }); HOLDINGS.forEach(function(h){ var b=by[h.id]; if(!b)return; if(typeof b.qty==='number')h.qty=b.qty; if(typeof b.invested==='number')h.invested=b.invested; }); })();
-  var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0);
+
+// ── PODA: remove do array local as posicoes ENCERRADAS (vendidas) ─────────
+// Necessario porque o override acima so SOBRESCREVE o que ja existe — se um
+// token sai de `holdings` no data.js, ele continuaria aparecendo aqui com o
+// valor hardcoded congelado. O `invested` da posicao encerrada continua sendo
+// somado ao total investido (senao o ROI e a base de IR ficam errados).
+  var CLOSED_INVESTED = 0;
+  (function(){
+    if(typeof window==='undefined'||!window.BAROLO_DATA) return;
+    var closed = window.BAROLO_DATA.closedPositions || [];
+    if(!closed.length) return;
+    var dead = {}; closed.forEach(function(c){ if(c.cgId) dead[c.cgId]=1; CLOSED_INVESTED += (c.invested||0); });
+    for(var i=HOLDINGS.length-1;i>=0;i--){ if(dead[HOLDINGS[i].id]) HOLDINGS.splice(i,1); }
+  })();
+  var TOTAL_INVESTED = HOLDINGS.reduce(function(s, h){ return s + h.invested; }, 0) + CLOSED_INVESTED;
   // ── Diário DeFi NÃO altera mais as holdings ──
   // Removido o sync que somava trades do Diário (localStorage) às quantidades: o Lucas já mantém
   // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.

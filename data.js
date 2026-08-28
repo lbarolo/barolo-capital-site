@@ -100,9 +100,57 @@
            TWR creditam ao gestor um dinheiro que veio de fora. Falta lançar em
            `wealthCurve.invested` (portfolio_analytics.html) no fechamento do
            mês. Mesma natureza dos 285,40 USDT da pendência de 22/08.
+   + REFRESH 28/08/2026 (prints CoinGecko + AAVE V4 + Kamino + Cardano staking):
+     · CoinGecko $11.199,26. Qty inalteradas em BTC/ETH/SOL/ADA/EIGEN/RDNT/ZK/
+       XAI/ZETA. Mudaram: POL 218,07 -> 190,13 · USDT 1.789,524 -> 2.198,08879 ·
+       USDS 299,99 -> 300 · SCR SAIU (ver `closedPositions`).
+     · POL -27,94 unidades (~$2,95). `invested` fica em 143,88 porque o GP do
+       print (-123,34) = 20,54 - 143,88 EXATO, ou seja o CoinGecko nao reduziu o
+       custo -> foi ajuste de saldo/transferencia, nao venda com baixa de custo.
+       ⚠️ Se foi venda de verdade, o custo precisa cair proporcionalmente —
+       confirmar com o Lucas na proxima passada.
+     · USDT +408,56479 unidades. Origem: deposito novo na AAVE (supply
+       1.604,84 -> 2.012,82) + 0,91 de juros. `invested` 1.772,92 -> 2.179,99,
+       que e exatamente qty - earnings da AAVE (2.198,08879 - 18,10) — o juro
+       entra a custo zero, o principal tem custo (regra de 15/07).
+       ⚠️ PENDENCIA: a ORIGEM dos ~407,07 USDT nao foi informada. Se veio de
+       fiat e APORTE NOVO e precisa entrar em `wealthCurve.invested`
+       (portfolio_analytics.html) no fechamento do mes — senao o ROI/TWR
+       creditam ao gestor dinheiro que veio de fora. Mesma natureza dos 285,40
+       USDT (22/08) e dos 46,10 USDC (27/08), que seguem abertas.
+     · AAVE: WETH supply 2,1629 -> 2,2255 (card "2,22 ETH / $5,41 mil"; o
+       CoinGecko NAO mudou, entao foi ETH da carteira que entrou na AAVE) @1,84%
+       (era 2,21%) · USDT 2.012,82 @3,26% · borrow 761,56 USDC @1,92% (era
+       4,92% — caiu forte) · fees paid 13,56 USDC.
+       HF 7,96 = (borrowing power 5.301,40 + borrowed 762,00) / 762,00, que e a
+       formula certa (numerador ja ponderado pelo CF: WETH 83% / USDT 78%).
+       Bate com Collateral $6.063 / 762 do proprio print. Era 7,37.
+       ⚠️ O card arredonda: "2,22 ETH" e "2,01 mil USDT". Os valores gravados
+       sao derivados ($5,41 mil / preco, e CoinGecko - carteira) — quando vier
+       print com o exato, o exato manda (licao do bug de $4,84 no USDT).
+     · `principals.aave` ATUALIZADO junto (regra de manutencao): WETH 2,15 ->
+       2,2115 e USDT 1.587,65 -> 1.994,72. Sem isso os ~0,0615 ETH e os ~407
+       USDT depositados apareceriam como JUROS GANHOS no emprestimos.html (bug
+       real de 14/08/2026). USDC segue 748,00 — confere sozinho: 761,56 - 748 =
+       13,56 = exatamente o "fees paid" do print. ✔
+     · Kamino: SOL 24,90 -> 24,91 @8,37% (era 5,68%) · USDS 304,44 -> 304,47
+       @3,44% · borrow 762,26 -> 762,46 USDC @6,19% · LTV 25,22% -> 26,11% ·
+       Liq.LTV 76,81% -> 76,56% · Net APY 8,44% · juros lifetime +$158,69.
+       Crescimento so por yield composto (sem deposito/saque) => `principals.
+       kamino` NAO muda. Rewards claimable a parte (nao lancados): USDS $1,59 ·
+       PYUSD $0,07 · KMNO $4,30.
+     · Cardano staking (print 4): A9,8 de ADA nao resgatado, A0,36 no mes,
+       A25,07 lifetime, ROS 1,73%. NAO lancado — o holding de ADA (375,245) vem
+       do CoinGecko e o Lucas ainda nao resgatou. Pela regra de yield (entra
+       como qty a custo zero) esses A9,8 (~$2) entram quando ele resgatar.
+     · Divida total 1.523,19 -> 1.524,02. Stables 2.089,51 -> 2.498,09.
+     · ⚠️ SEGUE ABERTA a pendencia (a) de 27/08: o holding de USDS (300) esta
+       ABAIXO do supply da Kamino (304,47). Como holdings incluem colateral, o
+       piso correto seria 304,47 — faltam ~4,47 USDS de yield nunca lancado.
+       Patrimonio subestimado em ~$4,47.
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-27',
+  asOf: '2026-08-28',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -113,24 +161,43 @@ window.BAROLO_DATA = {
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
-    { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:218.07,     invested:143.88  },
+    { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:190.13,     invested:143.88  },
     { ticker:'ZK',    cgId:'zksync',                   qty:876,        invested:0       },
     { ticker:'XAI',   cgId:'xai-blockchain',           qty:898.879,    invested:164.52  },
-    { ticker:'ZETA',  cgId:'zetachain',                qty:51.1434,    invested:0       },
-    { ticker:'SCR',   cgId:'scroll',                   qty:0.0018,     invested:0       }
+    { ticker:'ZETA',  cgId:'zetachain',                qty:51.1434,    invested:0       }
   ],
 
   // Stablecoins (também já no total CoinGecko).
   stables: [
-    { ticker:'USDT', cgId:'tether',           qty:1789.524, invested:1772.92  },
-    { ticker:'USDS', cgId:'usds',            qty:299.99,   invested:300      }
+    { ticker:'USDT', cgId:'tether',           qty:2198.08879, invested:2179.99 },
+    { ticker:'USDS', cgId:'usds',            qty:300,        invested:300     }
+  ],
+
+  // ── POSICOES ENCERRADAS (vendidas — NAO aparecem mais na carteira) ──────
+  // Sai de `holdings` e entra aqui. As paginas PODAM o proprio array local a
+  // partir desta lista (por cgId e por ticker), senao o token continuaria
+  // aparecendo com o valor hardcoded congelado — os overrides so SOBRESCREVEM
+  // o que existe, nunca removem.
+  // O registro fica aqui para o historico/IR: `invested` = custo de aquisicao
+  // (0 quando foi airdrop), `proceeds` = USD recebido na venda.
+  // ⚠️ CONTABILIDADE: o `invested` de uma posicao encerrada CONTINUA contando
+  // no total investido (senao o ROI e a base de IR ficam errados), e o
+  // `proceeds` ja esta representado no token que recebeu o dinheiro
+  // (USDT/BTC/etc.) — por isso nao se soma nada aqui ao patrimonio.
+  closedPositions: [
+    { ticker:'SCR', cgId:'scroll', name:'Scroll',
+      invested:0,          // airdrop — custo zero
+      proceeds:50.06,      // GP do print CoinGecko 28/08/2026 (custo 0 ⇒ GP = realizado)
+      qtyResidual:0.0018,  // poeira que sobrou ($0,00004185) — irrelevante, fica fora
+      closedAt:'2026-08',
+      note:'Vendido. Restaram 0,0018 SCR de poeira ($0,00004185). Removido da carteira a pedido do Lucas em 28/08/2026 — nao fazia sentido ocupar linha na alocacao valendo 4 centesimos de milesimo de dolar.' }
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.1629, apy:0.0221 }, USDT:{ qty:1604.84, apy:0.0310 } },
-      borrow: { USDC:{ qty:760.93, apy:0.0492 } },
+      supply: { WETH:{ qty:2.2255, apy:0.0184 }, USDT:{ qty:2012.82, apy:0.0326 } },
+      borrow: { USDC:{ qty:761.56, apy:0.0192 } },
       // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
       // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
       // borrow $760,17, LTV 13,4% -> HF 6,04.
@@ -169,7 +236,7 @@ window.BAROLO_DATA = {
       // com uma varredura única antes de lançar; NÃO é dust desprezível (o gas de
       // 0,04996 SOL deixado fora em 15/07 valia $3,88, duas ordens de grandeza
       // menos). Enquanto não resolver, o patrimônio está ~$88 subestimado.
-      healthFactor: 7.37
+      healthFactor: 7.96
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -183,9 +250,9 @@ window.BAROLO_DATA = {
       // 0,371763411 SOL. Debt $825,58 -> $762,23 · LTV 27,67% -> 25,22% ·
       // Collateral $2,98K -> $3,02K · Net APY 5,28% -> 5,30% · rewards claimable
       // a parte (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,95.
-      supply: { SOL:{ qty:24.90, apy:0.0568 }, USDS:{ qty:304.44, apy:0.0311 } },
-      borrow: { USDC:{ qty:762.26, apy:0.0579 } },
-      ltv: 0.2522, liqLtv: 0.7681   // LTV do print 27/08/2026; Liq.LTV mantido (nao exibido)
+      supply: { SOL:{ qty:24.91, apy:0.0837 }, USDS:{ qty:304.47, apy:0.0344 } },
+      borrow: { USDC:{ qty:762.46, apy:0.0619 } },
+      ltv: 0.2611, liqLtv: 0.7656   // ambos do print 28/08/2026
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
@@ -410,8 +477,11 @@ window.BAROLO_DATA = {
   //
   principals: {
     aave:   {
-      WETH: 2.15,     // 2,16 depositado − 0,01 earnings (print AAVE 14/08/2026)
-      USDT: 1587.65,  // 1.604 depositado − 16,35 earnings (print AAVE 14/08/2026)
+      WETH: 2.2115,   // 2,2255 supply − 0,01396 earnings (print AAVE 28/08/2026).
+                      // Era 2,15 — subiu porque o Lucas moveu ~0,0615 ETH da carteira
+                      // para a AAVE (o CoinGecko nao mudou: ja contava os dois lugares).
+      USDT: 1994.72,  // 2.012,82 supply − 18,10 earnings (print AAVE 28/08/2026).
+                      // Era 1.587,65 — deposito novo de ~407,07 USDT (ver log do cabecalho).
       USDC: 748.00    // borrow inicial (refin. 10/04/2026). Confere: 760,17 − 748 =
                       // 12,17 = exatamente o 'fees paid' do print AAVE.
     },
@@ -460,8 +530,8 @@ window.BAROLO_DATA = {
   // o custo em BRL na planilha Custo_BRL (aba Fiscal) — hoje em R$ 36.632,97.
   //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:760.93, kamino:762.26, total:1523.19 },
-  stablesTotalUSD: 2089.51   // USDT 1789.52 + USDS 299.99
+  debt:   { aave:761.56, kamino:762.46, total:1524.02 },
+  stablesTotalUSD: 2498.09   // USDT 2198.09 + USDS 300.00
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).

@@ -541,6 +541,14 @@ var PORTFOLIO_DATA = [
 // Override de qty/invested a partir da fonte única (data.js), casado por ticker.
 (function(){ if(typeof window==='undefined'||!window.BAROLO_DATA) return; var src=(window.BAROLO_DATA.holdings||[]).concat(window.BAROLO_DATA.stables||[]); var by={}; src.forEach(function(h){ by[h.ticker]=h; }); PORTFOLIO_DATA.forEach(function(a){ var b=by[a.ticker]; if(!b)return; if(typeof b.qty==='number')a.qty=b.qty; if(typeof b.invested==='number')a.invested=b.invested; }); })();
 
+// ── PODA: remove do array local as posicoes ENCERRADAS (vendidas) ─────────
+// Necessario porque o override acima so SOBRESCREVE o que ja existe — se um
+// token sai de `holdings` no data.js, ele continuaria aparecendo aqui com o
+// valor hardcoded congelado. O `invested` da posicao encerrada continua sendo
+// somado ao total investido (senao o ROI e a base de IR ficam errados).
+var CLOSED_INVESTED = 0;
+(function(){ if(typeof window==='undefined'||!window.BAROLO_DATA) return; var closed=window.BAROLO_DATA.closedPositions||[]; if(!closed.length) return; var dead={}; closed.forEach(function(c){ if(c.ticker)dead[c.ticker]=1; if(c.cgId)dead[c.cgId]=1; CLOSED_INVESTED+=(c.invested||0); }); for(var i=PORTFOLIO_DATA.length-1;i>=0;i--){ if(dead[PORTFOLIO_DATA[i].ticker]||dead[PORTFOLIO_DATA[i].cgId]) PORTFOLIO_DATA.splice(i,1); } })();
+
 var STABLES_USD   = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js
 var STABLES_COST  = 882.64;   // custo CoinGecko: USDT 582.64 (CG mostra +$719) + USDS 300
 var DEBT_TOTAL    = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
@@ -599,6 +607,7 @@ var fmt = function(v){ return '$' + Math.abs(v).toLocaleString('pt-BR',{maximumF
 function calcTotals() {
   var spotTotal=0, costTotal=0, plTotal=0;
   PORTFOLIO_DATA.forEach(function(a){ var v=a.qty*(a.price||0); spotTotal+=v; costTotal+=a.invested; plTotal+=(v-a.invested); });
+  costTotal += CLOSED_INVESTED;  // posicoes encerradas seguem no custo de aquisicao
   // Stables entram no P&L com o custo do CoinGecko (USDT mostra +$719). Espelha o CG, sem dívida.
   costTotal += STABLES_COST;
   plTotal   += (STABLES_USD - STABLES_COST);
