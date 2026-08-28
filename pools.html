@@ -632,15 +632,15 @@ if(window.Chart){
 
 <div id="bc-lp-active-section">
 <!-- ══ UNISWAP V3 LP — REVERT ══ -->
-<div class="section-label">Liquidity Pool Ativa — Uniswap V3</div>
+<div class="section-label">Liquidity Pool — sem posição ativa</div>
 
 <div class="revert-panel">
  <!-- Toolbar -->
  <div class="revert-toolbar">
  <div class="revert-title">
- <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ WETH/USDG</span>
- <span style="font-size:9px;color:var(--muted);">0.01% · Robinhood Chain</span>
- <span class="badge-warn">○ FORA DO RANGE (acima por 0,04%) — 100% USDG</span>
+ <span style="font-size:15px;color:var(--muted);font-weight:800;font-family:'Satoshi',serif;">⬡ Nenhuma pool aberta</span>
+ <span style="font-size:9px;color:var(--muted);">último ciclo encerrado em 28/08/2026</span>
+ <span class="badge-warn">○ CAPITAL NA AAVE — aguardando próxima montagem</span>
  </div>
  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
  <a class="btn-open" href="https://app.uniswap.org/positions" target="_blank" rel="noopener">
@@ -651,10 +651,10 @@ if(window.Chart){
 
  <!-- LP metrics bar — APR líquido pós-AAVE -->
  <div class="lp-bar" style="grid-template-columns:repeat(4,1fr);">
- <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$410.00</div><div class="lp-ms" id="lp-pooled-sub">0 WETH + 410,00 USDG (print 26/08)</div></div>
- <div class="lp-m"><div class="lp-ml">APR BRUTO LP</div><div class="lp-mv acc" id="lp-apr">—</div><div class="lp-ms" id="lp-apr-sub">ciclo novo (26/08) · fora do range = taxa zero</div></div>
- <div class="lp-m"><div class="lp-ml">CUSTO BORROW AAVE</div><div class="lp-mv neg" id="lp-custo-borrow">−3.79%</div><div class="lp-ms">USDC · taxa atual</div></div>
- <div class="lp-m" style="border-right:none;border-left:2px solid rgba(63,185,80,0.25);"><div class="lp-ml">APR LÍQUIDO</div><div class="lp-mv neg" id="lp-apr-net">−3.79%</div><div class="lp-ms" id="lp-apr-net-sub">0% − 3.79% (custo de carrego)</div></div>
+ <div class="lp-m"><div class="lp-ml">POOLED</div><div class="lp-mv" id="lp-pooled">$0.00</div><div class="lp-ms" id="lp-pooled-sub">sem posição desde 28/08/2026</div></div>
+ <div class="lp-m"><div class="lp-ml">ÚLTIMO CICLO</div><div class="lp-mv" id="lp-apr">26–28/08</div><div class="lp-ms" id="lp-apr-sub">WETH/USDG Robinhood · 2 dias fora do range = taxa zero</div></div>
+ <div class="lp-m"><div class="lp-ml">DESTINO DO CAPITAL</div><div class="lp-mv acc">AAVE</div><div class="lp-ms">+408,56 USDT de colateral @ 3,31%</div></div>
+ <div class="lp-m" style="border-right:none;border-left:2px solid rgba(201,160,80,0.25);"><div class="lp-ml">FEES 2026 YTD</div><div class="lp-mv acc">$124.02</div><div class="lp-ms">realizadas em pools este ano</div></div>
  </div>
 
 <div class="iframe-wrap" id="iframeWrap" style="height:960px;margin-top:16px;border:1px solid var(--border);border-radius:8px;">
@@ -671,13 +671,13 @@ if(window.Chart){
 <!-- Uniswap (posição ativa · Robinhood Chain) — abaixo do Revert -->
 <!-- A Uniswap bloqueia embed em iframe (X-Frame-Options: DENY / CSP frame-ancestors 'self').
      Não há como embutir — card estático com link direto em vez de mostrar "recusou a conexão". -->
-<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:6px;">↓ Uniswap · posição ativa</div>
+<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:6px;">↓ Uniswap · nenhuma posição aberta</div>
 <a href="https://app.uniswap.org/positions" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;border:1px solid var(--border);border-radius:8px;text-decoration:none;background:var(--surface);transition:border-color .2s,transform .2s;" onmouseover="this.style.borderColor='#FF007A';this.style.transform='translateY(-1px)';" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none';">
   <div style="display:flex;align-items:center;gap:12px;">
     <span style="font-size:22px;color:#FF007A;">⬡</span>
     <div>
-      <div style="font-size:13px;color:var(--text);font-weight:700;font-family:'Satoshi',sans-serif;">Ver posição no Uniswap</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;">WETH/USDG 0.01% · Robinhood Chain · app.uniswap.org/positions</div>
+      <div style="font-size:13px;color:var(--text);font-weight:700;font-family:'Satoshi',sans-serif;">Abrir o Uniswap para montar a próxima pool</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;">nenhuma posição aberta hoje · app.uniswap.org/positions</div>
     </div>
   </div>
   <span style="font-size:11px;color:#FF007A;font-weight:600;white-space:nowrap;">Abrir ↗</span>
@@ -2659,7 +2659,7 @@ var POOLS = [
   // ── ATIVA ──
   { pair:'WETH/USDG 0.01%', net:'Robinhood', open:'07/08/2026', close:'24/08/2026', days:17, capital:388.06, fees:5.28, il:0, result:5.28, status:'closed', lvr:0, fcr:29.2, invGrowth:0, obs:'Reaberta 07/08/2026 na mesma pool v3 WETH/USDG (Robinhood), range $1.852,38-$2.166,83, com o proveniente do ciclo anterior (entrou 0,150 WETH + 76,55 USDG = $364,28). 20/08: taxas COLETADAS ($5,28, swap 0,0023 ETH -> 5,28 USDG) e reaportadas junto com $18,50 da venda de ETH de fee antiga = +$23,78 mono-ativo (capital 364,28 -> 388,06). Print Uniswap 20/08: $413,05 = 0 WETH + 413,05 USDG, fora do range por cima (ETH ~$2.283 > max $2.166,83) -> saida gradual ETH->USDG COMPLETA, preco medio de venda ~$2.003. ENCERRADA 24/08 (segunda): o preco nao voltou ao range no fim de semana, o Lucas decidiu remontar e viu APR maior na BASE, entao desmontou aqui e fez bridge para a Base (ver linha seguinte). Saiu ~$413,05 e chegou $411,63 na Base (~$1,4 de bridge).' },
   { pair:'WETH/USDC 0.3%', net:'Base', open:'24/08/2026', close:'26/08/2026', days:2, capital:411.63, fees:0.80, il:0, result:0.80, status:'closed', lvr:0, fcr:35.5, invGrowth:0, obs:'Desvio de 2 dias para a Base atras de APR maior (fee tier 0,3% contra 0,01% da Robinhood). Print Uniswap 24/08: Position $411,63 = 0 WETH + 411,63 USDC (100% stable), range $2.208,39-$2.460,24, market $2.475,07 - ja entrou FORA do range por cima (0,6%), esperando o ETH cair para dentro e comprar. Desmontada 26/08 recolhendo $412 (dos quais $0,80 de fees) e o valor voltou por bridge para a Robinhood com $410. VEREDITO: o APR maior nao se materializou - $0,80 de fees em 2 dias contra ~$3,4 de atrito nas duas travessias de bridge = trecho LIQUIDO NEGATIVO (~-$2,6), e o range montado na Base ($2.208-$2.460) e praticamente identico ao que ele remontou de volta na Robinhood ($2.208-$2.464). Licao: fee tier maior nao significa APR realizado maior - em WETH/USDC na Base o 0,3% concorre com muita liquidez e recebe menos roteamento de volume.' },
-  { pair:'WETH/USDG 0.01%', net:'Robinhood', open:'26/08/2026', close:'—', days:(function(){var d=new Date()-new Date('2026-08-26');return Math.max(1,Math.floor(d/86400000));})(), capital:410, fees:0, il:0, result:0, status:'active', lvr:0, fcr:0, invGrowth:0, obs:'Ciclo NOVO aberto 26/08/2026 na Robinhood Chain com os $410 que voltaram da Base (ida de 24/08 a 26/08, ver linha anterior), RANGE NOVO $2.207,95-$2.464,17 (11,6% de largura). Print Uniswap 26/08: Position $410,00 = 0 WETH + 410,00 USDG (100% stable), fees earned $0 (recem-aberta), market $2.465,15 - ou seja fora do range por CIMA por apenas 0,04% ($0,98): qualquer recuo do ETH ja poe a posicao in-range e ela volta a gerar taxa. INVERSAO DA ESTRATEGIA: os ciclos anteriores eram saida gradual ETH->USDG; este entra 100% USDG acima do range, ou seja ENTRADA gradual USDG->ETH, comprando ETH conforme o preco cai dentro do range (tese do Lucas: capitulacao ate outubro). Preco medio de compra se percorrer o range inteiro ~$2.332. Decisao do Lucas: fica na Robinhood ate fechar a pool - sem mais bridges. Enquanto fora do range: taxa ZERO.' },
+  { pair:'WETH/USDG 0.01%', net:'Robinhood', open:'26/08/2026', close:'28/08/2026', days:2, capital:410, fees:0, il:0, result:0, status:'closed', lvr:0, fcr:0, invGrowth:0, obs:'Ciclo aberto 26/08/2026 na Robinhood Chain com os $410 que voltaram da Base, RANGE NOVO $2.207,95-$2.464,17 (11,6% de largura), 100% USDG e ja fora do range por cima por 0,04% (market $2.465,15). A ideia era INVERTER a estrategia: entrada gradual USDG->ETH, comprando ETH conforme o preco caisse para dentro do range (tese do Lucas: capitulacao ate outubro). NAO ACONTECEU - o ETH subiu em vez de cair (~$2.505 em 27/08, contra o max $2.464,17), entao a posicao passou os DOIS DIAS inteiros fora do range e 100% em stable: taxa ZERO, fees $0. ENCERRADA 28/08: o Lucas recolheu ~$411 (100% USDG), fez bridge para a Ethereum e, em vez de remontar pool, depositou o valor na AAVE como colateral - 408,56479 USDT @ 3,31% APY (atrito da bridge ~$2,44). A diferenca $410 -> $411 NAO e fee (100% stable fora do range nao muda de valor): e arredondamento entre os prints, por isso o ciclo entra com fees=0 e o YTD 2026 continua $124,02. LEITURA: com o capital em stable e a pool fora do range, uma pool que nao gera taxa perde para a AAVE, que paga 3,31% sobre a mesma stable e ainda aumenta o borrowing power - foi essa a troca.' },
 ];
 
 // (Hidratação via cache do track.html removida — track.html não existe mais; POOLS é a fonte estática.)

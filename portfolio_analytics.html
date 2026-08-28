@@ -742,8 +742,8 @@ body, input, button, select, textarea {
  </div>
  <div class="stat-card">
   <div class="stat-label">POOLS LP</div>
-  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">—</div>
-  <div class="stat-sub">WETH/USDC · Uniswap V3 · Base</div>
+  <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">$0</div>
+  <div class="stat-sub" id="s-pool-sub">sem pool ativa desde 28/08/2026</div>
  </div>
  <div class="stat-card">
   <div class="stat-label">DÍVIDAS</div>
@@ -1743,7 +1743,14 @@ var LP_POOLED = (function() {
   return _u ? (_u.pooled || 0) + (_u.uncollectedFees || 0) : 0;
 })();
 // Card POOLS LP — mostra valor da pool (cache live do pools.html ou fallback acima)
-(function(){ var el = document.getElementById('s-pool'); if (el && LP_POOLED > 0) el.textContent = '$' + Math.round(LP_POOLED); })();
+(function(){
+  var el = document.getElementById('s-pool'); if (el) el.textContent = '$' + Math.round(LP_POOLED);
+  var sub = document.getElementById('s-pool-sub');
+  if (sub && LP_POOLED > 0) {
+    var _u = (window.BAROLO_DATA && window.BAROLO_DATA.defi) ? window.BAROLO_DATA.defi.uniswapV3 : null;
+    if (_u && _u.pool) sub.textContent = _u.pool + ' · ' + _u.network;
+  }
+})();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var _BD = (typeof window !== 'undefined' && window.BAROLO_DATA) ? window.BAROLO_DATA : null;
 var AAVE_DEBT = (_BD && _BD.debt && _BD.debt.aave) || 754.65;     // USDC @ 5.38% APY (fallback 20/06/2026)

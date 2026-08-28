@@ -1759,7 +1759,9 @@ function toggleMobile() {
   // Removido o sync que somava trades do Diário (localStorage) às quantidades: o Lucas já mantém
   // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.
   var STABLES_USD    = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js (fallback 12/06)
-  var LP_POOLED      = 296;      // pool WETH/USDC Base aberta 03/06/2026: 0.18 WETH (capital $329, valor 10/06/2026)
+  // Valor da pool ativa — fonte única (data.js). Zero quando não há pool aberta (caso desde
+  // 28/08/2026: o capital voltou para a AAVE e já é contado como USDT nas stables).
+  var LP_POOLED      = (function(){ var u=(window.BAROLO_DATA&&window.BAROLO_DATA.defi)?window.BAROLO_DATA.defi.uniswapV3:null; return u?((u.pooled||0)+(u.uncollectedFees||0)):0; })();
   var TOTAL_DEBT     = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
