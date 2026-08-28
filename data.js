@@ -535,18 +535,23 @@ window.BAROLO_DATA = {
   //   Sem deposito novo — a variacao de supply e so yield, entao `principals.kamino`
   //   fica igual.
   // CoinGecko: saldo $10.786,73 · +$49,10 em 24h · GP total +$2.564,55.
-  //   POL 218,07 -> 190,13 (−27,94 un, ~$3). ⚠️ NAO foi informada a operacao —
-  //     confirmar com o Lucas se vendeu ou se mudou de carteira/stake antes de
-  //     mexer no `invested` (mantido em 143,88).
+  //   POL 218,07 -> 190,13: o Lucas trocou os 27,94 POL (~$3) por gas, para pagar
+  //     fees pela Rabby. `invested` fica em 143,88 DE PROPOSITO — o proprio print
+  //     mostra POL com custo 143,88 (valor 20,47 + GP 123,41), ou seja o CoinGecko
+  //     tambem nao reduziu o custo nessa saida. Manter espelhado com a fonte dele.
   //   USDS 299,99 -> 300 (arredondamento).
   //   ⚠️ O USDT do print ainda esta em 1.789,524: o Lucas AINDA NAO LANCOU no
   //     CoinGecko os 408,56479 que foram para a AAVE. Aqui ja estao lancados
   //     (2.198,089) porque o dinheiro existe e a AAVE e colateral, nao pool —
   //     stables na AAVE sempre estiveram dentro do CoinGecko. Lancar la para as
   //     duas fontes voltarem a bater.
-  //   ⚠️ Outras divergencias de `invested` no mesmo print, NAO aplicadas (pequenas
-  //     e sem confirmacao): SOL 2.533,36 aqui vs 2.483,37 derivado do GP (−$50) e
-  //     ADA 530,95 vs 490,93 (−$40). Conferir no proximo print antes de mexer.
+  //   SOL e ADA: cheguei a derivar do GP do print custos diferentes dos daqui
+  //     (SOL 2.483,37 vs 2.533,36 · ADA 490,93 vs 530,95), levei ao Lucas e ele
+  //     NAO identificou divergencia no CoinGecko dele. NAO alterados — a leitura
+  //     do print e que provavelmente errou (no ADA os dois numeros do print nem
+  //     fecham entre si: GP −412,42 implica custo 490,93, mas o % de −77,7%
+  //     implica 530,79, que e o valor daqui). Se o assunto voltar, pedir o custo
+  //     direto na tela em vez de derivar de GP.
   //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:761.54, kamino:762.43, total:1523.97 },
