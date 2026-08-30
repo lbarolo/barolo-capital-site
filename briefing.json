@@ -1,25 +1,19 @@
 {
- "updated": "2026-08-29T14:42:14.364Z",
- "date": "2026-08-29",
+ "updated": "2026-08-30T14:31:25.884Z",
+ "date": "2026-08-30",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 77760,
-   "d24": -2.21,
-   "d7": 0.5,
-   "d30": 19.8,
+   "price": 78855,
+   "d24": 1.48,
+   "d7": 2.2,
+   "d30": 23.9,
    "ath": 126080,
-   "athPct": -38.3,
+   "athPct": -37.5,
    "athDate": "2025-10-06",
-   "mcap": 1561026033594,
-   "vol": 24447162542,
+   "mcap": 1583150437345,
+   "vol": 14441507010,
    "spark": [
-    77276.15,
-    77266.9,
-    76854.12,
-    77177.17,
-    76083.99,
-    76544.84,
     77466.12,
     77191.32,
     77825.21,
@@ -56,26 +50,26 @@
     77790.6,
     77629.19,
     77649.83,
-    77583.38
+    77699.9,
+    78078.61,
+    78156.65,
+    78074.69,
+    78124.35,
+    78002.45,
+    78735.78
    ]
   },
   "eth": {
-   "price": 2438.12,
-   "d24": -3.04,
-   "d7": 0.3,
-   "d30": 26.7,
+   "price": 2476.35,
+   "d24": 1.65,
+   "d7": 2.1,
+   "d30": 31.7,
    "ath": 4946.05,
-   "athPct": -50.7,
+   "athPct": -49.9,
    "athDate": "2025-08-24",
-   "mcap": 294197381215,
-   "vol": 10090047391,
+   "mcap": 298850700488,
+   "vol": 6139061506,
    "spark": [
-    2429.65,
-    2426.14,
-    2407.74,
-    2422.45,
-    2374.12,
-    2411.35,
     2458.69,
     2440.22,
     2470.19,
@@ -112,26 +106,26 @@
     2443.5,
     2438.69,
     2435.37,
-    2434.39
+    2435.71,
+    2450.13,
+    2451.24,
+    2456.2,
+    2455.86,
+    2453.33,
+    2468.23
    ]
   },
   "sol": {
-   "price": 104.75,
-   "d24": -1.25,
-   "d7": 10.7,
-   "d30": 39.8,
+   "price": 106.92,
+   "d24": 2.53,
+   "d7": 13.4,
+   "d30": 45.9,
    "ath": 293.31,
-   "athPct": -64.3,
+   "athPct": -63.5,
    "athDate": "2025-01-19",
-   "mcap": 61202794841,
-   "vol": 3929457062,
+   "mcap": 62560013460,
+   "vol": 2343913313,
    "spark": [
-    94.1,
-    94.23,
-    92.9,
-    95.99,
-    92.34,
-    93.32,
     95.37,
     95.12,
     95.37,
@@ -168,105 +162,207 @@
     104.17,
     104,
     103.33,
-    103.61
+    103.82,
+    104.84,
+    105.04,
+    105.23,
+    105.05,
+    104.6,
+    105.99
    ]
   },
-  "stableMcap": 257485023773
+  "stableMcap": 257360282880
  },
  "fng": {
-  "value": 68,
+  "value": 69,
   "label": "Greed",
-  "prev": 73
+  "prev": 68
  },
  "broad": {
-  "btcDom": 59,
-  "ethDom": 11.1,
-  "altDom": 29.9,
-  "totalMcap": 2641284825535.1245,
-  "totalVol": 68139842438.12126,
-  "mcapChange24h": -4.42,
-  "ethBtc": 0.03135,
-  "stableMcap": 257485023773
+  "btcDom": 59.5,
+  "ethDom": 11.2,
+  "altDom": 29.3,
+  "totalMcap": 2654355564781.523,
+  "totalVol": 90782004680.65872,
+  "mcapChange24h": -2.01,
+  "ethBtc": 0.0314,
+  "stableMcap": 257360282880
  },
  "onchain": {
-  "t": "2026-08-28",
-  "price": 79116.91,
-  "mvrv": 1.46544,
-  "mvrv_sth": 1.111119,
-  "mvrv_lth": 1.572371,
-  "realized": 53057.77,
-  "realized_sth": 69977.18,
-  "realized_lth": 49449.51,
-  "sopr_lth": 1.013403,
-  "aviv": 1.018836,
-  "cvdd": 48215.04,
-  "sma200": 69234.24,
-  "mayer": 1.143
+  "t": "2026-08-29",
+  "price": 77822.68,
+  "mvrv": 1.474333,
+  "mvrv_sth": 1.117404,
+  "mvrv_lth": 1.582052,
+  "realized": 53058.58,
+  "realized_sth": 70006.91,
+  "realized_lth": 49445.9,
+  "sopr_lth": 0.887167,
+  "aviv": 1.024891,
+  "cvdd": 48214.12,
+  "sma200": 69277.21,
+  "mayer": 1.123
  },
  "risk": {
-  "score": 0.249,
+  "score": 0.23,
   "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.46544,
-    "s": 0.229
+    "v": 1.474333,
+    "s": 0.233
    },
    {
     "key": "Mayer",
-    "v": 1.143,
-    "s": 0.302
+    "v": 1.123,
+    "s": 0.291
    },
    {
     "key": "STH MVRV",
-    "v": 1.111119,
-    "s": 0.352
+    "v": 1.117404,
+    "s": 0.362
    },
    {
     "key": "AVIV",
-    "v": 1.018836,
-    "s": 0.259
+    "v": 1.024891,
+    "s": 0.262
    },
    {
     "key": "SOPR LTH",
-    "v": 1.013403,
-    "s": 0.103
+    "v": 0.887167,
+    "s": 0
    }
   ]
  },
  "portfolio": {
-  "netWorth": 9489.35,
-  "gross": 8513.04,
-  "stables": 2089.5,
+  "netWorth": 9636.06,
+  "gross": 8659.91,
+  "stables": 2089.35,
   "lp": 410,
   "debt": 1523.19,
   "invested": 10642.5,
-  "roi": -10.8,
-  "move24": -220.17,
-  "move24Pct": -2.27,
+  "roi": -9.5,
+  "move24": 168.36,
+  "move24Pct": 1.78,
   "aave": {
-   "hf": 7.35,
-   "collateral": 6877.02,
+   "hf": 7.44,
+   "collateral": 6960.94,
    "debt": 760.93,
-   "ltv": 11.1,
+   "ltv": 10.9,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 26.2,
+   "ltv": 25.7,
    "liqLtv": 76.8,
-   "collateral": 2912.71,
+   "collateral": 2966.75,
    "debt": 762.26,
    "liqSol": 25.4,
-   "dropToLiq": 75.7
+   "dropToLiq": 76.2
   },
   "carry": {
    "monthlyInterest": 6.8,
-   "monthlySupply": 26.99
+   "monthlySupply": 27.4
   },
   "dataAsOf": "2026-08-27"
  },
  "news": [
+  {
+   "source": "Decrypt",
+   "title": "After Their AI Models Hacked Real Companies, AI Labs Call for Stronger Cyber Defenses",
+   "url": "https://decrypt.co/376863/ai-models-hacked-companies-ai-labs-cyber-defenses",
+   "ts": 1788096664000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Here’s what happened in crypto today",
+   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788094177000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto market makers are cashing in on bitcoin's rally - without betting on direction",
+   "url": "https://www.coindesk.com/markets/2026/08/28/crypto-market-makers-are-cashing-in-on-bitcoin-s-rally-without-betting-on-direction",
+   "ts": 1788091200000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Russia’s Sber eyes USDT loans, questions digital ruble demand",
+   "url": "<![CDATA[https://cointelegraph.com/news/russia-sber-bank-bitcoin-ether-usdt-crypto-loans?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788083700000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Real Trump Coins denies launching GOLD token, blames ‘bad actors’",
+   "url": "<![CDATA[https://cointelegraph.com/news/real-trump-coins-denies-gold-token-launch?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788077096000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "A $1.1 million crypto card hack crashed a neobank's token 49%",
+   "url": "https://www.coindesk.com/web3/2026/08/29/a-usd1-1-million-crypto-card-hack-crashed-a-neobank-s-token-49",
+   "ts": 1788047357000
+  },
+  {
+   "source": "The Block",
+   "title": "Layer 1 blockchain Fogo halts mainnet after attacker receives 400 million FOGO tokens, 10% of circulating supply",
+   "url": "https://www.theblock.co/news/defi/2026-08-29-layer-1-blockchain-fogo-halts-mainnet-after-attacker-receives-400-million-fogo-tokens-10-of-circulating-supply-413064",
+   "ts": 1788038211000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Polygon discloses security flaws fixed in recent hard forks",
+   "url": "<![CDATA[https://cointelegraph.com/news/polygon-discloses-security-flaws-fixed-in-recent-hard-forks?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788035331000
+  },
+  {
+   "source": "The Block",
+   "title": "Cosmos Labs says it wrongly cleared the bug behind a $5.7 million six-chain hack",
+   "url": "https://www.theblock.co/news/defi/2026-08-29-cosmos-labs-says-it-wrongly-cleared-the-bug-behind-a-5-7-million-six-chain-hack-413061",
+   "ts": 1788034532000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Stellar tokenized RWA market more than quadruples to nearly $4B",
+   "url": "<![CDATA[https://cointelegraph.com/markets/stellar-tokenized-rwa-market-nears-4b-after-fourfold-2026-growth?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788030762000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bernie Sanders Vows Legislation to 'Stop Flock and AI Mass Surveillance'",
+   "url": "https://decrypt.co/376878/bernie-sanders-ban-flock-ai-surveillance",
+   "ts": 1788024663000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Tokenized stock transfer volume jumps 415% in 30 days to $29.5B",
+   "url": "<![CDATA[https://cointelegraph.com/markets/tokenized-stock-transfer-volume-jumps-416-in-30-days-to-295b?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788020848000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin's Oldest Coins Are Waking Up in 2026 at a Pace Rarely Seen",
+   "url": "https://decrypt.co/376866/bitcoin-oldest-coins-waking-up-2026",
+   "ts": 1788017464000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Ditching 'digital gold': BPI study suggests everyday Americans prefer control and micro-investing",
+   "url": "https://www.coindesk.com/business/2026/08/28/ditch-digital-gold-bpi-study-suggests-everyday-americans-prefer-control-and-micro-investing",
+   "ts": 1788015600000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Inside the high-stakes battle between digital dollars and Swift's massive money engine",
+   "url": "https://www.coindesk.com/business/2026/08/29/swift-s-usd1-5-quadrillion-network-faces-a-blockchain-test",
+   "ts": 1788015600000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "The next trillion-dollar currency may not be a stablecoin — it might not even have a name yet",
+   "url": "https://www.coindesk.com/business/2026/08/29/the-next-trillion-dollar-currency-may-not-be-a-stablecoin-it-might-not-even-have-a-name-yet",
+   "ts": 1788015600000
+  },
   {
    "source": "The Block",
    "title": "Former White House teleprompter operator ordered to pay $172,000 for Kalshi trades on mention markets",
@@ -284,12 +380,6 @@
    "title": "Tokenized assets are busier than the data shows",
    "url": "https://www.coindesk.com/opinion/2026/08/29/tokenized-assets-are-busier-than-the-data-shows",
    "ts": 1788008400000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Here’s what happened in crypto today",
-   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1788007199000
   },
   {
    "source": "Cointelegraph",
@@ -311,7 +401,7 @@
   },
   {
    "source": "CoinDesk",
-   "title": "Bitcoin wallets untouched for 10 years moved $40 million. Most avoided exchanges",
+   "title": "Bitcoin wallets untouched for 10 years moved $40 million worth of coins",
    "url": "https://www.coindesk.com/markets/2026/08/28/bitcoin-wallets-untouched-for-10-years-moved-usd40-million-most-avoided-exchanges",
    "ts": 1787977800000
   },
@@ -406,106 +496,16 @@
    "ts": 1787933282000
   },
   {
-   "source": "Decrypt",
-   "title": "Bitcoin Miner IREN Shares Fall as AI Conversion Costs Mount",
-   "url": "https://decrypt.co/376816/bitcoin-miner-iren-shares-drop-ai-costs",
-   "ts": 1787933077000
-  },
-  {
    "source": "The Block",
    "title": "Bitwise fund is first Solana ETF to hit $1 billion AUM",
    "url": "https://www.theblock.co/news/markets/2026-08-28-bitwise-fund-is-first-solana-etf-to-hit-1-billion-aum-413035",
    "ts": 1787932132000
   },
   {
-   "source": "Cointelegraph",
-   "title": "Bitcoin dips to $78.4K as Fed’s Warsh downplays softer inflation prints",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-dips-fed-warsh-dismisses-recent-low-inflation-prints?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1787931085000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Bitcoin Traders Watch Fed Chair Warsh for Clues—And Get Nothing",
-   "url": "https://decrypt.co/376813/bitcoin-traders-watch-fed-chair-warsh-for-clues-and-get-nothing",
-   "ts": 1787930051000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Crypto Biz: Bitcoin pumps, Wall Street does the paperwork",
-   "url": "<![CDATA[https://cointelegraph.com/news/crypto-biz-bitcoin-rally-crypto-stocks-circle-strategy-solana?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1787928820000
-  },
-  {
    "source": "The Block",
    "title": "Bybit launches 24/7 options on stock perpetuals, starting with SpaceX and Nvidia",
    "url": "https://www.theblock.co/news/markets/2026-08-28-bybit-launches-24-7-options-on-stock-perpetuals-starting-with-spacex-and-nvidia-413032",
    "ts": 1787928263000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "BitGo to buy NYDIG trading arm for $42.5M in cash and stock plus $15M earnout",
-   "url": "https://www.coindesk.com/business/2026/08/28/bitgo-to-buy-nydig-trading-arm-for-usd42-5m-in-cash-and-stock-plus-usd15m-earnout",
-   "ts": 1787927834000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Ethereum ETFs Take $226M in a Day, Almost Matching Bitcoin's Haul",
-   "url": "https://decrypt.co/376810/ethereum-etfs-take-226m-in-a-day-almost-matching-bitcoins-haul",
-   "ts": 1787926641000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Fed Chair Kevin Warsh at Jackson Hole: 'We have work to do' on inflation",
-   "url": "https://www.coindesk.com/markets/2026/08/28/warsh-at-jackson-hole-we-have-work-to-do-on-inflaiton",
-   "ts": 1787925912000
-  },
-  {
-   "source": "The Block",
-   "title": "SBI Holdings invests $270 million in Ajaib, taking 20% stake amid Asia digital asset push",
-   "url": "https://www.theblock.co/news/deals/2026-08-28-sbi-holdings-invests-270-million-in-ajaib-taking-20-stake-amid-asia-digital-asset-push-413023",
-   "ts": 1787923946000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Who is legally liable when an AI agent goes rogue?",
-   "url": "<![CDATA[https://cointelegraph.com/magazine/who-is-legally-liable-when-an-ai-agent-goes-rogue?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1787923800000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Polish Olympic chief charged in Zondacrypto probe, justice minister says",
-   "url": "<![CDATA[https://cointelegraph.com/news/polish-olympic-chief-charged-zondacrypto-probe?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1787922997000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "The Clarity Act slipped to September. Banks are building anyway",
-   "url": "https://www.coindesk.com/opinion/2026/08/28/the-clarity-act-slipped-to-september-banks-are-building-anyway",
-   "ts": 1787922000000
-  },
-  {
-   "source": "The Block",
-   "title": "IREN’s $25 billion-$30 billion AI buildout may have ‘spooked’ investors, Bernstein says",
-   "url": "https://www.theblock.co/news/business/2026-08-28-irens-25-billion-30-billion-ai-buildout-may-have-spooked-investors-bernstein-says-413016",
-   "ts": 1787921872000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Ethena looks beyond crypto to squeeze yield from booming equity perpetuals",
-   "url": "https://www.coindesk.com/business/2026/08/28/ethena-looks-beyond-crypto-to-squeeze-yield-from-booming-equity-perpetuals",
-   "ts": 1787920257000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "SBI buys 20% stake in Indonesia's Ajaib for $270 million to expand yen stablecoin in Southeast Asia",
-   "url": "https://www.coindesk.com/business/2026/08/28/sbi-stakes-usd270-million-in-ajaib-to-expand-yen-stablecoin-in-southeast-asia",
-   "ts": 1787919511000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "California Senate passes bill to ban memecoin issuance by public officials",
-   "url": "<![CDATA[https://cointelegraph.com/news/california-bill-ban-memecoin-issuance-public-officials?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1787918988000
   }
  ],
  "narrative": null
