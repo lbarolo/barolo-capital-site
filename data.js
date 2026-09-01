@@ -127,14 +127,23 @@
        SOL para $99,64, não por dívida nova) · Liq.LTV 76,64% · Net APY 4,17% ·
        juros ganhos (lifetime) +$160,51. Sem depósito/saque ⇒ `principals.kamino`
        inalterado (juros retidos hoje: +1,274 SOL · +4,20 USDS · −72,14 USDC pagos).
-     · USDT `invested` 1.772,92 → 2.179,19 (+406,27). Os 406,27 são PRINCIPAL, não
-       rendimento: a própria AAVE declara 18,90 de EARNINGS no campo dela, e o que
-       excede isso é depósito. Yield entra a custo zero, principal entra com custo.
-       ⚠️ NÃO SEI A ORIGEM desses ~406 USDT (fiat/DCA? venda? transferência?).
-       Tratados como APORTE NOVO no fechamento — se for outra coisa, corrigir
-       `invested` do USDT E o ponto 08/26 de wealthCurve.invested juntos.
-     · Pool: ver bloco `defi.uniswapV3` (entrou no range; valores derivados).
-     · Patrimônio líquido = 10.819,68 + 409,19 (LP) − 1.524,96 (dívida) = $9.703,91.
+     · ORIGEM DOS ~406 USDT: **é a pool fechada**, não aporte novo (corrigido em
+       01/09/2026 pelo Lucas, confirmado no Diário DeFi do Notion). Ele encerrou
+       o ciclo WETH/USDG de 26/08 (~$410, 100% USDG, sem taxa nenhuma), converteu
+       para USDT e depositou na AAVE. Ver o bloco `defi.uniswapV3` para o detalhe
+       e as duas conferências que fecham. Consequências no lançamento:
+         · o custo VIAJA com o dinheiro: ETH 4.880,53 → 4.474,26 e USDT 1.772,92
+           → 2.179,19. Total investido inalterado (10.642,50) — foi troca, não
+           dinheiro novo. Sem isso o USDT exibiria +$425 de lucro fantasma.
+         · `wealthCurve.invested` de 08/26 sobe só $360 (DCA de SOL 28,50 + os
+           285,40 de 22/08 + os 46,10 do pagamento externo), NÃO $766.
+       ⚠️ A pendência gêmea de 22/08 (os 285,40 USDT de "origem não
+       identificada") fica SUSPEITA por tabela: se também for dinheiro que já
+       estava no portfólio, os $360 acima caem para $75 e o retorno de agosto
+       sobe. Perguntado ao Lucas, sem resposta ainda.
+     · Pool: FECHADA ~28/08 sem gerar taxa. LP = $0 (não somar: o dinheiro dela
+       já está dentro do CoinGecko como USDT na AAVE).
+     · Patrimônio líquido = 10.819,68 + 0 (LP) − 1.524,96 (dívida) = $9.294,72.
      · PENDÊNCIA (a) de 27/08 CONTINUA: holding de USDS (300) segue ABAIXO do
        supply da Kamino (304,59) — faltam ~4,59 USDS de yield nunca lançados no
        CoinGecko. Patrimônio subestimado nesse valor.
@@ -149,7 +158,7 @@ window.BAROLO_DATA = {
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.23062,    invested:4880.53 },
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.23062,    invested:4474.26 },  // -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
     { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
@@ -229,9 +238,9 @@ window.BAROLO_DATA = {
       ltv: 0.2739, liqLtv: 0.7664   // print 01/09/2026 (LTV subiu com a queda do SOL, nao por divida nova)
     },
     uniswapV3: {
-      pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
-      capital:410, pooled:409.19, totalFees:0, uncollectedFees:0,
-      il:0.81, pnl:-0.81, apr:0, daysOpen:6, openDate:'2026-08-26',
+      pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'closed',
+      capital:410, pooled:0, totalFees:0, uncollectedFees:0,
+      il:0, pnl:0, apr:0, daysOpen:2, openDate:'2026-08-26', closeDate:'2026-08-28',
       rangeMin:2207.95, rangeMax:2464.17, poolApr:0, feeApr:0,
       // Ciclo anterior (aberto 14/07/2026) fechado em 07/08/2026: pooled $349,15
       // + fees $13,04 = ~$362,19 realizado (capital de entrada $343 → ganho
@@ -427,24 +436,43 @@ window.BAROLO_DATA = {
       //     range inteiro ≈ √(2207,95 × 2464,17) = $2.332.
       //     ⚠️ Range curto (11,6% de largura, $2.207,95-$2.464,17): se o ETH
       //       cair forte a posicao vira 100% WETH rapido e para de comprar.
-      // ── FECHAMENTO 01/09/2026: A POSICAO ENTROU NO RANGE (sem print) ─────
-      //     ETH $2.413,65 esta DENTRO do range $2.207,95-$2.464,17 (estava fora
-      //     por cima em 26/08, market $2.465,15). Ou seja: a ENTRADA GRADUAL
-      //     USDG->ETH COMECOU - a posicao ja converteu parte do stable em ETH.
-      //     ⚠️ NAO HOUVE PRINT DA UNISWAP/REVERT NESTE FECHAMENTO. Os numeros
-      //     abaixo sao DERIVADOS da matematica de v3 (deterministica dado L e P),
-      //     nao lidos de print:
-      //       L = 410 / (√2464,17 − √2207,95) = 410 / 2,6516 = 154,62
-      //       em P = 2.413,65:  USDG = L(√P − √pa) = 330,91
-      //                         WETH = L(1/√P − 1/√pb) = 0,032430 ($78,27)
-      //       pooled = 409,19  ·  IL vs os 410 USDG de entrada = −$0,81
-      //     `totalFees`/`uncollectedFees` ficam em 0 por HONESTIDADE, nao por
-      //     certeza: fee so se acumula com o preco DENTRO do range e nao da para
-      //     derivar volume sem print. Se a posicao passou dias em range, ha fee
-      //     real nao contabilizada -> o resultado da pool esta SUBESTIMADO.
-      //     ⇒ PEDIR PRINT (Uniswap/Revert) e sobrescrever: o print manda, sempre
-      //       (licao do proprio erro de 1,59% na derivacao de 20/08).
-      note:'WETH/USDG 0.01% · Robinhood Chain · ciclo desde 26/08 (range $2.207,95-$2.464,17) · ENTROU NO RANGE (market $2.413,65) e comecou a ENTRADA gradual USDG->ETH: ~$330,91 USDG + 0,03243 WETH · valores DERIVADOS (sem print da Uniswap neste fechamento); fees do periodo em range ainda nao contabilizadas'
+      // ── POOL FECHADA ~28/08/2026 — NAO HA POSICAO ABERTA HOJE ────────────
+      //     FONTE: Diario DeFi do Notion (pagina "Diario DeFi", secao intitulada
+      //     "ETH/USDG 0.1% (ROBINHOOD) FECHADA 0 A 0"), confirmado pelo Lucas em
+      //     01/09/2026. Ultimo callout da secao, sem data (a pagina foi editada
+      //     pela ultima vez em 28/08/2026):
+      //        "Pensei melhor e fechei essa pool sem nenhuma taxa."
+      //     Ou seja: o ciclo aberto em 26/08 com $410 (100% USDG, fora do range
+      //     por cima) foi encerrado poucos dias depois SEM GERAR TAXA NENHUMA —
+      //     o ETH nunca recuou para dentro do range enquanto a posicao existiu.
+      //     Resultado do ciclo: $0. `pooled` = 0, `status` = closed.
+      //
+      //     ⚠️ ONDE O DINHEIRO FOI PARAR (e por que isso NAO e aporte novo):
+      //     os ~$410 sairam da pool, viraram USDT e foram depositados na AAVE.
+      //     E exatamente o deposito de 406,27 USDT que apareceu no print de
+      //     01/09 (410 − ~3,7 de atrito de bridge/swap). Duas conferencias:
+      //       · CoinGecko USDT +408,56 no periodo = AAVE +407,98 (1.604,84 ->
+      //         2.012,82) + 1,71 de yield. Bate.
+      //       · Custo: o ETH que financiou a pool (0,183, deposito de 14/07) foi
+      //         retirado de `holdings` em 21/08 mas o custo dele ficou em ETH.
+      //         Agora que virou USDT, o custo VIAJA JUNTO: ETH 4.880,53 ->
+      //         4.474,26 e USDT 1.772,92 -> 2.179,19. Total investido NAO MUDA
+      //         (fica nos 10.642,50 de antes) porque nao entrou dinheiro novo —
+      //         foi uma troca de ETH por stable dentro do proprio portfolio.
+      //         Validacao: USDT vale 2.196,95 contra custo 2.179,19 = +17,76,
+      //         praticamente igual aos 18,90 de EARNINGS declarados pela AAVE.
+      //         Uma stable com P&L igual ao proprio yield e o resultado correto;
+      //         se o custo tivesse ficado no ETH, o USDT exibiria +$425 de
+      //         "lucro" fantasma (o mesmo artefato combatido em 23/06/2026).
+      //
+      //     ⚠️ LICAO (foi o erro cometido no fechamento de agosto, antes da
+      //       correcao): sem print, eu DERIVEI a composicao da pool pela
+      //       matematica de v3 e conclui que ela tinha entrado no range e estava
+      //       comprando ETH. A matematica estava certa; a PREMISSA (existe uma
+      //       posicao aberta) estava errada. Derivar o estado de uma posicao so
+      //       vale depois de confirmar que a posicao existe — checar o Diario
+      //       DeFi do Notion ANTES, nao depois.
+      note:'SEM POOL ATIVA. O ciclo WETH/USDG 0.01% (Robinhood) aberto em 26/08 foi FECHADO ~28/08 sem gerar taxa nenhuma (fonte: Diario DeFi do Notion, secao "FECHADA 0 A 0") — o ETH nunca voltou para dentro do range. Os ~$410 viraram USDT e foram depositados na AAVE (o deposito de 406,27 do print de 01/09). Resultado do ciclo: $0.'
     }
   },
 
