@@ -66,5 +66,18 @@ window.BAROLO_DIARY = [
       + 'Nota: registrado via Claude a partir de prints enviados pelo Lucas durante o check-in de mercado automatizado — dados já propagados para data.js.',
     pnl: 30.27,
     tags: ['pool', 'weth-usdg', 'saida-gradual', 'out-of-range', 'aave', 'kamino']
+  },
+  {
+    id: 1788307200000,
+    date: '2026-08-31',
+    type: 'insight',
+    title: 'Fechamento Agosto/2026 — patrimonio $9.704 (+38% no mes, +25,7% TWR)',
+    body: 'Patrimonio liquido $9.703,91 (Jul $7.031 -> +$2.673). Do ganho bruto, $766 foram APORTE novo, entao o retorno de verdade e +25,7% (TWR Modified Dietz) — melhor mes de 2026 depois de abril. ROI sobre aporte liquido +21,1%; sobre custo de aquisicao ($11.049) ainda -12,2%. Composicao: carteira $10.819,68 (CoinGecko) + LP $409,19 - divida $1.524,96.\n\n'
+      + 'POSITIVO: (1) BORROW DA AAVE DESPENCOU 4,92% -> 1,88% — e o dinheiro mais barato que ja tomei, e inverteu o carry da AAVE (supply blend 2,54% vs borrow 1,88%, spread +0,66pp; era negativo o ano inteiro). (2) Desalavancagem por valorizacao: divida/patrimonio 22,2% -> 15,7%, HF AAVE 7,91, LTV Kamino 27,4% vs liq. 76,6% — SOL precisaria cair ~72% pra ameacar. (3) Repay de 63,35 USDC na Kamino (27/08) + aporte recorde de $766 no mes (vs $150/mes no 2o trimestre). (4) Carry total da estrutura de lending +$258/ano. (5) A pool ENTROU NO RANGE (ETH $2.413,65 dentro de $2.207,95-$2.464,17): a entrada gradual USDG->ETH comecou, ~$331 USDG + 0,0324 WETH.\n\n'
+      + 'ATENCAO: (1) CARRY DA KAMINO INVERTEU: borrow 5,34% contra supply blend 4,50% — pago mais caro pelo dinheiro do que o colateral rende, e esse USDC financia uma pool que ficou fora do range de 20/08 a ~31/08 gerando ZERO. Migrar a divida da Kamino pra AAVE economiza ~$26/ano (spread 3,46pp) e sobra borrowing power de $5.268 la. (2) CHURN DA POOL: 3 remontagens no mes (07/08 Robinhood, 24/08 Base, 26/08 Robinhood); o desvio de 2 dias pra Base rendeu +$0,80 de fee e custou ~$3,40 de bridge = -$2,60, e terminou num range praticamente identico. Muito atrito pra uma posicao de $410 (4,2% do patrimonio). (3) Range curto (11,6%): se o ETH romper $2.464 de novo, volta a 100% USDG sem ter comprado quase nada. (4) Cauda de alts segue morta: $135,84 hoje contra $885,22 investidos (-85%), 1,3% do book — perda ja realizada economicamente. (5) Stables em 23,1% do book ($2.498) — municao proposital pra tese de capitulacao ate outubro, mas e muito capital a 3,3%.\n\n'
+      + 'PROXIMO MES: (a) pedir print da Uniswap/Revert — as fees do periodo em range NAO estao contabilizadas, o resultado da pool esta subestimado; (b) avaliar migrar a divida da Kamino pra AAVE enquanto o borrow la esta a 1,88%; (c) se a tese e comprar capitulacao, a alavanca certa agora e a AAVE, nao a Kamino; (d) lancar os ~4,59 USDS de yield da Kamino que nunca entraram no CoinGecko (pendencia aberta desde 27/08).\n\n'
+      + 'PENDENCIA ABERTA: nao foi identificada a origem dos ~406 USDT que entraram na AAVE no fim do mes (fiat/DCA? venda? transferencia?). Foram tratados como aporte novo (principal com custo) no fechamento — se for outra coisa, corrigir o `invested` do USDT e o ponto 08/26 de wealthCurve.invested juntos.',
+    pnl: 2673,
+    tags: ['fechamento-mensal', 'review', 'defi', 'agosto-2026']
   }
 ];

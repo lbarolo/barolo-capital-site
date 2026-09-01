@@ -100,9 +100,50 @@
            TWR creditam ao gestor um dinheiro que veio de fora. Falta lançar em
            `wealthCurve.invested` (portfolio_analytics.html) no fechamento do
            mês. Mesma natureza dos 285,40 USDT da pendência de 22/08.
+   + FECHAMENTO MENSAL AGOSTO/2026 (01/09/2026 — prints CoinGecko + AAVE V4 +
+     Kamino; SEM print da Uniswap/Revert):
+     · CoinGecko total $10.819,68 (+27,6% de ganho acumulado no book do CG).
+       Mudaram só DUAS quantidades: USDT 1.789,524 → 2.198,08879 (+408,56) e
+       POL 218,07 → 190,13 (−27,94, vale ~$2,50 — o custo do CG segue $143,88,
+       logo é ajuste de contagem, não venda; `invested` não muda).
+     · AAVE V4: WETH 2,1629 → 2,2248 @2,27% · USDT 1.604,84 → 2.012,82 @3,27%
+       · borrow 761,99 USDC @1,88% (era 4,92% — despencou) · Collateral $6.031
+       · Borrowing Power $5.268,67 ⇒ HF 7,91 = 6.031/762.
+       DOIS DEPÓSITOS NOVOS no mês (por isso `principals` subiu junto — sem
+       isso o aporte apareceria como "juros ganhos", o bug de 14/08):
+         WETH +0,0604 (2,2248 supply − 0,01444 earnings = 2,2104 de principal).
+           A carteira esvaziou (<0,01 ETH / $6,67): o ETH foi da wallet pra AAVE,
+           por isso o holding do CoinGecko NÃO muda (holdings já incluem colateral).
+         USDT +406,27 (2.012,82 − 18,90 earnings = 1.993,92 de principal).
+       ⚠️ O supply do aWETH é DERIVADO, o card arredonda: "2,22 ETH" ⇒ [2,215;2,225]
+         e "$5,37 mil" ⇒ [2,2227;2,2268]. A interseção é [2,2227;2,2250] — daí o
+         2,2248. (A conta pelo CoinGecko daria 2,2261, fora da interseção; ±$3.)
+       ⚠️ O supply do USDT também é derivado — o card diz "2,01 mil". Duas fontes
+         independentes batem: CoinGecko 2.198,08879 − corretora 185 − carteira
+         0,269 = 2.012,82 ✔ (e isso confirma que os 185 da corretora seguem FORA
+         da AAVE — se tivessem entrado, o card mostraria "2,20 mil").
+     · Kamino: SOL 24,90 → 24,92 @4,63% · USDS 304,44 → 304,59 @3,41% · borrow
+       762,26 → 762,97 USDC @5,34% · LTV 25,22% → 27,39% (subiu pela QUEDA do
+       SOL para $99,64, não por dívida nova) · Liq.LTV 76,64% · Net APY 4,17% ·
+       juros ganhos (lifetime) +$160,51. Sem depósito/saque ⇒ `principals.kamino`
+       inalterado (juros retidos hoje: +1,274 SOL · +4,20 USDS · −72,14 USDC pagos).
+     · USDT `invested` 1.772,92 → 2.179,19 (+406,27). Os 406,27 são PRINCIPAL, não
+       rendimento: a própria AAVE declara 18,90 de EARNINGS no campo dela, e o que
+       excede isso é depósito. Yield entra a custo zero, principal entra com custo.
+       ⚠️ NÃO SEI A ORIGEM desses ~406 USDT (fiat/DCA? venda? transferência?).
+       Tratados como APORTE NOVO no fechamento — se for outra coisa, corrigir
+       `invested` do USDT E o ponto 08/26 de wealthCurve.invested juntos.
+     · Pool: ver bloco `defi.uniswapV3` (entrou no range; valores derivados).
+     · Patrimônio líquido = 10.819,68 + 409,19 (LP) − 1.524,96 (dívida) = $9.703,91.
+     · PENDÊNCIA (a) de 27/08 CONTINUA: holding de USDS (300) segue ABAIXO do
+       supply da Kamino (304,59) — faltam ~4,59 USDS de yield nunca lançados no
+       CoinGecko. Patrimônio subestimado nesse valor.
+     · PENDÊNCIA (b) de 27/08 RESOLVIDA: os 46,09855 USDC do pagamento externo
+       entraram em wealthCurve.invested no ponto 08/26 (junto com os 285,40 USDT
+       reconhecidos em 22/08, os 406,27 acima e o DCA de SOL de 05/08).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-08-27',
+  asOf: '2026-09-01',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -113,7 +154,7 @@ window.BAROLO_DATA = {
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
-    { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:218.07,     invested:143.88  },
+    { ticker:'POL',   cgId:'polygon-ecosystem-token',  qty:190.13,     invested:143.88  },  // qty 218.07->190.13 (print CG 01/09); custo do CG segue 143,88 => ajuste de contagem, nao venda
     { ticker:'ZK',    cgId:'zksync',                   qty:876,        invested:0       },
     { ticker:'XAI',   cgId:'xai-blockchain',           qty:898.879,    invested:164.52  },
     { ticker:'ZETA',  cgId:'zetachain',                qty:51.1434,    invested:0       },
@@ -122,15 +163,15 @@ window.BAROLO_DATA = {
 
   // Stablecoins (também já no total CoinGecko).
   stables: [
-    { ticker:'USDT', cgId:'tether',           qty:1789.524, invested:1772.92  },
-    { ticker:'USDS', cgId:'usds',            qty:299.99,   invested:300      }
+    { ticker:'USDT', cgId:'tether',           qty:2198.08879, invested:2179.19  },
+    { ticker:'USDS', cgId:'usds',            qty:300,      invested:300      }
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.1629, apy:0.0221 }, USDT:{ qty:1604.84, apy:0.0310 } },
-      borrow: { USDC:{ qty:760.93, apy:0.0492 } },
+      supply: { WETH:{ qty:2.2248, apy:0.0227 }, USDT:{ qty:2012.82, apy:0.0327 } },
+      borrow: { USDC:{ qty:761.99, apy:0.0188 } },
       // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
       // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
       // borrow $760,17, LTV 13,4% -> HF 6,04.
@@ -169,7 +210,7 @@ window.BAROLO_DATA = {
       // com uma varredura única antes de lançar; NÃO é dust desprezível (o gas de
       // 0,04996 SOL deixado fora em 15/07 valia $3,88, duas ordens de grandeza
       // menos). Enquanto não resolver, o patrimônio está ~$88 subestimado.
-      healthFactor: 7.37
+      healthFactor: 7.91
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -183,14 +224,14 @@ window.BAROLO_DATA = {
       // 0,371763411 SOL. Debt $825,58 -> $762,23 · LTV 27,67% -> 25,22% ·
       // Collateral $2,98K -> $3,02K · Net APY 5,28% -> 5,30% · rewards claimable
       // a parte (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,95.
-      supply: { SOL:{ qty:24.90, apy:0.0568 }, USDS:{ qty:304.44, apy:0.0311 } },
-      borrow: { USDC:{ qty:762.26, apy:0.0579 } },
-      ltv: 0.2522, liqLtv: 0.7681   // LTV do print 27/08/2026; Liq.LTV mantido (nao exibido)
+      supply: { SOL:{ qty:24.92, apy:0.0463 }, USDS:{ qty:304.59, apy:0.0341 } },
+      borrow: { USDC:{ qty:762.97, apy:0.0534 } },
+      ltv: 0.2739, liqLtv: 0.7664   // print 01/09/2026 (LTV subiu com a queda do SOL, nao por divida nova)
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'active',
-      capital:410, pooled:410, totalFees:0, uncollectedFees:0,
-      il:0, pnl:0, apr:0, daysOpen:1, openDate:'2026-08-26',
+      capital:410, pooled:409.19, totalFees:0, uncollectedFees:0,
+      il:0.81, pnl:-0.81, apr:0, daysOpen:6, openDate:'2026-08-26',
       rangeMin:2207.95, rangeMax:2464.17, poolApr:0, feeApr:0,
       // Ciclo anterior (aberto 14/07/2026) fechado em 07/08/2026: pooled $349,15
       // + fees $13,04 = ~$362,19 realizado (capital de entrada $343 → ganho
@@ -386,7 +427,24 @@ window.BAROLO_DATA = {
       //     range inteiro ≈ √(2207,95 × 2464,17) = $2.332.
       //     ⚠️ Range curto (11,6% de largura, $2.207,95-$2.464,17): se o ETH
       //       cair forte a posicao vira 100% WETH rapido e para de comprar.
-      note:'WETH/USDG 0.01% · Robinhood Chain · CICLO NOVO desde 26/08 (range $2.207,95-$2.464,17) · 100% USDG $410 · fora do range por cima por 0,04% (market $2.465,15) · agora é ENTRADA gradual USDG->ETH: compra ETH quando o preco cair para dentro do range'
+      // ── FECHAMENTO 01/09/2026: A POSICAO ENTROU NO RANGE (sem print) ─────
+      //     ETH $2.413,65 esta DENTRO do range $2.207,95-$2.464,17 (estava fora
+      //     por cima em 26/08, market $2.465,15). Ou seja: a ENTRADA GRADUAL
+      //     USDG->ETH COMECOU - a posicao ja converteu parte do stable em ETH.
+      //     ⚠️ NAO HOUVE PRINT DA UNISWAP/REVERT NESTE FECHAMENTO. Os numeros
+      //     abaixo sao DERIVADOS da matematica de v3 (deterministica dado L e P),
+      //     nao lidos de print:
+      //       L = 410 / (√2464,17 − √2207,95) = 410 / 2,6516 = 154,62
+      //       em P = 2.413,65:  USDG = L(√P − √pa) = 330,91
+      //                         WETH = L(1/√P − 1/√pb) = 0,032430 ($78,27)
+      //       pooled = 409,19  ·  IL vs os 410 USDG de entrada = −$0,81
+      //     `totalFees`/`uncollectedFees` ficam em 0 por HONESTIDADE, nao por
+      //     certeza: fee so se acumula com o preco DENTRO do range e nao da para
+      //     derivar volume sem print. Se a posicao passou dias em range, ha fee
+      //     real nao contabilizada -> o resultado da pool esta SUBESTIMADO.
+      //     ⇒ PEDIR PRINT (Uniswap/Revert) e sobrescrever: o print manda, sempre
+      //       (licao do proprio erro de 1,59% na derivacao de 20/08).
+      note:'WETH/USDG 0.01% · Robinhood Chain · ciclo desde 26/08 (range $2.207,95-$2.464,17) · ENTROU NO RANGE (market $2.413,65) e comecou a ENTRADA gradual USDG->ETH: ~$330,91 USDG + 0,03243 WETH · valores DERIVADOS (sem print da Uniswap neste fechamento); fees do periodo em range ainda nao contabilizadas'
     }
   },
 
@@ -410,8 +468,8 @@ window.BAROLO_DATA = {
   //
   principals: {
     aave:   {
-      WETH: 2.15,     // 2,16 depositado − 0,01 earnings (print AAVE 14/08/2026)
-      USDT: 1587.65,  // 1.604 depositado − 16,35 earnings (print AAVE 14/08/2026)
+      WETH: 2.2104,   // 2,2248 supply − 0,01444 earnings (print AAVE 01/09/2026; +0,0604 depositados no mes)
+      USDT: 1993.92,  // 2.012,82 supply − 18,90 earnings (print AAVE 01/09/2026; +406,27 depositados no mes)
       USDC: 748.00    // borrow inicial (refin. 10/04/2026). Confere: 760,17 − 748 =
                       // 12,17 = exatamente o 'fees paid' do print AAVE.
     },
@@ -460,8 +518,8 @@ window.BAROLO_DATA = {
   // o custo em BRL na planilha Custo_BRL (aba Fiscal) — hoje em R$ 36.632,97.
   //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:760.93, kamino:762.26, total:1523.19 },
-  stablesTotalUSD: 2089.51   // USDT 1789.52 + USDS 299.99
+  debt:   { aave:761.99, kamino:762.97, total:1524.96 },
+  stablesTotalUSD: 2498.09   // USDT 2198.09 + USDS 300
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
