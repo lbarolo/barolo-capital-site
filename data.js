@@ -137,10 +137,13 @@
            dinheiro novo. Sem isso o USDT exibiria +$425 de lucro fantasma.
          · `wealthCurve.invested` de 08/26 sobe só $360 (DCA de SOL 28,50 + os
            285,40 de 22/08 + os 46,10 do pagamento externo), NÃO $766.
-       ⚠️ A pendência gêmea de 22/08 (os 285,40 USDT de "origem não
-       identificada") fica SUSPEITA por tabela: se também for dinheiro que já
-       estava no portfólio, os $360 acima caem para $75 e o retorno de agosto
-       sobe. Perguntado ao Lucas, sem resposta ainda.
+       ✅ RESOLVIDO em 01/09/2026 — os 285,40 USDT de 22/08 SÃO aporte novo
+       mesmo ("foi aporte, mas só um usdt mesmo, estou esperando lá para
+       comprar", Lucas). É pó seco parado esperando ponto de entrada, não
+       dinheiro que já estava no portfólio. Logo os $360 estão certos e o TWR
+       de agosto (+26,4%) fica como está.
+       ⚠️ Mas isso CONFIRMA a outra pendência: se entrou dinheiro de fora,
+       falta o custo em BRL na planilha Custo_BRL (aba Fiscal) — ver abaixo.
      · Pool: FECHADA ~28/08 sem gerar taxa. LP = $0 (não somar: o dinheiro dela
        já está dentro do CoinGecko como USDT na AAVE).
      · Patrimônio líquido = 10.819,68 + 0 (LP) − 1.524,96 (dívida) = $9.294,72.
@@ -542,8 +545,11 @@ window.BAROLO_DATA = {
   // Os demais ajustes nao mexem em `invested`: correcao de contagem, nao operacao. O XAI
   // extra entrou a custo zero (recompensa de staking) — confere com o GP do print.
   //
-  // ⚠️ PENDENTE: a ORIGEM dos 285,40 USDT nao foi identificada. Se vieram de fiat, falta
-  // o custo em BRL na planilha Custo_BRL (aba Fiscal) — hoje em R$ 36.632,97.
+  // ✅ ORIGEM CONFIRMADA (Lucas, 01/09/2026): aporte novo mesmo, USDT parado esperando
+  // ponto de entrada para comprar. Nao e dinheiro que ja estava no portfolio.
+  // ⚠️ PENDENTE (agora e a unica coisa que falta neste item): como entrou dinheiro de
+  // fora, o custo em BRL precisa ser lancado na planilha Custo_BRL (aba Fiscal) — hoje
+  // em R$ 36.632,97 e sem esses ~285 USDT. Falta a data e o cambio da conversao.
   //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:761.99, kamino:762.97, total:1524.96 },
