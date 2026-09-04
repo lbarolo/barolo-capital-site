@@ -29,23 +29,36 @@ const KEY = (md.match(/\|\s*Alchemy\s*\|\s*`([^`]+)`/) || [])[1];
 
 if (!WALLETS.length || !KEY) { console.error('nao achei carteiras/key no CLAUDE.md'); process.exit(1); }
 
-// WETH (ERC-20) por rede — ETH embrulhado conta igual como ETH no portfolio
+// WETH (ERC-20) por rede — ETH embrulhado conta igual como ETH no portfolio.
+// Robinhood Chain fica de fora: nao ha RPC publico confiavel (ver CLAUDE.md).
 const NETS = [
-  { name: 'ethereum', host: 'eth-mainnet',  weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
-  { name: 'base',     host: 'base-mainnet', weth: '0x4200000000000000000000000000000000000006' },
-  { name: 'arbitrum', host: 'arb-mainnet',  weth: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1' },
-  { name: 'optimism', host: 'opt-mainnet',  weth: '0x4200000000000000000000000000000000000006' },
+  { name: 'ethereum', weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+    rpcs: [`https://eth-mainnet.g.alchemy.com/v2/${KEY}`, 'https://eth.llamarpc.com', 'https://cloudflare-eth.com'] },
+  { name: 'base',     weth: '0x4200000000000000000000000000000000000006',
+    rpcs: [`https://base-mainnet.g.alchemy.com/v2/${KEY}`, 'https://mainnet.base.org', 'https://base.llamarpc.com'] },
+  { name: 'arbitrum', weth: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    rpcs: [`https://arb-mainnet.g.alchemy.com/v2/${KEY}`, 'https://arb1.arbitrum.io/rpc'] },
+  { name: 'optimism', weth: '0x4200000000000000000000000000000000000006',
+    rpcs: [`https://opt-mainnet.g.alchemy.com/v2/${KEY}`, 'https://mainnet.optimism.io'] },
 ];
 
-const rpc = async (host, method, params) => {
-  const r = await fetch(`https://${host}.g.alchemy.com/v2/${KEY}`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const j = await r.json();
-  if (j.error) throw new Error(j.error.message);
-  return j.result;
+// A key da Alchemy so tem Ethereum e Arbitrum habilitados (Base e Optimism voltam 403),
+// entao cada rede tem uma cascata: Alchemy primeiro, RPC publico depois.
+const rpc = async (net, method, params) => {
+  let last;
+  for (const url of net.rpcs) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+      });
+      if (!r.ok) { last = new Error(`HTTP ${r.status}`); continue; }
+      const j = await r.json();
+      if (j.error) { last = new Error(j.error.message); continue; }
+      return j.result;
+    } catch (e) { last = e; }
+  }
+  throw last || new Error('sem RPC');
 };
 const wei = h => (!h || h === '0x') ? 0 : Number(BigInt(h)) / 1e18;
 
@@ -58,11 +71,11 @@ const wei = h => (!h || h === '0x') ? 0 : Number(BigInt(h)) / 1e18;
     for (let i = 0; i < WALLETS.length; i++) {
       const w = WALLETS[i];
       let nativo = 0, weth = 0;
-      try { nativo = wei(await rpc(net.host, 'eth_getBalance', [w, 'latest'])); }
+      try { nativo = wei(await rpc(net, 'eth_getBalance', [w, 'latest'])); }
       catch (e) { console.log(`  ! carteira ${i + 1} ${net.name} nativo: ${e.message}`); }
       try {
         const data = '0x70a08231' + '0'.repeat(24) + w.slice(2).toLowerCase();
-        weth = wei(await rpc(net.host, 'eth_call', [{ to: net.weth, data }, 'latest']));
+        weth = wei(await rpc(net, 'eth_call', [{ to: net.weth, data }, 'latest']));
       } catch (e) { console.log(`  ! carteira ${i + 1} ${net.name} WETH: ${e.message}`); }
       if (nativo > 0 || weth > 0)
         console.log(`  carteira ${i + 1} · ${net.name.padEnd(9)} nativo ${nativo.toFixed(6)}  WETH ${weth.toFixed(6)}`);
