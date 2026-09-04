@@ -1,0 +1,23 @@
+name: Varredura de ETH nas carteiras (diagnostico)
+
+# Le o saldo de ETH (nativo + WETH) das 4 carteiras EVM em 4 redes, para validar
+# a decomposicao "holding CoinGecko = supply AAVE + carteiras + Yearn" que o
+# data.js carrega como pendencia. Roda SO sob demanda — nao tem cron, nao commita
+# nada e nao imprime endereco nenhum no log (so indice de carteira).
+#
+# Existe porque a politica de rede do ambiente Claude bloqueia a Alchemy de dentro
+# de uma sessao; o runner do GitHub tem rede.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Varrer carteiras
+        run: node scripts/eth-sweep.js
