@@ -1,20 +1,19 @@
 {
- "updated": "2026-09-04T13:48:01.940Z",
+ "updated": "2026-09-04T17:19:39.580Z",
  "date": "2026-09-04",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 79367,
-   "d24": 0.67,
-   "d7": -0.2,
-   "d30": 24.1,
+   "price": 79562,
+   "d24": -1.85,
+   "d7": 1.8,
+   "d30": 23.9,
    "ath": 126080,
-   "athPct": -37,
+   "athPct": -36.9,
    "athDate": "2025-10-06",
-   "mcap": 1594006011838,
-   "vol": 46174184271,
+   "mcap": 1597729941728,
+   "vol": 41309010327,
    "spark": [
-    79407.6,
     77798.28,
     77398.34,
     77727.3,
@@ -56,21 +55,21 @@
     80984.7,
     81055.85,
     81129.18,
-    81222.98
+    79438.21,
+    79411.26
    ]
   },
   "eth": {
-   "price": 2449.75,
-   "d24": 0.86,
-   "d7": -2.1,
+   "price": 2450.3,
+   "d24": -1.92,
+   "d7": -0.6,
    "d30": 31.4,
    "ath": 4946.05,
    "athPct": -50.5,
    "athDate": "2025-08-24",
-   "mcap": 298983435015,
-   "vol": 20842454473,
+   "mcap": 299000864648,
+   "vol": 18397483027,
    "spark": [
-    2498.59,
     2442.43,
     2427.43,
     2442.41,
@@ -112,21 +111,21 @@
     2502.29,
     2508.62,
     2526.1,
-    2522.98
+    2450.56,
+    2451.69
    ]
   },
   "sol": {
-   "price": 101.69,
-   "d24": 0.02,
-   "d7": -4,
-   "d30": 37.9,
+   "price": 101.57,
+   "d24": -2.95,
+   "d7": -3.3,
+   "d30": 37.8,
    "ath": 293.31,
-   "athPct": -65.3,
+   "athPct": -65.4,
    "athDate": "2025-01-19",
-   "mcap": 59541108224,
-   "vol": 4572133866,
+   "mcap": 59459340534,
+   "vol": 3769118112,
    "spark": [
-    104.88,
     105.18,
     103.85,
     103.9,
@@ -168,10 +167,11 @@
     103.54,
     103.87,
     104.34,
-    104.09
+    101.56,
+    101.44
    ]
   },
-  "stableMcap": 257569339457
+  "stableMcap": 257589155970
  },
  "fng": {
   "value": 74,
@@ -179,14 +179,14 @@
   "prev": 65
  },
  "broad": {
-  "btcDom": 59.1,
+  "btcDom": 59.2,
   "ethDom": 11.1,
-  "altDom": 29.8,
-  "totalMcap": 2685293139862.6304,
-  "totalVol": 117450707777.07318,
-  "mcapChange24h": -1.79,
-  "ethBtc": 0.03087,
-  "stableMcap": 257569339457
+  "altDom": 29.7,
+  "totalMcap": 2697037285456.971,
+  "totalVol": 111146881928.88922,
+  "mcapChange24h": -3.85,
+  "ethBtc": 0.0308,
+  "stableMcap": 257589155970
  },
  "onchain": {
   "t": "2026-09-03",
@@ -235,19 +235,19 @@
   ]
  },
  "portfolio": {
-  "netWorth": 9450.12,
-  "gross": 8477.16,
-  "stables": 2497.93,
+  "netWorth": 9442.68,
+  "gross": 8470.16,
+  "stables": 2498.09,
   "lp": 0,
-  "debt": 1524.96,
+  "debt": 1525.57,
   "invested": 10642.5,
-  "roi": -11.2,
-  "move24": 51.56,
-  "move24Pct": 0.55,
+  "roi": -11.3,
+  "move24": -191.29,
+  "move24Pct": -1.99,
   "aave": {
    "hf": 7.95,
-   "collateral": 7466.29,
-   "debt": 761.99,
+   "collateral": 7465.79,
+   "debt": 762.29,
    "ltv": 10.2,
    "liqEth": null,
    "dropToLiq": null
@@ -255,18 +255,78 @@
   "kamino": {
    "ltv": 26.9,
    "liqLtv": 76.6,
-   "collateral": 2840.7,
-   "debt": 762.97,
-   "liqSol": 25.41,
+   "collateral": 2836.55,
+   "debt": 763.28,
+   "liqSol": 25.42,
    "dropToLiq": 75
   },
   "carry": {
-   "monthlyInterest": 4.59,
-   "monthlySupply": 26.45
+   "monthlyInterest": 6.41,
+   "monthlySupply": 25.94
   },
-  "dataAsOf": "2026-09-01"
+  "dataAsOf": "2026-09-04"
  },
  "news": [
+  {
+   "source": "Cointelegraph",
+   "title": "US law enforcement group moves to ‘neutral’ position on CLARITY Act",
+   "url": "<![CDATA[https://cointelegraph.com/news/national-sheriffs-association-clarity-act-neutral?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788541534000
+  },
+  {
+   "source": "The Block",
+   "title": "Zcash tops $1,000 as ETF inflows ramp up and miners pile in",
+   "url": "https://www.theblock.co/news/markets/2026-09-04-zcash-tops-1000-etf-inflows-ramp-up-miners-pile-in-413580",
+   "ts": 1788541174000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Zcash Hits Highest Price in Nearly a Decade, Crushing Short Bets",
+   "url": "https://decrypt.co/377445/zcash-price-high-decade-shorts-rekt",
+   "ts": 1788539086000
+  },
+  {
+   "source": "The Block",
+   "title": "Ripple expands college sports push with XRP partnership at Florida",
+   "url": "https://www.theblock.co/news/business/2026-09-04-ripple-college-sports-push-xrp-partnership-florida-gators-413576",
+   "ts": 1788536237000
+  },
+  {
+   "source": "Decrypt",
+   "title": "OpenAI Agents Hack German Website to Share Rule-Breaking Tactics: Report",
+   "url": "https://decrypt.co/377412/openai-agents-hack-german-website",
+   "ts": 1788536164000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin Slides as Blowout Jobs Report Revives Fed Hike Odds",
+   "url": "https://decrypt.co/377414/bitcoin-slides-blowout-jobs-report-fed-hike-odds",
+   "ts": 1788534808000
+  },
+  {
+   "source": "Decrypt",
+   "title": "BitMEX Co-Founder Ben Delo Gives Farage's Reform UK Another £4 Million",
+   "url": "https://decrypt.co/377411/bitmex-co-founder-ben-delo-gives-farages-reform-uk-another-4-million",
+   "ts": 1788534600000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "AMC CEO tells Robinhood to stop issuing stock token as industry executives weigh in",
+   "url": "https://www.coindesk.com/business/2026/09/04/amc-ceo-tells-robinhood-to-stop-issuing-stock-token-as-industry-executives-weigh-in",
+   "ts": 1788533760000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "From warning to listing: UK’s largest retail investment platform opens access to crypto ETNs",
+   "url": "https://www.coindesk.com/business/2026/09/04/from-warning-to-listing-uk-s-largest-wealth-platform-opens-access-to-crypto-etns",
+   "ts": 1788531791000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "U.S. Sheriff’s association shifts opposition stance to Clarity Act to 'neutral'",
+   "url": "https://www.coindesk.com/policy/2026/09/04/u-s-sheriff-s-association-shifts-opposition-stance-to-clarity-act-to-neutral",
+   "ts": 1788531154000
+  },
   {
    "source": "Cointelegraph",
    "title": "Revolut, OpenReserve get preliminary US bank approval with crypto plans",
@@ -446,66 +506,6 @@
    "title": "One full bitcoin now buys a little more than 18 ounces of gold, the most since January",
    "url": "https://www.coindesk.com/markets/2026/09/04/one-full-bitcoin-now-buys-a-little-more-than-18-ounces-of-gold-the-most-since-january",
    "ts": 1788498634000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "US, UK launch joint alliance targeting crypto scam centers",
-   "url": "<![CDATA[https://cointelegraph.com/news/us-uk-joint-alliance-crypto-scam-centers?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1788496435000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin back above $81,000 as hike odds fade, Zcash leads with 15% jump",
-   "url": "https://www.coindesk.com/markets/2026/09/04/bitcoin-back-above-usd81-000-as-hike-odds-fade-zcash-leads-with-15-jump",
-   "ts": 1788495721000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "U.S. banking agency gives blockchain bank OpenReserve initial OK to operate",
-   "url": "https://www.coindesk.com/policy/2026/09/03/u-s-banking-agency-gives-blockchain-bank-openreserve-initial-ok-to-operate",
-   "ts": 1788492410000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "AMC CEO blasts Robinhood for stock token, putting synthetic shares in spotlight",
-   "url": "https://www.coindesk.com/business/2026/09/03/amc-ceo-blasts-robinhood-for-stock-token-putting-synthetic-shares-in-spotlight",
-   "ts": 1788491005000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Tether sued over frozen ‘pig butcher’ coins, 6,600 students get crypto loans: Asia Express",
-   "url": "<![CDATA[https://cointelegraph.com/magazine/tether-sued-over-frozen-pig-butcher-coins-6600-students-get-crypto-loans-asia-express?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1788478809000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Utah Becomes First State to Target VPNs in Age-Verification Crackdown",
-   "url": "https://decrypt.co/377370/utah-websites-check-vpn-age-verification",
-   "ts": 1788473764000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Bitcoin Miner Ditches Site for AI Deal That Could Top $1.2 Billion",
-   "url": "https://decrypt.co/377363/bitcoin-mine-ai-deal-1-2-billion",
-   "ts": 1788471065000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "CFTC files to dismiss CME lawsuit over crypto perpetual futures",
-   "url": "<![CDATA[https://cointelegraph.com/news/cftc-dismiss-cme-lawsuit-crypto-perpetual-futures?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1788469753000
-  },
-  {
-   "source": "The Block",
-   "title": "Coinbase seeks SEC greenlight to list 24/7 equity perpetuals",
-   "url": "https://www.theblock.co/news/regulation/2026-09-03-coinbase-seeks-sec-greenlight-to-list-24-7-equity-perpetuals-413487",
-   "ts": 1788468412000
-  },
-  {
-   "source": "Decrypt",
-   "title": "What Is Pons? The Robinhood Chain Meme Coin Factory Token Up 18,000% Since July",
-   "url": "https://decrypt.co/377349/pons-robinhood-chain-meme-coin-token-factory",
-   "ts": 1788468364000
   }
  ],
  "narrative": null
