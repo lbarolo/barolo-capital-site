@@ -4895,6 +4895,138 @@ exatos (HF 7,37) e os principals validados contra o print; **3 regras novas de c
 pendente com o Lucas
 
 ---
+
+## Sessão 04/09/2026 — Auditoria do site contra as sessões salvas: curva de patrimônio vira fonte única, dados congelados na landing, gráficos
+
+### Contexto
+Lucas pediu: *"Verifique pra mim o site, se bate todas as informações salvar em outras sessões aqui, corrija bugs, melhore os gráficos também."* Auditoria completa das 5 páginas
+editáveis (`emprestimos.html` é bundle) cruzando o que elas exibem contra `data.js`,
+`briefing.json`, `pools.html POOLS` e o que está registrado neste arquivo.
+
+⚠️ **Nota de processo:** este log estava parado em 22/08. As sessões de **27/08, 01/09 e
+04/09** (repay parcial na Kamino, fechamento mensal de agosto, reconciliação do USDS,
+varredura on-chain do ETH) nunca foram logadas aqui — só existem nos comentários do
+`data.js`, que estão detalhados e corretos. Quem for reconstruir o histórico precisa ler
+os dois.
+
+### Ambiente de verificação (importante para a próxima sessão)
+O sandbox do Claude Code na web **bloqueia os CDNs por política de rede** (`cdnjs`,
+`jsdelivr`, CoinGecko, fontes). Logo `Chart is not defined` e imagens quebradas **no
+sandbox não são bugs do site** — na máquina do Lucas carregam normalmente. Para auditar
+gráficos assim mesmo, foi usado um **stub do Chart.js** que registra as configs em
+`window.__CHARTS` (injetado via `addInitScript` do Playwright): dá para inspecionar
+séries, escalas e até *executar os callbacks de tooltip* sem a biblioteca real. Vale
+reusar — está descrito no corpo desta sessão.
+
+### Bugs de dados encontrados e corrigidos
+
+| # | Onde | O que estava errado |
+|---|---|---|
+| 1 | `data.js` | Holding de **SOL (24,765222) ABAIXO do supply da Kamino (24,93)** — viola o invariante de que holdings incluem o colateral. 0,164778 SOL (~$16,70) de yield nunca lançados. Corrigido a custo zero, igual ao USDS em 04/09 e ao SOL em 15/07. ⚠️ **Espelhar no CoinGecko** como transferência de entrada. |
+| 2 | `index.html` | Mantinha uma **SEGUNDA cópia da curva de patrimônio**, 3 meses atrasada (terminava 05/26 com $8.872 / aporte $6.261 contra 08/26 $9.295 / $7.610) — e o array de aportes era uma **série linear fictícia de +$100/mês**, não o aporte real. Alimenta o CAGR e a TIR do hero da landing pública. |
+| 3 | `index.html` | Somava **`LP_POOLED = 296`** de uma pool da Base fechada em 14/07/2026 (não há pool aberta desde ~28/08). Em dois lugares. |
+| 4 | `index.html` | `years = 4 + 4/12` cravado ("Jan 2022 to May 2026") e `TOTAL_APORTED = 6784` / `SPOT_VALUE = 5698` parados em junho. |
+| 5 | `pools.html` | Card anunciava **"Pool Ativa"** e **"FORA DO RANGE — 100% USDG"** com **zero** posições abertas; custo de borrow marcava 3,79% contra os 4,65% do `data.js`. |
+| 6 | `ferramentas.html` | Simulador comparava contra `totalBase = 5620` (junho) — o cenário "sem alteração nenhuma" já mostrava **+$3,6k de ganho fantasma**; `kamLiqThresh` 0,7579 vs 0,7661 do `data.js`. |
+| 7 | `pools.html` | Gráfico **"Taxas por Período"** usava array de trimestres cravado à mão, parando em 2026 Q1 e somando **$2.034 contra os $2.466 reais**. Sobrou da sincronização de 08/04/2026, que derivou os outros gráficos e esqueceu este. |
+| 8 | `portfolio_analytics.html` | **8 configs de gráfico passavam `'var(--muted)'` / `'var(--text)'` como cor para o Chart.js.** Canvas **não resolve custom properties**: o `fillStyle` fica inalterado e o tick cai numa cor herdada, deixando de seguir o tema. |
+| 9 | `pools.html` | `toggleTheme()` só trocava o atributo `data-theme` — os 10 gráficos ficavam com a paleta do tema **anterior** até o próximo reload. |
+
+### ⚡ MUDANÇA ESTRUTURAL — a curva de patrimônio agora vive no `data.js`
+
+O bug #2 é de uma classe que ia se repetir todo mês. A curva foi **promovida para
+`data.js` → `wealthCurve`** (`labels` / `values` / `invested`, 56 pontos, Jan/22→Ago/26) e
+as duas páginas leem de lá, mantendo os literais que já tinham apenas como fallback:
+- `portfolio_analytics.html` sobrescreve `WEEKLY_UPDATE.wealthCurve` (tudo na página é
+  derivado dela: retornos mensais/anuais, TWR, XIRR, ROIC, drawdown, Sharpe, benchmark
+  CDI/IPCA e o ROI de destaque);
+- `index.html` sobrescreve `WEALTH_LABELS` / `WEALTH_VALUES` / `INVESTED`.
+
+**O fechamento mensal passa a ser UMA edição só** — acrescentar um ponto nos três arrays
+do `data.js`. A regra de o que entra em `invested` (só dinheiro que veio de fora; yield e
+rotação interna não) está documentada no próprio bloco.
+
+Efeito colateral bom: a **TIR do hero da landing (+9,0%) passou a bater com o IRR do
+dashboard (+8,96%)** — antes divergiam porque usavam fluxos de caixa diferentes.
+
+### Decisão do Lucas — CAGR e Track Record da landing
+
+A landing exibia **"CAGR 2022–2026: +63,7%"** e **"Track Record (real): +621,7%"**. As duas
+contas dividiam o patrimônio de hoje pelo **capital-semente de Jan/2022 (~$1.061)**, ou
+seja, contavam os ~$7.610 aportados como se fossem retorno — **exatamente o erro
+categórico que a sessão de 19/08 identificou e corrigiu no dashboard**, onde o mesmo CAGR
+dá −2,2%.
+
+Perguntei (três opções: corrigir / manter e trocar o rótulo / não mexer) e **Lucas escolheu
+corrigir para bater com o dashboard**. Agora:
+- **CAGR** = TWR anualizado (Modified Dietz mês a mês, aporte no meio do mês, composto
+  geometricamente) → **−2,20%**, idêntico ao card do dashboard;
+- **Track Record (real)** = TWR **acumulado** (−9,68%) descontado da inflação → **−24,9%**.
+
+⚠️ **Armadilha registrada:** a tabela `CPI_USA` do `index.html` diz no comentário ser
+*"accumulated since Jan/2022"*, mas os valores são **interanuais** (os 8,6 de 06/22 são o
+pico YoY). Derivar a inflação acumulada dela daria ~3% no lugar de ~20% e inflaria o
+retorno real em quase 20 pontos. Por isso ela ficou como **constante explícita
+(20,2%, Jan/22→Mai/26)** com nota de manutenção anual. **Não "otimizar" isso depois.**
+
+Também: as tabelas `CPI_USA` / `IPCA_BR` / `USD_BRL` do index param em `05/26` e passariam
+a devolver `undefined` nos meses novos da curva (NaN na série em BRL e a linha de inflação
+caindo para 0%). O lookup passou a repetir o último valor conhecido, com o câmbio caindo
+para o `brlRate` do `data.js`.
+
+### Gráficos
+
+**Eixo duplo removido (`accChart`).** "Acumulação de Tokens" tinha dois eixos Y para duas
+séries na **mesma unidade** (tokens): acumulado à esquerda e ganho mensal num eixo direito
+com ticks escondidos e `max = maxDelta × 3,4`. Uma barra que ocupava um terço do gráfico
+valia ~1/19 do acumulado. Trocado por **barra flutuante `[de, até]` no mesmo eixo** — a
+altura passa a ser o ganho do mês e a posição mostra onde ele entrou na curva. Uma escala
+só, geometria honesta, nada perdido.
+
+**Tooltips.** Sete gráficos formatavam o *eixo* em dólar mas deixavam o tooltip no default
+do Chart.js, mostrando o número cru ("1389" em vez de "$1.389"). Padronizados, e com o
+contexto que faltava quando há 32 barras parecidas:
+`chartPnl` e `chartApr` (título vira o par da pool; corpo traz rede, dias, capital, datas,
+taxas e resultado) · `chartFees` (valor, participação no total, quantas pools fecharam no
+ano) · `chartTimeline` · `chartRanking` · `pnlByAsset` / `roiByAsset` (nome, valor, custo,
+ROI — usavam `tt()` sem callback, então saía float cru tipo "−645.9123") · `rendaChart`
+(era o único sem nem o estilo do site) · `cpImpactChart` (mostra peso e convexidade por
+trás do w×C).
+
+**Card da LP agora lê do `data.js`** em vez de ser 100% estático — badge, rótulo da seção,
+pooled, APR e custo de borrow acompanham sozinhos quando o Lucas reabrir uma posição.
+
+### Verificação
+Todas as 5 páginas: **0 erros de JS, 0 séries com NaN, 0 "NaN/undefined" no texto
+renderizado, 0 overflow horizontal**, em tema claro e escuro, com o toggle de tema
+exercitado. Os KPIs do dashboard fecham de forma aditiva
+(`6.643 + 0 LP + 2.503 − 1.526 = 7.620`). O TWR calculado em Node sobre a curva bate
+exatamente com o exibido (−2,20%). O caminho "ao vivo" da landing foi testado semeando o
+cache de preços que o código usa como fallback.
+
+### O que ainda falta
+- **Espelhar no CoinGecko** os +0,164778 SOL (e os +4,66 USDS de 04/09) como transferência
+  de entrada, custo zero — enquanto não fizer, o book do Lucas e o `data.js` divergem e a
+  próxima leitura de print vai querer puxar de volta.
+- **Drift do USDT**: holding 2.198,09 vs supply AAVE 2.013,38 → delta 184,71, contra os
+  185,27 de 01/09. É o juro do aToken correndo sem ser lançado. Ainda **acima** do supply
+  (não viola o invariante), mas caminha para violar, como aconteceu com SOL e USDS.
+- **Endereços de carteira em repositório público** — pendência aberta desde 22/08, sem
+  decisão do Lucas. Não executar nada sem ele pedir.
+- **`data.js → defi.aave.healthFactor`** com valores divergentes — guardado para depois por
+  pedido explícito do Lucas em 19/08. Não mexer.
+- Pendências antigas mantidas: `monthlyReturns[2026]` (Set–Dez), CDI/IPCA anual,
+  `FISCAL_ENTRADAS`, Registro Histórico em `pools.html`, custo em BRL dos ~285 USDT.
+
+### Commits
+| Hash | Mensagem |
+|---|---|
+| `eacb379` | fix: curva de patrimonio vira fonte unica no data.js + corrige dados congelados na landing |
+| `e744c05` | fix: graficos — trimestre derivado do POOLS, eixo duplo removido, cores de tema e tooltips |
+| `2a03310` | fix: CAGR e Track Record da landing passam a usar o TWR do dashboard |
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
