@@ -3049,15 +3049,30 @@ var RENDA_2026 = [
  { m:'Mar', lp:0,     lend:8.0  },
  { m:'Abr', lp:0,     lend:8.4  },  // refi AAVE 2.32%
  { m:'Mai', lp:0,     lend:11.1 },  // APYs de supply subiram
- { m:'Jun', lp:22.28, lend:7.9  }   // WETH/USDC $22.28 (03/06) · spike borrow 12/06
+ { m:'Jun', lp:22.28, lend:7.9  },  // WETH/USDC $22.28 (03/06) · spike borrow 12/06
+ { m:'Jul', lp:8.62,  lend:11.3 },  // WETH/USDC Base $8.62 (14/07) · lending pelo refresh de 31/07
+ { m:'Ago', lp:19.12, lend:14.3 }   // WETH/USDG $13.04 (07/08) + $5.28 (24/08) + WETH/USDC Base $0.80 (26/08)
 ];
+// `lp` = fees de pool REALIZADAS no mes, por data de coleta/fechamento — sai direto do
+// array POOLS de pools.html (mesmo criterio do card 'P&L 2026 YTD'). Confere: a soma
+// das 8 linhas da $124,02, identica ao total de 2026 do POOLS.
+// `lend` = lending LIQUIDO estimado do mes = (yield de supply − juros de borrow) / 12,
+// com as posicoes/APYs documentados no data.js e o preco MEDIO do mes (ETH/SOL vindos
+// de networth-history.json). Jul usa o refresh de 31/07 (ETH $1.859 · SOL $76,02);
+// Ago e a media de 3 leituras — 07/08, 22/08 e 27/08–01/09 (ETH $2.100 · SOL $84,11).
+//   ⚠️ Na leitura de 01/09 o borrow da AAVE marcava 1,88%, que era spot momentaneo: as
+//   fees pagas foram de 12,93 (22/08) para 14,29 (04/09), ou seja 1,36 USDC em 13 dias
+//   = 5,02%/ano REALIZADO na janela. Por isso Ago usa 4,74% (media realizada desde o
+//   refin de 10/04), nao o 1,88% — senao agosto sairia inflado em ~$1,8/mes.
+//   Validacao independente do lado do supply: o 'Interest Earned' da Kamino subiu $4,05
+//   entre 07/08 e 21/08 = $8,68/mes, exatamente o que o modelo estima para o mes.
 function buildRendaPassiva(){
  var canvas=document.getElementById('rendaChart');
  if(!canvas||typeof Chart==='undefined')return;
  var prev=Chart.getChart(canvas); if(prev)prev.destroy();
 
  // ── run-rate do mês corrente (lending ao vivo via data.js + preços live) ──
- var julLend=null, jurosMes=null, uncFees=0;
+ var runRateLend=null, jurosMes=null, uncFees=0;
  try{
    var D=window.BAROLO_DATA&&window.BAROLO_DATA.defi;
    if(D){
@@ -3068,7 +3083,7 @@ function buildRendaPassiva(){
                +(D.kamino.supply.SOL.qty*sp*D.kamino.supply.SOL.apy)
                +aaveApy(D.kamino.supply.USDS);
      var borrowY=aaveApy(D.aave.borrow.USDC)+aaveApy(D.kamino.borrow.USDC);
-     julLend=(supplyY-borrowY)/12;
+     runRateLend=(supplyY-borrowY)/12;
      jurosMes=borrowY/12;
      uncFees=(D.uniswapV3&&D.uniswapV3.uncollectedFees)||0;
    }
@@ -3083,8 +3098,8 @@ function buildRendaPassiva(){
  s('rp-ytd-sub','$'+RENDA_2026.reduce(function(a,r){return a+r.lp;},0).toFixed(2)+' LP + $'+RENDA_2026.reduce(function(a,r){return a+r.lend;},0).toFixed(2)+' lending');
  s('rp-avg',fmt(avg));
  s('rp-avg-sub',RENDA_2026.length+' meses fechados de 2026');
- if(julLend!=null){
-   s('rp-now',fmt(julLend));
+ if(runRateLend!=null){
+   s('rp-now',fmt(runRateLend));
    s('rp-now-sub','lending ao vivo · +$'+uncFees.toFixed(2)+' fees pendentes na pool');
  }
  if(jurosMes!=null&&jurosMes>0){
@@ -3095,11 +3110,14 @@ function buildRendaPassiva(){
    s('rp-cover-sub','renda $'+avg.toFixed(2)+' ÷ juros $'+jurosMes.toFixed(2)+'/mês');
  }
 
- // ── gráfico: barras empilhadas LP (ouro) + lending (verde), Jul* = run-rate ──
+ // ── gráfico: barras empilhadas LP (ouro) + lending (verde), mês* = run-rate ──
  var labels=RENDA_2026.map(function(r){return r.m;});
  var lpData=RENDA_2026.map(function(r){return r.lp;});
  var lendData=RENDA_2026.map(function(r){return r.lend;});
- if(julLend!=null){labels.push('Jul*');lpData.push(0);lendData.push(julLend);}
+ // O mês corrente entra como barra de run-rate (sufixo *) só enquanto não estiver
+ // fechado no array — sem isso o label ficava preso em 'Jul*' e apareceria duplicado.
+ var mesAtual=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][new Date().getMonth()];
+ if(runRateLend!=null&&labels.indexOf(mesAtual)<0){labels.push(mesAtual+'*');lpData.push(0);lendData.push(runRateLend);}
  var dark=document.documentElement.getAttribute('data-theme')==='dark';
  var grid=dark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
  var tick=dark?'#8a7a62':'#7a6a52';
