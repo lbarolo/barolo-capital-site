@@ -155,7 +155,7 @@
        reconhecidos em 22/08, os 406,27 acima e o DCA de SOL de 05/08).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-09-01',
+  asOf: '2026-09-04',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -182,8 +182,8 @@ window.BAROLO_DATA = {
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.2248, apy:0.0227 }, USDT:{ qty:2012.82, apy:0.0327 } },
-      borrow: { USDC:{ qty:761.99, apy:0.0188 } },
+      supply: { WETH:{ qty:2.2252, apy:0.0216 }, USDT:{ qty:2013.38, apy:0.0327 } },
+      borrow: { USDC:{ qty:762.29, apy:0.0465 } },
       // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
       // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
       // borrow $760,17, LTV 13,4% -> HF 6,04.
@@ -222,7 +222,26 @@ window.BAROLO_DATA = {
       // com uma varredura única antes de lançar; NÃO é dust desprezível (o gas de
       // 0,04996 SOL deixado fora em 15/07 valia $3,88, duas ordens de grandeza
       // menos). Enquanto não resolver, o patrimônio está ~$88 subestimado.
-      healthFactor: 7.91
+      // ── PRINT AAVE 04/09/2026 (standup) ───────────────────────────────────
+      //   Deposited $7.476,00 · Collateral $6.105,00 · Net Deposit APY 2,46%
+      //   ETH  2,22 ($5,46 mil) @2,16% · earnings 0,01 ETH ($36,30) · CF 83%
+      //   USDT 2,02 mil @3,27%        · earnings 19,46 USDT          · CF 78%
+      //   Borrowed $762,00 @4,65% · Borrowing Power $5.342,53 · fees pagas 14,29 USDC
+      //   Sem deposito/saque no periodo -> `principals` INALTERADO. Confirmado por
+      //   duas identidades exatas: USDC 748,00 (principal) + 14,29 (fees) = 762,29 =
+      //   borrowed do print; e Borrowing Power 5.342,53 + 762,19 = 6.104,72 = Collateral.
+      //   Quantidades derivadas do principal + earnings (o card arredonda):
+      //     WETH 2,2104 + 36,30/2.452,80 = 2,2252 · USDT 1.993,92 + 19,46 = 2.013,38
+      //   Confere: 2,2252 x $2.452,80 + 2.013,38 = $7.471 (print $7.476, dif 0,06% de
+      //   arredondamento) e 0,83 x 5.458 + 0,78 x 2.013 = $6.101 (print $6.105).
+      // ⚠️ APY DE BORROW VOLTOU AO NORMAL: 4,92% (22/08) -> 1,88% (01/09) -> 4,65% (hoje).
+      //   O 1,88% era leitura de spot legitima, mas e uma taxa variavel que oscila muito;
+      //   gravada como se fosse regime, ela subestimava o custo em ~2,8pp e contaminava o
+      //   KPI 'Juros/Mes' (o briefing.json de 03/09 saiu com $4,59/mes; o correto e ~$6,41).
+      //   Referencia estavel para sanity check: 14,29 de fees pagas sobre 748,00 em 147
+      //   dias desde o refin de 10/04/2026 = 4,74%/ano de taxa MEDIA realizada. Sempre que
+      //   um spot fugir muito disso, checar contra essa media antes de gravar.
+      healthFactor: 8.01   // Collateral 6.105,00 / borrowed 762,19 (print 04/09/2026)
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -236,9 +255,13 @@ window.BAROLO_DATA = {
       // 0,371763411 SOL. Debt $825,58 -> $762,23 · LTV 27,67% -> 25,22% ·
       // Collateral $2,98K -> $3,02K · Net APY 5,28% -> 5,30% · rewards claimable
       // a parte (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,95.
-      supply: { SOL:{ qty:24.92, apy:0.0463 }, USDS:{ qty:304.59, apy:0.0341 } },
-      borrow: { USDC:{ qty:762.97, apy:0.0534 } },
-      ltv: 0.2739, liqLtv: 0.7664   // print 01/09/2026 (LTV subiu com a queda do SOL, nao por divida nova)
+      // Print 04/09/2026 (standup): so acrescimo de juros, sem deposito/saque/repay —
+      // `principals.kamino` INALTERADO. Net Value $2,07K · Net APY 4,16% · Interest
+      // Earned (lifetime) +$161,52 · Supplied $2,83K · Borrowing $763,20.
+      // Rewards claimable a parte, NAO lancados: USDS $1,59 · PYUSD $0,07 · KMNO $3,96.
+      supply: { SOL:{ qty:24.93, apy:0.0463 }, USDS:{ qty:304.66, apy:0.0343 } },
+      borrow: { USDC:{ qty:763.28, apy:0.0543 } },
+      ltv: 0.2696, liqLtv: 0.7661   // print 04/09/2026 (LTV caiu de 27,39% com o SOL a $101,38 — nao houve repagamento)
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'closed',
@@ -552,7 +575,7 @@ window.BAROLO_DATA = {
   // em R$ 36.632,97 e sem esses ~285 USDT. Falta a data e o cambio da conversao.
   //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
-  debt:   { aave:761.99, kamino:762.97, total:1524.96 },
+  debt:   { aave:762.29, kamino:763.28, total:1525.57 },
   stablesTotalUSD: 2498.09   // USDT 2198.09 + USDS 300
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
