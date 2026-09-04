@@ -1972,6 +1972,12 @@ function toggleTheme(){
 
   var btn=document.querySelector('button[onclick="toggleTheme()"]');
   if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
+
+  // Os graficos leem as cores do tema na construcao — sem este rebuild eles ficavam
+  // com a paleta do tema anterior ate o proximo reload.
+  if (window.Chart && typeof window.rebuildPoolCharts === 'function') {
+    requestAnimationFrame(window.rebuildPoolCharts);
+  }
 }
 document.addEventListener('DOMContentLoaded',()=>{
  const saved=localStorage.getItem('bc-theme');
@@ -2783,6 +2789,24 @@ function ttOpts() {
   };
 }
 
+// ── Formatadores de tooltip ────────────────────────────────────────────────────
+// Varios graficos desta pagina formatavam o EIXO em dolar mas deixavam o tooltip no
+// default do Chart.js, que mostra o numero cru ("1389" em vez de "$1.389"). Estes
+// helpers padronizam, e os callbacks abaixo aproveitam para trazer o contexto da pool
+// (par, rede, dias, capital) — que e a informacao que falta quando ha 32 barras.
+function _money(v){ var n = Math.abs(+v||0);
+  return (v<0?'\u2212':'') + '$' + n.toLocaleString('pt-BR',{minimumFractionDigits: n<100?2:0, maximumFractionDigits: n<100?2:0}); }
+function _pct(v){ return ((+v||0)>=0?'+':'') + (+v||0).toFixed(1).replace('.',',') + '%'; }
+// Contexto da pool para o tooltip, a partir do array ja ordenado usado pelo grafico.
+function _poolCtx(p){
+  if(!p) return [];
+  var out = [];
+  out.push(p.net + (p.days ? '  ·  ' + p.days + ' dias' : ''));
+  if(p.capital) out.push('capital ' + _money(p.capital));
+  if(p.open) out.push(p.open + (p.close ? '  →  ' + p.close : '  →  em aberto'));
+  return out;
+}
+
 function buildPnl(type) {
   var ctx = document.getElementById('chartPnl'); if (!ctx) return;
   try {
@@ -2795,7 +2819,7 @@ function buildPnl(type) {
         { label:'IL', data:pnlIL.map(v=>-v), backgroundColor:isLine?'rgba(248,81,73,0.08)':'rgba(248,81,73,0.68)', borderColor:gc.red, borderWidth:isLine?2.5:1, borderRadius:4, tension:0.35, fill:isLine, pointRadius:isLine?4:0, pointBackgroundColor:gc.red, pointBorderColor:dk?'#0d1117':'#fff', pointBorderWidth:2 },
         { label:'Net', data:pnlNet, type:'line', borderColor:pnlNet.map(v=>v>=0?gc.gold:gc.red), backgroundColor:'transparent', borderWidth:2.5, tension:0.4, pointRadius:isLine?5:0, pointBackgroundColor:pnlNet.map(v=>v>=0?gc.gold:gc.red), pointBorderColor:dk?'#0d1117':'#fff', pointBorderWidth:2 }
       ]}, options:{ responsive:true, maintainAspectRatio:true, animation:{duration:400},
-        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),usePointStyle:true,padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11},displayColors:true,boxPadding:8} },
+        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),usePointStyle:true,padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11},displayColors:true,boxPadding:8,callbacks:{title:function(items){ var p=_chron[items[0].dataIndex]; return p? p.pair : items[0].label; },label:function(c){ var v=c.parsed.y; return '  '+c.dataset.label+': '+_money(c.dataset.label==='IL'? -Math.abs(v) : v); },afterBody:function(items){ return _poolCtx(_chron[items[0].dataIndex]).map(function(l){return '  '+l;}); }}} },
         scales:{ x:{ticks:{font:{size:10},color:gc.muted,maxRotation:35},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}}, y:{ticks:{font:{size:10},color:gc.muted,callback:v=>(v>=0?'+':'')+'$'+Math.abs(v).toLocaleString()},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}} }
       }
     });
@@ -2832,7 +2856,7 @@ function buildFees(type) {
         borderColor:colors, borderWidth:isLine?2.5:1.5, borderRadius:6,
         tension:0.38, fill:isLine, pointRadius:isLine?5:0, pointBackgroundColor:colors, pointBorderColor:dk?'#0d1117':'#fff', pointBorderWidth:2 }]},
       options:{ responsive:true, maintainAspectRatio:true, animation:{duration:400},
-        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11}} },
+        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11},callbacks:{label:function(c){ var tot=yearFees.reduce(function(a,b){return a+b;},0)||1; return '  ' + _money(c.parsed.y) + '  ·  ' + (c.parsed.y/tot*100).toFixed(0) + '% do total'; },afterBody:function(items){ var yr=_yrs[items[0].dataIndex]; var n=POOLS.filter(function(p){ var src=(p.status==='active')?String(_curYear):((p.close&&/\d{4}$/.test(p.close))?p.close:p.open);   var m=src&&String(src).match(/(\d{4})$/); return m && +m[1]===yr; }).length; return ['  ' + n + ' ' + (n===1?'pool':'pools') + ' realizadas no ano']; }}} },
         scales:{ x:{ticks:{font:{size:10},color:gc.muted},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}}, y:{ticks:{font:{size:10},color:gc.muted,callback:v=>'$'+v.toLocaleString()},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}} }
       }
     });
@@ -2844,15 +2868,39 @@ function buildTimeline(type) {
   try {
     if (charts.timeline) { charts.timeline.destroy(); charts.timeline = null; }
     var dk = isDark(); var isLine = type === 'line';
-    var labels = ['2023 Q1','2023 Q2','2023 Q3','2023 Q4','2024 Q1','2024 Q2','2024 Q3','2024 Q4','2025 Q1','2025 Q2','2025 Q3','2025 Q4','2026 Q1'];
-    var feesQ  = [90, 335, 22, 0, 36, 73, 0, 0, 1389, 7, 57, 0, 25];
+    // Trimestres DERIVADOS do array POOLS por data de realizacao (fechamento/coleta),
+    // mesmo criterio de buildFees e do card "P&L 2026 YTD". Antes era um array cravado
+    // a mao que parava em 2026 Q1 e somava $2.034 contra os $2.466 reais — sobrou da
+    // sincronizacao de 08/04/2026, que atualizou os outros graficos e esqueceu este.
+    var _qFees = {};
+    POOLS.forEach(function(p){
+      var src = (p.status === 'active') ? null : (p.close || p.open);
+      var d = src ? String(src).match(/(\d{2})\/(\d{2})\/(\d{4})/) : null;
+      var yr, q;
+      if (d) { yr = +d[3]; q = Math.floor((+d[2] - 1) / 3) + 1; }
+      else { var now = new Date(); yr = now.getFullYear(); q = Math.floor(now.getMonth() / 3) + 1; }
+      var k = yr + ' Q' + q;
+      _qFees[k] = (_qFees[k] || 0) + (p.fees || 0);
+    });
+    // Preenche os trimestres vazios entre o primeiro e o ultimo, para o eixo nao pular buracos
+    var _ks = Object.keys(_qFees).map(function(k){ var m = k.split(' Q'); return { y:+m[0], q:+m[1] }; })
+                    .sort(function(a,b){ return a.y - b.y || a.q - b.q; });
+    var labels = [], feesQ = [];
+    if (_ks.length) {
+      var cur = _ks[0], end = _ks[_ks.length - 1];
+      while (cur.y < end.y || (cur.y === end.y && cur.q <= end.q)) {
+        var key = cur.y + ' Q' + cur.q;
+        labels.push(key); feesQ.push(Math.round((_qFees[key] || 0) * 100) / 100);
+        cur = (cur.q === 4) ? { y: cur.y + 1, q: 1 } : { y: cur.y, q: cur.q + 1 };
+      }
+    }
     var col = feesQ.map(v=>v>0?gc.gold:'rgba(127,127,127,0.15)');
     charts.timeline = new Chart(ctx, { type:isLine?'line':'bar', data:{
       labels, datasets:[{ label:'Taxas por Período', data:feesQ,
         backgroundColor:isLine?'rgba(201,160,80,0.12)':col, borderColor:feesQ.map(v=>v>0?gc.gold:gc.muted),
         borderWidth:isLine?2.5:1, borderRadius:4, tension:0.35, fill:isLine, pointRadius:isLine?4:0, pointBackgroundColor:gc.gold, pointBorderColor:dk?'#0d1117':'#fff', pointBorderWidth:2 }]},
       options:{ responsive:true, maintainAspectRatio:true, animation:{duration:400},
-        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11}} },
+        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11},callbacks:{label:function(c){ return c.parsed.y>0 ? '  ' + _money(c.parsed.y) + ' em taxas' : '  sem taxas realizadas'; }}} },
         scales:{ x:{ticks:{font:{size:10},color:gc.muted,maxRotation:35},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}}, y:{ticks:{font:{size:10},color:gc.muted,callback:v=>'$'+v},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}} }
       }
     });
@@ -2870,7 +2918,7 @@ function buildApr(type) {
         backgroundColor:isLine?'rgba(201,160,80,0.12)':colors.map(c=>c.replace('1)','0.75)')), borderColor:colors,
         borderWidth:isLine?2.5:1, borderRadius:4, tension:0.35, fill:isLine, pointRadius:isLine?4:0, pointBackgroundColor:colors, pointBorderColor:dk?'#0d1117':'#fff', pointBorderWidth:2 }]},
       options:{ responsive:true, maintainAspectRatio:true, animation:{duration:400},
-        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11}} },
+        plugins:{ legend:{display:true, position:'top', labels:{font:{size:11,weight:'500'},color:textColor(),padding:14}}, tooltip:{backgroundColor:dk?'rgba(13,17,23,0.95)':'rgba(255,255,255,0.95)',borderColor:gc.gold,borderWidth:1,titleColor:gc.gold,bodyColor:textColor(),padding:10,titleFont:{size:12,weight:'600'},bodyFont:{size:11},callbacks:{title:function(items){ var p=_withFees[items[0].dataIndex]; return p? p.pair : items[0].label; },label:function(c){ return '  FCR anualizado: ' + _pct(c.parsed.y); },afterBody:function(items){ var p=_withFees[items[0].dataIndex]; if(!p) return []; return ['  taxas ' + _money(p.fees) + '  ·  resultado ' + _money(p.result)].concat(_poolCtx(p).map(function(l){return '  '+l;})); }}} },
         scales:{ x:{ticks:{font:{size:10},color:gc.muted,maxRotation:35},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}}, y:{ticks:{font:{size:10},color:gc.muted,callback:v=>v+'%'},grid:{color:gridColor(),drawBorder:false,lineWidth:0.5},border:{display:false}} }
       }
     });
@@ -2912,20 +2960,26 @@ window.setChartType = function(chartId, type, btn) {
 };
 
 
+// Reconstroi todos os graficos desta pagina. Os builders leem isDark()/gridColor()/
+// textColor() no momento da construcao, entao trocar de tema sem reconstruir deixava
+// eixos, grades e tooltips com as cores do tema ANTERIOR ate o proximo reload — era
+// o que acontecia, porque toggleTheme() so trocava o atributo data-theme.
+window.rebuildPoolCharts = function() {
+  try { buildPnl(chartTypes.pnl || 'bar'); } catch(e){}
+  try { buildFees(chartTypes.fees || 'bar'); } catch(e){}
+  try { buildTimeline(chartTypes.timeline || 'bar'); } catch(e){}
+  try { buildApr(chartTypes.apr || 'bar'); } catch(e){}
+  try { buildNet(chartTypes.net || 'bar'); } catch(e){}
+  try { buildRanking(window._rankMode || 'fcr'); } catch(e){}
+  try { buildWaterfallAdv(); } catch(e){}
+  try { buildFCR(); } catch(e){}
+  try { buildWaterfall(); } catch(e){}
+  try { buildNetRanking(); } catch(e){}
+  try { buildProjChart(); } catch(e){}
+};
+
 document.addEventListener('DOMContentLoaded', function() {
-  loadChartJs(function() {
-    try { buildPnl('bar'); } catch(e){}
-    try { buildFees('bar'); } catch(e){}
-    try { buildTimeline('bar'); } catch(e){}
-    try { buildApr('bar'); } catch(e){}
-    try { buildNet('bar'); } catch(e){}
-    try { buildRanking('fcr'); } catch(e){}
-    try { buildWaterfallAdv(); } catch(e){}
-    try { buildFCR(); } catch(e){}
-    try { buildWaterfall(); } catch(e){}
-    try { buildNetRanking(); } catch(e){}
-    try { buildProjChart(); } catch(e){}
-  });
+  loadChartJs(function() { window.rebuildPoolCharts(); });
 });
 
 // ── MOEDA USD / BRL (pools) ──
@@ -3485,7 +3539,10 @@ function buildRanking(mode) {
             borderColor: dk?'rgba(201,160,80,.25)':'rgba(138,104,32,.18)',
             borderWidth: 1, padding: 10, bodyFont: font, titleFont: font,
             titleColor: dk?'#e8e0d0':'#16110c', bodyColor: dk?'#8a7a60':'#7a6a50',
-            callbacks: { label: function(ctx){ return ' ' + (isNet ? '$' : '') + ctx.raw + (isNet ? '' : '%'); } }
+            callbacks: { label: function(ctx){ return '  ' + (isNet ? _money(ctx.raw) : _pct(ctx.raw)); },
+                        afterBody: function(items){ var p = sorted[items[0].dataIndex];
+                          if(!p) return [];
+                          return isNet ? ['  FCR anualizado ' + _pct(p.fcr)] : ['  resultado ' + _money(p.net)]; } }
           }
         },
         scales: {
@@ -3500,6 +3557,7 @@ window.setRankingMode = function(mode, btn) {
   var parent = btn ? (btn.closest('.ct-toggle') || btn.parentElement) : null;
   if (parent) parent.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
+  window._rankMode = mode;
   buildRanking(mode);
 };
 

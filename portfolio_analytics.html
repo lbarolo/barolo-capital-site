@@ -2433,6 +2433,15 @@ function setupChartDefaults(){
  tp.titleMarginBottom = 8;
  tp.bodySpacing = 6;
 }
+// ── Cor de token CSS resolvida para o canvas ───────────────────────────────────
+// O Chart.js escreve direto no canvas, e canvas NAO resolve custom properties: passar
+// 'var(--muted)' como cor deixa o fillStyle inalterado, entao os ticks caem numa cor
+// herdada (frequentemente preta) e param de seguir o tema. Sete configs de grafico
+// faziam isso — todas trocadas por cssVar(), que le o valor computado do :root.
+function cssVar(name, fallback){
+  try { var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v || fallback; }
+  catch(e){ return fallback; }
+}
 var tt=()=>{
  const dark=document.documentElement.getAttribute('data-theme')!=='light';
  return {
@@ -2482,7 +2491,13 @@ function buildLiveCharts(enriched, totalVal){
  pnlChartInst = new Chart(document.getElementById('pnlByAsset'),{
  type:'bar',
  data:{labels:withInv.map(a=>a.ticker),datasets:[{label:'P&L',data:withInv.map(a=>a.pnl),backgroundColor:withInv.map(a=>a.pnl>=0?'rgba(63,185,80,0.85)':'rgba(248,81,73,0.85)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:20}]},
- options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>'$'+v},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:12,weight:'600'}},grid:{display:false},border:{display:false}}}}
+ options:{indexAxis:'y',responsive:true,plugins:{tooltip:{...tt(),callbacks:{labelColor:ttLabelColor,
+   title:its=>{const a=withInv[its[0].dataIndex];return a?(a.name||a.ticker):its[0].label;},
+   label:c=>{const a=withInv[c.dataIndex];return '  P&L: '+(a.pnl>=0?'+':'\u2212')+fmtCurrency(Math.abs(a.pnl),2);},
+   afterBody:its=>{const a=withInv[its[0].dataIndex];if(!a)return[];
+     const l=['  valor '+fmtCurrency(a.currentValue,2)+'  \u00b7  custo '+(a.invested>0?fmtCurrency(a.invested,2):'airdrop')];
+     if(a.invested>0){const r=a.pnl/a.invested*100; l.push('  ROI '+(r>=0?'+':'\u2212')+Math.abs(r).toFixed(1)+'%');}
+     return l;}}},legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>'$'+v},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:12,weight:'600'}},grid:{display:false},border:{display:false}}}}
  });
  }catch(e){}
 
@@ -2491,7 +2506,12 @@ function buildLiveCharts(enriched, totalVal){
  roiChartInst = new Chart(document.getElementById('roiByAsset'),{
  type:'bar',
  data:{labels:withROI.map(a=>a.ticker),datasets:[{label:'ROI%',data:withROI.map(a=>((a.pnl/a.invested)*100).toFixed(1)),backgroundColor:withROI.map(a=>a.pnl>=0?'rgba(63,185,80,0.85)':'rgba(248,81,73,0.85)'),borderColor:'transparent',borderWidth:0,borderRadius:3,barThickness:20}]},
- options:{indexAxis:'y',responsive:true,plugins:{tooltip:tt(),legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>v+'%'},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:12,weight:'600'}},grid:{display:false},border:{display:false}}}}
+ options:{indexAxis:'y',responsive:true,plugins:{tooltip:{...tt(),callbacks:{labelColor:ttLabelColor,
+   title:its=>{const a=withROI[its[0].dataIndex];return a?(a.name||a.ticker):its[0].label;},
+   label:c=>{const a=withROI[c.dataIndex];const r=a.pnl/a.invested*100;return '  ROI: '+(r>=0?'+':'\u2212')+Math.abs(r).toFixed(1)+'%';},
+   afterBody:its=>{const a=withROI[its[0].dataIndex];if(!a)return[];
+     return ['  P&L '+(a.pnl>=0?'+':'\u2212')+fmtCurrency(Math.abs(a.pnl),2),
+             '  custo '+fmtCurrency(a.invested,2)+'  \u00b7  valor '+fmtCurrency(a.currentValue,2)];}}},legend:{display:false}},scales:{x:{ticks:{color:Chart.defaults.color,font:{size:11},callback:v=>v+'%'},grid:{color:Chart.defaults.borderColor,lineWidth:0.5},border:{display:false}},y:{ticks:{color:Chart.defaults.color,font:{size:12,weight:'600'}},grid:{display:false},border:{display:false}}}}
  });
  }catch(e){}
 }
@@ -2713,11 +2733,16 @@ function buildConvexityImpactChart(cv){
       maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: ctx => 'w×C: ' + ctx.raw.toFixed(4) } }
+        tooltip: { ...tt(), callbacks: {
+          labelColor: ttLabelColor,
+          label: ctx => '  impacto w×C: ' + ctx.raw.toFixed(4),
+          afterBody: its => { const d = data[its[0].dataIndex]; if(!d) return [];
+            return ['  peso ' + (cv.weights[d.ticker]*100).toFixed(1) + '%  ·  convexidade ' + cv.convexities[d.ticker].toFixed(2)]; }
+        } }
       },
       scales: {
-        x: { ticks: { color: 'var(--muted)', font: { size: 8 } }, grid: { color: 'rgba(150,150,150,0.06)' } },
-        y: { ticks: { color: 'var(--muted)', font: { size: 9 } }, grid: { display: false } }
+        x: { ticks: { color: cssVar('--muted','#8a7a62'), font: { size: 8 }, callback: v => (+v).toFixed(2) }, grid: { color: 'rgba(150,150,150,0.06)' } },
+        y: { ticks: { color: cssVar('--muted','#8a7a62'), font: { size: 9 } }, grid: { display: false } }
       }
     }
   });
@@ -2747,7 +2772,7 @@ function buildConvexityDecompositionChart(cv){
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom', labels: { color: 'var(--muted)', font: { size: 9 }, padding: 10, boxWidth: 10 } },
+        legend: { position: 'bottom', labels: { color: cssVar('--muted','#8a7a62'), font: { size: 9 }, padding: 10, boxWidth: 10 } },
         tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw.toFixed(4)} (${(ctx.raw/total*100).toFixed(1)}%)` } }
       }
     }
@@ -2797,8 +2822,8 @@ function buildConvexityHistChart(currentCP){
         annotation: annotationCfg
       },
       scales: {
-        y: { min: 0, max: 0.5, ticks: { color: 'var(--muted)', font: { size: 8 } }, grid: { color: 'rgba(150,150,150,0.05)' } },
-        x: { ticks: { color: 'var(--muted)', font: { size: 8 } }, grid: { display: false } }
+        y: { min: 0, max: 0.5, ticks: { color: cssVar('--muted','#8a7a62'), font: { size: 8 }, callback: v => (+v).toFixed(2) }, grid: { color: 'rgba(150,150,150,0.05)' } },
+        x: { ticks: { color: cssVar('--muted','#8a7a62'), font: { size: 8 } }, grid: { display: false } }
       }
     }
   });
@@ -3144,7 +3169,9 @@ function buildRendaPassiva(){
      responsive:true,maintainAspectRatio:false,
      plugins:{
        legend:{labels:{color:tick,font:{family:"'JetBrains Mono',monospace",size:9},boxWidth:8,usePointStyle:true,pointStyle:'circle'}},
-       tooltip:{callbacks:{footer:function(items){var t=items.reduce(function(a,i){return a+i.parsed.y;},0);return 'Total: '+(t<0?'−$':'+$')+Math.abs(t).toFixed(2);}}}
+       tooltip:{...tt(),callbacks:{labelColor:ttLabelColor,
+         label:function(c){return '  '+c.dataset.label+': '+(c.parsed.y<0?'\u2212$':'$')+Math.abs(c.parsed.y).toFixed(2);},
+         footer:function(items){var t=items.reduce(function(a,i){return a+i.parsed.y;},0);return 'Total: '+(t<0?'\u2212$':'+$')+Math.abs(t).toFixed(2);}}}
      },
      scales:{
        x:{stacked:true,grid:{display:false},ticks:{color:tick,font:{family:"'JetBrains Mono',monospace",size:9}}},
@@ -3318,7 +3345,7 @@ function buildAnnualChart(){
  }
  }},
  legend:{display:true,labels:{color:Chart.defaults.color,font:{size:10},boxWidth:8,usePointStyle:true,pointStyleWidth:6}},
- title:{display:true,text:`← Voltar para Visão Anual`,color:'var(--muted)',font:{size:9},align:'start',
+ title:{display:true,text:`← Voltar para Visão Anual`,color:cssVar('--muted','#8a7a62'),font:{size:9},align:'start',
  onClick:()=>{annualView='yearly';buildAnnualChart();}}
  },
  scales:{
@@ -3853,8 +3880,8 @@ function buildAlphaVsHodl(){
         tooltip: { callbacks: { label: function(ctx){ var v=ctx.raw; return (v>=0?'+':'−')+sym+Math.abs(v).toFixed(dec)+' '+coin.toUpperCase(); } } }
       },
       scales: {
-        x: { ticks: { color: 'var(--muted)', font: { size: 8 }, callback: function(v){ return sym+(+v).toFixed(2); } }, grid: { color: 'rgba(150,150,150,0.06)' } },
-        y: { ticks: { color: 'var(--text)', font: { size: 9 } }, grid: { display: false } }
+        x: { ticks: { color: cssVar('--muted','#8a7a62'), font: { size: 8 }, callback: function(v){ return sym+(+v).toFixed(2); } }, grid: { color: 'rgba(150,150,150,0.06)' } },
+        y: { ticks: { color: cssVar('--text','#e8dfc8'), font: { size: 9 } }, grid: { display: false } }
       }
     }
   });
@@ -4945,7 +4972,6 @@ function buildAccChart() {
   const grad = ctx.getContext('2d').createLinearGradient(0, 0, 0, 210);
   grad.addColorStop(0, color + '55');
   grad.addColorStop(1, color + '00');
-  const maxDelta = Math.max.apply(null, delta.map(Math.abs)) || 1;
   const lastPts = cum.map((_,i)=> i===cum.length-1 ? 4 : 0);
 
   accChart = new Chart(ctx, {
@@ -4953,12 +4979,18 @@ function buildAccChart() {
       labels,
       datasets: [
         {
-          type: 'bar', label: 'Ganho no mês', data: delta, yAxisID: 'y2', order: 2,
-          backgroundColor: color + '30', borderColor: color + '70', borderWidth: 1,
-          borderRadius: 3, maxBarThickness: 14,
+          // Barra FLUTUANTE [de, ate] no MESMO eixo do acumulado: a altura e o ganho do
+          // mes e a posicao e onde ele entrou na curva. Antes esta serie vivia num
+          // segundo eixo (y2) com os ticks escondidos e max = maxDelta*3.4 — ou seja,
+          // uma barra que parecia 1/3 do grafico valia ~1/19 do acumulado. Como as duas
+          // series estao na MESMA unidade (tokens), o eixo duplo so distorcia a leitura.
+          type: 'bar', label: 'Ganho no mês', order: 2,
+          data: cum.map(function(v, i){ return i === 0 ? [0, v] : [cum[i-1], v]; }),
+          backgroundColor: color + '38', borderColor: color + '80', borderWidth: 1,
+          borderRadius: 2, maxBarThickness: 14,
         },
         {
-          type: 'line', label: 'Acumulado', data: cum, yAxisID: 'y', order: 1,
+          type: 'line', label: 'Acumulado', data: cum, order: 1,
           borderColor: color, backgroundColor: grad, borderWidth: 2.5, fill: true,
           tension: 0.4, pointRadius: lastPts, pointHoverRadius: 5,
           pointBackgroundColor: color, pointBorderColor: isDark ? '#16110c' : '#fff', pointBorderWidth: 1.5,
@@ -4977,17 +5009,20 @@ function buildAccChart() {
           titleColor: isDark ? '#e8e0d0' : '#16110c', bodyColor: isDark ? '#b9ad97' : '#7a6a50',
           callbacks: {
             label: c => {
+              if (c.dataset.label === 'Ganho no mês') {
+                const r = c.raw || [0, 0];
+                const d = (r[1] || 0) - (r[0] || 0);
+                return '  +' + d.toFixed(4) + ' ' + sym + ' no mês  ·  ≈ ' + fmtCurrency(d * price, 2);
+              }
               const y = c.parsed.y || 0;
-              if (c.dataset.label === 'Ganho no mês') return '  +' + y.toFixed(4) + ' ' + sym + ' no mês';
-              return '  ' + y.toFixed(4) + ' ' + sym + '  ·  ≈ ' + fmtCurrency(y * price, 0);
+              return '  ' + y.toFixed(4) + ' ' + sym + ' acumulado  ·  ≈ ' + fmtCurrency(y * price, 0);
             }
           }
         }
       },
       scales: {
         x: { ticks: { font: { size: 8 }, color: textC, maxRotation: 30 }, grid: { display: false }, border: { display: false } },
-        y: { position: 'left', ticks: { font: { family: 'JetBrains Mono, monospace', size: 8 }, color: textC, callback: v => v.toFixed(3) + ' ' + unit }, grid: { color: gridC }, border: { display: false } },
-        y2: { position: 'right', max: maxDelta * 3.4, min: 0, ticks: { display: false }, grid: { display: false }, border: { display: false } }
+        y: { position: 'left', beginAtZero: true, ticks: { font: { family: 'JetBrains Mono, monospace', size: 8 }, color: textC, callback: v => v.toFixed(3) + ' ' + unit }, grid: { color: gridC }, border: { display: false } }
       }
     }
   });
