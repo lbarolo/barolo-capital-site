@@ -176,7 +176,16 @@ window.BAROLO_DATA = {
   // Stablecoins (também já no total CoinGecko).
   stables: [
     { ticker:'USDT', cgId:'tether',           qty:2198.08879, invested:2179.19  },
-    { ticker:'USDS', cgId:'usds',            qty:300,      invested:300      }
+    // USDS 300 -> 304.66 em 04/09/2026: o holding estava ABAIXO do supply da Kamino
+    // (304,66), o que viola o invariante de que holdings incluem o colateral — o piso
+    // do holding e sempre o supply. A diferenca e yield acumulado que o CoinGecko nunca
+    // acompanhou (nao ha USDS em carteira desde o swap de 17,44514 em 27/08). Entra a
+    // CUSTO ZERO, entao `invested` fica em 300 — juro e renda, nao aporte. Mesmo
+    // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
+    // ⚠️ ESPELHAR NO COINGECKO: enquanto o Lucas nao lancar os +4,66 la, o book dele e
+    // este arquivo divergem — e a proxima leitura do print vai querer puxar de volta
+    // para 300. Lancar como 'transferencia de entrada' (custo 0), igual ao SOL em 15/07.
+    { ticker:'USDS', cgId:'usds',            qty:304.66,   invested:300      }
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
@@ -216,12 +225,29 @@ window.BAROLO_DATA = {
       // 2.1629 (antes 2.16, arredondado do card). Com o exato, a decomposição do
       // ETH fecha:  CoinGecko 2,25752 − AAVE 2,1629 = 0,09462 em carteira.
       // Juros retidos = supply − principal = 2,1629 − 2,15 = 0,0129 ETH (~$31).
-      // ⚠️ PENDENTE: o Lucas somou os "farelos" das carteiras e chegou a 0,131,
-      // não 0,09462 — ou seja, faltariam 0,03638 ETH (~$88, 1% do patrimônio) no
-      // CoinGecko. As duas somas não cobriram as mesmas carteiras/redes. Resolver
-      // com uma varredura única antes de lançar; NÃO é dust desprezível (o gas de
-      // 0,04996 SOL deixado fora em 15/07 valia $3,88, duas ordens de grandeza
-      // menos). Enquanto não resolver, o patrimônio está ~$88 subestimado.
+      // ⚠️ PENDENTE — REVISADO EM 04/09/2026, o numero antigo (0,03638) ESTAVA ERRADO.
+      // Havia TRES contagens de carteira em disputa em 22/08:
+      //   (a) 0,06595 — screenshots das carteiras  <- foi ESTA que entrou no livro
+      //   (b) 0,09462 — implicito (CoinGecko 2,25752 - AAVE 2,1629)
+      //   (c) 0,13100 — soma manual dos farelos feita pelo Lucas
+      // A nota antiga calculava (c)-(b) = 0,03638, mas o livro nao usa (b), usa (a).
+      // Se (c) estiver certo, o que falta e (c)-(a) = 0,06505 ETH (~$160) — quase o
+      // DOBRO do que estava escrito. Nao lancar o 0,036: ele nao corresponde a
+      // diferenca de nada que esteja no livro.
+      // EVIDENCIA NOVA (a favor de (a)): a decomposicao fecha sozinha hoje. Carteira
+      // implicita = holding 2,23062 - supply AAVE 2,2252 = 0,00542. Esperada por (a)
+      // = 0,06595 - 0,0604 (WETH depositado na AAVE no mes, ver principals) =
+      // 0,00555. Diferenca 0,00013 ETH = $0,32, ou seja gas. Se (c) fosse a contagem
+      // certa, sobrariam ~0,065 ETH sem lugar nenhum na decomposicao.
+      // COMO RESOLVER (uma coisa so): varredura das 4 carteiras EVM num mesmo dia,
+      // listando ETH POR REDE (mainnet + L2s) e o Yearn V3 a parte. Se o total bater
+      // ~0,0054 + o que estiver fora da AAVE, esta pendencia morre; se bater ~0,07,
+      // lancar a diferenca a custo zero. A hipotese mais provavel para (c) e ter
+      // incluido o aWETH da AAVE ou o Yearn, contando duas vezes.
+      // ⚠️ A MARGEM ENCOLHEU: holding - supply caiu de 0,09462 (22/08) para 0,00542.
+      // Como o supply da AAVE cresce sozinho com juros, em poucas semanas o holding
+      // fica ABAIXO do supply e viola o invariante (foi exatamente o que aconteceu
+      // com o USDS, corrigido hoje). Ou seja: isso se auto-sinaliza em breve.
       // ── PRINT AAVE 04/09/2026 (standup) ───────────────────────────────────
       //   Deposited $7.476,00 · Collateral $6.105,00 · Net Deposit APY 2,46%
       //   ETH  2,22 ($5,46 mil) @2,16% · earnings 0,01 ETH ($36,30) · CF 83%
@@ -576,7 +602,7 @@ window.BAROLO_DATA = {
   //
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:762.29, kamino:763.28, total:1525.57 },
-  stablesTotalUSD: 2498.09   // USDT 2198.09 + USDS 300
+  stablesTotalUSD: 2502.75   // USDT 2198.09 + USDS 304.66 (yield reconciliado 04/09)
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
