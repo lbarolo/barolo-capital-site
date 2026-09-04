@@ -1678,6 +1678,19 @@ var WEEKLY_UPDATE = {
  // buildBenchmarkChart() e calculatePerformanceMetrics().
 };
 
+// ── FONTE UNICA: a curva acima e apenas FALLBACK; a oficial vive em data.js ────────
+// Promovida para data.js em 04/09/2026 porque o index.html mantinha uma SEGUNDA copia
+// da mesma curva, que ficou tres meses atrasada. Com as duas paginas lendo daqui, o
+// fechamento mensal passa a ser UMA edicao so (data.js -> wealthCurve).
+// Tudo nesta pagina e derivado desta curva: retornos mensais/anuais, TWR, XIRR, ROIC,
+// drawdown, Sharpe, benchmark CDI/IPCA e o ROI de destaque.
+(function(){
+  var w = window.BAROLO_DATA && window.BAROLO_DATA.wealthCurve;
+  if(!w || !w.labels || !w.values || !w.invested) return;
+  if(w.labels.length !== w.values.length || w.labels.length !== w.invested.length) return; // desalinhado: mantem o fallback
+  WEEKLY_UPDATE.wealthCurve = { labels:w.labels.slice(), values:w.values.slice(), invested:w.invested.slice() };
+})();
+
 // ── applyUpdate() é chamado depois que todos os dados estão declarados ──
 // ══════════════════════════════════════════════════════════════════
 

@@ -1759,7 +1759,12 @@ function toggleMobile() {
   // Removido o sync que somava trades do Diário (localStorage) às quantidades: o Lucas já mantém
   // tudo no CoinGecko e a base HOLDINGS é sincronizada com ele, então somar o diário contava em dobro.
   var STABLES_USD    = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js (fallback 12/06)
-  var LP_POOLED      = 296;      // pool WETH/USDC Base aberta 03/06/2026: 0.18 WETH (capital $329, valor 10/06/2026)
+  // LP: valor da pool ativa. Vem do data.js (defi.uniswapV3) — estava CRAVADO em 296,
+  // de uma pool da Base que fechou em 14/07/2026, inflando o hero em ~$296 desde entao.
+  // Hoje nao ha pool aberta (ultimo ciclo encerrado ~28/08/2026), entao isto da 0.
+  var LP_POOLED      = (function(){ var u = window.BAROLO_DATA && window.BAROLO_DATA.defi && window.BAROLO_DATA.defi.uniswapV3;
+                                    if(!u || u.status === 'closed') return 0;
+                                    return (u.pooled||0) + (u.uncollectedFees||0); })();
   var TOTAL_DEBT     = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
 
   var FALLBACK = { bitcoin: 84000, ethereum: 2080, solana: 87, cardano: 0.26 };
@@ -1999,6 +2004,20 @@ var INVESTED = [1061,1161,1261,1361,1461,1561,1661,1761,1861,1961,2061,2161,
   4661,4761,4861,4961,5061,5161,5261,5361,5461,5561,5661,5761,
   5861,5961,6061,6161,6261];
 
+// ── FONTE UNICA: a curva vive em data.js (window.BAROLO_DATA.wealthCurve) ──────
+// Os tres arrays acima sao apenas FALLBACK. Ate 04/09/2026 esta pagina mantinha uma
+// copia manual da curva que ficou TRES MESES atrasada (terminava em 05/26) e cujo
+// array INVESTED era uma serie linear ficticia (+$100/mes), nao o aporte real —
+// o que jogava a TIR e o CAGR do hero para valores errados na landing publica.
+(function(){
+  var w = window.BAROLO_DATA && window.BAROLO_DATA.wealthCurve;
+  if(!w || !w.labels || !w.values || !w.invested) return;
+  if(w.labels.length !== w.values.length || w.labels.length !== w.invested.length) return; // desalinhado: mantem o fallback
+  WEALTH_LABELS = w.labels.slice();
+  WEALTH_VALUES = w.values.slice();
+  INVESTED      = w.invested.slice();
+})();
+
 // CPI USA (accumulated since Jan/2022)
 var CPI_USA = {'01/22': 0, '02/22': 0.8, '03/22': 1.2, '04/22': 2.9, '05/22': 5.0, '06/22': 8.6,
   '07/22': 8.5, '08/22': 8.0, '09/22': 8.2, '10/22': 8.0, '11/22': 7.1, '12/22': 6.5,
@@ -2032,13 +2051,30 @@ var USD_BRL = {'01/22': 5.25, '02/22': 5.16, '03/22': 5.02, '04/22': 4.94, '05/2
   '07/25': 5.22, '08/25': 5.18, '09/25': 5.25, '10/25': 5.30, '11/25': 5.35, '12/25': 5.25,
   '01/26': 5.20, '02/26': 5.18, '03/26': 5.15, '04/26': 5.12, '05/26': 5.10};
 
-function calculateInflationData() {
-  var startCapUSD = 1061;
-  var endLabel = '05/26';
-  var years = 4.42;
+// ── Lookup tolerante: as tabelas acima (CPI/IPCA/USD_BRL) sao atualizadas a mao e
+// param em '05/26', mas a curva de patrimonio vem do data.js e cresce todo mes. Sem
+// isto, cada mes novo virava `undefined` -> NaN no grafico de inflacao (a serie em BRL
+// multiplica por USD_BRL[label]). Agora o mes sem dado repete o ultimo conhecido, e o
+// cambio cai para o brlRate do data.js, que e atual.
+// MANUTENCAO: ao acrescentar meses reais nas tabelas, isto simplesmente para de agir.
+function tableAt(table, label, fallback){
+  if(table[label] != null) return table[label];
+  var keys = Object.keys(table);
+  var last = keys.length ? table[keys[keys.length - 1]] : undefined;
+  return (fallback != null) ? fallback : last;
+}
+function brlAt(label){
+  var live = window.BAROLO_DATA && window.BAROLO_DATA.brlRate;
+  return tableAt(USD_BRL, label, (USD_BRL[label] == null && live) ? live : null);
+}
 
-  var inflUSD = CPI_USA[endLabel];
-  var inflBRL = IPCA_BR[endLabel];
+function calculateInflationData() {
+  var startCapUSD = INVESTED[0] || 1061;
+  var endLabel = WEALTH_LABELS[WEALTH_LABELS.length - 1];
+  var years = Math.max(1/12, (WEALTH_LABELS.length - 1) / 12);
+
+  var inflUSD = tableAt(CPI_USA, endLabel);
+  var inflBRL = tableAt(IPCA_BR, endLabel);
 
   var capNeededUSD = startCapUSD * (1 + inflUSD / 100);
   var capNeededBRL = startCapUSD * USD_BRL['01/22'] * (1 + inflBRL / 100);
@@ -2072,17 +2108,19 @@ function buildInflationChart(currency) {
   var isUSD = currency === 'usd';
   var inflData = isUSD ? CPI_USA : IPCA_BR;
   var rateMultiplier = isUSD ? 1 : USD_BRL['01/22'];
-  var endRate = isUSD ? 1 : USD_BRL['05/26'];
+  var endRate = isUSD ? 1 : brlAt(WEALTH_LABELS[WEALTH_LABELS.length - 1]);
 
-  var startingCapital = 1061 * (isUSD ? 1 : USD_BRL['01/22']);
+  var startingCapital = (INVESTED[0] || 1061) * (isUSD ? 1 : USD_BRL['01/22']);
 
   var portfolioData = WEALTH_VALUES.map(function(val, idx) {
-    var absoluteVal = val * (isUSD ? 1 : USD_BRL[WEALTH_LABELS[idx]]);
+    var absoluteVal = val * (isUSD ? 1 : brlAt(WEALTH_LABELS[idx]));
     return (absoluteVal - startingCapital) / startingCapital * 100;
   });
 
   var inflationThresholdData = WEALTH_LABELS.map(function(label, idx) {
-    var inflRate = parseFloat(inflData[label]) || 0;
+    // tableAt: mes ainda sem CPI/IPCA publicado repete o ultimo — sem isto a linha de
+    // inflacao despencava para 0% nos meses novos da curva (parseFloat(undefined)||0).
+    var inflRate = parseFloat(tableAt(inflData, label)) || 0;
     var thresholdValue = startingCapital * (1 + inflRate / 100);
     return (thresholdValue - startingCapital) / startingCapital * 100;
   });
@@ -2174,13 +2212,13 @@ function setInflCurrency(curr, btn) {
 
 function updateInflationStats(currency) {
   var isUSD = currency === 'usd';
-  var startCapUSD = 1061;
-  var endLabel = '05/26';
-  var years = 4.42;
+  var startCapUSD = INVESTED[0] || 1061;
+  var endLabel = WEALTH_LABELS[WEALTH_LABELS.length - 1];
+  var years = Math.max(1/12, (WEALTH_LABELS.length - 1) / 12);
 
-  var inflRate = isUSD ? CPI_USA[endLabel] : IPCA_BR[endLabel];
+  var inflRate = isUSD ? tableAt(CPI_USA, endLabel) : tableAt(IPCA_BR, endLabel);
   var capNeeded = isUSD ? startCapUSD * (1 + inflRate / 100) : startCapUSD * USD_BRL['01/22'] * (1 + inflRate / 100);
-  var endVal = isUSD ? WEALTH_VALUES[WEALTH_VALUES.length - 1] : WEALTH_VALUES[WEALTH_VALUES.length - 1] * USD_BRL[endLabel];
+  var endVal = isUSD ? WEALTH_VALUES[WEALTH_VALUES.length - 1] : WEALTH_VALUES[WEALTH_VALUES.length - 1] * brlAt(endLabel);
 
   var realGain = endVal - capNeeded;
   var pctAboveInfl = ((endVal / capNeeded) - 1) * 100;
@@ -2200,18 +2238,23 @@ function calculatePerformanceMetrics() {
   var n = WEALTH_VALUES.length;
   var startVal = WEALTH_VALUES[0];
   var endVal = WEALTH_VALUES[n - 1];
-  var years = 4 + (4 / 12); // Jan 2022 to May 2026 = 4 years 4 months
+  // Prazo derivado da propria curva (n meses -> n-1 intervalos). Estava cravado em
+  // "4 anos e 4 meses (Jan/22 a Mai/26)" e nao andava com o tempo, o que puxava o CAGR
+  // para cima a cada mes novo.
+  var years = Math.max(1/12, (WEALTH_LABELS.length - 1) / 12);
 
   // ── Capital allocation (05/06/2026 verified data) ──
   var STABLES_DRY_POWDER = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js
-  var TOTAL_APORTED = 6784;           // Total capital aported since Jan/2022
-  var CAPITAL_INVESTED = TOTAL_APORTED - STABLES_DRY_POWDER; // deployed in assets
+  // Aporte liquido acumulado = ultimo ponto da curva (data.js). Estava cravado em 6784.
+  var TOTAL_APORTED = INVESTED[INVESTED.length - 1] || 6784;
+  var CAPITAL_INVESTED = Math.max(1, TOTAL_APORTED - STABLES_DRY_POWDER); // deployed in assets
 
-  // Portfolio composition (10/06/2026)
-  var SPOT_VALUE = 5698;        // Cripto holdings (preços CoinGecko 10/06/2026)
-  var LP_POOLED = 296;          // pool WETH/USDC Base aberta 03/06/2026 (0.18 WETH)
+  // Composicao: ultimo fechamento da curva (bruto, ja inclui LP) menos a divida atual.
+  // Antes: SPOT_VALUE=5698 e LP_POOLED=296 cravados nos precos de 10/06/2026 — o valor
+  // ficava tres meses parado e ainda contava uma pool que nao existe mais.
+  var GROSS_VALUE = WEALTH_VALUES[WEALTH_VALUES.length - 1];
   var TOTAL_DEBT = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
-  var PORTFOLIO_INVESTED_VALUE = SPOT_VALUE + LP_POOLED - TOTAL_DEBT; // 6335.38K
+  var PORTFOLIO_INVESTED_VALUE = GROSS_VALUE - TOTAL_DEBT;
 
   // ── CAGR of invested capital (excluding dry powder) ──
   var cagrInvested = (Math.pow(PORTFOLIO_INVESTED_VALUE / CAPITAL_INVESTED, 1 / years) - 1) * 100;

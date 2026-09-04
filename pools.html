@@ -632,7 +632,7 @@ if(window.Chart){
 
 <div id="bc-lp-active-section">
 <!-- ══ UNISWAP V3 LP — REVERT ══ -->
-<div class="section-label">Liquidity Pool Ativa — Uniswap V3</div>
+<div class="section-label" id="lp-section-label">Liquidity Pool — Uniswap V3</div>
 
 <div class="revert-panel">
  <!-- Toolbar -->
@@ -640,7 +640,7 @@ if(window.Chart){
  <div class="revert-title">
  <span style="font-size:15px;color:#FF007A;font-weight:800;font-family:'Satoshi',serif;">⬡ WETH/USDG</span>
  <span style="font-size:9px;color:var(--muted);">0.01% · Robinhood Chain</span>
- <span class="badge-warn">○ FORA DO RANGE (acima por 0,04%) — 100% USDG</span>
+ <span class="badge-warn" id="lp-status-badge">○ SEM POSIÇÃO ABERTA — último ciclo encerrado ~28/08/2026</span>
  </div>
  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
  <a class="btn-open" href="https://app.uniswap.org/positions" target="_blank" rel="noopener">
@@ -671,17 +671,74 @@ if(window.Chart){
 <!-- Uniswap (posição ativa · Robinhood Chain) — abaixo do Revert -->
 <!-- A Uniswap bloqueia embed em iframe (X-Frame-Options: DENY / CSP frame-ancestors 'self').
      Não há como embutir — card estático com link direto em vez de mostrar "recusou a conexão". -->
-<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:6px;">↓ Uniswap · posição ativa</div>
+<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:6px;" id="lp-uni-caption">↓ Uniswap · posições</div>
 <a href="https://app.uniswap.org/positions" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;border:1px solid var(--border);border-radius:8px;text-decoration:none;background:var(--surface);transition:border-color .2s,transform .2s;" onmouseover="this.style.borderColor='#FF007A';this.style.transform='translateY(-1px)';" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none';">
   <div style="display:flex;align-items:center;gap:12px;">
     <span style="font-size:22px;color:#FF007A;">⬡</span>
     <div>
-      <div style="font-size:13px;color:var(--text);font-weight:700;font-family:'Satoshi',sans-serif;">Ver posição no Uniswap</div>
+      <div style="font-size:13px;color:var(--text);font-weight:700;font-family:'Satoshi',sans-serif;" id="lp-uni-title">Abrir posições no Uniswap</div>
       <div style="font-size:10px;color:var(--muted);margin-top:2px;">WETH/USDG 0.01% · Robinhood Chain · app.uniswap.org/positions</div>
     </div>
   </div>
   <span style="font-size:11px;color:#FF007A;font-weight:600;white-space:nowrap;">Abrir ↗</span>
 </a>
+
+
+<script>
+// ── Card da LP sincronizado com o data.js (antes era 100% estatico) ─────────────
+// A pool migra de rede e abre/fecha com frequencia; o card ficava congelado no
+// ultimo estado escrito a mao. Em 04/09/2026 ele ainda anunciava "Pool Ativa" e
+// "FORA DO RANGE" com ZERO posicoes abertas, e o custo de borrow marcava 3,79%
+// enquanto o data.js ja registrava 4,65%. Agora tudo sai de BAROLO_DATA.
+(function(){
+  var B = window.BAROLO_DATA; if(!B || !B.defi) return;
+  var u = B.defi.uniswapV3 || {};
+  var borrowApy = (B.defi.aave && B.defi.aave.borrow && B.defi.aave.borrow.USDC.apy * 100) || null;
+  var set = function(id, txt, cls){ var e = document.getElementById(id); if(!e) return;
+                                    e.textContent = txt; if(cls) e.className = cls; };
+  var fechada = (u.status === 'closed') || !((u.pooled||0) + (u.uncollectedFees||0));
+  // data.js grava datas em ISO; o site inteiro exibe DD/MM/AAAA
+  var br = function(d){ if(!d) return ''; var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+                        return m ? (m[3] + '/' + m[2] + '/' + m[1]) : d; };
+  var pooled  = (u.pooled||0) + (u.uncollectedFees||0);
+
+  // Cabecalho / estado
+  var badge = document.getElementById('lp-status-badge');
+  if(badge){
+    if(fechada){
+      badge.className = 'badge-warn';
+      badge.textContent = '○ SEM POSIÇÃO ABERTA' + (u.closeDate ? ' — último ciclo encerrado ' + br(u.closeDate) : '');
+    } else {
+      badge.className = 'badge-green';
+      badge.textContent = '● POSIÇÃO ABERTA — ' + (u.pool || 'LP') + (u.network ? ' · ' + u.network : '');
+    }
+  }
+  var lbl = document.getElementById('lp-section-label');
+  if(lbl) lbl.textContent = fechada ? 'Liquidity Pool — Uniswap V3 (sem posição aberta)'
+                                    : 'Liquidity Pool Ativa — Uniswap V3';
+  var uniTitle = document.getElementById('lp-uni-title');
+  if(uniTitle) uniTitle.textContent = fechada ? 'Abrir posições no Uniswap' : 'Ver posição no Uniswap';
+
+  // Metricas
+  set('lp-pooled', '$' + pooled.toFixed(2));
+  set('lp-pooled-sub', fechada
+      ? ('sem posição aberta' + (u.closeDate ? ' desde ' + br(u.closeDate) : ''))
+      : ((u.pool||'LP') + ' · ' + (u.network||'')));
+
+  var feeApr = fechada ? 0 : (u.feeApr || 0);
+  set('lp-apr', fechada ? '—' : (feeApr>=0?'+':'') + feeApr.toFixed(1) + '%', 'lp-mv acc');
+  if(fechada) set('lp-apr-sub', 'nenhuma taxa correndo — posição encerrada');
+
+  if(borrowApy != null){
+    set('lp-custo-borrow', '−' + borrowApy.toFixed(2) + '%', 'lp-mv neg');
+    var net = feeApr - borrowApy;
+    set('lp-apr-net', (net>=0?'+':'−') + Math.abs(net).toFixed(2) + '%', 'lp-mv ' + (net>=0?'pos':'neg'));
+    set('lp-apr-net-sub', fechada
+        ? ('0% − ' + borrowApy.toFixed(2) + '% (custo de carrego da dívida)')
+        : (feeApr.toFixed(1) + '% − ' + borrowApy.toFixed(2) + '%'));
+  }
+})();
+</script>
 
 </div><!-- end bc-lp-active-section -->
 

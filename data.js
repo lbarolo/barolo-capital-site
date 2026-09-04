@@ -162,7 +162,16 @@ window.BAROLO_DATA = {
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.23062,    invested:4474.26 },  // -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
-    { ticker:'SOL',   cgId:'solana',                   qty:24.765222,  invested:2533.36 },
+    // SOL 24,765222 -> 24,93 em 04/09/2026: MESMO caso do USDS logo abaixo — o holding
+    // estava ABAIXO do supply da Kamino (24,93), violando o invariante de que holdings
+    // incluem o colateral (o piso do holding e sempre o supply). A diferenca (0,164778 SOL,
+    // ~$16,70) e yield acumulado que o CoinGecko nunca acompanhou. Entra a CUSTO ZERO, entao
+    // `invested` fica em 2533.36 — juro e renda, nao aporte. Mesmo tratamento do SOL em
+    // 15/07/2026 e do USDS em 04/09/2026.
+    // Os ~0,04996 SOL de gas na carteira seguem FORA da contabilidade por decisao do Lucas
+    // (15/07/2026, ~$5) — por isso o holding fica igual ao supply, nao supply + carteira.
+    // ⚠️ ESPELHAR NO COINGECKO: lancar +0,164778 SOL como 'transferencia de entrada' (custo 0).
+    { ticker:'SOL',   cgId:'solana',                   qty:24.93,      invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
@@ -587,6 +596,28 @@ window.BAROLO_DATA = {
   // fora, o custo em BRL precisa ser lancado na planilha Custo_BRL (aba Fiscal) — hoje
   // em R$ 36.632,97 e sem esses ~285 USDT. Falta a data e o cambio da conversao.
   //
+  // ── CURVA DE PATRIMONIO (mensal, fechamento) — FONTE UNICA ────────────────
+  // Promovida para ca em 04/09/2026. Antes existiam DUAS copias: a de
+  // portfolio_analytics.html (WEEKLY_UPDATE.wealthCurve) e uma copia manual em
+  // index.html (WEALTH_VALUES/INVESTED). A do index ficou TRES MESES atrasada
+  // (terminava em 05/26 com $8.872 / aporte $6.261 contra 08/26 $9.295 / $7.610),
+  // e como ela alimenta o CAGR e a TIR do hero da landing, a pagina publica exibia
+  // numeros errados. As duas paginas leem daqui agora; os literais que sobraram nelas
+  // sao so fallback para o caso de este arquivo nao carregar.
+  //
+  // MANUTENCAO (fechamento mensal): acrescentar UM ponto nos tres arrays.
+  //   labels   -> 'MM/AA' do mes que fechou
+  //   values   -> patrimonio BRUTO do fechamento (total CoinGecko + LP, ANTES da divida)
+  //   invested -> aporte liquido ACUMULADO (so dinheiro que entrou de fora; yield e
+  //               rotacao interna NAO entram — ver a discussao dos 406,27 USDT de 08/26)
+  // Os tres arrays precisam ter o MESMO comprimento: todo o resto (retornos mensais,
+  // retorno anual, TWR, XIRR, drawdown, benchmark CDI/IPCA) e derivado daqui.
+  wealthCurve: {
+    labels:   ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26','04/26','05/26','06/26','07/26','08/26'],
+    values:   [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,7392,7651,7031,9295],
+    invested: [1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418,6684,6950,7100,7250,7610]
+  },
+
   // Agregados (derivados, mantidos explícitos para conveniência das páginas).
   debt:   { aave:762.29, kamino:763.28, total:1525.57 },
   stablesTotalUSD: 2502.75   // USDT 2198.09 + USDS 304.66 (yield reconciliado 04/09)

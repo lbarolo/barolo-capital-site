@@ -2476,7 +2476,16 @@ var BASE = {
   if(h.ETH) BASE.ethQty=h.ETH.qty; if(h.SOL) BASE.solQty=h.SOL.qty;
   var a=B.defi&&B.defi.aave, k=B.defi&&B.defi.kamino;
   if(a){ BASE.aaveDebt=a.borrow.USDC.qty; BASE.aaveUSDT=a.supply.USDT.qty; BASE.aaveETH=a.supply.WETH.qty; }
-  if(k){ BASE.kamDebt=k.borrow.USDC.qty; BASE.kamPYUSD=k.supply.USDS.qty; BASE.kamSOL=k.supply.SOL.qty; }
+  if(k){ BASE.kamDebt=k.borrow.USDC.qty; BASE.kamPYUSD=k.supply.USDS.qty; BASE.kamSOL=k.supply.SOL.qty;
+         if(typeof k.liqLtv==='number') BASE.kamLiqThresh=k.liqLtv; }  // estava cravado em 0.7579 (jun/26)
+  // `totalBase` e o patrimonio de referencia do "delta vs base" do simulador. Estava
+  // cravado em 5620 (junho/2026): com o patrimonio real perto de $9,3k, o cenario
+  // "sem alteracao nenhuma" ja aparecia com +$3,6k de ganho fantasma. Agora sai do
+  // ultimo fechamento da curva (bruto) menos a divida — a mesma conta do dashboard.
+  var wc = B.wealthCurve;
+  if(wc && wc.values && wc.values.length && B.debt){
+    BASE.totalBase = Math.round(wc.values[wc.values.length-1] - (B.debt.total||0));
+  }
 })();
 
 function setScenario(eth,sol,btc,alt){
