@@ -225,48 +225,35 @@ window.BAROLO_DATA = {
       // 2.1629 (antes 2.16, arredondado do card). Com o exato, a decomposição do
       // ETH fecha:  CoinGecko 2,25752 − AAVE 2,1629 = 0,09462 em carteira.
       // Juros retidos = supply − principal = 2,1629 − 2,15 = 0,0129 ETH (~$31).
-      // ⚠️ PENDENTE — REVISADO EM 04/09/2026, o numero antigo (0,03638) ESTAVA ERRADO.
-      // Havia TRES contagens de carteira em disputa em 22/08:
-      //   (a) 0,06595 — screenshots das carteiras  <- foi ESTA que entrou no livro
-      //   (b) 0,09462 — implicito (CoinGecko 2,25752 - AAVE 2,1629)
-      //   (c) 0,13100 — soma manual dos farelos feita pelo Lucas
-      // A nota antiga calculava (c)-(b) = 0,03638, mas o livro nao usa (b), usa (a).
-      // Se (c) estiver certo, o que falta e (c)-(a) = 0,06505 ETH (~$160) — quase o
-      // DOBRO do que estava escrito. Nao lancar o 0,036: ele nao corresponde a
-      // diferenca de nada que esteja no livro.
-      // EVIDENCIA NOVA (a favor de (a)): a decomposicao fecha sozinha hoje. Carteira
-      // implicita = holding 2,23062 - supply AAVE 2,2252 = 0,00542. Esperada por (a)
-      // = 0,06595 - 0,0604 (WETH depositado na AAVE no mes, ver principals) =
-      // 0,00555. Diferenca 0,00013 ETH = $0,32, ou seja gas. Se (c) fosse a contagem
-      // certa, sobrariam ~0,065 ETH sem lugar nenhum na decomposicao.
-      // COMO RESOLVER (uma coisa so): varredura das 4 carteiras EVM num mesmo dia,
-      // listando ETH POR REDE (mainnet + L2s) e o Yearn V3 a parte. Se o total bater
-      // ~0,0054 + o que estiver fora da AAVE, esta pendencia morre; se bater ~0,07,
-      // lancar a diferenca a custo zero. A hipotese mais provavel para (c) e ter
-      // incluido o aWETH da AAVE ou o Yearn, contando duas vezes.
-      // ⚠️ A MARGEM ENCOLHEU: holding - supply caiu de 0,09462 (22/08) para 0,00542.
+      // ── PENDENCIA DO ETH: RESOLVIDA EM 04/09/2026 (varredura on-chain) ──────
+      // Durante semanas ficou aberta a duvida de quanto ETH estava FORA da AAVE.
+      // Havia tres contagens divergentes de 22/08: 0,06595 (screenshots, que entrou
+      // no livro), 0,09462 (implicito CoinGecko-AAVE) e 0,13100 (soma manual). A nota
+      // antiga dizia que faltavam 0,03638 ETH (~$88) — e o numero estava errado duas
+      // vezes: era calculado contra 0,09462, que nao e o que o livro usa; se a soma
+      // manual estivesse certa, o que faltaria seria 0,06505.
+      //
+      // `scripts/eth-sweep.js` (Action `eth-sweep.yml`, workflow_dispatch) leu as 4
+      // carteiras EVM em 4 redes, nativo + WETH. Resultado de 04/09/2026:
+      //     ethereum 0,005632 · base 0,000019 · arbitrum 0,000364 · optimism 0,000011
+      //     TOTAL FORA DA AAVE = 0,006026 ETH
+      // O livro esperava holding 2,23062 - supply AAVE 2,2252 = 0,005420.
+      // Diferenca 0,000606 ETH (~$1,49) => O LIVRO ESTAVA CERTO. Nao ha 0,036 nem
+      // 0,065 em lugar nenhum; a soma manual de 0,131 quase certamente contou duas
+      // vezes o aWETH da AAVE ou o Yearn. Nada a lancar.
+      //
+      // O QUE A VARREDURA NAO COBRE (residuo conhecido, deixado fora de proposito):
+      //   · Yearn V3 0,0018 — e vault token (yvWETH), nao WETH na carteira
+      //   · Robinhood Chain — sem RPC publico confiavel (ver CLAUDE.md)
+      // Somando o Yearn, o holding estaria ~0,0024 ETH (~$5,90) subestimado. Fica
+      // fora pelo mesmo criterio dos 0,04996 SOL de gas que o Lucas decidiu ignorar
+      // em 15/07/2026 ($3,88) — mesma ordem de grandeza, nao vale o ruido.
+      //
+      // ⚠️ A MARGEM E APERTADA: holding - supply caiu de 0,09462 (22/08) para 0,00542.
       // Como o supply da AAVE cresce sozinho com juros, em poucas semanas o holding
-      // fica ABAIXO do supply e viola o invariante (foi exatamente o que aconteceu
-      // com o USDS, corrigido hoje). Ou seja: isso se auto-sinaliza em breve.
-      // ── PRINT AAVE 04/09/2026 (standup) ───────────────────────────────────
-      //   Deposited $7.476,00 · Collateral $6.105,00 · Net Deposit APY 2,46%
-      //   ETH  2,22 ($5,46 mil) @2,16% · earnings 0,01 ETH ($36,30) · CF 83%
-      //   USDT 2,02 mil @3,27%        · earnings 19,46 USDT          · CF 78%
-      //   Borrowed $762,00 @4,65% · Borrowing Power $5.342,53 · fees pagas 14,29 USDC
-      //   Sem deposito/saque no periodo -> `principals` INALTERADO. Confirmado por
-      //   duas identidades exatas: USDC 748,00 (principal) + 14,29 (fees) = 762,29 =
-      //   borrowed do print; e Borrowing Power 5.342,53 + 762,19 = 6.104,72 = Collateral.
-      //   Quantidades derivadas do principal + earnings (o card arredonda):
-      //     WETH 2,2104 + 36,30/2.452,80 = 2,2252 · USDT 1.993,92 + 19,46 = 2.013,38
-      //   Confere: 2,2252 x $2.452,80 + 2.013,38 = $7.471 (print $7.476, dif 0,06% de
-      //   arredondamento) e 0,83 x 5.458 + 0,78 x 2.013 = $6.101 (print $6.105).
-      // ⚠️ APY DE BORROW VOLTOU AO NORMAL: 4,92% (22/08) -> 1,88% (01/09) -> 4,65% (hoje).
-      //   O 1,88% era leitura de spot legitima, mas e uma taxa variavel que oscila muito;
-      //   gravada como se fosse regime, ela subestimava o custo em ~2,8pp e contaminava o
-      //   KPI 'Juros/Mes' (o briefing.json de 03/09 saiu com $4,59/mes; o correto e ~$6,41).
-      //   Referencia estavel para sanity check: 14,29 de fees pagas sobre 748,00 em 147
-      //   dias desde o refin de 10/04/2026 = 4,74%/ano de taxa MEDIA realizada. Sempre que
-      //   um spot fugir muito disso, checar contra essa media antes de gravar.
+      // fica ABAIXO do supply e viola o invariante (foi o que acabou de acontecer com
+      // o USDS). Quando isso acontecer, rodar a Action `eth-sweep` de novo e subir o
+      // holding para supply + total da varredura, a custo zero.
       healthFactor: 8.01   // Collateral 6.105,00 / borrowed 762,19 (print 04/09/2026)
     },
     kamino: {
