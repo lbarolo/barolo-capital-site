@@ -389,6 +389,7 @@ nav{
 }
 [data-theme="light"] .hp-stat-val{color:var(--dark)}
 .hp-stat-val.pos{color:var(--green)}
+.hp-stat-val.neg{color:var(--red)}
 .hp-stat-lbl{
   font-family:'JetBrains Mono',monospace;font-size:8px;
   letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:8px;
@@ -1200,11 +1201,11 @@ body::after{
       </div>
       <div class="hp-stats">
         <div class="hp-stat">
-          <div class="hp-stat-val pos count-up" id="heroCAGR">+63.7%</div>
+          <div class="hp-stat-val neg count-up" id="heroCAGR">−2.2%</div>
           <div class="hp-stat-lbl" data-i18n="hp-cagr">CAGR 2022–2026</div>
         </div>
         <div class="hp-stat">
-          <div class="hp-stat-val pos count-up" id="heroRealReturn">+621.7%</div>
+          <div class="hp-stat-val neg count-up" id="heroRealReturn">−24.9%</div>
           <div class="hp-stat-lbl" data-i18n="hp-track">Track Record (real)</div>
         </div>
         <div class="hp-stat">
@@ -1885,20 +1886,59 @@ function toggleMobile() {
 
   var INITIAL_CAPITAL = 1061; // primeiro capital registrado (Jan/2022, wealthCurve.invested[0])
 
-  function calculateCAGR(currentAssets) {
-    var start = new Date(2022, 0, 1); // Jan 1, 2022
-    var end = new Date();
-    var years = (end - start) / (365.25 * 24 * 60 * 60 * 1000);
-    if (years <= 0 || currentAssets <= 0) return 0;
-    return (Math.pow(currentAssets / INITIAL_CAPITAL, 1 / years) - 1) * 100;
+  // ── TWR (Time-Weighted Return) — MESMA metodologia do dashboard ────────────────
+  // Ate 04/09/2026 esta pagina calculava "CAGR" e "Track Record" dividindo o
+  // patrimonio de hoje pelo capital-semente de Jan/2022 (~$1.061), o que conta os
+  // ~$7.610 aportados desde entao como se fossem RETORNO: dava +63,7% a.a. enquanto
+  // o dashboard, com a conta certa, dava -2,2% a.a. sobre os mesmos dados.
+  // Agora usa Modified Dietz mes a mes (aporte no meio do mes, como o dashboard),
+  // composto geometricamente — e portanto os dois batem.
+  // Fonte: calculatePerformanceMetrics() em portfolio_analytics.html.
+  function monthlyTWRSeries(finalValue) {
+    // Guard: com cache quente de precos, updateHeroReturn() pode rodar SINCRONAMENTE
+    // antes de WEALTH_VALUES/INVESTED serem declaradas (estao depois desta IIFE).
+    // Nesse caso devolve serie vazia; o proximo fetch recalcula com os dados prontos.
+    if (typeof WEALTH_VALUES === 'undefined' || typeof INVESTED === 'undefined') return [];
+    if (!WEALTH_VALUES.length || WEALTH_VALUES.length !== INVESTED.length) return [];
+    var values = WEALTH_VALUES.slice();
+    var inv    = INVESTED.slice();
+    // O ultimo ponto vira o valor AO VIVO quando ele existe, sem aporte novo no meio
+    if (typeof finalValue === 'number' && finalValue > 0) values[values.length - 1] = finalValue;
+    var rets = [];
+    for (var i = 1; i < values.length; i++) {
+      var aporte = inv[i] - inv[i-1];
+      var denom  = values[i-1] + 0.5 * aporte;
+      if (denom > 0) rets.push((values[i] - values[i-1] - aporte) / denom);
+    }
+    return rets;
+  }
+  function twrGrowth(finalValue) {
+    return monthlyTWRSeries(finalValue).reduce(function(acc, r){ return acc * (1 + r); }, 1);
   }
 
+  // CAGR = TWR anualizado (o mesmo numero do card "CAGR" do dashboard)
+  function calculateCAGR(currentAssets) {
+    var rets = monthlyTWRSeries(currentAssets);
+    if (!rets.length) return null;                      // ainda sem dados: nao sobrescreve
+    var growth = rets.reduce(function(acc, r){ return acc * (1 + r); }, 1);
+    if (growth <= 0) return -100;
+    return (Math.pow(growth, 12 / rets.length) - 1) * 100;
+  }
+
+  // Track Record (real) = retorno ACUMULADO do gestor (TWR composto, nao anualizado)
+  // descontado da inflacao americana do periodo. Antes era (patrimonio/1061)/1,202,
+  // que herdava o mesmo erro do CAGR e ainda usava uma inflacao fixa ate mai/26.
   function calculateRealReturn(currentAssets) {
-    // Inflação acumulada USA (jan 2022 - maio 2026): 20.2%
-    var cumulativeInflation = 1.202; // 1 + 0.202
-    var nominalReturn = (currentAssets / INITIAL_CAPITAL - 1) * 100;
-    var realReturn = ((currentAssets / INITIAL_CAPITAL) / cumulativeInflation - 1) * 100;
-    return realReturn;
+    var rets = monthlyTWRSeries(currentAssets);
+    if (!rets.length) return null;                      // ainda sem dados: nao sobrescreve
+    var growth = rets.reduce(function(acc, r){ return acc * (1 + r); }, 1);
+    // Inflacao ACUMULADA dos EUA no periodo. NAO derivar da tabela CPI_USA abaixo:
+    // apesar do comentario dela dizer "accumulated since Jan/2022", os valores sao
+    // interanuais (os 8,6 de 06/22 sao o pico YoY, nao acumulado) — usar de la daria
+    // ~3% no lugar de ~20% e inflaria o retorno real em quase 20 pontos.
+    // MANUTENCAO: atualizar no fechamento de cada ano (CPI-U, Jan/2022 -> hoje).
+    var US_CPI_CUMULATIVE_PCT = 20.2;                   // Jan/2022 -> Mai/2026
+    return (growth / (1 + US_CPI_CUMULATIVE_PCT / 100) - 1) * 100;
   }
 
   function updateHeroReturn(prices) {
@@ -1914,7 +1954,10 @@ function toggleMobile() {
     var realReturn = calculateRealReturn(currentAssets);
 
     var cagrEl = document.getElementById('heroCAGR');
-    if (cagrEl) cagrEl.textContent = (cagr >= 0 ? '+' : '') + cagr.toFixed(1) + '%';
+    if (cagrEl && cagr != null) {
+      cagrEl.textContent = (cagr >= 0 ? '+' : '\u2212') + Math.abs(cagr).toFixed(1) + '%';
+      cagrEl.className = 'hp-stat-val count-up ' + (cagr >= 0 ? 'pos' : 'neg');
+    }
 
     // Retorno Anual (TIR money-weighted) — valor atual da carteira como ponto terminal da série.
     // Guard: updateHeroReturn pode rodar SINCRONAMENTE (cache quente) antes de WEALTH_VALUES/INVESTED
@@ -1929,7 +1972,10 @@ function toggleMobile() {
     }
 
     var realEl = document.getElementById('heroRealReturn');
-    if (realEl) realEl.textContent = (realReturn >= 0 ? '+' : '') + realReturn.toFixed(1) + '%';
+    if (realEl && realReturn != null) {
+      realEl.textContent = (realReturn >= 0 ? '+' : '\u2212') + Math.abs(realReturn).toFixed(1) + '%';
+      realEl.className = 'hp-stat-val count-up ' + (realReturn >= 0 ? 'pos' : 'neg');
+    }
   }
 
   // IDs de todos os tokens para fetch (ticker + portfolio)
