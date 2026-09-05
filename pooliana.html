@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA) -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<script>
+// Theme init — runs before render to avoid flash
+(function(){
+ var t=localStorage.getItem('bc-theme');
+ if(t) document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>">
+<link rel="canonical" href="/pooliana">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Barolo Capital · Pooliana</title>
+<link rel="stylesheet" href="ui-polish.css"><!-- camada de polish compartilhada -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root{
+ --bg:#0e0e12;--surface:#141418;--surface2:#1a1a20;--border:#2a2620;--border2:#3a3228;
+ --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--wine:#8b3048;
+ --sol1:#14F195;--sol2:#9945ff;
+ --text:#e8dfc8;--muted:#8a7a62;--card-shadow:0 4px 18px rgba(0,0,0,0.28);
+ --font:'Satoshi',sans-serif;--mono:'JetBrains Mono',monospace;--serif:'Cormorant Garamond',Georgia,serif;
+}
+[data-theme="light"]{
+ --bg:#f5f0e8;--surface:#faf6ee;--surface2:#f0ebe0;--border:#ddd4c0;--border2:#ccc2a8;
+ --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--wine:#7a2535;
+ --sol1:#0f9e64;--sol2:#6d29c4;
+ --text:#2a1e0e;--muted:#7a6a52;--card-shadow:0 1px 4px rgba(120,96,40,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh;}
+
+/* ── NAV (mesma variante dos dashboards) ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(242,236,224,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+[data-theme="dark"] nav{background:rgba(14,14,18,0.96);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-links{display:flex;gap:0;}
+.nav-links a{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:0 16px;height:100%;display:flex;align-items:center;transition:color .2s;border-bottom:2px solid transparent;}
+.nav-links a:hover{color:var(--text);}
+.nav-links a.active{color:var(--accent);border-bottom-color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:all .2s;}
+.btn-sm:hover{color:var(--accent);border-color:var(--accent);}
+.nav-hamburger{background:none;border:1px solid var(--border);border-radius:4px;padding:5px 9px;cursor:pointer;flex-direction:column;gap:4px;align-items:center;justify-content:center;display:none;}
+.nav-hamburger span{display:block;width:16px;height:1.5px;background:var(--muted);transition:all .25s;}
+
+/* ── LAYOUT ── */
+.container{max-width:1320px;margin:0 auto;padding:70px 24px 60px;}
+.page-header{margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.page-eyebrow{font-family:var(--mono);font-size:9px;color:var(--accent);letter-spacing:.3em;margin-bottom:8px;text-transform:uppercase;}
+.page-title{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;letter-spacing:.03em;}
+.page-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.18em;margin-top:8px;text-transform:uppercase;}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);margin:38px 0 16px;padding:0 0 10px 12px;border-left:2px solid var(--accent);font-weight:400;}
+.live-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);animation:plPulse 2s infinite;}
+@keyframes plPulse{50%{opacity:.25;}}
+
+/* ── HERO (proporção áurea 1.618 / 1, como na landing) ── */
+.pl-hero{display:grid;grid-template-columns:1.618fr 1fr;gap:18px;align-items:stretch;}
+.pl-lead{background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--card-shadow);padding:26px 28px;position:relative;overflow:hidden;}
+.pl-lead::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sol2),var(--sol1),var(--accent));}
+.pl-lead h2{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.25;margin-bottom:14px;}
+.pl-lead h2 em{font-style:normal;color:var(--accent);}
+.pl-lead p{font-size:13px;line-height:1.75;color:var(--muted);margin-bottom:12px;}
+.pl-lead p strong{color:var(--text);font-weight:500;}
+.pl-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+.pl-chip{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:3px;border:1px solid var(--border2);color:var(--muted);}
+.pl-chip.gold{border-color:rgba(201,160,80,.35);color:var(--accent);background:rgba(201,160,80,.07);}
+.pl-chip.sol{border-color:rgba(20,241,149,.30);color:var(--sol1);background:rgba(20,241,149,.06);}
+
+/* ── PAINEL DA CARTEIRA ── */
+.wallet-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--card-shadow);display:flex;flex-direction:column;overflow:hidden;}
+.wp-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2);}
+.wp-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:7px;}
+.wp-status{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.wp-body{padding:18px 16px;flex:1;display:flex;flex-direction:column;justify-content:center;}
+.wp-cta{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.wbtn{width:100%;padding:12px 14px;border-radius:6px;border:1px solid rgba(153,69,255,.42);
+ background:linear-gradient(100deg,rgba(153,69,255,.16),rgba(20,241,149,.13));
+ color:var(--text);font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+ cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:9px;}
+.wbtn:hover{border-color:var(--sol1);box-shadow:0 0 0 1px rgba(20,241,149,.18),0 6px 18px rgba(153,69,255,.14);transform:translateY(-1px);}
+.wbtn:disabled{opacity:.5;cursor:wait;transform:none;box-shadow:none;}
+.wp-hint{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.06em;margin-top:11px;text-align:center;line-height:1.7;}
+.wp-hint a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);}
+.wp-addr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;border:1px solid var(--border2);border-radius:5px;background:var(--surface2);margin-bottom:12px;}
+.wp-addr-val{font-family:var(--mono);font-size:11.5px;color:var(--text);letter-spacing:.04em;}
+.wp-addr-tag{font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:3px;}
+.wp-rows{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:5px;overflow:hidden;margin-bottom:12px;}
+.wp-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:9px 11px;background:var(--surface);}
+.wp-row-lbl{font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;}
+.wp-row-val{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text);}
+.wp-row-val.big{font-size:19px;color:var(--accent);}
+.wp-row-sub{font-family:var(--mono);font-size:8px;color:var(--muted);margin-left:6px;font-weight:400;}
+.wp-foot{display:flex;gap:6px;}
+.wp-foot .btn-sm{flex:1;text-align:center;}
+.wp-err{font-family:var(--mono);font-size:9px;color:var(--red);line-height:1.65;margin-top:10px;text-align:center;}
+
+/* ── GRID DE CAPACIDADES ── */
+.cap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
+.cap-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 17px;box-shadow:var(--card-shadow);transition:border-color .2s;}
+.cap-card:hover{border-color:var(--border2);}
+.cap-icon{font-size:15px;margin-bottom:9px;display:block;}
+.cap-name{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:7px;}
+.cap-desc{font-size:12px;line-height:1.65;color:var(--muted);}
+.cap-tool{font-family:var(--mono);font-size:8px;color:var(--muted);opacity:.65;margin-top:9px;letter-spacing:.04em;}
+
+/* ── B.A.R.C.A ── */
+.barca-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--card-shadow);padding:20px 22px;}
+.cycle-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);}
+.cycle-tab{padding:9px 18px;font-size:10px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+.cycle-tab:hover{color:var(--text);}
+.cycle-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.barca-row{display:grid;grid-template-columns:22px 1fr 62px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+.barca-row:last-child{border-bottom:none;}
+.barca-letter{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--accent);line-height:1;text-align:center;}
+.barca-name{font-size:12.5px;color:var(--text);margin-bottom:5px;}
+.barca-name span{color:var(--muted);font-size:11px;}
+.barca-track{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.barca-fill{height:100%;border-radius:3px;transition:width .45s cubic-bezier(.4,0,.2,1);}
+.barca-pct{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);text-align:right;transition:color .3s;}
+.barca-note{font-size:11.5px;color:var(--muted);line-height:1.7;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+.barca-note strong{color:var(--text);font-weight:500;}
+
+/* ── CALCULADORA DO MULTIPLICADOR ── */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.calc-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--card-shadow);padding:20px 22px;}
+.calc-box h3{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.calc-field{margin-bottom:13px;}
+.calc-field label{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.calc-field input,.calc-field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:9px 11px;color:var(--text);font-family:var(--mono);font-size:13px;transition:border-color .2s;}
+.calc-field input:focus,.calc-field select:focus{outline:none;border-color:var(--accent);}
+.calc-out{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:5px;overflow:hidden;margin-top:16px;}
+.calc-out-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--surface2);}
+.calc-out-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.calc-out-val{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);}
+.calc-verdict{margin-top:12px;padding:11px 13px;border-radius:5px;font-size:12px;line-height:1.6;border:1px solid var(--border2);color:var(--muted);}
+.calc-verdict.ok{border-color:rgba(63,185,80,.35);background:rgba(63,185,80,.07);color:var(--green);}
+.calc-verdict.warn{border-color:rgba(210,153,34,.35);background:rgba(210,153,34,.07);color:var(--yellow);}
+.calc-verdict.bad{border-color:rgba(248,81,73,.35);background:rgba(248,81,73,.07);color:var(--red);}
+
+/* ── FILTROS / CHECKLIST ── */
+.filter-list{display:flex;flex-direction:column;gap:0;}
+.filter-item{display:grid;grid-template-columns:20px 1fr;gap:11px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;}
+.filter-item:last-child{border-bottom:none;}
+.filter-mark{font-family:var(--mono);font-size:12px;line-height:1.4;}
+.filter-mark.pass{color:var(--green);}
+.filter-mark.fail{color:var(--red);}
+.filter-txt{font-size:12.5px;line-height:1.6;color:var(--text);}
+.filter-txt span{display:block;color:var(--muted);font-size:11.5px;margin-top:3px;line-height:1.6;}
+.filter-txt b{font-family:var(--mono);font-weight:700;color:var(--accent);}
+
+/* ── FLUXO DE DECISÃO ── */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;}
+.flow-step{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:15px 16px;position:relative;box-shadow:var(--card-shadow);}
+.flow-step::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:var(--accent);opacity:.25;border-radius:8px 8px 0 0;}
+.flow-num{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--accent);margin-bottom:8px;}
+.flow-title{font-size:12.5px;font-weight:500;color:var(--text);margin-bottom:7px;}
+.flow-body{font-size:11.5px;line-height:1.65;color:var(--muted);}
+.flow-body code{font-family:var(--mono);font-size:10.5px;color:var(--accent);}
+
+/* ── STACK / RUN ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.stack-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:5px;overflow:hidden;}
+.stack-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--surface);}
+.stack-k{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.stack-v{font-family:var(--mono);font-size:11.5px;color:var(--text);text-align:right;}
+.code{background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:13px 15px;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--text);overflow-x:auto;white-space:pre;}
+.code .c{color:var(--muted);}
+.code .p{color:var(--accent);}
+.warn-box{margin-top:14px;padding:12px 14px;border:1px solid rgba(210,153,34,.3);background:rgba(210,153,34,.06);border-radius:5px;font-size:11.5px;line-height:1.7;color:var(--muted);}
+.warn-box strong{color:var(--yellow);font-weight:600;}
+
+/* ── RANKING DE POOLS (pooliana-pools.json) ── */
+.scan-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--card-shadow);overflow:hidden;}
+.scan-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;}
+.scan-title{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+.scan-meta{font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:.06em;}
+.scan-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.pool-table{width:100%;border-collapse:collapse;font-size:12px;min-width:760px;}
+.pool-table th{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+ font-weight:400;text-align:right;padding:9px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.pool-table th:nth-child(1),.pool-table th:nth-child(2),.pool-table th:last-child{text-align:left;}
+.pool-table td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:right;
+ font-family:var(--mono);font-size:12px;color:var(--text);white-space:nowrap;}
+.pool-table td:nth-child(1),.pool-table td:nth-child(2),.pool-table td:last-child{text-align:left;}
+.pool-table tr:last-child td{border-bottom:none;}
+.pool-table tbody tr:hover{background:var(--surface2);}
+.pt-rank{color:var(--muted);font-size:10px;width:28px;}
+.pt-pair{font-weight:700;color:var(--text);}
+.pt-dex{font-size:8.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:2px;}
+.pt-apr{font-weight:700;}
+.pt-tier{font-size:9px;letter-spacing:.04em;color:var(--muted);font-family:var(--font);}
+.pt-flag{display:inline-block;font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;
+ padding:2px 6px;border-radius:3px;margin-left:6px;border:1px solid rgba(210,153,34,.4);color:var(--yellow);background:rgba(210,153,34,.08);}
+.scan-foot{padding:12px 18px;border-top:1px solid var(--border);font-size:11.5px;line-height:1.7;color:var(--muted);background:var(--surface2);}
+.scan-foot strong{color:var(--text);font-weight:500;}
+.scan-empty{padding:26px 18px;text-align:center;font-size:12px;color:var(--muted);line-height:1.7;}
+
+/* ── TICKER (idêntico aos dashboards) ── */
+.market-ticker{position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--surface2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:0;height:28px;font-family:var(--mono);font-size:10px;}
+.ticker-item{display:flex;align-items:center;gap:6px;padding:0 16px;border-right:1px solid var(--border);height:100%;white-space:nowrap;}
+.ticker-lbl{font-size:8px;color:var(--muted);letter-spacing:.08em;}
+.ticker-price{font-weight:700;color:var(--text);}
+.ticker-chg{font-size:8px;font-weight:600;}
+.ticker-chg.up{color:var(--green);}
+.ticker-chg.dn{color:var(--red);}
+.ticker-gas{display:flex;align-items:center;gap:5px;padding:0 16px;border-right:1px solid var(--border);height:100%;}
+.ticker-gas svg{opacity:.5;}
+.gas-val{font-weight:700;color:var(--accent);}
+.gas-unit{font-size:8px;color:var(--muted);}
+
+/* ── RESPONSIVO ── */
+@media(max-width:980px){
+ .pl-hero{grid-template-columns:1fr;}
+ .calc-grid,.two-col{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+ html,body{overflow-x:hidden;}
+ .container{max-width:100vw;overflow-x:hidden;padding:66px 14px 56px;}
+ .page-title{font-size:30px;}
+ .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;
+  background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);padding:8px 0;z-index:999;}
+ [data-theme="dark"] .nav-links{background:rgba(20,20,24,.98);}
+ .nav-links.open{display:flex;}
+ .nav-links a{padding:12px 20px;font-size:11px;height:auto;border-bottom:1px solid var(--border);}
+ .nav-links a:last-child{border-bottom:none;}
+ .nav-hamburger{display:flex;}
+ .nav-right .btn-sm:not(#themeBtn){display:none;}
+ nav{padding:0 14px;}
+ .cap-card,.calc-box,.barca-wrap,.code{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+}
+@media(min-width:769px){.nav-hamburger{display:none!important;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-44 0 254 30" width="148" height="21" style="display:block;">
+      <defs>
+        <linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="transparent"/>
+          <stop offset="18%" stop-color="#c9a050"/>
+          <stop offset="82%" stop-color="#c9a050"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+      </defs>
+      <polygon points="-34,25 -22,7 -10,25" fill="#9a7228"/><polygon points="-25,25 -16,13 -7,25" fill="#c9a050"/><line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+      <text x="105" y="20"
+        font-family="Satoshi, Palatino Linotype, Times New Roman, serif"
+        font-weight="600" font-size="14" letter-spacing="3"
+        fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+    </svg>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Início</a>
+    <a href="portfolio_analytics.html">Portfolio</a>
+    <a href="pools.html">Pools &amp; DeFi</a>
+    <a href="pooliana.html" class="active">Pooliana</a>
+    <a href="emprestimos.html">Empréstimos</a>
+    <a href="ferramentas.html">Ferramentas</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-sm" onclick="window.location.href='relatorio.html'" title="Abrir relatório completo">↗ Relatório</button>
+    <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
+  </div>
+  <div class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu" title="Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-eyebrow">⬡ Barolo Capital · Projeto</div>
+    <div class="page-title">POOLIANA</div>
+    <div class="page-sub">Agente DeFi para pools de liquidez em Solana · Metodologia Genesis · Execução local</div>
+  </div>
+
+  <!-- ══ HERO + CARTEIRA ══ -->
+  <div class="pl-hero">
+
+    <div class="pl-lead">
+      <h2>Uma agente que lê pools de liquidez pela <em>metodologia</em>, não pelo APR da vitrine.</h2>
+      <p>A <strong>Pooliana</strong> escaneia pools de Solana na Orca e na Raydium, filtra pelos critérios de
+      qualidade do curso Defiverso e ranqueia pelo único número que importa na seleção:
+      o <strong>multiplicador Taxas&nbsp;24h / TVL</strong>. O APR anunciado é derivado disso — nunca o critério.</p>
+      <p>Ela roda <strong>localmente</strong>, na sua máquina, com carteira dedicada e chave privada que
+      nunca sai do <code style="font-family:var(--mono);font-size:11.5px;color:var(--accent);">config/.env</code>.
+      Analisa, calcula rebalanceamento e propõe a operação — mas <strong>não dispara transação nenhuma</strong>
+      sem um "go" explícito, por texto ou por voz.</p>
+      <p>Esta página é a <strong>vitrine e o painel de leitura</strong> do projeto: conecte uma carteira
+      Solana para ver o portfólio pela régua B.A.R.C.A, e use as calculadoras abaixo para rodar
+      o mesmo filtro que a agente roda antes de abrir qualquer posição.</p>
+      <div class="pl-meta">
+        <span class="pl-chip sol">◎ Solana · Mainnet</span>
+        <span class="pl-chip">Orca Whirlpools</span>
+        <span class="pl-chip">Raydium</span>
+        <span class="pl-chip">Jupiter Swap</span>
+        <span class="pl-chip gold">Metodologia Genesis</span>
+        <span class="pl-chip">Claude · Anthropic</span>
+        <span class="pl-chip">Voz opcional</span>
+      </div>
+    </div>
+
+    <div class="wallet-panel">
+      <div class="wp-head">
+        <div class="wp-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><circle cx="17.5" cy="14.5" r="1.2" fill="currentColor" stroke="none"/>
+          </svg>
+          Carteira Solana
+        </div>
+        <div class="wp-status" id="wpStatus">desconectada</div>
+      </div>
+
+      <div class="wp-body">
+        <!-- estado: desconectado -->
+        <div id="wpDisconnected">
+          <div class="wp-cta">Conecte uma carteira para ler o saldo on-chain e ver a alocação
+          pela régua <strong style="color:var(--text);">B.A.R.C.A</strong>.</div>
+          <button class="wbtn" id="wpConnectBtn" onclick="Wallet.connect()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4z"/>
+            </svg>
+            <span id="wpConnectLabel">Conectar carteira</span>
+          </button>
+          <div class="wp-hint" id="wpHint">
+            Leitura apenas — a página nunca pede assinatura nem move fundos.
+          </div>
+          <div class="wp-err" id="wpErr" style="display:none;"></div>
+        </div>
+
+        <!-- estado: conectado -->
+        <div id="wpConnected" style="display:none;">
+          <div class="wp-addr">
+            <div>
+              <span class="wp-addr-tag" id="wpProvider">Carteira</span>
+              <span class="wp-addr-val" id="wpAddr">—</span>
+            </div>
+            <button class="btn-sm" onclick="Wallet.copy()" title="Copiar endereço" id="wpCopyBtn">Copiar</button>
+          </div>
+          <div class="wp-rows">
+            <div class="wp-row">
+              <span class="wp-row-lbl">Valor total</span>
+              <span class="wp-row-val big" id="wpTotal">—</span>
+            </div>
+            <div class="wp-row">
+              <span class="wp-row-lbl">SOL</span>
+              <span class="wp-row-val"><span id="wpSol">—</span><span class="wp-row-sub" id="wpSolUsd"></span></span>
+            </div>
+            <div class="wp-row">
+              <span class="wp-row-lbl">Tokens SPL</span>
+              <span class="wp-row-val" id="wpTokens">—</span>
+            </div>
+            <div class="wp-row">
+              <span class="wp-row-lbl" title="15% do portfólio em Renda Passiva (B.A.R.C.A, mercado neutro)">Alvo em pools <span style="opacity:.6;">·15%</span></span>
+              <span class="wp-row-val" id="wpTarget">—</span>
+            </div>
+          </div>
+          <div class="wp-foot">
+            <button class="btn-sm" onclick="Wallet.refresh()">↻ Atualizar</button>
+            <button class="btn-sm" onclick="Wallet.disconnect()">Desconectar</button>
+          </div>
+          <div class="wp-hint">Saldo via RPC público · preços CoinGecko · nada é gravado no site.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RANKING DE POOLS (scan diário) ══ -->
+  <div class="section-label">Pools ranqueadas pelo método — scan diário</div>
+  <div class="scan-panel">
+    <div class="scan-head">
+      <div class="scan-title">Solana · Raydium + Orca · ordenado por score Genesis</div>
+      <div class="scan-meta" id="scanMeta">carregando…</div>
+    </div>
+    <div class="scan-scroll">
+      <table class="pool-table">
+        <thead>
+          <tr>
+            <th></th><th>Par</th><th>TVL</th><th>Taxas 24h</th>
+            <th>Multiplicador</th><th>Mês</th><th>APR</th><th>Score</th><th>Perfil do par</th>
+          </tr>
+        </thead>
+        <tbody id="scanBody">
+          <tr><td colspan="9" class="scan-empty">Carregando o scan…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="scan-foot">
+      <strong>Isto é a Etapa 2 do método — o filtro do pool.</strong> Ranqueia por
+      <code style="font-family:var(--mono);font-size:11px;color:var(--accent);">taxas 24h / TVL</code>,
+      com peso de rede e penalidade por perfil do par, e limita a 1%/dia qualquer pool cujo volume
+      passe de 5× o TVL (spike não é retorno sustentado).
+      <strong>A Etapa 1 — qualidade do token — continua manual:</strong> contrato verificado,
+      volume 24h entre 2% e 4% do market cap, sem red flag de tokenomics. Um token desconhecido
+      no topo desta lista <strong>não</strong> está aprovado — está apenas qualificado no filtro de pool.
+    </div>
+  </div>
+
+  <!-- ══ CAPACIDADES ══ -->
+  <div class="section-label">O que a agente faz</div>
+  <div class="cap-grid">
+    <div class="cap-card">
+      <span class="cap-icon">🔍</span>
+      <div class="cap-name">Escanear pools</div>
+      <div class="cap-desc">Varre Orca e Raydium, aplica os filtros obrigatórios e ranqueia pelo multiplicador Taxas/TVL — não pelo APR anunciado.</div>
+      <div class="cap-tool">scan_dex_pools · analyze_pool</div>
+    </div>
+    <div class="cap-card">
+      <span class="cap-icon">💼</span>
+      <div class="cap-name">Ler o portfólio</div>
+      <div class="cap-desc">Saldo de SOL e tokens SPL da carteira dedicada, com preço ao vivo e leitura contra a alocação B.A.R.C.A do ciclo atual.</div>
+      <div class="cap-tool">get_portfolio · get_price</div>
+    </div>
+    <div class="cap-card">
+      <span class="cap-icon">📊</span>
+      <div class="cap-name">Monitorar posições</div>
+      <div class="cap-desc">Acompanha as Whirlpools abertas, avisa quando o preço sai do range e aplica senso crítico antes de sugerir remontagem.</div>
+      <div class="cap-tool">monitor_positions · set_price_alert</div>
+    </div>
+    <div class="cap-card">
+      <span class="cap-icon">⚖️</span>
+      <div class="cap-name">Calcular rebalanceamento</div>
+      <div class="cap-desc">Dado um pool alvo, calcula exatamente quanto trocar de cada lado para entrar na proporção certa do range.</div>
+      <div class="cap-tool">rebalance_for_pool</div>
+    </div>
+    <div class="cap-card">
+      <span class="cap-icon">🌊</span>
+      <div class="cap-name">Abrir e fechar pools</div>
+      <div class="cap-desc">Executa add/remove liquidity na Orca e swaps via Jupiter — sempre com confirmação explícita antes de assinar.</div>
+      <div class="cap-tool">add_liquidity · remove_liquidity · execute_swap</div>
+    </div>
+    <div class="cap-card">
+      <span class="cap-icon">🛡️</span>
+      <div class="cap-name">Checar risco</div>
+      <div class="cap-desc">Valida IL acumulado contra o teto de 20%, confere o peso de Renda Passiva no portfólio e trava a operação se estourar.</div>
+      <div class="cap-tool">check_risk</div>
+    </div>
+    <div class="cap-card">
+      <span class="cap-icon">📚</span>
+      <div class="cap-name">Responder pela metodologia</div>
+      <div class="cap-desc">Base de conhecimento com a metodologia Genesis indexada — responde por que uma pool passa ou não passa no filtro.</div>
+      <div class="cap-tool">search_knowledge</div>
+    </div>
+    <div class="cap-card">
+      <span class="cap-icon">🔒</span>
+      <div class="cap-name">Kill switch</div>
+      <div class="cap-desc">Interruptor que bloqueia qualquer execução na hora. Toda operação fica registrada em auditoria com custo de API do dia.</div>
+      <div class="cap-tool">kill_switch · audit</div>
+    </div>
+  </div>
+
+  <!-- ══ B.A.R.C.A ══ -->
+  <div class="section-label">Método B.A.R.C.A — alocação por ciclo</div>
+  <div class="barca-wrap">
+    <div class="cycle-tabs">
+      <button class="cycle-tab" onclick="Barca.set('bear',this)">🐻 Bear Market</button>
+      <button class="cycle-tab active" onclick="Barca.set('neutro',this)">◑ Neutro</button>
+      <button class="cycle-tab" onclick="Barca.set('bull',this)">🐂 Bull Market</button>
+    </div>
+    <div id="barcaRows"></div>
+    <div class="barca-note" id="barcaNote"></div>
+  </div>
+
+  <!-- ══ CRITÉRIO DE SELEÇÃO ══ -->
+  <div class="section-label">Critério de seleção de pool</div>
+  <div class="calc-grid">
+
+    <div class="calc-box">
+      <h3>Multiplicador Taxas / TVL</h3>
+      <div class="calc-field">
+        <label for="mcFees">Taxas geradas em 24h (US$)</label>
+        <input type="number" id="mcFees" value="4200" step="100" oninput="Mult.calc()">
+      </div>
+      <div class="calc-field">
+        <label for="mcTvl">TVL do pool (US$)</label>
+        <input type="number" id="mcTvl" value="1800000" step="50000" oninput="Mult.calc()">
+      </div>
+      <div class="calc-field">
+        <label for="mcCycle">Ciclo de mercado (define a meta)</label>
+        <select id="mcCycle" onchange="Mult.calc()">
+          <option value="bear">Bear Market — meta 4% a 5% ao mês</option>
+          <option value="neutro" selected>Neutro — meta 4% a 5% ao mês</option>
+          <option value="bull">Bull Market — meta 20%+ ao mês</option>
+        </select>
+      </div>
+      <div class="calc-out">
+        <div class="calc-out-row">
+          <span class="calc-out-lbl">Multiplicador diário</span>
+          <span class="calc-out-val" id="mcMult">—</span>
+        </div>
+        <div class="calc-out-row">
+          <span class="calc-out-lbl">Projeção mensal (30d)</span>
+          <span class="calc-out-val" id="mcMonth">—</span>
+        </div>
+        <div class="calc-out-row">
+          <span class="calc-out-lbl">APR projetado (365d)</span>
+          <span class="calc-out-val" id="mcApr">—</span>
+        </div>
+      </div>
+      <div class="calc-verdict" id="mcVerdict">Preencha taxas e TVL para avaliar.</div>
+    </div>
+
+    <div class="calc-box">
+      <h3>Filtros que rodam antes do multiplicador</h3>
+      <div class="filter-list">
+        <div class="filter-item">
+          <span class="filter-mark" id="fTvlMark">·</span>
+          <span class="filter-txt">TVL mínimo de <b>US$ 500.000</b>
+            <span id="fTvlNote">Abaixo disso o pool é descartado automaticamente, por maior que seja o multiplicador.</span></span>
+        </div>
+        <div class="filter-item">
+          <span class="filter-mark pass">✓</span>
+          <span class="filter-txt">Contrato verificado
+            <span>Solscan / De.Fi Scanner: ownership renunciado, sem mint ilimitado, supply não concentrado.</span></span>
+        </div>
+        <div class="filter-item">
+          <span class="filter-mark pass">✓</span>
+          <span class="filter-txt">Volume 24h entre <b>2% e 4%</b> do market cap
+            <span>Volume de 7 dias entre 10% e 20%. Listado em mais de uma exchange.</span></span>
+        </div>
+        <div class="filter-item">
+          <span class="filter-mark pass">✓</span>
+          <span class="filter-txt">Correlação adequada no par
+            <span>Dois voláteis exigem correlação positiva alta (DeFiLlama) — correlação baixa significa IL alto.</span></span>
+        </div>
+        <div class="filter-item">
+          <span class="filter-mark fail">✕</span>
+          <span class="filter-txt">Red flags descartam na hora
+            <span>Sem utilidade real · inflação sem controle · time não verificável · promessa de lucro garantido · FDV muito acima do market cap · cliff de vesting próximo.</span></span>
+        </div>
+        <div class="filter-item">
+          <span class="filter-mark" style="color:var(--yellow);">◑</span>
+          <span class="filter-txt">Memecoin: só em bull confirmado
+            <span>Com volume real e crescente, contrato verificado, liquidez para sair e saída planejada desde a entrada.</span></span>
+        </div>
+      </div>
+      <div class="calc-verdict" style="margin-top:16px;">
+        Sem preferência por fee tier: <strong style="color:var(--text);">entra sempre no tier com maior multiplicador</strong>.
+        A prioridade de redes (Solana → Arbitrum → Polygon → Base → Ethereum) é histórica — o multiplicador decide.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FLUXO ══ -->
+  <div class="section-label">Fluxo de decisão completo</div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">ETAPA 01</div>
+      <div class="flow-title">Qualidade do token</div>
+      <div class="flow-body">Contrato verificado, volume saudável, sem red flags. Par de dois voláteis exige checar correlação. Reprovou em qualquer um → descarta.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">ETAPA 02</div>
+      <div class="flow-title">Filtro do pool</div>
+      <div class="flow-body">TVL abaixo de US$ 500K descarta. Calcula <code>Taxas 24h / TVL</code> em todos os candidatos e seleciona o de maior multiplicador.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">ETAPA 03</div>
+      <div class="flow-title">Validação do ciclo</div>
+      <div class="flow-body">O multiplicador projeta a meta do ciclo? Bear pede 4–5% ao mês, bull pede 20%+. Não projeta → procura outro pool.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">ETAPA 04</div>
+      <div class="flow-title">Definição de range</div>
+      <div class="flow-body">Suporte e resistência do gráfico, Bollinger como auxílio. Não existe range fixo — cada ativo e cada momento pedem o seu.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">ETAPA 05</div>
+      <div class="flow-title">Monitorar e remontar</div>
+      <div class="flow-body">Saiu do range? Só remonta se saiu <strong style="color:var(--text);">muito</strong> e sem expectativa de retorno. Na dúvida, aguarda. IL acima de 20% → sai.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">ETAPA 06</div>
+      <div class="flow-title">Coleta de taxas</div>
+      <div class="flow-body">Coleta com regularidade e reinveste conforme o B.A.R.C.A e o ciclo — token quando o objetivo é acumular, stable quando é desalavancar.</div>
+    </div>
+  </div>
+
+  <!-- ══ STACK + COMO RODAR ══ -->
+  <div class="section-label">Stack e execução local</div>
+  <div class="two-col">
+
+    <div class="calc-box">
+      <h3>Arquitetura</h3>
+      <div class="stack-list">
+        <div class="stack-row"><span class="stack-k">Backend</span><span class="stack-v">FastAPI · Python · porta 8000</span></div>
+        <div class="stack-row"><span class="stack-k">Frontend</span><span class="stack-v">React + Vite · porta 5173</span></div>
+        <div class="stack-row"><span class="stack-k">Cérebro</span><span class="stack-v">Claude · Anthropic API</span></div>
+        <div class="stack-row"><span class="stack-k">Voz (opcional)</span><span class="stack-v">Whisper STT · ElevenLabs TTS</span></div>
+        <div class="stack-row"><span class="stack-k">Execução</span><span class="stack-v">Orca Whirlpools · Jupiter</span></div>
+        <div class="stack-row"><span class="stack-k">Dados de mercado</span><span class="stack-v">DEX scanner · on-chain · preços</span></div>
+        <div class="stack-row"><span class="stack-k">Persistência</span><span class="stack-v">SQLite local · auditoria diária</span></div>
+        <div class="stack-row"><span class="stack-k">Onde roda</span><span class="stack-v">só na máquina do operador</span></div>
+      </div>
+      <div class="warn-box">
+        <strong>⚠ Mainnet desde o setup.</strong> Toda transação é dinheiro real. A agente usa
+        carteira dedicada — nunca a principal — e não dispara nada sem confirmação explícita.
+      </div>
+    </div>
+
+    <div class="calc-box">
+      <h3>Como rodar</h3>
+      <div class="code"><span class="c"># 1 · setup interativo (nome, chaves, carteira, ciclo)</span>
+<span class="p">./setup.sh</span>
+
+<span class="c"># 2 · sobe backend :8000 + frontend :5173</span>
+<span class="p">make dev</span>
+
+<span class="c"># 3 · abre no navegador</span>
+http://localhost:5173
+
+<span class="c"># utilitários</span>
+<span class="p">make test</span>         <span class="c"># testes</span>
+<span class="p">make cost-today</span>   <span class="c"># gasto de API no dia</span>
+<span class="p">make clean</span>        <span class="c"># limpa caches</span></div>
+      <div class="warn-box" style="border-color:var(--border2);background:var(--surface2);">
+        A chave privada fica só em <strong style="color:var(--text);">config/.env</strong> (permissão 600, fora do git).
+        Esta página <strong style="color:var(--text);">não</strong> tem acesso a ela: o botão de carteira acima
+        é leitura on-chain via extensão do navegador, e nada aqui assina transação.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ══ TICKER ══ -->
+<div class="market-ticker" id="marketTicker">
+  <div class="ticker-gas" title="Gas ETH (Gwei)">
+    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M2 13V3a1 1 0 011-1h6a1 1 0 011 1v3l1 1v3l-1 1v2"/><path d="M5 6h2"/>
+    </svg>
+    <span class="gas-val" id="gasVal">—</span>
+    <span class="gas-unit">gwei</span>
+  </div>
+  <div class="ticker-item">
+    <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" width="13" height="13" style="border-radius:50%;vertical-align:middle;" onerror="this.style.display='none'">
+    <span class="ticker-lbl">BTC</span>
+    <span class="ticker-price" id="tickBtcPrice">—</span>
+    <span class="ticker-chg" id="tickBtcChg">—</span>
+  </div>
+  <div class="ticker-item">
+    <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" width="13" height="13" style="border-radius:50%;vertical-align:middle;" onerror="this.style.display='none'">
+    <span class="ticker-lbl">ETH</span>
+    <span class="ticker-price" id="tickEthPrice">—</span>
+    <span class="ticker-chg" id="tickEthChg">—</span>
+  </div>
+  <div class="ticker-item">
+    <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" width="13" height="13" style="border-radius:50%;vertical-align:middle;" onerror="this.style.display='none'">
+    <span class="ticker-lbl">SOL</span>
+    <span class="ticker-price" id="tickSolPrice">—</span>
+    <span class="ticker-chg" id="tickSolChg">—</span>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// TEMA
+// ══════════════════════════════════════════════════════════════════
+function toggleTheme(){
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+  localStorage.setItem('bc-theme', html.getAttribute('data-theme'));
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = html.getAttribute('data-theme') === 'dark' ? '☾' : '☀';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀';
+});
+
+// ══════════════════════════════════════════════════════════════════
+// CARTEIRA SOLANA — leitura on-chain, sem assinatura
+// Privacidade: nenhum endereço fica no código. Só o que a extensão
+// devolver em runtime, exibido truncado. Nada é persistido.
+// ══════════════════════════════════════════════════════════════════
+var Wallet = (function(){
+  var HELIUS_RPC = 'https://mainnet.helius-rpc.com/?api-key=76a7f1e6-fac9-4361-a6bb-f7787926c719';
+  var FALLBACK_RPC = 'https://api.mainnet-beta.solana.com';
+  var TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+  var TOKEN22_PROGRAM = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb';
+  var state = { provider:null, name:'', pubkey:'' };
+
+  function $(id){ return document.getElementById(id); }
+  function set(id, v){ var e = $(id); if (e) e.textContent = v; }
+  function usd(n){ return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function trunc(a){ return a.length > 12 ? a.slice(0,4) + '…' + a.slice(-4) : a; }
+
+  // Detecta provedores injetados. Sem extensão → null.
+  function detect(){
+    var w = window;
+    if (w.phantom && w.phantom.solana && w.phantom.solana.isPhantom) return { p:w.phantom.solana, n:'Phantom' };
+    if (w.solflare && w.solflare.isSolflare) return { p:w.solflare, n:'Solflare' };
+    if (w.backpack && w.backpack.isBackpack) return { p:w.backpack, n:'Backpack' };
+    if (w.solana) return { p:w.solana, n:w.solana.isPhantom ? 'Phantom' : 'Carteira Solana' };
+    return null;
+  }
+
+  async function rpc(method, params){
+    var urls = [HELIUS_RPC, FALLBACK_RPC];
+    var lastErr;
+    for (var i = 0; i < urls.length; i++){
+      try {
+        var r = await fetch(urls[i], {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ jsonrpc:'2.0', id:1, method:method, params:params })
+        });
+        var d = await r.json();
+        if (d.error) throw new Error(d.error.message);
+        return d.result;
+      } catch(e){ lastErr = e; }
+    }
+    throw lastErr || new Error('RPC indisponível');
+  }
+
+  function showError(msg){
+    var e = $('wpErr');
+    if (!e) return;
+    e.textContent = msg;
+    e.style.display = msg ? 'block' : 'none';
+  }
+
+  function renderConnected(){
+    $('wpDisconnected').style.display = 'none';
+    $('wpConnected').style.display = 'block';
+    set('wpStatus', 'conectada');
+    set('wpProvider', state.name);
+    set('wpAddr', trunc(state.pubkey));
+    var st = $('wpStatus');
+    if (st) st.style.color = 'var(--green)';
+  }
+
+  function renderDisconnected(){
+    $('wpDisconnected').style.display = 'block';
+    $('wpConnected').style.display = 'none';
+    set('wpStatus', 'desconectada');
+    var st = $('wpStatus');
+    if (st) st.style.color = '';
+    ['wpTotal','wpSol','wpTokens','wpTarget'].forEach(function(id){ set(id, '—'); });
+    set('wpSolUsd', '');
+  }
+
+  async function loadBalances(){
+    set('wpTotal', '…'); set('wpSol', '…'); set('wpTokens', '…'); set('wpTarget', '…');
+    try {
+      var results = await Promise.all([
+        rpc('getBalance', [state.pubkey]),
+        rpc('getTokenAccountsByOwner', [state.pubkey, { programId: TOKEN_PROGRAM }, { encoding:'jsonParsed' }]).catch(function(){ return { value: [] }; }),
+        rpc('getTokenAccountsByOwner', [state.pubkey, { programId: TOKEN22_PROGRAM }, { encoding:'jsonParsed' }]).catch(function(){ return { value: [] }; }),
+        fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd')
+          .then(function(r){ return r.json(); }).catch(function(){ return null; })
+      ]);
+
+      var lamports = (results[0] && typeof results[0].value === 'number') ? results[0].value : (results[0] || 0);
+      var sol = lamports / 1e9;
+      var accounts = (results[1].value || []).concat(results[2].value || []);
+      var priceRes = results[3];
+      var solPrice = (priceRes && priceRes.solana && priceRes.solana.usd) ? priceRes.solana.usd : (window._plSolPrice || 0);
+
+      // Só conta posições com saldo. Stables entram no valor total (1:1).
+      var held = 0, stableUsd = 0;
+      var STABLES = {
+        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v': 1,   // USDC
+        'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB': 1,   // USDT
+        'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA' : 1    // USDS
+      };
+      accounts.forEach(function(a){
+        try {
+          var info = a.account.data.parsed.info;
+          var amt = info.tokenAmount.uiAmount;
+          if (!amt) return;
+          held++;
+          if (STABLES[info.mint]) stableUsd += amt;
+        } catch(e){}
+      });
+
+      var solUsd = sol * solPrice;
+      var total = solUsd + stableUsd;
+
+      set('wpSol', sol.toFixed(4));
+      set('wpSolUsd', solPrice ? '  ' + usd(solUsd) : '');
+      set('wpTokens', String(held));
+      set('wpTotal', solPrice ? usd(total) : '—');
+      // Renda Passiva = 15% do portfólio (B.A.R.C.A, mercado neutro)
+      set('wpTarget', solPrice ? usd(total * 0.15) : '—');
+    } catch(e){
+      console.warn('[pooliana] leitura de saldo falhou:', e);
+      set('wpTotal', '—'); set('wpSol', '—'); set('wpTokens', '—'); set('wpTarget', '—');
+    }
+  }
+
+  async function connect(){
+    showError('');
+    var found = detect();
+    if (!found){
+      showError('Nenhuma carteira Solana encontrada neste navegador.');
+      var h = $('wpHint');
+      if (h) h.innerHTML = 'Instale <a href="https://phantom.app/" target="_blank" rel="noopener">Phantom</a>, ' +
+        '<a href="https://solflare.com/" target="_blank" rel="noopener">Solflare</a> ou ' +
+        '<a href="https://backpack.app/" target="_blank" rel="noopener">Backpack</a> e recarregue a página.';
+      return;
+    }
+    var btn = $('wpConnectBtn');
+    if (btn) btn.disabled = true;
+    set('wpConnectLabel', 'Aguardando aprovação…');
+    try {
+      var resp = await found.p.connect();
+      var pk = (resp && resp.publicKey) ? resp.publicKey : found.p.publicKey;
+      if (!pk) throw new Error('Carteira não devolveu chave pública.');
+      state.provider = found.p;
+      state.name = found.n;
+      state.pubkey = pk.toString();
+      try { localStorage.setItem('bc-pooliana-wallet', found.n); } catch(e){}
+      renderConnected();
+      loadBalances();
+      if (found.p.on) {
+        found.p.on('disconnect', renderDisconnected);
+        found.p.on('accountChanged', function(newPk){
+          if (newPk){ state.pubkey = newPk.toString(); renderConnected(); loadBalances(); }
+          else renderDisconnected();
+        });
+      }
+    } catch(e){
+      // 4001 / "User rejected" = usuário cancelou, não é erro de verdade
+      var msg = (e && e.message) ? e.message : String(e);
+      showError(/reject|denied|4001/i.test(msg) ? 'Conexão cancelada na carteira.' : ('Falha ao conectar: ' + msg));
+    } finally {
+      if (btn) btn.disabled = false;
+      set('wpConnectLabel', 'Conectar carteira');
+    }
+  }
+
+  async function disconnect(){
+    try { if (state.provider && state.provider.disconnect) await state.provider.disconnect(); } catch(e){}
+    try { localStorage.removeItem('bc-pooliana-wallet'); } catch(e){}
+    state = { provider:null, name:'', pubkey:'' };
+    renderDisconnected();
+  }
+
+  function refresh(){ if (state.pubkey) loadBalances(); }
+
+  function copy(){
+    if (!state.pubkey) return;
+    var done = function(){
+      var b = $('wpCopyBtn');
+      if (!b) return;
+      var old = b.textContent;
+      b.textContent = 'Copiado';
+      setTimeout(function(){ b.textContent = old; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(state.pubkey).then(done).catch(function(){});
+    }
+  }
+
+  // Reconexão silenciosa: só se a carteira já confia neste site.
+  async function autoConnect(){
+    var pref;
+    try { pref = localStorage.getItem('bc-pooliana-wallet'); } catch(e){}
+    if (!pref) return;
+    var found = detect();
+    if (!found) return;
+    try {
+      var resp = await found.p.connect({ onlyIfTrusted:true });
+      var pk = (resp && resp.publicKey) ? resp.publicKey : found.p.publicKey;
+      if (!pk) return;
+      state.provider = found.p; state.name = found.n; state.pubkey = pk.toString();
+      renderConnected();
+      loadBalances();
+    } catch(e){ /* não confiado ainda — segue desconectado */ }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    // A extensão injeta um pouco depois do DOMContentLoaded em alguns navegadores.
+    setTimeout(autoConnect, 350);
+  });
+
+  return { connect:connect, disconnect:disconnect, refresh:refresh, copy:copy };
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// B.A.R.C.A — alocação por ciclo
+// ══════════════════════════════════════════════════════════════════
+var Barca = (function(){
+  var ROWS = [
+    { l:'B', name:'Base Sólida',     desc:'Bitcoin — DCA diário guiado por indicadores',        color:'#F7931A' },
+    { l:'A', name:'Ativos Voláteis', desc:'Altcoins selecionadas pela metodologia',             color:'#9945ff' },
+    { l:'R', name:'Renda Passiva',   desc:'Pools de liquidez + real yield + staking',           color:'#14F195' },
+    { l:'C', name:'Caixa',           desc:'Stablecoins — reserva de oportunidade',              color:'#2775ca' },
+    { l:'A', name:'Aprender',        desc:'Testes, airdrops, novas aplicações',                 color:'#c9a050' }
+  ];
+  var CYCLES = {
+    bear:   { v:[60,5,10,25,0],  note:'<strong>Bear market.</strong> Bitcoin sobe para 60% e o caixa para 25% — pó seco esperando ponto de entrada. Nas pools, prioridade para pares com stablecoin ou BTC/ETH + stable. Meta de rendimento: 4% a 5% ao mês, consistência acima de tudo.' },
+    neutro: { v:[50,20,15,10,5], note:'<strong>Mercado neutro.</strong> Alocação base do método. Renda passiva em 15% do portfólio — é esse o teto que a agente usa para dimensionar quanto pode ir para pools de liquidez.' },
+    bull:   { v:[40,40,10,5,5],  note:'<strong>Bull market.</strong> Altcoins empatam com bitcoin em 40%, caixa cai para 5%. Nas pools, aceita mais volatilidade em troca de mais taxas — inclusive memecoin com timing consciente. Meta: 20%+ ao mês.' }
+  };
+  var current = 'neutro';
+
+  function render(){
+    var c = CYCLES[current];
+    var html = '';
+    ROWS.forEach(function(r, i){
+      var pct = c.v[i];
+      html += '<div class="barca-row">' +
+        '<div class="barca-letter">' + r.l + '</div>' +
+        '<div>' +
+          '<div class="barca-name">' + r.name + ' <span>— ' + r.desc + '</span></div>' +
+          '<div class="barca-track"><div class="barca-fill" style="width:' + pct + '%;background:' + r.color + ';"></div></div>' +
+        '</div>' +
+        '<div class="barca-pct" style="color:' + (pct === 0 ? 'var(--muted)' : 'var(--text)') + '">' + pct + '%</div>' +
+      '</div>';
+    });
+    document.getElementById('barcaRows').innerHTML = html;
+    document.getElementById('barcaNote').innerHTML = c.note;
+  }
+
+  function set(cycle, btn){
+    current = cycle;
+    var tabs = document.querySelectorAll('.cycle-tab');
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+    if (btn) btn.classList.add('active');
+    render();
+  }
+
+  document.addEventListener('DOMContentLoaded', render);
+  return { set:set };
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// CALCULADORA — multiplicador Taxas/TVL
+// ══════════════════════════════════════════════════════════════════
+var Mult = (function(){
+  var MIN_TVL = 500000;
+
+  function calc(){
+    var fees = parseFloat(document.getElementById('mcFees').value) || 0;
+    var tvl  = parseFloat(document.getElementById('mcTvl').value) || 0;
+    var cycle = document.getElementById('mcCycle').value;
+    var vEl = document.getElementById('mcVerdict');
+    var tvlMark = document.getElementById('fTvlMark');
+    var tvlNote = document.getElementById('fTvlNote');
+
+    // Filtro obrigatório de TVL — roda antes do multiplicador
+    if (tvl > 0){
+      var ok = tvl >= MIN_TVL;
+      tvlMark.textContent = ok ? '✓' : '✕';
+      tvlMark.className = 'filter-mark ' + (ok ? 'pass' : 'fail');
+      tvlNote.textContent = ok
+        ? 'TVL de $' + Math.round(tvl).toLocaleString('en-US') + ' passa no piso de $500.000.'
+        : 'TVL de $' + Math.round(tvl).toLocaleString('en-US') + ' está abaixo do piso — pool descartado, não importa o multiplicador.';
+    }
+
+    if (!fees || !tvl){
+      ['mcMult','mcMonth','mcApr'].forEach(function(id){ document.getElementById(id).textContent = '—'; });
+      vEl.className = 'calc-verdict';
+      vEl.textContent = 'Preencha taxas e TVL para avaliar.';
+      return;
+    }
+
+    var mult    = fees / tvl;          // multiplicador diário
+    var monthly = mult * 30 * 100;     // % ao mês
+    var apr     = mult * 365 * 100;    // % ao ano
+
+    document.getElementById('mcMult').textContent  = mult.toFixed(5);
+    document.getElementById('mcMonth').textContent = monthly.toFixed(2) + '%';
+    document.getElementById('mcApr').textContent   = apr.toFixed(1) + '%';
+
+    var meta = (cycle === 'bull') ? 20 : 4;
+    var metaTxt = (cycle === 'bull') ? '20% ao mês (bull)' : '4% ao mês (' + (cycle === 'bear' ? 'bear' : 'neutro') + ')';
+
+    if (tvl < MIN_TVL){
+      vEl.className = 'calc-verdict bad';
+      vEl.innerHTML = '✕ <strong>Descartado no filtro.</strong> TVL abaixo de $500.000 — o multiplicador nem chega a ser comparado.';
+    } else if (monthly >= meta){
+      vEl.className = 'calc-verdict ok';
+      vEl.innerHTML = '✓ <strong>Projeta a meta.</strong> ' + monthly.toFixed(2) + '% ao mês contra os ' + metaTxt +
+        '. Passa para a etapa de range — depois de conferir contrato, volume e correlação do par.';
+    } else if (monthly >= meta * 0.7){
+      vEl.className = 'calc-verdict warn';
+      vEl.innerHTML = '◑ <strong>Perto, mas abaixo.</strong> ' + monthly.toFixed(2) + '% ao mês contra os ' + metaTxt +
+        '. Só entra se for o maior multiplicador entre os candidatos e não houver nada melhor.';
+    } else {
+      vEl.className = 'calc-verdict bad';
+      vEl.innerHTML = '✕ <strong>Não projeta a meta.</strong> ' + monthly.toFixed(2) + '% ao mês contra os ' + metaTxt +
+        '. Buscar outro pool.';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', calc);
+  return { calc:calc };
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// RANKING DE POOLS — lê pooliana-pools.json (gerado pela Action pools.yml)
+// Estático: nenhuma chamada ao agente local, nenhuma chave envolvida.
+// ══════════════════════════════════════════════════════════════════
+(function poolScan(){
+  function usd(n){
+    if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n/1e3) + 'K';
+    return '$' + Math.round(n);
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function since(iso){
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var h = Math.floor((Date.now() - d) / 36e5);
+    if (h < 1)  return 'atualizado agora há pouco';
+    if (h < 24) return 'atualizado há ' + h + 'h';
+    return 'atualizado há ' + Math.floor(h/24) + 'd';
+  }
+  function aprColor(pct){
+    // Escala do método (§3): ≥200% excelente · ≥100% muito bom · ≥50% bom
+    if (pct >= 200) return 'var(--green)';
+    if (pct >= 100) return 'var(--accent)';
+    if (pct >= 50)  return 'var(--text)';
+    return 'var(--muted)';
+  }
+
+  function render(doc){
+    var meta = document.getElementById('scanMeta');
+    var body = document.getElementById('scanBody');
+    if (!body) return;
+
+    var pools = (doc && doc.pools) || [];
+    if (!pools.length){
+      body.innerHTML = '<tr><td colspan="9" class="scan-empty">Nenhum pool qualificado no último scan.</td></tr>';
+      return;
+    }
+
+    if (meta){
+      meta.textContent = doc.scanned + ' varridos · ' + doc.qualified + ' qualificados · ' + since(doc.updated);
+    }
+
+    body.innerHTML = pools.map(function(p, i){
+      return '<tr>'
+        + '<td class="pt-rank">' + (i+1) + '</td>'
+        + '<td><span class="pt-pair">' + esc(p.pair) + '</span>'
+          + '<span class="pt-dex">' + esc(p.dex) + ' · ' + p.feeTierPct + '%</span></td>'
+        + '<td>' + usd(p.tvlUsd) + '</td>'
+        + '<td>' + usd(p.fees24hUsd) + '</td>'
+        + '<td>' + p.multiplierDaily.toFixed(5) + '</td>'
+        + '<td>' + p.monthlyPct.toFixed(1) + '%</td>'
+        + '<td class="pt-apr" style="color:' + aprColor(p.aprPct) + '">' + p.aprPct.toFixed(0) + '%</td>'
+        + '<td>' + p.score.toFixed(2) + '</td>'
+        + '<td><span class="pt-tier">' + esc(p.tier) + '</span>'
+          + (p.spike ? '<span class="pt-flag" title="Volume 24h de ' + p.spikeRatio
+              + '× o TVL — score limitado a 1%/dia">spike ' + p.spikeRatio + '×</span>' : '')
+          + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    fetch('pooliana-pools.json', { cache:'no-cache' })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(render)
+      .catch(function(e){
+        var meta = document.getElementById('scanMeta');
+        var body = document.getElementById('scanBody');
+        if (meta) meta.textContent = 'scan indisponível';
+        if (body) body.innerHTML = '<tr><td colspan="9" class="scan-empty">'
+          + 'Não consegui ler <code>pooliana-pools.json</code>.<br>'
+          + 'Abrindo o arquivo direto do disco (file://) o navegador bloqueia essa leitura — '
+          + 'use um servidor local ou o site publicado.</td></tr>';
+        console.debug('[pooliana] scan indisponível:', e.message);
+      });
+  });
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// TICKER DE MERCADO (mesmo dos outros dashboards)
+// ══════════════════════════════════════════════════════════════════
+(function tickerInit(){
+  function setEl(id, val){ var el = document.getElementById(id); if (el) el.textContent = val; }
+  function setChg(id, pct){
+    var el = document.getElementById(id); if (!el) return;
+    var v = parseFloat(pct);
+    el.textContent = (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+    el.className = 'ticker-chg ' + (v >= 0 ? 'up' : 'dn');
+  }
+  function fmtPrice(v){ return v >= 1000 ? '$' + Math.round(v).toLocaleString() : '$' + v.toFixed(2); }
+
+  async function fetchTicker(){
+    try {
+      var p = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true').then(function(r){ return r.json(); });
+      if (p.bitcoin){ setEl('tickBtcPrice', fmtPrice(p.bitcoin.usd)); setChg('tickBtcChg', p.bitcoin.usd_24h_change); }
+      if (p.ethereum){ setEl('tickEthPrice', fmtPrice(p.ethereum.usd)); setChg('tickEthChg', p.ethereum.usd_24h_change); }
+      if (p.solana){
+        setEl('tickSolPrice', fmtPrice(p.solana.usd));
+        setChg('tickSolChg', p.solana.usd_24h_change);
+        window._plSolPrice = p.solana.usd; // reaproveitado pelo painel da carteira
+      }
+    } catch(e){ console.warn('ticker fetch failed', e); }
+
+    try {
+      var g = await fetch('https://eth-mainnet.g.alchemy.com/v2/R_9y5DBqKNR2NapexG8n7', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ jsonrpc:'2.0', id:1, method:'eth_gasPrice', params:[] })
+      }).then(function(r){ return r.json(); });
+      if (g.result){
+        var gwei = parseInt(g.result, 16) / 1e9;
+        setEl('gasVal', gwei < 10 ? gwei.toFixed(2) : gwei.toFixed(1));
+      }
+    } catch(e){}
+  }
+
+  fetchTicker();
+  setInterval(fetchTicker, 60000);
+})();
+</script>
+
+</body>
+</html>
