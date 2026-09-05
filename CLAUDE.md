@@ -5004,13 +5004,20 @@ exercitado. Os KPIs do dashboard fecham de forma aditiva
 exatamente com o exibido (−2,20%). O caminho "ao vivo" da landing foi testado semeando o
 cache de preços que o código usa como fallback.
 
+### Confirmado pelo Lucas em 05/09/2026 (fecha duas pendências desta sessão)
+
+- **Os +0,164778 SOL são ganhos mesmo, custo zero** — *"esse 0.1648sol foram ganhos mesmo,
+  custo zero"*. Ele espelha no CoinGecko como transferência de entrada. O `data.js` está
+  certo; **não puxar de volta para 24,765222** na próxima leitura de print. Mesma coisa
+  vale para os +4,66 USDS de 04/09 (mesma operação, mesmo tratamento).
+- **O USDT está certo no CoinGecko** — o delta de 184,71 contra o supply da AAVE não é
+  drift a corrigir: são os ~185 de caixa em corretora + carteira, exatamente como
+  documentado em 22/08. Não era pendência.
+
+As duas notas ⚠️ no `data.js` foram trocadas por ✅ com a citação, para que a próxima
+sessão não reabra o assunto.
+
 ### O que ainda falta
-- **Espelhar no CoinGecko** os +0,164778 SOL (e os +4,66 USDS de 04/09) como transferência
-  de entrada, custo zero — enquanto não fizer, o book do Lucas e o `data.js` divergem e a
-  próxima leitura de print vai querer puxar de volta.
-- **Drift do USDT**: holding 2.198,09 vs supply AAVE 2.013,38 → delta 184,71, contra os
-  185,27 de 01/09. É o juro do aToken correndo sem ser lançado. Ainda **acima** do supply
-  (não viola o invariante), mas caminha para violar, como aconteceu com SOL e USDS.
 - **Endereços de carteira em repositório público** — pendência aberta desde 22/08, sem
   decisão do Lucas. Não executar nada sem ele pedir.
 - **`data.js → defi.aave.healthFactor`** com valores divergentes — guardado para depois por

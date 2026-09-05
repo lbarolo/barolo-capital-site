@@ -170,7 +170,9 @@ window.BAROLO_DATA = {
     // 15/07/2026 e do USDS em 04/09/2026.
     // Os ~0,04996 SOL de gas na carteira seguem FORA da contabilidade por decisao do Lucas
     // (15/07/2026, ~$5) — por isso o holding fica igual ao supply, nao supply + carteira.
-    // ⚠️ ESPELHAR NO COINGECKO: lancar +0,164778 SOL como 'transferencia de entrada' (custo 0).
+    // ✅ CONFIRMADO PELO LUCAS (05/09/2026): "esse 0.1648sol foram ganhos mesmo, custo zero"
+    // — ele vai espelhar no CoinGecko como 'transferencia de entrada' (custo 0). O valor
+    // aqui esta certo; NAO puxar de volta para 24,765222 na proxima leitura de print.
     { ticker:'SOL',   cgId:'solana',                   qty:24.93,      invested:2533.36 },
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
@@ -191,9 +193,8 @@ window.BAROLO_DATA = {
     // acompanhou (nao ha USDS em carteira desde o swap de 17,44514 em 27/08). Entra a
     // CUSTO ZERO, entao `invested` fica em 300 — juro e renda, nao aporte. Mesmo
     // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
-    // ⚠️ ESPELHAR NO COINGECKO: enquanto o Lucas nao lancar os +4,66 la, o book dele e
-    // este arquivo divergem — e a proxima leitura do print vai querer puxar de volta
-    // para 300. Lancar como 'transferencia de entrada' (custo 0), igual ao SOL em 15/07.
+    // ✅ Mesma confirmacao do SOL (Lucas, 05/09/2026): e yield, custo zero, e ele espelha
+    // no CoinGecko como 'transferencia de entrada'. NAO puxar de volta para 300.
     { ticker:'USDS', cgId:'usds',            qty:304.66,   invested:300      }
   ],
 
