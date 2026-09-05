@@ -37,11 +37,23 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
    - ❌ Datas de nascimento ou eventos pessoais
    - ✅ Dados financeiros (apenas números, sem contexto pessoal)
 
-5. **Escopo real da privacidade (decidido em 19/08/2026):** o repositório é **público** por escolha.
-   `robots.txt` e `noindex` protegem o site publicado, não o repositório — o `data.js` e todo o
-   histórico do git são legíveis por qualquer pessoa. A regra que permanece **inegociável** é a
-   outra: nunca expor endereço de carteira, NFT ID ou qualquer identificador único on-chain. Essa
-   nunca foi violada. Não reabrir a discussão de tornar o repo privado sem o Lucas pedir.
+5. **Escopo real da privacidade (decidido em 19/08 e reafirmado em 05/09/2026):** o repositório é
+   **público** por escolha. `robots.txt` e `noindex` protegem o site publicado, não o repositório —
+   o `data.js` e todo o histórico do git são legíveis por qualquer pessoa.
+   **Sobre os endereços de carteira — DECISÃO TOMADA, NÃO REABRIR:** eles estão, sim, em arquivo
+   público (`pools.html` 19 EVM + 1 SOL · `portfolio_analytics.html` 16 EVM + 1 SOL ·
+   `ferramentas.html` 7 EVM · bundle de `emprestimos.html` · `CLAUDE.md` 18 EVM + 1 Cardano).
+   Nos HTMLs isso é **funcional e inevitável num site estático**: é o JS do browser que chama
+   Alchemy/Helius/AAVE/Kamino, então quem abre o site vê os endereços no DevTools de qualquer jeito
+   — tirar do repo não esconderia nada, e `git rm --cached` não apaga o histórico. Lucas avaliou e
+   **aceitou a exposição em 05/09/2026**: *"pode deixar assim, pensando que é um site que não
+   divulgo a ninguém e decidi deixar o site no ar para poder acessar fora do computador também"*.
+   O risco real é baixo porque o endereço só revela saldo/histórico on-chain (que já é público por
+   natureza) e não dá nenhum poder de gasto. **Não re-sinalizar como achado nem propor
+   privatizar o repo / reescrever histórico sem o Lucas pedir.**
+   A regra que permanece **inegociável**: nunca colocar endereço, NFT ID ou identificador único
+   em **URL pública** (link, iframe `src`, query string) — no JS pode, em URL não. Essa nunca foi
+   violada (o caso do iframe do Revert foi corrigido em 16/06/2026).
 
 ### Objetivo:
 O site é **prova de competência técnica**, não **portfolio público**. Funcionalidade sim, exposição não.
@@ -4842,7 +4854,7 @@ nada). Ele não respondeu — NÃO EXECUTAR nada disso sem decisão dele.**
 
 ### O que ainda falta
 
-- **Decisão sobre a exposição dos endereços** (acima) — pendente de resposta do Lucas.
+- ~~**Decisão sobre a exposição dos endereços**~~ — ✅ **RESOLVIDO em 05/09/2026**: Lucas avaliou e aceitou a exposição (ver política de privacidade, item 5). Não reabrir.
 - **Origem dos 285,40 USDT** depositados na AAVE e nunca lançados. Se vieram de fiat, falta o
   custo em BRL na planilha (hoje R$ 36.632,97). Procurar no extrato um depósito/conversão de
   ~R$ 1.500 que foi direto para a AAVE.
@@ -5018,8 +5030,7 @@ As duas notas ⚠️ no `data.js` foram trocadas por ✅ com a citação, para q
 sessão não reabra o assunto.
 
 ### O que ainda falta
-- **Endereços de carteira em repositório público** — pendência aberta desde 22/08, sem
-  decisão do Lucas. Não executar nada sem ele pedir.
+- ~~**Endereços de carteira em repositório público**~~ — ✅ **RESOLVIDO em 05/09/2026** (ver item 5 da política de privacidade). Não reabrir.
 - **`data.js → defi.aave.healthFactor`** com valores divergentes — guardado para depois por
   pedido explícito do Lucas em 19/08. Não mexer.
 - Pendências antigas mantidas: `monthlyReturns[2026]` (Set–Dez), CDI/IPCA anual,
