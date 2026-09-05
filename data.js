@@ -660,8 +660,11 @@ window.BAROLO_DATA = {
   // listado aqui, assume-se que CoinGecko == holding (nada pendente).
   // Base: print do CoinGecko de 05/09/2026.
   cgMirror: {
-    SOL:  24.765222,   // holding 24,94  -> faltam ~0,175 SOL de yield da Kamino
-    USDS: 300          // holding 304,69 -> faltam ~4,69 USDS de yield da Kamino
+    // ✅ LANCADO POR ELE em 05/09/2026 ("Coloquei la no coingecko"): +0,174778 SOL
+    // e +4,69 USDS entraram como transferencia de entrada, custo zero. Espelho
+    // igualado ao holding -> pendente ZERO e o card do dashboard some sozinho.
+    SOL:  24.94,
+    USDS: 304.69
     // ETH, BTC, USDT, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no
     // print de 05/09 — iguais ao holding, nada pendente.
   },

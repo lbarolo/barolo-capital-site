@@ -94,7 +94,9 @@ igualando às qty do holding** — aí o pendente zera e o card some.
 ⚠️ Se aparecer diferença **negativa** (CoinGecko com MAIS que o site), não é yield — é erro de
 contagem ou posição fora do radar. Investigar antes de lançar qualquer coisa.
 
-**Pendente em 05/09/2026:** SOL +0,174778 (~US$ 18) · USDS +4,69 (~US$ 4,69) · **total ~US$ 22,60**.
+**Estado em 05/09/2026:** ✅ **em dia** — o Lucas lançou (+0,174778 SOL e +4,69 USDS,
+transferência de entrada com custo zero) e o `cgMirror` foi igualado ao holding no mesmo dia.
+Próxima cobrança: fechamento de setembro.
 
 ---
 
@@ -5210,8 +5212,10 @@ arquivo) e ganhou três formas de aparecer, para não depender da minha memória
 A Action `close-month.yml` também roda o relatório todo dia 1 (`continue-on-error`, então nunca
 derruba o fechamento).
 
-**Pendente hoje: SOL +0,174778 (~US$ 18) · USDS +4,69 · total ~US$ 22,60.** Quando ele lançar,
-atualizar o `cgMirror` igualando às qty do holding.
+**Primeiro ciclo já fechado no mesmo dia:** o pendente era SOL +0,174778 (~US$ 18) e USDS +4,69
+(~US$ 22,74 no total). Ele lançou (*"Coloquei lá no coingecko"*) e o `cgMirror` foi igualado ao
+holding — o relatório passou a dizer "nada pendente" e o card sumiu do dashboard (verificado nos
+dois temas). A rotina está validada de ponta a ponta.
 
 ⚠️ Diferença **negativa** (CoinGecko com mais que o site) não é yield — é erro de contagem ou
 posição fora do radar. O script marca com aviso; investigar antes de lançar.
