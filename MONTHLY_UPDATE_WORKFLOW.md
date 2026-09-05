@@ -1,8 +1,76 @@
 # Fluxo Mensal de Atualização — Barolo Capital Dashboard
 
-**Frequência:** Todo dia 20–21 do mês (após fechamento de dados do mês anterior)  
-**Entrada:** Prints do CoinGecko, AAVE V4, Kamino Finance  
-**Saída:** Site atualizado + commit no GitHub + snapshot JSON
+**Frequência:** quando o Lucas quiser — uma vez por semana, ou sempre que houver aporte / operação nova. Não depende mais de data fixa: o fechamento mensal da curva é automático (Action `close-month.yml`, todo dia 1).  
+**Entrada:** prints do CoinGecko, AAVE V4, Kamino (mandados no chat)  
+**Saída:** `data.js` atualizado → push na `main` → site republicado em ~1–2 min
+
+---
+
+## ⚡⚡ COMO FUNCIONA HOJE (05/09/2026) — leia esta seção primeiro
+
+**Para o Lucas, o fluxo inteiro é: mandar o print no chat.** Nada além disso.
+Todo o resto é derivado ou automático.
+
+### O que EU (Claude) edito quando você manda um print
+
+Só o `data.js`, e só as **partes**:
+
+| Você mandou print de | Eu edito em `data.js` |
+|---|---|
+| CoinGecko (portfólio) | `holdings[].qty` / `.invested` e `stables[].qty` |
+| AAVE V4 (Position Details) | `defi.aave.supply.*` e `.borrow.*` (qty + apy) |
+| Kamino | `defi.kamino.supply.*`, `.borrow.*`, `ltv`, `liqLtv` |
+| Comprovante de aporte novo (fiat→cripto) | **uma linha em `contributions`** |
+| Print de pool | `defi.uniswapV3` |
+
+### O que se atualiza SOZINHO a partir disso
+
+Nada disto precisa ser digitado — é tudo calculado:
+
+- **`debt.aave` / `debt.kamino` / `debt.total`** — somados dos `borrow` de cada protocolo
+- **`stablesTotalUSD`** — somado de `stables[]`
+- **Patrimônio, alocação %, P&L, ROI, preço médio** — todas as páginas leem `holdings[]`
+- **Curva de patrimônio mensal** — `scripts/close-month.js` + Action `close-month.yml`
+  fecham o mês sozinhos todo dia 1, usando `networth-history.json`
+- **CAGR, TWR, TIR (XIRR), Sharpe, volatilidade, drawdown, retorno mensal e anual,
+  benchmark ETH/BTC/CDI** — todos derivados da curva, em uma implementação só
+  (`BAROLO_DATA.curveWithLive`), usada tanto pelo dashboard quanto pela landing
+- **Snapshot diário do patrimônio** — Action `networth.yml`
+- **Preços do benchmark, indicadores on-chain do BTC, briefing** — Actions próprias
+- **`emprestimos.html`** — a Action `sync-emprestimos.yml` regrava o `data.js`
+  embutido no bundle no push
+
+### Registrar um aporte novo
+
+Uma linha, e só. Exemplo:
+
+```js
+contributions: [
+  { date:'2026-09-15', usd: 250, note:'DCA mensal SOL' },
+],
+```
+
+Isso entra no ROI de destaque, no TWR, na TIR, no benchmark e no gráfico de DCA —
+no mesmo dia, sem esperar o fechamento do mês. **Só entra aqui dinheiro que veio de
+fora.** Yield, juros, airdrop e rotação interna (vender X para comprar Y, fechar
+pool) mexem em `invested` do holding, nunca em `contributions`.
+
+### As duas regras que continuam valendo
+
+1. **Holding ≥ supply do protocolo.** O `holdings[]` já inclui o colateral em
+   AAVE/Kamino. Se o print do protocolo mostra mais SOL do que o `holdings`, a
+   diferença é yield que o CoinGecko não acompanhou: sobe a qty, **`invested` não
+   muda** (rendimento tem custo zero).
+2. **`invested` = USD efetivamente pago.** Nunca o "custo" que o CoinGecko deriva
+   (`valor − P&L`), que produz artefato em stablecoin.
+
+### Rodar manualmente (se precisar)
+
+```bash
+node scripts/close-month.js --dry-run   # mostra o que o fechamento faria
+node scripts/close-month.js             # aplica
+node scripts/refresh-emprestimos-data.js # regrava o bundle de emprestimos
+```
 
 ---
 

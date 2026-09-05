@@ -1201,15 +1201,15 @@ body::after{
       </div>
       <div class="hp-stats">
         <div class="hp-stat">
-          <div class="hp-stat-val neg count-up" id="heroCAGR">−2.2%</div>
+          <div class="hp-stat-val pos count-up" id="heroCAGR">+1.7%</div><!-- fallback estatico: o valor ao vivo vem de updateHeroReturn() (TWR anualizado, mesma conta do card CAGR do dashboard) -->
           <div class="hp-stat-lbl" data-i18n="hp-cagr">CAGR 2022–2026</div>
         </div>
         <div class="hp-stat">
-          <div class="hp-stat-val neg count-up" id="heroRealReturn">−24.9%</div>
+          <div class="hp-stat-val neg count-up" id="heroRealReturn">−10.0%</div><!-- fallback estatico: TWR acumulado descontado da inflacao americana -->
           <div class="hp-stat-lbl" data-i18n="hp-track">Track Record (real)</div>
         </div>
         <div class="hp-stat">
-          <div class="hp-stat-val pos count-up" id="heroCAGRYTD">+14.2%</div>
+          <div class="hp-stat-val pos count-up" id="heroCAGRYTD">+16.0%</div><!-- fallback estatico: TIR (money-weighted) -->
           <div class="hp-stat-lbl" data-i18n="hp-irr">Retorno Anual (TIR)</div>
         </div>
         <div class="hp-stat">
@@ -1900,10 +1900,14 @@ function toggleMobile() {
     // Nesse caso devolve serie vazia; o proximo fetch recalcula com os dados prontos.
     if (typeof WEALTH_VALUES === 'undefined' || typeof INVESTED === 'undefined') return [];
     if (!WEALTH_VALUES.length || WEALTH_VALUES.length !== INVESTED.length) return [];
-    var values = WEALTH_VALUES.slice();
-    var inv    = INVESTED.slice();
-    // O ultimo ponto vira o valor AO VIVO quando ele existe, sem aporte novo no meio
-    if (typeof finalValue === 'number' && finalValue > 0) values[values.length - 1] = finalValue;
+    // O mes corrente entra como ponto NOVO ao vivo (nao sobrescreve o ultimo mes
+    // fechado, como fazia antes — isso apagava um mes inteiro da serie). A conta e
+    // a mesma do dashboard: os dois chamam BAROLO_DATA.curveWithLive().
+    var _c = (window.BAROLO_DATA && window.BAROLO_DATA.curveWithLive)
+      ? window.BAROLO_DATA.curveWithLive(finalValue) : null;
+    var values = _c ? _c.values.slice()   : WEALTH_VALUES.slice();
+    var inv    = _c ? _c.invested.slice() : INVESTED.slice();
+    if (!_c && typeof finalValue === 'number' && finalValue > 0) values[values.length - 1] = finalValue;
     var rets = [];
     for (var i = 1; i < values.length; i++) {
       var aporte = inv[i] - inv[i-1];
@@ -1964,9 +1968,12 @@ function toggleMobile() {
     // serem declarados (estão depois da IIFE do ticker). Nesse caso, calculatePerformanceMetrics
     // preenche o valor no DOMContentLoaded e o próximo fetch atualiza ao vivo.
     if (typeof WEALTH_VALUES !== 'undefined' && typeof INVESTED !== 'undefined') {
-      var liveCurve = WEALTH_VALUES.slice();
-      liveCurve[liveCurve.length - 1] = currentAssets;
-      var irr = estimateIRR(liveCurve, INVESTED);
+      var _lc = (window.BAROLO_DATA && window.BAROLO_DATA.curveWithLive)
+        ? window.BAROLO_DATA.curveWithLive(currentAssets) : null;
+      var liveCurve = _lc ? _lc.values : WEALTH_VALUES.slice();
+      var liveInv   = _lc ? _lc.invested : INVESTED;
+      if (!_lc) liveCurve[liveCurve.length - 1] = currentAssets;
+      var irr = estimateIRR(liveCurve, liveInv);
       var irrEl = document.getElementById('heroCAGRYTD');
       if (irrEl) irrEl.textContent = (irr >= 0 ? '+' : '') + irr.toFixed(1) + '%';
     }

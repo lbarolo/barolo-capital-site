@@ -5045,6 +5045,129 @@ sessão não reabra o assunto.
 
 ---
 
+## Sessão 05/09/2026 — Merge na main + automação de ponta a ponta (agregados derivados, fechamento mensal por Action, curva ao vivo unificada) + refresh 05/09
+
+### O que o Lucas pediu
+Três coisas, na ordem: (1) mergear na `main` o trabalho da sessão de 04/09 (o site publica da
+main, então nada daquilo estava no ar); (2) deixar registrada a decisão sobre os endereços de
+carteira; (3) **"aumentando ali o valor dos tokens que já mude automaticamente no valor do
+patrimônio e tudo o mais, as porcentagens. Eu gostaria que tudo fosse automático, e que uma vez
+por semana, ou quando eu fizer algum aporte novo ou coisa do tipo, coloco aqui o print e já vai
+direto automático pro site também."**
+
+### Decisão registrada — endereços de carteira (NÃO REABRIR)
+Item 5 da política de privacidade reescrito. Lucas avaliou e **aceitou a exposição em
+05/09/2026**: *"pode deixar assim, pensando que é um site que não divulgo a ninguém e decidi
+deixar o site no ar para poder acessar fora do computador também"*. Nos HTMLs os endereços são
+**funcionais e inevitáveis num site estático** (é o JS do browser que chama Alchemy/Helius/
+AAVE/Kamino), então quem abre o site já os vê no DevTools — tirar do repo não esconderia nada, e
+`git rm --cached` não apaga o histórico. Corrigida também uma imprecisão antiga do arquivo, que
+dizia que "a regra nunca foi violada" sem dizer qual: o inegociável é **endereço em URL pública**
+(link, `src` de iframe, query string); no JavaScript pode. As duas pendências abertas (22/08 e
+04/09) ficam marcadas como resolvidas.
+
+### Merge na main
+`claude/site-verification-improvements-ou354i` → `main` em fast-forward (`0b48d62..5583729`).
+O que estava fora do ar até então: SOL abaixo do supply da Kamino, landing somando US$ 296 de uma
+pool fechada em julho + curva parada em maio/26 + aporte fictício de +$100/mês, CAGR +63,7% /
+Track Record +621,7% (a conta do capital-semente), card "Pool Ativa · FORA DO RANGE" sem posição
+aberta, simulador com +$3,6k de ganho fantasma, gráfico de taxas somando $2.034 em vez de $2.466.
+
+### ⚡ AUTOMAÇÃO — o que mudou de verdade
+
+#### 1. `data.js`: agregados agora são DERIVADOS, não digitados
+Uma IIFE no fim do arquivo recalcula a cada carregamento (browser e Node):
+`stablesTotalUSD` (soma de `stables[].qty`), `debt.aave` / `debt.kamino` (soma dos
+`defi.*.borrow.*.qty`, qualquer token — já foi GHO e USDG) e `debt.total`. Antes eram números
+escritos à mão ao lado das partes: duas fontes para a mesma verdade, bastava esquecer uma para o
+site mostrar divergência. **Testado**: alterando só a qty de USDT e do borrow da AAVE, os totais
+acompanharam sozinhos.
+
+#### 2. `contributions` — o lugar único para registrar aporte novo
+Lista nova em `data.js`. Uma linha (`{ date:'2026-09-15', usd:250, note:'DCA SOL' }`) e o aporte
+entra no ROI de destaque, TWR, TIR, benchmark e gráfico de DCA **no mesmo dia**, sem esperar o
+fechamento do mês. Só entra dinheiro que veio de fora — yield, juros, airdrop e rotação interna
+mexem em `invested` do holding, nunca aqui.
+
+#### 3. 🐛 BUG GRAVE encontrado e corrigido — degrau falso de US$ 1.525 na curva
+A série `wealthCurve` estava **internamente inconsistente**: 07/26 e 08/26 tinham entrado como
+patrimônio **LÍQUIDO** (depois da dívida) enquanto todo o resto é **BRUTO** (antes). Confirmado
+pela própria mensagem do commit `65aeccd`: *"wealthCurve ganha 08/26: valor 9.704 (10.819,68 +
+409,19 LP − 1.524,96 dívida)"*. Como a curva é a base de retorno mensal, retorno anual, TWR,
+XIRR, drawdown, Sharpe, benchmark e do hero da landing, o degrau contaminava tudo — o mês de
+julho aparecia como **−10%** quando o correto é **+10,6%**.
+
+Corrigido pelo script novo (abaixo): **07/26 7031 → 8623** e **08/26 9295 → 11037**, ambos vindos
+do último snapshot real do mês em `networth-history.json`. Cross-check: 06/26 = 7651 está
+documentado no CLAUDE.md de 23/06 como "CoinGecko $7.650,91" (bruto), e 04/26 = 9206 como "saldo
+CoinGecko" — ou seja, a definição bruta é a original da série.
+
+#### 4. `scripts/close-month.js` + Action `close-month.yml` — fechamento mensal automático
+Roda todo dia 1 (~08:00 BRT). Lê `networth-history.json`, pega o último snapshot de cada mês
+completo (só conta a partir do dia 25, senão não é fechamento) e acrescenta o ponto na
+`wealthCurve`: `values` = gross + stables + LP (antes da dívida), `invested` = acumulado anterior
++ `contributions` do mês. Também **reconcilia** meses já existentes que divirjam da definição —
+foi assim que os dois pontos acima foram corrigidos. Idempotente (`--dry-run` disponível), valida
+que o `data.js` reescrito ainda carrega e que os três arrays continuam alinhados antes de salvar.
+
+#### 5. `BAROLO_DATA.curveWithLive()` — uma implementação só para dashboard e landing
+Antes cada página fazia diferente com o valor ao vivo: a **landing SUBSTITUÍA o último mês
+fechado** pelo valor de hoje (apagando um mês inteiro da série) e o **dashboard ignorava o valor
+ao vivo**. Resultado: CAGR diferente nas duas para o mesmo dado. Agora as duas chamam a mesma
+função, que **acrescenta** o mês corrente como ponto novo (com o aporte do mês vindo de
+`contributions`). Verificado no browser com os preços do print de hoje: dashboard CAGR **+1,7%** e
+landing CAGR **+1,7%**; TIR 15,98% vs 16,0%. Os fallbacks estáticos do hero foram atualizados
+(eram −2,2% / −24,9% / +14,2% → +1,7% / −10,0% / +16,0%).
+
+### Dados de 05/09/2026 aplicados (prints CoinGecko + AAVE + Kamino)
+
+| Campo | Antes | Depois |
+|---|---|---|
+| SOL holding / supply Kamino | 24,93 | **24,94** (yield, custo zero) |
+| USDS holding / supply Kamino | 304,66 | **304,69** (yield, custo zero) |
+| AAVE WETH supply | 2,2252 | **2,2253** @2,16% |
+| AAVE USDT supply | 2013,38 @3,27% | **2013,57 @3,90%** |
+| AAVE borrow USDC | 762,29 @**4,65%** | **762,40 @1,96%** |
+| Kamino SOL / USDS APY | 4,63% / 3,43% | **4,67% / 3,44%** |
+| Kamino borrow USDC | 763,28 @5,43% | **763,40 @5,44%** |
+| Kamino LTV / Liq.LTV | 26,96% / 76,61% | **26,72% / 76,60%** |
+| Dívida total (derivada) | 1.525,57 | **1.525,80** |
+| Stables total (derivado) | 2.502,75 | **2.502,78** |
+
+**Sem aporte novo** — as quantidades do CoinGecko não mudaram, então `contributions` fica vazia.
+Quantidades da AAVE derivadas por `principal + earnings` (metodologia de 22/08): WETH
+2,2104 + 0,014893 (US$ 36,56 ÷ 2.454,82) = 2,2253 · USDT 1.993,92 + 19,65 = 2.013,57.
+**O borrow valida os principals sozinho:** 762,40 − 748,00 = **14,40**, exatamente o "fees paid"
+do print. Borrow da AAVE despencou de 4,65% para **1,96%** — vale observar se sustenta.
+
+⚠️ O print do CoinGecko ainda mostra SOL 24,765222 e USDS 300 (Lucas ainda não espelhou o yield
+como "transferência de entrada"). O `data.js` está certo — **não puxar de volta**; o piso do
+holding é sempre o supply do protocolo.
+
+### Verificação
+Todas as 5 páginas no browser (servidor local), com e sem preços semeados: **0 erros de JS reais**
+(os que aparecem são CDN bloqueado pelo sandbox), **0 séries com NaN**, **0 "NaN/undefined" no
+texto**, **0 overflow horizontal**. KPIs aditivos com os preços do print de hoje:
+`8.521 SPOT + 0 LP + 2.503 STABLES − 1.526 DÍVIDA = 9.498 PATRIMÔNIO` (bruto 11.024, que bate com
+o total do print — 11.002,32 + 17,89 de SOL + 4,69 de USDS = 11.024,90). `close-month.js` rodado
+duas vezes seguidas para confirmar idempotência. Bundle de `emprestimos.html` regravado.
+
+### O que ainda falta
+- **`monthlyReturns[2026]`** Set–Dez (meses ainda não fechados — entram sozinhos pela Action)
+- **CDI/IPCA anual** (`ferramentas`/`portfolio`) e **`FISCAL_ENTRADAS`** — atualização anual/manual
+- **`US_CPI_CUMULATIVE_PCT`** no `index.html` (hoje 20,2%, Jan/22→Mai/26) — atualizar no
+  fechamento de cada ano. **Não derivar da tabela `CPI_USA`**: apesar do comentário dela, os
+  valores são interanuais, não acumulados
+- **Registro Histórico em `pools.html`** — decidir se reconstrói a tabela das 28 pools
+- **Custo em BRL dos ~285 USDT** depositados na AAVE (falta a data e o câmbio da conversão)
+- **`data.js → defi.aave.healthFactor`** — guardado a pedido do Lucas (19/08). Não mexer
+- **Confirmar a Action `close-month.yml` rodando** — a primeira execução agendada é em 01/10;
+  dá para disparar antes por Actions → "Fechamento mensal da curva de patrimônio" → Run workflow
+- **05/26 na curva** — não deu para verificar (o `networth-history.json` só começa em 08/07/2026);
+  os pontos até 06/26 seguem como estavam. Se um dia aparecer um extrato mais antigo, vale conferir
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)

@@ -155,7 +155,7 @@
        reconhecidos em 22/08, os 406,27 acima e o DCA de SOL de 05/08).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-09-04',
+  asOf: '2026-09-05',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -173,7 +173,7 @@ window.BAROLO_DATA = {
     // ✅ CONFIRMADO PELO LUCAS (05/09/2026): "esse 0.1648sol foram ganhos mesmo, custo zero"
     // — ele vai espelhar no CoinGecko como 'transferencia de entrada' (custo 0). O valor
     // aqui esta certo; NAO puxar de volta para 24,765222 na proxima leitura de print.
-    { ticker:'SOL',   cgId:'solana',                   qty:24.93,      invested:2533.36 },
+    { ticker:'SOL',   cgId:'solana',                   qty:24.94,      invested:2533.36 },  // 24,93->24,94: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
@@ -195,14 +195,21 @@ window.BAROLO_DATA = {
     // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
     // ✅ Mesma confirmacao do SOL (Lucas, 05/09/2026): e yield, custo zero, e ele espelha
     // no CoinGecko como 'transferencia de entrada'. NAO puxar de volta para 300.
-    { ticker:'USDS', cgId:'usds',            qty:304.66,   invested:300      }
+    { ticker:'USDS', cgId:'usds',            qty:304.69,   invested:300      }  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
   defi: {
     aave: {
-      supply: { WETH:{ qty:2.2252, apy:0.0216 }, USDT:{ qty:2013.38, apy:0.0327 } },
-      borrow: { USDC:{ qty:762.29, apy:0.0465 } },
+      // Print 05/09/2026 (Position Details): ETH 2,22 deposited @2,16% earnings 0,01 ETH ($36,56)
+      // · USDT 2,02 mil @3,90% earnings 19,65 USDT · USDC borrow 762,40 @1,96% (era 4,65%!)
+      // fees paid 14,40 USDC · Borrowing Power livre $5.341,59 · colateral ponderado $6.104,00.
+      // Quantidades = principal + earnings (metodologia 22/08): WETH 2,2104+0,014893=2,2253
+      // (36,56 / 2.454,82) · USDT 1.993,92+19,65=2.013,57. O borrow confere sozinho:
+      // 762,40 - 748 (principal) = 14,40 = exatamente o 'fees paid' do print. Sem deposito
+      // nem reemprestimo no periodo -> principals INALTERADOS.
+      supply: { WETH:{ qty:2.2253, apy:0.0216 }, USDT:{ qty:2013.57, apy:0.0390 } },
+      borrow: { USDC:{ qty:762.40, apy:0.0196 } },
       // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
       // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
       // borrow $760,17, LTV 13,4% -> HF 6,04.
@@ -264,7 +271,7 @@ window.BAROLO_DATA = {
       // fica ABAIXO do supply e viola o invariante (foi o que acabou de acontecer com
       // o USDS). Quando isso acontecer, rodar a Action `eth-sweep` de novo e subir o
       // holding para supply + total da varredura, a custo zero.
-      healthFactor: 8.01   // Collateral 6.105,00 / borrowed 762,19 (print 04/09/2026)
+      healthFactor: 8.01   // 6.104,00 colateral ponderado / 762,31 borrowed (print 05/09/2026)
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -282,9 +289,13 @@ window.BAROLO_DATA = {
       // `principals.kamino` INALTERADO. Net Value $2,07K · Net APY 4,16% · Interest
       // Earned (lifetime) +$161,52 · Supplied $2,83K · Borrowing $763,20.
       // Rewards claimable a parte, NAO lancados: USDS $1,59 · PYUSD $0,07 · KMNO $3,96.
-      supply: { SOL:{ qty:24.93, apy:0.0463 }, USDS:{ qty:304.66, apy:0.0343 } },
-      borrow: { USDC:{ qty:763.28, apy:0.0543 } },
-      ltv: 0.2696, liqLtv: 0.7661   // print 04/09/2026 (LTV caiu de 27,39% com o SOL a $101,38 — nao houve repagamento)
+      // Print 05/09/2026: Supplied $2,86K (24,94 SOL @4,67% = $2,55K + 304,69 USDS @3,44%) ·
+      // Borrowing $763,32 (763,40 USDC @5,44%) · Net Value $2,09K · Net APY 4,21% ·
+      // Interest Earned lifetime +$161,85 · rewards claimable a parte (nao lancados):
+      // USDS $1,59 · PYUSD $0,07 · KMNO $4,04.
+      supply: { SOL:{ qty:24.94, apy:0.0467 }, USDS:{ qty:304.69, apy:0.0344 } },
+      borrow: { USDC:{ qty:763.40, apy:0.0544 } },
+      ltv: 0.2672, liqLtv: 0.7660   // print 05/09/2026
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'closed',
@@ -606,23 +617,121 @@ window.BAROLO_DATA = {
   // numeros errados. As duas paginas leem daqui agora; os literais que sobraram nelas
   // sao so fallback para o caso de este arquivo nao carregar.
   //
-  // MANUTENCAO (fechamento mensal): acrescentar UM ponto nos tres arrays.
+  // ⚡ MANUTENCAO: NAO EDITAR A MAO (desde 05/09/2026).
+  // `scripts/close-month.js` acrescenta o ponto do mes que fechou, e a Action
+  // .github/workflows/close-month.yml roda isso todo dia 1. Definicao unica:
   //   labels   -> 'MM/AA' do mes que fechou
-  //   values   -> patrimonio BRUTO do fechamento (total CoinGecko + LP, ANTES da divida)
-  //   invested -> aporte liquido ACUMULADO (so dinheiro que entrou de fora; yield e
-  //               rotacao interna NAO entram — ver a discussao dos 406,27 USDT de 08/26)
+  //   values   -> ultimo snapshot do mes em networth-history.json, patrimonio
+  //               BRUTO = holdings x preco (inclui colateral DeFi) + stables + LP,
+  //               ANTES da divida
+  //   invested -> aporte acumulado anterior + soma de `contributions` daquele mes
+  // Para registrar um aporte novo, adicione UMA linha em `contributions` (acima).
+  //
+  // Historico do bug que motivou a automacao: 07/26 e 08/26 tinham entrado como
+  // patrimonio LIQUIDO (depois da divida) enquanto todo o resto da serie e BRUTO —
+  // um degrau falso de ~US$ 1.525 que contaminava retorno mensal/anual, TWR, XIRR,
+  // drawdown e benchmark. Corrigido pelo script em 05/09/2026 (7031->8623, 9295->11037).
+  //
   // Os tres arrays precisam ter o MESMO comprimento: todo o resto (retornos mensais,
   // retorno anual, TWR, XIRR, drawdown, benchmark CDI/IPCA) e derivado daqui.
   wealthCurve: {
     labels:   ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26','04/26','05/26','06/26','07/26','08/26'],
-    values:   [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,7392,7651,7031,9295],
+    values:   [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,7392,7651,8623,11037],
     invested: [1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418,6684,6950,7100,7250,7610]
   },
 
-  // Agregados (derivados, mantidos explícitos para conveniência das páginas).
+  // ── APORTES EXTERNOS (dinheiro que entrou DE FORA: fiat -> cripto/stable) ──
+  // SO isto conta como aporte na curva de patrimonio. Yield, juros, airdrop e
+  // rotacao interna (vender X para comprar Y, fechar pool) NAO entram — mexem em
+  // `invested` dos holdings, nunca aqui.
+  //
+  // ⚡ E AQUI QUE VOCE REGISTRA UM APORTE NOVO. Uma linha, e pronto:
+  // patrimonio, ROI de destaque, TWR, CAGR, XIRR, benchmark CDI/IPCA, drawdown,
+  // grafico de DCA e o hero da landing se ajustam sozinhos no proximo fechamento.
+  //
+  // A serie historica (wealthCurve.invested) ja embute tudo ate 08/2026; esta
+  // lista cobre 09/2026 em diante. `scripts/close-month.js` soma os aportes do
+  // mes que fechou e acrescenta o ponto novo.
+  contributions: [
+    // { date:'2026-09-15', usd: 250, note:'DCA mensal SOL' },
+  ],
+
+  // ── Agregados DERIVADOS — NAO editar a mao ────────────────────────────────
+  // Os valores abaixo sao recalculados no fim deste arquivo a partir das partes
+  // (stables[] e defi.*.borrow). Ficam escritos so como fallback/documentacao.
+  // Antes eram numeros digitados ao lado das partes — duas fontes para a mesma
+  // verdade, entao bastava esquecer um para o site mostrar dado divergente.
   debt:   { aave:762.29, kamino:763.28, total:1525.57 },
   stablesTotalUSD: 2502.75   // USDT 2198.09 + USDS 304.66 (yield reconciliado 04/09)
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
 };
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AGREGADOS DERIVADOS — recalculados a cada carregamento.
+   Objetivo: mexer numa quantidade (aqui em cima) e o resto acompanhar sozinho,
+   sem depender de ninguem lembrar de atualizar o total logo abaixo.
+     · stablesTotalUSD = soma das qty de stables[]  (stable = US$ 1)
+     · debt.aave / debt.kamino = borrow.USDC.qty de cada protocolo
+     · debt.total = aave + kamino
+   Roda tanto no browser quanto nos scripts Node (que carregam este arquivo com
+   new Function('window', src)). Se algo estiver faltando, mantem o valor escrito.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function (D) {
+  if (!D) return;
+  var r2 = function (n) { return Math.round(n * 100) / 100; };
+
+  if (Array.isArray(D.stables)) {
+    D.stablesTotalUSD = r2(D.stables.reduce(function (s, x) { return s + (Number(x.qty) || 0); }, 0));
+  }
+
+  D.debt = D.debt || {};
+  var borrowOf = function (proto) {
+    var b = D.defi && D.defi[proto] && D.defi[proto].borrow;
+    if (!b) return null;
+    // Soma qualquer token de divida (hoje so USDC, mas ja foi GHO e USDG).
+    var t = 0, found = false;
+    for (var k in b) { if (b[k] && typeof b[k].qty === 'number') { t += b[k].qty; found = true; } }
+    return found ? r2(t) : null;
+  };
+  var a = borrowOf('aave'), k = borrowOf('kamino');
+  if (a !== null) D.debt.aave = a;
+  if (k !== null) D.debt.kamino = k;
+  D.debt.total = r2((D.debt.aave || 0) + (D.debt.kamino || 0));
+
+  // ── Curva mensal + o mes CORRENTE ao vivo — UMA implementacao so ───────────
+  // Antes cada pagina fazia diferente: a landing SUBSTITUIA o ultimo mes fechado
+  // pelo valor de hoje (apagando um mes inteiro da serie) e o dashboard ignorava
+  // o valor ao vivo. Resultado: CAGR/TWR diferentes nas duas para o mesmo dado.
+  // Agora as duas chamam isto. `liveGross` = patrimonio BRUTO de agora (holdings x
+  // preco + stables + LP, antes da divida) — mesma definicao dos pontos fechados.
+  // O aporte do mes corrente sai de `contributions`, entao registrar um aporte novo
+  // ja aparece no ROI/TWR/TIR no mesmo dia, sem esperar o fechamento do mes.
+  D.curveWithLive = function (liveGross, refDate) {
+    var wc = D.wealthCurve || {};
+    var labels = (wc.labels || []).slice();
+    var values = (wc.values || []).slice();
+    var invested = (wc.invested || []).slice();
+    if (!(liveGross > 0) || !labels.length) return { labels: labels, values: values, invested: invested };
+
+    var now = refDate ? new Date(refDate) : new Date();
+    var mm = ('0' + (now.getMonth() + 1)).slice(-2);
+    var cur = mm + '/' + String(now.getFullYear()).slice(-2);
+    var ym = now.getFullYear() + '-' + mm;
+
+    var add = 0;
+    (D.contributions || []).forEach(function (c) {
+      if (c && c.date && String(c.date).slice(0, 7) === ym && typeof c.usd === 'number') add += c.usd;
+    });
+
+    if (labels[labels.length - 1] === cur) {
+      values[values.length - 1] = liveGross;           // mes ainda aberto: so atualiza
+    } else {
+      labels.push(cur);
+      values.push(liveGross);
+      invested.push(Math.round((invested[invested.length - 1] || 0) + add));
+    }
+    return { labels: labels, values: values, invested: invested };
+  };
+})(typeof window !== 'undefined' ? window.BAROLO_DATA : null);

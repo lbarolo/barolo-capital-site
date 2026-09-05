@@ -2928,7 +2928,13 @@ function buildConvexityGauge(cpValue){
 // ──────────────────────────────────────────────────
 
 function calculatePerformanceMetrics() {
- const wc = WEEKLY_UPDATE.wealthCurve;
+ // Serie mensal + o mes CORRENTE ao vivo, pela MESMA funcao que a landing usa
+ // (BAROLO_DATA.curveWithLive). Antes o dashboard ignorava o valor ao vivo e a
+ // landing sobrescrevia o ultimo mes fechado — dois CAGR diferentes para o mesmo dado.
+ const _live = (typeof _livePortfolioGross !== 'undefined' && _livePortfolioGross > 0) ? _livePortfolioGross : 0;
+ const wc = (window.BAROLO_DATA && window.BAROLO_DATA.curveWithLive)
+   ? window.BAROLO_DATA.curveWithLive(_live)
+   : WEEKLY_UPDATE.wealthCurve;
  const labels = wc.labels;
  const values = wc.values;
  const invested = wc.invested;

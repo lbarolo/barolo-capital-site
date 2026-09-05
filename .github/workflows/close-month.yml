@@ -1,0 +1,53 @@
+name: Fechamento mensal da curva de patrimônio (data.js)
+
+# Todo dia 1, acrescenta em data.js -> wealthCurve o ponto do mês que acabou de
+# fechar, usando o último snapshot do mês em networth-history.json.
+#
+# Por que é automático: até 09/2026 esse ponto era digitado à mão a partir de um
+# print. Duas coisas davam errado — esquecer (a curva do index chegou a ficar 3
+# meses atrasada, e ela alimenta o CAGR/TIR do hero da landing) e cada sessão
+# interpretar a definição de um jeito (07/26 e 08/26 entraram como patrimônio
+# LÍQUIDO enquanto o resto da série é BRUTO, criando um degrau falso de ~US$ 1.525
+# que contaminava retorno mensal/anual, TWR, XIRR, drawdown e benchmark).
+#
+# Aporte novo: registrar UMA linha em data.js -> contributions. O script soma os
+# aportes do mês sozinho. Sem secrets — só lê arquivos do próprio repo.
+
+on:
+  schedule:
+    - cron: '0 11 1 * *'   # dia 1, ~08:00 BRT (depois do networth das 09:40 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: close-month
+  cancel-in-progress: false
+
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Fechar o mês na curva de patrimônio
+        run: node scripts/close-month.js
+
+      - name: Commit se houver mudança
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data.js; then
+            echo "Sem mudanças no data.js — a curva já estava fechada."
+          else
+            git add data.js
+            git commit -m "data: fechamento mensal da curva de patrimônio (automático)"
+            git pull --rebase origin main
+            git push
+          fi
