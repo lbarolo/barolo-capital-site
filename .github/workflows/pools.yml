@@ -1,0 +1,48 @@
+name: Scan de pools Solana — método Genesis (pooliana-pools.json)
+
+# Varre Raydium e Orca, aplica os filtros e o score do método Genesis
+# (CONHECIMENTO-POOLIANA.md §4, §5.2 e §6) e commita o ranking em
+# pooliana-pools.json, consumido pela aba Pooliana do site.
+#
+# Sem secrets — só APIs públicas (api-v3.raydium.io, api.orca.so).
+# A agente Pooliana em si NÃO roda aqui: ela é local, com chave privada.
+# Este é só o lado sem chave do método (aritmética sobre dado público).
+
+on:
+  schedule:
+    - cron: '0 11 * * *'   # ~08:00 BRT diariamente (depois do benchmark das 10:00 UTC)
+  workflow_dispatch:        # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pools-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Escanear e ranquear pools
+        run: node scripts/fetch-pools.js
+
+      - name: Commit se houver mudança
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- pooliana-pools.json; then
+            echo "Sem mudanças no pooliana-pools.json."
+          else
+            git add pooliana-pools.json
+            git commit -m "data: scan de pools Solana (automático)"
+            git pull --rebase origin main
+            git push
+          fi
