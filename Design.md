@@ -12,7 +12,7 @@
 > página** (veja a tabela de divergência de tokens). Este doc existe justamente para
 > tornar isso rápido.
 
-Última atualização: 06/07/2026
+Última atualização: 05/09/2026
 
 ---
 
@@ -104,7 +104,7 @@ Regra: número = mono, sempre. Ao criar componente novo com valores, use `font-f
 ### 4.1 Nav (`<nav>` + `.nav-links` + `.nav-right`)
 - **Dois tipos de nav no site:**
   - **Landing (`index.html`)** — nav por âncoras: `Home · About · Portfolio · Strategies · Contact`. Tem hamburger mobile (`#navLinks`, `.nav-hamburger`, `toggleMobile()`), logo SVG "BAROLO CAPITAL" com gradiente, underline dourado animado (`.nav-links a::after`). Altura ~60px, `position:sticky`.
-  - **Dashboards + relatório** — nav entre páginas: `Início · Portfolio · Pools & DeFi · Empréstimos · Ferramentas`. A página atual tem `class="active"`. Estilo mais compacto (`position:fixed`, ~50px, `.nav-brand`, sem underline animado). É uma **variante** — CSS próprio inline em cada dashboard.
+  - **Dashboards + relatório** — nav entre páginas: `Início · Portfolio · Pools & DeFi · Pooliana · Empréstimos · Ferramentas`. A página atual tem `class="active"`. Estilo mais compacto (`position:fixed`, ~50px, `.nav-brand`, sem underline animado). É uma **variante** — CSS próprio inline em cada dashboard.
 - ⚠️ **`pools.html` tem DOIS blocos `<nav>`** (desktop + duplicado mobile). Mudou o nav? Mude os dois.
 - ⚠️ **`ferramentas.html`**: os links "Pools & DeFi" e "Empréstimos" estão na mesma linha do HTML (cosmético, funciona).
 - `emprestimos.html` (bundle) tem o nav dentro do bundle — não editável aqui.
@@ -175,11 +175,12 @@ Anti-flash de tema: IIFE inline no `<head>` de cada página lê `bc-theme` e apl
 | **index.html** | Landing pública (EN padrão, toggle PT) | âncoras + hamburger | Hero editorial 2 colunas + painel "Barolo · Live" (φ/razão áurea, espiral, aurora, efeito de digitação), token board com sparklines, widget de gwei fixo, seções `01 Sobre · 02 Portfolio · 03 Strategies · 04 Contact`. JS: `initTicker`, `toggleIndexLang`, sparklines, φ-spiral. |
 | **portfolio_analytics.html** | Dashboard principal (PT) | dashboard | Exec bar, abas (Ativos/Performance/Métricas/Risco & Convexidade/DeFi & Mercado), donut de alocação, curva de patrimônio, heatmap, drawdown, DCA, Evolução Patrimonial (com **benchmark CDI/IPCA** — `CDI_MONTHLY_BY_YEAR`/`IPCA_MONTHLY_BY_YEAR` + `_fixedIncomeSeries()`, só na régua USD; atualizar as taxas 1×/ano), **Renda Passiva Realizada** (livro-razão mensal, `RENDA_2026` + `buildRendaPassiva()`, aba DeFi & Mercado), régua USD/BRL/BTC/ETH, KPI "vs HODL", ~32 canvases Chart.js. `toggleTheme` reconstrói gráficos. |
 | **pools.html** | Pools de liquidez + DeFi (PT) | dashboard (**2 navs**) | Meta 5%, P&L YTD, card pool ativa (WETH/USDC **Base**), gráficos, iframes lazy (Revert/GeckoTerminal/AAVE), explorador de APR. Array `POOLS`. |
+| **pooliana.html** | Vitrine do agente DeFi Pooliana + ranking de pools (PT) | dashboard | Hero 2 col em proporção áurea (`1.618fr 1fr`) + painel de **carteira Solana** (`window.Wallet` — connect via Phantom/Solflare/Backpack, leitura on-chain por RPC, endereço sempre truncado, nada persistido além do nome do provedor). **Tabela de pools ranqueadas** lendo `pooliana-pools.json` (IIFE `poolScan`, gerado pela Action `pools.yml`). Grid de capacidades, **B.A.R.C.A** por ciclo (`window.Barca`), calculadora do multiplicador Taxas/TVL (`window.Mult`), fluxo de decisão, stack. Sem Chart.js. Cores extras: `--sol1`/`--sol2`. ⚠️ **A agente NÃO roda aqui** — é local, com chave privada; a página nunca chama `localhost` (decisão de 05/09/2026). |
 | **ferramentas.html** | Ferramentas + Diário (PT, toggle EN) | dashboard | 11 abas (calculadoras Kelly/Merton/Hedge/LevHedge, Liquidação, Cenários, Diário, Alertas, **Ciclo** on-chain BTC, **Fiscal** custo BRL/IR). `window.Ciclo`, `window.Fiscal`, `switchTab(id,btn)`. |
 | **relatorio.html** | Relatório/PDF (PT) | dashboard (compacto, `no-print`) | Resumo executivo, tabela de ativos, posições DeFi, evolução, `window.print()` com `@media print`. Menor/mais limpo. |
 | **emprestimos.html** | Lending AAVE/Kamino | (no bundle) | ⚠️ **Bundle minificado** — não editar aqui. Fonte + rebuild. |
 
-**Assets compartilhados:** `data.js` (posições), `ui-polish.css` (polish), `btc-onchain.json` (dados do Ciclo, gerado por GitHub Action diária).
+**Assets compartilhados:** `data.js` (posições), `ui-polish.css` (polish), `pooliana-pools.json` (ranking de pools, Action diária), `btc-onchain.json` (dados do Ciclo, gerado por GitHub Action diária).
 
 ---
 

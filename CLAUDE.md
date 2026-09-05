@@ -8,6 +8,14 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 
 > 📚 **BASE DE CONHECIMENTO CONSOLIDADA** — no final deste arquivo (bloco delimitado pelos marcadores HTML KB-START / KB-END) está a consolidação de **todos os estudos do Notion do Lucas + tudo aprendido nas conversas + o portfólio completo**. É autocontida e existe também como cópia autônoma em `CONHECIMENTO-BAROLO.md` (para colar em outro chat). **Leia essa seção antes de responder qualquer coisa sobre estratégia, filosofia, análise de projeto, gestão de risco ou o portfólio do Lucas.**
 
+> 🌊 **`CONHECIMENTO-POOLIANA.md`** (raiz) — documento **separado e autocontido** com toda a
+> metodologia **Genesis / Defiverso** extraída do PROJETO POOLIANA: multiplicador Taxas/TVL,
+> B.A.R.C.A, hierarquia de pares, fórmula de score do agente, critérios de saída, limites de
+> risco e um bloco pronto para colar em outro agente. **Não confundir com a metodologia do
+> próprio Lucas** (`CONHECIMENTO-BAROLO.md`) — as duas divergem em pontos importantes, e a
+> §14 daquele arquivo mapeia exatamente onde. Consulte-o ao falar de seleção de pool em Solana,
+> Orca/Raydium ou da agente Pooliana.
+
 ---
 
 ## POLÍTICA DE PRIVACIDADE (IMPORTANTE)
