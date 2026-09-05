@@ -55,6 +55,24 @@ no mesmo dia, sem esperar o fechamento do mês. **Só entra aqui dinheiro que ve
 fora.** Yield, juros, airdrop e rotação interna (vender X para comprar Y, fechar
 pool) mexem em `invested` do holding, nunca em `contributions`.
 
+### ⚡ Fechamento de mês: passar o yield a lançar no CoinGecko
+
+Combinado em 05/09/2026. Todo fim de mês o Claude roda:
+
+```bash
+node scripts/yield-to-mirror.js
+```
+
+e passa a soma para o Lucas. É o juro de AAVE/Kamino que já entrou no supply (e por isso já está
+no `data.js`) mas ainda não foi lançado no CoinGecko — lá tem que entrar como **transferência de
+entrada, custo zero**, porque é renda e não aporte.
+
+O mesmo número aparece no card **"Yield a lançar no CoinGecko"** do dashboard (aba Ativos), que só
+existe quando há pendência, e no log da Action `close-month.yml`.
+
+Depois que ele lançar: atualizar `data.js → cgMirror` igualando às qty do holding — o pendente
+zera e o card some.
+
 ### As duas regras que continuam valendo
 
 1. **Holding ≥ supply do protocolo.** O `holdings[]` já inclui o colateral em

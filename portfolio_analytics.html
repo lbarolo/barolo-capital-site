@@ -769,6 +769,22 @@ body, input, button, select, textarea {
 <!-- ══ TAB: ATIVOS ══ -->
 <div id="tab-ativos" class="tab-pane">
 
+<!-- ══ YIELD A LANÇAR NO COINGECKO (só aparece quando há pendência) ══ -->
+<!-- O holding acompanha o supply dos protocolos; o CoinGecko não acompanha juros
+     sozinho. Este card mostra a diferença — o que falta lançar lá como
+     "transferência de entrada" com custo ZERO. Fonte: data.js -> cgMirror. -->
+<div class="card" id="cgMirrorCard" style="display:none;margin-bottom:14px;padding:14px 18px;border-left:3px solid var(--gold);">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div class="chart-title" style="margin:0;">Yield a lançar no CoinGecko</div>
+    <div id="cgMirrorTotal" style="font-family:var(--mono,'JetBrains Mono',monospace);font-size:13px;color:var(--gold);"></div>
+  </div>
+  <div id="cgMirrorList" style="margin-top:8px;font-family:var(--mono,'JetBrains Mono',monospace);font-size:11px;line-height:1.9;"></div>
+  <div style="margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5;">
+    Juros de AAVE/Kamino que já entraram no supply e ainda não estão no CoinGecko.
+    Lançar como <strong>transferência de entrada, custo zero</strong> — é renda, não aporte.
+  </div>
+</div>
+
 <!-- ══ ALOCAÇÃO ATUAL ══ -->
 <div class="section-label">Alocação Atual</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
@@ -2250,6 +2266,7 @@ function renderUI(enriched){
    set('defi-m-maxdd', '−' + Math.abs(metrics.maxDD).toFixed(1) + '%');
  })();
 
+ buildCgMirrorCard();
  buildAllocationChart(enriched, _livePortfolioGross); // total includes tokens + stables
 
  if(!chartsBuilt){ buildStaticCharts(); chartsBuilt=true; }
@@ -2353,6 +2370,46 @@ function genSpark(price, change24h){
 // ──────────────────────────────────────────────────
 // ALLOCATION CHART (CoinGecko style)
 // ──────────────────────────────────────────────────
+// ── Yield a lançar no CoinGecko ────────────────────────────────────────────
+// O holding do data.js acompanha o SUPPLY dos protocolos (juro entra na hora, a
+// custo zero); o CoinGecko não acompanha sozinho — o Lucas lança manualmente como
+// "transferência de entrada". `cgMirror` guarda a qty como está lá, então a
+// diferença é o que falta lançar. Combinado em 05/09/2026: reportar isso todo
+// fechamento de mês. Mesmo cálculo de `scripts/yield-to-mirror.js`.
+function buildCgMirrorCard(){
+ var card = document.getElementById('cgMirrorCard');
+ if (!card) return;
+ var B = window.BAROLO_DATA;
+ var mirror = (B && B.cgMirror) || null;
+ if (!mirror) { card.style.display = 'none'; return; }
+
+ var all = (B.holdings || []).concat(B.stables || []);
+ var EPS = 1e-8, rows = [], totalUsd = 0;
+ all.forEach(function(h){
+  var cg = mirror[h.ticker];
+  if (!(cg > 0)) return;                       // sem espelho: assume igual
+  var delta = h.qty - cg;
+  if (Math.abs(delta) <= EPS) return;
+  var usd = delta * getPrice(h.cgId);
+  totalUsd += usd;
+  rows.push({ t:h.ticker, delta:delta, usd:usd, cg:cg, site:h.qty });
+ });
+
+ if (!rows.length) { card.style.display = 'none'; return; }
+
+ var dec = function(v){ var a = Math.abs(v); return a >= 100 ? 2 : a >= 1 ? 3 : 6; };
+ document.getElementById('cgMirrorList').innerHTML = rows.map(function(r){
+  var sign = r.delta >= 0 ? '+' : '−';
+  var cls  = r.delta >= 0 ? 'pos' : 'neg';
+  return '<div><span style="display:inline-block;min-width:52px;color:var(--text);">' + r.t + '</span>' +
+   '<span class="' + cls + '">' + sign + Math.abs(r.delta).toFixed(dec(r.delta)) + '</span>' +
+   '<span style="color:var(--muted);"> &nbsp;·&nbsp; ' + fmtCurrency(Math.abs(r.usd), 2) + ' &nbsp;·&nbsp; ' +
+   r.cg + ' → ' + r.site + '</span></div>';
+ }).join('');
+ document.getElementById('cgMirrorTotal').textContent = fmtCurrency(totalUsd, 2) + ' a lançar';
+ card.style.display = '';
+}
+
 function buildAllocationChart(enriched, totalVal){
   const canvas = document.getElementById('allocChart');
   if(!canvas) return;

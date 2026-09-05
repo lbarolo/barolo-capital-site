@@ -38,6 +38,10 @@ jobs:
       - name: Fechar o mês na curva de patrimônio
         run: node scripts/close-month.js
 
+      - name: Yield a lançar no CoinGecko (relatório de fim de mês)
+        run: node scripts/yield-to-mirror.js
+        continue-on-error: true
+
       - name: Commit se houver mudança
         if: github.ref == 'refs/heads/main'
         run: |

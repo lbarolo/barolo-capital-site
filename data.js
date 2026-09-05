@@ -640,6 +640,32 @@ window.BAROLO_DATA = {
     invested: [1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418,6684,6950,7100,7250,7610]
   },
 
+  // ── ESPELHO DO COINGECKO (yield de lending a lancar la) ───────────────────
+  // O `holdings`/`stables` acima acompanha o SUPPLY dos protocolos: quando a AAVE
+  // ou a Kamino paga juros, a qty sobe aqui na hora (a custo zero — juro e renda,
+  // nao aporte). O CoinGecko nao acompanha isso sozinho: o Lucas precisa lancar
+  // manualmente, como 'transferencia de entrada' com custo 0.
+  //
+  // Este bloco guarda a qty COMO ESTA NO COINGECKO hoje. A diferenca para o
+  // `holdings` e exatamente o que falta lancar la.
+  //
+  // ⚡ ROTINA COMBINADA COM O LUCAS (05/09/2026): TODO FECHAMENTO DE MES eu passo
+  // pra ele a soma do que precisa ser alterado no CoinGecko. O numero sai de
+  //     node scripts/yield-to-mirror.js
+  // e tambem aparece no card "Yield a lancar no CoinGecko" do dashboard (aba
+  // Ativos), que so aparece quando ha algo pendente.
+  //
+  // MANUTENCAO: quando ele lancar no CoinGecko, atualizar a qty aqui para a nova
+  // (igualando o holding) — o pendente zera sozinho. Se um ticker nao estiver
+  // listado aqui, assume-se que CoinGecko == holding (nada pendente).
+  // Base: print do CoinGecko de 05/09/2026.
+  cgMirror: {
+    SOL:  24.765222,   // holding 24,94  -> faltam ~0,175 SOL de yield da Kamino
+    USDS: 300          // holding 304,69 -> faltam ~4,69 USDS de yield da Kamino
+    // ETH, BTC, USDT, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no
+    // print de 05/09 — iguais ao holding, nada pendente.
+  },
+
   // ── APORTES EXTERNOS (dinheiro que entrou DE FORA: fiat -> cripto/stable) ──
   // SO isto conta como aporte na curva de patrimonio. Yield, juros, airdrop e
   // rotacao interna (vender X para comprar Y, fechar pool) NAO entram — mexem em

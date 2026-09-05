@@ -60,6 +60,44 @@ O site é **prova de competência técnica**, não **portfolio público**. Funci
 
 ---
 
+## ROTINAS COMBINADAS COM O LUCAS (obrigações permanentes)
+
+### 1. Fechamento de mês → passar o yield a lançar no CoinGecko ⚡
+
+**Combinado em 05/09/2026.** O Lucas disse, com estas palavras: *"eu ainda não tenho esse controle
+pra pôr tudo no CoinGecko, por isso o site me ajuda nisso também; peço que anote aí para todo
+final do mês passar a soma de quanto eu devo alterar no CoinGecko desse yield ganho nos
+empréstimos."*
+
+**Por que existe:** `holdings[]`/`stables[]` do `data.js` acompanham o **supply dos protocolos** —
+quando AAVE/Kamino pagam juros, a quantidade sobe aqui na hora, a custo zero (juro é renda, não
+aporte). O CoinGecko **não** acompanha isso sozinho: ele precisa lançar manualmente como
+*transferência de entrada* com custo zero. Sem isso, o CoinGecko fica sistematicamente abaixo da
+realidade e o "total de ganhos" de lá vira ficção.
+
+**Como fazer (todo fechamento de mês, sem ele precisar pedir):**
+
+```bash
+node scripts/yield-to-mirror.js
+```
+
+Sai a lista por token (quanto lançar, valor em USD, `qty do CoinGecko → qty do site`) e o total.
+Passar isso para ele no chat. O mesmo número aparece:
+- no card **"Yield a lançar no CoinGecko"** do dashboard (aba **Ativos**) — só aparece quando há
+  pendência, some sozinho quando zera;
+- no log da Action `close-month.yml`, que roda todo dia 1.
+
+**A fonte da verdade é `data.js → cgMirror`**: a quantidade **como está no CoinGecko hoje**. A
+diferença para o `holdings` é o pendente. **Quando ele confirmar que lançou, atualizar o `cgMirror`
+igualando às qty do holding** — aí o pendente zera e o card some.
+
+⚠️ Se aparecer diferença **negativa** (CoinGecko com MAIS que o site), não é yield — é erro de
+contagem ou posição fora do radar. Investigar antes de lançar qualquer coisa.
+
+**Pendente em 05/09/2026:** SOL +0,174778 (~US$ 18) · USDS +4,69 (~US$ 4,69) · **total ~US$ 22,60**.
+
+---
+
 ## Estrutura de arquivos
 
 ```
@@ -5151,6 +5189,32 @@ texto**, **0 overflow horizontal**. KPIs aditivos com os preços do print de hoj
 `8.521 SPOT + 0 LP + 2.503 STABLES − 1.526 DÍVIDA = 9.498 PATRIMÔNIO` (bruto 11.024, que bate com
 o total do print — 11.002,32 + 17,89 de SOL + 4,69 de USDS = 11.024,90). `close-month.js` rodado
 duas vezes seguidas para confirmar idempotência. Bundle de `emprestimos.html` regravado.
+
+### Rotina nova combinada — yield a lançar no CoinGecko (05/09/2026)
+
+O Lucas explicou que **não mantém o CoinGecko em dia com o yield de lending** — o site é que faz
+esse controle pra ele: *"peço que anote aí para todo final do mês passar a soma de quanto eu devo
+alterar no CoinGecko desse yield ganho nos empréstimos."*
+
+Ficou registrado como obrigação permanente (seção "ROTINAS COMBINADAS COM O LUCAS", no topo deste
+arquivo) e ganhou três formas de aparecer, para não depender da minha memória:
+
+1. **`data.js → cgMirror`** — a qty **como está no CoinGecko** hoje. A diferença para o `holdings`
+   (que acompanha o supply dos protocolos) é exatamente o pendente. Base: print de 05/09.
+2. **`scripts/yield-to-mirror.js`** — relatório por token com qty, valor em USD e total; busca
+   preço ao vivo, mas funciona sem rede (só perde a coluna de USD). Tem `--json`.
+3. **Card "Yield a lançar no CoinGecko"** no dashboard (aba Ativos) — aparece só quando há
+   pendência e some sozinho quando zera. Verificado nos dois temas, e verificado que some quando
+   `cgMirror` iguala o holding e quando o bloco não existe.
+
+A Action `close-month.yml` também roda o relatório todo dia 1 (`continue-on-error`, então nunca
+derruba o fechamento).
+
+**Pendente hoje: SOL +0,174778 (~US$ 18) · USDS +4,69 · total ~US$ 22,60.** Quando ele lançar,
+atualizar o `cgMirror` igualando às qty do holding.
+
+⚠️ Diferença **negativa** (CoinGecko com mais que o site) não é yield — é erro de contagem ou
+posição fora do radar. O script marca com aviso; investigar antes de lançar.
 
 ### O que ainda falta
 - **`monthlyReturns[2026]`** Set–Dez (meses ainda não fechados — entram sozinhos pela Action)
