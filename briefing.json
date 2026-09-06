@@ -1,25 +1,19 @@
 {
- "updated": "2026-09-05T13:02:55.441Z",
- "date": "2026-09-05",
+ "updated": "2026-09-06T13:10:35.753Z",
+ "date": "2026-09-06",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 79715,
-   "d24": 0.26,
-   "d7": 2.8,
-   "d30": 23.5,
+   "price": 79945,
+   "d24": 0.32,
+   "d7": 2.3,
+   "d30": 23,
    "ath": 126080,
-   "athPct": -36.8,
+   "athPct": -36.6,
    "athDate": "2025-10-06",
-   "mcap": 1600653298835,
-   "vol": 23708608301,
+   "mcap": 1605191381020,
+   "vol": 20119738573,
    "spark": [
-    77583.38,
-    78020.82,
-    78124.81,
-    78184.08,
-    78098.44,
-    78068.85,
     78735.78,
     79316.05,
     78587.38,
@@ -56,26 +50,26 @@
     79593.02,
     79513.29,
     79647.88,
-    79616.73
+    79713.13,
+    80053.61,
+    79741.22,
+    79886.77,
+    79862.91,
+    79835.1,
+    79911.78
    ]
   },
   "eth": {
-   "price": 2459.28,
-   "d24": 0.3,
-   "d7": 1,
-   "d30": 29.1,
+   "price": 2499.47,
+   "d24": 1.64,
+   "d7": 1.7,
+   "d30": 30.6,
    "ath": 4946.05,
-   "athPct": -50.3,
+   "athPct": -49.5,
    "athDate": "2025-08-24",
-   "mcap": 300064333670,
-   "vol": 8660332953,
+   "mcap": 304941570221,
+   "vol": 8806516578,
    "spark": [
-    2434.39,
-    2450.84,
-    2452.63,
-    2459.02,
-    2455.14,
-    2456.54,
     2468.23,
     2527.97,
     2490.27,
@@ -112,26 +106,26 @@
     2452.95,
     2449.43,
     2456.69,
-    2453.88
+    2459.03,
+    2471.07,
+    2477.4,
+    2490.54,
+    2504.13,
+    2495.51,
+    2501.56
    ]
   },
   "sol": {
-   "price": 103.26,
-   "d24": 1.59,
-   "d7": -0.3,
-   "d30": 40.5,
+   "price": 106.95,
+   "d24": 3.68,
+   "d7": 1.7,
+   "d30": 45.3,
    "ath": 293.31,
-   "athPct": -64.8,
+   "athPct": -63.5,
    "athDate": "2025-01-19",
-   "mcap": 60438475442,
-   "vol": 2421055958,
+   "mcap": 62609313022,
+   "vol": 3799930699,
    "spark": [
-    103.61,
-    104.89,
-    105.23,
-    105.28,
-    105.05,
-    104.73,
     105.99,
     106.83,
     104.77,
@@ -168,105 +162,165 @@
     101.86,
     101.78,
     102.57,
-    102.35
+    103.25,
+    103.4,
+    103.25,
+    103.32,
+    105.75,
+    105.2,
+    106.45
    ]
   },
-  "stableMcap": 258008095071
+  "stableMcap": 257926388655
  },
  "fng": {
   "value": 73,
   "label": "Greed",
-  "prev": 74
+  "prev": 73
  },
  "broad": {
-  "btcDom": 58.9,
-  "ethDom": 11,
-  "altDom": 30.1,
-  "totalMcap": 2710783530552.8457,
-  "totalVol": 69609388319.06126,
-  "mcapChange24h": -1.86,
-  "ethBtc": 0.03085,
-  "stableMcap": 258008095071
+  "btcDom": 59.2,
+  "ethDom": 11.2,
+  "altDom": 29.6,
+  "totalMcap": 2703533716899.878,
+  "totalVol": 67476773538.87628,
+  "mcapChange24h": -2.81,
+  "ethBtc": 0.03126,
+  "stableMcap": 257926388655
  },
  "onchain": {
-  "t": "2026-09-04",
-  "price": 80355.06,
-  "mvrv": 1.498581,
-  "mvrv_sth": 1.125245,
-  "mvrv_lth": 1.613851,
-  "realized": 53153.02,
-  "realized_sth": 70788.2,
-  "realized_lth": 49356.54,
-  "sopr_lth": 0.970286,
-  "aviv": 1.04133,
-  "cvdd": 48275.22,
-  "sma200": 69588.57,
-  "mayer": 1.155
+  "t": "2026-09-05",
+  "price": 79725.8,
+  "mvrv": 1.500598,
+  "mvrv_sth": 1.126142,
+  "mvrv_lth": 1.616651,
+  "realized": 53172.37,
+  "realized_sth": 70852.85,
+  "realized_lth": 49355.36,
+  "sopr_lth": 1.388975,
+  "aviv": 1.042712,
+  "cvdd": 48292.29,
+  "sma200": 69647.19,
+  "mayer": 1.145
  },
  "risk": {
-  "score": 0.252,
+  "score": 0.327,
   "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.498581,
-    "s": 0.241
+    "v": 1.500598,
+    "s": 0.242
    },
    {
     "key": "Mayer",
-    "v": 1.155,
-    "s": 0.308
+    "v": 1.145,
+    "s": 0.303
    },
    {
     "key": "STH MVRV",
-    "v": 1.125245,
-    "s": 0.375
+    "v": 1.126142,
+    "s": 0.377
    },
    {
     "key": "AVIV",
-    "v": 1.04133,
+    "v": 1.042712,
     "s": 0.271
    },
    {
     "key": "SOPR LTH",
-    "v": 0.970286,
-    "s": 0.064
+    "v": 1.388975,
+    "s": 0.445
    }
   ]
  },
  "portfolio": {
-  "netWorth": 9531.26,
-  "gross": 8554.36,
-  "stables": 2502.7,
+  "netWorth": 9717.34,
+  "gross": 8740.53,
+  "stables": 2502.6,
   "lp": 0,
   "debt": 1525.8,
   "invested": 10642.5,
-  "roi": -10.4,
-  "move24": 61.47,
-  "move24Pct": 0.65,
+  "roi": -8.7,
+  "move24": 193.97,
+  "move24Pct": 2.04,
   "aave": {
-   "hf": 7.97,
-   "collateral": 7486.21,
+   "hf": 8.07,
+   "collateral": 7575.64,
    "debt": 762.4,
-   "ltv": 10.2,
+   "ltv": 10.1,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 26.5,
+   "ltv": 25.7,
    "liqLtv": 76.6,
-   "collateral": 2879.99,
+   "collateral": 2972.02,
    "debt": 763.4,
    "liqSol": 25.41,
-   "dropToLiq": 75.4
+   "dropToLiq": 76.2
   },
   "carry": {
    "monthlyInterest": 4.71,
-   "monthlySupply": 27.29
+   "monthlySupply": 27.81
   },
   "dataAsOf": "2026-09-05"
  },
  "news": [
+  {
+   "source": "Decrypt",
+   "title": "This Crypto Project Just Funded 1,000 Student Loans Entirely On-Chain",
+   "url": "https://decrypt.co/377494/pencil-finance-1-million-student-loan",
+   "ts": 1788699664000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Tether-backed Orionx to shut down after audit flags $7M custody gap",
+   "url": "<![CDATA[https://cointelegraph.com/news/orionx-shut-down-7-million-move-outside-wallets?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1788685628000
+  },
+  {
+   "source": "The Block",
+   "title": "UBS, Jane Street among firms with combined $75 million in Hyperliquid ETF holdings: Bloomberg",
+   "url": "https://www.theblock.co/news/defi/2026-09-05-ubs-jane-street-among-firms-with-combined-75-million-in-hyperliquid-etf-holdings-bloomberg-413616",
+   "ts": 1788638528000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Timing the bitcoin market is exciting but nearly impossible. Here's why",
+   "url": "https://www.coindesk.com/markets/2026/09/05/why-crypto-experts-say-buying-and-holding-bitcoin-easily-beats-trying-to-time-the-market",
+   "ts": 1788631511000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Ancient Bitcoin Wallet That Turned $120 Into $3 Million Wakes Up",
+   "url": "https://decrypt.co/377510/ancient-bitcoin-wallet-3-million-wakes-up",
+   "ts": 1788627664000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Dollar-backed stablecoins can push local currencies lower, Bank of Korea study finds",
+   "url": "https://www.coindesk.com/business/2026/09/05/dollar-backed-stablecoins-can-push-local-currencies-lower-bank-of-korea-study-finds",
+   "ts": 1788626593000
+  },
+  {
+   "source": "Decrypt",
+   "title": "What Is Robinhood Chain? The Ethereum Layer-2 Network for Tokenized Stocks and Meme Coins",
+   "url": "https://decrypt.co/resources/what-robinhood-chain-ethereum-layer-2-network-tokenized-stocks",
+   "ts": 1788624401000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Update Your Browser: Google Patches Chrome Flaw Hackers Were Already Using",
+   "url": "https://decrypt.co/377501/google-chrome-zero-day-exploited",
+   "ts": 1788620464000
+  },
+  {
+   "source": "The Block",
+   "title": "LeBron James teases Polymarket partnership in new social media video",
+   "url": "https://www.theblock.co/news/deals/2026-09-05-lebron-james-teases-polymarket-partnership-in-new-social-media-video-413608",
+   "ts": 1788616900000
+  },
   {
    "source": "Decrypt",
    "title": "AI Just Solved a 350-Year-Old Math Problem By Writing the Longest Proof Ever",
@@ -406,24 +460,6 @@
    "ts": 1788536237000
   },
   {
-   "source": "Decrypt",
-   "title": "OpenAI Agents Hack German Website to Share Rule-Breaking Tactics: Report",
-   "url": "https://decrypt.co/377412/openai-agents-hack-german-website",
-   "ts": 1788536164000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Bitcoin Slides as Blowout Jobs Report Revives Fed Hike Odds",
-   "url": "https://decrypt.co/377414/bitcoin-slides-blowout-jobs-report-fed-hike-odds",
-   "ts": 1788534808000
-  },
-  {
-   "source": "Decrypt",
-   "title": "BitMEX Co-Founder Ben Delo Gives Farage's Reform UK Another £4 Million",
-   "url": "https://decrypt.co/377411/bitmex-co-founder-ben-delo-gives-farages-reform-uk-another-4-million",
-   "ts": 1788534600000
-  },
-  {
    "source": "CoinDesk",
    "title": "Robinhood isn't backing down after AMC CEO demands halt to stock tokens",
    "url": "https://www.coindesk.com/business/2026/09/04/amc-ceo-tells-robinhood-to-stop-issuing-stock-token-as-industry-executives-weigh-in",
@@ -452,60 +488,6 @@
    "title": "Token buybacks are booming. But are they good for crypto projects?",
    "url": "<![CDATA[https://cointelegraph.com/magazine/token-buybacks-are-booming-but-are-they-good-for-crypto-projects?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
    "ts": 1788528600000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "U.S. added stronger than expected 162,000 jobs in August as labor market bounced back",
-   "url": "https://www.coindesk.com/markets/2026/09/04/u-s-added-stronger-than-expected-162-000-jobs-in-august-as-labor-market-bounced-back",
-   "ts": 1788525107000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Morning Minute: Crypto Stages Major Rally on Rate Hopes",
-   "url": "https://decrypt.co/377393/morning-minute-crypto-stages-major-rally-on-rate-hopes",
-   "ts": 1788525091000
-  },
-  {
-   "source": "The Block",
-   "title": "Trezor says ShipMonk breach affected another 67,000 customers",
-   "url": "https://www.theblock.co/news/business/2026-09-04-trezor-says-shipmonk-breach-affected-another-67000-customers-413540",
-   "ts": 1788523396000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Kalshi US visits soar 1,500% as regulatory pressure mounts",
-   "url": "<![CDATA[https://cointelegraph.com/news/kalshi-traffic-soars-regulatory-pressure-mounts?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1788521548000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "We checked 6 years of bitcoin data. The NFP report isn't big price mover",
-   "url": "https://www.coindesk.com/daybook-us/2026/09/04/we-checked-6-years-of-bitcoin-data-the-nfp-report-isn-t-big-price-mover",
-   "ts": 1788521345000
-  },
-  {
-   "source": "The Block",
-   "title": "El Salvador has not used public funds to accumulate bitcoin since June 2025, IMF says",
-   "url": "https://www.theblock.co/news/regulation/2026-09-04-el-salvador-has-not-used-public-funds-to-accumulate-bitcoin-since-june-2025-imf-says-413535",
-   "ts": 1788521326000
-  },
-  {
-   "source": "The Block",
-   "title": "Crypto firms urge SEC to speed ETF reviews and allow confidential draft filings",
-   "url": "https://www.theblock.co/news/regulation/2026-09-04-crypto-firms-urge-sec-to-speed-etf-reviews-and-allow-confidential-draft-filings-413532",
-   "ts": 1788520869000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Zcash jumps 20% to landmark $1,000 level as short sellers lose $34 million",
-   "url": "https://www.coindesk.com/markets/2026/09/04/zcash-jumps-20-to-landmark-usd1-000-level-as-short-sellers-lose-usd34-million",
-   "ts": 1788518414000
-  },
-  {
-   "source": "The Block",
-   "title": "Andreessen Horowitz-backed OpenReserve secures preliminary OCC approval for national bank charter",
-   "url": "https://www.theblock.co/news/regulation/2026-09-04-andreessen-horowitz-backed-openreserve-secures-preliminary-occ-approval-for-national-bank-charter-413528",
-   "ts": 1788517120000
   }
  ],
  "narrative": null
