@@ -583,11 +583,17 @@ são chamáveis direto do navegador, sem backend:
 > servidor**. É aritmética sobre dado público. Dá para rodar no navegador, num GitHub Action
 > ou em qualquer script.
 
-**Já implementado no `barolo-capital-site`** (05/09/2026): `scripts/fetch-pools.js` é a porta em
-Node deste scan — aplica os filtros da §4, as penalidades da §5.2 e a fórmula da §6, e grava
-`pooliana-pools.json`. Roda diariamente pela Action `.github/workflows/pools.yml` (~08:00 BRT,
-**sem secret nenhum**) e alimenta a tabela da aba Pooliana.
-**Este arquivo é a especificação daquele script** — mudou o método aqui, mude lá.
+**Já implementado no PROJETO POOLIANA** (06/09/2026), em duas formas — as duas em Node puro,
+sem backend, sem chave, sem venv:
+- **`painel.html`** — painel local de arquivo único. Abre com duplo clique, varre ao vivo, e traz
+  junto o checklist da Etapa 1, a calculadora Taxas/TVL, o B.A.R.C.A por ciclo e a carteira Solana
+  em leitura.
+- **`scripts/scan-pools.js`** — o mesmo scan em linha de comando (`--json` para saída estruturada).
+
+**Este arquivo é a especificação dos dois** — mudou o método aqui, mude lá.
+(Houve uma versão disso dentro do `barolo-capital-site`, em 05/09/2026; removida em 06/09 — a
+Pooliana roda local, e o site publicado não conseguiria falar com ela de qualquer forma: o Chrome
+bloqueia requisição de origem pública para endereço da rede local.)
 
 ---
 

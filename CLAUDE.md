@@ -15,6 +15,14 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 > próprio Lucas** (`CONHECIMENTO-BAROLO.md`) — as duas divergem em pontos importantes, e a
 > §14 daquele arquivo mapeia exatamente onde. Consulte-o ao falar de seleção de pool em Solana,
 > Orca/Raydium ou da agente Pooliana.
+>
+> ⚠️ **A Pooliana NÃO faz parte deste site — decidido em 06/09/2026.** Ela roda local, em
+> `C:\Users\barol\OneDrive\Documentos\PROJETO POOLIANA` (`painel.html` = painel de arquivo único
+> que abre com duplo clique; `scripts/scan-pools.js` = o mesmo scan em CLI). Houve uma aba dela
+> aqui em 05/09 e foi removida no dia seguinte. **Não propor trazer de volta:** o agente tem
+> chave privada e precisa ser local, e o Chrome bloqueia site publicado falando com localhost.
+> Só o `CONHECIMENTO-POOLIANA.md` fica neste repo, por pedido do Lucas — para reusar em outros
+> agentes.
 
 ---
 
