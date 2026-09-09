@@ -5508,18 +5508,33 @@ DOM**.
 |---|---:|---:|
 | `principals.aave.WETH` | 2,2104 | **2,209740** |
 | `principals.aave.USDT` | 1.993,92 | **1.995,900978** |
-| `wealthCurve.invested` 04/26 | 6.684 | **6.969** |
-| `wealthCurve.invested` 08/26 | 7.610 | **7.941** |
-| `contributions` | vazio | **2 linhas (US$ 331,50)** |
+| `wealthCurve.invested` 01/26 | 6.230 | **6.451** |
+| `wealthCurve.invested` 04/26 | 6.684 | **7.190** |
+| `wealthCurve.invested` 08/26 | 7.610 | **8.162** |
+| `contributions` | vazio | **4 linhas (US$ 552,30)** |
 | Juro exibido do USDT (AAVE) | 19,65 | **17,67** |
 | Juro exibido do WETH (AAVE) | 0,014893 | **0,015560** |
-| ROI sobre 08/26 | 45,0% | **39,0%** |
-| CAGR / TWR | +1,7% | **+1,0%** |
-| TIR / XIRR | +16,0% | **+15,1%** |
-| Track record real (landing) | −10,0% | **−12,8%** |
+| ROI sobre 08/26 | 45,0% | **35,2%** |
+| ROI de destaque (dashboard) | 21,1% | **17,6%** |
+| CAGR / TWR | +1,7% | **+0,5%** |
+| TIR / XIRR | +16,0% | **+14,1%** |
+| Track record real (landing) | −10,0% | **−15,5%** |
+
+⚠️ Os valores acima são os **FINAIS** da sessão (depois dos 4 lançamentos). Houve um estado
+intermediário — invested 7.941 / ROI 39,0% — quando só os dois de abril+agosto tinham entrado.
 
 Nenhuma posição alterada — só metodologia e séries derivadas. Landing e dashboard **convergem**
-(CAGR +1,0% nos dois; TIR +15,1% contra IRR +15,08%), verificado no browser com preços ao vivo.
+(CAGR +0,3% na landing contra +0,5% no dashboard; TIR +14,2% contra IRR +14,05% — diferença de
+timing de preço), verificado no browser com preços ao vivo.
+
+**As 4 contribuições registradas:**
+
+| Data | US$ | Origem |
+|---|---:|---|
+| 16/01/2026 | 145,62 | pagamento `0x0a91…09a0` → USDe → AAVE V3 |
+| 22/01/2026 | 75,18 | pagamento `0x0a91…09a0` → AAVE V3 direto |
+| 24/04/2026 | 285,40 | pagamento `0x0a91…09a0` → carteira `0x8311` → AAVE |
+| 27/08/2026 | 46,10 | pagamento externo em USDC → abateu dívida na Kamino |
 
 ### Bugs corrigidos
 
@@ -5535,8 +5550,8 @@ Nenhuma posição alterada — só metodologia e séries derivadas. Landing e da
 `close-month.js --dry-run` idempotente, bundle sincronizado, **0 erros de console e 0 NaN** em
 `emprestimos.html`, `portfolio_analytics.html` e `index.html`.
 ⚠️ **O sandbox bloqueia o CoinGecko** — a landing degrada CAGR/TIR para +0,0% sem preço ao vivo.
-Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, volta a +1,0% /
-+15,1%. **Testar o caminho ao vivo assim, não concluir que quebrou.**
+Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, os números voltam.
+**Testar o caminho ao vivo assim, não concluir que quebrou.**
 
 ### Commits (push direto na main)
 
@@ -5547,7 +5562,8 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, v
 | `deca6c1` | docs: log sessão 08-09/09/2026 |
 | `d49a8bb` | data: registra tambem os dois recebidos de janeiro (US$ 220,80) |
 | `7faa0dc` | docs: depositos de ETH do 0x0cd6db sao rotacao, nao aporte |
-| `(este)` | feat: alerta de address poisoning na aba Alertas |
+| `54c597e` | feat: alerta de address poisoning na aba Alertas |
+| `(este)` | docs: fecha o log da sessão 08-09/09 |
 
 ### O que ainda falta
 
@@ -5565,6 +5581,24 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, v
 - **`FISCAL_ENTRADAS` não cobre jul/2026 em diante** — a planilha de custo BRL termina em
   17/06/2026. Os recebidos em cripto **não** entram lá (não passaram por fiat), mas se houver
   conversão nova de fiat, falta lançar.
+
+### Balanço da varredura de entradas externas
+
+Quatro investigadas: **duas eram aporte** (os pagamentos de USDT do `0x0a91…09a0`, lançados) e
+**duas eram rotação** (os 408,56 de agosto e os depósitos de ETH do `0x0cd6db…`). Capital
+aportado fechou em **US$ 8.162**. **Nada mais encontrado em aberto** — se aparecer entrada nova,
+o teste é *de onde veio*, não *em que virou*: pagamento de trabalho é dinheiro novo; comprar ETH
+com o próprio USDT é troca de bolso (e o BRL que comprou aquele USDT já está contado, então
+lançar de novo seria dupla contagem).
+
+---
+
+Atualizado: 09/09/2026 — **MCP oficial da Aave conectado** (`mcp.aave.com`, sem key; server novo
+só carrega em sessão nova); **principals da AAVE agora vêm do histórico on-chain** e não de print
+arredondado; **V3 auditada e zerada**; **origem dos 285,40 encontrada** (pagamento de trabalho de
+uma EOA, pendência aberta desde 22/08); **4 recebidos em cripto registrados como contribuição**
+(US$ 552,30 — ROI 45,0% → **35,2%**, agora sem creditar à gestão dinheiro que veio de fora);
+**dois casos de address poisoning detectados e publicados no site** (Ferramentas → Alertas)
 
 ---
 
