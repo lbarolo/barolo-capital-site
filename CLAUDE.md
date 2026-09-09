@@ -5690,6 +5690,11 @@ o CoinGecko perdeu esse histórico.** Mexer só no ETH criaria custo fantasma co
 | CAGR / TWR | +1,7% | **+0,5%** |
 | TIR / XIRR | +16,0% | **+14,1%** |
 | Track record real (landing) | −10,0% | **−15,5%** |
+| `data.js → defi.aave.healthFactor` | 8,01 | **8,09** (agora fallback explícito) |
+| `FISCAL_ENTRADAS` USDT | 2.794,60 un · R$ 15.066,57 | **2.979,78 un · R$ 16.016,57** |
+| `APORTADO_BRL` | 36.632,97 | **37.582,97** |
+| `holdings.SOL.invested` | 2.533,36 | **2.498,84** |
+| `TOTAL_INVESTED` (soma dos holdings) | 10.642,50 | **10.607,98** |
 
 ⚠️ Os valores acima são os **FINAIS** da sessão (depois dos 4 lançamentos). Houve um estado
 intermediário — invested 7.941 / ROI 39,0% — quando só os dois de abril+agosto tinham entrado.
@@ -5713,6 +5718,8 @@ timing de preço), verificado no browser com preços ao vivo.
 |---|---|---|
 | Depósito contado como rendimento (2,29 USDT) | Fechamento de agosto registrou "+406,27 USDT / +0,0604 WETH" derivados do card arredondado; on-chain foram **+408,564790** e **+0,060000** | `principals` passam a vir do `activities` on-chain |
 | Performance inflada em ~6 p.p. | Recebidos em cripto (285,40 + 46,10) entravam no patrimônio sem subir o capital aportado — o TWR creditava à gestão dinheiro que veio de trabalho | Registrados em `contributions` + ajuste retroativo em `wealthCurve.invested` |
+| `SOL.invested` inflado em US$ 34,52 | O lançamento de 04/07/2026 somou US$ 53,92 por 0,66 SOL; o CoinGecko registra a mesma compra por **US$ 41,18** | Alinhado ao "Custo total" do CoinGecko (2.498,84). Rastreado por `git log -S` na linha do holding |
+| Eu estimei o custo do ADA errado (490,93) | Derivei de *valor + GP*, que quebra quando o token teve venda (ADA vendeu 32,5 em 12/2024) | Usar sempre o campo **"Custo total"** do header do print. O ADA já batia: 530,95 |
 | Conflito de rebase em `emprestimos.html` | A Action `sync-emprestimos` rodou com o push anterior e gerou a própria versão do bundle | Resolvido **regenerando** (`node scripts/refresh-emprestimos-data.js`) — a geração é determinística, o script confirmou "já sincronizado" |
 
 ### Verificação
@@ -5735,7 +5742,12 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, o
 | `7faa0dc` | docs: depositos de ETH do 0x0cd6db sao rotacao, nao aporte |
 | `54c597e` | feat: alerta de address poisoning na aba Alertas |
 | `aa7351c` | docs: log sessão 08-09/09/2026 (fechamento) |
-| `(este)` | fix: HF definitivo + Fiscal com as conversões de julho |
+| `4949c57` | fix: HF definitivo (via MCP da Aave) + Fiscal com as conversoes de julho |
+| `93887e0` | docs: CoinGecko e a fonte dos aportes em USD; extratos das CEX so para o BRL |
+| `3f8763c` | docs: custo de aquisicao CoinGecko x data.js, token a token |
+| `b87f4c7` | fix: SOL invested alinhado ao CoinGecko (2.533,36 -> 2.498,84) |
+| `0e9401c` | docs: no CoinGecko o valor e confiavel, a data nem sempre |
+| `(este)` | docs: fecha o log da sessão 08-09/09 |
 
 ### O que ainda falta
 
@@ -5778,7 +5790,12 @@ só carrega em sessão nova); **principals da AAVE agora vêm do histórico on-c
 arredondado; **V3 auditada e zerada**; **origem dos 285,40 encontrada** (pagamento de trabalho de
 uma EOA, pendência aberta desde 22/08); **4 recebidos em cripto registrados como contribuição**
 (US$ 552,30 — ROI 45,0% → **35,2%**, agora sem creditar à gestão dinheiro que veio de fora);
-**dois casos de address poisoning detectados e publicados no site** (Ferramentas → Alertas)
+**dois casos de address poisoning detectados e publicados no site** (Ferramentas → Alertas);
+**Health Factor encerrado** (fórmula `Σ(colateral×CF)/dívida`, os 3 valores divergentes eram
+snapshots defasados); **Fiscal com as conversões de julho** (R$ 37.582,97 — fecha os "R$ 950 de
+julho" pendentes desde 13/07); **auditoria do custo de aquisição contra 16 prints do CoinGecko**
+— 6 dos 7 tokens batem exatamente, SOL corrigido (−34,52), **ETH deliberadamente NÃO alinhado**
+(migração de custo para o USDT, verificada dos dois lados)
 
 ---
 
