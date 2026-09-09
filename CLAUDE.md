@@ -5587,6 +5587,50 @@ dinheiro novo. Comprar ETH com USDT que já era dele é rotação. A pista é a 
 ele registra BRL→USD→cripto no mesmo dia, então compras em sequência na mesma data costumam ser
 UMA entrada de fiat, não várias. Na dúvida, perguntar.
 
+#### 16. Custo de aquisição — CoinGecko × `data.js`, token a token (09/09/2026)
+
+Lucas mandou **16 prints** do histórico de transações do CoinGecko
+(`DIARIO DEFI E PRINTS/PRINTS COINGECKO 09-2026/`) e dois blocos de notas (`ETH.txt` com as
+compras de 2021–2024 em BRL e USDT, `USDC.txt`). O campo **"Custo total"** do header de cada
+print é a soma das compras — é o USD efetivamente pago, então é comparável ao `invested`.
+
+| Token | `data.js` | CoinGecko | dif |
+|---|---:|---:|---:|
+| BTC | 270,47 | 270,47 | **0** ✓ |
+| EIGEN | 45,87 | 45,87 | **0** ✓ |
+| POL | 143,88 | 143,88 | **0** ✓ |
+| XAI | 164,52 | 164,52 | **0** ✓ |
+| SOL | 2.533,36 | 2.498,84 | +34,52 |
+| ADA | 530,95 | 490,93 | +40,02 |
+| **ETH** | **4.474,26** | **4.980,47** | **−506,21** |
+| USDT | 2.179,19 | 581,40 | +1.597,79 |
+| USDS | 300,00 | 0,00 | +300,00 |
+| **TOTAL** | **10.642,50** | **9.176,38** | +1.466,12 |
+
+**Quatro tokens batem exatamente** — o `data.js` está correto neles.
+
+⚠️ **USDT e USDS: o CoinGecko é que está errado, não o `data.js`.** Os prints mostram por quê —
+o grosso entrou como **"Transferência de entrada" a custo ZERO**: USDT +1.652,11 (14/03/2026),
++185 e +302 (22/08), +408,56 (28/08); USDS +300 (24/03/2026). **Houve um "reset" do portfólio
+no CoinGecko em março/2026** que trouxe os saldos existentes sem custo, destruindo o histórico
+anterior desses dois. Por isso o USDT mostra "+US$ 1.616 de ganho" — artefato, não lucro.
+ETH, SOL e BTC **não** foram resetados (têm transações desde 2025 e antes).
+
+⚠️ **NOTA:** a sessão de 22/08 registrou no CLAUDE.md que os 185 e os 302 USDT foram *"lançados
+a custo US$ 185"* — o print mostra que entraram **a custo zero**. O `data.js` foi corrigido à mão
+depois, então está certo; a nota de 22/08 é que estava imprecisa.
+
+🎯 **ACHADO EM ABERTO — ETH com US$ 506 a menos.** O CoinGecko (histórico íntegro, fonte que o
+Lucas considera mais fiel) diz **4.980,47**; o `data.js` tem **4.474,26**. Em 23/06/2026 o valor
+canônico era **4.880,53** — ou seja, mudou depois, em alguma reconciliação não logada.
+**Não alterado nesta sessão** — precisa entender por que caiu antes de mexer, senão troca um
+número por outro sem saber qual é o certo.
+
+**`ETH.txt` (bloco de notas, 2021–2024):** confirma as compras em BRL uma a uma contra a aba
+Binance da planilha (10/01, 20/02, 23/02, 25/04, 26/04, 05/05 de 2022 batem exatamente). Registra
+também as primeiras compras de 13 e 16/12/2021 em USDT — as que fundamentam o "desde 2021".
+**Não traz BRL novo** além do que a planilha já tem.
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5667,9 +5711,12 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, o
 - ~~`FISCAL_ENTRADAS` não cobre jul/2026~~ — ✅ **RESOLVIDO** (ver §14): as 2 conversões de
   julho lançadas, R$ 37.582,97 no total. **Próxima lacuna: ago/2026 em diante** — o extrato da
   OKX tem janela de 12 meses, então pedir print novo a cada refresh do Fiscal.
-- **Reconciliar `wealthCurve.invested` contra o histórico do CoinGecko** (ver §15) — a série
-  dá US$ 8.162 e o Fiscal (incompleto) sugere US$ 7.538. **A fonte certa é o CoinGecko, não os
-  extratos das CEX.** Falta o Lucas exportar/printar o histórico de transações por token.
+- 🎯 **ETH `invested`: 4.474,26 no `data.js` contra 4.980,47 no CoinGecko** (ver §16) — era
+  4.880,53 em 23/06. Descobrir por que caiu antes de corrigir.
+- **Reconciliar `wealthCurve.invested`** — a série dá US$ 8.162; a soma dos custos do CoinGecko
+  dá US$ 9.176 (mas subestima USDT/USDS pelo reset de março). São métricas diferentes (aporte
+  líquido × custo de aquisição), então não precisam bater — mas a diferença ainda não foi
+  explicada.
 
 ### Balanço da varredura de entradas externas
 
