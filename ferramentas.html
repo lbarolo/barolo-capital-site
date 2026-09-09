@@ -1761,6 +1761,48 @@ body, input, button, select, textarea {
  <button class="btn btn-sm btn-danger" style="margin-top:12px;" onclick="clearAlertLog()">LIMPAR LOG</button>
  </div>
  </div>
+
+        <!-- ── Segurança: address poisoning ────────────────────────── -->
+        <div class="section" id="sec-poisoning">
+          <div class="section-title">
+            <span data-i18n="poison-title">Segurança — Address Poisoning</span>
+            <span data-i18n="poison-badge">2 CASOS DETECTADOS</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:16px;" data-i18n="poison-desc">O golpe planta no seu histórico transferências falsas que imitam as reais: mesmo valor, no mesmo dia, de um endereço que copia o início E o fim do verdadeiro. O objetivo é que você copie o endereço errado do histórico na próxima transferência. Os tokens falsos são inertes — o risco é a cópia, não o saldo.</div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:16px;">
+
+            <div style="background:rgba(248,81,73,.05);border:1px solid rgba(248,81,73,.28);border-radius:10px;padding:14px 16px;">
+              <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;color:var(--red);margin-bottom:10px;">28/08/2026 · CARTEIRA PRINCIPAL</div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:10px;" data-i18n="poison-c1">Três saídas do mesmo valor no mesmo dia. Só uma era real.</div>
+              <div style="font-family:var(--font-mono);font-size:10.5px;line-height:1.9;">
+                <div style="color:var(--green);">✓ USDT &nbsp;→ 0x5a9aaa78…f396</div>
+                <div style="color:var(--red);">✗ U&#x1EE5;&#x180B;5 &nbsp;&nbsp;→ 0x5a9a9a61…&nbsp; <span style="color:var(--muted);font-family:inherit;">unicode</span></div>
+                <div style="color:var(--red);">✗ US&#x034F;DT → 0x5a954a35…&nbsp; <span style="color:var(--muted);">char invisível</span></div>
+              </div>
+              <div style="font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5;" data-i18n="poison-c1b">Também entrou 0,00 USDT de um endereço que começa com <b>0x5a9a</b> e termina em <b>f396</b> — igual ao real nas duas pontas.</div>
+            </div>
+
+            <div style="background:rgba(248,81,73,.05);border:1px solid rgba(248,81,73,.28);border-radius:10px;padding:14px 16px;">
+              <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;color:var(--red);margin-bottom:10px;">04/02/2026 · SAQUE DE EXCHANGE</div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:10px;" data-i18n="poison-c2">Um ERC-20 chamado “ETH” clonou o valor exato do saque real.</div>
+              <div style="font-family:var(--font-mono);font-size:10.5px;line-height:1.9;">
+                <div style="color:var(--green);">✓ 0,012784 ETH ← 0x0cd6db…66fc</div>
+                <div style="color:var(--red);">✗ 0,012784 “ETH” ← 0x0cd61d…&nbsp; <span style="color:var(--muted);">token falso</span></div>
+              </div>
+              <div style="font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5;" data-i18n="poison-c2b">Conferir por valor + começo do endereço faz os dois baterem. Só o token e o endereço completo denunciam.</div>
+            </div>
+
+          </div>
+
+          <div class="liq-warning liq-warn" style="display:flex;align-items:flex-start;line-height:1.6;">
+            <span style="font-size:14px;">&#9888;</span>
+            <span data-i18n="poison-rule"><b>Regra:</b> conferir o endereço inteiro, nunca só as pontas — ou usar contatos salvos na carteira. Não interagir com os tokens falsos (não vender, não aprovar): alguns só existem para induzir uma aprovação maliciosa.</span>
+          </div>
+
+          <div style="font-size:10px;color:var(--muted);margin-top:12px;line-height:1.6;" data-i18n="poison-note">Nota: um endereço aparecer “enviando” tokens de nome falso não significa que a contraparte seja maliciosa — contratos de spam forjam eventos de transferência usando endereços de alto volume como remetente, para ganhar credibilidade.</div>
+        </div>
+
  </div>
 
  <!-- ══════════════════════════════════════════════
@@ -4157,7 +4199,16 @@ var LANG_STRINGS = {
   'tab-cenarios':  {pt:'Cenários',    en:'Scenarios'},
   'tab-sizing':    {pt:'Sizing & Risk', en:'Sizing & Risk'},
   'tab-diario':    {pt:'Diário DeFi', en:'DeFi Journal'},
-  'tab-alertas':   {pt:'Alertas',     en:'Alerts'},
+    'poison-title':{pt:'Segurança — Address Poisoning',en:'Security — Address Poisoning'},
+  'poison-badge':{pt:'2 CASOS DETECTADOS',en:'2 CASES DETECTED'},
+  'poison-desc':{pt:'O golpe planta no seu histórico transferências falsas que imitam as reais: mesmo valor, no mesmo dia, de um endereço que copia o início E o fim do verdadeiro. O objetivo é que você copie o endereço errado do histórico na próxima transferência. Os tokens falsos são inertes — o risco é a cópia, não o saldo.',en:'The scam plants fake transfers in your history that mimic the real ones: same amount, same day, from an address copying both the start AND the end of the genuine one. The goal is for you to copy the wrong address from your history on the next transfer. The fake tokens are inert — the risk is the copy, not the balance.'},
+  'poison-c1':{pt:'Três saídas do mesmo valor no mesmo dia. Só uma era real.',en:'Three transfers of the same amount on the same day. Only one was real.'},
+  'poison-c1b':{pt:'Também entrou 0,00 USDT de um endereço que começa com 0x5a9a e termina em f396 — igual ao real nas duas pontas.',en:'A 0.00 USDT transfer also arrived from an address starting with 0x5a9a and ending in f396 — matching the real one at both ends.'},
+  'poison-c2':{pt:'Um ERC-20 chamado “ETH” clonou o valor exato do saque real.',en:'An ERC-20 named “ETH” cloned the exact amount of the real withdrawal.'},
+  'poison-c2b':{pt:'Conferir por valor + começo do endereço faz os dois baterem. Só o token e o endereço completo denunciam.',en:'Checking by amount + address prefix makes both match. Only the token and the full address give it away.'},
+  'poison-rule':{pt:'Regra: conferir o endereço inteiro, nunca só as pontas — ou usar contatos salvos na carteira. Não interagir com os tokens falsos (não vender, não aprovar): alguns só existem para induzir uma aprovação maliciosa.',en:'Rule: check the full address, never just the ends — or use saved contacts in your wallet. Do not interact with the fake tokens (do not sell, do not approve): some exist only to induce a malicious approval.'},
+  'poison-note':{pt:'Nota: um endereço aparecer “enviando” tokens de nome falso não significa que a contraparte seja maliciosa — contratos de spam forjam eventos de transferência usando endereços de alto volume como remetente, para ganhar credibilidade.',en:'Note: an address appearing to “send” fake-named tokens does not mean the counterparty is malicious — spam contracts forge transfer events using high-volume addresses as the sender to gain credibility.'},
+'tab-alertas':   {pt:'Alertas',     en:'Alerts'},
   'tab-evolucao':  {pt:'Evolução',    en:'Evolution'},
   'tab-apy':       {pt:'Pools APY',   en:'Pools APY'},
   'tab-ciclo':     {pt:'Ciclo',       en:'Cycle'},

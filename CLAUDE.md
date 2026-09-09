@@ -5470,6 +5470,38 @@ por valor + começo do endereço faz os dois baterem. Só o token e o endereço 
 (os pagamentos de USDT de 0x0a91, lançados) e **duas eram rotação** (os 408,56 de agosto e estes
 depósitos de ETH). Capital aportado em **US$ 8.162** — nada mais encontrado em aberto.
 
+#### 12. Alerta de address poisoning publicado no site (`ferramentas.html`)
+
+Nova `.section` **`#sec-poisoning`** na aba **Alertas**, full-width abaixo do `.two-col`
+(irmã dele, filha direta de `#panel-alertas`). Conteúdo: explicação do golpe + dois cards com
+os casos reais detectados + regra prática + nota sobre o falso positivo.
+
+- **Card 1 — 28/08/2026, carteira principal:** as três saídas de 408,564790 no mesmo dia,
+  marcando a real em verde e as duas falsas (`Ụ᠋5` unicode, `US͏DT` com char invisível) em
+  vermelho; nota sobre o endereço que copia início (`0x5a9a`) e fim (`f396`).
+- **Card 2 — 04/02/2026, saque de exchange:** o ERC-20 falso "ETH" do `0x0cd61d…` clonando o
+  valor exato do saque real do `0x0cd6db…`.
+- **Regra** (`.liq-warning .liq-warn`): conferir o endereço inteiro, nunca só as pontas, ou usar
+  contatos salvos; **não interagir com os tokens falsos** (não vender, não aprovar — alguns só
+  existem para induzir aprovação maliciosa).
+- **Nota final:** endereço "enviando" token de nome falso não implica contraparte maliciosa
+  (eventos forjados por contratos de spam).
+
+**9 strings i18n** adicionadas em PT e EN (`poison-*`), inseridas antes de `'tab-alertas':`.
+`applyLang` ignora chave ausente com segurança (`if (!s || !s[lang]) return`), mas foram
+adicionadas mesmo assim para o toggle funcionar.
+
+**Verificado** (viewport 1440×900): largura **1340px, idêntica ao `.two-col`**; altura 388px;
+2 cards; **JetBrains Mono nos endereços** (regra do design system); PT↔EN alternando; tema claro
+legível (texto `rgb(42,30,14)`); overflow horizontal 0; 0 NaN; `<div>`/`</div>` balanceados
+(628/628). Padrão de cor segue o `.liq-warn` já existente no arquivo: rgba fixo no fundo/borda,
+`var(--red)` no texto.
+
+⚠️ **Nota de ambiente:** o Browser pane abriu com `viewport 0×0` e TODAS as medidas davam zero —
+inclusive as de seções pré-existentes. Não é bug do código: chamar `resize_window` antes de medir.
+Screenshot nessa página continua renderizando errado (comportamento já conhecido) — **validar por
+DOM**.
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5514,6 +5546,8 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, v
 | `01cf429` | data: registra os dois recebidos em cripto como contribuicao |
 | `deca6c1` | docs: log sessão 08-09/09/2026 |
 | `d49a8bb` | data: registra tambem os dois recebidos de janeiro (US$ 220,80) |
+| `7faa0dc` | docs: depositos de ETH do 0x0cd6db sao rotacao, nao aporte |
+| `(este)` | feat: alerta de address poisoning na aba Alertas |
 
 ### O que ainda falta
 
