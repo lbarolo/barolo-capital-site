@@ -5438,6 +5438,38 @@ legítimos, já com `invested: 0`. **ETH e SOL têm custo normal** ($4.023 e $2.
 Lançados: **+221 em `wealthCurve.invested` de 01/26 em diante** (6.230→6.451 … 7.941→**8.162**).
 Série segue monotônica; `close-month.js --dry-run` idempotente. ROI sobre 08/26: **39,0% → 35,2%**.
 
+#### 11. Depósitos de ETH do `0x0cd6db…66fc` — ROTAÇÃO, não aporte (verificado 09/09/2026)
+
+7 depósitos de ETH na carteira `0x8311`, jan→jun/2026, somando **0,170361 ETH**
+(21/01 0,012256 · 30/01 0,020465 · 04/02 0,012784 · 05/02 0,027704 · 02/03 0,019690 ·
+24/04 0,008293 · 05/06 0,069169). Todos foram para a AAVE.
+
+**O remetente é hot wallet de exchange/processador de pagamentos, não um pagador.** As 100
+saídas mais recentes são todas do mesmo dia, para 50 destinos distintos, valores de 0,0018 a
+463 ETH, saldo 238,7 ETH. Perfil oposto ao do `0x0a91…09a0` (EOA, 6 destinos no histórico
+inteiro), que é o pagador dos USDT.
+
+**Não é aporte** — a planilha de custo BRL prova: a Binance tem 18 compras de ETH com BRL, mas a
+última é de **06/04/2025**; a OKX tem 17 conversões em 2026, **todas em USDT**. Em 2026 todo o
+fiat virou USDT. Logo esses ETH foram comprados com USDT que já era do Lucas, e esse USDT já
+entrou como aporte quando o BRL foi convertido. **Lançar seria dupla contagem** — o Lucas
+autorizou alterar "se foi aporte", e a condição não se verifica. Nada foi alterado.
+
+⚠️ **Falso alarme registrado para não repetir:** esse endereço aparece "enviando" tokens
+`ЕTH`/`EТH` (E e Т cirílicos, homóglifos) para pares de endereços poisoned. **Não é ação dele** —
+são eventos `Transfer` forjados por contratos de spam, que usam endereços de alto volume como
+remetente falso para ganhar credibilidade. Não tratar como sinal de que a contraparte é maliciosa.
+
+⚠️ **SEGUNDO CASO DE SPOOFING (04/02/2026):** além do depósito real de `0,012784 ETH` do
+`0x0cd6db…`, entrou no mesmo dia um **ERC-20 chamado "ETH"** — falso — de `0x0cd61d9798f3…`,
+com **exatamente o mesmo valor**. Endereço construído para imitar o da exchange
+(`0x0cd6db` vs `0x0cd61d`). Mesmo golpe de 28/08, agora aplicado ao fluxo de saques: conferir
+por valor + começo do endereço faz os dois baterem. Só o token e o endereço completo denunciam.
+
+**Balanço da varredura de entradas externas:** das quatro investigadas, **duas eram aporte**
+(os pagamentos de USDT de 0x0a91, lançados) e **duas eram rotação** (os 408,56 de agosto e estes
+depósitos de ETH). Capital aportado em **US$ 8.162** — nada mais encontrado em aberto.
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5495,6 +5527,7 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, v
 - **Registro Histórico em `pools.html`** — decidir se reconstrói a tabela das 28 pools
 - **`data.js → defi.aave.healthFactor`** — guardado a pedido do Lucas (19/08). **Não mexer**
 - **Confirmar a Action `close-month.yml`** — primeira execução agendada em 01/10
+- ~~Depósitos de ETH do `0x0cd6…`~~ — ✅ **RESOLVIDO**: rotação, não aporte (ver §11)
 - **`FISCAL_ENTRADAS` não cobre jul/2026 em diante** — a planilha de custo BRL termina em
   17/06/2026. Os recebidos em cripto **não** entram lá (não passaram por fiat), mas se houver
   conversão nova de fiat, falta lançar.
