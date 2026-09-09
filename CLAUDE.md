@@ -5648,9 +5648,20 @@ Rastreado por `git log -S` na linha do holding:
 | 04/07 | **2.504,86** (+53,92) | *"Kamino +0.66 SOL supply (compra da semana anterior)"* |
 | 07/08 | 2.533,36 (+28,50) | compra 0,374988 @ $76,01 ✓ confere com o CoinGecko |
 
-**A causa:** o lançamento de 04/07 somou **US$ 53,92** por 0,66 SOL — preço implícito **$81,70**,
-que era o preço do SOL **no dia do registro**. A compra real está no CoinGecko como
-**0,661425 SOL @ $62,26 = US$ 41,18** (05/06/2026). Lançou-se o preço do dia em vez do custo pago.
+**A causa:** o lançamento de 04/07 somou **US$ 53,92** por 0,66 SOL (preço implícito $81,70),
+quando o CoinGecko registra a mesma compra de **0,661425 SOL por US$ 41,18**. Excesso de
+US$ 12,74, mais diferenças menores acumuladas nos outros lançamentos.
+
+⚡ **REGRA (Lucas, 09/09/2026): no CoinGecko o VALOR é confiável, a DATA nem sempre.**
+Palavras dele: *"nem sempre eu coloquei o coingecko na data certa que eu aportei, mas os valores
+são corretos, pode estar em datas diferentes alguns sim"*. Consequências práticas:
+- **Nunca casar transação por data** entre o CoinGecko e o `data.js`/extratos/on-chain. Casar por
+  **quantidade e valor**.
+- O "Custo total" do header é **canônico**; a data de cada linha é indicativa.
+- Isso explica esta divergência: o commit de 04/07 falava em *"compra da semana anterior"* e o
+  CoinGecko registra 05/06 — um mês antes. **As datas não batem porque não precisam bater.**
+- Também vale para a série `wealthCurve.invested`: não tentar alocar aportes a MESES específicos
+  usando as datas do CoinGecko.
 
 **Resultado da auditoria: 6 dos 7 tokens com custo batem exatamente com o CoinGecko.**
 `TOTAL_INVESTED` 10.642,50 → **10.607,98**.
