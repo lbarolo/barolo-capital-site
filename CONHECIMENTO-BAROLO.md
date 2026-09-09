@@ -17,6 +17,27 @@
 - **Horizonte: +10 anos.** DCA mensal fiat→cripto. Bear market = oportunidade de compra, não razão para sair.
 - **Concentração intencional em ETH + SOL** (entende os protocolos profundamente). BTC como base. Alts menores mantidas por opcionalidade, sem realizar prejuízo.
 - **Objetivo final:** o **yield pagar a vida sem tocar no capital** — mesma lógica do aluguel de imóvel e dos dividendos do Barsi. O capital fica trabalhando.
+- 🎯 **META DECLARADA E QUANTIFICADA (09/09/2026, palavras dele):** *"meu maior sonho e pode
+  deixar registrado aqui é viver de yield, hoje em dia preciso de 100k reais por ano, então seria
+  cerca de 20k USD de yield anuais, meu foco é os 100k USD yield anual"*. Duas metas, então:
+  **intermediária US$ 20k/ano** (cobre o custo de vida atual) e **final US$ 100k/ano**.
+
+  | Yield a.a. | Capital p/ US$ 20k | Capital p/ US$ 100k |
+  |---|---:|---:|
+  | 5% (lending conservador) | $400k | $2,0M |
+  | 8% (lending + stables) | $250k | $1,25M |
+  | 12% (mix lending+pools) | $167k | $833k |
+  | **15% (pools chatas com peso)** | **$133k** | **$667k** |
+  | 25% (pools agressivo) | $80k | $400k |
+
+  **Tempo até US$ 133k** (= 20k/ano a 15%), partindo de ~$9,5k: aporte de $2k/ano → **14 anos**;
+  $4k → 11a; $6k → **9 anos**; $10k → 7a. Para os **US$ 100k/ano**: $2k/ano → 25a; $12k/ano → 16a.
+
+  ⚡ **PONTO DE VIRADA — o marco que importa agora:** com patrimônio de $9,5k, um retorno de 15%
+  rende $1.425/ano contra $2.000 de aporte. **O aporte ainda é o motor, não o retorno.** Ele
+  vira quando o patrimônio passa de **~$13k a 15%** — ou seja, em **~2 anos**. Isso é coerente
+  com o diagnóstico de que o resultado até aqui veio do DCA e não da seleção de ativos: vai
+  continuar sendo assim por mais ~2 anos, e só depois o retorno passa a comandar.
 - **Sucesso é medido em ativos acumulados (tokens), não no preço em dólar.**
 - **Meta original registrada no Notion (página META):** aporte inicial ~US$ 2.000, ~US$ 400/mês (~US$ 13,33/dia) → **US$ 10.000 em ~25 meses** (ou 50 meses a US$ 200/mês).
 - **Privacidade é regra, não preferência:** "quero ser **efetivo**, não **visto**". Nada de endereço de carteira em URL pública, nada de identificadores únicos (NFT ID, endereço Cardano completo), `robots.txt` bloqueando tudo, `noindex` em todas as páginas.

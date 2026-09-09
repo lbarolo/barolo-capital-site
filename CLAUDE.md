@@ -5673,6 +5673,50 @@ valores atuais). Alinhar o ETH exigiria baixar o USDT nos mesmos 406,27, mas o U
 está zerado pelo reset de março e não serve de referência. **A migração existe justamente porque
 o CoinGecko perdeu esse histórico.** Mexer só no ETH criaria custo fantasma contado duas vezes.
 
+#### 18. Mentoria — avaliação do portfólio como fundo + meta de yield registrada (09/09/2026)
+
+**Contexto:** depois da auditoria de dados, Lucas pediu uma avaliação honesta do retorno desde
+2021, primeiro contra cripto e depois contra mercados tradicionais.
+
+**Benchmark com o MESMO fluxo de aportes** (US$ 8.162, jan/22→ago/26, tudo em USD):
+BTC $12.601 (+54,4%) · **S&P 500 $11.530 (+41,3%)** · **PORTFÓLIO $11.037 (+35,2%)** ·
+CDI $10.933 (+34,0%) · Ibovespa $9.511 (+16,5%) · ETH $8.665 (+6,2%). **3º de 6.**
+
+Ajustado ao risco é pior: CAGR +6,8% com **vol 65,2%** e **maxDD −63,0%** (Sharpe ~0,03), contra
+S&P +10,2%/15%/−25% (0,34) e Ibov +12,6%/17%/−18% (0,45).
+
+⚠️ **CORREÇÃO IMPORTANTE DE LEITURA (o Lucas questionou e tinha razão):** eu destaquei o TWR de
+**+0,34% a.a.** como "medíocre". O número está certo mas a leitura estava incompleta — ele é
+**quase inteiramente 2022** (−79,4% sozinho). Por janela de início:
+
+| TWR desde | acumulado | anualizado |
+|---|---:|---:|
+| jan/2022 | +1,6% | +0,3% |
+| **jan/2023** | **+394,3%** | **+54,6%** |
+| jan/2024 | +119,7% | +34,3% |
+| jan/2025 | −22,2% | −14,0% |
+| jan/2026 | −20,2% | −28,7% |
+
+**Um único ano — o primeiro, no topo do ciclo, sem experiência — define a estatística inteira.**
+E 29% do capital entrou nele. Hoje **52% do capital entrou em 2025-26** (os anos de baixa), o que
+é o DCA funcionando, não erro.
+
+**Padrão estrutural identificado:** 2022 pior que o mercado (−79% vs −57% do BTC), 2024 muito
+melhor (+182% vs +121%), 2026 pior de novo (−20,2% vs −10%). É a assinatura da **alavancagem, que
+amplifica nos dois sentidos** — não é falta de disciplina. Em 2025 ele bateu o mercado
+(−2,5% vs −6%).
+
+**Lição registrada pelo Lucas (rotação que não veio):** *"nos anos anteriores o BTC performou
+menos que as ALT's e esses últimos anos o BTC se mostrou o carro chefe… acabei esperando ter essa
+Alt season para vender as alts e trocar por BTC, mas não aconteceu"*. Consequência prática já
+adotada: **foco de aporte nos maiores players**, estudando outros cases em paralelo. Confirmado
+pelos dados — a cauda de alts vale ~$125 contra ~$885 investidos, e BTC teria dado +54,4%.
+
+**Frentes de estudo declaradas:** macroeconomia, pools, análise técnica, análise on-chain.
+
+🎯 **Meta de viver de yield registrada e quantificada na §1 da KB** (US$ 20k/ano intermediária,
+US$ 100k/ano final, com a tabela de capital necessário e o "ponto de virada" em ~2 anos).
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5818,6 +5862,27 @@ julho" pendentes desde 13/07); **auditoria do custo de aquisição contra 16 pri
 - **Horizonte: +10 anos.** DCA mensal fiat→cripto. Bear market = oportunidade de compra, não razão para sair.
 - **Concentração intencional em ETH + SOL** (entende os protocolos profundamente). BTC como base. Alts menores mantidas por opcionalidade, sem realizar prejuízo.
 - **Objetivo final:** o **yield pagar a vida sem tocar no capital** — mesma lógica do aluguel de imóvel e dos dividendos do Barsi. O capital fica trabalhando.
+- 🎯 **META DECLARADA E QUANTIFICADA (09/09/2026, palavras dele):** *"meu maior sonho e pode
+  deixar registrado aqui é viver de yield, hoje em dia preciso de 100k reais por ano, então seria
+  cerca de 20k USD de yield anuais, meu foco é os 100k USD yield anual"*. Duas metas, então:
+  **intermediária US$ 20k/ano** (cobre o custo de vida atual) e **final US$ 100k/ano**.
+
+  | Yield a.a. | Capital p/ US$ 20k | Capital p/ US$ 100k |
+  |---|---:|---:|
+  | 5% (lending conservador) | $400k | $2,0M |
+  | 8% (lending + stables) | $250k | $1,25M |
+  | 12% (mix lending+pools) | $167k | $833k |
+  | **15% (pools chatas com peso)** | **$133k** | **$667k** |
+  | 25% (pools agressivo) | $80k | $400k |
+
+  **Tempo até US$ 133k** (= 20k/ano a 15%), partindo de ~$9,5k: aporte de $2k/ano → **14 anos**;
+  $4k → 11a; $6k → **9 anos**; $10k → 7a. Para os **US$ 100k/ano**: $2k/ano → 25a; $12k/ano → 16a.
+
+  ⚡ **PONTO DE VIRADA — o marco que importa agora:** com patrimônio de $9,5k, um retorno de 15%
+  rende $1.425/ano contra $2.000 de aporte. **O aporte ainda é o motor, não o retorno.** Ele
+  vira quando o patrimônio passa de **~$13k a 15%** — ou seja, em **~2 anos**. Isso é coerente
+  com o diagnóstico de que o resultado até aqui veio do DCA e não da seleção de ativos: vai
+  continuar sendo assim por mais ~2 anos, e só depois o retorno passa a comandar.
 - **Sucesso é medido em ativos acumulados (tokens), não no preço em dólar.**
 - **Meta original registrada no Notion (página META):** aporte inicial ~US$ 2.000, ~US$ 400/mês (~US$ 13,33/dia) → **US$ 10.000 em ~25 meses** (ou 50 meses a US$ 200/mês).
 - **Privacidade é regra, não preferência:** "quero ser **efetivo**, não **visto**". Nada de endereço de carteira em URL pública, nada de identificadores únicos (NFT ID, endereço Cardano completo), `robots.txt` bloqueando tudo, `noindex` em todas as páginas.
