@@ -5243,12 +5243,234 @@ posição fora do radar. O script marca com aviso; investigar antes de lançar.
   fechamento de cada ano. **Não derivar da tabela `CPI_USA`**: apesar do comentário dela, os
   valores são interanuais, não acumulados
 - **Registro Histórico em `pools.html`** — decidir se reconstrói a tabela das 28 pools
-- **Custo em BRL dos ~285 USDT** depositados na AAVE (falta a data e o câmbio da conversão)
+- ~~Custo em BRL dos ~285 USDT~~ — ✅ RESOLVIDO em 09/09/2026: era pagamento de trabalho, não conversão de fiat (ver sessão 08–09/09)
 - **`data.js → defi.aave.healthFactor`** — guardado a pedido do Lucas (19/08). Não mexer
 - **Confirmar a Action `close-month.yml` rodando** — a primeira execução agendada é em 01/10;
   dá para disparar antes por Actions → "Fechamento mensal da curva de patrimônio" → Run workflow
 - **05/26 na curva** — não deu para verificar (o `networth-history.json` só começa em 08/07/2026);
   os pontos até 06/26 seguem como estavam. Se um dia aparecer um extrato mais antigo, vale conferir
+
+---
+
+## Sessão 08–09/09/2026 — MCP oficial da Aave conectado · principals derivados do histórico on-chain · V3 auditada · origem dos 285,40 encontrada · recebidos em cripto viram contribuição
+
+### Contexto
+Lucas colou o tweet da Aave anunciando o MCP server oficial e perguntou se ajudava em alguma
+coisa. A verificação de procedência levou à conexão do server, e daí saiu uma auditoria do
+histórico on-chain da AAVE que fechou uma pendência aberta desde 22/08 e corrigiu a
+metodologia dos `principals`.
+
+### Implementado
+
+#### 1. MCP server oficial da Aave — verificado, conectado, disponível
+
+- ⚠️ **A busca por "aave mcp" devolve só servers de TERCEIROS** (Tairon, foodaka, PaulieB14,
+  junct-bot, catwhisperingninja). Nenhum é da Aave. O que confirma o oficial é
+  **`aave.com/llms.txt`** — servido sob o domínio da própria Aave — apontando
+  `https://mcp.aave.com`. `aave.com/docs` **não** tem página de MCP (o anúncio é de 08/09).
+- Instalado por `claude mcp add --transport http aave https://mcp.aave.com`. **Sem API key.**
+  Registrado em `C:/Users/barol/.claude.json`; `claude mcp list` → `✓ Connected`.
+- ⚠️ **Server novo NÃO entra na sessão que já está rodando** — os tools só carregam numa sessão
+  nova. Foi o que aconteceu aqui: conectou, mas a sessão em curso não os enxergava. O trabalho
+  todo desta sessão foi feito pela GraphQL direta (mesma fonte); os tools apareceram depois.
+- 41 tools. Os úteis para este projeto: `get_user_activity`, `get_apy_history`,
+  `get_user_summary_history`, `get_user_positions`, `get_user_summary`, `get_reserve_details`,
+  `get_markets`, `preview_action`. Os `prepare_*` devolvem transação **não assinada** — o server
+  nunca detém chave nem submete (só relaya o que o usuário já assinou).
+
+#### 2. Como consultar o histórico da AAVE sem depender do MCP (GraphQL pública)
+
+`api.aave.com/graphql`, sem key, **funciona no sandbox** (ao contrário dos CDNs). A query do
+histórico é `activities`:
+
+```graphql
+query($r: ActivitiesRequest!){ activities(request:$r){
+  items { __typename
+    ... on SupplyActivity   { timestamp txHash supplied  { amount{value} token{info{symbol}} } }
+    ... on WithdrawActivity { timestamp txHash withdrawn { amount{value} token{info{symbol}} } }
+    ... on BorrowActivity   { timestamp txHash borrowed  { amount{value} token{info{symbol}} } }
+    ... on RepayActivity    { timestamp txHash repaid    { amount{value} token{info{symbol}} } }
+  } pageInfo { next } } }
+```
+
+`variables`: `{"r":{"query":{"chainIds":[1]},"user":"0x5a9a…f396","types":["SUPPLY","WITHDRAW","BORROW","REPAY"],"pageSize":"FIFTY"}}`
+
+**Armadilhas do schema** (custaram várias rodadas de introspection): `amount` é `DecimalNumber`
+e exige subfield (`{value}`); `Erc20Token` **não tem `symbol`** — é `token{info{symbol}}`;
+`pageSize` é enum (`TEN`/`FIFTY`); `types` é obrigatório. Outros campos úteis descobertos:
+`supplyApyHistory`, `borrowApyHistory`, `userSummaryHistory` (health factor no tempo).
+⚠️ O `fetch` do Node leva **403 se o User-Agent for customizado** — usar UA de browser.
+
+#### 3. Histórico completo da AAVE V4 (15 movimentos, 01/04 → 28/08/2026)
+
+| Data | Ação | Qtd | Token |
+|---|---|---:|---|
+| 01/04 | BORROW | 747,00 | GHO |
+| 01/04 | SUPPLY | 1,880000 | WETH |
+| 01/04 | SUPPLY | 903,513553 | USDT |
+| 02/04 | SUPPLY | 746,959855 | USDT |
+| 10/04 | BORROW | 748,00 | USDC |
+| 10/04 | REPAY | 747,574675 | GHO |
+| 10/04 | SUPPLY | 749,183085 | USDT |
+| 10/04 | WITHDRAW | 748,00 | USDT |
+| 24/04 | SUPPLY | 335,679695 | USDT |
+| 03/06 | WITHDRAW | 300,00 | USDT |
+| 05/06 | SUPPLY | 0,269740 | WETH |
+| 05/06 | WITHDRAW | 400,00 | USDT |
+| 04/07 | SUPPLY | 300,00 | USDT |
+| 28/08 | SUPPLY | 0,060000 | WETH |
+| 28/08 | SUPPLY | 408,564790 | USDT |
+
+A linha do tempo **valida a metodologia dos `principals`**: o saldo em 14/08 dá 1.587,34,
+contra os 1.587,65 que tinham sido derivados do print (diferença de arredondamento).
+
+#### 4. `data.js` — principals da AAVE agora vêm do on-chain, não de print arredondado
+
+| | antes | agora |
+|---|---:|---:|
+| WETH | 2,2104 | **2,209740** |
+| USDT | 1.993,92 | **1.995,900978** |
+| USDC | 748,00 | 748,00 (já exato) |
+
+Bloco de comentário novo acima de `principals` documenta a fonte, a query reproduzível e a
+auditoria da V3. **Verificado na UI** (`emprestimos.html`, seção "Juros em Tempo Real"):
+`+0,0153 WETH ($38,21) · +20,29 USDT` — antes exibiria 22,27 no USDT.
+
+#### 5. ⚠️ A V4 só cobre desde 01/04/2026 — como auditar a V3
+
+O `activities` começa na data da migração. A V3 foi auditada à parte pelos **aTokens antigos**
+via `alchemy_getAssetTransfers` (mint = supply, burn = saque), em
+`aEthWETH 0x4d5F…14E8` e `aEthUSDT 0x2387…086a`:
+
+| | entradas | saídas | líquido |
+|---|---:|---:|---:|
+| aEthWETH | 2,03376729 | 2,03376729 | **0,00000000** |
+| aEthUSDT | 2.373,534210 | 2.373,534209 | **0,000001** |
+
+**A V3 está ZERADA** — tudo migrou em 01–02/04/2026 e a passagem bate dos dois lados
+(saíram 1,8721144 WETH / 1.653,70 USDT; entraram 1,88 / 1.650,47). **Nada de V3 falta na
+contabilidade — não reabrir.**
+
+#### 6. 🎯 Origem dos 285,40 USDT — pendência de 22/08 RESOLVIDA
+
+Rastreada por `alchemy_getAssetTransfers` na cadeia de carteiras:
+
+**`0x0a91…09a0` → carteira `0x8311…4ea3` → AAVE, em 24/04/2026.**
+
+`0x0a91…09a0` é uma **EOA** (carteira de pessoa; não é contrato nem exchange — só 6 destinos
+no histórico) e pagou o Lucas três vezes, em valores irregulares: **145,62** (16/01) ·
+**75,18** (22/01) · **335,68** (24/04). Os 335,68 entraram e foram para a AAVE no mesmo dia.
+Fecha com o log de 24/04, que registra AAVE **+335,68** contra CoinGecko **+70,66** — os
+**265,02** de diferença nunca foram lançados.
+
+**Não é problema de custo em BRL. É pagamento de trabalho = entrada externa.** Lucas confirmou:
+*"deve ter sido um pagamento sim, de cabeça assim não me lembro"*.
+
+#### 7. Os 408,56 de agosto: ROTAÇÃO, não aporte (pendência cancelada)
+
+Eu havia levantado que faltariam ~R$ 2.100 de custo em BRL para agosto. **Errado** — rastreado:
+03–06/06 saíram 400 USDT da carteira em 4 parcelas de 100 (depósito em corretora para comprar
+ETH spot, que não pegou no alvo), 04/07 voltaram os 300 que sobraram e 28/08 voltaram 408,56.
+Lucas confirmou a história. **Não falta custo em BRL para agosto.**
+
+#### 8. ⚠️ ALERTA DE SEGURANÇA — address poisoning em 28/08 (avisar de novo se repetir)
+
+No mesmo dia da transferência real saíram **três** movimentos de `408,564790` da carteira
+principal:
+
+| Token | Destino | O que é |
+|---|---|---|
+| `Ụ᠋5` | `0x5a9a9a61…` | **falso** — Unicode imitando USDT |
+| `US͏DT` | `0x5a954a35…` | **falso** — caractere invisível entre `US` e `DT` |
+| `USDT` | `0x5a9aaa78…` | ✅ o real (carteira AAVE) |
+
+E entrou 0,00 USDT de `0x5a9a1704…561af396` — que **copia o começo (`0x5a9a`) e o fim (`f396`)**
+do endereço real da carteira AAVE. Golpe montado para quem confere só as pontas.
+**Regra: conferir o endereço inteiro ou usar contatos salvos.** Os tokens falsos são inertes.
+
+#### 9. Recebidos em cripto registrados como contribuição (decisão do Lucas, 09/09/2026)
+
+Discussão de metodologia: o que separa retorno de aporte não é a **origem** do dinheiro, é se
+ele foi **gerado pelo portfólio** ou **entrou de fora**. Pagamento de trabalho entra de fora —
+teste do Barsi: quem recebe salário e compra PETR4 não teve valorização da carteira.
+Lucas primeiro disse *"entenda isso como um recebido então, não como aporte"*; depois de ver a
+consequência, decidiu: **"pode registrar como contribuição com essa nota mesmo"**.
+
+Duas linhas em `data.js → contributions`, com a nota preservando que a origem foi trabalho:
+
+```
+{ date:'2026-04-24', usd: 285.40, note:'recebido — pagamento de trabalho em USDT (nao DCA); …' }
+{ date:'2026-08-27', usd:  46.10, note:'recebido — pagamento externo em USDC (nao DCA); …' }
+```
+
+⚠️ **PEGADINHA IMPORTANTE:** `scripts/close-month.js` só aplica `contributions` a meses **NOVOS**
+(linha ~114: *"NAO mexe em `invested` — a serie de aportes e historica e manual"*). Abril e
+agosto já estavam na série, então a linha sozinha **não teria efeito**. O ajuste foi somado
+**à mão** em `wealthCurve.invested`: **+285 de 04/26 em diante e +46 em 08/26**
+(6.684→6.969 · 6.950→7.235 · 7.100→7.385 · 7.250→7.535 · 7.610→**7.941**). Comentário no
+`data.js` avisa para **não somar de novo**. `close-month.js --dry-run` depois: *"nada a fazer,
+curva consistente até 08/26"*.
+
+### Dados atualizados
+
+| Campo | Antes | Depois |
+|---|---:|---:|
+| `principals.aave.WETH` | 2,2104 | **2,209740** |
+| `principals.aave.USDT` | 1.993,92 | **1.995,900978** |
+| `wealthCurve.invested` 04/26 | 6.684 | **6.969** |
+| `wealthCurve.invested` 08/26 | 7.610 | **7.941** |
+| `contributions` | vazio | **2 linhas (US$ 331,50)** |
+| Juro exibido do USDT (AAVE) | 19,65 | **17,67** |
+| Juro exibido do WETH (AAVE) | 0,014893 | **0,015560** |
+| ROI sobre 08/26 | 45,0% | **39,0%** |
+| CAGR / TWR | +1,7% | **+1,0%** |
+| TIR / XIRR | +16,0% | **+15,1%** |
+| Track record real (landing) | −10,0% | **−12,8%** |
+
+Nenhuma posição alterada — só metodologia e séries derivadas. Landing e dashboard **convergem**
+(CAGR +1,0% nos dois; TIR +15,1% contra IRR +15,08%), verificado no browser com preços ao vivo.
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| Depósito contado como rendimento (2,29 USDT) | Fechamento de agosto registrou "+406,27 USDT / +0,0604 WETH" derivados do card arredondado; on-chain foram **+408,564790** e **+0,060000** | `principals` passam a vir do `activities` on-chain |
+| Performance inflada em ~6 p.p. | Recebidos em cripto (285,40 + 46,10) entravam no patrimônio sem subir o capital aportado — o TWR creditava à gestão dinheiro que veio de trabalho | Registrados em `contributions` + ajuste retroativo em `wealthCurve.invested` |
+| Conflito de rebase em `emprestimos.html` | A Action `sync-emprestimos` rodou com o push anterior e gerou a própria versão do bundle | Resolvido **regenerando** (`node scripts/refresh-emprestimos-data.js`) — a geração é determinística, o script confirmou "já sincronizado" |
+
+### Verificação
+
+`data.js` carrega (shim `global.window`), 3 arrays de `wealthCurve` com 56 pontos cada,
+`close-month.js --dry-run` idempotente, bundle sincronizado, **0 erros de console e 0 NaN** em
+`emprestimos.html`, `portfolio_analytics.html` e `index.html`.
+⚠️ **O sandbox bloqueia o CoinGecko** — a landing degrada CAGR/TIR para +0,0% sem preço ao vivo.
+Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, volta a +1,0% /
++15,1%. **Testar o caminho ao vivo assim, não concluir que quebrou.**
+
+### Commits (push direto na main)
+
+| Hash | Mensagem |
+|---|---|
+| `9afcf02` | fix: principals da AAVE derivados do historico on-chain |
+| `01cf429` | data: registra os dois recebidos em cripto como contribuicao |
+
+### O que ainda falta
+
+- **Dois pagamentos de janeiro do mesmo `0x0a91…09a0`** — **145,62** (16/01) e **75,18** (22/01),
+  US$ 220,80 no total. Se foram lançados no CoinGecko na época, são o mesmo caso dos 285,40 e o
+  ROI segue ~2 pontos otimista. Conferir no histórico do CoinGecko de janeiro.
+- ~~Custo em BRL dos ~285 USDT~~ — ✅ **RESOLVIDO**: não era conversão de fiat, era pagamento de
+  trabalho. Registrado como contribuição. **Não reabrir como pendência de custo BRL.**
+- ~~Origem dos 285,40~~ — ✅ **RESOLVIDO** (ver §6).
+- ~~Falta de custo BRL em agosto (408,56)~~ — ✅ **CANCELADO**: era rotação (ver §7).
+- **`monthlyReturns[2026]`** Set–Dez — entram sozinhos pela Action
+- **CDI/IPCA anual**, **`FISCAL_ENTRADAS`**, **`US_CPI_CUMULATIVE_PCT`** — manutenção anual
+- **Registro Histórico em `pools.html`** — decidir se reconstrói a tabela das 28 pools
+- **`data.js → defi.aave.healthFactor`** — guardado a pedido do Lucas (19/08). **Não mexer**
+- **Confirmar a Action `close-month.yml`** — primeira execução agendada em 01/10
+- **`FISCAL_ENTRADAS` não cobre jul/2026 em diante** — a planilha de custo BRL termina em
+  17/06/2026. Os recebidos em cripto **não** entram lá (não passaram por fiat), mas se houver
+  conversão nova de fiat, falta lançar.
 
 ---
 
