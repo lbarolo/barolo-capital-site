@@ -663,7 +663,7 @@ window.BAROLO_DATA = {
   wealthCurve: {
     labels:   ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26','04/26','05/26','06/26','07/26','08/26'],
     values:   [853,860,1037,1108,1037,544,772,896,742,923,754,777,1119,1224,1388,1542,1570,1667,1780,1624,1639,1922,2226,2605,2959,3604,4636,4524,5471,5112,5955,5226,5170,6020,8153,8634,8570,7907,6760,6263,8069,8386,9424,8365,8545,12312,11610,10857,9511,7376,6371,9206,7392,7651,8623,11037],
-    invested: [1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6230,6418,6418,6969,7235,7385,7535,7941]
+    invested: [1061,1276,1276,1681,1771,1810,1886,1904,2198,2274,2367,2367,2431,2480,2499,2567,2658,2721,2721,2762,2802,2842,2870,2977,2977,2977,2977,3056,3056,3098,3098,3195,3310,3592,3677,3952,4127,4527,4598,4948,5121,5121,5121,5121,5121,6098,6098,6108,6451,6639,6639,7190,7456,7606,7756,8162]
   },
 
   // ── ESPELHO DO COINGECKO (yield de lending a lancar la) ───────────────────
@@ -716,9 +716,21 @@ window.BAROLO_DATA = {
     // contribuicao, com a nota preservando que a origem foi trabalho, nao DCA.
     // ⚠️ Datas anteriores a 09/2026: `close-month.js` so aplica `contributions` a
     //    meses NOVOS (ver linha 114 do script — `invested` de mes existente e
-    //    manual). Por isso o efeito destas duas ja foi somado A MAO em
-    //    wealthCurve.invested: +285 de 04/26 em diante, +46 em 08/26.
+    //    manual). Por isso o efeito destas ja foi somado A MAO em
+    //    wealthCurve.invested: +221 de 01/26 em diante (os dois de janeiro),
+    //    +285 de 04/26 em diante e +46 em 08/26.
     //    NAO somar de novo. Estao aqui para rastreabilidade e para o IR.
+    // VERIFICACAO DOS DOIS DE JANEIRO (09/09/2026): o print 'USDT COINGECKO.png'
+    //    mostra o historico COMPLETO do USDT (5 transacoes) e NAO tem nada de
+    //    janeiro — a posicao no CoinGecko so comeca em 14/03/2026, com uma
+    //    'transferencia de entrada' de 1.652,11 a CUSTO ZERO. Esse valor e o saldo
+    //    do aUSDT da AAVE V3 (1.650,57 no fim de fev + 1,54 de juros), entao os dois
+    //    pagamentos ESTAO ali dentro em quantidade — mas entraram sem custo e sem
+    //    subir o capital aportado. Caminho provado pelo transactions_aave.csv:
+    //    22/01 Supply 75,176145 USDT direto; 16/01 Supply 145,214452 USDe, sacado em
+    //    20/01 e convertido, virando parte do Supply de 1.649,538907 USDT.
+    { date:'2026-01-16', usd: 145.62, note:'recebido — pagamento de trabalho em USDT (nao DCA); de 0x0a91…09a0, virou 145,21 USDe e foi pro supply da AAVE V3 no mesmo dia' },
+    { date:'2026-01-22', usd:  75.18, note:'recebido — pagamento de trabalho em USDT (nao DCA); de 0x0a91…09a0, supply direto na AAVE V3 no mesmo dia' },
     { date:'2026-04-24', usd: 285.40, note:'recebido — pagamento de trabalho em USDT (nao DCA); de 0x0a91…09a0 via carteira 0x8311, foi direto pro supply da AAVE no mesmo dia' },
     { date:'2026-08-27', usd:  46.10, note:'recebido — pagamento externo em USDC (nao DCA); entrou direto para abater divida na Kamino' },
   ],
