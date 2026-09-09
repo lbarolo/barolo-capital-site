@@ -5411,6 +5411,33 @@ agosto já estavam na série, então a linha sozinha **não teria efeito**. O aj
 `data.js` avisa para **não somar de novo**. `close-month.js --dry-run` depois: *"nada a fazer,
 curva consistente até 08/26"*.
 
+#### 10. Os dois pagamentos de janeiro — conferidos no CoinGecko e lançados (09/09/2026)
+
+Lucas pediu para conferir e apontou os prints antigos na pasta do projeto. **`DIARIO DEFI E
+PRINTS/USDT COINGECKO.png`** (16/04/2026) mostra o histórico **completo** do USDT —
+*"Mostrando 1 para 5 dos resultados 5"* — e **não tem nada de janeiro**. A posição de USDT no
+CoinGecko só começa em **14/03/2026**, com uma **"Transferência de entrada" de +1.652,11 a
+CUSTO ZERO**.
+
+Esse número é exatamente o saldo do aUSDT da AAVE V3: **1.650,57** no fim de fevereiro
+**+ 1,54** de juros de duas semanas. Ou seja, **os dois pagamentos estão ali dentro em
+quantidade** — mas entraram sem custo e sem subir o capital aportado.
+
+⚠️ **Achado de ferramenta:** `DIARIO DEFI E PRINTS/transactions_aave.csv` (56 registros,
+04/2025→02/2026) é o **histórico da V3**, que a API `activities` não cobre. Foi ele que provou
+o caminho: `16/01 Supply 145,214452 USDe` (sacado em 20/01 e convertido, virando parte do
+`Supply 1.649,538907 USDT`) e `22/01 Supply 75,176145 USDT`. **Usar esse CSV sempre que
+precisar de histórico anterior a 01/04/2026.**
+
+**Print do portfólio geral conferido** (`portifolio coingecko.png`): os únicos outros ativos com
+ganho igual ao valor total (assinatura de custo zero) são **RDNT, ZK, ZETA e SCR** — airdrops
+legítimos, já com `invested: 0`. **ETH e SOL têm custo normal** ($4.023 e $2.265 implícitos).
+**Não há outro buraco além do USDT** — a suspeita de que o lançamento de 14/03 tivesse
+"resetado" o portfólio inteiro a custo zero foi verificada e descartada.
+
+Lançados: **+221 em `wealthCurve.invested` de 01/26 em diante** (6.230→6.451 … 7.941→**8.162**).
+Série segue monotônica; `close-month.js --dry-run` idempotente. ROI sobre 08/26: **39,0% → 35,2%**.
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5453,12 +5480,12 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, v
 |---|---|
 | `9afcf02` | fix: principals da AAVE derivados do historico on-chain |
 | `01cf429` | data: registra os dois recebidos em cripto como contribuicao |
+| `deca6c1` | docs: log sessão 08-09/09/2026 |
+| `d49a8bb` | data: registra tambem os dois recebidos de janeiro (US$ 220,80) |
 
 ### O que ainda falta
 
-- **Dois pagamentos de janeiro do mesmo `0x0a91…09a0`** — **145,62** (16/01) e **75,18** (22/01),
-  US$ 220,80 no total. Se foram lançados no CoinGecko na época, são o mesmo caso dos 285,40 e o
-  ROI segue ~2 pontos otimista. Conferir no histórico do CoinGecko de janeiro.
+- ~~Dois pagamentos de janeiro do mesmo `0x0a91…09a0`~~ — ✅ **RESOLVIDO no mesmo dia** (ver §10).
 - ~~Custo em BRL dos ~285 USDT~~ — ✅ **RESOLVIDO**: não era conversão de fiat, era pagamento de
   trabalho. Registrado como contribuição. **Não reabrir como pendência de custo BRL.**
 - ~~Origem dos 285,40~~ — ✅ **RESOLVIDO** (ver §6).
