@@ -554,10 +554,36 @@ window.BAROLO_DATA = {
   // para auditar/reconstruir o baseline se houver suspeita de drift (ou no fim do
   // ano, para o IR). O baseline abaixo foi cravado com o CSV de 15/07/2026.
   //
+  // ── FONTE ON-CHAIN DOS PRINCIPALS DA AAVE (08/09/2026) ────────────────
+  // Os principals da AAVE deixaram de ser derivados de print arredondado.
+  // Agora vêm do histórico on-chain, via a GraphQL pública da Aave
+  // (api.aave.com/graphql, query `activities` — a mesma fonte que o MCP
+  // server oficial mcp.aave.com expõe). Reprodução:
+  //   activities(request:{ query:{chainIds:[1]}, user:"0x5a9a…f396",
+  //     types:[SUPPLY,WITHDRAW,BORROW,REPAY], pageSize:FIFTY })
+  // 15 movimentos, 01/04/2026 → 28/08/2026. Somatório:
+  //   USDT supply 3.443,900978 − withdraw 1.448,00 = 1.995,900978
+  //   WETH supply 2,209740 (1,88 + 0,269740 + 0,06), zero saques
+  //   USDC borrow 748,00, zero repay  → confere com o valor que já estava
+  //
+  // ⚠️ O `activities` só cobre a V4 (começa em 01/04/2026, a migração).
+  //   A V3 foi auditada à parte pelos aTokens antigos via Alchemy
+  //   (alchemy_getAssetTransfers em aEthWETH 0x4d5F…14E8 e aEthUSDT
+  //   0x2387…086a, mint = supply / burn = saque). Resultado: a posição V3
+  //   está ZERADA — aWETH entradas 2,03376729 = saídas 2,03376729 e
+  //   aUSDT entradas 2.373,534210 vs saídas 2.373,534209 (dust). Tudo
+  //   migrou para a V4 em 01–02/04/2026, então nada de V3 falta aqui.
+  //
+  // CORREÇÃO QUE ISTO TROUXE: o fechamento de agosto registrou os depósitos
+  //   como "USDT +406,27" e "WETH +0,0604" (derivados do card, arredondado).
+  //   On-chain foram +408,564790 e +0,060000. Os 2,29 a mais de USDT eram
+  //   contados como juro — mesma classe do bug de 14/08, em escala menor
+  //   (juro do USDT exibido caiu de 19,65 para 17,67, o valor real).
+  //
   principals: {
     aave:   {
-      WETH: 2.2104,   // 2,2248 supply − 0,01444 earnings (print AAVE 01/09/2026; +0,0604 depositados no mes)
-      USDT: 1993.92,  // 2.012,82 supply − 18,90 earnings (print AAVE 01/09/2026; +406,27 depositados no mes)
+      WETH: 2.209740,      // ON-CHAIN EXATO (08/09/2026): 1,88 (01/04) + 0,269740 (05/06) + 0,06 (28/08), zero saques
+      USDT: 1995.900978,   // ON-CHAIN EXATO (08/09/2026): supply 3.443,900978 - saques 1.448,00
       USDC: 748.00    // borrow inicial (refin. 10/04/2026). Confere: 760,17 − 748 =
                       // 12,17 = exatamente o 'fees paid' do print AAVE.
     },
