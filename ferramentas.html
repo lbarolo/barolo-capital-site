@@ -2075,7 +2075,7 @@ body, input, button, select, textarea {
     <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:10px;line-height:1.6;">
       * Só conversões <b>fiat→cripto</b> (BRL saindo do banco). Compras cripto↔cripto não geram custo novo em BRL — o custo migra da stable usada.<br>
       * BUSD/DOT/BNB não estão mais em carteira (convertidos depois) — o custo deles migrou para os ativos atuais via trades.<br>
-      * <b>Pendente:</b> os depósitos de julho/2026 (R$ 500 em 10/07 + R$ 450 em 14/07 = R$ 950) não aparecem como conversão USDT/BRL na janela de 3 meses do extrato — viraram compra direta em par BRL ou seguem em BRL na corretora. Falta o histórico de ordens spot em pares BRL para fechar o rastro.
+      * Os R$ 950 de julho (R$ 500 em 10/07 + R$ 450 em 14/07) <b>já estão incluídos</b>: viraram 185,18 USDT no par USDT/BRL (câmbio médio 5,1302), confirmado pelo extrato de ordens da OKX em 09/09/2026. São os ~185 USDT de caixa que ficaram na corretora.
     </div>
   </div>
 
@@ -2281,15 +2281,23 @@ window.Fiscal = (function(){
   //      05/06  76,39353 USDT @ 5,2398 = R$   400,29
   //      17/06  96,26852 USDT @ 5,1938 = R$   500,00
   //    subtotal 218,35806 USDT por R$ 1.134,78 (câmbio médio 5,1969)
-  // Conferido que NÃO duplica: a planilha termina em 08/05/2026, as três são posteriores.
-  var APORTADO_BRL = 36632.97;   // Binance 29.664,20 + OKX 6.200,28 (fiat→cripto)
+  //  + 2 conversões USDT/BRL de julho (print de ordens OKX 09/09/2026):
+  //      10/07  97,11566 USDT @ 5,1485 = R$   500,00
+  //      14/07  88,06262 USDT @ 5,1100 = R$   450,00
+  //    subtotal 185,17828 USDT por R$ 950,00 (câmbio médio 5,1302)
+  //    Estes são os "~185 USDT de caixa em corretora" documentados em 22/08 — fecha o rastro
+  //    dos R$ 950 de julho, que estava pendente por não aparecer na janela de 3 meses.
+  // Conferido que NÃO duplica: a planilha termina em 08/05/2026, todas as cinco são posteriores.
+  // As compras BTC/USDT do mesmo print (24/06 e 01/07) são cripto↔cripto e NÃO entram aqui —
+  // já estão em data.js → holdings.BTC (invested $38,84 e $95,89).
+  var APORTADO_BRL = 37582.97;   // Binance 29.664,20 + OKX 7.150,28 (fiat→cripto)
   var FISCAL_ENTRADAS = [
     { t:'BTC',  qty:'0,00337',    brl:998.11,   avg:'296.174,15' },
     { t:'ETH',  qty:'0,3872',     brl:5844.80,  avg:'15.096,18'  },
     { t:'SOL',  qty:'1,012',      brl:914.48,   avg:'903,63'     },
     { t:'ADA',  qty:'307,99',     brl:3713.84,  avg:'12,06'      },
     { t:'XAI',  qty:'79',         brl:101.52,   avg:'1,29'       },
-    { t:'USDT', qty:'2.794,60',   brl:15066.57, avg:'5,39'       },
+    { t:'USDT', qty:'2.979,78',   brl:16016.57, avg:'5,38'       },
     { t:'USDC', qty:'531,13',     brl:2900.35,  avg:'5,46'       },
     { t:'BUSD', qty:'1.231,66',   brl:6433.55,  avg:'5,22'       },
     { t:'DOT',  qty:'2,97',       brl:352.77,   avg:'118,78'     },

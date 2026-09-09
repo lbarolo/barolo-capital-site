@@ -210,17 +210,26 @@ window.BAROLO_DATA = {
       // nem reemprestimo no periodo -> principals INALTERADOS.
       supply: { WETH:{ qty:2.2253, apy:0.0216 }, USDT:{ qty:2013.57, apy:0.0390 } },
       borrow: { USDC:{ qty:762.40, apy:0.0196 } },
-      // HF REAL da Aave = colateral x liquidation threshold / divida. Conferido com
-      // briefing.json (15/08/2026): colateral $5.658,25 (2,16 WETH @ $1.878,82 + 1.600 USDT),
-      // borrow $760,17, LTV 13,4% -> HF 6,04.
-      // CORRECAO 18/08/2026: o 6.08 anterior vinha de um colateral defasado ($4.622, que implica
-      // ETH a $1.399,07) combinado com a formula Collateral/Borrow, que SUPERESTIMA o HF (daria
-      // 7,44). Os dois erros quase se cancelavam. NAO usar Collateral/Borrow como regra geral.
-      // Refresh 21/08/2026: print mostra "Collateral" $5.516,00 direto (já é o valor ponderado
-      // pelo Collateral Factor de cada ativo — CF WETH 83% / CF USDT 78%, conferido: 2,16 ETH
-      // @$2.372 x 0,83 + 1.600 USDT x 0,78 = ~$5.500, bate com os $5.516 do print). Collateral/
-      // Borrow = 5.516/760,78 = 7,25, e desta vez CONFERE com o fetch ao vivo do briefing.json
-      // (7,26) — ao contrário do caso de 18/08, aqui o número já vem corretamente ponderado.
+      // ══ HEALTH FACTOR — FORMULA DEFINITIVA (resolvido 09/09/2026 via MCP da Aave) ══
+      //
+      //   HF = Borrowing Power / divida = SOMA(colateral_i x CF_i) / divida
+      //
+      // Onde CF = Collateral Factor por ativo: WETH 83% · USDT 78%.
+      // Conferido contra o `get_user_summary`/`get_user_positions` do mcp.aave.com em
+      // 09/09/2026, que devolve os campos oficiais:
+      //   maxBorrowingPowerUsd 6.167,641 / totalDebtUsd 762,7573 = healthFactor 8,0860 ✓
+      //   averageCollateralFactorPct 81,6653 — e os CFs individuais batem:
+      //   (5.538,77 x 0,83) + (2.013,57 x 0,78) = 6.167,76 -> 81,67% do colateral bruto ✓
+      //
+      // ⚠️ NAO usar `Collateral / Borrow` cru: superestima o HF (aqui daria 9,90 em vez de
+      //    8,09). So coincide quando o numero de "Collateral" do print JA vem ponderado pelo
+      //    CF — o que acontece em alguns cards da Aave e foi a origem da confusao historica.
+      //
+      // HISTORICO DA DIVERGENCIA (encerrado — nao reabrir): circularam 6,04 / 6,12 / 5,00 /
+      // 7,25 em momentos diferentes. Nenhum era "outra formula": eram SNAPSHOTS DEFASADOS,
+      // tirados com precos e colaterais diferentes, alguns com a formula crua por cima. O HF
+      // se move com o preco do ETH, entao QUALQUER valor gravado aqui envelhece em horas.
+      // O campo abaixo e SO FALLBACK — as paginas buscam o HF ao vivo e e esse que vale.
       // ── PRINT "POSITION DETAILS" DA AAVE (22/08/2026) — dados exatos ─────
       //   WETH: deposited 2,16 (exato 2,1629) · APY 2,21% · earnings 0,01 ETH
       //         ($32,07 = 0,0132 ETH) · CF 83%
@@ -271,7 +280,7 @@ window.BAROLO_DATA = {
       // fica ABAIXO do supply e viola o invariante (foi o que acabou de acontecer com
       // o USDS). Quando isso acontecer, rodar a Action `eth-sweep` de novo e subir o
       // holding para supply + total da varredura, a custo zero.
-      healthFactor: 8.01   // 6.104,00 colateral ponderado / 762,31 borrowed (print 05/09/2026)
+      healthFactor: 8.09   // FALLBACK. 6.167,64 borrowing power / 762,76 divida (MCP 09/09/2026)
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable

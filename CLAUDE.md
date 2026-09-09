@@ -5502,6 +5502,61 @@ inclusive as de seções pré-existentes. Não é bug do código: chamar `resize
 Screenshot nessa página continua renderizando errado (comportamento já conhecido) — **validar por
 DOM**.
 
+#### 13. Health Factor — divergência ENCERRADA (fórmula definitiva, via MCP da Aave)
+
+Primeira consulta real ao `mcp.aave.com` desta sessão. `get_user_summary` + `get_user_positions`
+devolvem os campos oficiais e fecham a questão:
+
+```
+maxBorrowingPowerUsd 6.167,641 / totalDebtUsd 762,7573 = healthFactor 8,0860
+averageCollateralFactorPct 81,6653
+```
+
+**Fórmula definitiva: `HF = Borrowing Power / dívida = Σ(colateral_i × CF_i) / dívida`**, com
+CF WETH **83%** e CF USDT **78%**. Conferido: (5.538,77 × 0,83) + (2.013,57 × 0,78) = 6.167,76,
+que é 81,67% do colateral bruto — bate com o `averageCollateralFactorPct` da API.
+
+⚠️ **NÃO usar `Collateral / Borrow` cru** — aqui daria **9,90** em vez de 8,09. Só coincide
+quando o "Collateral" do print já vem ponderado pelo CF, que é a origem de toda a confusão.
+
+**Os 3 valores divergentes (6,04 / 6,12 / 5,00, mais 7,25) não eram fórmulas diferentes: eram
+SNAPSHOTS DEFASADOS**, tirados com preços e colaterais distintos, alguns com a fórmula crua por
+cima. O HF se move com o preço do ETH, então qualquer valor gravado envelhece em horas.
+`data.js → defi.aave.healthFactor` **8,01 → 8,09**, agora rotulado explicitamente como
+**FALLBACK** (as páginas buscam ao vivo, e é o ao vivo que vale). Bloco de comentário antigo
+substituído pela explicação acima. **Pendência encerrada — não reabrir.**
+
+#### 14. Fiscal — conversões de julho lançadas (extrato OKX de 09/09/2026)
+
+Print do histórico de ordens da OKX (18/06 → hoje) trouxe 4 operações:
+
+| Data | Par | Qtd | Valor | Entra no Fiscal? |
+|---|---|---:|---:|---|
+| 14/07 | USDT/BRL | 88,06262 USDT @ 5,11 | R$ 450,00 | ✅ fiat→cripto |
+| 10/07 | USDT/BRL | 97,11566 USDT @ 5,1485 | R$ 500,00 | ✅ fiat→cripto |
+| 01/07 | BTC/USDT | 0,00164555 BTC | $96,00 | ❌ cripto↔cripto |
+| 24/06 | BTC/USDT | 0,00065484 BTC | $38,88 | ❌ cripto↔cripto |
+
+**Isso fecha a pendência dos "R$ 950 de julho"**, aberta desde 13/07: os depósitos de 10/07 e
+14/07 viraram **185,17828 USDT** (câmbio médio **5,1302**) e são exatamente os *"~185 USDT de
+caixa em corretora"* documentados em 22/08. A nota "Pendente" que estava visível na aba Fiscal
+foi substituída pela confirmação.
+
+`ferramentas.html`: `FISCAL_ENTRADAS` USDT **2.794,60 → 2.979,78** un · **R$ 15.066,57 →
+16.016,57** · câmbio 5,39 → **5,38**. `APORTADO_BRL` **36.632,97 → 37.582,97** (OKX 6.200,28 →
+7.150,28). Verificado na aba: linha USDT e TOTAL renderizando, sem NaN.
+
+As duas compras de BTC **não entram** (cripto↔cripto, o custo migra da stable) e já estavam em
+`data.js → holdings.BTC` — invested $38,84 (24/06) e $95,89 (01/07), contra $38,88 e $96,00 do
+print; a diferença é taxa.
+
+⚠️ **OBSERVAÇÃO NÃO RESOLVIDA (decisão do Lucas):** julho registra **+US$ 150** em
+`wealthCurve.invested`, mas o extrato mostra **US$ 185,18** de fiat convertido no mês — US$ 35
+de diferença. Junho e maio também não batem com o extrato (junho +150 contra ~US$ 173; maio +266
+contra ~US$ 94). Ou seja, **a série `invested` histórica não foi construída a partir dos extratos
+das CEX** e tem metodologia própria. Ajustar só julho introduziria inconsistência. Se for
+reconciliar, tem que ser a série inteira contra os extratos — não foi feito.
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5563,7 +5618,8 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, o
 | `d49a8bb` | data: registra tambem os dois recebidos de janeiro (US$ 220,80) |
 | `7faa0dc` | docs: depositos de ETH do 0x0cd6db sao rotacao, nao aporte |
 | `54c597e` | feat: alerta de address poisoning na aba Alertas |
-| `(este)` | docs: fecha o log da sessão 08-09/09 |
+| `aa7351c` | docs: log sessão 08-09/09/2026 (fechamento) |
+| `(este)` | fix: HF definitivo + Fiscal com as conversões de julho |
 
 ### O que ainda falta
 
@@ -5575,12 +5631,15 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, o
 - **`monthlyReturns[2026]`** Set–Dez — entram sozinhos pela Action
 - **CDI/IPCA anual**, **`FISCAL_ENTRADAS`**, **`US_CPI_CUMULATIVE_PCT`** — manutenção anual
 - **Registro Histórico em `pools.html`** — decidir se reconstrói a tabela das 28 pools
-- **`data.js → defi.aave.healthFactor`** — guardado a pedido do Lucas (19/08). **Não mexer**
+- ~~`data.js → defi.aave.healthFactor`~~ — ✅ **RESOLVIDO** (ver §13): fórmula definitiva documentada, valor vira fallback explícito
 - **Confirmar a Action `close-month.yml`** — primeira execução agendada em 01/10
 - ~~Depósitos de ETH do `0x0cd6…`~~ — ✅ **RESOLVIDO**: rotação, não aporte (ver §11)
-- **`FISCAL_ENTRADAS` não cobre jul/2026 em diante** — a planilha de custo BRL termina em
-  17/06/2026. Os recebidos em cripto **não** entram lá (não passaram por fiat), mas se houver
-  conversão nova de fiat, falta lançar.
+- ~~`FISCAL_ENTRADAS` não cobre jul/2026~~ — ✅ **RESOLVIDO** (ver §14): as 2 conversões de
+  julho lançadas, R$ 37.582,97 no total. **Próxima lacuna: ago/2026 em diante** — o extrato da
+  OKX tem janela de 12 meses, então pedir print novo a cada refresh do Fiscal.
+- **Série `wealthCurve.invested` não reconcilia com os extratos das CEX** — julho +US$ 150 na
+  série contra US$ 185,18 no extrato; junho e maio também divergem. Metodologia própria, não
+  derivada dos extratos. Reconciliar exigiria refazer a série inteira (ver §14).
 
 ### Balanço da varredura de entradas externas
 
