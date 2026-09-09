@@ -173,7 +173,7 @@ window.BAROLO_DATA = {
     // ✅ CONFIRMADO PELO LUCAS (05/09/2026): "esse 0.1648sol foram ganhos mesmo, custo zero"
     // — ele vai espelhar no CoinGecko como 'transferencia de entrada' (custo 0). O valor
     // aqui esta certo; NAO puxar de volta para 24,765222 na proxima leitura de print.
-    { ticker:'SOL',   cgId:'solana',                   qty:24.94,      invested:2533.36 },  // 24,93->24,94: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
+    { ticker:'SOL',   cgId:'solana',                   qty:24.94,      invested:2498.84 },  // invested = "Custo total" do CoinGecko (print 09/09/2026), fonte canonica. Era 2.533,36: o lancamento de 04/07 somou 53,92 por 0,66 SOL (preco do DIA do registro, $81,70) quando a compra real foi 0,661425 @ $62,26 = $41,18. Qty 24,93->24,94 acompanha o supply da Kamino (yield, custo zero).
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },

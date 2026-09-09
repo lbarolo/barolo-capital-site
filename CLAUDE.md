@@ -5631,6 +5631,37 @@ Binance da planilha (10/01, 20/02, 23/02, 25/04, 26/04, 05/05 de 2022 batem exat
 também as primeiras compras de 13 e 16/12/2021 em USDT — as que fundamentam o "desde 2021".
 **Não traz BRL novo** além do que a planilha já tem.
 
+#### 17. SOL e ADA investigados — ADA já batia, SOL corrigido (09/09/2026)
+
+⚠️ **ERRO DE MÉTODO MEU, corrigido:** eu tinha estimado o custo do ADA em 490,93 derivando de
+*valor + GP* do print de abril. **Errado** — o print novo mostra "Custo total **US$ 530,95**",
+idêntico ao `data.js`. A derivação falha quando o token teve venda (o ADA vendeu 32,5 em
+04/12/2024, receita $40,02, e isso entra no GP). **Usar sempre o campo "Custo total" do header,
+nunca derivar.**
+
+**SOL — erro real encontrado e corrigido: 2.533,36 → 2.498,84** (o "Custo total" do CoinGecko).
+Rastreado por `git log -S` na linha do holding:
+
+| Data | invested | commit |
+|---|---:|---|
+| 23/06 | 2.450,94 | fonte única `data.js` |
+| 04/07 | **2.504,86** (+53,92) | *"Kamino +0.66 SOL supply (compra da semana anterior)"* |
+| 07/08 | 2.533,36 (+28,50) | compra 0,374988 @ $76,01 ✓ confere com o CoinGecko |
+
+**A causa:** o lançamento de 04/07 somou **US$ 53,92** por 0,66 SOL — preço implícito **$81,70**,
+que era o preço do SOL **no dia do registro**. A compra real está no CoinGecko como
+**0,661425 SOL @ $62,26 = US$ 41,18** (05/06/2026). Lançou-se o preço do dia em vez do custo pago.
+
+**Resultado da auditoria: 6 dos 7 tokens com custo batem exatamente com o CoinGecko.**
+`TOTAL_INVESTED` 10.642,50 → **10.607,98**.
+
+🔒 **ETH fica como está (4.474,26) — e NÃO deve ser alinhado ao CoinGecko.** A diferença de
+506,21 não é erro: 406,27 são **migração deliberada de custo** (o ETH que virou pool e foi vendido
+transferiu o custo para o USDT — conferido: 4.880,53−406,27 e 1.772,92+406,27 dão exatamente os
+valores atuais). Alinhar o ETH exigiria baixar o USDT nos mesmos 406,27, mas o USDT do CoinGecko
+está zerado pelo reset de março e não serve de referência. **A migração existe justamente porque
+o CoinGecko perdeu esse histórico.** Mexer só no ETH criaria custo fantasma contado duas vezes.
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5711,8 +5742,10 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, o
 - ~~`FISCAL_ENTRADAS` não cobre jul/2026~~ — ✅ **RESOLVIDO** (ver §14): as 2 conversões de
   julho lançadas, R$ 37.582,97 no total. **Próxima lacuna: ago/2026 em diante** — o extrato da
   OKX tem janela de 12 meses, então pedir print novo a cada refresh do Fiscal.
-- 🎯 **ETH `invested`: 4.474,26 no `data.js` contra 4.980,47 no CoinGecko** (ver §16) — era
-  4.880,53 em 23/06. Descobrir por que caiu antes de corrigir.
+- ~~ETH `invested` divergente~~ — ✅ **RESOLVIDO** (ver §17): é migração de custo deliberada
+  (ETH→USDT), documentada e conferida. **Não alinhar ao CoinGecko.**
+- ~~SOL e ADA divergentes~~ — ✅ **RESOLVIDO** (ver §17): ADA já batia; SOL corrigido para
+  2.498,84 (lançamento de 04/07 usou o preço do dia em vez do custo pago).
 - **Reconciliar `wealthCurve.invested`** — a série dá US$ 8.162; a soma dos custos do CoinGecko
   dá US$ 9.176 (mas subestima USDT/USDS pelo reset de março). São métricas diferentes (aporte
   líquido × custo de aquisição), então não precisam bater — mas a diferença ainda não foi
