@@ -5557,6 +5557,36 @@ contra ~US$ 94). Ou seja, **a série `invested` histórica não foi construída 
 das CEX** e tem metodologia própria. Ajustar só julho introduziria inconsistência. Se for
 reconciliar, tem que ser a série inteira contra os extratos — não foi feito.
 
+#### 15. ⚡ METODOLOGIA — o CoinGecko é a fonte dos APORTES; os extratos das CEX são só para o BRL
+
+Estabelecido pelo Lucas em 09/09/2026, com as palavras dele: *"não consegui trazer tudo das DEX,
+o que tenho foi anotado em papel e aqui no coingecko, creio que é mais fiel, só não vou ter ao
+certo os valores em BRL, porém eu geralmente coloco no coingecko no mesmo dia que eu compro de
+BRL pra Dólar e depois pra Cripto, já registro no mesmo momento"*.
+
+**Consequência prática, que muda como reconciliar:**
+
+| Para quê | Fonte | Por quê |
+|---|---|---|
+| `wealthCurve.invested` (aportes, **USD**) | **CoinGecko** | A série é em USD — o BRL é irrelevante aqui. O CoinGecko tem as datas e os custos em USD, registrados no momento da operação. |
+| `FISCAL_ENTRADAS` (custo de aquisição, **BRL**) | extratos das CEX | Só o extrato traz o câmbio BRL/USD da conversão. **Incompleto por natureza** — janela de 12 meses na OKX e o Lucas usa várias corretoras. |
+
+⚠️ **Não tentar reconciliar a série `invested` contra os extratos das CEX** — foi a tentativa
+desta sessão e ela não fecha (julho +US$ 150 na série contra US$ 185,18 no extrato; junho e maio
+divergem em direções opostas). Os extratos são incompletos e estão em BRL; a série é completa e
+em USD. **São fontes diferentes para coisas diferentes.**
+
+**Estado do diagnóstico (09/09/2026):** o Fiscal, convertido a USD pelo câmbio médio de 5,38,
+mais os recebidos em cripto, dá **US$ 7.538** contra os **US$ 8.162** da série — diferença de
+US$ 624. **Isso NÃO prova que a série está errada**: o Fiscal está reconhecidamente incompleto.
+Para fechar, a fonte é o histórico de transações do CoinGecko (o print `USDT COINGECKO.png` é
+um exemplo do formato — 5 transações, com data, quantidade e custo).
+
+⚠️ **Ao usar o CoinGecko para aportes, separar aporte de rotação:** nem toda linha "Comprar" é
+dinheiro novo. Comprar ETH com USDT que já era dele é rotação. A pista é a regra do Lucas —
+ele registra BRL→USD→cripto no mesmo dia, então compras em sequência na mesma data costumam ser
+UMA entrada de fiat, não várias. Na dúvida, perguntar.
+
 ### Dados atualizados
 
 | Campo | Antes | Depois |
@@ -5637,9 +5667,9 @@ Não é bug: semeando `localStorage['bc-index-prices-cache']` com `ts` fresco, o
 - ~~`FISCAL_ENTRADAS` não cobre jul/2026~~ — ✅ **RESOLVIDO** (ver §14): as 2 conversões de
   julho lançadas, R$ 37.582,97 no total. **Próxima lacuna: ago/2026 em diante** — o extrato da
   OKX tem janela de 12 meses, então pedir print novo a cada refresh do Fiscal.
-- **Série `wealthCurve.invested` não reconcilia com os extratos das CEX** — julho +US$ 150 na
-  série contra US$ 185,18 no extrato; junho e maio também divergem. Metodologia própria, não
-  derivada dos extratos. Reconciliar exigiria refazer a série inteira (ver §14).
+- **Reconciliar `wealthCurve.invested` contra o histórico do CoinGecko** (ver §15) — a série
+  dá US$ 8.162 e o Fiscal (incompleto) sugere US$ 7.538. **A fonte certa é o CoinGecko, não os
+  extratos das CEX.** Falta o Lucas exportar/printar o histórico de transações por token.
 
 ### Balanço da varredura de entradas externas
 
