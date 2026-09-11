@@ -6009,6 +6009,171 @@ fechamento; patrimônio líquido US$ 9.691 (+1,7% na semana); borrow da AAVE sub
 
 ---
 
+## Sessão 11/09/2026 (continuação) — Revisão dos 44 gráficos antes dos PDFs · Colateral vs Dívida e Acumulação de Tokens passam a atualizar sozinhos · Portfólio em branco no benchmark
+
+### Contexto
+Depois do review semanal, Lucas avisou que ia **salvar os PDFs de tudo no mesmo dia** e pediu uma
+revisão de todos os gráficos. Em seguida perguntou quais gráficos se atualizam sozinhos e mandou
+automatizar os dois que ainda eram manuais. Por fim, pediu a linha do Portfólio em branco no
+gráfico de benchmark.
+
+### ⚠️ Ambiente de verificação (reusar na próxima auditoria de gráficos)
+O Browser pane fica **oculto** (`document.visibilityState === 'hidden'`) → **`requestAnimationFrame`
+não dispara**. Consequências: (1) todo gráfico criado em aba oculta mede **0×0** e o Chart.js não
+redimensiona (o `resize()` fica preso esperando animação); (2) as sparklines da tabela de ativos
+(criadas dentro de um rAF) nem chegam a existir. **Isso NÃO é bug do site.** Contorno que funcionou:
+para cada gráfico `ch.stop(); ch.options.animation=false; ch.resize(); ch.update('none')` e medir
+"tinta" (% de pixels não transparentes via `getImageData`). Com isso dá para validar tamanho real,
+NaN, séries vazias e pixels desenhados sem ver a tela. O CoinGecko também dá 429/CORS em rajada
+local — não é bug; na máquina do Lucas os preços carregam.
+
+### Implementado
+
+#### 1. Auditoria — 44 gráficos, 6 páginas, todas as abas
+Inventário: dashboard 22 gráficos Chart.js (+13 sparklines + 1 gauge custom) em 5 abas · pools 10 ·
+empréstimos 1 · ferramentas 2 (Evolução, Ciclo) em 11 abas · landing 1 · relatório 2.
+**Nenhum com NaN, série vazia ou erro de console.** Pools, empréstimos, ferramentas e landing:
+OK sem mexer. Achados e fixes abaixo (commit `09c8505`).
+
+#### 2. `portfolio_analytics.html` — aba Risco: 3 gráficos achatados (bug real)
+`cpImpactChart`, `cpDecompositionChart`, `cpHistChart` usam `maintainAspectRatio:false` com o canvas
+solto no card (só `max-height`). `buildConvexityUI` roda no `renderUI` com a aba oculta → canvas 0 →
+quando a aba abre, o Chart.js mede a altura do card, que é só o título → **26 a 52px**.
+Fix: cada canvas embrulhado em `<div style="position:relative;height:210px|200px">` (padrão
+documentado do Chart.js). Depois: 650×210, 650×210, 1352×200.
+
+#### 3. `portfolio_analytics.html` — sparklines "7d Spark" eram RUÍDO ALEATÓRIO
+`genSpark()` gerava a linha com `Math.random()` — o desenho mudava a cada recarga e não tinha nada a
+ver com o preço. Fix: `fetchPrices()` agora pede `&sparkline=true` no `/coins/markets` e grava
+`liveData[id].spark7d` (168 pontos horários reduzidos a ~28, `i % 6`; vai junto no cache
+`bc-prices-cache`). O desenho usa `spark7d + preço atual`; cor pela tendência da própria linha.
+Sem sparkline (fallback `/simple/price` ou cache antigo) → `genSpark` desenha **reta de 24h**, nunca
+ruído. Verificado: ETH 28 pontos, 2.456→2.627.
+
+#### 4. `relatorio.html` — curva e retornos mensais eram cópias à mão paradas em 03/26
+`WEALTH_CURVE` (51 pontos, até 03/26, com 10/25 = **10.395** contra os 12.312 reais) e
+`MONTHLY_RETURNS` (estimativas antigas) não liam o `data.js` → **o PDF do relatório divergia do
+dashboard**. Fix: IIFE nova logo depois de `MONTHLY_RETURNS` sobrescreve os dois a partir de
+`BAROLO_DATA.wealthCurve`, com a mesma conta do dashboard (**Modified Dietz**, aporte no meio do mês).
+Literais antigos ficam só como fallback. Depois: 56 meses até 08/26; anuais 2022 −79,5 · 2023 +125 ·
+2024 +182,2 · 2025 −2,3 · 2026 −20,1 (conferido em Node: diferença ≤0,2 p.p., arredondamento mensal).
+
+#### 5. `portfolio_analytics.html` — HF de fallback 5,00 fixo
+`WEEKLY_UPDATE.defi.aave.healthFactor: 5.00` e `buildConvexityUI` (`_liveAaveHF || 5.00`) →
+agora caem no `BAROLO_DATA.defi.aave.healthFactor` (8,21). **Fecha a pendência registrada no início
+desta mesma data.** Com preços carregando o exec bar já mostrava 8,21; o fix só protege o dia em
+que o fetch falhar.
+
+#### 6. ⚡ Colateral vs Dívida e Acumulação de Tokens — AUTOMÁTICOS (commit `504eab4`)
+Os dois gráficos da aba DeFi & Mercado eram arrays digitados à mão e tinham parado
+(**set/25–mar/26** e **out/24–abr/26**). Agora:
+
+**`data.js → BAROLO_DATA.lendingSnapshot(px)`** (dentro da IIFE de agregados) — fórmula única,
+`px = {ETH, SOL}`, stables a $1. Devolve `aaveCol, kamCol, aaveDebt, kamDebt`, **`hf`**
+(Σ col×CF / dívida, CF WETH 83% / USDT 78%), **`kLtv`** (%), **`accEth`, `accSol`**, `ethLendV4`,
+`solLend`. Sem preço → campos em USD vêm `null`.
+
+**`data.js → tokenAccumulation`** (bloco novo): `poolsETH 0,0700` · `poolsSOL 2,070` (fees de pool
+recebidas em token, histórico fechado) · `ethLendingV3 0,0158` (juro da V3 abr/25–mar/26,
+**estimado e congelado** — virou principal na migração para a V4, não dá para isolar on-chain) ·
+`history` = a série estimada antiga out/24–abr/26, congelada.
+Juro retido **medido** = supply − principals. Na Kamino o principal vem do CSV da obrigação inteira
+(K1–K4), então `supply − principal` = **juro da vida inteira em SOL** (inclui o sacado em 2025) —
+confere com o "Interest Earned" da Kamino (~US$ 164 ≈ 1,30 SOL × preço médio + 4,5 USDS).
+⚠️ Isso corrige uma afirmação da sessão de 14/08, que dizia que "atual − principal" era só o juro
+**ainda retido**: com o principal líquido de saques, a conta dá o juro de toda a vida.
+
+**`scripts/fetch-networth.js`** — o snapshot diário (Action `networth.yml`) grava `point.defi =
+B.lendingSnapshot({ETH, SOL})` em `networth-history.json`. Testado: HF 8,186 · LTV 26,7% ·
+3,374 SOL / 0,1016 ETH acumulados.
+
+**Backfill** (script único, scratchpad, não commitado): preencheu `defi` nos **66 pontos** desde
+08/07 usando a versão do `data.js` de cada `dataAsOf` (via `git show`) + os preços gravados no ponto.
+Principals por data (o bloco `principals` só existe desde 14/08): AAVE WETH 2,149740 até 27/08 e
+2,209740 depois · Kamino SOL **desconhecido antes de 15/07** (`accSol:null`), 23,274227 até 26/08,
+23,645990 depois. Pontos marcados `backfill:true`.
+⚠️ Supply de WETH antes de 22/08 vinha arredondado (2,16) → `ethLendV4` desses pontos tem erro de
+±0,001–0,005 ETH. Aceitável; documentado.
+
+**Gráfico Colateral vs Dívida** (`buildDebtChart` → `loadNetworthHistory()` → `renderDebtChart`):
+1 ponto por semana ancorado no snapshot mais recente + **"Hoje"** ao vivo (só com preço real de
+`liveData`, nunca o fallback). Modo Empilhado (colateral/dívida por protocolo) e **modo Ratio
+agora real** (HF 5,9→8,2 e LTV Kamino 37%→26,7% desde julho; eixo LTV 0–80% para mostrar a margem
+até os ~77% de liquidação). Título: "Evolução Semanal · … desde jul/26, atualiza sozinho".
+
+**Gráfico Acumulação de Tokens** (`buildAccChart` → `renderAccChart` + `accSeries`): estimativa
+do diário até abr/26 + último snapshot de cada mês de jul/26 em diante + mês corrente ao vivo.
+**Mai–jun/26 = null**, desenhado **tracejado** (`spanGaps` + `segment.borderDash`), porque o CSV da
+Kamino na pasta (`DIARIO DEFI E PRINTS/transactions_kamino.csv`) vai só até **fev/2026** — sem
+principal confiável nesses meses. Tooltip marca "(estimativa do diário)" vs "(medido)". O degrau do
+SOL abr→jul (2,600 → 3,186) é a **correção da estimativa antiga** (0,53 SOL estimado vs ~1,1
+medido), explicado na nota abaixo do gráfico. KPIs com IDs novos (`acc-eth-pools`, `acc-eth-lend`,
+`acc-sol-pools`, `acc-sol-lend` + barras `-bar`), calculados pelo `lendingSnapshot`.
+Hoje: **0,1016 ETH** (pools 0,0700 + lending 0,0316) · **3,374 SOL** (pools 2,070 + lending 1,304).
+
+Os dois reconstroem a cada `renderUI` (hook logo depois de `buildConvexityUI(WEEKLY_UPDATE)`),
+porque o ponto de hoje depende do preço ao vivo. Funções antigas removidas (sem código morto).
+`ACC_DATA`/`ACC_MONTHLY` ficam só como fallback. **Nada mais para atualizar à mão nesses dois.**
+
+#### 7. Benchmark de aporte equivalente — Portfólio em branco (commit `e794e44`)
+Pedido do Lucas. `buildBenchmarkChart`: `borderColor: dk ? '#ffffff' : '#2a1e0e'`. **No tema
+claro (padrão do site) vira a cor do texto**, porque branco sumiria no fundo creme — Lucas aprovou
+("ta otimo"). Segue a troca de tema (verificado light→dark→light).
+
+### Dados atualizados
+
+| Onde | O que mudou |
+|---|---|
+| `data.js` | + `tokenAccumulation` (poolsETH/poolsSOL/ethLendingV3 + history out/24–abr/26) · + `lendingSnapshot(px)` |
+| `networth-history.json` | + campo `defi` em todos os 66 pontos (backfill) e em todo ponto novo |
+| `relatorio.html` | curva e retornos mensais passam a vir do `data.js` (56 meses) |
+| Acumulação de Tokens | ETH 0,088 (estimado, abr/26) → **0,1016 medido** · SOL 2,600 → **3,374** |
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| Gráficos da aba Risco com 26–52px de altura | `maintainAspectRatio:false` + canvas sem container de altura fixa, criados com a aba oculta | Wrapper `position:relative;height:210/200px` |
+| Sparklines da tabela eram inventadas | `genSpark()` com `Math.random()` | Sparkline real de 7d do CoinGecko; fallback = reta de 24h |
+| Relatório com curva parada em 03/26 e retornos antigos | Cópias à mão, sem ler o `data.js` | Deriva de `BAROLO_DATA.wealthCurve` com Modified Dietz |
+| HF 5,00 no exec bar quando o fetch de preço falha | Fallback fixo antigo | Fallback = `data.js` (8,21) |
+| Colateral vs Dívida parado em mar/26 · Acumulação parada em abr/26 | Arrays digitados à mão | Leem `networth-history.json` (campo `defi` diário) + ponto ao vivo |
+
+### O que ainda falta
+- **Decisões do Lucas sobre dois itens da aba Risco / DeFi & Mercado (perguntado, sem resposta):**
+  (1) **"Evolução da Convexidade" é série INVENTADA** — 19 valores fixos em `buildConvexityHistChart`,
+  só o último é real: tirar o gráfico ou marcar "ilustrativo"? (2) **Semicírculo do Fear & Greed
+  nunca é desenhado** — o `<canvas id="fg-gauge">` não tem código que o pinte (só o número aparece):
+  deixar ou remover o espaço vazio?
+- **Renda Passiva (`RENDA_2026`)** — continua manual: 1 linha por fechamento de mês (setembro entra
+  em 01/10). Candidato a entrar no `/fecharmes`.
+- **Mai–jun/26 na Acumulação** — só preenche se aparecer o CSV da Kamino de mar–jul/2026
+  (Transaction History) para reconstruir o principal desses meses.
+- **Evolução (ferramentas)** — usa snapshots do `localStorage` do navegador; só existe na máquina do
+  Lucas (por desenho).
+- Pendências do review semanal da mesma data seguem valendo: yield pendente no CoinGecko (~US$ 11,39,
+  acumulando — lembrar em 01/10), borrow da AAVE a 5,63% (reavaliar se >5% por 2 semanas), rewards
+  da Kamino (~US$ 5,76), confirmar a Action `close-month.yml` em 01/10.
+
+### Commits (push direto na main)
+| Hash | Mensagem |
+|---|---|
+| `09c8505` | fix: revisao dos graficos antes dos PDFs |
+| `504eab4` | feat: Colateral vs Divida e Acumulacao de Tokens passam a atualizar sozinhos |
+| `e794e44` | style: linha do Portfolio no benchmark de aporte equivalente em branco |
+| `(este)` | docs: log sessão 11/09/2026 (continuação) |
+
+---
+
+Atualizado: 11/09/2026 (continuação) — **revisão dos 44 gráficos** (0 NaN; corrigidos os 3 achatados
+da aba Risco, as sparklines que eram aleatórias, o relatório com curva parada em 03/26 e o HF 5,00
+de fallback); **Colateral vs Dívida e Acumulação de Tokens agora se atualizam sozinhos** via
+`lendingSnapshot` no `data.js` + campo `defi` no snapshot diário (66 pontos preenchidos desde 08/07);
+**Portfólio em branco no benchmark** (tema claro usa a cor do texto); pendentes com o Lucas: série
+inventada da Convexidade e semicírculo vazio do Fear & Greed
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
