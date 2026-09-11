@@ -1236,12 +1236,12 @@ body, input, button, select, textarea {
   <!-- Left: Impact Chart -->
   <div class="card" style="margin-bottom:0;">
     <div class="chart-title" style="margin-bottom:12px;">Impacto por Ativo (w×C[i])</div>
-    <canvas id="cpImpactChart" style="max-height:210px;"></canvas>
+    <div style="position:relative;height:210px;"><canvas id="cpImpactChart"></canvas></div>
   </div>
   <!-- Right: Decomposition Pie -->
   <div class="card" style="margin-bottom:0;">
     <div class="chart-title" style="margin-bottom:12px;">Decomposição de CP (λ₁/λ₂/λ₃)</div>
-    <canvas id="cpDecompositionChart" style="max-height:210px;"></canvas>
+    <div style="position:relative;height:210px;"><canvas id="cpDecompositionChart"></canvas></div>
   </div>
 </div>
 
@@ -1297,7 +1297,7 @@ body, input, button, select, textarea {
 <!-- Convexity Evolution Chart -->
 <div class="card" style="margin-bottom:14px;">
   <div class="chart-title" style="margin-bottom:12px;">Evolução da Convexidade (Série Histórica)</div>
-  <canvas id="cpHistChart" style="max-height:200px;"></canvas>
+  <div style="position:relative;height:200px;"><canvas id="cpHistChart"></canvas></div>
 </div>
 
 <!-- Stress Test Matrix -->
@@ -1628,7 +1628,7 @@ var WEEKLY_UPDATE = {
  usdtSupplied: 1300,
  usdcBorrowed: 754.65,
  usdcBorrowApy: 5.38,
- healthFactor: 5.00,
+ healthFactor: (window.BAROLO_DATA && window.BAROLO_DATA.defi && window.BAROLO_DATA.defi.aave && window.BAROLO_DATA.defi.aave.healthFactor) || 5.00,
  },
  kamino: {
  solSupplied: 23.36,
@@ -1842,7 +1842,7 @@ async function fetchPrices(){
  // Try CoinGecko /coins/markets first (richer data)
  try {
  const ids = PORTFOLIO.map(a=>a.cgId).join(',');
- const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h,7d,30d,1y`;
+ const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=24h,7d,30d,1y`;
  const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
  if(!r.ok) throw new Error('HTTP ' + r.status);
  const arr = await r.json();
@@ -1854,6 +1854,9 @@ async function fetchPrices(){
    change7d:  coin.price_change_percentage_7d_in_currency  || 0,
    change30d: coin.price_change_percentage_30d_in_currency || 0,
    change1y:  coin.price_change_percentage_1y_in_currency  || 0,
+   // sparkline REAL de 7 dias (CoinGecko, ~168 pts horarios) reduzida a ~29 pontos
+   spark7d: (coin.sparkline_in_7d && coin.sparkline_in_7d.price && coin.sparkline_in_7d.price.length)
+     ? coin.sparkline_in_7d.price.filter(function(_, i){ return i % 6 === 0; }) : null,
  };
  const asset = PORTFOLIO_DATA.find(a => a.cgId === coin.id);
  if (asset && coin.image) asset.logo = coin.image;
@@ -2349,8 +2352,9 @@ function renderTable(enriched, totalVal){
  const canvas = document.getElementById('spark_'+a.ticker);
  if(!canvas) return;
  const c24=a.change24h||0;
- const sparkData = genSpark(a.price, c24);
- const color = c24>=0?'#00e676':'#ff4f4f';
+ const _sp = (liveData[a.cgId] && liveData[a.cgId].spark7d) || null;
+ const sparkData = (_sp && _sp.length > 1) ? _sp.concat([a.price]) : genSpark(a.price, c24);
+ const color = (sparkData[sparkData.length-1] >= sparkData[0])?'#00e676':'#ff4f4f';
  sparkCharts[a.ticker] = new Chart(canvas,{
  type:'line',
  data:{labels:sparkData.map((_,i)=>i), datasets:[{data:sparkData,borderColor:color,backgroundColor:color+'22',borderWidth:1.5,fill:true,tension:0.4,pointRadius:0}]},
@@ -2363,7 +2367,8 @@ function renderTable(enriched, totalVal){
 function genSpark(price, change24h){
  const start = price / (1 + (change24h||0)/100);
  const pts = 14; const d=[start];
- for(let i=1;i<pts-1;i++) d.push(d[i-1]+(Math.random()-0.48)*price*0.035);
+ // Sem sparkline real (fallback /simple/price ou cache antigo): reta de 24h, nunca ruido aleatorio.
+ for(let i=1;i<pts-1;i++) d.push(start+(price-start)*i/(pts-1));
  d.push(price); return d;
 }
 
@@ -2669,7 +2674,7 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
 
 function buildConvexityUI(W){
   const enriched = buildEnriched();
-  const aaveHF = window._liveAaveHF || 5.00;
+  const aaveHF = window._liveAaveHF || WEEKLY_UPDATE.defi.aave.healthFactor || 5.00;
   const kaminoLTV = window._liveKaminoLTV || 0.401;
   // W.holdings é objeto {ticker:qty}, não array — usa o helper de preço live
   const liveETH = getPrice('ethereum') || 1470;

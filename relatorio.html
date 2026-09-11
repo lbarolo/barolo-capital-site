@@ -589,6 +589,28 @@ var MONTHLY_RETURNS = {
   2026:{ Jan:-18,Feb:-22,Mar:-13.6,Apr:40.3,May:null,Jun:null,Jul:null,Aug:null,Sep:null,Oct:null,Nov:null,Dec:null },
 };
 
+// ── Curva + retornos mensais DERIVADOS do data.js (11/09/2026) ──
+// Antes eram copias a mao que pararam em 03/26 (e com 10/25 = 10.395 contra os 12.312
+// reais), e os retornos mensais eram estimativas antigas — o PDF divergia do dashboard.
+// Agora: mesma fonte (BAROLO_DATA.wealthCurve) e mesma conta do portfolio_analytics
+// (Modified Dietz, aporte no meio do mes). Os literais acima ficam so como fallback.
+(function(){
+  var wc = window.BAROLO_DATA && window.BAROLO_DATA.wealthCurve;
+  if (!wc || !wc.labels || wc.labels.length !== wc.values.length || wc.labels.length !== wc.invested.length) return;
+  WEALTH_CURVE = { labels: wc.labels.slice(), values: wc.values.slice(), invested: wc.invested.slice() };
+  var keys = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var mr = {};
+  wc.labels.forEach(function(l){ var y = 2000 + parseInt(l.split('/')[1], 10); if (!mr[y]) { mr[y] = {}; keys.forEach(function(k){ mr[y][k] = null; }); } });
+  for (var i = 1; i < wc.labels.length; i++) {
+    var p = wc.labels[i].split('/'), m = parseInt(p[0], 10) - 1, y = 2000 + parseInt(p[1], 10);
+    if (!(wc.values[i-1] > 0)) continue;
+    var inflow = (wc.invested[i] || 0) - (wc.invested[i-1] || 0);
+    var denom = wc.values[i-1] + 0.5 * inflow;
+    mr[y][keys[m]] = denom > 0 ? +(((wc.values[i] - inflow - wc.values[i-1]) / denom) * 100).toFixed(1) : null;
+  }
+  MONTHLY_RETURNS = mr;
+})();
+
 // (Hidratação via cache do track.html removida — track.html não existe mais; POOLS_DATA é a fonte estática.)
 
 // ─────────────────────────────────────────────
