@@ -5847,6 +5847,168 @@ julho" pendentes desde 13/07); **auditoria do custo de aquisição contra 16 pri
 
 ---
 
+## Sessão 11/09/2026 — Review semanal: AAVE exata via MCP, Kamino, juro da AAVE passa a entrar no holding, yield pendente no CoinGecko fica acumulando
+
+### Contexto
+Lucas mandou 3 prints (CoinGecko, AAVE Position Details e Kamino My Loan) e pediu o review
+semanal alterando o que fosse preciso. Nenhum aporte, nenhum depósito/saque/repay na semana:
+só juros e mudança de taxa.
+
+### Implementado
+
+#### 1. AAVE com quantidades EXATAS pelo MCP (não pelo card arredondado)
+Primeira atualização semanal feita inteira pelo `mcp.aave.com` (os tools já carregam em sessão
+nova). Sequência que funciona — **reusar sempre**:
+1. `get_user_positions` (user = carteira AAVE, `version:'v4'`, `chainId:1`) → devolve o
+   `spokeId` do spoke "Main", HF, borrowing power, dívida.
+2. `get_position_items` com esse `spokeId`, `side:'supply'` e depois `side:'borrow'` → devolve
+   **`balance`, `principal` e `interest` por ativo, com todas as casas decimais**.
+
+Resultado 11/09/2026:
+
+| Item | balance | principal | juro | APY |
+|---|---:|---:|---:|---:|
+| WETH | 2,225494100 | 2,209740095 | 0,015754006 | 1,78% |
+| USDT | 2.016,818486 | 1.995,900978 | 20,917508 | 3,21% |
+| USDC (borrow) | 763,052538 | 748 | 15,052538 | 5,63% net · **6,44% base** |
+
+**Os três principals bateram na casa decimal com o bloco `principals` do `data.js`**
+(derivados do `activities` on-chain em 08/09) — a metodologia está validada de ponta a ponta.
+HF 8,2135 · maxBorrowingPower $6.266,59 · dívida $762,96 · colateral $7.671,56.
+⚠️ Diferença de APY do borrow: o print e o `netBorrowApyPct` dizem **5,63%**; o item mostra
+`apyPct` **6,44%** (taxa base). Gravado o 5,63% (é o que o Lucas vê e o efetivo da posição).
+
+#### 2. ⚡ MUDANÇA DE MÉTODO — o juro da AAVE (ETH e USDT) passa a entrar no holding
+Até aqui só o juro da **Kamino** subia o holding a custo zero (SOL/USDS, onde holding = supply).
+O juro do aWETH e do aUSDT **nunca era espelhado** desde a reconciliação de 22/08, embora a
+regra 2 daquela sessão ("yield entra no CoinGecko como quantidade, custo zero — aToken que cresce
+sozinho") já mandasse fazer isso. Corrigido, medindo **só o crescimento do juro desde 22/08**
+(independe do principal e do caixa fora da AAVE):
+- **ETH** 2,23062 → **2,23317** (+0,00255 = juro 0,015754 hoje − 0,0132 do print de 22/08)
+- **USDT** 2.198,08879 → **2.201,81879** (+3,73 = juro 20,917508 hoje − 17,19 de 22/08)
+
+Por que a conta é pelo delta do juro e não pelo supply: o número do CoinGecko de 22/08 já
+embutia o supply da AAVE daquele dia (inclusive o juro de então), e o depósito de 28/08
+(+0,06 ETH / +408,56 USDT) é principal. Logo o que falta é exatamente o juro acumulado depois.
+Conferência do USDT: AAVE 2.016,82 + corretora 185 + carteira ~0,27 = 2.202,09 contra 2.201,82
+(os ~0,27 são arredondamento herdado de 22/08). Conferência do ETH: supply 2,225494 + varredura
+fora da AAVE 0,006026 + Yearn 0,0018 = 2,23332 ≈ 2,23317.
+**Efeito colateral bom:** encerra o alerta "a margem holding − supply está encolhendo" que ficou
+no `data.js` desde 04/09 — o holding agora acompanha o supply.
+
+#### 3. `cgMirror` ganhou ETH e USDT; card do dashboard reapareceu
+`data.js → cgMirror` agora lista SOL 24,94 · USDS 304,69 · **ETH 2,23062 · USDT 2198,08879**
+(o que está no CoinGecko hoje). `node scripts/yield-to-mirror.js` passa a mostrar:
+
+| Token | Lançar | CoinGecko → site |
+|---|---|---|
+| ETH | +0,002550 (~US$ 6,47) | 2,23062 → 2,23317 |
+| SOL | +0,01 (~US$ 1,03) | 24,94 → 24,95 |
+| USDT | +3,73 | 2.198,08879 → 2.201,81879 |
+| USDS | +0,17 | 304,69 → 304,86 |
+| **Total** | **~US$ 11,39** | |
+
+#### 4. ⏸ DECISÃO DO LUCAS — não lançar ainda, deixar acumulando
+Palavras dele: *"Não vou lançar ainda no coingecko ta muito baixo os valores, salve pra depois
+me lembrar."* Registrado em três lugares: comentário no `cgMirror` do `data.js`, rotina 1 no
+topo deste arquivo ("Estado em 11/09/2026: ACUMULANDO") e memória
+`project_yield_cg_acumulando.md`. **Regras:** não igualar o `cgMirror` ao holding antes de ele
+confirmar que lançou; lembrar o total acumulado em todo fechamento de mês; não há valor mínimo
+combinado — ele decide quando compensa.
+
+#### 5. Verificação
+- `data.js` carrega (shim Node), agregados derivados corretos, `close-month.js --dry-run`
+  idempotente ("curva fechada e consistente até 08/26"), bundle de `emprestimos.html` regenerado.
+- Browser local: **0 NaN**; `emprestimos.html` mostra juros **+0,0158 WETH · +20,92 USDT** (igual
+  ao print); card "Yield a lançar no CoinGecko" renderiza os 4 tokens; `_liveAaveHF` = 8,2135.
+- Bruto calculado com os preços do print = **US$ 11.218,62** = CoinGecko 11.206,32 + 11,39 de
+  yield pendente (diferença < US$ 1 de arredondamento) ✓.
+- Os erros de console locais foram todos CoinGecko 429/CORS (ambiente), não código.
+
+### Dados atualizados
+
+| Campo | Antes (05/09) | Depois (11/09) |
+|---|---|---|
+| `asOf` | 2026-09-05 | **2026-09-11** |
+| `holdings.ETH` | 2,23062 | **2,23317** |
+| `holdings.SOL` | 24,94 | **24,95** |
+| `stables.USDT` | 2.198,08879 | **2.201,81879** |
+| `stables.USDS` | 304,69 | **304,86** |
+| AAVE WETH supply | 2,2253 @2,16% | **2,225494 @1,78%** |
+| AAVE USDT supply | 2.013,57 @3,90% | **2.016,818486 @3,21%** |
+| AAVE borrow USDC | 762,40 @**1,96%** | **763,052538 @5,63%** |
+| AAVE HF (fallback) | 8,09 | **8,21** |
+| Kamino SOL / USDS | 24,94 @4,67% / 304,69 @3,44% | **24,95 @4,04% / 304,86 @3,31%** |
+| Kamino borrow USDC | 763,40 @5,44% | **764,14 @5,56%** |
+| Kamino LTV / Liq.LTV | 26,72% / 76,60% | **26,68% / 76,60%** |
+| Dívida total (derivada) | 1.525,80 | **1.527,19** |
+| Stables total (derivado) | 2.502,78 | **2.506,68** |
+| `cgMirror` | SOL, USDS | **SOL, USDS, ETH, USDT** |
+
+Posição com preços do print (ETH $2.539,37 · SOL $102,65 · BTC $77.378): **patrimônio líquido
+US$ 9.691** (+US$ 162, +1,7% vs snapshot de 05/09 $9.529) · bruto 11.219 · ROI sobre aporte
+(8.162) **+18,7%** · SOL liquidaria em ~US$ 25,4 (−75%) · carry supply $279/ano − borrow
+$85/ano = **+US$ 16,1/mês**. Kamino: Interest Earned lifetime +$163,95; juro retido 1,304 SOL
++ 4,47 USDS; 73,31 USDC já pagos. Rewards claimable **não lançados**: USDS $1,59 · PYUSD $0,07 ·
+KMNO $4,10.
+Principals **inalterados** (AAVE e Kamino) — sem movimentação de capital.
+
+### Observações registradas (nenhuma ação tomada)
+- **Borrow da AAVE triplicou em 1 semana (1,96% → 5,63%)** e passou do supply do USDT na
+  própria AAVE (3,21%). Com a pool fechada desde 28/08, a dívida não financia nada produtivo —
+  o spread custa ~(5,63−3,21)% × 763 ≈ **US$ 18/ano**. Pequeno, e a taxa oscilou 1,88%–4,92%
+  nas 3 semanas anteriores. Sugestão dada ao Lucas (decisão dele): se ficar acima de ~5% por
+  2 semanas, quitar a AAVE com o USDT (sacar → swap → repay); com HF 8, reemprestar é 1 tx.
+- **`ev-hf-aave` do exec bar mostrou 5,00 no teste local**: quando o fetch de preços do
+  CoinGecko falha, `renderUI` não reroda e fica um fallback hardcoded antigo
+  (`portfolio_analytics.html` ~linha 2672, `window._liveAaveHF || 5.00`), mesmo com o HF ao vivo
+  já lido (8,21). Na máquina do Lucas os preços carregam. **Não corrigido** — candidato a trocar
+  o `5.00` por `BAROLO_DATA.defi.aave.healthFactor`.
+
+### Complemento da sessão 09/09 (fechamento de mentoria, entregue depois do último /salvar)
+Cenários até a meta intermediária (US$ 133k = US$ 20k/ano a 15%), Lucas com 31 anos:
+hoje + $2k/ano → 14a (45 anos) · hoje + $6k/ano → 9a (40) · +3x de valorização + $2k/ano → 9a (40)
+· +3x + $6k/ano → 7a (38) · +5x + $6k/ano → 5a (36). Leitura dada: valorização encurta muito
+(3x vale o mesmo que triplicar o aporte), mas é a variável que ele não controla — **planejar
+pelos 45 e tratar o resto como bônus**; o aporte (vendas de imóveis) é a alavanca controlável.
+
+### Bugs corrigidos
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| Juro da AAVE (ETH/USDT) fora do holding e do CoinGecko desde 22/08 | Só o yield da Kamino era acompanhado; a regra 2 de 22/08 nunca foi aplicada à AAVE | Holding sobe pelo delta do juro; `cgMirror` passa a listar ETH e USDT |
+| Conflito de rebase em `emprestimos.html` no 2º push | A Action `sync-emprestimos` regerou o bundle com o 1º push | `git checkout --ours` + `node scripts/refresh-emprestimos-data.js` (determinístico) + `rebase --continue` |
+
+### O que ainda falta
+- **Yield pendente no CoinGecko (~US$ 11,39)** — acumulando por decisão do Lucas; lembrar o
+  total no fechamento de setembro (01/10) e em todo fechamento seguinte.
+- **Fallback `5.00` do HF no exec bar** (`portfolio_analytics.html`) — trocar pelo valor do
+  `data.js` se o Lucas quiser.
+- **Borrow da AAVE** — acompanhar a taxa; se passar de ~5% por 2 semanas, reavaliar quitar.
+- **Rewards da Kamino** (~US$ 5,76) — claim quando o gas compensar; não lançados.
+- **Confirmar a Action `close-month.yml`** — primeira execução agendada em 01/10.
+- Pendências antigas: `monthlyReturns[2026]` Set–Dez (automático), CDI/IPCA anual,
+  `US_CPI_CUMULATIVE_PCT`, Registro Histórico em `pools.html`, lacuna do Fiscal a partir de
+  ago/2026 (print novo da OKX), reconciliar `wealthCurve.invested` ($8.162) vs custo do
+  CoinGecko ($9.176), regra de saída das pools por escrito.
+
+### Commits (push direto na main)
+| Hash | Mensagem |
+|---|---|
+| `8a315a1` | data: review semanal 11/09/2026 (AAVE exata via MCP + Kamino + yield pendente) |
+| `4a86c6a` | docs: yield pendente no CoinGecko fica acumulando (decisao do Lucas) |
+| `(este)` | docs: log sessão 11/09/2026 |
+
+---
+
+Atualizado: 11/09/2026 — **Review semanal feito inteiro pelo MCP da Aave** (`get_user_positions`
+→ `get_position_items` dá principal e juro exatos; os 3 principals bateram na casa decimal);
+**juro da AAVE (ETH +0,00255 / USDT +3,73) passa a entrar no holding** a custo zero; **yield
+pendente no CoinGecko (~US$ 11,39) fica acumulando por decisão do Lucas** — lembrar no
+fechamento; patrimônio líquido US$ 9.691 (+1,7% na semana); borrow da AAVE subiu de 1,96% para
+5,63% (observado, sem ação)
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
