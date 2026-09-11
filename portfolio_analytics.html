@@ -1352,7 +1352,7 @@ body, input, button, select, textarea {
 <div class="section-label">Composição DeFi — Colateral vs Dívida</div>
 <div class="card" style="margin-bottom:12px;">
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
- <div class="chart-title" style="margin-bottom:0;">Evolução Mensal · Colateral Alocado vs Dívida Ativa</div>
+ <div class="chart-title" style="margin-bottom:0;">Evolução Semanal · Colateral Alocado vs Dívida Ativa <span style="color:var(--muted);font-weight:400;">· desde jul/26, atualiza sozinho</span></div>
  <div style="display:flex;gap:4px;">
  <button class="chart-type-btn active" id="debtBarBtn" onclick="setDebtView('stacked')">▌ Empilhado</button>
  <button class="chart-type-btn" id="debtLineBtn" onclick="setDebtView('ratio')">∿ Ratio HF/LTV</button>
@@ -1488,14 +1488,14 @@ body, input, button, select, textarea {
     <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px;">
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
         <span style="color:var(--muted);">Pools LP (Uniswap/ETH)</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">0.0630 ETH</span>
+        <span id="acc-eth-pools" style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">0.0700 ETH</span>
       </div>
-      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div style="height:100%;background:#627EEA;opacity:.6;border-radius:2px;width:82%;"></div></div>
+      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="acc-eth-pools-bar" style="height:100%;background:#627EEA;opacity:.6;border-radius:2px;width:69%;"></div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
-        <span style="color:var(--muted);">AAVE V4 — Supply APY</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">0.0140 ETH</span>
+        <span style="color:var(--muted);">AAVE — juro do supply (V3 est. + V4 medido)</span>
+        <span id="acc-eth-lend" style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">0.0316 ETH</span>
       </div>
-      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div style="height:100%;background:#627EEA;opacity:.4;border-radius:2px;width:18%;"></div></div>
+      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="acc-eth-lend-bar" style="height:100%;background:#627EEA;opacity:.4;border-radius:2px;width:31%;"></div></div>
     </div>
   </div>
 
@@ -1510,14 +1510,14 @@ body, input, button, select, textarea {
     <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px;">
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
         <span style="color:var(--muted);">Pools LP (Raydium/SOL)</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">2.070 SOL</span>
+        <span id="acc-sol-pools" style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">2.070 SOL</span>
       </div>
-      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div style="height:100%;background:#9945ff;opacity:.6;border-radius:2px;width:82%;"></div></div>
+      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="acc-sol-pools-bar" style="height:100%;background:#9945ff;opacity:.6;border-radius:2px;width:61%;"></div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;">
-        <span style="color:var(--muted);">Kamino — Supply APY</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">0.460 SOL</span>
+        <span style="color:var(--muted);">Kamino — juro do supply (medido)</span>
+        <span id="acc-sol-lend" style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">1.304 SOL</span>
       </div>
-      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div style="height:100%;background:#9945ff;opacity:.4;border-radius:2px;width:18%;"></div></div>
+      <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;"><div id="acc-sol-lend-bar" style="height:100%;background:#9945ff;opacity:.4;border-radius:2px;width:39%;"></div></div>
     </div>
   </div>
 </div>
@@ -1534,7 +1534,7 @@ body, input, button, select, textarea {
   <canvas id="accChart" style="max-height:200px;"></canvas>
 </div>
 <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--muted);margin-bottom:28px;">
-  * Dados de pools extraídos do Diário DeFi · APY lending estimado por posição × período · Em tokens — não em USD · Exclui capital principal aportado
+  * Pools: fees recebidas em ETH/SOL (Diário DeFi, histórico fechado) · Lending: juro retido medido (supply − principal; na Kamino é a vida inteira da obrigação) + AAVE V3 estimado (0,0158 ETH) · Série: out/24–abr/26 = estimativa do diário; de jul/26 em diante = medido pelo snapshot diário (atualiza sozinho); mai–jun/26 sem dado (tracejado). O degrau do SOL entre abr e jul é a correção da estimativa antiga, que subestimava o juro da Kamino · Em tokens — não em USD · Exclui capital aportado
 </div>
 
 <!-- ══ GAS FEES GASTOS ══ -->
@@ -2275,6 +2275,10 @@ function renderUI(enriched){
  if(!chartsBuilt){ buildStaticCharts(); chartsBuilt=true; }
  buildLiveCharts(enriched, _livePortfolioGross);
  buildConvexityUI(WEEKLY_UPDATE);
+ // Colateral vs Divida e Acumulacao de Tokens: o ponto de HOJE depende do preco ao vivo,
+ // entao reconstroem a cada renderUI (os pontos passados vem do networth-history.json).
+ try { if (typeof buildDebtChart === 'function') buildDebtChart(); } catch(e) {}
+ try { if (typeof buildAccChart === 'function') { buildAccChart(); updateAccKpis(); } } catch(e) {}
 
  // Render performance metrics (já computados no topo desta função, em `metrics`)
  console.log('[Performance Metrics]', {
@@ -4890,77 +4894,95 @@ function setDebtView(mode) {
  buildDebtChart(mode);
 }
 
+// Historico diario (networth-history.json) — alimenta 'Colateral vs Divida' e 'Acumulacao
+// de Tokens' (11/09/2026). Antes os dois eram arrays digitados a mao (set/25–mar/26 e
+// out/24–abr/26) e pararam no tempo. Agora o snapshot diario (scripts/fetch-networth.js,
+// Action networth.yml) grava o campo `defi` todo dia, e o ponto de HOJE sai do data.js x
+// preco ao vivo (BAROLO_DATA.lendingSnapshot). Nada para atualizar a mao.
+var _nwHistPromise = null;
+function loadNetworthHistory() {
+ if (!_nwHistPromise) {
+  _nwHistPromise = fetch('networth-history.json', { cache: 'no-cache' })
+   .then(function (r) { return r.ok ? r.json() : null; })
+   .then(function (d) { return (d && Array.isArray(d.history)) ? d.history : []; })
+   .catch(function () { return []; });
+ }
+ return _nwHistPromise;
+}
+function liveLendingPoint() {
+ var D = window.BAROLO_DATA;
+ if (!D || typeof D.lendingSnapshot !== 'function') return null;
+ var e = liveData && liveData.ethereum && liveData.ethereum.usd;
+ var s = liveData && liveData.solana && liveData.solana.usd;
+ if (!(e > 0 && s > 0)) return null;   // so com preco AO VIVO — nunca o fallback estatico
+ var p = D.lendingSnapshot({ ETH: e, SOL: s });
+ p.date = new Date().toISOString().slice(0, 10);
+ return p;
+}
+function debtSeries(hist) {
+ var pts = hist.filter(function (p) { return p && p.defi && p.defi.aaveCol != null; });
+ var out = [];
+ for (var i = pts.length - 1; i >= 0; i -= 7) out.unshift(pts[i]);   // 1 ponto/semana, ancorado no mais recente
+ var live = liveLendingPoint();
+ if (live) {
+  if (out.length && out[out.length - 1].date === live.date) out.pop();
+  out.push({ date: live.date, defi: live, live: true });
+ }
+ return out;
+}
+var debtChartMode = 'stacked';
 function buildDebtChart(mode) {
+ if (mode) debtChartMode = mode;
+ loadNetworthHistory().then(function (hist) { renderDebtChart(debtChartMode, hist); });
+}
+function renderDebtChart(mode, hist) {
  const canvas = document.getElementById('debtChart');
  if (!canvas) return;
  if (debtChartInst) { debtChartInst.destroy(); debtChartInst = null; }
  const dk = document.documentElement.getAttribute('data-theme') === 'dark';
-
- const labels = ['Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26'];
-
+ const ser = debtSeries(hist);
+ if (!ser.length) return;
+ const labels = ser.map(p => p.live ? 'Hoje' : p.date.slice(8, 10) + '/' + p.date.slice(5, 7));
+ const col = k => ser.map(p => p.defi[k]);
+ const legend = { labels: { font: { size: 9 }, color: Chart.defaults.color, boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } };
+ const xAxis = { ticks: { font: { size: 9 }, color: Chart.defaults.color }, grid: { display: false }, border: { display: false } };
  if (mode === 'stacked') {
- // Stacked: AAVE collateral, Kamino collateral, AAVE debt, Kamino debt
- const aaveCol = [5650, 5490, 5900, 5580, 5230, 5120, 5493];
- const kaminoCol = [1820, 1780, 1940, 1860, 1720, 1800, 1790];
- const aaveDebt = [ 748, 745, 760, 750, 748, 746, 746];
- const kaminoDebt= [ 810, 808, 812, 810, 808, 805, 803];
- debtChartInst = new Chart(canvas, {
- type: 'bar',
- data: {
- labels,
- datasets: [
- { label: 'AAVE Colateral', data: aaveCol, backgroundColor: dk ? 'rgba(63,185,80,0.55)' : 'rgba(42,124,63,0.50)', stack: 'col', borderRadius: 3 },
- { label: 'Kamino Colateral',data: kaminoCol, backgroundColor: dk ? 'rgba(126,200,227,0.55)' : 'rgba(70,150,180,0.50)', stack: 'col', borderRadius: 3 },
- { label: 'AAVE Dívida', data: aaveDebt.map(v => -v), backgroundColor: dk ? 'rgba(248,81,73,0.60)' : 'rgba(185,45,45,0.55)', stack: 'debt', borderRadius: 3 },
- { label: 'Kamino Dívida', data: kaminoDebt.map(v => -v), backgroundColor: dk ? 'rgba(210,153,34,0.60)' : 'rgba(160,115,20,0.55)', stack: 'debt', borderRadius: 3 },
- ]
- },
- options: {
- responsive: true,
- interaction: { mode: 'index', intersect: false },
- plugins: {
- legend: { labels: { font: { size: 9 }, color: Chart.defaults.color, boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } },
- tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: $${Math.abs(ctx.raw).toLocaleString()}` } }
- },
- scales: {
- x: { ticks: { font: { size: 9 }, color: Chart.defaults.color }, grid: { display: false }, border: { display: false } },
- y: { ticks: { font: { size: 9 }, color: Chart.defaults.color, callback: v => '$' + Math.abs(v).toLocaleString() }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false } }
- }
- }
- });
+  debtChartInst = new Chart(canvas, {
+   type: 'bar',
+   data: { labels, datasets: [
+    { label: 'AAVE Colateral',   data: col('aaveCol'), backgroundColor: dk ? 'rgba(63,185,80,0.55)' : 'rgba(42,124,63,0.50)', stack: 'col', borderRadius: 3 },
+    { label: 'Kamino Colateral', data: col('kamCol'),  backgroundColor: dk ? 'rgba(126,200,227,0.55)' : 'rgba(70,150,180,0.50)', stack: 'col', borderRadius: 3 },
+    { label: 'AAVE Dívida',      data: col('aaveDebt').map(v => -v), backgroundColor: dk ? 'rgba(248,81,73,0.60)' : 'rgba(185,45,45,0.55)', stack: 'debt', borderRadius: 3 },
+    { label: 'Kamino Dívida',    data: col('kamDebt').map(v => -v),  backgroundColor: dk ? 'rgba(210,153,34,0.60)' : 'rgba(160,115,20,0.55)', stack: 'debt', borderRadius: 3 }
+   ] },
+   options: {
+    responsive: true, interaction: { mode: 'index', intersect: false },
+    plugins: { legend, tooltip: { callbacks: {
+     title: its => { const p = ser[its[0].dataIndex]; return p.live ? 'Hoje (preço ao vivo)' : 'Snapshot de ' + p.date.split('-').reverse().join('/'); },
+     label: ctx => ` ${ctx.dataset.label}: $${Math.round(Math.abs(ctx.raw)).toLocaleString('en-US')}` } } },
+    scales: { x: xAxis, y: { ticks: { font: { size: 9 }, color: Chart.defaults.color, callback: v => '$' + Math.abs(v).toLocaleString('en-US') }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false } } }
+   }
+  });
  } else {
- // Line: HF AAVE + LTV Kamino
- const aaveHF = [6.80, 6.42, 7.10, 6.70, 6.20, 6.05, 6.00];
- const kaminoLTV = [43.2, 44.1, 42.9, 43.8, 44.5, 44.8, 44.93];
- debtChartInst = new Chart(canvas, {
- type: 'line',
- data: {
- labels,
- datasets: [
- { label: 'AAVE Health Factor', data: aaveHF, borderColor: dk ? '#3fb950' : '#2a7c3f', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2.5, pointRadius: 4, yAxisID: 'y' },
- { label: 'Kamino LTV (%)', data: kaminoLTV, borderColor: dk ? '#d29922' : '#a06810', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2, pointRadius: 4, borderDash: [5,3], yAxisID: 'y2' }
- ]
- },
- options: {
- responsive: true,
- interaction: { mode: 'index', intersect: false },
- plugins: {
- legend: { labels: { font: { size: 9 }, color: Chart.defaults.color, boxWidth: 8, usePointStyle: true, pointStyleWidth: 6 } },
- tooltip: {
- callbacks: {
- label: ctx => ctx.datasetIndex === 0
- ? ` HF AAVE: ${ctx.raw.toFixed(2)}`
- : ` LTV Kamino: ${ctx.raw.toFixed(1)}%`
- }
- }
- },
- scales: {
- x: { ticks: { font: { size: 9 }, color: Chart.defaults.color }, grid: { display: false }, border: { display: false } },
- y: { position: 'left', min: 4, ticks: { font: { size: 9 }, color: dk ? '#3fb950' : '#2a7c3f', callback: v => 'HF ' + v.toFixed(1) }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }, title: { display: true, text: 'Health Factor', color: dk ? '#3fb950' : '#2a7c3f', font: { size: 8 } } },
- y2: { position: 'right', min: 30, max: 80, ticks: { font: { size: 9 }, color: dk ? '#d29922' : '#a06810', callback: v => v + '%' }, grid: { display: false }, border: { display: false }, title: { display: true, text: 'LTV %', color: dk ? '#d29922' : '#a06810', font: { size: 8 } } }
- }
- }
- });
+  const hfC = dk ? '#3fb950' : '#2a7c3f', ltvC = dk ? '#d29922' : '#a06810';
+  debtChartInst = new Chart(canvas, {
+   type: 'line',
+   data: { labels, datasets: [
+    { label: 'AAVE Health Factor', data: col('hf'),   borderColor: hfC,  backgroundColor: 'transparent', tension: 0.3, borderWidth: 2.5, pointRadius: 3, yAxisID: 'y' },
+    { label: 'Kamino LTV (%)',     data: col('kLtv'), borderColor: ltvC, backgroundColor: 'transparent', tension: 0.3, borderWidth: 2, pointRadius: 3, borderDash: [5, 3], yAxisID: 'y2' }
+   ] },
+   options: {
+    responsive: true, interaction: { mode: 'index', intersect: false },
+    plugins: { legend, tooltip: { callbacks: {
+     title: its => { const p = ser[its[0].dataIndex]; return p.live ? 'Hoje (preço ao vivo)' : 'Snapshot de ' + p.date.split('-').reverse().join('/'); },
+     label: ctx => ctx.datasetIndex === 0 ? ` HF AAVE: ${ctx.raw.toFixed(2)}` : ` LTV Kamino: ${ctx.raw.toFixed(1)}% (liquida em ~77%)` } } },
+    scales: {
+     x: xAxis,
+     y:  { position: 'left', grace: '15%', ticks: { font: { size: 9 }, color: hfC, callback: v => 'HF ' + (+v).toFixed(1) }, grid: { color: Chart.defaults.borderColor, lineWidth: 0.5 }, border: { display: false }, title: { display: true, text: 'Health Factor', color: hfC, font: { size: 8 } } },
+     y2: { position: 'right', min: 0, max: 80, ticks: { font: { size: 9 }, color: ltvC, callback: v => v + '%' }, grid: { display: false }, border: { display: false }, title: { display: true, text: 'LTV %', color: ltvC, font: { size: 8 } } }
+    }
+   }
+  });
  }
 }
 
@@ -5019,19 +5041,56 @@ const ACC_MONTHLY = [
 var accChart = null;
 var accToken = 'eth';
 
+// Serie: estimativa congelada do Diario (data.js -> tokenAccumulation.history, out/24–abr/26)
+// + ultimo snapshot de cada mes do networth-history.json (medido, jul/26 em diante)
+// + o mes corrente ao vivo. Meses sem dado ficam null (linha tracejada por cima).
+function accSeries(hist) {
+  const D = window.BAROLO_DATA, T = D && D.tokenAccumulation;
+  let labels = [], eth = [], sol = [];
+  if (T && T.history) { labels = T.history.labels.slice(); eth = T.history.eth.slice(); sol = T.history.sol.slice(); }
+  else ACC_MONTHLY.forEach(r => { labels.push(r[0]); eth.push(r[1]); sol.push(r[2]); });
+  const nEst = labels.length;
+  const MN = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const byMonth = {};
+  (hist || []).forEach(p => { if (p && p.defi && p.defi.accEth != null) byMonth[p.date.slice(0, 7)] = p.defi; });
+  const live = (typeof liveLendingPoint === 'function') ? liveLendingPoint() : null;
+  if (live) byMonth[live.date.slice(0, 7)] = live;
+  const keys = Object.keys(byMonth).sort();
+  if (keys.length && nEst) {
+    const last = labels[nEst - 1].split('/');
+    let cur = new Date(2000 + (+last[1]), MN.indexOf(last[0]) + 1, 1);
+    const end = keys[keys.length - 1];
+    for (let guard = 0; guard < 240; guard++) {
+      const k = cur.getFullYear() + '-' + ('0' + (cur.getMonth() + 1)).slice(-2);
+      if (k > end) break;
+      const d = byMonth[k];
+      labels.push(MN[cur.getMonth()] + '/' + String(cur.getFullYear()).slice(2));
+      eth.push(d ? d.accEth : null);
+      sol.push(d && d.accSol != null ? d.accSol : null);
+      cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+    }
+  }
+  return { labels, eth, sol, nEst, liveMonth: live ? live.date.slice(0, 7) : null };
+}
+
 function buildAccChart() {
+  const p = (typeof loadNetworthHistory === 'function') ? loadNetworthHistory() : Promise.resolve([]);
+  p.then(renderAccChart);
+}
+
+function renderAccChart(hist) {
   const ctx = document.getElementById('accChart');
   if (!ctx) return;
   if (accChart) { accChart.destroy(); accChart = null; }
 
-  const labels = ACC_MONTHLY.map(r => r[0]);
+  const S = accSeries(hist);
+  const labels = S.labels;
   const isEth = accToken === 'eth';
-  const cum = ACC_MONTHLY.map(r => isEth ? r[1] : r[2]);
-  const delta = cum.map((v,i)=> i===0 ? v : +(v - cum[i-1]).toFixed(6));
+  const cum = isEth ? S.eth : S.sol;
   const color = isEth ? '#627EEA' : '#9945ff';
   const unit = isEth ? 'Ξ' : '◎';
   const sym = isEth ? 'ETH' : 'SOL';
-  const price = isEth ? (window._liveEthPrice || 2079) : (window._liveSolPrice || 87);
+  const price = isEth ? ((typeof getPrice === 'function' && getPrice('ethereum')) || 2079) : ((typeof getPrice === 'function' && getPrice('solana')) || 87);
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const gridC = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
@@ -5040,25 +5099,22 @@ function buildAccChart() {
   const grad = ctx.getContext('2d').createLinearGradient(0, 0, 0, 210);
   grad.addColorStop(0, color + '55');
   grad.addColorStop(1, color + '00');
-  const lastPts = cum.map((_,i)=> i===cum.length-1 ? 4 : 0);
+  const lastPts = cum.map((_, i) => i === cum.length - 1 ? 4 : 0);
 
   accChart = new Chart(ctx, {
     data: {
       labels,
       datasets: [
         {
-          // Barra FLUTUANTE [de, ate] no MESMO eixo do acumulado: a altura e o ganho do
-          // mes e a posicao e onde ele entrou na curva. Antes esta serie vivia num
-          // segundo eixo (y2) com os ticks escondidos e max = maxDelta*3.4 — ou seja,
-          // uma barra que parecia 1/3 do grafico valia ~1/19 do acumulado. Como as duas
-          // series estao na MESMA unidade (tokens), o eixo duplo so distorcia a leitura.
+          // Barra FLUTUANTE [de, ate] no MESMO eixo do acumulado: altura = ganho do mes.
           type: 'bar', label: 'Ganho no mês', order: 2,
-          data: cum.map(function(v, i){ return i === 0 ? [0, v] : [cum[i-1], v]; }),
+          data: cum.map((v, i) => v == null ? null : (i === 0 ? [0, v] : (cum[i - 1] == null ? null : [cum[i - 1], v]))),
           backgroundColor: color + '38', borderColor: color + '80', borderWidth: 1,
           borderRadius: 2, maxBarThickness: 14,
         },
         {
-          type: 'line', label: 'Acumulado', data: cum, order: 1,
+          type: 'line', label: 'Acumulado', data: cum, order: 1, spanGaps: true,
+          segment: { borderDash: c => (c.p1DataIndex - c.p0DataIndex > 1) ? [4, 4] : undefined },
           borderColor: color, backgroundColor: grad, borderWidth: 2.5, fill: true,
           tension: 0.4, pointRadius: lastPts, pointHoverRadius: 5,
           pointBackgroundColor: color, pointBorderColor: isDark ? '#16110c' : '#fff', pointBorderWidth: 1.5,
@@ -5083,7 +5139,8 @@ function buildAccChart() {
                 return '  +' + d.toFixed(4) + ' ' + sym + ' no mês  ·  ≈ ' + fmtCurrency(d * price, 2);
               }
               const y = c.parsed.y || 0;
-              return '  ' + y.toFixed(4) + ' ' + sym + ' acumulado  ·  ≈ ' + fmtCurrency(y * price, 0);
+              const tag = c.dataIndex < S.nEst ? ' (estimativa do diário)' : ' (medido)';
+              return '  ' + y.toFixed(4) + ' ' + sym + ' acumulado' + tag + '  ·  ≈ ' + fmtCurrency(y * price, 0);
             }
           }
         }
@@ -5104,21 +5161,30 @@ function setAccToken(token, btn) {
 }
 
 function updateAccKpis() {
-  const eth = window._liveEthPrice || 2079;
-  const sol = window._liveSolPrice || 87;
-
-  const ethTotal = ACC_DATA.eth.pools + ACC_DATA.eth.lending + ACC_DATA.eth.staking;
-  const solTotal = ACC_DATA.sol.pools + ACC_DATA.sol.lending + ACC_DATA.sol.staking;
-
-  const eEl = document.getElementById('acc-eth-total');
-  const sEl = document.getElementById('acc-sol-total');
-  const eUsd = document.getElementById('acc-eth-usd');
-  const sUsd = document.getElementById('acc-sol-usd');
-
-  if (eEl) eEl.textContent = ethTotal.toFixed(4);
-  if (sEl) sEl.textContent = solTotal.toFixed(3);
-  if (eUsd) eUsd.textContent = '≈ $' + Math.round(ethTotal * eth).toLocaleString('en-US') + ' ao preço atual';
-  if (sUsd) sUsd.textContent = '≈ $' + Math.round(solTotal * sol).toLocaleString('en-US') + ' ao preço atual';
+  const D = window.BAROLO_DATA, T = D && D.tokenAccumulation;
+  const ePx = (typeof getPrice === 'function' && getPrice('ethereum')) || window._liveEthPrice || 2079;
+  const sPx = (typeof getPrice === 'function' && getPrice('solana')) || window._liveSolPrice || 87;
+  let ethPools = ACC_DATA.eth.pools, ethLend = ACC_DATA.eth.lending, solPools = ACC_DATA.sol.pools, solLend = ACC_DATA.sol.lending;
+  if (D && T && typeof D.lendingSnapshot === 'function') {
+    const s = D.lendingSnapshot({ ETH: ePx, SOL: sPx });   // acc* nao depende do preco
+    ethPools = T.poolsETH; ethLend = s.accEth - T.poolsETH;
+    solPools = T.poolsSOL; solLend = s.accSol - T.poolsSOL;
+  }
+  const ethTotal = ethPools + ethLend, solTotal = solPools + solLend;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const bar = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = Math.round(pct) + '%'; };
+  set('acc-eth-total', ethTotal.toFixed(4));
+  set('acc-sol-total', solTotal.toFixed(3));
+  set('acc-eth-pools', ethPools.toFixed(4) + ' ETH');
+  set('acc-eth-lend',  ethLend.toFixed(4) + ' ETH');
+  set('acc-sol-pools', solPools.toFixed(3) + ' SOL');
+  set('acc-sol-lend',  solLend.toFixed(3) + ' SOL');
+  bar('acc-eth-pools-bar', ethTotal ? ethPools / ethTotal * 100 : 0);
+  bar('acc-eth-lend-bar',  ethTotal ? ethLend / ethTotal * 100 : 0);
+  bar('acc-sol-pools-bar', solTotal ? solPools / solTotal * 100 : 0);
+  bar('acc-sol-lend-bar',  solTotal ? solLend / solTotal * 100 : 0);
+  set('acc-eth-usd', '≈ $' + Math.round(ethTotal * ePx).toLocaleString('en-US') + ' ao preço atual');
+  set('acc-sol-usd', '≈ $' + Math.round(solTotal * sPx).toLocaleString('en-US') + ' ao preço atual');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

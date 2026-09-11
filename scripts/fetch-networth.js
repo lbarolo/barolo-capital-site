@@ -83,6 +83,13 @@ async function fetchPrices(ids, tries = 4) {
     }
   };
 
+  // Snapshot do lending (colateral/divida por protocolo, HF, LTV e tokens acumulados) —
+  // alimenta os graficos 'Colateral vs Divida' e 'Acumulacao de Tokens' do dashboard.
+  // Mesma formula da pagina (data.js -> lendingSnapshot).
+  if (typeof B.lendingSnapshot === 'function') {
+    point.defi = B.lendingSnapshot({ ETH: point.prices.ETH, SOL: point.prices.SOL });
+  }
+
   // ── 4. Upsert no histórico (1 ponto/dia, ordenado) ──
   let doc = { methodology: 'netWorth = holdings×preço (inclui colateral DeFi) + stables + LP(pooled+unc fees) − dívida · qty/dívida/LP do data.js · preços CoinGecko', history: [] };
   if (fs.existsSync(OUT)) {

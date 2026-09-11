@@ -771,6 +771,30 @@ window.BAROLO_DATA = {
     { date:'2026-08-27', usd:  46.10, note:'recebido — pagamento externo em USDC (nao DCA); entrou direto para abater divida na Kamino' },
   ],
 
+  // ── ACUMULACAO DE TOKENS (ETH/SOL ganhos, nao comprados) ────────────────────
+  // Desde 11/09/2026 o total e MEDIDO, nao estimado — lendingSnapshot() (no fim deste
+  // arquivo) soma:
+  //   · poolsETH / poolsSOL — fees de pool recebidas em ETH/SOL (Diario DeFi). Historico
+  //     FECHADO: so muda se uma pool nova pagar fee em ETH/SOL que fique no holding.
+  //   · ethLendingV3 — juro do WETH na AAVE V3 (abr/25–mar/26), ESTIMADO e congelado:
+  //     ele virou principal na migracao para a V4 (01/04/2026), nao da para isolar on-chain.
+  //   · juro retido AO VIVO = supply − principals (AAVE V4 WETH e Kamino SOL). O principal
+  //     da Kamino vem do CSV da obrigacao INTEIRA (K1–K4), entao supply − principal = juro
+  //     da vida inteira em SOL, inclusive o que foi sacado em 2025. Confere com o
+  //     'Interest Earned' da Kamino (~$164 ≈ 1,30 SOL x preco medio + 4,5 USDS).
+  // `history` = serie mensal ESTIMADA do Diario (out/24–abr/26), congelada. De jul/26 em
+  // diante os pontos saem do networth-history.json (campo defi.accEth/accSol do snapshot
+  // diario) — NAO editar a mao. Mai–jun/26 ficam sem ponto: nao ha principal confiavel
+  // da Kamino nessas datas (o CSV da pasta vai so ate fev/26).
+  tokenAccumulation: {
+    poolsETH: 0.0700, poolsSOL: 2.070, ethLendingV3: 0.0158,
+    history: {
+      labels: ['Out/24','Nov/24','Dez/24','Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26'],
+      eth:    [0.011,0.023,0.029,0.032,0.034,0.035,0.038,0.040,0.042,0.045,0.048,0.053,0.061,0.067,0.072,0.075,0.080,0.085,0.088],
+      sol:    [0.000,0.000,0.000,0.514,1.182,1.655,1.727,1.768,1.809,1.851,1.892,1.933,2.056,2.179,2.334,2.426,2.508,2.560,2.600]
+    }
+  },
+
   // ── Agregados DERIVADOS — NAO editar a mao ────────────────────────────────
   // Os valores abaixo sao recalculados no fim deste arquivo a partir das partes
   // (stables[] e defi.*.borrow). Ficam escritos so como fallback/documentacao.
@@ -814,6 +838,35 @@ window.BAROLO_DATA = {
   if (a !== null) D.debt.aave = a;
   if (k !== null) D.debt.kamino = k;
   D.debt.total = r2((D.debt.aave || 0) + (D.debt.kamino || 0));
+
+  // ── Snapshot do lending — UMA formula para os graficos 'Colateral vs Divida' e
+  // 'Acumulacao de Tokens' (portfolio_analytics) e para o snapshot diario
+  // (scripts/fetch-networth.js grava o resultado em networth-history.json -> defi).
+  // px = { ETH: preco, SOL: preco } (stables a US$ 1). HF pela formula definitiva:
+  // SOMA(colateral x CF) / divida, CF WETH 83% · USDT 78% (MCP 09/09/2026).
+  var CF = { WETH: 0.83, USDT: 0.78 };
+  D.lendingSnapshot = function (px) {
+    px = px || {};
+    var A = (D.defi && D.defi.aave) || {}, K = (D.defi && D.defi.kamino) || {};
+    var q = function (o, t) { return (o && o[t] && typeof o[t].qty === 'number') ? o[t].qty : 0; };
+    var eth = Number(px.ETH) || 0, sol = Number(px.SOL) || 0, hasPx = eth > 0 && sol > 0;
+    var aW = q(A.supply, 'WETH'), aU = q(A.supply, 'USDT'), kS = q(K.supply, 'SOL'), kU = q(K.supply, 'USDS');
+    var aD = D.debt.aave || 0, kD = D.debt.kamino || 0;
+    var aCol = aW * eth + aU, kCol = kS * sol + kU;
+    var pa = (D.principals && D.principals.aave) || {}, pk = (D.principals && D.principals.kamino) || {};
+    var T = D.tokenAccumulation || {};
+    var ethLendV4 = pa.WETH ? Math.max(0, aW - pa.WETH) : 0;
+    var solLend = pk.SOL ? Math.max(0, kS - pk.SOL) : 0;
+    return {
+      aaveCol: hasPx ? r2(aCol) : null, kamCol: hasPx ? r2(kCol) : null,
+      aaveDebt: r2(aD), kamDebt: r2(kD),
+      hf:   (hasPx && aD > 0) ? +((aW * eth * CF.WETH + aU * CF.USDT) / aD).toFixed(3) : null,
+      kLtv: (hasPx && kCol > 0) ? +(kD / kCol * 100).toFixed(2) : null,
+      accEth: +((T.poolsETH || 0) + (T.ethLendingV3 || 0) + ethLendV4).toFixed(6),
+      accSol: +((T.poolsSOL || 0) + solLend).toFixed(6),
+      ethLendV4: +ethLendV4.toFixed(6), solLend: +solLend.toFixed(6)
+    };
+  };
 
   // ── Curva mensal + o mes CORRENTE ao vivo — UMA implementacao so ───────────
   // Antes cada pagina fazia diferente: a landing SUBSTITUIA o ultimo mes fechado
