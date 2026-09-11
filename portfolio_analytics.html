@@ -3517,7 +3517,9 @@ function buildBenchmarkChart(){
  benchChartInst = new Chart(ctx, {
  type:'line',
  data:{ labels:lbl, datasets:[
- {label:'Portfólio',data:port,borderColor:'#c9a050',backgroundColor:'rgba(201,160,80,0.08)',borderWidth:3,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
+ // Portfolio em BRANCO (pedido do Lucas, 11/09/2026). No tema claro o branco sumiria no
+// fundo creme, entao la vira a cor do texto (#2a1e0e) — mesmo contraste, sem sumir.
+{label:'Portfólio',data:port,borderColor:dk?'#ffffff':'#2a1e0e',backgroundColor:dk?'rgba(255,255,255,0.06)':'rgba(42,30,14,0.05)',borderWidth:3,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5},
  {label:'100% ETH', data:eth, borderColor:'#627EEA',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
  {label:'100% BTC', data:btc, borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,pointRadius:0,pointHoverRadius:4},
  {label:'CDI', data:cdi, borderColor:'#E85D9E',borderWidth:1.8,fill:false,tension:0.1,pointRadius:0,pointHoverRadius:4,borderDash:[2,3]},
