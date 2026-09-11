@@ -718,6 +718,10 @@ window.BAROLO_DATA = {
     // ✅ LANCADO POR ELE em 05/09/2026 ("Coloquei la no coingecko"): +0,174778 SOL
     // e +4,69 USDS entraram como transferencia de entrada, custo zero. Espelho
     // igualado ao holding -> pendente ZERO e o card do dashboard some sozinho.
+    // ⏸ DECISAO DO LUCAS (11/09/2026): NAO lancar ainda — "ta muito baixo os valores"
+    // (~US$ 11,39). Deixar ACUMULAR aqui e lembrar ele no fechamento de cada mes com o
+    // total atualizado (node scripts/yield-to-mirror.js); ele decide quando compensa.
+    // NAO igualar este bloco ao holding antes de ele confirmar que lancou.
     // Print do CoinGecko de 11/09/2026 — o que esta LA hoje:
     SOL:  24.94,
     USDS: 304.69,

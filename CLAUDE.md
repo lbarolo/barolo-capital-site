@@ -110,9 +110,13 @@ igualando às qty do holding** — aí o pendente zera e o card some.
 ⚠️ Se aparecer diferença **negativa** (CoinGecko com MAIS que o site), não é yield — é erro de
 contagem ou posição fora do radar. Investigar antes de lançar qualquer coisa.
 
-**Estado em 05/09/2026:** ✅ **em dia** — o Lucas lançou (+0,174778 SOL e +4,69 USDS,
-transferência de entrada com custo zero) e o `cgMirror` foi igualado ao holding no mesmo dia.
-Próxima cobrança: fechamento de setembro.
+**Estado em 11/09/2026:** ⏸ **ACUMULANDO por decisão do Lucas** — pendente ~US$ 11,39
+(ETH +0,00255 · SOL +0,01 · USDT +3,73 · USDS +0,17). Palavras dele: *"Não vou lançar ainda no
+coingecko ta muito baixo os valores, salve pra depois me lembrar"*. **Não igualar o `cgMirror`
+antes de ele confirmar que lançou.** Lembrar o total acumulado em todo fechamento de mês; ele
+decide quando compensa (sem limite combinado). Desde 11/09 o juro da AAVE (ETH/USDT) também
+entra na pendência, não só o da Kamino.
+*(Histórico: em 05/09/2026 estava em dia — ele lançou +0,174778 SOL e +4,69 USDS.)*
 
 ---
 
