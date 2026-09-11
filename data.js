@@ -155,13 +155,13 @@
        reconhecidos em 22/08, os 406,27 acima e o DCA de SOL de 05/08).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-09-05',
+  asOf: '2026-09-11',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.23062,    invested:4474.26 },  // -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.23317,    invested:4474.26 },  // qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
     // SOL 24,765222 -> 24,93 em 04/09/2026: MESMO caso do USDS logo abaixo — o holding
     // estava ABAIXO do supply da Kamino (24,93), violando o invariante de que holdings
     // incluem o colateral (o piso do holding e sempre o supply). A diferenca (0,164778 SOL,
@@ -173,7 +173,7 @@ window.BAROLO_DATA = {
     // ✅ CONFIRMADO PELO LUCAS (05/09/2026): "esse 0.1648sol foram ganhos mesmo, custo zero"
     // — ele vai espelhar no CoinGecko como 'transferencia de entrada' (custo 0). O valor
     // aqui esta certo; NAO puxar de volta para 24,765222 na proxima leitura de print.
-    { ticker:'SOL',   cgId:'solana',                   qty:24.94,      invested:2498.84 },  // invested = "Custo total" do CoinGecko (print 09/09/2026), fonte canonica. Era 2.533,36: o lancamento de 04/07 somou 53,92 por 0,66 SOL (preco do DIA do registro, $81,70) quando a compra real foi 0,661425 @ $62,26 = $41,18. Qty 24,93->24,94 acompanha o supply da Kamino (yield, custo zero).
+    { ticker:'SOL',   cgId:'solana',                   qty:24.95,      invested:2498.84 },  // 24,94->24,95 (11/09): supply da Kamino, yield custo zero.  // invested = "Custo total" do CoinGecko (print 09/09/2026), fonte canonica. Era 2.533,36: o lancamento de 04/07 somou 53,92 por 0,66 SOL (preco do DIA do registro, $81,70) quando a compra real foi 0,661425 @ $62,26 = $41,18. Qty 24,93->24,94 acompanha o supply da Kamino (yield, custo zero).
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
@@ -186,7 +186,12 @@ window.BAROLO_DATA = {
 
   // Stablecoins (também já no total CoinGecko).
   stables: [
-    { ticker:'USDT', cgId:'tether',           qty:2198.08879, invested:2179.19  },
+    // USDT 2198,08879 -> 2201,81879 (11/09/2026): +3,73 de juro da AAVE desde 22/08
+    // (earnings 17,19 -> 20,917508, MCP). Custo zero, invested inalterado. O CoinGecko
+    // ficou em 2198,08879 (22/08 + o deposito de 408,56 em 28/08, que e principal) —
+    // pendente de lancar, ver cgMirror. Conferencia: AAVE 2016,818486 + corretora 185
+    // + carteira ~0,27 = 2202,09 (o ~0,27 de diferenca e arredondamento de 22/08).
+    { ticker:'USDT', cgId:'tether',           qty:2201.81879, invested:2179.19  },
     // USDS 300 -> 304.66 em 04/09/2026: o holding estava ABAIXO do supply da Kamino
     // (304,66), o que viola o invariante de que holdings incluem o colateral — o piso
     // do holding e sempre o supply. A diferenca e yield acumulado que o CoinGecko nunca
@@ -195,7 +200,7 @@ window.BAROLO_DATA = {
     // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
     // ✅ Mesma confirmacao do SOL (Lucas, 05/09/2026): e yield, custo zero, e ele espelha
     // no CoinGecko como 'transferencia de entrada'. NAO puxar de volta para 300.
-    { ticker:'USDS', cgId:'usds',            qty:304.69,   invested:300      }  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
+    { ticker:'USDS', cgId:'usds',            qty:304.86,   invested:300      }  // 304,69->304,86 (11/09): supply da Kamino, yield custo zero.  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
@@ -208,8 +213,16 @@ window.BAROLO_DATA = {
       // (36,56 / 2.454,82) · USDT 1.993,92+19,65=2.013,57. O borrow confere sozinho:
       // 762,40 - 748 (principal) = 14,40 = exatamente o 'fees paid' do print. Sem deposito
       // nem reemprestimo no periodo -> principals INALTERADOS.
-      supply: { WETH:{ qty:2.2253, apy:0.0216 }, USDT:{ qty:2013.57, apy:0.0390 } },
-      borrow: { USDC:{ qty:762.40, apy:0.0196 } },
+      // Refresh 11/09/2026 — print Position Details + MCP (get_position_items), EXATO:
+      //   WETH 2,225494100 = principal 2,209740095 + juro 0,015754006 @1,78%
+      //   USDT 2016,818486 = principal 1995,900978 + juro 20,917508 @3,21%
+      //   USDC borrow 763,052538 = principal 748 + juro 15,052538 @5,63% (net; a taxa
+      //   base do item veio 6,44%) — era 1,96% em 05/09, TRIPLICOU na semana.
+      //   Deposited $7.672 · Borrowing Power $6.266,59 · HF 8,2135 (MCP).
+      //   Os tres principals conferem na casa decimal com o bloco `principals`. Sem
+      //   deposito/saque/reemprestimo -> principals INALTERADOS.
+      supply: { WETH:{ qty:2.225494, apy:0.0178 }, USDT:{ qty:2016.818486, apy:0.0321 } },
+      borrow: { USDC:{ qty:763.052538, apy:0.0563 } },
       // ══ HEALTH FACTOR — FORMULA DEFINITIVA (resolvido 09/09/2026 via MCP da Aave) ══
       //
       //   HF = Borrowing Power / divida = SOMA(colateral_i x CF_i) / divida
@@ -280,7 +293,9 @@ window.BAROLO_DATA = {
       // fica ABAIXO do supply e viola o invariante (foi o que acabou de acontecer com
       // o USDS). Quando isso acontecer, rodar a Action `eth-sweep` de novo e subir o
       // holding para supply + total da varredura, a custo zero.
-      healthFactor: 8.09   // FALLBACK. 6.167,64 borrowing power / 762,76 divida (MCP 09/09/2026)
+      // ✅ 11/09/2026: a partir de agora o juro do aWETH entra no holding (custo zero,
+      // pendente no cgMirror) — o holding acompanha o supply e a margem deixa de encolher.
+      healthFactor: 8.21   // FALLBACK. 6.266,59 borrowing power / 762,96 divida (MCP 11/09/2026)
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -302,9 +317,14 @@ window.BAROLO_DATA = {
       // Borrowing $763,32 (763,40 USDC @5,44%) · Net Value $2,09K · Net APY 4,21% ·
       // Interest Earned lifetime +$161,85 · rewards claimable a parte (nao lancados):
       // USDS $1,59 · PYUSD $0,07 · KMNO $4,04.
-      supply: { SOL:{ qty:24.94, apy:0.0467 }, USDS:{ qty:304.69, apy:0.0344 } },
-      borrow: { USDC:{ qty:763.40, apy:0.0544 } },
-      ltv: 0.2672, liqLtv: 0.7660   // print 05/09/2026
+      // Print 11/09/2026: Supplied $2,86K (24,95 SOL @4,04% + 304,86 USDS @3,31%) ·
+      // Borrowing $764,07 (764,14 USDC @5,56%) · Net Value $2,10K · Net APY 3,39% ·
+      // Interest Earned lifetime +$163,95 · LTV 26,68% · Liq.LTV 76,60%. So juros, sem
+      // deposito/saque/repay -> principals.kamino INALTERADO. Rewards claimable a parte
+      // (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,10.
+      supply: { SOL:{ qty:24.95, apy:0.0404 }, USDS:{ qty:304.86, apy:0.0331 } },
+      borrow: { USDC:{ qty:764.14, apy:0.0556 } },
+      ltv: 0.2668, liqLtv: 0.7660   // print 11/09/2026
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'closed',
@@ -698,10 +718,13 @@ window.BAROLO_DATA = {
     // ✅ LANCADO POR ELE em 05/09/2026 ("Coloquei la no coingecko"): +0,174778 SOL
     // e +4,69 USDS entraram como transferencia de entrada, custo zero. Espelho
     // igualado ao holding -> pendente ZERO e o card do dashboard some sozinho.
+    // Print do CoinGecko de 11/09/2026 — o que esta LA hoje:
     SOL:  24.94,
-    USDS: 304.69
-    // ETH, BTC, USDT, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no
-    // print de 05/09 — iguais ao holding, nada pendente.
+    USDS: 304.69,
+    ETH:  2.23062,       // juro do aWETH nunca espelhado desde 22/08 (+0,00255)
+    USDT: 2198.08879     // juro do aUSDT desde 22/08 (+3,73)
+    // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de
+    // 11/09 — iguais ao holding, nada pendente.
   },
 
   // ── APORTES EXTERNOS (dinheiro que entrou DE FORA: fiat -> cripto/stable) ──
@@ -749,8 +772,8 @@ window.BAROLO_DATA = {
   // (stables[] e defi.*.borrow). Ficam escritos so como fallback/documentacao.
   // Antes eram numeros digitados ao lado das partes — duas fontes para a mesma
   // verdade, entao bastava esquecer um para o site mostrar dado divergente.
-  debt:   { aave:762.29, kamino:763.28, total:1525.57 },
-  stablesTotalUSD: 2502.75   // USDT 2198.09 + USDS 304.66 (yield reconciliado 04/09)
+  debt:   { aave:763.05, kamino:764.14, total:1527.19 },
+  stablesTotalUSD: 2506.68   // USDT 2201.82 + USDS 304.86 (11/09)
   // NÃO adicionar `lpPooled` aqui: o valor da pool vive em defi.uniswapV3.pooled
   // (+ uncollectedFees). Um segundo campo só cria drift — a pool migra de rede e o
   // duplicado congela numa posição já desmontada (foi o que aconteceu até 15/07/2026).
