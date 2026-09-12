@@ -115,7 +115,7 @@ window.BENCHMARK_DATA = {
   58523.93,
   62825.9,
   78562.74,
-  79307.38
+  77252.67
  ],
  "ethUsd": [
   2689.72,
@@ -174,7 +174,7 @@ window.BENCHMARK_DATA = {
   1569.45,
   1860.66,
   2467.29,
-  2626.2
+  2536.15
  ],
  "cdiMonthlyPct": [
   0.73,
@@ -236,6 +236,6 @@ window.BENCHMARK_DATA = {
   0.36
  ],
  "source": "BTC via Coinbase Exchange · ETH via Coinbase Exchange (fechamento mensal em USD) + BCB SGS série 4391 (CDI % a.m.)",
- "fetchedAt": "2026-09-11T14:01:04.596Z",
+ "fetchedAt": "2026-09-12T13:19:17.158Z",
  "methodology": "btcUsd/ethUsd = preço de fechamento do candle mensal em USD (fonte em cascata: Coinbase Exchange → Yahoo Finance → Binance); mês corrente usa o candle parcial mais recente. cdiMonthlyPct = taxa CDI acumulada no mês (% a.m., BCB SGS 4391) — null no mês ainda em curso (só fecha no fim do mês). Alinhado mês a mês com WEEKLY_UPDATE.wealthCurve.labels. Usado para simular \"o mesmo aporte, no mesmo mês, comprando 100% deste ativo\" (ver simulateDcaEquivalent/simulateCdiEquivalent em portfolio_analytics.html)."
 };
