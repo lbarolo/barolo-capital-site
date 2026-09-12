@@ -1,25 +1,19 @@
 {
- "updated": "2026-09-11T13:50:49.542Z",
- "date": "2026-09-11",
+ "updated": "2026-09-12T13:10:14.934Z",
+ "date": "2026-09-12",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 78037,
-   "d24": 1.52,
-   "d7": -4.1,
-   "d30": 21.4,
+   "price": 77354,
+   "d24": -0.29,
+   "d7": -2.9,
+   "d30": 21.9,
    "ath": 126080,
-   "athPct": -38.1,
+   "athPct": -38.6,
    "athDate": "2025-10-06",
-   "mcap": 1565789730389,
-   "vol": 29898938968,
+   "mcap": 1553276906787,
+   "vol": 27148609394,
    "spark": [
-    79438.21,
-    79753.14,
-    79706.25,
-    79593.02,
-    79513.29,
-    79647.88,
     79713.13,
     80053.61,
     79741.22,
@@ -56,26 +50,26 @@
     76879.28,
     77091.25,
     77335.06,
-    76995.97
+    77960.79,
+    77917.11,
+    77315.12,
+    77276.53,
+    77213.83,
+    77342.54,
+    77340.17
    ]
   },
   "eth": {
-   "price": 2536.11,
-   "d24": 4.71,
-   "d7": -0.7,
-   "d30": 30.9,
+   "price": 2539.76,
+   "d24": 1.7,
+   "d7": 3.2,
+   "d30": 34.9,
    "ath": 4946.05,
    "athPct": -48.7,
    "athDate": "2025-08-24",
-   "mcap": 308808631270,
-   "vol": 16936094056,
+   "mcap": 309652880026,
+   "vol": 20417637997,
    "spark": [
-    2450.56,
-    2460.54,
-    2451.52,
-    2452.95,
-    2449.43,
-    2456.69,
     2459.03,
     2471.07,
     2477.4,
@@ -112,26 +106,26 @@
     2455.9,
     2458.45,
     2475.94,
-    2457.06
+    2509.1,
+    2578.32,
+    2529.76,
+    2510.33,
+    2512.31,
+    2532.93,
+    2535.47
    ]
   },
   "sol": {
-   "price": 102.25,
-   "d24": 2.97,
-   "d7": -2.6,
-   "d30": 32.1,
+   "price": 102.15,
+   "d24": 0.88,
+   "d7": -0.3,
+   "d30": 35,
    "ath": 293.31,
-   "athPct": -65.1,
+   "athPct": -65.2,
    "athDate": "2025-01-19",
-   "mcap": 59905723053,
-   "vol": 3220769415,
+   "mcap": 59916832184,
+   "vol": 3836473768,
    "spark": [
-    101.56,
-    101.85,
-    101.77,
-    101.86,
-    101.78,
-    102.57,
     103.25,
     103.4,
     103.25,
@@ -168,105 +162,243 @@
     99.13,
     99.66,
     99.89,
-    99.43
+    101.59,
+    102.35,
+    102.48,
+    101.9,
+    101.59,
+    101.8,
+    102.11
    ]
   },
-  "stableMcap": 257566126994
+  "stableMcap": 257822848217
  },
  "fng": {
-  "value": 56,
+  "value": 63,
   "label": "Greed",
-  "prev": 69
+  "prev": 56
  },
  "broad": {
-  "btcDom": 58.4,
-  "ethDom": 11.5,
-  "altDom": 30.1,
-  "totalMcap": 2684027148630.71,
-  "totalVol": 91513354271.38669,
-  "mcapChange24h": -1.25,
-  "ethBtc": 0.0325,
-  "stableMcap": 257566126994
+  "btcDom": 58.2,
+  "ethDom": 11.6,
+  "altDom": 30.2,
+  "totalMcap": 2665010615893.4355,
+  "totalVol": 87496880801.25018,
+  "mcapChange24h": -2.93,
+  "ethBtc": 0.03283,
+  "stableMcap": 257822848217
  },
  "onchain": {
-  "t": "2026-09-10",
-  "price": 77722.01,
-  "mvrv": 1.443318,
-  "mvrv_sth": 1.079475,
-  "mvrv_lth": 1.557242,
-  "realized": 53221.78,
-  "realized_sth": 71160.49,
-  "realized_lth": 49328.19,
-  "sopr_lth": 1.156441,
-  "aviv": 1.002711,
-  "cvdd": 48351.16,
-  "sma200": 69932.12,
-  "mayer": 1.111
+  "t": "2026-09-11",
+  "price": 77312.54,
+  "mvrv": 1.449093,
+  "mvrv_sth": 1.083235,
+  "mvrv_lth": 1.563654,
+  "realized": 53223.52,
+  "realized_sth": 71199.56,
+  "realized_lth": 49324.09,
+  "sopr_lth": 0.921437,
+  "aviv": 1.00664,
+  "cvdd": 48357.74,
+  "sma200": 69991.01,
+  "mayer": 1.105
  },
  "risk": {
-  "score": 0.258,
+  "score": 0.217,
   "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.443318,
-    "s": 0.222
+    "v": 1.449093,
+    "s": 0.224
    },
    {
     "key": "Mayer",
-    "v": 1.111,
-    "s": 0.284
+    "v": 1.105,
+    "s": 0.281
    },
    {
     "key": "STH MVRV",
-    "v": 1.079475,
-    "s": 0.299
+    "v": 1.083235,
+    "s": 0.305
    },
    {
     "key": "AVIV",
-    "v": 1.002711,
-    "s": 0.251
+    "v": 1.00664,
+    "s": 0.253
    },
    {
     "key": "SOPR LTH",
-    "v": 1.156441,
-    "s": 0.233
+    "v": 0.921437,
+    "s": 0.019
    }
   ]
  },
  "portfolio": {
-  "netWorth": 9673.9,
-  "gross": 8697.9,
-  "stables": 2501.8,
+  "netWorth": 9676.16,
+  "gross": 8697.1,
+  "stables": 2506.24,
   "lp": 0,
-  "debt": 1525.8,
+  "debt": 1527.19,
   "invested": 10607.98,
   "roi": -8.8,
-  "move24": 332.09,
-  "move24Pct": 3.55,
+  "move24": 111.96,
+  "move24Pct": 1.17,
   "aave": {
    "hf": 8.15,
-   "collateral": 7657.18,
-   "debt": 762.4,
+   "collateral": 7663.52,
+   "debt": 763.05,
    "ltv": 10,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 26.7,
+   "ltv": 26.8,
    "liqLtv": 76.6,
-   "collateral": 2860.79,
-   "debt": 763.4,
-   "liqSol": 25.41,
-   "dropToLiq": 75.2
+   "collateral": 2853.5,
+   "debt": 764.14,
+   "liqSol": 25.43,
+   "dropToLiq": 75.1
   },
   "carry": {
-   "monthlyInterest": 4.71,
-   "monthlySupply": 27.52
+   "monthlyInterest": 7.12,
+   "monthlySupply": 23.19
   },
-  "dataAsOf": "2026-09-05"
+  "dataAsOf": "2026-09-11"
  },
  "news": [
+  {
+   "source": "Decrypt",
+   "title": "ChatGPT Images 2.5 vs Nano Banana 2: Which One is Better?",
+   "url": "https://decrypt.co/377998/chatgpt-images-2-5-vs-nano-banana-2-review",
+   "ts": 1789218063000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin activity, passports exposed after Revolut falls for fake government request",
+   "url": "https://www.coindesk.com/tech/2026/09/12/bitcoin-activity-passports-exposed-after-revolut-falls-for-fake-government-request",
+   "ts": 1789207861000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Robinhood CEO says companies shouldn't get veto over stock tokens in AMC feud",
+   "url": "https://www.coindesk.com/markets/2026/09/11/robinhood-ceo-says-companies-shouldn-t-get-veto-over-stock-tokens-in-amc-feud",
+   "ts": 1789170471000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Cyberattacks on Law Firms Nearly Double as Stolen Documents Hit the Dark Web",
+   "url": "https://decrypt.co/378094/cyberattacks-law-firms-stolen-documents-dark-web",
+   "ts": 1789163105000
+  },
+  {
+   "source": "The Block",
+   "title": "Former Alameda CEO Caroline Ellison joins nonprofit charity Manifund",
+   "url": "https://www.theblock.co/news/business/2026-09-11-former-alameda-ceo-caroline-ellison-joins-nonprofit-charity-manifund-414310",
+   "ts": 1789162622000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Here’s what happened in crypto today",
+   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1789162200000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin Golden Cross Flickers Off as Rate-Hike Bets Firm Up",
+   "url": "https://decrypt.co/378081/bitcoin-golden-cross-flickers-off",
+   "ts": 1789160019000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin Suisse to shift up to half of Swiss jobs abroad",
+   "url": "<![CDATA[https://cointelegraph.com/news/bitcoin-suisse-to-shift-up-to-half-of-swiss-jobs-abroad?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1789155984000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Hyperliquid’s biggest risk is regulation, says Ran Neuner",
+   "url": "<![CDATA[https://cointelegraph.com/news/hyperliquids-biggest-risk-is-regulation-says-ran-neuner?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1789152315000
+  },
+  {
+   "source": "Decrypt",
+   "title": "OpenAI Asks Congress Whether an AI Slowdown Would Be Legal",
+   "url": "https://decrypt.co/377990/openai-congress-ai-slowdown-legal",
+   "ts": 1789150564000
+  },
+  {
+   "source": "The Block",
+   "title": "Bitcoin, ether rise as inflation data does little to alter Fed interest rate outlook",
+   "url": "https://www.theblock.co/news/markets/2026-09-11-bitcoin-ether-rise-inflation-data-does-little-alter-fed-interest-rate-outlook-414287",
+   "ts": 1789148454000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Robinhood Crypto Trading Volume Jumps 61% in August",
+   "url": "https://decrypt.co/377982/robinhoods-crypto-volume-jumps-august",
+   "ts": 1789147359000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "The legal drama of imprisoned Sam Bankman-Fried is waiting on its last act",
+   "url": "https://www.coindesk.com/news-analysis/2026/09/11/the-legal-drama-of-imprisoned-sam-bankman-fried-is-waiting-on-its-last-act",
+   "ts": 1789146765000
+  },
+  {
+   "source": "The Block",
+   "title": "‘DeFi’s federal bank’: Standard Chartered sees SKY token rising fivefold by end-2028",
+   "url": "https://www.theblock.co/news/markets/2026-09-11-standard-chartered-sky-token-defi-federal-bank-414280",
+   "ts": 1789145291000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitwise to Close Dogecoin ETF Before Its First Anniversary",
+   "url": "https://decrypt.co/377973/bitwise-shuts-dogecoin-etf",
+   "ts": 1789143365000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Anchorage Digital adds institutional access to Frgmnt’s fUSD stablecoin",
+   "url": "<![CDATA[https://cointelegraph.com/news/anchorage-digital-adds-institutional-access-to-frgmnts-fusd-stablecoin?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1789142715000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin spikes toward $80K as US CPI data delivers new 22-year high in bond yields",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-spikes-toward-80k-as-us-cpi-data-delivers-new-22-year-high-in-bond-yields?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1789142617000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "With Fed rate hike all but assured, here's how markets might react",
+   "url": "https://www.coindesk.com/markets/2026/09/11/hotter-cpi-complicates-fed-hold-as-warsh-s-preferred-inflation-gauge-tells-different-story",
+   "ts": 1789141556000
+  },
+  {
+   "source": "The Block",
+   "title": "Metaplanet reverses course on executive options with 41% cut to potential shares, scraps employee warrant plan",
+   "url": "https://www.theblock.co/news/business/2026-09-11-metaplanet-reverses-course-executive-options-41-cut-potential-shares-scraps-employee-warrant-plan-414265",
+   "ts": 1789141525000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin Rises as Markets Digest Inflation Data Ahead of Fed Rate Decision",
+   "url": "https://decrypt.co/377962/bitcoin-price-cpi-inflation-fed-rate-decision",
+   "ts": 1789140728000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "India's richest state is exploring tokenizing its own assets to fund new infrastructure",
+   "url": "https://www.coindesk.com/markets/2026/09/11/india-s-richest-state-is-exploring-tokenizing-its-own-assets-to-fund-new-infrastructure",
+   "ts": 1789139828000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Blockstream Refuses Ransom for Return of $47M in Bitcoin from Liquid Hack: 'It Is Theft'",
+   "url": "https://decrypt.co/377959/blockstream-refuses-ransom-for-return-of-47m-in-bitcoin-from-liquid-hack-it-is-theft",
+   "ts": 1789136258000
+  },
   {
    "source": "CoinDesk",
    "title": "Metaplanet cuts executive reward pool by 41%, extinguishes $220 million in value",
@@ -290,12 +422,6 @@
    "title": "Trading stocks against BONER is the latest trend for DeFi degens",
    "url": "<![CDATA[https://cointelegraph.com/magazine/trading-stocks-against-boner-is-the-latest-trend-for-defi-degens?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
    "ts": 1789133400000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Here’s what happened in crypto today",
-   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1789131444000
   },
   {
    "source": "Cointelegraph",
@@ -353,7 +479,7 @@
   },
   {
    "source": "CoinDesk",
-   "title": "Live updates: Bitcoin volatile as U.S. inflation data could point to rate hike next week.",
+   "title": "Live updates: Bitcoin gives up early gains, with markets moving to price in multiple rate hikes",
    "url": "https://www.coindesk.com/business/2026/09/11/live-updates-bitcoin-sinks-to-usd77-000-as-cpi-lands-with-hike-odds-near-70",
    "ts": 1789124652000
   },
@@ -376,136 +502,10 @@
    "ts": 1789123468000
   },
   {
-   "source": "Cointelegraph",
-   "title": "India launches tokenized bond pilot with $107M issued",
-   "url": "<![CDATA[https://cointelegraph.com/news/india-launches-tokenized-bond-pilot-with-107m-issued?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1789122804000
-  },
-  {
    "source": "CoinDesk",
    "title": "Bitcoin pulls back as another golden cross fails to deliver",
    "url": "https://www.coindesk.com/markets/2026/09/11/bitcoin-pulls-back-as-another-golden-cross-fails-to-deliver",
    "ts": 1789121624000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Albuquerque Bans Bitcoin ATMs, Giving Operators 45 Days to Remove Them",
-   "url": "https://decrypt.co/377939/albuquerque-bans-bitcoin-atms-giving-operators-45-days-to-remove-them",
-   "ts": 1789121441000
-  },
-  {
-   "source": "The Block",
-   "title": "ESMA says major prediction platforms lack EU authorization, questions Polymarket and Kalshi’s partial geo-blocks",
-   "url": "https://www.theblock.co/news/regulation/2026-09-11-esma-says-major-prediction-platforms-lack-eu-authorization-questions-polymarket-and-kalshis-partial-geo-blocks-414239",
-   "ts": 1789121437000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Anthropic says Claude used for cyberattacks and surveillance",
-   "url": "<![CDATA[https://cointelegraph.com/news/claude-ai-cyberattacks-surveillance-weapons-anthropic?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1789120051000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Sam Bankman-Fried Asks Supreme Court to Overturn FTX Fraud Conviction",
-   "url": "https://decrypt.co/377931/sam-bankman-fried-asks-supreme-court-to-overturn-ftx-fraud-conviction",
-   "ts": 1789117451000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Blockstream rejects ransom as Liquid hackers hold nearly 600 BTC",
-   "url": "<![CDATA[https://cointelegraph.com/news/blockstream-rejects-ransom-liquid-hackers-return-bitcoin?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1789116199000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bitwise to put down Dogecoin ETF less than a year after launch",
-   "url": "<![CDATA[https://cointelegraph.com/news/bitwise-put-down-dogecoin-etf-year-launch?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1789112833000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Kalshi wants 24/7 Tesla and Nvidia perps as Wall Street fights over who regulates them",
-   "url": "https://www.coindesk.com/markets/2026/09/11/kalshi-wants-24-7-tesla-and-nvidia-perps-as-wall-street-fights-over-who-regulates-them",
-   "ts": 1789107451000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "India starts tokenizing $620 billion corporate bond market with digital rupee settlement",
-   "url": "https://www.coindesk.com/markets/2026/09/11/india-starts-tokenizing-usd620-billion-corporate-bond-market-with-digital-rupee-settlement",
-   "ts": 1789103595000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin below $77,000, Zcash leads losses as traders bet on a Fed rate hike",
-   "url": "https://www.coindesk.com/markets/2026/09/11/bitcoin-below-usd77-000-zcash-leads-losses-as-traders-bet-on-a-fed-rate-hike",
-   "ts": 1789101975000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Ripple puts AI agents inside its $1 billion corporate treasury bet",
-   "url": "https://www.coindesk.com/markets/2026/09/11/ripple-puts-ai-agents-inside-its-usd1-billion-corporate-treasury-bet",
-   "ts": 1789100721000
-  },
-  {
-   "source": "The Block",
-   "title": "Sam Bankman-Fried asks Supreme Court to overturn fraud conviction and $11 billion forfeiture",
-   "url": "https://www.theblock.co/news/regulation/2026-09-11-sam-bankman-fried-supreme-court-petition-414226",
-   "ts": 1789100415000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Senate Republicans Release Revised Clarity Act Ahead of September 15 Vote",
-   "url": "https://decrypt.co/377928/senate-republicans-revised-clarity-act-draft",
-   "ts": 1789075128000
-  },
-  {
-   "source": "Decrypt",
-   "title": "DeepSeek's New Model Nearly Matches GPT-6 Astra on Design—at 1.4% of the Cost",
-   "url": "https://decrypt.co/377917/deepseek-openai-gpt-6-astra-design-benchmark",
-   "ts": 1789074963000
-  },
-  {
-   "source": "Decrypt",
-   "title": "AI Agents Just Slashed the Cost of a Quantum Attack on Bitcoin",
-   "url": "https://decrypt.co/377925/ai-agents-slash-cost-quantum-attack-bitcoin",
-   "ts": 1789072490000
-  },
-  {
-   "source": "The Block",
-   "title": "Bitwise shuts down Dogecoin ETF less than a year after launch",
-   "url": "https://www.theblock.co/news/markets/2026-09-10-bitwise-shuts-down-dogecoin-etf-less-than-a-year-after-launch-414184",
-   "ts": 1789072126000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "New Clarity Act text tweaks DeFi, credit union provisions, but road ahead for bill remains murky",
-   "url": "https://www.coindesk.com/policy/2026/09/10/new-clarity-act-text-tweaks-defi-credit-union-provisions-but-road-ahead-for-bill-remains-murky",
-   "ts": 1789071717000
-  },
-  {
-   "source": "The Block",
-   "title": "Senate Republicans unveil revised crypto bill ahead of key Clarity Act vote next week",
-   "url": "https://www.theblock.co/news/regulation/2026-09-10-senate-republicans-unveil-revised-crypto-bill-ahead-of-key-clarity-act-vote-next-week-414180",
-   "ts": 1789069326000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Coinbase Wallet Rebrands to Chase 'Anything, Anywhere' Trading as Robinhood Chain Heats Up",
-   "url": "https://decrypt.co/377601/coinbase-wallet-rebrand-robinhood-chain",
-   "ts": 1789066264000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Bitcoin Rally Cools, But a Golden Cross Is Coming",
-   "url": "https://decrypt.co/377903/bitcoin-price-golden-cross-coming",
-   "ts": 1789065964000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Banks Have Minutes, Not Weeks, to Fix Flaws as AI Speeds Up Attacks: BIS",
-   "url": "https://decrypt.co/377902/ai-hacks-shrinking-bank-time-fix-flaws-bis",
-   "ts": 1789063993000
   }
  ],
  "narrative": null
