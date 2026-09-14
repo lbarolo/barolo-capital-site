@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
+<script src="lib/barolo-core.js"></script><!-- matemática compartilhada: Dietz / TWR / XIRR -->
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Barolo Capital — investidor independente, educação em criptoativos e finanças pessoais.">
 <meta name="robots" content="noindex, nofollow">
@@ -1908,16 +1909,7 @@ function toggleMobile() {
     var values = _c ? _c.values.slice()   : WEALTH_VALUES.slice();
     var inv    = _c ? _c.invested.slice() : INVESTED.slice();
     if (!_c && typeof finalValue === 'number' && finalValue > 0) values[values.length - 1] = finalValue;
-    var rets = [];
-    for (var i = 1; i < values.length; i++) {
-      var aporte = inv[i] - inv[i-1];
-      var denom  = values[i-1] + 0.5 * aporte;
-      if (denom > 0) rets.push((values[i] - values[i-1] - aporte) / denom);
-    }
-    return rets;
-  }
-  function twrGrowth(finalValue) {
-    return monthlyTWRSeries(finalValue).reduce(function(acc, r){ return acc * (1 + r); }, 1);
+    return BaroloCore.dietzReturns(values, inv);        // lib/barolo-core.js
   }
 
   // CAGR = TWR anualizado (o mesmo numero do card "CAGR" do dashboard)
@@ -2286,120 +2278,23 @@ function updateInflationStats(currency) {
 // ══════════════════════════════════
 // PERFORMANCE METRICS CALCULATION
 // ══════════════════════════════════
+// Hero "Retorno Anual (TIR)" no load, com a curva fechada (sem preço ao vivo); o fetch de
+// preços sobrescreve depois com o mês corrente (updateHeroReturn).
+// Até 14/09/2026 esta função também calculava CAGR, volatilidade, Sharpe e ROI para uma seção
+// "Performance" que não existe mais no HTML — com fórmula DIFERENTE da do dashboard (retorno
+// simples, sem descontar o aporte). Nada disso aparecia na tela; foi removido. A fonte única
+// dessas métricas é BaroloCore.performanceMetrics() (lib/barolo-core.js).
 function calculatePerformanceMetrics() {
-  // Usa as séries globais WEALTH_LABELS / WEALTH_VALUES / INVESTED (fonte única — atualize só uma vez)
-  var n = WEALTH_VALUES.length;
-  var startVal = WEALTH_VALUES[0];
-  var endVal = WEALTH_VALUES[n - 1];
-  // Prazo derivado da propria curva (n meses -> n-1 intervalos). Estava cravado em
-  // "4 anos e 4 meses (Jan/22 a Mai/26)" e nao andava com o tempo, o que puxava o CAGR
-  // para cima a cada mes novo.
-  var years = Math.max(1/12, (WEALTH_LABELS.length - 1) / 12);
-
-  // ── Capital allocation (05/06/2026 verified data) ──
-  var STABLES_DRY_POWDER = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js
-  // Aporte liquido acumulado = ultimo ponto da curva (data.js). Estava cravado em 6784.
-  var TOTAL_APORTED = INVESTED[INVESTED.length - 1] || 6784;
-  var CAPITAL_INVESTED = Math.max(1, TOTAL_APORTED - STABLES_DRY_POWDER); // deployed in assets
-
-  // Composicao: ultimo fechamento da curva (bruto, ja inclui LP) menos a divida atual.
-  // Antes: SPOT_VALUE=5698 e LP_POOLED=296 cravados nos precos de 10/06/2026 — o valor
-  // ficava tres meses parado e ainda contava uma pool que nao existe mais.
-  var GROSS_VALUE = WEALTH_VALUES[WEALTH_VALUES.length - 1];
-  var TOTAL_DEBT = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
-  var PORTFOLIO_INVESTED_VALUE = GROSS_VALUE - TOTAL_DEBT;
-
-  // ── CAGR of invested capital (excluding dry powder) ──
-  var cagrInvested = (Math.pow(PORTFOLIO_INVESTED_VALUE / CAPITAL_INVESTED, 1 / years) - 1) * 100;
-
-  // ── Return on invested capital ──
-  var returnInvested = ((PORTFOLIO_INVESTED_VALUE - CAPITAL_INVESTED) / CAPITAL_INVESTED) * 100;
-
-  // ── CAGR of total gross portfolio (for reference) ──
-  var cagrGross = (Math.pow(endVal / startVal, 1 / years) - 1) * 100;
-
-  // ── IRR (money-weighted) ──
   var irr = estimateIRR(WEALTH_VALUES, INVESTED);
-
-  // Hero "Retorno Anual (TIR)" — setado AQUI (antes do bloco DOM da seção Performance, que é
-  // dead code e pode lançar) para garantir render no load mesmo sem preços ao vivo.
   var heroIRRel = document.getElementById('heroCAGRYTD');
   if (heroIRRel) heroIRRel.textContent = (irr >= 0 ? '+' : '') + irr.toFixed(1) + '%';
-
-  // ── Monthly returns ──
-  var monthlyReturns = [];
-  for (var i = 1; i < WEALTH_VALUES.length; i++) {
-    var ret = (WEALTH_VALUES[i] - WEALTH_VALUES[i - 1]) / WEALTH_VALUES[i - 1];
-    monthlyReturns.push(ret);
-  }
-
-  // ── Volatility (annualized) ──
-  var meanReturn = monthlyReturns.reduce(function(s, r) { return s + r; }, 0) / monthlyReturns.length;
-  var variance = monthlyReturns.reduce(function(s, r) { return s + Math.pow(r - meanReturn, 2); }, 0) / monthlyReturns.length;
-  var monthlyStdDev = Math.sqrt(variance);
-  var volatility = monthlyStdDev * Math.sqrt(12) * 100;
-
-  // ── Max Drawdown ──
-  var peak = WEALTH_VALUES[0];
-  var maxDD = 0;
-  for (var i = 1; i < WEALTH_VALUES.length; i++) {
-    if (WEALTH_VALUES[i] > peak) peak = WEALTH_VALUES[i];
-    var dd = (peak - WEALTH_VALUES[i]) / peak;
-    if (dd > maxDD) maxDD = dd;
-  }
-  maxDD = maxDD * 100;
-
-  // ── Sharpe Ratio (risk-free rate = 2.5% annual = ~0.208% monthly) ──
-  var riskFreeMonthly = 0.025 / 12;
-  var excessReturn = meanReturn - riskFreeMonthly;
-  var sharpe = (excessReturn / monthlyStdDev) * Math.sqrt(12);
-
-  // ── Total ROI (gross portfolio) ──
-  var roi = ((endVal - startVal) / startVal) * 100;
-
-  // Update DOM — seção "Performance" (pode não existir no HTML atual). Helper tolerante a null
-  // para nunca lançar e interromper o resto da inicialização (ícone de tema, nav, etc.).
-  function setPerf(id, text, cls) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    if (text != null) el.textContent = text;
-    if (cls) el.className = cls;
-  }
-  setPerf('perfInvested', '$' + CAPITAL_INVESTED.toLocaleString('en-US', {maximumFractionDigits: 0}));
-  setPerf('perfDryPowder', '$' + STABLES_DRY_POWDER.toLocaleString('en-US', {maximumFractionDigits: 0}));
-  setPerf('perfInvestedReturn', (returnInvested >= 0 ? '+' : '') + returnInvested.toFixed(0) + '%', 'perf-metric-value' + (returnInvested >= 0 ? ' pos' : ' neg'));
-  setPerf('perfCAGR', (cagrInvested >= 0 ? '+' : '') + cagrInvested.toFixed(2) + '%', 'perf-metric-value' + (cagrInvested >= 0 ? ' pos' : ' neg'));
-  setPerf('perfIRR', (irr >= 0 ? '+' : '') + irr.toFixed(2) + '%', 'perf-metric-value' + (irr >= 0 ? ' pos' : ' neg'));
-  setPerf('perfSharpe', (sharpe >= 0 ? '+' : '') + sharpe.toFixed(2), 'perf-metric-value' + (sharpe >= 0 ? ' pos' : ' neg'));
-  setPerf('perfVolatility', (volatility >= 0 ? '+' : '') + volatility.toFixed(1) + '%', 'perf-metric-value' + (volatility >= 0 ? ' neg' : ' pos'));
-  setPerf('perfMaxDD', '−' + maxDD.toFixed(1) + '%', 'perf-metric-value neg');
-  setPerf('perfROI', (roi >= 0 ? '+' : '') + roi.toFixed(0) + '%', 'perf-metric-value' + (roi >= 0 ? ' pos' : ' neg'));
 }
 
-// IRR money-weighted (taxa interna de retorno) — % ANUALIZADO.
-// Fluxo de caixa: aportes incrementais negativos a cada mês + valor terminal da carteira no fim.
-// Resolve por bisseção na taxa mensal (estável; o Newton-Raphson anterior divergia para ~1e28).
+// TIR money-weighted anualizada, em %. Mesma XIRR do dashboard (lib/barolo-core.js).
+// Sem raiz ou sem dados → 0 (comportamento histórico desta página).
 function estimateIRR(values, invested) {
-  var n = values.length;
-  if (n < 2 || !invested || invested.length < n) return 0; // usa os primeiros n aportes
-  // aporte incremental do mês t (o primeiro é o capital inicial)
-  var contrib = [];
-  for (var t = 0; t < n; t++) contrib.push(t === 0 ? invested[0] : invested[t] - invested[t - 1]);
-  var terminal = values[n - 1];
-  function npv(rm) {
-    var s = 0;
-    for (var t = 0; t < n; t++) s += -contrib[t] / Math.pow(1 + rm, t);
-    return s + terminal / Math.pow(1 + rm, n - 1);
-  }
-  // npv decresce com a taxa → bisseção entre -99% e +100% ao mês
-  var lo = -0.99, hi = 1.0;
-  if (npv(lo) <= 0 || npv(hi) >= 0) return 0; // sem raiz no intervalo (ex: dados inconsistentes)
-  for (var i = 0; i < 200; i++) {
-    var mid = (lo + hi) / 2;
-    if (npv(mid) > 0) lo = mid; else hi = mid;
-  }
-  var rm = (lo + hi) / 2;
-  return (Math.pow(1 + rm, 12) - 1) * 100; // anualiza a taxa mensal
+  var r = BaroloCore.curveIRRPct(values, invested);
+  return r === null ? 0 : r;
 }
 
 // Initialize on DOMContentLoaded

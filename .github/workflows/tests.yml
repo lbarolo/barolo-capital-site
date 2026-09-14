@@ -1,0 +1,22 @@
+name: Testes (cálculos e integridade do data.js)
+
+# Roda os testes em todo push e PR. Não commita nada e não usa secrets.
+# Local: npm test   (ou: node --test tests/*.test.js)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: node --test tests/*.test.js

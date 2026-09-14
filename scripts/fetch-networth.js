@@ -18,6 +18,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const Core = require('../lib/barolo-core.js');
+
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'networth-history.json');
 
@@ -55,13 +57,8 @@ async function fetchPrices(ids, tries = 4) {
   if (missing.length) throw new Error('CoinGecko sem preço para: ' + missing.join(','));
 
   // ── 3. Cálculo ──
-  const val = a => a.qty * prices[a.cgId].usd;
-  const gross   = B.holdings.reduce((s, a) => s + val(a), 0);
-  const stables = B.stables.reduce((s, a) => s + val(a), 0);
-  const uni = (B.defi && B.defi.uniswapV3) || {};
-  const lp  = (uni.pooled || 0) + (uni.uncollectedFees || 0);
-  const debt = B.debt.total;
-  const netWorth = gross + stables + lp - debt;
+  // Mesma conta do briefing (fetch-briefing.js) — uma implementação em lib/barolo-core.js
+  const { gross, stables, lp, debt, netWorth } = Core.netWorth(B, id => prices[id].usd);
 
   // sanity: patrimônio plausível (evita gravar lixo se algum preço vier absurdo)
   if (!isFinite(netWorth) || netWorth < 1000 || netWorth > 1e6) {

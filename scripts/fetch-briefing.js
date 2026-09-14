@@ -19,6 +19,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const Core = require('../lib/barolo-core.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'briefing.json');
@@ -178,12 +179,8 @@ async function buildPortfolio(B, mkt) {
   if (missing.length) throw new Error('CoinGecko sem preço para: ' + missing.join(','));
 
   const val = a => a.qty * px(a.cgId);
-  const gross   = B.holdings.reduce((s, a) => s + val(a), 0);
-  const stables = B.stables.reduce((s, a) => s + val(a), 0);
-  const uni = (B.defi && B.defi.uniswapV3) || {};
-  const lp   = (uni.pooled || 0) + (uni.uncollectedFees || 0);
-  const debt = B.debt.total;
-  const netWorth = gross + stables + lp - debt;
+  // Mesma conta do snapshot diário (fetch-networth.js) — uma implementação em lib/barolo-core.js
+  const { gross, stables, lp, debt, netWorth } = Core.netWorth(B, px);
   const invested = [...B.holdings, ...B.stables].reduce((s, a) => s + (a.invested || 0), 0);
 
   // Variação 24h em $ do patrimônio (LP entra pela parcela em WETH)

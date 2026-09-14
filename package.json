@@ -1,0 +1,11 @@
+{
+  "name": "barolo-site",
+  "private": true,
+  "description": "Dashboard estático da Barolo Capital. Sem build e sem dependências: este arquivo só existe para rodar os testes.",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
