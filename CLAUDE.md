@@ -6140,11 +6140,12 @@ claro (padrão do site) vira a cor do texto**, porque branco sumiria no fundo cr
 | Colateral vs Dívida parado em mar/26 · Acumulação parada em abr/26 | Arrays digitados à mão | Leem `networth-history.json` (campo `defi` diário) + ponto ao vivo |
 
 ### O que ainda falta
-- **Decisões do Lucas sobre dois itens da aba Risco / DeFi & Mercado (perguntado, sem resposta):**
-  (1) **"Evolução da Convexidade" é série INVENTADA** — 19 valores fixos em `buildConvexityHistChart`,
-  só o último é real: tirar o gráfico ou marcar "ilustrativo"? (2) **Semicírculo do Fear & Greed
-  nunca é desenhado** — o `<canvas id="fg-gauge">` não tem código que o pinte (só o número aparece):
-  deixar ou remover o espaço vazio?
+- ~~Decisões do Lucas sobre "Evolução da Convexidade" e semicírculo do Fear & Greed~~ — ✅ **RESOLVIDO
+  em 14/09/2026**: o gráfico de série inventada (`cpHistChart` / `buildConvexityHistChart`) foi
+  **removido**; o card do Fear & Greed perdeu o `<canvas id="fg-gauge">` vazio e virou número grande
+  (46px) + histórico Ontem/Semana/**Mês passado** (o JS já calculava o mês, mas o elemento não existia)
+  + barra de escala maior (12px, marcador 18px). IDs `fg-value`/`fg-label` preservados — o cálculo de
+  convexidade lê o `fg-value` para o regime de Markov.
 - **Renda Passiva (`RENDA_2026`)** — continua manual: 1 linha por fechamento de mês (setembro entra
   em 01/10). Candidato a entrar no `/fecharmes`.
 - **Mai–jun/26 na Acumulação** — só preenche se aparecer o CSV da Kamino de mar–jul/2026
