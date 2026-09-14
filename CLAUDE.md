@@ -6175,6 +6175,209 @@ inventada da Convexidade e semicírculo vazio do Fear & Greed
 
 ---
 
+## Sessão 14/09/2026 — Convexidade/Fear & Greed · revisão de arquitetura · núcleo de cálculo e leitura on-chain compartilhados (lib/) · 77 testes automatizados · fallback de preço do pools
+
+### Contexto
+Quatro frentes, todas com push na main e verificação no navegador:
+1. As duas decisões pendentes de 11/09 (Convexidade inventada e Fear & Greed vazio).
+2. Revisão de arquitetura pedida pelo Lucas ("atue como engenheiro sênior que acaba de entrar no
+   projeto"): análise completa + plano em 6 fases + código melhorado + testes que provam que o
+   comportamento original se manteve.
+3. Fase 1 (núcleo de cálculo) e Fase 2 (leitura on-chain) do plano executadas.
+4. Correção do fallback morto `price.jup.ag` no `pools.html` (+ conserto do CI que isso quebrou).
+
+### Implementado
+
+#### 1. `portfolio_analytics.html` — Convexidade e Fear & Greed (commit `5ed73a1`)
+- **"Evolução da Convexidade (Série Histórica)" REMOVIDO** (decisão do Lucas): card + canvas
+  `cpHistChart` + função `buildConvexityHistChart` + a chamada em `buildConvexityUI`. Eram 19
+  valores fixos, só o último real. Os outros gráficos de convexidade e a matriz de cenários ficam.
+- **Card do Fear & Greed refeito** (pedido: "remova o espaço vazio e faça com que seja melhor
+  visível"): saiu o `<canvas id="fg-gauge">` que nunca era desenhado. Agora:
+  - "Hoje": `#fg-value` em 46px + `#fg-label` 12px, coloridos pelo sentimento;
+  - histórico Ontem / Semana passada / **Mês passado** com classificação (`#fg-yesterday-lbl`,
+    `#fg-week-lbl`, `#fg-month`, `#fg-month-lbl` — o JS já calculava o mês, o elemento não existia);
+  - barra de escala 12px com marcador `#fg-dot` de 18px; `#fg-chip` preso entre 4% e 96%;
+    `#fg-updated` + link alternative.me no rodapé. Removidos `#fg-needle` e o código morto `fg-arc`.
+  - ⚠️ **IDs `fg-value`/`fg-label` preservados de propósito**: `calculatePortfolioConvexity()` lê
+    `#fg-value` para o regime de Markov (λ₃). Não renomear.
+
+#### 2. Revisão de arquitetura — achados (medidos por script, não estimados)
+| Achado | Número |
+|---|---|
+| Funções definidas em mais de uma página | **40** |
+| Idênticas 100% entre portfolio e pools | **17** (~590 linhas; Cardano sozinho 123) |
+| Cópias do retorno mensal (Modified Dietz) | **4** (portfolio ×2, index, relatorio) |
+| Algoritmos de TIR diferentes | **2** (dashboard XIRR anual × landing bisseção mensal) |
+| Versões de `toggleTheme` | **5** (uma por página) |
+| Commits de robô desde 01/08 | **185 de 274 (67%)** |
+| Objetos temporários abandonados no `.git` | **30** (`tmp_obj_*`, sinal de interferência do OneDrive) |
+| Requisições ao abrir o dashboard | **56** (26 logos, cada token 2×: small + large; 3 chamadas de preço) |
+| JS inline | portfolio 195 KB · pools 159 KB · ferramentas 145 KB |
+- **Duas fórmulas de Health Factor:** `data.js` usa CF 0,83/0,78; `scripts/fetch-briefing.js` usa
+  LT 0,825/0,775 (constante `LT`, linha ~28). Não mexido — muda número na tela, decisão do Lucas.
+- Actions com versões misturadas (checkout v4/v5, Node 20/22).
+- Plano em 6 fases (sem mudança de UX em nenhuma): **1** núcleo de cálculo ✅ · **2** leitura
+  on-chain ✅ · **3** `lib/barolo-ui.js` (tema, idioma, moeda, formatadores) · **4** rede (preço
+  único com cache entre páginas, logo num tamanho, pausar polling em aba oculta) · **5** Actions
+  (um workflow diário sequencial, versões alinhadas) · **6** des-bundlar o `emprestimos.html`.
+
+#### 3. Fase 1 — `lib/barolo-core.js` (commit `f4587b5`)
+Módulo PURO (sem DOM, sem rede), UMD: `window.BaroloCore` no browser, `require()` no Node.
+API: `dietzReturns` · `monthlyReturnsTable` · `compound` · `xirr` · `curveCashflows` ·
+`curveIRRPct` · `performanceMetrics(curve, bench)` · `netWorth(D, priceOf)`. As expressões foram
+copiadas na MESMA ordem de operações das originais → resultado idêntico bit a bit.
+- `portfolio_analytics.html`: `calculatePerformanceMetrics` virou 1 linha
+  (`BaroloCore.performanceMetrics(wc, window.BENCHMARK_DATA || null)`); `computeXIRR` virou
+  wrapper; o heatmap (`MONTHLY_RETURNS_DATA`) sai de `BaroloCore.monthlyReturnsTable`.
+- `index.html`: `monthlyTWRSeries` usa `dietzReturns`; `twrGrowth` (morta) removida;
+  `calculatePerformanceMetrics` reduzida à TIR do hero — o resto calculava CAGR/vol/Sharpe/ROI
+  para elementos que não existem, com fórmula diferente da do dashboard; `estimateIRR` usa
+  `curveIRRPct` (null → 0).
+- `relatorio.html`: a tabela de retornos mensais vem de `monthlyReturnsTable`.
+- `scripts/fetch-networth.js` e `fetch-briefing.js`: mesma `Core.netWorth`.
+- Ordem das tags: `data.js` → `lib/barolo-core.js` (index, portfolio, relatorio).
+- ⚠️ **Única mudança de comportamento:** a TIR da landing agora usa a faixa de busca do dashboard
+  (−99% a +1000% a.a.; a antiga ia de ~−100% a +409.500%). Fora dela, mostra 0. TIR real ~14%.
+- Verificado no navegador contra retrato "antes": dashboard 0 diferença nas 9 métricas (TWR 0,73%,
+  TIR 14,50%, benchmark 12,26%); relatório idêntico; landing TIR Δ 2,7e-10 p.p., hero idêntico.
+
+#### 4. Infraestrutura de testes (commit `f4587b5`)
+- `package.json` só para testes, sem dependências: **`npm test`** = `node --test tests/*.test.js`.
+  ⚠️ No Node 24, `node --test tests/` (pasta) NÃO funciona — tem de ser o glob.
+- `.github/workflows/tests.yml`: roda em TODO push (inclusive os dos robôs) e PR; Node 22,
+  checkout v5, sem secrets, não commita.
+- `tests/core.test.js` (unitários), `tests/equivalence.test.js` (código novo × antigo sobre o
+  data.js real + 300 curvas sintéticas), `tests/pages.test.js` (todo `<script>` das 5 páginas e dos
+  scripts Node compila; ordem de carregamento de `lib/`), `tests/data.test.js` (invariantes do
+  data.js — ver regras abaixo).
+- `tests/helpers/extract.js`: lê as páginas e extrai funções/IIFEs pelo nome (casamento de chaves
+  ignorando strings e comentários).
+- `tests/fixtures/legacy.js` = código de cálculo LITERAL do commit `5ed73a1`, gerado por
+  `tests/fixtures/build-legacy.js` a partir do git. Não editar à mão.
+
+#### 5. Fase 2 — `lib/barolo-chain.js` (commit `f2b78d5`)
+Levantamento antes de mexer (script de uso de globais/IDs): a maior parte do "duplicado" era MORTO.
+- `updatePatrimonio` nunca chamado (em nenhuma das duas páginas; o do pools tinha quantidades de junho).
+- `fetchAllEVM`, `fetchSolBalance`, `fetchSolTokens` definidos e nunca chamados no portfolio; no pools
+  chamados a cada 5 min (16 Alchemy + 2 Helius) e o resultado nunca lido.
+- `fetchUniswapLP`: no portfolio consultava a posição da Base fechada em 14/07; no pools ~170 linhas
+  atrás de `return`.
+- Escritas em `aave-net-worth`, `aave-hf-metric`, `kamino-net-val`, `kamino-ltv-bar` — elementos
+  que NÃO existem em página nenhuma.
+- 13 globais gravados e nunca lidos: `_liveUniActive`, `_liveSolWallet`, `_livePyusd`,
+  `_liveUsdcSol`, `_liveKaminoDeposit`, `_liveKaminoNetVal`, `_liveKaminoSol`, `_liveKaminoLtv`,
+  `_liveAdaStaked`, `_liveAdaRewards`, `_liveAdaPool`, `_liveAdaRewardsHistory`, `_liveAdaWallet`.
+- Bloco Cardano no pools: 5 chamadas ao Blockfrost por carregamento, sem `#cardano-stake-target`.
+Módulo (duas camadas): `CONFIG` (chaves, RPC, carteiras, contratos, mints) · `fetch*/parse*`
+(devolvem dados, não mexem em nada): `parseAaveV4`, `fetchAave`, `fetchAaveApys`,
+`parseKaminoLoan`, `parseKaminoReserves`, `fetchKamino({withApys})` → `{position, apys, failed}`,
+`fetchCardano` · `apply*` (gravam os globais): `applyAave`, `applyAaveApys`, `applyKamino`.
+- `portfolio_analytics.html`: `initWalletFetch` 385 → 42 linhas; `initCardanoFetch` 188 → 111
+  (a montagem do card continua na página, só ela tem o alvo). `pools.html`: `initWalletFetch`
+  499 → 44; `initCardanoFetch` removido (comentário explica). Tag `lib/barolo-chain.js` depois do data.js.
+- Globais que continuam: `_liveAaveDebt/_Collateral/_HF`, `_liveAaveUsdtApy`, `_liveAaveBorrowApy`,
+  `_liveKaminoDebt`, `_liveKaminoSolApy/_UsdsApy/_BorrowApy`.
+- Rede medida (versão do git servida lado a lado): **pools 80 → 58 requisições** (Alchemy 19 → 3,
+  sem Helius, sem Blockfrost); **portfolio** sem a chamada à Base. Números na tela iguais (HF 8,20,
+  AAVE 763,28, Kamino 764,42, Meta $10.662 naquele momento, card ADA "● LIVE").
+- ⚠️ **Única mudança de comportamento:** falha da API Kamino no portfolio usava US$ **808,77** fixo
+  (de maio); agora usa a dívida do `data.js`, igual ao pools.
+- Testes: `tests/helpers/sandbox.js` (navegador falso: fetch com respostas gravadas, document mínimo,
+  timers capturados), `tests/fixtures/chain/responses.json` (respostas REAIS de 14/09 de AAVE,
+  Kamino, Blockfrost; identificadores trocados por `OBLIGATION_FIXTURE`, `STAKE_FIXTURE`,
+  `POOL_FIXTURE`), `tests/fixtures/legacy-chain.js` (blocos antigos do commit `f4587b5`, gerado por
+  `build-legacy-chain.js`), `tests/chain.test.js`, `tests/chain-equivalence.test.js` (11 cenários de
+  falha × 2 páginas + 6 do Cardano; as diferenças permitidas estão escritas uma a uma).
+
+#### 6. `pools.html` — fallback morto do `price.jup.ag` (commits `d666f1d` + `7c867da`)
+- Quando o CoinGecko falhava (429), `getLivePrice` chamava `price.jup.ag/v6` (fora do ar): 1
+  requisição por token, em série, 6 s de timeout cada, sem nunca devolver preço. Sem preço, o bloco
+  da Meta de Alocação (`prices[id]?.usd || 1`) somava **cada token a US$ 1** (7.290 RDNT = US$ 7.290).
+- Novo: `_rememberPrices` salva cada resposta boa por token em `localStorage['bc-pools-last-prices']`;
+  na falha, `_lastKnownPrices(ids)` devolve o preço mais recente entre esse registro,
+  `bc-prices-cache` (portfolio: `{ts, data:{id:{usd}}}`) e `bc-index-prices-cache` (landing:
+  `{ts, data:{id: número}}`) — mesma origem, zero requisição. Caminho feliz idêntico.
+- Verificado com o CoinGecko em 429 no ambiente: 0 requisições ao Jupiter, pools **58 → 39**
+  requisições, Meta **$10.662 (bug) → $9.736** (bate com o patrimônio líquido de 11/09, US$ 9.691).
+- `tests/prices.test.js`: antiga × nova lado a lado (a antiga vem de `legacy-chain.js → poolsPrice`).
+
+### Dados atualizados
+Nenhuma posição alterada. Arquivos/chaves novos:
+| Onde | O quê |
+|---|---|
+| `lib/barolo-core.js`, `lib/barolo-chain.js` | módulos compartilhados (carregados antes do código das páginas) |
+| `tests/fixtures/chain/responses.json` | respostas reais gravadas em 14/09/2026 (sem identificadores) |
+| `localStorage['bc-pools-last-prices']` | `{ <cgId>: { usd, ts } }` — último preço bom por token (pools) |
+| `package.json`, `.github/workflows/tests.yml` | testes rodam local (`npm test`) e em todo push |
+
+### Bugs corrigidos
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| Card "Evolução da Convexidade" mostrava série inventada | 19 valores fixos no código | Removido |
+| Semicírculo do Fear & Greed vazio | `<canvas id="fg-gauge">` sem código que o pintasse | Card refeito sem gauge |
+| "Mês passado" do F&G nunca aparecia | JS gravava em `#fg-month`, elemento não existia | Elemento criado |
+| Landing com rotina de métricas divergente do dashboard | Cópia antiga com retorno simples (sem tirar aporte), para elementos inexistentes | Removida; TIR via core |
+| Kamino em falha: portfolio assumia dívida de US$ 808,77 | Número fixo de maio no `catch` | Fallback = data.js |
+| Pools: 16 chamadas Alchemy + 2 Helius a cada 5 min à toa; 5 Blockfrost por carregamento | Código morto ainda executando | Removido |
+| Pools: Meta de Alocação somando cada token a US$ 1 quando o CoinGecko falha | Fallback do Jupiter morto → `{}` → `|| 1` | Último preço salvo |
+| CI vermelho em `d666f1d` | `prices.test.js` usava `git show f2b78d5`; o checkout do Actions é raso | Versão antiga vai para fixture; reproduzido e validado num clone raso local |
+
+### Regras e lições (valem para as próximas sessões)
+- **Cálculo de performance/patrimônio → `lib/barolo-core.js`. Leitura AAVE/Kamino/Cardano →
+  `lib/barolo-chain.js`.** Não recriar cópia dentro de página; se precisar mudar, muda no módulo
+  e os testes mostram o efeito nas páginas.
+- **`npm test` antes de todo push.** O `tests.yml` roda também nos commits dos robôs.
+- **Testes nunca dependem do histórico do git** (checkout raso no Actions). Versão antiga para
+  comparar = fixture gerada por `tests/fixtures/build-legacy*.js` (pinados em commit).
+- **`tests/data.test.js` barra `data.js` inconsistente, de propósito:** holding ≥ supply do
+  protocolo (bug de 04/09), supply ≥ principal (bug de 14/08), `wealthCurve` com 3 arrays alinhados
+  e meses consecutivos, `invested` que nunca cai, agregados = soma das partes. Se um refresh
+  semanal quebrar o CI, é o dado que está errado — só mudar o teste se a regra mudar (ex.: um
+  saque de verdade faria `invested` cair).
+- **Verificação no Browser pane:** o console ACUMULA mensagens entre navegações — usar
+  `performance.getEntriesByType('resource')` (por página) e filtrar o console por `Error:`. Para
+  comparar antes/depois, servir `git show HEAD:<arquivo> > _<arquivo>_head.html` temporário na raiz
+  e apagar depois. Aqui o CoinGecko dá 429 (aparece como CORS) — isso é ambiente, não bug.
+- Nas fixtures do repositório público: trocar identificadores únicos por marcadores e conferir com grep.
+
+### O que ainda falta
+- **Fase 3** `lib/barolo-ui.js` (tema, idioma, moeda, formatadores; 5 `toggleTheme` diferentes).
+- **Fase 4 (rede):** preço único com cache compartilhado entre páginas (pools ainda faz 6 chamadas
+  ao CoinGecko, portfolio 3); logos num tamanho só; pausar `setInterval` em aba oculta.
+- **Fase 5 (Actions):** um workflow diário sequencial com um commit; alinhar `networth`, `onchain`,
+  `briefing` e `sync-emprestimos` para checkout v5 / Node 22 (ainda v4 / Node 20).
+- **Fase 6:** des-bundlar o `emprestimos.html`.
+- **HF com duas fórmulas** (`data.js` CF 0,83/0,78 × `fetch-briefing.js` LT 0,825/0,775) — decisão do Lucas.
+- **Card ADA nunca mostra USD:** `window._livePrices` não é gravado por ninguém → `adaPrice` sempre
+  null. Não corrigido (mudaria a tela); é só ligar ao `liveData` do portfolio se o Lucas quiser.
+- **Pools, bloco da Meta de Alocação (~linha 1766):** usa um `QTYS` próprio — não conferido se está
+  em dia com o `data.js`.
+- **Repositório dentro do OneDrive** (30 `tmp_obj` no `.git`) — considerar mover para fora.
+- **Chaves de API no front-end** (Alchemy, Helius, Blockfrost): restringir por domínio nos painéis.
+- Pendências de antes seguem: yield pendente no CoinGecko (~US$ 11,39, lembrar em 01/10),
+  `RENDA_2026` de setembro, confirmar `close-month.yml` em 01/10, borrow AAVE, rewards Kamino,
+  mai–jun/26 da Acumulação.
+
+### Commits (push direto na main; CI verde no último)
+| Hash | Mensagem |
+|---|---|
+| `5ed73a1` | fix: remove a serie inventada da Convexidade e refaz o card do Fear & Greed |
+| `f4587b5` | refactor: nucleo unico de calculo (lib/barolo-core.js) + testes de equivalencia |
+| `f2b78d5` | refactor: leitura on-chain compartilhada (lib/barolo-chain.js) + remove codigo morto |
+| `d666f1d` | fix: remove o fallback morto do price.jup.ag no getLivePrice (pools) |
+| `7c867da` | test: prices.test.js le a versao antiga da fixture, nao do git |
+
+---
+
+Atualizado: 14/09/2026 — **Convexidade inventada removida e Fear & Greed refeito**; **revisão de
+arquitetura** (40 funções duplicadas, Dietz ×4, TIR ×2, 67% dos commits de robô, OneDrive no `.git`);
+**Fase 1 `lib/barolo-core.js`** e **Fase 2 `lib/barolo-chain.js`** com equivalência provada contra o
+código antigo; **77 testes** rodando em todo push (`tests.yml`); pools **80 → 39 requisições** e fim
+do `price.jup.ag` morto (Meta deixava de somar tokens a US$ 1)
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
