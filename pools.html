@@ -1357,6 +1357,50 @@ function fetchTimeout(url, opts, ms) {
  return Promise.race([fetch(url, opts), timer]);
 }
 
+// Último preço bom de cada token. Cada resposta do CoinGecko fica salva aqui; quando ele
+// falha (429 do free tier), getLivePrice devolve o último preço REAL em vez de nada.
+// Até 15/09/2026 o fallback era a API antiga do Jupiter (price.jup.ag/v6), que saiu do ar:
+// 1 requisição por token, em série, 6 s de timeout cada — nunca devolvia preço e atrasava a
+// página. Sem preço, a Meta de Alocação somava cada token a US$ 1 (7.290 RDNT = US$ 7.290).
+var LAST_PRICES_KEY = 'bc-pools-last-prices';
+
+function _rememberPrices(data) {
+ try {
+  const saved = JSON.parse(localStorage.getItem(LAST_PRICES_KEY) || '{}') || {};
+  const now = Date.now();
+  Object.keys(data || {}).forEach(function(id) {
+   if (data[id] && typeof data[id].usd === 'number') saved[id] = { usd: data[id].usd, ts: now };
+  });
+  localStorage.setItem(LAST_PRICES_KEY, JSON.stringify(saved));
+ } catch(e) {}
+}
+
+// Preço mais recente de cada id entre: o registro desta página, o cache do portfolio
+// (bc-prices-cache: { ts, data: { id: { usd } } }) e o da landing (bc-index-prices-cache:
+// { ts, data: { id: número } }) — todos na mesma origem. Não faz requisição nenhuma.
+function _lastKnownPrices(ids) {
+ const best = {};
+ const take = function(id, usd, ts) {
+  if (typeof usd === 'number' && usd > 0 && (!best[id] || ts > best[id].ts)) best[id] = { usd: usd, ts: ts || 0 };
+ };
+ try {
+  const own = JSON.parse(localStorage.getItem(LAST_PRICES_KEY) || '{}') || {};
+  Object.keys(own).forEach(function(id) { take(id, own[id] && own[id].usd, own[id] && own[id].ts); });
+ } catch(e) {}
+ ['bc-prices-cache', 'bc-index-prices-cache'].forEach(function(k) {
+  try {
+   const c = JSON.parse(localStorage.getItem(k) || 'null');
+   if (c && c.data) ids.forEach(function(id) {
+    const v = c.data[id];
+    take(id, v && typeof v === 'object' ? v.usd : v, c.ts);
+   });
+  } catch(e) {}
+ });
+ const out = {};
+ ids.forEach(function(id) { if (best[id]) out[id] = { usd: best[id].usd }; });
+ return out;
+}
+
 async function getLivePrice(ids) {
  const key = ids.join(',');
  if (_priceCache[key] && Date.now() - _priceCache[key].ts < 60000) return _priceCache[key].data;
@@ -1368,19 +1412,12 @@ async function getLivePrice(ids) {
  if (!r.ok) throw new Error('CoinGecko HTTP ' + r.status);
  const data = await r.json();
  _priceCache[key] = { ts: Date.now(), data: data };
+ _rememberPrices(data);
  return data;
  } catch(e) {
- const data = {};
- for (const id of ids) {
- try {
- const jupId = id === 'ethereum' ? 'ETH' : id === 'solana' ? 'SOL' : id.toUpperCase();
- const r2 = await fetchTimeout('https://price.jup.ag/v6/price?ids=' + jupId, {}, 6000);
- const j = await r2.json();
- if (j && j.data && j.data[jupId] && j.data[jupId].price) data[id] = { usd: j.data[jupId].price };
- } catch(_) {}
- }
- if (Object.keys(data).length) return data;
- return {};
+ const data = _lastKnownPrices(ids);
+ if (Object.keys(data).length) console.warn('[price] CoinGecko falhou (' + e.message + ') — usando o último preço salvo de ' + Object.keys(data).join(', '));
+ return data;
  }
 }
 
