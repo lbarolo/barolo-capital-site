@@ -29,6 +29,17 @@ test('páginas que usam BaroloCore carregam lib/barolo-core.js antes do primeiro
   }
 });
 
+test('páginas que usam BaroloChain carregam lib/barolo-chain.js antes do primeiro uso', () => {
+  for (const page of ['portfolio_analytics.html', 'pools.html']) {
+    const html = H.read(page);
+    const tag = html.indexOf('<script src="lib/barolo-chain.js">');
+    const use = html.indexOf('BaroloChain');
+    assert.ok(tag > 0, `${page} não carrega lib/barolo-chain.js`);
+    assert.ok(html.indexOf('BaroloChain', tag + 60) > tag && use >= tag, `${page} usa BaroloChain antes de carregar`);
+    assert.ok(html.indexOf('<script src="data.js">') < tag, `${page}: data.js deve vir antes`);
+  }
+});
+
 test('scripts Node compilam', () => {
   const dir = path.join(H.ROOT, 'scripts');
   for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.js'))) {

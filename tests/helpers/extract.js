@@ -46,6 +46,15 @@ function extractFunction(js, name) {
   return js.slice(m.index, close + 1);
 }
 
+// Texto de uma IIFE nomeada: '(function <name>() { ... })();'
+function extractIIFE(js, name) {
+  const start = js.indexOf('(function ' + name + '() {');
+  if (start < 0) throw new Error('IIFE não encontrada: ' + name);
+  const close = matchBrace(js, js.indexOf('{', start));
+  if (close < 0 || js.slice(close + 1, close + 5) !== ')();') throw new Error('fim da IIFE não reconhecido: ' + name);
+  return js.slice(start, close + 5);
+}
+
 // Executa código num contexto isolado e devolve o contexto (globais viram props).
 function run(code, globals) {
   const ctx = vm.createContext(Object.assign({ Math, JSON, isFinite, parseInt, parseFloat, Array, Object }, globals || {}));
@@ -66,4 +75,4 @@ function loadBenchmark() {
   return win.BENCHMARK_DATA;
 }
 
-module.exports = { ROOT, read, inlineScripts, extractFunction, matchBrace, run, loadData, loadBenchmark };
+module.exports = { ROOT, read, inlineScripts, extractFunction, extractIIFE, matchBrace, run, loadData, loadBenchmark };

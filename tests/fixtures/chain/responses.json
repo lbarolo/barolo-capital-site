@@ -1,0 +1,439 @@
+{
+ "recordedAt": "2026-09-14T18:45:50.948Z",
+ "aave": {
+  "main": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b55fc9fc7d0653d00000000000000000000000000000000000000000000000071c75490a4e87cc30000000000000000000000000000000000000009ab6fd17d896fffb789caf0000000000000000000031ce7e121add1c07707d1f014d9d46a99ab4b5425e5c00000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001",
+  "bluechip": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "reserveUsdt": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008dab491eb000000000000000000000000000000000000000000000000000b50dbba112be200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009e9c9ba2a6b420000000000000000000000000000000000000000001abe3c979a051c6d68926600000000000000000000000000000000000000000021eb5966ac7e1667c9b6cd00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003cc2f0dc8f1efbd79cbf9d50000000000000000000000000000000000000000040523590e43b7f154aa9375000000000000000000000000000000000000000000000000000000006aa840b7",
+  "reserveUsdc": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000791bf276b00000000000000000000000000000000000000000000000000086d24c7197e8600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007c6acbcca455b0000000000000000000000000000000000000000001dace5100b4c88553cc74900000000000000000000000000000000000000000023bb03b79af60d0148c0b800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003d4bc7c1ee388cafeb08e700000000000000000000000000000000000000000040906d72e58e0e672bfa1f4000000000000000000000000000000000000000000000000000000006aa840cf"
+ },
+ "kamino": {
+  "obligations": [
+   {
+    "obligationAddress": "OBLIGATION_FIXTURE"
+   }
+  ],
+  "loan": {
+   "loanInfo": {
+    "collateral": {
+     "deposits": [
+      {
+       "tokenMint": "So11111111111111111111111111111111111111112",
+       "tokenAmount": "24.963406995080818346",
+       "tokenValue": "2589.2226897358281042"
+      },
+      {
+       "tokenMint": "USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA",
+       "tokenAmount": "304.94027960430072964",
+       "tokenValue": "304.92193744648253095"
+      }
+     ]
+    },
+    "debt": {
+     "borrows": [
+      {
+       "tokenMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+       "tokenAmount": "764.4915163314890787496743365838944798832",
+       "tokenValue": "764.4330709550655364096039239808626411502"
+      }
+     ]
+    }
+   }
+  },
+  "reserves": [
+   {
+    "liquidityTokenMint": "sctmY8fJucsJatwHz6P48RuWBBkdBMNmSMuBYrWFdrw",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "Dso1bDeDjCQxTrWHqUUi63oBvV7Mdm6WaobLbQ7gnPQ",
+    "supplyApy": "0",
+    "borrowApy": "0.01610943633547124"
+   },
+   {
+    "liquidityTokenMint": "So11111111111111111111111111111111111111112",
+    "supplyApy": "0.04504561465660184",
+    "borrowApy": "0.059667861216279094"
+   },
+   {
+    "liquidityTokenMint": "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs",
+    "supplyApy": "0.0022199099434800917",
+    "borrowApy": "0.013861586773054047"
+   },
+   {
+    "liquidityTokenMint": "3orqhCKM5admbcHkHQhRAEKbXhUT5VPgsQqz7fBa6QdF",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "picobAEvs6w7QEknPce34wAE4gknZA9v5tTonnmHYdX",
+    "supplyApy": "0.0000029130020857692784",
+    "borrowApy": "0.016603750096792824"
+   },
+   {
+    "liquidityTokenMint": "stke7uu3fXHsGqKVVjKnkmj65LRPVrqr4bLG2SJg7rh",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+    "supplyApy": "0.028119368284711843",
+    "borrowApy": "0.04152369727054106"
+   },
+   {
+    "liquidityTokenMint": "cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij",
+    "supplyApy": "0.000039564335081898605",
+    "borrowApy": "0.0019107610856099466"
+   },
+   {
+    "liquidityTokenMint": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "CtzPWv73Sn1dMGVU3ZtLv9yWSyUAanBni19YWDaznnkn",
+    "supplyApy": "0.000015489425797765577",
+    "borrowApy": "0.0012267598221322729"
+   },
+   {
+    "liquidityTokenMint": "ZScHuTtqZukUrtZS43teTKGs2VqkKL8k4QCouR2n6Uo",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "9HB4kAMLSYfGFfN142DKMyPyHyZQ8pXF8M1STbDudodY",
+    "supplyApy": "0",
+    "borrowApy": "0"
+   },
+   {
+    "liquidityTokenMint": "3jsFX1tx2Z8ewmamiwSU851GzyzM2DJMq7KWW5DM8Py3",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "supplyApy": "0",
+    "borrowApy": "0.07600971109735322"
+   },
+   {
+    "liquidityTokenMint": "Bybit2vBJGhPF52GBdNaQfUJ6ZpThSgHBobjWZpLPb4B",
+    "supplyApy": "0.000051174838801237854",
+    "borrowApy": "0.01841638094596787"
+   },
+   {
+    "liquidityTokenMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "supplyApy": "0",
+    "borrowApy": "0.06955945058417567"
+   },
+   {
+    "liquidityTokenMint": "USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB",
+    "supplyApy": "0.03703461109708428",
+    "borrowApy": "0.06496560495861359"
+   },
+   {
+    "liquidityTokenMint": "GYiUmJ8reqYAdTQtx6CRFawHqPXx9yzkUFvaUVE8PskP",
+    "supplyApy": "0",
+    "borrowApy": "0"
+   },
+   {
+    "liquidityTokenMint": "sctmTAsDn4tLUcemqoqYijfuRkiEfAMPi84PNq2EueR",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "cPQPBN7WubB3zyQDpzTK2ormx1BMdAym9xkrYUJsctm",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL",
+    "supplyApy": "0.000006064095626978627",
+    "borrowApy": "0.0007994891756009093"
+   },
+   {
+    "liquidityTokenMint": "strng7mqqc1MBJJV6vMzYbEqnwVGvKKGKedeCvtktWA",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "supplyApy": "0.03694120041257731",
+    "borrowApy": "0.07277973294832885"
+   },
+   {
+    "liquidityTokenMint": "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH",
+    "supplyApy": "0.03194584492669139",
+    "borrowApy": "0.047306176185823556"
+   },
+   {
+    "liquidityTokenMint": "4G9USgnbg6fDTQ5AUfpCjM89zqbzWj32xfqvsaAu66DM",
+    "supplyApy": "0",
+    "borrowApy": "0"
+   },
+   {
+    "liquidityTokenMint": "HUBsveNpjo5pWqNkH57QzxjQASdTVXcSK7bVKTSZtcSX",
+    "supplyApy": "0",
+    "borrowApy": "0.016109450565878092"
+   },
+   {
+    "liquidityTokenMint": "USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA",
+    "supplyApy": "0.03240457272849473",
+    "borrowApy": "0.05162230672282431"
+   },
+   {
+    "liquidityTokenMint": "9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u",
+    "supplyApy": "0.053553797438212314",
+    "borrowApy": "0.09834056461753793"
+   },
+   {
+    "liquidityTokenMint": "CgnTSoL3DgY9SFHxcLj6CgCgKKoTBr6tp4CPAEWy25DE",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "he1iusmfkpAdwvxLNGV8Y1iSbj4rUy6yMhEA3fotn9A",
+    "supplyApy": "5.601919084163853e-8",
+    "borrowApy": "0.01614171141045939"
+   },
+   {
+    "liquidityTokenMint": "vSoLxydx6akxyMD9XEcPvGYNGq6Nn66oqVb3UkGkei7",
+    "supplyApy": "5.601919084163853e-8",
+    "borrowApy": "0.016142010258536343"
+   },
+   {
+    "liquidityTokenMint": "sctmB7GPi5L2Q5G9tUSzXvhZ4YiDMEGcRov9KfArQpx",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "supplyApy": "0.0345981610406394",
+    "borrowApy": "0.05318438708520157"
+   },
+   {
+    "liquidityTokenMint": "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v",
+    "supplyApy": "0.000008346894038835373",
+    "borrowApy": "0.01699516690510605"
+   },
+   {
+    "liquidityTokenMint": "USDH1SM1ojwWUga67PGrgFWUHibbjqMvuMaDkRJTgkX",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4",
+    "supplyApy": "0",
+    "borrowApy": "0"
+   },
+   {
+    "liquidityTokenMint": "HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr",
+    "supplyApy": "0.026026763178098822",
+    "borrowApy": "0.05118109678558125"
+   },
+   {
+    "liquidityTokenMint": "2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH",
+    "supplyApy": "0.03794510863176925",
+    "borrowApy": "0.055474896432055054"
+   },
+   {
+    "liquidityTokenMint": "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
+    "supplyApy": "0.0000035012054595551234",
+    "borrowApy": "0.016658152388292935"
+   },
+   {
+    "liquidityTokenMint": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
+    "supplyApy": "0.00004631493724693847",
+    "borrowApy": "0.018300132191204854"
+   },
+   {
+    "liquidityTokenMint": "CDCSoLckzozyktpAp9FWT3w92KFJVEUxAU7cNu2Jn3aX",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "3Fb5DMRWoBLWD36Lp4BtG41LaFjVeEJNCH9YLNPYdVqj",
+    "supplyApy": "0",
+    "borrowApy": "0"
+   },
+   {
+    "liquidityTokenMint": "BNso1VUJnh4zcfpZa6986Ea66P6TCp59hvtNJ8b1X85",
+    "supplyApy": "0",
+    "borrowApy": "0.016109592869957057"
+   },
+   {
+    "liquidityTokenMint": "StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "Dk2X1HCbwJae44P7FpqdFoeT6LEw4JVyyHvZMHUzHWbi",
+    "supplyApy": "0",
+    "borrowApy": "0"
+   },
+   {
+    "liquidityTokenMint": "xStpgUCss9piqeFUk2iLVcvJEGhAdJxJQuwLkXP555G",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT",
+    "supplyApy": "0",
+    "borrowApy": "0.00015823871856723848"
+   },
+   {
+    "liquidityTokenMint": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+    "supplyApy": "0.03525672258174173",
+    "borrowApy": "0.053651095130669235"
+   },
+   {
+    "liquidityTokenMint": "bSo13r4TkiE4KumL71LsHTPpL2euBYLFx6h9HP3piy1",
+    "supplyApy": "0.00024644477140145504",
+    "borrowApy": "0.02127289400166177"
+   },
+   {
+    "liquidityTokenMint": "7Q2afV64in6N6SeZsAAB81TJzwDoD6zpqmHkzi9Dcavn",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "LAinEtNLgpmCP9Rvsf5Hn8W6EhNiKLZQti1xfWMLy6X",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   },
+   {
+    "liquidityTokenMint": "pSo1f9nQXWgXibFtKf7NWYxb5enAM4qfP6UJSiXRQfL",
+    "supplyApy": "0.000020335172468133322",
+    "borrowApy": "0.01753487047677771"
+   },
+   {
+    "liquidityTokenMint": "3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh",
+    "supplyApy": "0.00023641491559711625",
+    "borrowApy": "0.004558978788352208"
+   },
+   {
+    "liquidityTokenMint": "6DNSN2BJsaPFdFFc1zP37kkeNe4Usc1Sqkzr9C9vPWcU",
+    "supplyApy": "0.02157644281999982",
+    "borrowApy": "0.0434642008062327"
+   },
+   {
+    "liquidityTokenMint": "BonK1YhkXEGLZzwtcvRTip3gAL9nCeQD7ppZBLXhtTs",
+    "supplyApy": "0",
+    "borrowApy": "0.01610967825241416"
+   },
+   {
+    "liquidityTokenMint": "LnTRntk2kTfWEY6cVB8K9649pgJbt6dJLS1Ns1GZCWg",
+    "supplyApy": "0",
+    "borrowApy": "0.016109393644252012"
+   }
+  ]
+ },
+ "cardano": {
+  "address": {
+   "amount": [
+    {
+     "unit": "lovelace",
+     "quantity": "93633924"
+    }
+   ],
+   "stake_address": "STAKE_FIXTURE"
+  },
+  "account": {
+   "controlled_amount": "254535642",
+   "withdrawable_amount": "145272",
+   "pool_id": "POOL_FIXTURE"
+  },
+  "poolMetadata": {
+   "name": "Cardanistas StakePool",
+   "ticker": "CARDs"
+  },
+  "poolHistory": [
+   {
+    "active_stake": "11893474091665",
+    "rewards": "1014127756"
+   },
+   {
+    "active_stake": "12039464378394",
+    "rewards": "2838724379"
+   },
+   {
+    "active_stake": "12143826118327",
+    "rewards": "1702399521"
+   },
+   {
+    "active_stake": "12193170929339",
+    "rewards": "3408637951"
+   },
+   {
+    "active_stake": "12167143408166",
+    "rewards": "2007229218"
+   }
+  ],
+  "rewards": [
+   {
+    "amount": "52908"
+   },
+   {
+    "amount": "52389"
+   },
+   {
+    "amount": "28521"
+   },
+   {
+    "amount": "64362"
+   },
+   {
+    "amount": "34718"
+   },
+   {
+    "amount": "70016"
+   },
+   {
+    "amount": "34624"
+   },
+   {
+    "amount": "64356"
+   },
+   {
+    "amount": "64051"
+   },
+   {
+    "amount": "81403"
+   },
+   {
+    "amount": "46433"
+   },
+   {
+    "amount": "70126"
+   },
+   {
+    "amount": "82154"
+   },
+   {
+    "amount": "93984"
+   },
+   {
+    "amount": "82880"
+   },
+   {
+    "amount": "41159"
+   },
+   {
+    "amount": "83118"
+   },
+   {
+    "amount": "46784"
+   },
+   {
+    "amount": "82386"
+   },
+   {
+    "amount": "64622"
+   }
+  ]
+ }
+}
