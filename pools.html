@@ -1359,7 +1359,7 @@ function fetchTimeout(url, opts, ms) {
 
 // Último preço bom de cada token. Cada resposta do CoinGecko fica salva aqui; quando ele
 // falha (429 do free tier), getLivePrice devolve o último preço REAL em vez de nada.
-// Até 15/09/2026 o fallback era a API antiga do Jupiter (price.jup.ag/v6), que saiu do ar:
+// Até 14/09/2026 o fallback era a API antiga do Jupiter (price.jup.ag/v6), que saiu do ar:
 // 1 requisição por token, em série, 6 s de timeout cada — nunca devolvia preço e atrasava a
 // página. Sem preço, a Meta de Alocação somava cada token a US$ 1 (7.290 RDNT = US$ 7.290).
 var LAST_PRICES_KEY = 'bc-pools-last-prices';
