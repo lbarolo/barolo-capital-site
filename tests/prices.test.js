@@ -1,22 +1,20 @@
 // getLivePrice (pools.html): o fallback do Jupiter (price.jup.ag, fora do ar) foi trocado pelo
-// último preço salvo. Roda a versão ANTIGA (git f2b78d5) e a NOVA lado a lado, com fetch e
-// localStorage falsos, e mostra: caminho feliz idêntico; na falha, a antiga disparava uma
-// requisição morta por token e devolvia nada — a nova não faz requisição e devolve preço real.
+// último preço salvo. Roda a versão ANTIGA (tests/fixtures/legacy-chain.js → poolsPrice, extraída
+// do git) e a NOVA lado a lado, com fetch e localStorage falsos, e mostra: caminho feliz idêntico;
+// na falha, a antiga disparava uma requisição morta por token e devolvia nada — a nova não faz
+// requisição e devolve preço real.
+// Não usa `git show` aqui: o checkout do GitHub Actions só baixa o último commit.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('vm');
-const { execSync } = require('child_process');
 const H = require('./helpers/extract');
+const LEG = require('./fixtures/legacy-chain.js');
 
-const OLD_HTML = execSync('git show f2b78d5:pools.html', { cwd: H.ROOT, encoding: 'utf8', maxBuffer: 64e6 });
-const pick = (html, names) => {
-  const js = H.inlineScripts(html).join('\n;\n');
-  return 'var _priceCache = {};\nvar LAST_PRICES_KEY = "bc-pools-last-prices";\n' +
-    names.filter(n => new RegExp('function\\s+' + n + '\\s*\\(').test(js)).map(n => H.extractFunction(js, n)).join('\n');
-};
-const NAMES = ['fetchTimeout', '_rememberPrices', '_lastKnownPrices', 'getLivePrice'];
-const OLD_SRC = pick(OLD_HTML, NAMES);
-const NEW_SRC = pick(H.read('pools.html'), NAMES);
+const PRELUDE = 'var _priceCache = {};\nvar LAST_PRICES_KEY = "bc-pools-last-prices";\n';
+const NEW_JS = H.inlineScripts(H.read('pools.html')).join('\n;\n');
+const OLD_SRC = PRELUDE + LEG.poolsPrice;
+const NEW_SRC = PRELUDE + ['fetchTimeout', '_rememberPrices', '_lastKnownPrices', 'getLivePrice']
+  .map(n => H.extractFunction(NEW_JS, n)).join('\n');
 
 const IDS = ['ethereum', 'solana', 'cardano', 'radiant-capital', 'eigenlayer', 'polygon-ecosystem-token', 'zksync', 'xai-blockchain', 'zetachain'];
 const CG = { ethereum: { usd: 2539.37 }, solana: { usd: 102.65 }, cardano: { usd: 0.71 }, 'radiant-capital': { usd: 0.0061 },

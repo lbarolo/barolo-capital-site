@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { inlineScripts, matchBrace, ROOT } = require('../helpers/extract');
+const { inlineScripts, matchBrace, extractFunction, ROOT } = require('../helpers/extract');
 
 const COMMIT = 'f4587b5';
 const show = f => execSync(`git show ${COMMIT}:${f}`, { cwd: ROOT, encoding: 'utf8', maxBuffer: 64e6 });
@@ -28,6 +28,9 @@ for (const [key, file] of [['portfolio', 'portfolio_analytics.html'], ['pools', 
   const js = inlineScripts(show(file)).join('\n;\n');
   out[key + 'Wallet'] = iife(js, 'initWalletFetch');
   out[key + 'Cardano'] = iife(js, 'initCardanoFetch');
+  // getLivePrice do pools com o fallback antigo do Jupiter (price.jup.ag). Não mudou entre
+  // este commit e o f2b78d5; foi trocado em d666f1d. Usado por tests/prices.test.js.
+  if (key === 'pools') out.poolsPrice = extractFunction(js, 'fetchTimeout') + '\n' + extractFunction(js, 'getLivePrice');
 }
 const text = `/* GERADO por tests/fixtures/build-legacy-chain.js — NÃO EDITAR À MÃO.
    Blocos on-chain LITERAIS do commit ${COMMIT} (antes da Fase 2), como texto. */
