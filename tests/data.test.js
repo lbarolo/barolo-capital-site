@@ -51,3 +51,17 @@ test('supply ≥ principal em cada posição de lending', () => {
   assert.ok(D.defi.kamino.supply.SOL.qty >= P.kamino.SOL);
   assert.ok(D.defi.kamino.supply.USDS.qty >= P.kamino.USDS);
 });
+
+// Histórico de pools — fonte única desde 15/09/2026 (antes pools.html e relatorio.html tinham
+// listas próprias que divergiam). result = fees − il é a definição usada nos gráficos e no PDF.
+test('poolHistory: resultado = fees − IL e datas DD/MM/AAAA', () => {
+  const P = D.poolHistory;
+  assert.ok(Array.isArray(P) && P.length > 0, 'poolHistory vazio');
+  const dmy = /^\d{2}\/\d{2}\/\d{4}$/;
+  P.forEach(p => {
+    const tag = `${p.pair} ${p.net} ${p.open}`;
+    assert.ok(Math.abs((p.fees - p.il) - p.result) < 0.005, `result ≠ fees − il em ${tag}`);
+    assert.ok(dmy.test(p.open), `data de abertura inválida em ${tag}`);
+    if (p.status === 'closed') assert.ok(dmy.test(p.close), `pool fechada sem data de fechamento em ${tag}`);
+  });
+});

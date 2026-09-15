@@ -400,7 +400,7 @@ tr:hover td{ background:var(--surface2); }
     <tbody id="r-pool-table"><!-- preenchido por JS --></tbody>
     <tfoot>
       <tr>
-        <td colspan="3" style="padding-top:12px;color:var(--muted);font-size:8px;letter-spacing:.12em;">TOTAL (27 pools · 2022–2026)</td>
+        <td colspan="3" style="padding-top:12px;color:var(--muted);font-size:8px;letter-spacing:.12em;" id="r-pool-total-label">TOTAL</td>
         <td class="r" style="padding-top:12px;">—</td>
         <td class="r" style="padding-top:12px;color:var(--green);font-weight:700;" id="r-pool-fees-total">—</td>
         <td class="r" style="padding-top:12px;color:var(--red);font-weight:700;" id="r-pool-il-total">—</td>
@@ -559,25 +559,29 @@ var KAM_SOL_QTY=(_bdK&&_bdK.supply.SOL.qty)||23.38,    KAM_SOL_APY=(_bdK&&_bdK.s
 var KAM_USDS_QTY=(_bdK&&_bdK.supply.USDS.qty)||302.41, KAM_USDS_APY=(_bdK&&_bdK.supply.USDS.apy)||0.0368;
 var KAM_BORROW=(_bdK&&_bdK.borrow.USDC.qty)||816.79,   KAM_BORROW_APY=(_bdK&&_bdK.borrow.USDC.apy)||0.0578;
 
-var POOLS_DATA = [
-  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'closed',  fees:5.28, il:0, result:5.28 }, // ciclo 07/08-24/08/2026. Fees coletadas 20/08. Encerrado 24/08 para migrar a posicao para a Base atras de APR maior
-  { pair:'WETH/USDC 0.3%',  net:'Base',     status:'closed',  fees:0.80, il:0, result:0.80 }, // desvio de 2 dias (24-26/08/2026) na Base, $411,63. APR maior nao se materializou: $0,80 de fees contra ~$3,4 de bridge = liquido negativo
-  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'closed',  fees:0, il:0, result:0 }, // ciclo 26/08-28/08/2026 FECHADO 0 A 0: $410 (100% USDG), range $2.207,95-$2.464,17; o ETH nunca recuou para dentro do range e o Lucas encerrou sem taxa nenhuma (fonte: Diario DeFi do Notion). Os ~$410 viraram USDT na AAVE
-  { pair:'WETH/USDG 0.01%',net:'Robinhood',status:'closed',  fees:13.04, il:0, result:13.04 }, // fechada 07/08/2026 — pooled $349.15 + fees $13.04 = ~$362.19 realizado (aberta 14/07/2026)
-  { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:8.62, il:0, result:8.62 }, // desmontada 14/07/2026 (remove 0.1717 ETH + 47.22 USDC → ~0.197 ETH bridgeado); result = fees
-  { pair:'WETH/USDC 0.3%', net:'Base',     status:'closed',  fees:22.28, il:6.55, result:15.73 }, // encerrada 03/06/2026 — dados finais Revert
-  { pair:'ETH/USDC 0.3%',  net:'Base',     status:'closed',  fees:16,  il:0,  result:16   },
-  { pair:'ETH/USDT 0.05%', net:'Arbitrum', status:'closed',  fees:34,  il:0,  result:34   },
-  { pair:'SOL/USDC 0.04%', net:'Solana',   status:'closed',  fees:23,  il:0,  result:23   },
-  { pair:'XAI/WETH 0.3%',  net:'Arbitrum', status:'closed',  fees:7,   il:21, result:-14  },
-  { pair:'SOL/GRIFT 2%',   net:'Solana',   status:'closed',  fees:1389,il:2899,result:-1510}, // il=fees-result=1389-(-1510)=2899; SOL recuperado via Kamino (portfolio tem 20 SOL hoje)
-  { pair:'MSTR/ETH 1%',    net:'Ethereum', status:'closed',  fees:36,  il:0,  result:36   },
-  { pair:'ARB/USDT 0.3%',  net:'Arbitrum', status:'closed',  fees:73,  il:0,  result:73   },
-  { pair:'PEANUT/ETH 1%',  net:'Ethereum', status:'closed',  fees:0,   il:243,result:-243 },
-  { pair:'RDNT/ETH 0.3%×5',net:'Arbitrum', status:'closed',  fees:340, il:0,  result:340  },
-  { pair:'ARB/USDC 0.05%×2',net:'Arbitrum',status:'closed',  fees:335, il:0,  result:335  },
-  { pair:'Outras pools',   net:'Várias',   status:'closed',  fees:66,  il:80, result:-14  },
-];
+// Resumo de pools do PDF — agregado da MESMA lista do pools.html (data.js → poolHistory, 15/09/2026).
+// Antes era uma lista à mão de 17 linhas ("27 pools") que divergia do pools: fees $2.369 / resultado
+// −$881 contra $2.466 / −$794. Agrupa o mesmo par na mesma rede ("×N"), mais recente primeiro.
+var POOLS_SUMMARY = { count: 0, y0: null, y1: null };
+var POOLS_DATA = (function(){
+  var src = (window.BAROLO_DATA && window.BAROLO_DATA.poolHistory) || [];
+  var ymd = function(d){ var p = String(d || '').split('/'); return p.length === 3 ? p[2] + '-' + p[1] + '-' + p[0] : ''; };
+  var g = {}, order = [];
+  src.forEach(function(p){
+    var k = p.pair + '|' + p.net;
+    if (!g[k]) { g[k] = { pair:p.pair, net:p.net, status:'closed', n:0, fees:0, il:0, result:0, last:'' }; order.push(k); }
+    var x = g[k]; x.n++; x.fees += p.fees || 0; x.il += p.il || 0; x.result += p.result || 0;
+    if (p.status === 'active') x.status = 'active';
+    var c = ymd(p.close) || ymd(p.open); if (c > x.last) x.last = c;
+    var yo = +String(p.open || '').slice(-4), yc = +String(p.close || p.open || '').slice(-4);
+    if (yo && (!POOLS_SUMMARY.y0 || yo < POOLS_SUMMARY.y0)) POOLS_SUMMARY.y0 = yo;
+    if (yc && (!POOLS_SUMMARY.y1 || yc > POOLS_SUMMARY.y1)) POOLS_SUMMARY.y1 = yc;
+  });
+  POOLS_SUMMARY.count = src.length;
+  var r2 = function(v){ return Math.round(v * 100) / 100; };
+  return order.map(function(k){ var x = g[k]; return { pair: x.pair + (x.n > 1 ? ' ×' + x.n : ''), net:x.net, status:x.status, fees:r2(x.fees), il:r2(x.il), result:r2(x.result), last:x.last }; })
+    .sort(function(a, b){ return b.last.localeCompare(a.last); });
+})();
 
 var WEALTH_CURVE = {
   labels:  ['01/22','02/22','03/22','04/22','05/22','06/22','07/22','08/22','09/22','10/22','11/22','12/22','01/23','02/23','03/23','04/23','05/23','06/23','07/23','08/23','09/23','10/23','11/23','12/23','01/24','02/24','03/24','04/24','05/24','06/24','07/24','08/24','09/24','10/24','11/24','12/24','01/25','02/25','03/25','04/25','05/25','06/25','07/25','08/25','09/25','10/25','11/25','12/25','01/26','02/26','03/26'],
@@ -773,6 +777,8 @@ function renderAssetTable() {
   document.getElementById('r-pool-il-total').textContent   = '−$'+totalIL.toLocaleString('pt-BR');
   document.getElementById('r-pool-net-total').textContent  = (totalNet>=0?'+':'−')+'$'+Math.abs(totalNet).toLocaleString('pt-BR');
   document.getElementById('r-pool-net-total').style.color  = totalNet>=0?'var(--green)':'var(--red)';
+  var lbl = document.getElementById('r-pool-total-label');
+  if (lbl && POOLS_SUMMARY.count) lbl.textContent = 'TOTAL (' + POOLS_SUMMARY.count + ' pools · ' + POOLS_SUMMARY.y0 + '–' + POOLS_SUMMARY.y1 + ')';
 })();
 
 // ── Returns table + Charts (once on load) ──
