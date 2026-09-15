@@ -24,6 +24,12 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 > Só o `CONHECIMENTO-POOLIANA.md` fica neste repo, por pedido do Lucas — para reusar em outros
 > agentes.
 
+> 🤖 **AGENTES POR PAPEL (desde 15/09/2026)** — `/prints` (review semanal → `data.js`), `/contas`,
+> `/corrigir`, `/bugs` e `/seguranca` (os dois últimos são subagentes **só leitura**). Cada papel
+> tem um **caderno** em `agentes/` com as regras, o estado atual e o histórico dele. **Ao fazer
+> qualquer uma dessas tarefas, leia primeiro o caderno do papel** em vez deste arquivo inteiro —
+> e atualize "Estado atual" + "Histórico" no fim. Índice: `agentes/README.md`.
+
 ---
 
 ## POLÍTICA DE PRIVACIDADE (IMPORTANTE)
