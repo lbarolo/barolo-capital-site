@@ -322,8 +322,8 @@ tr:hover td{ background:var(--surface2); }
     </div>
     <div class="kpi-cell">
       <div class="kpi-label">Dívida Total</div>
-      <div class="kpi-value neg">$1.569</div>
-      <div class="kpi-sub">AAVE $755 · Kamino $816</div>
+      <div class="kpi-value neg" id="r-debt-total">—</div>
+      <div class="kpi-sub" id="r-debt-sub">AAVE · Kamino</div>
     </div>
     <div class="kpi-cell" style="border-left:2px solid rgba(63,185,80,0.25);">
       <div class="kpi-label">Yield Líq./Mês</div>
@@ -364,25 +364,25 @@ tr:hover td{ background:var(--surface2); }
     <div class="col-card">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">AAVE V4 · Ethereum</div>
       <table>
-        <tr><td style="color:var(--muted);">Supply WETH</td><td class="r">2.16 WETH</td><td class="r" id="r-aave-eth-usd">—</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r">1.300 USDT</td><td class="r">$1.300</td></tr>
+        <tr><td style="color:var(--muted);">Supply WETH</td><td class="r" id="r-aave-weth-qty">—</td><td class="r" id="r-aave-eth-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDT</td><td class="r" id="r-aave-usdt-qty">—</td><td class="r" id="r-aave-usdt-usd">—</td></tr>
         <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-aave-supply">—</td></tr>
-        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">754,65 USDC</td><td class="r" style="color:var(--red);">−$755</td></tr>
-        <tr><td style="color:var(--muted);">Health Factor</td><td></td><td class="r" style="color:var(--green);font-weight:700;">5.32</td></tr>
-        <tr><td style="color:var(--muted);">Taxa Borrow</td><td></td><td class="r">5,38% a.a.</td></tr>
-        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$3,38</td></tr>
+        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r" id="r-aave-borrow-qty">—</td><td class="r" style="color:var(--red);" id="r-aave-borrow-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Health Factor</td><td></td><td class="r" style="color:var(--green);font-weight:700;" id="r-aave-hf">—</td></tr>
+        <tr><td style="color:var(--muted);">Taxa Borrow</td><td></td><td class="r" id="r-aave-rate">—</td></tr>
+        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);" id="r-aave-interest">—</td></tr>
       </table>
     </div>
     <div class="col-card">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:14px;">Kamino Finance · Solana</div>
       <table>
-        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r">23,36 SOL</td><td class="r" id="r-kam-sol-usd">—</td></tr>
-        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r">302,25 USDS</td><td class="r">$302</td></tr>
+        <tr><td style="color:var(--muted);">Supply SOL</td><td class="r" id="r-kam-sol-qty">—</td><td class="r" id="r-kam-sol-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">Supply USDS</td><td class="r" id="r-kam-usds-qty">—</td><td class="r" id="r-kam-usds-usd">—</td></tr>
         <tr><td style="color:var(--muted);font-weight:600;">Total Supply</td><td></td><td class="r" style="font-weight:700;" id="r-kam-supply">—</td></tr>
-        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r">815,97 USDC</td><td class="r" style="color:var(--red);">−$816</td></tr>
-        <tr><td style="color:var(--muted);">LTV Atual</td><td></td><td class="r" style="color:var(--green);font-weight:700;">41,2%</td></tr>
-        <tr><td style="color:var(--muted);">LTV Liquidação</td><td></td><td class="r">77,29%</td></tr>
-        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);">~$3,87</td></tr>
+        <tr><td style="color:var(--red);">Borrow USDC</td><td class="r" id="r-kam-borrow-qty">—</td><td class="r" style="color:var(--red);" id="r-kam-borrow-usd">—</td></tr>
+        <tr><td style="color:var(--muted);">LTV Atual</td><td></td><td class="r" style="color:var(--green);font-weight:700;" id="r-kam-ltv">—</td></tr>
+        <tr><td style="color:var(--muted);">LTV Liquidação</td><td></td><td class="r" id="r-kam-liq-ltv">—</td></tr>
+        <tr><td style="color:var(--muted);">Juros/Mês</td><td></td><td class="r" style="color:var(--red);" id="r-kam-interest">—</td></tr>
       </table>
     </div>
   </div>
@@ -438,7 +438,7 @@ tr:hover td{ background:var(--surface2); }
     <table>
       <tr>
         <td style="color:var(--muted);width:140px;padding-bottom:12px;">Período</td>
-        <td style="padding-bottom:12px;">Abril 2026</td>
+        <td style="padding-bottom:12px;" id="r-period">—</td>
       </tr>
       <tr>
         <td style="color:var(--muted);padding-bottom:12px;">Pool Ativa</td>
@@ -450,7 +450,7 @@ tr:hover td{ background:var(--surface2); }
       </tr>
       <tr>
         <td style="color:var(--muted);padding-bottom:12px;">Capital em Caixa</td>
-        <td style="padding-bottom:12px;">USDT $2.140,12 + USDS $300,78 = $2.440,90</td>
+        <td style="padding-bottom:12px;" id="r-cash">—</td>
       </tr>
       <tr>
         <td style="color:var(--muted);">Estratégia</td>
@@ -607,6 +607,7 @@ var MONTHLY_RETURNS = {
     keys.forEach(function(k, m){ mr[y][k] = table[y][m]; });
   });
   MONTHLY_RETURNS = mr;
+var LIVE_PRICES = false; // vira true quando chega preço de verdade (API ou cache) — ver fetchLivePrices()
 })();
 
 // (Hidratação via cache do track.html removida — track.html não existe mais; POOLS_DATA é a fonte estática.)
@@ -654,6 +655,49 @@ function renderKPIs() {
 
   // DeFi position USD values (live)
   var aaveEthUsd = AAVE_ETH_QTY * ethPrice;
+
+  // Bloco de lending + caixa + período (15/09/2026). Antes eram textos fixos de 20/06 no HTML
+  // (HF 5.32, dívida $1.569, SOL 23,36…). Quantidades, taxas e dívida vêm do data.js (constantes
+  // AAVE_*/KAM_*). HF e LTV são recalculados com o preço AO VIVO pela mesma fórmula do site
+  // (BAROLO_DATA.lendingSnapshot); sem preço ao vivo usa o valor gravado no data.js — nunca os
+  // preços de fallback desta página, que são antigos.
+  var BD = window.BAROLO_DATA || {};
+  var n = function(v,d){ return Number(v).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); };
+  var usd0 = function(v){ return '$'+Math.round(v).toLocaleString('pt-BR'); };
+  var paint = function(id,text,color){ var el=document.getElementById(id); if(!el) return; el.textContent=text; if(color) el.style.color=color; };
+  var snap = (LIVE_PRICES && BD.lendingSnapshot) ? BD.lendingSnapshot({ETH:ethPrice, SOL:solPrice}) : null;
+  var hf  = (snap && snap.hf) || (_bdA && _bdA.healthFactor) || null;
+  var ltv = (snap && snap.kLtv) || (_bdK && _bdK.ltv ? _bdK.ltv*100 : null);
+  var liq = (_bdK && _bdK.liqLtv) ? _bdK.liqLtv*100 : null;
+
+  paint('r-debt-total', usd0(DEBT_TOTAL));
+  paint('r-debt-sub', 'AAVE '+usd0(AAVE_BORROW)+' · Kamino '+usd0(KAM_BORROW));
+
+  paint('r-aave-weth-qty',   n(AAVE_ETH_QTY,4)+' WETH');
+  paint('r-aave-usdt-qty',   n(AAVE_USDT_QTY,2)+' USDT');
+  paint('r-aave-usdt-usd',   usd0(AAVE_USDT_QTY));
+  paint('r-aave-borrow-qty', n(AAVE_BORROW,2)+' USDC');
+  paint('r-aave-borrow-usd', '−'+usd0(AAVE_BORROW));
+  if(hf) paint('r-aave-hf', n(hf,2), hf>=3?'var(--green)':hf>=1.5?'var(--yellow,#e3b341)':'var(--red)');
+  paint('r-aave-rate',       n(AAVE_BORROW_APY*100,2)+'% a.a.');
+  paint('r-aave-interest',   '~$'+n(AAVE_BORROW*AAVE_BORROW_APY/12,2));
+
+  paint('r-kam-sol-qty',     n(KAM_SOL_QTY,2)+' SOL');
+  paint('r-kam-usds-qty',    n(KAM_USDS_QTY,2)+' USDS');
+  paint('r-kam-usds-usd',    usd0(KAM_USDS_QTY));
+  paint('r-kam-borrow-qty',  n(KAM_BORROW,2)+' USDC');
+  paint('r-kam-borrow-usd',  '−'+usd0(KAM_BORROW));
+  if(ltv) paint('r-kam-ltv', n(ltv,1)+'%', ltv<50?'var(--green)':ltv<65?'var(--yellow,#e3b341)':'var(--red)');
+  if(liq) paint('r-kam-liq-ltv', n(liq,2)+'%');
+  paint('r-kam-interest',    '~$'+n(KAM_BORROW*KAM_BORROW_APY/12,2));
+
+  if (BD.asOf) {
+    var dt = String(BD.asOf).split('-');
+    var MES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    paint('r-period', MES[+dt[1]-1]+' '+dt[0]+' · posições de '+dt[2]+'/'+dt[1]+'/'+dt[0]);
+  }
+  var st = BD.stables || [];
+  if (st.length) paint('r-cash', st.map(function(x){ return x.ticker+' $'+n(x.qty,2); }).join(' + ')+' = $'+n(STABLES_USD,2));
   var aaveSupply = aaveEthUsd + AAVE_USDT_QTY;
   var kamSolUsd  = KAM_SOL_QTY * solPrice;
   var kamSupply  = kamSolUsd + KAM_USDS_QTY;
@@ -811,7 +855,7 @@ renderAssetTable();
 
   function applyPrices(cacheData) {
     PORTFOLIO_DATA.forEach(function(a){
-      if (cacheData[a.cgId] && cacheData[a.cgId].usd) a.price = cacheData[a.cgId].usd;
+      if (cacheData[a.cgId] && cacheData[a.cgId].usd) { a.price = cacheData[a.cgId].usd; LIVE_PRICES = true; }
     });
     renderAssetTable();
     renderKPIs();
@@ -828,7 +872,7 @@ renderAssetTable();
     .then(function(r){ return r.json(); })
     .then(function(p) {
       var cacheData = {};
-      PORTFOLIO_DATA.forEach(function(a){ if (p[a.cgId] && p[a.cgId].usd) { a.price = p[a.cgId].usd; cacheData[a.cgId] = {usd: p[a.cgId].usd}; } });
+      PORTFOLIO_DATA.forEach(function(a){ if (p[a.cgId] && p[a.cgId].usd) { a.price = p[a.cgId].usd; cacheData[a.cgId] = {usd: p[a.cgId].usd}; LIVE_PRICES = true; } });
       saveCache(cacheData);
       renderAssetTable();
       renderKPIs();
