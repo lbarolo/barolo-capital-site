@@ -37,12 +37,6 @@
 ## Achados em aberto
 _(varredura de 15/09/2026: todos os achados existem no HEAD commitado `af2c418`, nenhum veio da
 Fase 3 não commitada)_
-- [ALTA] `index.html:2620-2623` (landing pública, card "Portfolio Assets") — `prices()` procura
-  números no nível de cima de `bc-index-prices-cache`, mas o cache é gravado como
-  `{ts, data:{…}}` (linha 1970). Nenhum preço é achado e sempre caem os preços `FB` fixos (BTC
-  101k · ETH 3.150 · SOL 158…). `#dashPnl` mostra ≈ +53,8% (real ≈ +5,0%) e o donut, NAV
-  ≈ US$ 13,5k (real ≈ 9,5k). Correção: ler `c.data`. Obs.: esse "+%" é uma 4ª definição de ROI
-  (holdings sem stables ÷ custo) — alinhar rótulo. (15/09/2026)
 - [ALTA] `relatorio.html:318-322, 363-381, 399, 437-449` — bloco de lending do PDF estático, sem
   id, parado em 20/06: dívida $1.569 (real 1.527,19), AAVE USDT 1.300 (2.016,82), borrow 754,65
   (763,05), HF 5.32 (8,21), Kamino SOL 23,36 (24,95), borrow 815,97 (764,14), LTV 41,2% (26,68%),
@@ -105,11 +99,20 @@ Fase 3 não commitada)_
 - [A CONFIRMAR] `bc-lang` preso em "en": nenhum dashboard tem botão de idioma; se o navegador tiver
   `bc-lang = en` salvo, portfolio/pools/ferramentas ficam em EN sem volta pela interface.
   (15/09/2026)
+- [DECISÃO DO LUCAS] `index.html`, card "Portfolio Assets" — o "+%" é uma 4ª definição de ROI
+  (holdings sem stables ÷ custo de aquisição): ≈ +4,9% hoje, contra ≈ +16% do ROI de destaque do
+  dashboard (patrimônio líquido ÷ aporte). Alinhar a conta ou só o rótulo "sobre o capital
+  investido"? (15/09/2026)
 - [DECISÃO DO LUCAS] `scripts/fetch-briefing.js` usa LT 0,825/0,775 no HF; o `data.js` usa CF
   0,83/0,78. Números diferentes no card de pools. (14/09/2026)
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 15/09/2026 · `7b1902d` — [ALTA] landing, card "Portfolio Assets": `prices()` lia o nível de
+  cima de `bc-index-prices-cache` (gravado como `{ts, data}`) e caía sempre nos preços `FB` —
+  P&L +53,8%. Agora lê `data`. Verificado: +7,5% com preços semeados (= conta em Node) e +4,9%
+  com os preços ao vivo (= conta com o cache). Sobrou só a decisão sobre a definição/rótulo desse
+  "+%" (ver "Achados em aberto").
 - 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
   `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
   curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,

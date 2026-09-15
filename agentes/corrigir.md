@@ -52,6 +52,13 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 8. Commit **só dos arquivos que você mexeu** + caderno(s) atualizados, mensagem `fix: ...` /
    `feat: ...`, com a linha de atribuição indicada pelo sistema. `pull --rebase`, `push origin main`.
    Conflito em `emprestimos.html`: `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
+   - **Arquivo com trabalho alheio não commitado** (ex.: `index.html` em 15/09): não dá `git add`
+     nele. Monte a versão do stage = `git show HEAD:<arquivo>` + só a sua troca, grave com
+     `git hash-object -w <tmp>` e `git update-index --cacheinfo 100644,<hash>,<arquivo>`; confira
+     com `git diff --cached`. O working tree fica com o trabalho alheio intacto. (Script de
+     exemplo: foi usado em `7b1902d`.) `git add -p` não funciona aqui (interativo).
+   - **PowerShell 5.1 + aspas duplas na mensagem** quebra `git commit -m $msg` ("pathspec did not
+     match"). Grave a mensagem num arquivo do scratchpad e use `git commit -F <arquivo>`.
 9. Mover o item de "Achados em aberto" para "Resolvidos" no caderno de origem (com hash do commit).
 10. Atualizar "Estado atual" e "Histórico" abaixo.
 
@@ -63,11 +70,14 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (15/09/2026)
+- Fila de bugs: ALTA da landing resolvido (`7b1902d`). Próximos ALTA: `relatorio.html` (bloco de
+  lending estático, parado em 20/06) e `pools.html` (tabela "Colateral em Empréstimos" de 13/03).
 - Plano de arquitetura em andamento: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
   **Fase 3 (`barolo-ui.js`) com trabalho não commitado no working tree em 15/09** (Design.md, 5
   páginas, `tests/ui*.test.js`) — de outra sessão; não commitar sem o Lucas confirmar que é para
   seguir. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — landing: card "Portfolio Assets" lia o cache de preços errado (+53,8% → +4,9%) — `7b1902d`.
 - 15/09/2026 — `/fecharmes` reescrito para a arquitetura atual (curva automática, sem `monthlyReturns`).
 - 15/09/2026 — caderno criado.
