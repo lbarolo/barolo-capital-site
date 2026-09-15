@@ -76,15 +76,22 @@ D.lendingSnapshot({ ETH: 2539.37, SOL: 102.65 }); // { hf, kLtv, aaveCol, kamCol
 - Somar retornos mensais em vez de compor.
 - Comparar retorno de PREÇO de índice com TIR do portfólio.
 - `CPI_USA` do `index.html` é **interanual**, não acumulado — não derivar inflação acumulada dela.
+- No `data.js`, **`apy`, `ltv` e `liqLtv` são FRAÇÃO** (0,0563 = 5,63%; liqLtv 0,766). Não dividir
+  por 100 de novo — em 15/09 isso deu carry de US$ 1,89/ano e SOL liquidando em US$ 3.986.
+  (`lendingSnapshot().kLtv` já devolve em %.)
 - Não dar recomendação de investimento personalizada como se fosse assessor. Mostrar a conta e as
   opções; a decisão é do Lucas.
 
-## Estado atual — números de referência (11/09/2026, preços do print)
-- Patrimônio líquido US$ 9.691 · bruto US$ 11.219 · dívida US$ 1.527,19 · aporte líquido US$ 8.162
-- ROI sobre aporte +18,7% · TWR desde 2022 ≈ +0,3% a.a. (≈ +54,6% a.a. desde jan/2023 — 2022 sozinho foi −79%)
-- TIR ≈ 14,2% a.a. · benchmark 50/50 BTC/ETH ≈ 12,4% · vol ≈ 65% · max DD −50,9%
-- Carry do lending ≈ +US$ 16/mês · HF 8,21 · LTV Kamino 26,7%
+## Estado atual — números de referência (15/09/2026, CoinGecko ao vivo: BTC 76.851 · ETH 2.476,76 · SOL 100,85 · USD/BRL 5,14; posições do data.js de 11/09)
+- Patrimônio líquido US$ 9.501 (≈ R$ 48.836) · bruto US$ 11.028 · dívida US$ 1.527,19 · aporte líquido US$ 8.162
+- ROI sobre aporte +16,4% · ROI sobre custo de aquisição (US$ 10.608) −10,4%
+- TWR desde 2022 ≈ +0,3% a.a. (+1,5% acumulado; ≈ +54,6% a.a. desde jan/2023 — 2022 sozinho foi −79%)
+- TIR ≈ 13,6% a.a. · benchmark 50/50 BTC/ETH ≈ 12,3% · alpha +1,4 p.p. · vol ≈ 64,6% · max DD −50,9%
+- Carry do lending: supply US$ 274,6/ano − borrow US$ 85,4/ano = **+US$ 189/ano (+US$ 15,8/mês)**
+- HF AAVE 8,06 · LTV Kamino 27,1% · SOL liquida em ~US$ 27,76 (−72%)
+- Acumulado em token: 0,1016 ETH · 3,374 SOL · yield pendente no CoinGecko ~US$ 11,22 (acumulando)
 - Benchmark de mesmo fluxo (09/09): BTC +54,4% · S&P +41,3% · **portfólio +35,2%** · CDI +34,0% · Ibov +16,5% · ETH +6,2%
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — 1ª sessão (sem pergunta específica): retrato ao vivo — PL US$ 9.501, ROI +16,4%, TIR 13,6%, carry +US$ 15,8/mês, HF 8,06.
 - 15/09/2026 — caderno criado; snippet de Node testado (metrics, netWorth, lendingSnapshot).
