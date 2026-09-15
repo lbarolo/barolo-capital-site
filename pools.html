@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
+<script src="lib/barolo-core.js"></script><!-- cálculo compartilhado (patrimônio da Meta de Alocação) -->
 <script src="lib/barolo-chain.js"></script><!-- leitura on-chain compartilhada: AAVE V4 / Kamino -->
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 <script>
@@ -1795,30 +1796,32 @@ function initIframePanel(frameId, loadingId, fallbackId, ms) {
 })();
 
 // ── META 5% ──
+// Patrimônio líquido pela MESMA conta do resto do site: BaroloCore.netWorth (lib/barolo-core.js)
+// = Σ holdings × preço (já inclui o colateral DeFi) + stables + LP − dívida, com as quantidades do
+// data.js; a dívida usa o valor ao vivo da AAVE/Kamino quando já carregou. Até 15/09/2026 isto tinha
+// um QTYS próprio de junho (BTC 0,00204 · ETH 2,376 · SOL 23,31; sem SCR e sem LP) e contava US$ 1
+// por token sem preço — se o CoinGecko falhasse, 7.290 RDNT viravam US$ 7.290.
 setTimeout(function() {
- var STABLES = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52; // fonte: data.js
- var ids = ['bitcoin','ethereum','solana','cardano','radiant-capital','eigenlayer','polygon-ecosystem-token','zksync','xai-blockchain','zetachain'];
- var QTYS = {bitcoin:0.00204156,ethereum:2.37632741,solana:23.31,cardano:375.245,'radiant-capital':7290.46,
- eigenlayer:153.36298802,'polygon-ecosystem-token':218,zksync:876,'xai-blockchain':692.86,zetachain:51.1434};
+ var D = window.BAROLO_DATA;
+ var pEl = document.getElementById('capop-patrimonio');
+ var rEl = document.getElementById('capop-rec');
+ var paint = function(net) {
+ if (pEl) pEl.textContent = net ? '$' + Math.round(net).toLocaleString('en-US') : '—';
+ if (rEl) rEl.textContent = net ? '$' + Math.round(net * 0.05).toLocaleString('en-US') : '—';
+ };
+ if (!D || !window.BaroloCore) { paint(window._livePatrimonio || null); return; }
+ var stableIds = D.stables.map(function(s){ return s.cgId; });
+ var ids = D.holdings.map(function(h){ return h.cgId; }).concat(stableIds);
  getLivePrice(ids).then(function(prices) {
- var spot = 0;
- ids.forEach(function(id){ spot += (QTYS[id]||0) * (prices[id]?.usd || 1); });
- var debt = (window._liveAaveDebt || (window.BAROLO_DATA&&window.BAROLO_DATA.debt.aave) || 754.65) + (window._liveKaminoDebt || (window.BAROLO_DATA&&window.BAROLO_DATA.debt.kamino) || 815.97);
- var net = spot + STABLES - debt;
- var meta = net * 0.05;
+ var priceOf = function(id) { var p = prices[id] && prices[id].usd; return typeof p === 'number' ? p : (stableIds.indexOf(id) >= 0 ? 1 : 0); };
+ // Sem preço de BTC/ETH/SOL o número sairia muito baixo: mostra '—' em vez de um valor errado.
+ if (['bitcoin','ethereum','solana'].some(function(id){ return !priceOf(id); })) { paint(window._livePatrimonio || null); return; }
+ var r = BaroloCore.netWorth(D, priceOf);
+ var debt = (window._liveAaveDebt || D.debt.aave) + (window._liveKaminoDebt || D.debt.kamino);
+ var net = r.gross + r.stables + r.lp - debt;
  window._livePatrimonio = net;
- var pEl = document.getElementById('capop-patrimonio');
- var rEl = document.getElementById('capop-rec');
- if(pEl) pEl.textContent = '$' + Math.round(net).toLocaleString('en-US');
- if(rEl) rEl.textContent = '$' + Math.round(meta).toLocaleString('en-US');
- }).catch(function() {
- // fallback: usa window._livePatrimonio se disponível (calculado em outra fetch)
- var fallbackNet = window._livePatrimonio || 7900;
- var pEl = document.getElementById('capop-patrimonio');
- var rEl = document.getElementById('capop-rec');
- if(pEl) pEl.textContent = '$' + Math.round(fallbackNet).toLocaleString('en-US');
- if(rEl) rEl.textContent = '$' + Math.round(fallbackNet*0.05).toLocaleString('en-US');
- });
+ paint(net);
+ }).catch(function() { paint(window._livePatrimonio || null); });
 }, 1500);
 
 // ── LP REF TOGGLE ──
