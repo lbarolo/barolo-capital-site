@@ -6384,6 +6384,133 @@ do `price.jup.ag` morto (Meta deixava de somar tokens a US$ 1)
 
 ---
 
+## Sessão 15/09/2026 — Agentes por papel (5 + cadernos em `agentes/`) · `/fecharmes` atualizado · 1ª varredura de bugs · 7 correções (landing, relatório, pools) · histórico de pools vira fonte única no `data.js`
+
+### Contexto
+O Lucas perguntou se separar o trabalho por agentes (bugs, prints, briefing, correções, contas,
+segurança) seria melhor aqui ou no Cowork. Recomendei **aqui** (tudo mexe no repo: `data.js`, testes,
+preview, push), criamos os agentes, e o resto da sessão foi usá-los: `/bugs` fez a 1ª varredura e o
+`/corrigir` resolveu a fila, um item por vez, com commit, verificação e caderno atualizado a cada um.
+
+### Implementado
+
+#### 1. Agentes por papel — commit `0588251`
+- **Comandos** (`.claude/commands/`): `prints.md`, `contas.md`, `corrigir.md`, `bugs.md` e
+  `seguranca.md`. Os dois últimos só lançam o subagente e registram o resultado no caderno.
+- **Subagentes só leitura** (`.claude/agents/`): `bugs.md` e `seguranca.md` (`tools: Read, Grep, Glob,
+  Bash, PowerShell`, sem Edit/Write; o prompt proíbe gravar por shell). ⚠️ **Subagente novo só carrega
+  numa sessão nova** — nesta sessão ele apareceu depois de uma troca de mensagens.
+- **Cadernos** (`agentes/`): `README.md` (índice e regras comuns) + `prints.md`, `contas.md`,
+  `corrigir.md`, `bugs.md`, `seguranca.md`. Cada um tem regras do papel, "Estado atual" (sobrescrito
+  a cada execução) e "Histórico" (1 linha por execução). **Cada agente lê o próprio caderno em vez
+  do CLAUDE.md inteiro** — é o que evita perder contexto em conversa longa (pedido do Lucas).
+- Fluxo: `/bugs` e `/seguranca` → "Achados em aberto" do caderno → `/corrigir` resolve e move para
+  "Resolvidos" com hash. Só um escritor por vez (`/prints` ou `/corrigir`).
+- Aviso no topo deste arquivo (bloco 🤖 AGENTES POR PAPEL) apontando para `agentes/README.md`.
+- ⚠️ Os cadernos estão no repo público: não escrever endereço, NFT ID, chave ou dado pessoal neles.
+
+#### 2. `/fecharmes` reescrito para a arquitetura atual — `6ea5573`
+O comando antigo mandava acrescentar o ponto da `wealthCurve` em `portfolio_analytics.html` e
+preencher `monthlyReturns` — os dois são automáticos desde 04–05/09 (`data.js` + Action
+`close-month.yml`; retornos derivados pela `lib/barolo-core.js`). Seguir o antigo criaria uma 2ª
+fonte. Novo roteiro: conferir `contributions` do mês **antes** do dia 1 (o `close-month.js` só aplica
+aporte a mês novo), confirmar a curva (`--dry-run`), review de prints pelo caderno, `RENDA_2026`,
+`jurosAcumulados`, yield no CoinGecko (acumulando), números do mês por comando pronto, Diário com
+patrimônio **líquido** (a curva é bruta). Os comandos do arquivo foram testados.
+
+#### 3. Nota de revisão do fechamento de agosto no Diário — `af2c418`
+O fechamento de 31/08 registrou **+26,4%** (TWR) no mês; pela metodologia atual (curva bruta
+corrigida em 05/09 + aporte de agosto $360 → $406 com os US$ 46,10 recebidos em USDC) o certo é
+**+22,8%** — `(11.037 − 8.623 − 406) ÷ (8.623 + 203)`. ROI sobre aporte +22,1% → +13,9%. Entrou
+como **entrada nova** (`id 1789474381200`, date `2026-08-31`), não editando a antiga: no merge do
+`ferramentas.html` o localStorage vence o `diario.js` e o "Sincronizar" desfaria a edição (item
+registrado na fila de bugs).
+
+#### 4. Primeira varredura do subagente `bugs` — `7ee26d6`
+109/109 testes e invariantes do `data.js` OK; 3 ALTA, 6 MÉDIA, 5 BAIXA + código morto, 2 a
+confirmar. Todos existiam no HEAD commitado (nenhum veio do trabalho não commitado da Fase 3).
+
+#### 5. Correções (`/corrigir`), cada uma verificada no navegador **e na cópia exata do commit**
+| Hash | Página | O que era | Agora |
+|---|---|---|---|
+| `7b1902d` | landing, card "Portfolio Assets" | `prices()` lia o nível de cima de `bc-index-prices-cache` (gravado `{ts, data}`) → preços `FB` fixos → P&L **+53,8%** | lê `data` → **+4,9%** (= conta com o cache) |
+| `e49aadc` + `9fe0b8f` | relatório PDF, bloco de lending/dívida/caixa/período | texto fixo de 20/06 (HF 5.32, dívida $1.569, SOL 23,36, LTV 41,2%, "Abril 2026") | ids preenchidos do `data.js`; HF/LTV com preço ao vivo pela `lendingSnapshot` (sem preço: valor do `data.js`) |
+| `4b700a8` | relatório PDF, P&L | `STABLES_COST = 882,64` (custo do CoinGecko, zerado no reset de março) → ganho fantasma ≈ US$ 1.624 | Σ `stables[].invested` (2.479,19): Total Investido $9.011 → **$10.608**, P&L +$2.033 → **+$437**, STABLES +184% → **+1,1%** |
+| `aab2279` | pools, tabela "Colateral em Empréstimos" + nota | quantidades e dívidas do print de 13/03 → total $8.637,95 | `data.js → defi.*` → **$10.357,95**; `catch` usa último preço salvo; sem preço ETH/SOL o total mostra "—"; linha ETH/WETH das fees não chama mais de "ativa" a pool fechada |
+| `a80a193` | pools, Meta de Alocação | `QTYS` próprio de junho (sem SCR/LP), fallbacks 754,65/815,97/7.900, **US$ 1 por token sem preço** | pools carrega `lib/barolo-core.js` e usa `BaroloCore.netWorth` + dívida ao vivo; sem preço BTC/ETH/SOL → "—" |
+| `f84856b` | pools | `fetchAaveData`/`fetchKaminoData` (285 linhas) escreviam em 36 ids inexistentes e faziam rede | removidas: **−6 chamadas por carregamento** (eth.drpc 2→0, Kamino 4→2, CoinGecko 6→4) |
+| `b97e713` | relatório + pools + `data.js` | 2 listas de pools (pools 32; relatório 17 à mão, "27 pools", fees $2.369 / −$881) | ver "Dados atualizados": `poolHistory` fonte única; relatório agrega por par+rede |
+
+#### 6. Técnica de commit com trabalho alheio no mesmo arquivo (importante)
+Havia trabalho **não commitado de outra sessão** (Fase 3, `lib/barolo-ui.js`) em `index.html`,
+`pools.html`, `relatorio.html`, `ferramentas.html`, `portfolio_analytics.html`, `Design.md`,
+`tests/pages.test.js` + arquivos novos não rastreados. Nunca commitado por mim. Para commitar só os
+meus trechos:
+- ✅ **Método que funciona:** versão do stage = **HEAD + só os meus trechos**, aplicados pelas
+  **posições exatas de linha** de `git diff -U0 HEAD -- <arquivo>` (de baixo para cima, conferindo
+  cada linha `-` contra o HEAD) → `git hash-object -w` → `git update-index --cacheinfo`. Conferir:
+  scripts compilam, `git diff --cached` = só os meus, pasta × stage = só os alheios. Descrito no
+  passo 8 de `agentes/corrigir.md` (o script `stage-mine2.js` ficou no scratchpad da sessão).
+- ❌ **Nunca** `git apply --cached --unidiff-zero` com parte dos trechos: posicionou inserções
+  8 linhas fora e o `e49aadc` foi publicado com a `renderKPIs()` quebrada (`var LIVE_PRICES` caiu
+  dentro de outra função → ReferenceError). Compilava; só quebrava rodando. Corrigido em `9fe0b8f`
+  minutos depois.
+- ✅ **Testar a versão commitada**, não só a da pasta: gerar `_<arquivo>_head.html` com
+  `git show HEAD:<arquivo>` **via Node** (o pipe do PowerShell re-codifica acentos; conferir com
+  `git hash-object`), abrir no preview, apagar depois.
+- PowerShell 5.1: mensagem de commit com aspas duplas quebra `git commit -m $msg` → usar `-F arquivo`
+  ou mensagem sem aspas duplas.
+
+### Dados atualizados
+| Onde | Mudança |
+|---|---|
+| `data.js → poolHistory` (**novo**) | As 32 pools movidas **verbatim** de `pools.html` (JSON idêntico conferido). `pools.html` faz `var POOLS = BAROLO_DATA.poolHistory`; o relatório agrega dela. **Fechou uma pool? UMA entrada aqui.** Invariante nova em `tests/data.test.js`: `result = fees − il`, datas DD/MM/AAAA. |
+| `diario.js` | + nota de revisão do fechamento de agosto (retorno do mês +22,8%) |
+| `tests/data.test.js` | + teste `poolHistory` (110 testes no total) |
+| Posições | **nenhuma alterada** (`asOf` segue 2026-09-11) |
+| `emprestimos.html` | regravado pela Action `sync-emprestimos` (`afd1b44`) depois do push do `data.js` |
+
+### Bugs corrigidos
+Ver a tabela da seção 5. Causas raiz em comum: **valor fixo que nunca leu o `data.js`** (relatório,
+colateral e Meta do pools), **leitura de cache no formato errado** (landing), **custo do CoinGecko
+usado como canônico** (stables do PDF), **código morto rodando** (funções do pools) e **duas listas
+para o mesmo dado** (pools × relatório).
+
+### O que ainda falta
+- **Fila de bugs** (`agentes/bugs.md`) — **nenhum ALTA aberto**. MÉDIA:
+  - APY Scanner (aba "Pools APY" do ferramentas) usa o The Graph hospedado, desligado (301).
+  - "SOL liquida em" do briefing: `fetch-briefing.js` usa LT 0,82/0,80 (US$ 25,43) × Liq.LTV da
+    Kamino 0,766 (US$ 27,76). **Um print da Kamino** com o preço de liquidação resolve.
+  - Merge do Diário: localStorage vence o `diario.js` (edição de entrada existente não chega ao
+    navegador). `ferramentas.html` tem trabalho da Fase 3 — confirmar antes de mexer.
+- BAIXA: formatação dos valores da tabela de pools do PDF ("$31,7", "−$6.55"); "Última Compra" fixa
+  em Abr/2026 no relatório; ticker do pools chama Etherscan V1 com `YourApiKeyToken`; Convexidade
+  com fallbacks fixos; código morto listado no caderno; 4 Actions em checkout/setup-node v4; frase
+  sobre "2 `<nav>`" no `Design.md`.
+- A confirmar: LT real da SOL na Kamino; `bc-lang` preso em "en" sem botão de volta nos dashboards.
+- **Decisões do Lucas:** (1) o "+%" do card da landing é uma 4ª definição de ROI (tokens ÷ custo,
+  ≈ +4,9%) — alinhar a conta ou só o rótulo?; (2) no PDF, "Total Investido" tem subtítulo "capital
+  aportado" mas mostra custo de aquisição ($10.608 × aporte $8.162), e o P&L é bruto sem dívida
+  (+4,1% × ≈ +16% / ≈ −10% do dashboard); (3) HF do briefing com LT × CF.
+- `/seguranca` ainda não rodou nenhuma vez.
+- **Fase 3 (`lib/barolo-ui.js`)** segue não commitada no working tree, de outra sessão — não
+  commitar sem o Lucas confirmar. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar) pendentes.
+- Pendências antigas mantidas: yield a lançar no CoinGecko acumulando (~US$ 11,23 — lembrar no
+  fechamento); borrow da AAVE 5,63% (reavaliar se > 5% por 2 semanas); rewards da Kamino
+  (~US$ 5,76); confirmar a Action `close-month.yml` em 01/10; `RENDA_2026` de setembro; mai–jun/26
+  da Acumulação; chaves de API sem restrição por domínio; repositório dentro do OneDrive.
+
+---
+
+Atualizado: 15/09/2026 — **5 agentes por papel** (`/prints`, `/contas`, `/corrigir` + subagentes só
+leitura `/bugs` e `/seguranca`) com **cadernos em `agentes/`** para não perder contexto; `/fecharmes`
+atualizado; **1ª varredura de bugs** e **7 correções publicadas** (landing +53,8% → +4,9%; relatório
+com lending de 20/06 e ganho fantasma de US$ 1.624; colateral e Meta do pools; 285 linhas mortas
+removidas); **histórico de pools vira fonte única em `data.js → poolHistory`**; lição registrada:
+stage parcial só pelas posições de linha, e sempre testar a cópia do commit
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
