@@ -69,4 +69,5 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   seguir. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — `/fecharmes` reescrito para a arquitetura atual (curva automática, sem `monthlyReturns`).
 - 15/09/2026 — caderno criado.

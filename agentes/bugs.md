@@ -35,10 +35,6 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
-- [MÉDIA] `.claude/commands/fecharmes.md` — passo 5 manda adicionar o ponto da `wealthCurve` em
-  `portfolio_analytics.html`, mas desde 04–05/09/2026 a curva vive no `data.js` e quem fecha é a
-  Action `close-month.yml`. Seguir o comando como está criaria uma segunda fonte. Também cita
-  `Co-Authored-By` de outro modelo. (registrado em 15/09/2026)
 - [BAIXA] `portfolio_analytics.html` — card ADA nunca mostra valor em USD: lê
   `window._livePrices`, que ninguém grava. (14/09/2026)
 - [BAIXA] `pools.html` (~linha 1766, Meta de Alocação) — usa um `QTYS` próprio; não conferido
@@ -48,6 +44,10 @@
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
+  `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
+  curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,
+  `jurosAcumulados`, yield no CoinGecko acumulando, Diário com patrimônio líquido.
 
 ## Estado atual
 - Última varredura completa: 04/09/2026 e revisão de gráficos em 11/09/2026 (44 gráficos, 0 NaN).
