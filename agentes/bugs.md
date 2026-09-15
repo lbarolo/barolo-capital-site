@@ -37,12 +37,6 @@
 ## Achados em aberto
 _(varredura de 15/09/2026: todos os achados existem no HEAD commitado `af2c418`, nenhum veio da
 Fase 3 não commitada)_
-- [ALTA] `relatorio.html:538` (Resumo Executivo do PDF) — `STABLES_COST = 882.64` é o custo "do
-  CoinGecko" (artefato do reset de março, USDT a custo zero), mas o custo canônico das stables no
-  `data.js` é USDT 2.179,19 + USDS 300 = 2.479,19. Efeito: "P&L Total" e "Total Investido" do PDF
-  somam ≈ +US$ 1.624 de ganho fantasma nas stables, e a linha STABLES da tabela mostra ROI +184%.
-  Correção: `STABLES_COST` = Σ `stables[].invested` do `data.js`. (achado ao corrigir o bloco de
-  lending, 15/09/2026)
 - [ALTA] `pools.html:2535-2540` — tabela "Colateral em Empréstimos · LIVE"
   (`#collateralTokenBody`) com quantidades de 13/03: ETH 1,87 · USDT 1.652,03 · SOL 20,31 · USDS
   300,42 (data.js: 2,2255 · 2.016,82 · 24,95 · 304,86). Total ≈ US$ 8.639 contra ≈ 10.359
@@ -106,6 +100,11 @@ Fase 3 não commitada)_
   (holdings sem stables ÷ custo de aquisição): ≈ +4,9% hoje, contra ≈ +16% do ROI de destaque do
   dashboard (patrimônio líquido ÷ aporte). Alinhar a conta ou só o rótulo "sobre o capital
   investido"? (15/09/2026)
+- [DECISÃO DO LUCAS] `relatorio.html`, Resumo Executivo — "Total Investido" tem o subtítulo
+  "capital aportado", mas mostra o **custo de aquisição** ($10.608); o aporte líquido é $8.162. E o
+  "P&L Total" do PDF é bruto, sem descontar a dívida (+$437, +4,1%), enquanto o dashboard mostra
+  ROI sobre aporte (≈ +16%) e sobre custo com dívida descontada (≈ −10%). Trocar o subtítulo para
+  "custo de aquisição" e/ou alinhar a conta ao dashboard? (15/09/2026)
 - [DECISÃO DO LUCAS] `scripts/fetch-briefing.js` usa LT 0,825/0,775 no HF; o `data.js` usa CF
   0,83/0,78. Números diferentes no card de pools. (14/09/2026)
 
@@ -122,6 +121,11 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   `lendingSnapshot` (sem preço ao vivo: valor do `data.js`). ⚠️ O `e49aadc` saiu com dois blocos
   deslocados (quebrava a `renderKPIs()`); corrigido no `9fe0b8f` minutos depois. Verificado:
   HF 8,07 = fórmula (8,067), LTV 27,0% = 27,04%, caminho sem preço = 8,21 / 26,7%.
+- 15/09/2026 · `4b700a8` — [ALTA] relatório PDF: `STABLES_COST` era 882,64 (custo do CoinGecko,
+  zerado no reset de março) e somava ≈ US$ 1.624 de ganho fantasma. Agora = Σ `stables[].invested`
+  do `data.js` (2.479,19). Antes → depois: Total Investido $9.011 → $10.608 (= custo de aquisição
+  do dashboard), P&L +$2.033 (+22,6%) → +$437 (+4,1%), linha STABLES +$1.624 (+184%) → +$27
+  (+1,1%, = yield de lending). Conferido também na cópia exata do commit.
 - 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
   `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
   curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,

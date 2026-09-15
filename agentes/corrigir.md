@@ -78,15 +78,18 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (15/09/2026)
-- Fila de bugs: ALTA da landing (`7b1902d`) e do bloco de lending do relatório (`e49aadc` +
-  `9fe0b8f`) resolvidos. Próximos ALTA: `pools.html` (tabela "Colateral em Empréstimos" de 13/03)
-  e `relatorio.html` (`STABLES_COST` do CoinGecko inflando o P&L do PDF em ≈ US$ 1.624).
+- Fila de bugs: resolvidos hoje a landing (`7b1902d`), o bloco de lending do relatório
+  (`e49aadc` + `9fe0b8f`) e o custo das stables do relatório (`4b700a8`). Último ALTA aberto:
+  `pools.html` (tabela "Colateral em Empréstimos" com quantidades de 13/03).
+- Script de stage parcial seguro: `stage-mine.js` (scratchpad da sessão de 15/09) — recria-se em
+  1 min pelo método descrito no passo 8.
 - Plano de arquitetura em andamento: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
   **Fase 3 (`barolo-ui.js`) com trabalho não commitado no working tree em 15/09** (Design.md, 5
   páginas, `tests/ui*.test.js`) — de outra sessão; não commitar sem o Lucas confirmar que é para
   seguir. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — relatório: custo das stables vem do `data.js` (P&L do PDF +$2.033 → +$437) — `4b700a8`.
 - 15/09/2026 — relatório: bloco de lending/dívida/caixa/período passa a ler o `data.js` — `e49aadc` (publicado quebrado: blocos deslocados pelo stage parcial) + `9fe0b8f` (correção).
 - 15/09/2026 — landing: card "Portfolio Assets" lia o cache de preços errado (+53,8% → +4,9%) — `7b1902d`.
 - 15/09/2026 — `/fecharmes` reescrito para a arquitetura atual (curva automática, sem `monthlyReturns`).
