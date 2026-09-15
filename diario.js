@@ -81,6 +81,19 @@ window.BAROLO_DIARY = [
       + 'PENDENCIA FECHADA: os 285,40 USDT lancados em 22/08 SAO aporte novo mesmo — po seco parado esperando ponto de entrada pra comprar. Confirmado por mim em 01/09. Entao o aporte do mes fica em $360 e o TWR em +26,4%. O que sobra desse item e fiscal: como foi dinheiro de fora, falta lancar o custo em BRL na planilha Custo_BRL (aba Fiscal, hoje R$ 36.632,97) — preciso achar a data e o cambio da conversao.',
     pnl: 2264,
     tags: ['fechamento-mensal', 'review', 'defi', 'agosto-2026', 'pool-fechada']
+  },
+  {
+    id: 1789474381200,
+    date: '2026-08-31',
+    type: 'insight',
+    title: 'Nota de revisão — Fechamento Agosto/2026: retorno do mês +22,8% (não +26,4%)',
+    body: 'NOTA DE REVISÃO, escrita em 15/09/2026 sobre o fechamento de agosto (entrada logo ao lado). Lá está +26,4% de retorno no mês (TWR). Pela metodologia que o site usa hoje, o número certo é +22,8%.\n\n'
+      + 'POR QUE MUDOU: (1) a conta de 01/09 usou patrimônio LÍQUIDO (Jul $7.031 → Ago $9.295), mas a curva do site é BRUTA, antes da dívida. Em 05/09 os pontos de julho e agosto foram corrigidos para $8.623 e $11.037 — tinham entrado como líquido enquanto o resto da série é bruto, o que criava um degrau falso de ~US$ 1.525. (2) O aporte do mês passou de $360 para $406: em 09/09 os US$ 46,10 recebidos em USDC em 27/08 foram registrados como contribuição (dinheiro que veio de fora, não resultado da operação).\n\n'
+      + 'CONTA ATUAL (Modified Dietz, aporte no meio do mês): (11.037 − 8.623 − 406) ÷ (8.623 + 203) = +22,8%.\n\n'
+      + 'TAMBÉM MUDA: o ROI sobre aporte líquido era +22,1% sobre $7.610. Com o aporte acumulado revisado para $8.162 (os recebidos em cripto de janeiro, abril e agosto, registrados em 09/09), fica +13,9% ($9.294,72 ÷ $8.162).\n\n'
+      + 'O QUE NÃO MUDA: o patrimônio líquido de $9.294,72, o resto da análise e a leitura do mês — agosto segue o segundo melhor mês de 2026, atrás só de abril (+34,4%).',
+    pnl: null,
+    tags: ['fechamento-mensal', 'revisao', 'agosto-2026']
   }
 
 ];

@@ -35,6 +35,13 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
+- [MÉDIA] `ferramentas.html` (~linha 2216, merge do Diário) — no conflito de `id` o
+  localStorage sempre vence o `diario.js`. Consequência: **editar uma entrada que já existe no
+  `diario.js` nunca chega ao navegador do Lucas**, e o próximo "📤 Sincronizar" exporta a versão
+  antiga e desfaz a edição. Hoje a saída é criar entrada nova (foi o que se fez com a nota de
+  revisão de agosto em 15/09). Correção sugerida: campo `updated` nas entradas e o merge ficar
+  com a versão mais nova. ⚠️ Em 15/09 o `ferramentas.html` tinha trabalho não commitado de outra
+  sessão (Fase 3) — confirmar antes de mexer. (15/09/2026)
 - [BAIXA] `portfolio_analytics.html` — card ADA nunca mostra valor em USD: lê
   `window._livePrices`, que ninguém grava. (14/09/2026)
 - [BAIXA] `pools.html` (~linha 1766, Meta de Alocação) — usa um `QTYS` próprio; não conferido
