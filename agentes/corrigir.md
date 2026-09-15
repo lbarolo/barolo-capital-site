@@ -52,11 +52,19 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 8. Commit **só dos arquivos que você mexeu** + caderno(s) atualizados, mensagem `fix: ...` /
    `feat: ...`, com a linha de atribuição indicada pelo sistema. `pull --rebase`, `push origin main`.
    Conflito em `emprestimos.html`: `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
-   - **Arquivo com trabalho alheio não commitado** (ex.: `index.html` em 15/09): não dá `git add`
-     nele. Monte a versão do stage = `git show HEAD:<arquivo>` + só a sua troca, grave com
-     `git hash-object -w <tmp>` e `git update-index --cacheinfo 100644,<hash>,<arquivo>`; confira
-     com `git diff --cached`. O working tree fica com o trabalho alheio intacto. (Script de
-     exemplo: foi usado em `7b1902d`.) `git add -p` não funciona aqui (interativo).
+   - **Arquivo com trabalho alheio não commitado** (ex.: `index.html`/`relatorio.html` em 15/09):
+     não dá `git add` nele, e `git add -p` não funciona aqui (interativo). Método que funciona:
+     **arquivo da pasta (o que você testou) com só os trechos alheios desfeitos** — pegue os
+     trechos alheios de `git diff -U0 HEAD -- <arquivo>` e, no texto da pasta, troque cada bloco
+     `+` pelo bloco `-`; grave com `git hash-object -w <tmp>` e
+     `git update-index --cacheinfo 100644,<hash>,<arquivo>`. Antes de commitar, confira:
+     scripts compilam, `git diff <HEAD> <hash>` tem só os seus trechos, e depois do commit
+     `git diff -U0 HEAD -- <arquivo>` mostra só os trechos alheios.
+   - ⚠️ **Nunca** use `git apply --cached --unidiff-zero` com parte dos trechos: ele posicionou
+     inserções 8 linhas fora do lugar e o `e49aadc` foi publicado com a `renderKPIs()` quebrada
+     (corrigido no `9fe0b8f`). Compilar não pega esse erro — só rodando.
+   - **Teste a versão commitada, não só a da pasta:** `git show HEAD:<arquivo> > _<arquivo>_head.html`,
+     abrir no preview, conferir, apagar.
    - **PowerShell 5.1 + aspas duplas na mensagem** quebra `git commit -m $msg` ("pathspec did not
      match"). Grave a mensagem num arquivo do scratchpad e use `git commit -F <arquivo>`.
 9. Mover o item de "Achados em aberto" para "Resolvidos" no caderno de origem (com hash do commit).
@@ -70,14 +78,16 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (15/09/2026)
-- Fila de bugs: ALTA da landing resolvido (`7b1902d`). Próximos ALTA: `relatorio.html` (bloco de
-  lending estático, parado em 20/06) e `pools.html` (tabela "Colateral em Empréstimos" de 13/03).
+- Fila de bugs: ALTA da landing (`7b1902d`) e do bloco de lending do relatório (`e49aadc` +
+  `9fe0b8f`) resolvidos. Próximos ALTA: `pools.html` (tabela "Colateral em Empréstimos" de 13/03)
+  e `relatorio.html` (`STABLES_COST` do CoinGecko inflando o P&L do PDF em ≈ US$ 1.624).
 - Plano de arquitetura em andamento: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
   **Fase 3 (`barolo-ui.js`) com trabalho não commitado no working tree em 15/09** (Design.md, 5
   páginas, `tests/ui*.test.js`) — de outra sessão; não commitar sem o Lucas confirmar que é para
   seguir. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — relatório: bloco de lending/dívida/caixa/período passa a ler o `data.js` — `e49aadc` (publicado quebrado: blocos deslocados pelo stage parcial) + `9fe0b8f` (correção).
 - 15/09/2026 — landing: card "Portfolio Assets" lia o cache de preços errado (+53,8% → +4,9%) — `7b1902d`.
 - 15/09/2026 — `/fecharmes` reescrito para a arquitetura atual (curva automática, sem `monthlyReturns`).
 - 15/09/2026 — caderno criado.

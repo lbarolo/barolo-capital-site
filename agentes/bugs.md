@@ -37,12 +37,12 @@
 ## Achados em aberto
 _(varredura de 15/09/2026: todos os achados existem no HEAD commitado `af2c418`, nenhum veio da
 Fase 3 não commitada)_
-- [ALTA] `relatorio.html:318-322, 363-381, 399, 437-449` — bloco de lending do PDF estático, sem
-  id, parado em 20/06: dívida $1.569 (real 1.527,19), AAVE USDT 1.300 (2.016,82), borrow 754,65
-  (763,05), HF 5.32 (8,21), Kamino SOL 23,36 (24,95), borrow 815,97 (764,14), LTV 41,2% (26,68%),
-  "Abril 2026", caixa $2.440,90 (2.506,68). Incoerente com `r-aave-supply`/`r-kam-supply`, que já
-  vêm do `data.js`. Correção: ids + preencher em `renderKPIs()` com as constantes `AAVE_*`/`KAM_*`
-  (linhas 545-549). (15/09/2026)
+- [ALTA] `relatorio.html:538` (Resumo Executivo do PDF) — `STABLES_COST = 882.64` é o custo "do
+  CoinGecko" (artefato do reset de março, USDT a custo zero), mas o custo canônico das stables no
+  `data.js` é USDT 2.179,19 + USDS 300 = 2.479,19. Efeito: "P&L Total" e "Total Investido" do PDF
+  somam ≈ +US$ 1.624 de ganho fantasma nas stables, e a linha STABLES da tabela mostra ROI +184%.
+  Correção: `STABLES_COST` = Σ `stables[].invested` do `data.js`. (achado ao corrigir o bloco de
+  lending, 15/09/2026)
 - [ALTA] `pools.html:2535-2540` — tabela "Colateral em Empréstimos · LIVE"
   (`#collateralTokenBody`) com quantidades de 13/03: ETH 1,87 · USDT 1.652,03 · SOL 20,31 · USDS
   300,42 (data.js: 2,2255 · 2.016,82 · 24,95 · 304,86). Total ≈ US$ 8.639 contra ≈ 10.359
@@ -78,6 +78,9 @@ Fase 3 não commitada)_
   a cada carregamento (eth_call em 2 spokes, 2× API Kamino, 2× preço), com RPCs mortos
   (`rpc.payload.de`, `eth.llamarpc.com` 525) e constantes de junho. Sobraram da Fase 2.
   Correção: remover (o `lib/barolo-chain.js` já cobre). (15/09/2026)
+- [BAIXA] `relatorio.html:445` — "Última Compra" fixa em "+0.999 SOL @ $78.78 (Abr/2026)"; há
+  compra mais recente no Diário (SOL 0,374988 @ $76,01 em 05/08/2026). Correção: ler a última
+  entrada `type:'trade'` do `diario.js` (carregar o arquivo na página) ou tirar a linha. (15/09/2026)
 - [BAIXA] `pools.html:2674` — ticker chama a Etherscan V1 com `apikey=YourApiKeyToken` a cada 60 s
   (endpoint deprecado; resultado não usado — o gas vem da Alchemy). Correção: remover. (15/09/2026)
 - [BAIXA] `portfolio_analytics.html:2629, 2654-2658` — Convexidade com fallbacks fixos (dívida
@@ -113,6 +116,12 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   P&L +53,8%. Agora lê `data`. Verificado: +7,5% com preços semeados (= conta em Node) e +4,9%
   com os preços ao vivo (= conta com o cache). Sobrou só a decisão sobre a definição/rótulo desse
   "+%" (ver "Achados em aberto").
+- 15/09/2026 · `e49aadc` + `9fe0b8f` — [ALTA] relatório PDF: bloco de lending, KPI de dívida,
+  "Período" e "Capital em Caixa" eram textos fixos de 20/06 (HF 5.32, dívida $1.569, SOL 23,36,
+  LTV 41,2%, "Abril 2026"). Agora leem o `data.js`; HF e LTV recalculados com preço ao vivo pela
+  `lendingSnapshot` (sem preço ao vivo: valor do `data.js`). ⚠️ O `e49aadc` saiu com dois blocos
+  deslocados (quebrava a `renderKPIs()`); corrigido no `9fe0b8f` minutos depois. Verificado:
+  HF 8,07 = fórmula (8,067), LTV 27,0% = 27,04%, caminho sem preço = 8,21 / 26,7%.
 - 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
   `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
   curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,
