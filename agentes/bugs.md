@@ -58,11 +58,6 @@ Fase 3 não commitada)_
   sessão (Fase 3) — confirmar antes de mexer. (15/09/2026)
 - [BAIXA] `portfolio_analytics.html` — card ADA nunca mostra valor em USD: lê
   `window._livePrices`, que ninguém grava. (14/09/2026)
-- [MÉDIA] `pools.html:1509-1673` e `1677-1792` — `fetchAaveData`/`fetchKaminoData` escrevem em
-  ids que não existem (`aave-liq-main`, `aave-hf-badge`, `kamino-liq-main`…) mas ainda fazem rede
-  a cada carregamento (eth_call em 2 spokes, 2× API Kamino, 2× preço), com RPCs mortos
-  (`rpc.payload.de`, `eth.llamarpc.com` 525) e constantes de junho. Sobraram da Fase 2.
-  Correção: remover (o `lib/barolo-chain.js` já cobre). (15/09/2026)
 - [BAIXA] `relatorio.html:445` — "Última Compra" fixa em "+0.999 SOL @ $78.78 (Abr/2026)"; há
   compra mais recente no Diário (SOL 0,374988 @ $76,01 em 05/08/2026). Correção: ler a última
   entrada `type:'trade'` do `diario.js` (carregar o arquivo na página) ou tirar a linha. (15/09/2026)
@@ -129,6 +124,11 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   dashboard e do snapshot diário) com a dívida ao vivo; sem preço de BTC/ETH/SOL mostra "—".
   Verificado: $9.507 (meta $475) = conta com os mesmos preços; caminho sem preço = "—"; cópia do
   commit conferida.
+- 15/09/2026 · `f84856b` — [MÉDIA] pools: `fetchAaveData`/`fetchKaminoData` removidas (285
+  linhas). Preenchiam 36 ids inexistentes (conferido no HTML e no DOM) e faziam rede à toa.
+  Resultado: 6 chamadas a menos por carregamento (eth.drpc 2→0, Kamino 4→2, CoinGecko 6→4);
+  dívida/HF ao vivo seguem pela `barolo-chain`; Meta, colateral, 10 gráficos e console iguais.
+  Cópia do commit conferida.
 - 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
   `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
   curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,
