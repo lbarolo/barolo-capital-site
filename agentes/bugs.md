@@ -46,9 +46,6 @@ Fase 3 não commitada)_
   mostra US$ 25,43 (−75%); a conta com o `liqLtv` dá ≈ US$ 27,76 (−72%). Correção: usar o
   `liqLtv` do `data.js` (ou LT por ativo da API). Mesma constante `LT` do item de HF abaixo.
   (15/09/2026)
-- [MÉDIA] `relatorio.html:399` + `POOLS_DATA` — resumo de pools diz "27 pools", mas a lista tem
-  17; fees 2.369,02 / resultado −880,53 contra 2.466,02 / −793,53 do `POOLS` do pools (32
-  entradas). Correção: mesma fonte nas duas páginas. (15/09/2026)
 - [MÉDIA] `ferramentas.html` (~linha 2216, merge do Diário) — no conflito de `id` o
   localStorage sempre vence o `diario.js`. Consequência: **editar uma entrada que já existe no
   `diario.js` nunca chega ao navegador do Lucas**, e o próximo "📤 Sincronizar" exporta a versão
@@ -58,6 +55,10 @@ Fase 3 não commitada)_
   sessão (Fase 3) — confirmar antes de mexer. (15/09/2026)
 - [BAIXA] `portfolio_analytics.html` — card ADA nunca mostra valor em USD: lê
   `window._livePrices`, que ninguém grava. (14/09/2026)
+- [BAIXA] `relatorio.html` (`renderPoolTable`) — formatação dos valores da tabela de pools: fees
+  sem casas fixas ("$31,7", "$0,8") e IL montado com `'−$'+p.il`, sem locale ("−$6.55" com ponto).
+  Já existia; ficou mais visível com os valores agregados. Correção: `toLocaleString('pt-BR',
+  {minimumFractionDigits:2, maximumFractionDigits:2})` nas três colunas. (15/09/2026)
 - [BAIXA] `relatorio.html:445` — "Última Compra" fixa em "+0.999 SOL @ $78.78 (Abr/2026)"; há
   compra mais recente no Diário (SOL 0,374988 @ $76,01 em 05/08/2026). Correção: ler a última
   entrada `type:'trade'` do `diario.js` (carregar o arquivo na página) ou tirar a linha. (15/09/2026)
@@ -129,6 +130,11 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   Resultado: 6 chamadas a menos por carregamento (eth.drpc 2→0, Kamino 4→2, CoinGecko 6→4);
   dívida/HF ao vivo seguem pela `barolo-chain`; Meta, colateral, 10 gráficos e console iguais.
   Cópia do commit conferida.
+- 15/09/2026 · `b97e713` — [MÉDIA] resumo de pools do relatório divergia do pools (17 linhas à
+  mão, "27 pools", fees $2.369,02 / resultado −$880,53). O histórico virou fonte única em
+  `data.js → poolHistory` (movido verbatim, JSON idêntico); o pools lê de lá (10 gráficos e P&L
+  YTD idênticos ao antes) e o relatório agrupa por par+rede (20 linhas, fees $2.466,02 / IL
+  −$3.259,55 / resultado −$793,53, "32 pools · 2023–2026"). Teste novo em `tests/data.test.js`.
 - 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
   `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
   curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,

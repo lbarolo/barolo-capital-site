@@ -49,11 +49,11 @@ do mês, com os prints do fechamento.
 4. **Renda passiva do mês** — `portfolio_analytics.html → RENDA_2026`: acrescentar UMA linha
    `{ m:'Set', lp:…, lend:… }` com comentário da origem.
    - `lp` = fees de pool **realizadas no mês**, por data de coleta/fechamento — somar `fees` das
-     entradas do array `POOLS` de `pools.html` cujo `close` cai no mês. Sem pool fechada no mês → `0`.
+     entradas de `data.js → poolHistory` cujo `close` cai no mês. Sem pool fechada no mês → `0`.
    - `lend` = lending líquido do mês = (Σ supply × APY − Σ borrow × APY) ÷ 12, com as posições do
      `data.js` e o preço MÉDIO do mês de ETH/SOL (`networth-history.json → prices`). Para o borrow
      da AAVE, preferir a taxa **realizada** (variação do "fees paid" no mês) ao APY spot do print.
-   - Conferir: a soma de `lp` do ano = total de 2026 no `POOLS` (card "P&L 2026 YTD").
+   - Conferir: a soma de `lp` do ano = total de 2026 em `poolHistory` (card "P&L 2026 YTD" do pools).
 
 5. **Juros pagos acumulados** — `portfolio_analytics.html → WEEKLY_UPDATE.pnlOrigin.jurosAcumulados`
    (negativo): somar os juros de borrow do mês — variação do "fees paid" da AAVE + juros do

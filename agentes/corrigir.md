@@ -6,7 +6,7 @@
 ## Mapa rápido
 | Coisa | Onde |
 |---|---|
-| Posições e dados | `data.js` (fonte única) — mudança de DADO é papel do `/prints` |
+| Posições e dados | `data.js` (fonte única) — mudança de DADO é papel do `/prints`. Inclui o histórico de pools (`poolHistory`, desde 15/09/2026) |
 | Cálculo (retornos, TWR, TIR, patrimônio) | `lib/barolo-core.js` |
 | Leitura on-chain (AAVE, Kamino, Cardano) | `lib/barolo-chain.js` |
 | Tema/idioma compartilhados | `lib/barolo-ui.js` (Fase 3 — conferir no `git status` se já foi commitado) |
@@ -80,9 +80,9 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 ## Estado atual (15/09/2026)
 - Fila de bugs: **nenhum ALTA aberto** — resolvidos em 15/09 a landing (`7b1902d`), o lending do
   relatório (`e49aadc` + `9fe0b8f`), as stables do relatório (`4b700a8`) e o colateral do pools
-  (`aab2279`); MÉDIA da Meta de Alocação do pools (`a80a193`) e das funções mortas do pools
-  (`f84856b`). Próximos MÉDIA: APY Scanner do ferramentas (The Graph desligado), "SOL liquida em"
-  do briefing, resumo de pools do relatório, merge do Diário.
+  (`aab2279`); MÉDIA da Meta de Alocação do pools (`a80a193`), das funções mortas do pools
+  (`f84856b`) e do resumo de pools do relatório (`b97e713`). Próximos MÉDIA: APY Scanner do
+  ferramentas (The Graph desligado), "SOL liquida em" do briefing, merge do Diário.
 - `pools.html` passou a carregar `lib/barolo-core.js` (15/09) — cálculo novo no pools usa a lib.
 - Script de stage parcial: `stage-mine2.js` (scratchpad de 15/09; recria-se pelo método do passo 8).
 - Plano de arquitetura em andamento: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
@@ -91,6 +91,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   seguir. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — histórico de pools vira fonte única (`data.js → poolHistory`); relatório agrega dela e para de divergir — `b97e713`.
 - 15/09/2026 — pools: removidas `fetchAaveData`/`fetchKaminoData` (285 linhas mortas, −6 chamadas de rede) — `f84856b`.
 - 15/09/2026 — pools: Meta de Alocação usa `BaroloCore.netWorth` (fim do `QTYS` de junho e do US$ 1 por token sem preço) — `a80a193`.
 - 15/09/2026 — pools: tabela "Colateral em Empréstimos" + nota leem o `data.js` ($8.638 → $10.358) — `aab2279`.
