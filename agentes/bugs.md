@@ -37,10 +37,6 @@
 ## Achados em aberto
 _(varredura de 15/09/2026: todos os achados existem no HEAD commitado `af2c418`, nenhum veio da
 Fase 3 não commitada)_
-- [MÉDIA] `pools.html:1798-1813` (Meta de Alocação) — `QTYS` próprio com dados de junho (BTC
-  0,00204 × 0,00434 · ETH 2,376 × 2,233 · SOL 23,31 × 24,95; falta SCR; fallback `7900`). O erro
-  líquido hoje é só +US$ 18 **por coincidência** (os desvios se cancelam). Correção: ler
-  `BAROLO_DATA.holdings`. (14/09, conferido 15/09/2026)
 - [MÉDIA] `ferramentas.html:3723-3727` — APY Scanner (aba "Pools APY") nunca funciona: as 3 URLs
   são o serviço hospedado `api.thegraph.com/subgraphs/name/uniswap/...`, que responde
   301 → `error.thegraph.com`. Correção: GeckoTerminal (já usado no pools) ou gateway do The Graph
@@ -127,6 +123,12 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   ETH 2.074 / SOL 86 fixos; sem preço de ETH/SOL o total mostra "—". Linha ETH/WETH da tabela de
   fees não chama mais de "ativa (uncollected)" a pool fechada em 14/07. Conferido na cópia exata
   do commit.
+- 15/09/2026 · `a80a193` — [MÉDIA] pools, Meta de Alocação: `QTYS` próprio de junho (sem SCR e sem
+  LP), fallbacks de dívida 754,65/815,97 e patrimônio 7.900, e US$ 1 por token sem preço. Agora o
+  `pools.html` carrega `lib/barolo-core.js` e a Meta usa `BaroloCore.netWorth` (a mesma conta do
+  dashboard e do snapshot diário) com a dívida ao vivo; sem preço de BTC/ETH/SOL mostra "—".
+  Verificado: $9.507 (meta $475) = conta com os mesmos preços; caminho sem preço = "—"; cópia do
+  commit conferida.
 - 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
   `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
   curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,

@@ -80,9 +80,10 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 ## Estado atual (15/09/2026)
 - Fila de bugs: **nenhum ALTA aberto** — resolvidos em 15/09 a landing (`7b1902d`), o lending do
   relatório (`e49aadc` + `9fe0b8f`), as stables do relatório (`4b700a8`) e o colateral do pools
-  (`aab2279`). Próximos MÉDIA: Meta de Alocação do pools (`QTYS` de junho), APY Scanner do
+  (`aab2279`); MÉDIA da Meta de Alocação do pools (`a80a193`). Próximos MÉDIA: APY Scanner do
   ferramentas (The Graph desligado), "SOL liquida em" do briefing, resumo de pools do relatório,
   funções mortas do pools que ainda fazem rede, merge do Diário.
+- `pools.html` passou a carregar `lib/barolo-core.js` (15/09) — cálculo novo no pools usa a lib.
 - Script de stage parcial: `stage-mine2.js` (scratchpad de 15/09; recria-se pelo método do passo 8).
 - Plano de arquitetura em andamento: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
   **Fase 3 (`barolo-ui.js`) com trabalho não commitado no working tree em 15/09** (Design.md, 5
@@ -90,6 +91,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   seguir. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — pools: Meta de Alocação usa `BaroloCore.netWorth` (fim do `QTYS` de junho e do US$ 1 por token sem preço) — `a80a193`.
 - 15/09/2026 — pools: tabela "Colateral em Empréstimos" + nota leem o `data.js` ($8.638 → $10.358) — `aab2279`.
 - 15/09/2026 — relatório: custo das stables vem do `data.js` (P&L do PDF +$2.033 → +$437) — `4b700a8`.
 - 15/09/2026 — relatório: bloco de lending/dívida/caixa/período passa a ler o `data.js` — `e49aadc` (publicado quebrado: blocos deslocados pelo stage parcial) + `9fe0b8f` (correção).
