@@ -40,6 +40,34 @@ test('páginas que usam BaroloChain carregam lib/barolo-chain.js antes do primei
   }
 });
 
+test('as 5 páginas carregam lib/barolo-ui.js no <head>, antes de qualquer BaroloUI.*', () => {
+  for (const page of PAGES) {
+    const html = H.read(page);
+    const tag = html.indexOf('<script src="lib/barolo-ui.js">');
+    assert.ok(tag > 0, `${page} não carrega lib/barolo-ui.js`);
+    assert.ok(tag < html.indexOf('</head>'), `${page}: lib/barolo-ui.js tem de estar no <head> (evita piscar o tema)`);
+    assert.ok(html.indexOf('BaroloUI.') > tag, `${page} usa BaroloUI antes de carregar`);
+  }
+});
+
+// Todo onclick="fn(...)" / onclick="Obj.fn(...)" precisa ter o que chamar na página — pega
+// botão que ficou apontando para função removida.
+test('todo onclick das páginas aponta para algo definido', () => {
+  const LIBS = ['lib/barolo-core.js', 'lib/barolo-chain.js', 'lib/barolo-ui.js'].map(f => H.read(f)).join('\n');
+  for (const page of PAGES) {
+    const html = H.read(page);
+    const js = H.inlineScripts(html).join('\n') + '\n' + LIBS;
+    const names = [...new Set([...html.matchAll(/onclick="\s*([A-Za-z_$][\w$]*)/g)].map(m => m[1]))]
+      // código inline no próprio onclick (var x = …; if …) não é chamada de função
+      .filter(n => !['this', 'event', 'document', 'window', 'location', 'history', 'if', 'return',
+        'var', 'let', 'const', 'new', 'typeof', 'void', 'function', 'try', 'true', 'false', 'null'].includes(n));
+    for (const n of names) {
+      const defined = new RegExp('function\\s+' + n + '\\s*\\(|(?:window\\.|\\b(?:var|let|const)\\s+)' + n + '\\s*=|\\b' + n + '\\s*=\\s*(?:function|\\()').test(js);
+      assert.ok(defined, `${page}: onclick chama ${n}, que não está definido`);
+    }
+  }
+});
+
 test('scripts Node compilam', () => {
   const dir = path.join(H.ROOT, 'scripts');
   for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.js'))) {

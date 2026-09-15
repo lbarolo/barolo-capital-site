@@ -39,7 +39,8 @@
 | **Cards (KPI/stat/métrica)** | classes por página (`.stat-card`, `.kpi-card`, `.metric-card`, `.card`…) | Ver §4.4. |
 | **Abas (tabs)** | `switchTab(...)` + `.tab` + painéis `#panel-*`/`.tab-pane` | Ver §4.5 e §6. Assinaturas diferem por página. |
 | **Tooltip dos gráficos** (bolinha vs quadrado) | `Chart.defaults` inline logo após o Chart.js no `<head>` de cada página | Ver §4.6. Padrão = bolinha cheia da cor, sem borda. Global — não mexer em cada gráfico. |
-| **Toggle de tema / idioma / moeda** | funções JS inline (`toggleTheme`, `toggleLang`/`toggleIndexLang`, `toggleCurrency`) | Ver §5. |
+| **Toggle de tema / idioma** | `lib/barolo-ui.js` (`BaroloUI.bootTheme`/`toggleTheme`/`applyI18n`); cada página tem uma `toggleTheme()`/`applyLang()` fina que chama o módulo | Ver §5. Landing tem o próprio `toggleIndexLang`. |
+| **Régua de moeda (USD/BRL/BTC/ETH)** | `toggleCurrency` no `portfolio_analytics.html` | Só no portfolio (pools/ferramentas tinham cópia morta, removida em 14/09/2026). |
 | **Conteúdo/estrutura de uma página** | o próprio arquivo (ver mapa em §6) | Cada página é autossuficiente. |
 | **Textos EN/PT** | atributos `data-i18n="chave"` + objeto de strings no JS (`INDEX_LANG_STRINGS`/`LANG_STRINGS`) | index tem toggle EN/PT; dashboards são PT. |
 | **Números do portfólio (qty, preço, dívida)** | `data.js` | **Não** editar HTML — ver `MONTHLY_UPDATE_WORKFLOW.md`. |
@@ -51,8 +52,10 @@
 ## 2. Tokens (cores, tema, escala)
 
 Definidos em `:root{}` (tema escuro, padrão) e `[data-theme="light"]{}` no `<style>` de cada
-página. **`data-theme` fica no `<html>`**, salvo em `localStorage['bc-theme']`. Um IIFE inline
-no `<head>` aplica o tema salvo antes da 1ª pintura (anti-flash).
+página. **`data-theme` fica no `<html>`** (a tag já vem com `data-theme="dark"`), salvo em
+`localStorage['bc-theme']`. No `<head>` de cada página, `<script src="lib/barolo-ui.js">` seguido de
+`BaroloUI.bootTheme('<padrão>')` aplica o tema salvo antes da 1ª pintura (anti-flash). Padrão da
+1ª visita: `'dark'` em todas, `'light'` no portfolio.
 
 ### 2.1 Paleta canônica (idêntica nas 5 páginas — pode trocar com segurança se replicar em todas)
 ```
@@ -149,22 +152,24 @@ Chart.defaults.plugins.tooltip.callbacks.labelColor = (ctx) => {
 
 ---
 
-## 5. Interações (funções JS — cada página tem a sua, inline)
+## 5. Interações (funções JS)
 
-> Não há JS compartilhado. Cada página define suas próprias funções. Para achar: buscar
-> `function nomeDaFuncao` no arquivo. Comportamentos podem divergir de propósito.
+> Desde 14/09/2026 há três módulos compartilhados em `lib/`, carregados por `<script src>`:
+> `barolo-core.js` (cálculo de performance/patrimônio), `barolo-chain.js` (leitura AAVE/Kamino/ADA)
+> e `barolo-ui.js` (tema e idioma). O resto continua inline em cada página — buscar
+> `function nomeDaFuncao` no arquivo. Mudou algo de tema/idioma? Muda no módulo e roda `npm test`.
 
 | Função | O que faz | Observações por página |
 |---|---|---|
-| `toggleTheme()` | alterna `data-theme`, salva `bc-theme` | **portfolio** e **ferramentas** também **reconstroem os gráficos** no toggle (destroy+rebuild / `Ciclo.rebuild()`). Se mexer, preserve isso. index/pools/relatorio são simples. |
+| `toggleTheme()` | chama `BaroloUI.toggleTheme(fn)`: alterna `data-theme`, salva `bc-theme`, acerta o ícone ☾/☀ de todo botão de tema | `fn` = o que é da página: **portfolio** reconstrói os gráficos, **ferramentas** refaz Evolução + `Ciclo.rebuild()`, **pools** chama `rebuildPoolCharts`. index/relatorio não passam nada. |
 | `toggleMobile()` / `closeMobile()` | abre/fecha menu mobile (`#navLinks.open`) | só **index** (landing). |
 | `setActive(el)` | marca link ativo do nav | index. |
 | `toggleIndexLang()` | EN⇄PT na landing | **só index**. Strings em `INDEX_LANG_STRINGS`. |
-| `toggleLang()` / `applyLang()` | EN⇄PT | pools, ferramentas (strings em `LANG_STRINGS`). Dashboards em geral são PT. |
-| `toggleCurrency()` | cicla régua USD→BRL→BTC→ETH | **portfolio** (4 estados, salva `bc-currency`), **pools**, **ferramentas**. |
+| `toggleLang()` / `applyLang()` | EN⇄PT via `BaroloUI.applyI18n(LANG_STRINGS, lang)`, salva `bc-lang` | portfolio, pools, ferramentas (esta passa `langHtmlKey` e recalcula o Sizing & Risk). ⚠️ Nenhum dashboard tem botão de idioma hoje — só o valor salvo é aplicado no carregamento. |
+| `toggleCurrency()` | cicla régua USD→BRL→BTC→ETH, salva `bc-currency` | **só portfolio**. |
 | `window.Ciclo` | aba Ciclo (indicadores on-chain BTC) | **só ferramentas** (IIFE, escopo `#panel-ciclo`, lê `btc-onchain.json`). |
 
-Anti-flash de tema: IIFE inline no `<head>` de cada página lê `bc-theme` e aplica `data-theme` antes de pintar. Mantenha inline.
+Anti-flash de tema: `lib/barolo-ui.js` + `BaroloUI.bootTheme(...)` no `<head>` de cada página (o teste `tests/pages.test.js` garante que o módulo está no `<head>`). Não mover para o fim do `<body>` — a página piscaria no tema errado.
 
 ---
 
@@ -179,14 +184,14 @@ Anti-flash de tema: IIFE inline no `<head>` de cada página lê `bc-theme` e apl
 | **relatorio.html** | Relatório/PDF (PT) | dashboard (compacto, `no-print`) | Resumo executivo, tabela de ativos, posições DeFi, evolução, `window.print()` com `@media print`. Menor/mais limpo. |
 | **emprestimos.html** | Lending AAVE/Kamino | (no bundle) | ⚠️ **Bundle minificado** — não editar aqui. Fonte + rebuild. |
 
-**Assets compartilhados:** `data.js` (posições), `ui-polish.css` (polish), `btc-onchain.json` (dados do Ciclo, gerado por GitHub Action diária).
+**Assets compartilhados:** `data.js` (posições), `ui-polish.css` (polish), `btc-onchain.json` (dados do Ciclo, gerado por GitHub Action diária), `lib/barolo-core.js` · `lib/barolo-chain.js` · `lib/barolo-ui.js` (ver §5).
 
 ---
 
 ## 7. Como testar e publicar
 
 - **Testar local** (Node, Python não está no PATH): subir um server estático simples na raiz e abrir `http://localhost:8080/<pagina>.html`. F12 → Console p/ erros. (Config em `.claude/launch.json`.)
-- **Checklist ao mexer em qualquer página:** tema claro/escuro alterna e persiste · nav funciona · abas/idioma/moeda funcionam (se houver) · gráficos Chart.js renderizam · **0 erros no console** · números continuam em JetBrains Mono.
+- **Checklist ao mexer em qualquer página:** `npm test` passa · tema claro/escuro alterna, persiste e o ícone ☾/☀ bate com o tema · nav funciona · abas/idioma/moeda funcionam (se houver) · gráficos Chart.js renderizam · **0 erros no console** · números continuam em JetBrains Mono.
 - **Deploy:** GitHub Pages (`barolocapital.com.br`). Push direto na `main` → site atualiza em ~1–2 min. (Ver `CLAUDE.md` › Deploy.)
 
 ---
@@ -196,8 +201,8 @@ Anti-flash de tema: IIFE inline no `<head>` de cada página lê `bc-theme` e apl
 - Tokens **divergiram** entre páginas (§2.2) — não existe fonte única de cor. Mudança de cor consistente = editar as 5.
 - `emprestimos.html` é bundle (não editável à mão).
 - `pools.html` tem 2 `<nav>`; `ferramentas.html` tem 2 links na mesma linha (cosmético).
-- `toggleTheme` de **portfolio** e **ferramentas** reconstrói gráficos — não simplificar.
+- A `toggleTheme` de **portfolio**, **ferramentas** e **pools** passa um gancho de rebuild para `BaroloUI.toggleTheme(fn)` — os gráficos leem a cor do tema na construção. Não tirar o gancho.
 - Screenshots de `index`/dashboards podem travar por causa das animações (aurora/espiral/typing) — é ambiental, não erro da página.
 - Ao editar JS inline: conferir chaves balanceadas (`depth==0`) e nenhuma função duplicada (histórico de corrupção em `CLAUDE.md`).
 - **Nunca salvar HTML via proxy Cloudflare** — ele ofusca e-mails em `data-cfemail` + script `/cdn-cgi/email-decode` que não existe no GitHub Pages → visitante vê "[email protected]" (aconteceu no contato do index; corrigido 08/07/2026).
-- Este doc descreve a **realidade inline atual**. Se um dia o site adotar uma biblioteca compartilhada (`tokens.css`/`components.css`), atualize este arquivo primeiro.
+- Este doc descreve a realidade atual: **visual inline em cada página** (sem `tokens.css`/`components.css` — o design system compartilhado foi rejeitado em 06/07/2026) e **JS de tema/idioma, cálculo e leitura on-chain em `lib/`** (14/09/2026). Se isso mudar, atualize este arquivo primeiro.

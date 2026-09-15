@@ -25,12 +25,8 @@ if(window.Chart){
   };
 }
 </script>
-<script>
-(function(){
-  var t=localStorage.getItem('bc-theme')||'dark';
-  document.documentElement.setAttribute('data-theme',t);
-})();
-</script>
+<script src="lib/barolo-ui.js"></script><!-- tema e idioma compartilhados (no <head>: aplica o tema antes de pintar) -->
+<script>BaroloUI.bootTheme('dark');</script>
 
 <style>
 /* ── Reset ── */
@@ -1113,13 +1109,6 @@ body::after{
   .hero::after{transform:none!important;transition:none!important}
 }
 </style>
-<script>
-// Theme init — runs before render to avoid flash
-(function(){
-  var t=localStorage.getItem('bc-theme');
-  if(t) document.documentElement.setAttribute('data-theme',t);
-})();
-</script>
 </head>
 <body>
 
@@ -1581,14 +1570,7 @@ function loginAccess() {
 // ══════════════════════════════════
 // THEME TOGGLE
 // ══════════════════════════════════
-function toggleTheme() {
-  var html = document.documentElement;
-  var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('bc-theme', next);
-  var btn = document.getElementById('themeToggle');
-  if (btn) btn.textContent = next === 'dark' ? '☾' : '☀';
-}
+function toggleTheme() { BaroloUI.toggleTheme(); } // lib/barolo-ui.js
 
 // ══════════════════════════════════
 // LANGUAGE TOGGLE

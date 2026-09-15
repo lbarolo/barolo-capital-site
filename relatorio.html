@@ -10,12 +10,8 @@
 <link rel="stylesheet" href="ui-polish.css"><!-- camada de polish compartilhada -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
-<script>
-(function(){
-  var t = localStorage.getItem('bc-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', t);
-})();
-</script>
+<script src="lib/barolo-ui.js"></script><!-- tema compartilhado (no <head>: aplica o tema antes de pintar) -->
+<script>BaroloUI.bootTheme('dark');</script>
 <style>
 /* ── Reset & Base ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -487,11 +483,7 @@ if(window.Chart){
 </script>
 <script>
 // ── Tema ──
-function toggleTheme(){
-  var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', t);
-  localStorage.setItem('bc-theme', t);
-}
+function toggleTheme(){ BaroloUI.toggleTheme(); } // lib/barolo-ui.js (agora também troca o ícone ☾/☀)
 
 // ── Período ──
 var MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];

@@ -5,13 +5,8 @@ window.addEventListener('error',function(e){if(!e.message||e.message.includes('S
 </script>
 <meta charset="UTF-8">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
-<script>
-// Theme init — runs before render to avoid flash
-(function(){
- var t=localStorage.getItem('bc-theme');
- if(t) document.documentElement.setAttribute('data-theme',t);
-})();
-</script>
+<script src="lib/barolo-ui.js"></script><!-- tema e idioma compartilhados (no <head>: aplica o tema antes de pintar) -->
+<script>BaroloUI.bootTheme('light'); // 1ª visita, sem tema salvo: claro (era o init(), que pintava escuro antes)</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <link rel="canonical" href="/portfolio">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -4260,22 +4255,19 @@ function currSymbol() { return currentCurrency === 'BRL' ? 'R$' : currentCurrenc
 function toDisplay(usd) { if (currentCurrency === 'BRL') return usd * usdBrlRate; if (currentCurrency === 'BTC') return usd / (getPrice('bitcoin')||65000); if (currentCurrency === 'ETH') return usd / (getPrice('ethereum')||1900); return usd; }
 
 
+// Tema: lib/barolo-ui.js alterna, salva e troca o ícone. Aqui só o rebuild dos gráficos.
 function toggleTheme(){
- const html=document.documentElement;
- const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
- html.setAttribute('data-theme',next);
- localStorage.setItem('bc-theme',next);
+ BaroloUI.toggleTheme(function(){
  if(chartsBuilt){
  chartsBuilt=false;
  if(allocChartInst) allocChartInst.destroy();
  destroyStatic();
  Object.values(sparkCharts).forEach(c=>{try{c.destroy();}catch(e){}});
- var btn=document.querySelector('button[onclick="toggleTheme()"]');
- if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
  sparkCharts={};
  const enriched=buildEnriched();
  renderUI(enriched);
  }
+ });
 }
 
 function toggleHide(){
@@ -4301,11 +4293,8 @@ function switchTab(name, btn){
 // INIT
 // ──────────────────────────────────────────────────
 async function init(){
- const saved=localStorage.getItem('bc-theme');
- document.documentElement.setAttribute('data-theme', saved || 'light');
- // Update theme button icon
- const thBtn=document.querySelector('button[onclick="toggleTheme()"]');
- if(thBtn && saved==='dark') thBtn.textContent='◑ Tema';
+ // Tema: aplicado no <head> por BaroloUI.bootTheme('light'), com o ícone ☾/☀ certo.
+ // (Até 14/09/2026 era reaplicado aqui, e o ícone virava "◑ Tema" no tema escuro.)
 
  // Restore régua de medida (USD/BRL/BTC/ETH)
  (function(){ var sc=localStorage.getItem('bc-currency'); if(sc && ['USD','BRL','BTC','ETH'].indexOf(sc)>=0){ currentCurrency=sc; var cb=document.getElementById('currencyBtn'); if(cb) cb.textContent=({USD:'$ USD',BRL:'R$ BRL',BTC:'₿ BTC',ETH:'Ξ ETH'})[sc]; var bg=document.getElementById('brlRateBadge'); if(bg) bg.style.display = sc==='BRL'?'inline-flex':'none'; } })();
@@ -5182,37 +5171,13 @@ var LANG_STRINGS = {
   // section labels — will be found by data-i18n attribute
 };
 
-function applyLang(lang) {
-  document.documentElement.setAttribute('data-lang', lang);
-  var btn = document.getElementById('langBtn');
-  if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
-  // Apply to all elements with data-i18n attribute
-  document.querySelectorAll('[data-i18n]').forEach(function(el) {
-    var key = el.getAttribute('data-i18n');
-    var s = LANG_STRINGS[key];
-    if (s && s[lang]) el.textContent = s[lang];
-  });
-}
-
-function toggleLang() {
-  var current = document.documentElement.getAttribute('data-lang') || 'pt';
-  var next = current === 'pt' ? 'en' : 'pt';
-  localStorage.setItem('bc-lang', next);
-  applyLang(next);
-}
-
-(function initLang() {
-  var saved = localStorage.getItem('bc-lang') || 'pt';
-  applyLang(saved);
-})();
+// Idioma: lib/barolo-ui.js aplica LANG_STRINGS em todo [data-i18n] e guarda em bc-lang.
+function applyLang(lang) { BaroloUI.applyI18n(LANG_STRINGS, lang); }
+function toggleLang() { BaroloUI.toggleLang(applyLang); }
+BaroloUI.bootLang(applyLang);
 
 
-// Update theme toggle icon on load
-(function(){
-  var t = localStorage.getItem('bc-theme') || 'light';
-  var btn = document.querySelector('button[onclick="toggleTheme()"]');
-  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
-})();
+// (Ícone do tema: acertado por lib/barolo-ui.js no DOMContentLoaded.)
 
 
 

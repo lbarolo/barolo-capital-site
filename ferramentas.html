@@ -5,13 +5,8 @@
 <script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
 <script src="diario.js"></script><!-- cópia git-tracked do Diário DeFi (window.BAROLO_DIARY); merge com localStorage no load -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
-<script>
-// Theme init — runs before render to avoid flash
-(function(){
- var t=localStorage.getItem('bc-theme');
- if(t) document.documentElement.setAttribute('data-theme',t);
-})();
-</script>
+<script src="lib/barolo-ui.js"></script><!-- tema e idioma compartilhados (no <head>: aplica o tema antes de pintar) -->
+<script>BaroloUI.bootTheme('dark');</script>
 <link rel="canonical" href="/ferramentas">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
@@ -2238,18 +2233,13 @@ var liveETH = 1936.22, liveSOL = 83.43, liveETH24h = 0, liveSOL24h = 0;
 // ══════════════════════════════════════════════
 // THEME + DATE
 // ══════════════════════════════════════════════
+// Tema: lib/barolo-ui.js alterna, salva e troca o ícone. Aqui só o rebuild do que é desta página.
 function toggleTheme(){
- const h=document.documentElement;
- h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark');
- localStorage.setItem('bc-theme',h.getAttribute('data-theme'));
+ BaroloUI.toggleTheme(function(){
  if(evoChart) renderEvoChart();
  if(window.Ciclo) Ciclo.rebuild();
-
-  var btn=document.querySelector('button[onclick="toggleTheme()"]');
-  if(btn) btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☾' : '☀';
+ });
 }
-var savedTheme=localStorage.getItem('bc-theme');
-if(savedTheme) document.documentElement.setAttribute('data-theme',savedTheme);
 
 document.getElementById('today-date').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
 document.getElementById('d-date').value = new Date().toISOString().split('T')[0];
@@ -3853,35 +3843,9 @@ async function scanPools() {
 </script>
 
 <script>
-// ── MOEDA USD / BRL (pools) ──
-window.currentCurrency = localStorage.getItem('bc-currency') || 'USD';
-window.usdBrlRate = 5.33;
-(async function fetchRate(){
- try{
- const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
- const d = await r.json();
- if(d.rates && d.rates.BRL) usdBrlRate = d.rates.BRL;
- }catch(e){}
-})();
-function toggleCurrency(){
- currentCurrency = currentCurrency==='USD'?'BRL':'USD';
- localStorage.setItem('bc-currency', currentCurrency);
- const btn = document.getElementById('currencyBtn');
- if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
- document.querySelectorAll('[data-usd]').forEach(el=>{
- const v = parseFloat(el.getAttribute('data-usd'));
- if(isNaN(v)) return;
- if(currentCurrency==='BRL'){
- el.textContent = 'R$ '+( v*usdBrlRate).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
- } else {
- el.textContent = '$'+ v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
- }
- });
-}
-document.addEventListener('DOMContentLoaded',()=>{
- const btn=document.getElementById('currencyBtn');
- if(btn) btn.textContent = currentCurrency==='USD'?'$ USD':'R$ BRL';
-});
+// (Moeda USD/BRL: removida em 14/09/2026 — Fase 3. Esta página não tem botão de moeda nem
+//  elementos [data-usd]; o bloco só buscava o câmbio no exchangerate-api a cada carregamento,
+//  sem ninguém usar. A régua USD/BRL/BTC/ETH vive no portfolio_analytics.html.)
 
 
 function toggleMobileNav(){
@@ -4494,22 +4458,14 @@ function tStr(key, fallback) {
   return (s && s[lang]) || fallback || key;
 }
 
+// Idioma: lib/barolo-ui.js aplica LANG_STRINGS em todo [data-i18n] e guarda em bc-lang.
+// Aqui só o que é desta página: as chaves com HTML e o recálculo do Sizing & Risk.
+function langHtmlKey(key) {
+  return key === 'page-title' || /^sz-header-desc|^sz-notes-(kelly|merton|hedge|levhedge)$/.test(key);
+}
 function applyLang(lang) {
-  document.documentElement.setAttribute('data-lang', lang);
   document.documentElement.setAttribute('lang', lang === 'pt' ? 'pt-BR' : 'en');
-  var btn = document.getElementById('langBtn');
-  if (btn) btn.textContent = lang === 'pt' ? 'EN' : 'PT';
-  document.querySelectorAll('[data-i18n]').forEach(function(el) {
-    var key = el.getAttribute('data-i18n');
-    var s = LANG_STRINGS[key];
-    if (!s || !s[lang]) return;
-    // Use innerHTML for keys containing HTML markup
-    if (key === 'page-title' || /^sz-header-desc|^sz-notes-(kelly|merton|hedge|levhedge)$/.test(key)) {
-      el.innerHTML = s[lang];
-    } else {
-      el.textContent = s[lang];
-    }
-  });
+  BaroloUI.applyI18n(LANG_STRINGS, lang, langHtmlKey);
   // Recalcula os painéis do Sizing & Risk — os vereditos/notas são gerados via JS (tStr)
   // e ficam presos no idioma anterior até o próximo input se não forem recalculados aqui.
   if (document.getElementById('kp-p')) calcKellyPool();
@@ -4518,25 +4474,9 @@ function applyLang(lang) {
   if (document.getElementById('lh-capital')) calcLevHedge();
 }
 
-function toggleLang() {
-  var current = document.documentElement.getAttribute('data-lang') || 'pt';
-  var next = current === 'pt' ? 'en' : 'pt';
-  localStorage.setItem('bc-lang', next);
-  applyLang(next);
-}
-
-(function initLang() {
-  var saved = localStorage.getItem('bc-lang') || 'pt';
-  applyLang(saved);
-})();
-
-
-// Update theme toggle icon on load
-(function(){
-  var t = localStorage.getItem('bc-theme') || 'light';
-  var btn = document.querySelector('button[onclick="toggleTheme()"]');
-  if(btn) btn.textContent = t === 'dark' ? '☾' : '☀';
-})();
+function toggleLang() { BaroloUI.toggleLang(applyLang); }
+BaroloUI.bootLang(applyLang);
+// (Ícone do tema: acertado por lib/barolo-ui.js no DOMContentLoaded.)
 
 </script>
 
