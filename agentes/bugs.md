@@ -35,9 +35,31 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
-_(varredura de 15/09/2026: todos os achados existem no HEAD commitado `af2c418`, nenhum veio da
-Fase 3 não commitada)_
-- [MÉDIA] `ferramentas.html:3723-3727` — APY Scanner (aba "Pools APY") nunca funciona: as 3 URLs
+_(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
+`b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
+20/06 que já existiam)_
+- [MÉDIA] `portfolio_analytics.html:1619-1633` e `:2133-2146` — executive bar lê
+  `WEEKLY_UPDATE.defi` com quantidades de 20/06 (USDT 1300, SOL 23,36, USDS 302,25) e deixa de fora
+  o yield do WETH. "Yield DeFi/Mês" (`ev-yield`) mostra ≈ +US$ 5,06 × esperado **+US$ 15,57** (=
+  carry do `briefing.json` e do card "Leitura da carteira" do pools; o WETH sozinho vale
+  US$ 8,05/mês). "Kamino LTV" (`ev-hf-kamino`) 28,9% × **27,3%**. Correção: quantidades de
+  `BAROLO_DATA.defi`/`lendingSnapshot`, somar o supply do WETH e trocar os APYs de fallback de junho
+  (5,38 / 5,69 / 1,60 / 4,89 / 5,00) pelos do `data.js`. (2ª varredura 15/09/2026)
+- [MÉDIA] `ferramentas.html:808-810, 838-840, 845` — calculadora de liquidação (aba Liquidação)
+  abre com as posições de 20/06: `aave-eth` 2.16 · `aave-usdt` 1300 · `aave-debt` 754.65 ·
+  `kam-sol` 23.36 · `kam-pyusd` 302.25 · `kam-debt` 815.97 · `kam-liq-thresh` 75.79 × `data.js`
+  2,225494 · 2.016,82 · 763,05 · 24,95 · 304,86 · 764,14 · liqLtv 0,766. O override do `BASE`
+  (2515-2527) só alimenta o simulador de cenários; ninguém preenche esses inputs. Correção: no load,
+  copiar `BASE.aaveETH/aaveUSDT/aaveDebt/kamSOL/kamPYUSD/kamDebt/kamLiqThresh` para os `value`
+  antes de `calcAave()`/`calcKamino()`. (2ª varredura 15/09/2026)
+- [MÉDIA] `ferramentas.html:3465-3469` — `checkAlerts()` (a cada 5 min e a cada preço) usa as
+  quantidades de junho com fator 0,86: HF 7,48 × **7,96** (fórmula CF do `data.js`), LTV Kamino
+  30,9% × **27,3%** (erro conservador, mas o limite do Lucas deixa de significar o que ele pensa). O
+  alerta "Uniswap Fora do Range" usa o range 1822,61–2401,90 de uma pool fechada e **dispara com ETH
+  a 2.438 sem existir pool aberta** (`defi.uniswapV3.status: 'closed'`). Correção: mesma fonte do
+  item acima (CF 0,83/0,78); tirar o alerta de range ou ligá-lo a `defi.uniswapV3` só com pool
+  aberta. `aaveHFEl` (3461) não é usada. (2ª varredura 15/09/2026)
+- [MÉDIA] `ferramentas.html:3724-3726` — APY Scanner (aba "Pools APY") nunca funciona: as 3 URLs
   são o serviço hospedado `api.thegraph.com/subgraphs/name/uniswap/...`, que responde
   301 → `error.thegraph.com`. Correção: GeckoTerminal (já usado no pools) ou gateway do The Graph
   com chave. (15/09/2026)
@@ -51,10 +73,18 @@ Fase 3 não commitada)_
   `diario.js` nunca chega ao navegador do Lucas**, e o próximo "📤 Sincronizar" exporta a versão
   antiga e desfaz a edição. Hoje a saída é criar entrada nova (foi o que se fez com a nota de
   revisão de agosto em 15/09). Correção sugerida: campo `updated` nas entradas e o merge ficar
-  com a versão mais nova. ⚠️ Em 15/09 o `ferramentas.html` tinha trabalho não commitado de outra
-  sessão (Fase 3) — confirmar antes de mexer. (15/09/2026)
-- [BAIXA] `portfolio_analytics.html` — card ADA nunca mostra valor em USD: lê
+  com a versão mais nova. (A Fase 3 já foi commitada em `b4523fa` — o arquivo está livre.) (15/09/2026)
+- [BAIXA] `portfolio_analytics.html:5059` — card ADA nunca mostra valor em USD: lê
   `window._livePrices`, que ninguém grava. (14/09/2026)
+- [BAIXA] `index.html:2128` (`buildInflationChart`) + `:1573`, e `relatorio.html:800` + `:486` —
+  os gráficos leem a cor do tema na construção e a `toggleTheme()` dessas duas páginas não passa
+  gancho de rebuild para `BaroloUI.toggleTheme`: ao ir para o claro, ticks do gráfico de inflação
+  continuam `#e8dfc8` sobre fundo claro até recarregar. Não é regressão (antes também não refazia).
+  Correção: `BaroloUI.toggleTheme(function(){ buildInflationChart(...) })` e o equivalente no
+  relatório. (2ª varredura 15/09/2026)
+- [BAIXA] `ferramentas.html:2210` — `STORAGE_ALERTS = 'bc-alerts-v2'` declarado e nunca usado:
+  toggles e limites dos alertas não persistem entre recargas. Só é bug se a intenção for lembrar os
+  alertas ligados. (2ª varredura 15/09/2026)
 - [BAIXA] `relatorio.html` (`renderPoolTable`) — formatação dos valores da tabela de pools: fees
   sem casas fixas ("$31,7", "$0,8") e IL montado com `'−$'+p.il`, sem locale ("−$6.55" com ponto).
   Já existia; ficou mais visível com os valores agregados. Correção: `toLocaleString('pt-BR',
@@ -62,7 +92,7 @@ Fase 3 não commitada)_
 - [BAIXA] `relatorio.html:445` — "Última Compra" fixa em "+0.999 SOL @ $78.78 (Abr/2026)"; há
   compra mais recente no Diário (SOL 0,374988 @ $76,01 em 05/08/2026). Correção: ler a última
   entrada `type:'trade'` do `diario.js` (carregar o arquivo na página) ou tirar a linha. (15/09/2026)
-- [BAIXA] `pools.html:2674` — ticker chama a Etherscan V1 com `apikey=YourApiKeyToken` a cada 60 s
+- [BAIXA] `pools.html:2410` — ticker chama a Etherscan V1 com `apikey=YourApiKeyToken` a cada 60 s
   (endpoint deprecado; resultado não usado — o gas vem da Alchemy). Correção: remover. (15/09/2026)
 - [BAIXA] `portfolio_analytics.html:2629, 2654-2658` — Convexidade com fallbacks fixos (dívida
   754,65 + 815,97, stables 2.536,40, colateral AAVE 6.000) e `kaminoLTVlimit = 0.7722` sempre
@@ -72,17 +102,21 @@ Fase 3 não commitada)_
   `setRef`, sem `.ref-btn`) · `pools.html:2601-2608` (escreve em `lp-weth-usd` inexistente) ·
   `index.html:1559` (`loginAccess` sem chamador; `#access-error` não existe) ·
   `index.html:2486-2581` (drill-down anual sem canvas, com array `MR` de retornos estimados à mão
-  que contradiz a curva — armadilha se reativar). (15/09/2026)
+  que contradiz a curva — armadilha se reativar). Linhas podem ter andado com a Fase 3. (15/09/2026)
 - [BAIXA] `.github/workflows/{briefing,networth,onchain,sync-emprestimos}.yml` ainda em
   `checkout@v4`/`setup-node@v4`/Node 20 (os outros em v5/Node 22). Previsto na Fase 5. (15/09/2026)
-- [BAIXA] `Design.md:203` diz que o pools tem 2 `<nav>`; o duplicado foi removido em 13/07.
-  (15/09/2026)
+- [BAIXA] `Design.md:203` diz que o pools tem 2 `<nav>`; o duplicado foi removido em 13/07 (a Fase 3
+  editou a linha vizinha e não corrigiu esta). (15/09/2026)
+- [A CONFIRMAR] `data.js → poolHistory`, "ETH/USDC 0.05%" Arbitrum (01/08/2023 → 26/03/2024):
+  `days: 209`, mas as datas dão 238 dias (o `fcr` 3,8 bate com 209). Ou a abertura ou os dias estão
+  errados — precisa do Diário. O teste só confere `result = fees − il`. (2ª varredura 15/09/2026)
 - [A CONFIRMAR] LT real da SOL na Kamino — a API pública só dá `maxLtv` 0,74. Se o
   `emprestimos.html` usa 0,82/0,80, o card de lá também erra o preço de liquidação. Precisa do LT
   por ativo (`klend/loans`) ou print da Kamino. (15/09/2026)
-- [A CONFIRMAR] `bc-lang` preso em "en": nenhum dashboard tem botão de idioma; se o navegador tiver
-  `bc-lang = en` salvo, portfolio/pools/ferramentas ficam em EN sem volta pela interface.
-  (15/09/2026)
+- [A CONFIRMAR · risco menor] `bc-lang` preso em "en": depois da Fase 3 nenhuma página escreve mais
+  `bc-lang` (os `toggleLang()` de portfolio/pools/ferramentas não têm `onclick`). Só um valor antigo
+  já salvo no navegador prende o idioma; não surgem casos novos. Sugestão: fechar, ou o `bootLang`
+  ignorar `en` enquanto não houver botão. (15/09/2026)
 - [DECISÃO DO LUCAS] `index.html`, card "Portfolio Assets" — o "+%" é uma 4ª definição de ROI
   (holdings sem stables ÷ custo de aquisição): ≈ +4,9% hoje, contra ≈ +16% do ROI de destaque do
   dashboard (patrimônio líquido ÷ aporte). Alinhar a conta ou só o rótulo "sobre o capital
@@ -93,7 +127,7 @@ Fase 3 não commitada)_
   ROI sobre aporte (≈ +16%) e sobre custo com dívida descontada (≈ −10%). Trocar o subtítulo para
   "custo de aquisição" e/ou alinhar a conta ao dashboard? (15/09/2026)
 - [DECISÃO DO LUCAS] `scripts/fetch-briefing.js` usa LT 0,825/0,775 no HF; o `data.js` usa CF
-  0,83/0,78. Números diferentes no card de pools. (14/09/2026)
+  0,83/0,78. Números diferentes no card de pools (HF 7,92 × 7,96 em 15/09). (14/09/2026)
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
@@ -141,11 +175,14 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   `jurosAcumulados`, yield no CoinGecko acumulando, Diário com patrimônio líquido.
 
 ## Estado atual
-- Última varredura completa: **15/09/2026** (subagente `bugs`, HEAD `af2c418`). 109/109 testes
-  verdes e invariantes do `data.js` OK, mas 3 números visíveis errados (P&L da landing, lending
-  do relatório, colateral do pools) — todos por valor fixo ou cache lido errado, não por cálculo.
-  Actions rodando todo dia de 20/08 a 14/09.
+- Última varredura completa: **15/09/2026 (2ª do dia)**, HEAD `584a48a`, depois da Fase 3. 110/110
+  testes verdes, invariantes do `data.js` OK (`asOf` 11/09, 4 dias), Fase 3 sem regressão. Nenhum
+  ALTA. Os 3 MÉDIA novos são o mesmo padrão de sempre: valor fixo de 20/06 que não lê o `data.js`
+  (executive bar do dashboard, calculadora de liquidação e alertas do ferramentas — este último
+  dispara alerta de range de uma pool fechada). Actions de 15/09 commitaram; `tests.yml` pós-`b4523fa`
+  não conferido (sem `gh`).
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — 2ª varredura (pós-Fase 3): 0 ALTA, 3 MÉDIA, 2 BAIXA e 1 a confirmar novos; 4 itens da fila atualizados.
 - 15/09/2026 — 1ª varredura completa do agente: 3 ALTA, 6 MÉDIA, 5 BAIXA (+ código morto), 2 a confirmar.
 - 15/09/2026 — caderno criado; fila semeada com os achados abertos das sessões de 14/09 e 15/09.
