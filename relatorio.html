@@ -543,7 +543,10 @@ var PORTFOLIO_DATA = [
 (function(){ if(typeof window==='undefined'||!window.BAROLO_DATA) return; var src=(window.BAROLO_DATA.holdings||[]).concat(window.BAROLO_DATA.stables||[]); var by={}; src.forEach(function(h){ by[h.ticker]=h; }); PORTFOLIO_DATA.forEach(function(a){ var b=by[a.ticker]; if(!b)return; if(typeof b.qty==='number')a.qty=b.qty; if(typeof b.invested==='number')a.invested=b.invested; }); })();
 
 var STABLES_USD   = (window.BAROLO_DATA&&window.BAROLO_DATA.stablesTotalUSD) || 1602.52;  // fonte: data.js
-var STABLES_COST  = 882.64;   // custo CoinGecko: USDT 582.64 (CG mostra +$719) + USDS 300
+// Custo das stables = USD efetivamente pago (Σ stables[].invested do data.js — hoje USDT 2.179,19 +
+// USDS 300). Até 15/09/2026 era 882,64, o custo "do CoinGecko", que zerou o custo do USDT no reset de
+// março/2026: o PDF somava ≈ US$ 1.624 de ganho que não existe (linha STABLES com ROI +184%).
+var STABLES_COST  = (window.BAROLO_DATA && (window.BAROLO_DATA.stables||[]).reduce(function(s,x){ return s + (Number(x.invested)||0); }, 0)) || 2479.19;
 var DEBT_TOTAL    = (window.BAROLO_DATA&&window.BAROLO_DATA.debt&&window.BAROLO_DATA.debt.total) || 1570.62;  // fonte: data.js
 
 // Posições DeFi — constantes para yield calc (12/06/2026)
@@ -620,7 +623,7 @@ var LIVE_PRICES = false; // vira true quando chega preço de verdade (API ou cac
 function calcTotals() {
   var spotTotal=0, costTotal=0, plTotal=0;
   PORTFOLIO_DATA.forEach(function(a){ var v=a.qty*(a.price||0); spotTotal+=v; costTotal+=a.invested; plTotal+=(v-a.invested); });
-  // Stables entram no P&L com o custo do CoinGecko (USDT mostra +$719). Espelha o CG, sem dívida.
+  // Stables entram no P&L pelo custo pago (data.js) — o ganho delas é só o yield. Sem dívida.
   costTotal += STABLES_COST;
   plTotal   += (STABLES_USD - STABLES_COST);
   // netTotal (Patrimônio Líquido) é o único lugar que desconta a dívida
@@ -728,7 +731,7 @@ function renderAssetTable() {
       + '<td class="r" style="color:var(--muted);">'+pct+'%</td>'
       + '</tr>';
   });
-  // Stables row — custo do CoinGecko (USDT tem +$719 de P&L no CG)
+  // Stables row — custo pago (data.js); o P&L da linha ≈ yield acumulado de lending
   var stPl = STABLES_USD - STABLES_COST;
   var stRoi = (stPl / STABLES_COST * 100).toFixed(1);
   rows += '<tr style="color:var(--muted);">'
