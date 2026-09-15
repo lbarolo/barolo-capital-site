@@ -2637,7 +2637,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function prices(){
       var p = {};
-      try { var c = JSON.parse(localStorage.getItem('bc-index-prices-cache')||'null'); if(c){ Object.keys(c).forEach(function(k){ if(typeof c[k]==='number') p[k]=c[k]; }); } } catch(e){}
+      // O cache e gravado por saveIndexCache() como {ts, data:{cgId: preco}} — os precos ficam em
+      // `data`. Ate 15/09/2026 isto lia o nivel de cima, so achava `ts` e o card caia sempre nos
+      // precos FB (P&L +53,8% em vez de ~+5%).
+      try { var c = JSON.parse(localStorage.getItem('bc-index-prices-cache')||'null'); var d = c && c.data; if(d){ Object.keys(d).forEach(function(k){ if(typeof d[k]==='number') p[k]=d[k]; }); } } catch(e){}
       return p;
     }
     function priceOf(id,p){ return p[id] || FB[id] || 0; }
