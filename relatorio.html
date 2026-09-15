@@ -607,7 +607,6 @@ var MONTHLY_RETURNS = {
     keys.forEach(function(k, m){ mr[y][k] = table[y][m]; });
   });
   MONTHLY_RETURNS = mr;
-var LIVE_PRICES = false; // vira true quando chega preço de verdade (API ou cache) — ver fetchLivePrices()
 })();
 
 // (Hidratação via cache do track.html removida — track.html não existe mais; POOLS_DATA é a fonte estática.)
@@ -616,6 +615,7 @@ var LIVE_PRICES = false; // vira true quando chega preço de verdade (API ou cac
 // RENDER
 // ─────────────────────────────────────────────
 var fmt = function(v){ return '$' + Math.abs(v).toLocaleString('pt-BR',{maximumFractionDigits:0}); };
+var LIVE_PRICES = false; // vira true quando chega preço de verdade (API ou cache) — ver fetchLivePrices()
 
 function calcTotals() {
   var spotTotal=0, costTotal=0, plTotal=0;
@@ -655,6 +655,14 @@ function renderKPIs() {
 
   // DeFi position USD values (live)
   var aaveEthUsd = AAVE_ETH_QTY * ethPrice;
+  var aaveSupply = aaveEthUsd + AAVE_USDT_QTY;
+  var kamSolUsd  = KAM_SOL_QTY * solPrice;
+  var kamSupply  = kamSolUsd + KAM_USDS_QTY;
+  var s = function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+  s('r-aave-eth-usd', '~$'+Math.round(aaveEthUsd).toLocaleString('pt-BR'));
+  s('r-aave-supply',  '~$'+Math.round(aaveSupply).toLocaleString('pt-BR'));
+  s('r-kam-sol-usd',  '~$'+Math.round(kamSolUsd).toLocaleString('pt-BR'));
+  s('r-kam-supply',   '~$'+Math.round(kamSupply).toLocaleString('pt-BR'));
 
   // Bloco de lending + caixa + período (15/09/2026). Antes eram textos fixos de 20/06 no HTML
   // (HF 5.32, dívida $1.569, SOL 23,36…). Quantidades, taxas e dívida vêm do data.js (constantes
@@ -698,14 +706,6 @@ function renderKPIs() {
   }
   var st = BD.stables || [];
   if (st.length) paint('r-cash', st.map(function(x){ return x.ticker+' $'+n(x.qty,2); }).join(' + ')+' = $'+n(STABLES_USD,2));
-  var aaveSupply = aaveEthUsd + AAVE_USDT_QTY;
-  var kamSolUsd  = KAM_SOL_QTY * solPrice;
-  var kamSupply  = kamSolUsd + KAM_USDS_QTY;
-  var s = function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
-  s('r-aave-eth-usd', '~$'+Math.round(aaveEthUsd).toLocaleString('pt-BR'));
-  s('r-aave-supply',  '~$'+Math.round(aaveSupply).toLocaleString('pt-BR'));
-  s('r-kam-sol-usd',  '~$'+Math.round(kamSolUsd).toLocaleString('pt-BR'));
-  s('r-kam-supply',   '~$'+Math.round(kamSupply).toLocaleString('pt-BR'));
 }
 
 function renderAssetTable() {
