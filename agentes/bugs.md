@@ -35,6 +35,41 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
+_(varredura de 15/09/2026: todos os achados existem no HEAD commitado `af2c418`, nenhum veio da
+Fase 3 não commitada)_
+- [ALTA] `index.html:2620-2623` (landing pública, card "Portfolio Assets") — `prices()` procura
+  números no nível de cima de `bc-index-prices-cache`, mas o cache é gravado como
+  `{ts, data:{…}}` (linha 1970). Nenhum preço é achado e sempre caem os preços `FB` fixos (BTC
+  101k · ETH 3.150 · SOL 158…). `#dashPnl` mostra ≈ +53,8% (real ≈ +5,0%) e o donut, NAV
+  ≈ US$ 13,5k (real ≈ 9,5k). Correção: ler `c.data`. Obs.: esse "+%" é uma 4ª definição de ROI
+  (holdings sem stables ÷ custo) — alinhar rótulo. (15/09/2026)
+- [ALTA] `relatorio.html:318-322, 363-381, 399, 437-449` — bloco de lending do PDF estático, sem
+  id, parado em 20/06: dívida $1.569 (real 1.527,19), AAVE USDT 1.300 (2.016,82), borrow 754,65
+  (763,05), HF 5.32 (8,21), Kamino SOL 23,36 (24,95), borrow 815,97 (764,14), LTV 41,2% (26,68%),
+  "Abril 2026", caixa $2.440,90 (2.506,68). Incoerente com `r-aave-supply`/`r-kam-supply`, que já
+  vêm do `data.js`. Correção: ids + preencher em `renderKPIs()` com as constantes `AAVE_*`/`KAM_*`
+  (linhas 545-549). (15/09/2026)
+- [ALTA] `pools.html:2535-2540` — tabela "Colateral em Empréstimos · LIVE"
+  (`#collateralTokenBody`) com quantidades de 13/03: ETH 1,87 · USDT 1.652,03 · SOL 20,31 · USDS
+  300,42 (data.js: 2,2255 · 2.016,82 · 24,95 · 304,86). Total ≈ US$ 8.639 contra ≈ 10.359
+  (−16,6%). Fallback de preço na linha 2620 também parado. `FEE_TOKENS` (~2528) ainda cita fees
+  "uncollected" de pool fechada. Correção: montar de `BAROLO_DATA.defi.*.supply`. (15/09/2026)
+- [MÉDIA] `pools.html:1798-1813` (Meta de Alocação) — `QTYS` próprio com dados de junho (BTC
+  0,00204 × 0,00434 · ETH 2,376 × 2,233 · SOL 23,31 × 24,95; falta SCR; fallback `7900`). O erro
+  líquido hoje é só +US$ 18 **por coincidência** (os desvios se cancelam). Correção: ler
+  `BAROLO_DATA.holdings`. (14/09, conferido 15/09/2026)
+- [MÉDIA] `ferramentas.html:3723-3727` — APY Scanner (aba "Pools APY") nunca funciona: as 3 URLs
+  são o serviço hospedado `api.thegraph.com/subgraphs/name/uniswap/...`, que responde
+  301 → `error.thegraph.com`. Correção: GeckoTerminal (já usado no pools) ou gateway do The Graph
+  com chave. (15/09/2026)
+- [MÉDIA] `scripts/fetch-briefing.js:29,205` — "SOL liquida em" usa LT SOL 0,82 / USDS 0,80
+  (Liq. LTV implícito 0,818), mas a Kamino informa 0,766 (`data.js → liqLtv`). Card do pools
+  mostra US$ 25,43 (−75%); a conta com o `liqLtv` dá ≈ US$ 27,76 (−72%). Correção: usar o
+  `liqLtv` do `data.js` (ou LT por ativo da API). Mesma constante `LT` do item de HF abaixo.
+  (15/09/2026)
+- [MÉDIA] `relatorio.html:399` + `POOLS_DATA` — resumo de pools diz "27 pools", mas a lista tem
+  17; fees 2.369,02 / resultado −880,53 contra 2.466,02 / −793,53 do `POOLS` do pools (32
+  entradas). Correção: mesma fonte nas duas páginas. (15/09/2026)
 - [MÉDIA] `ferramentas.html` (~linha 2216, merge do Diário) — no conflito de `id` o
   localStorage sempre vence o `diario.js`. Consequência: **editar uma entrada que já existe no
   `diario.js` nunca chega ao navegador do Lucas**, e o próximo "📤 Sincronizar" exporta a versão
@@ -44,8 +79,32 @@
   sessão (Fase 3) — confirmar antes de mexer. (15/09/2026)
 - [BAIXA] `portfolio_analytics.html` — card ADA nunca mostra valor em USD: lê
   `window._livePrices`, que ninguém grava. (14/09/2026)
-- [BAIXA] `pools.html` (~linha 1766, Meta de Alocação) — usa um `QTYS` próprio; não conferido
-  contra o `data.js`. (14/09/2026)
+- [MÉDIA] `pools.html:1509-1673` e `1677-1792` — `fetchAaveData`/`fetchKaminoData` escrevem em
+  ids que não existem (`aave-liq-main`, `aave-hf-badge`, `kamino-liq-main`…) mas ainda fazem rede
+  a cada carregamento (eth_call em 2 spokes, 2× API Kamino, 2× preço), com RPCs mortos
+  (`rpc.payload.de`, `eth.llamarpc.com` 525) e constantes de junho. Sobraram da Fase 2.
+  Correção: remover (o `lib/barolo-chain.js` já cobre). (15/09/2026)
+- [BAIXA] `pools.html:2674` — ticker chama a Etherscan V1 com `apikey=YourApiKeyToken` a cada 60 s
+  (endpoint deprecado; resultado não usado — o gas vem da Alchemy). Correção: remover. (15/09/2026)
+- [BAIXA] `portfolio_analytics.html:2629, 2654-2658` — Convexidade com fallbacks fixos (dívida
+  754,65 + 815,97, stables 2.536,40, colateral AAVE 6.000) e `kaminoLTVlimit = 0.7722` sempre
+  (data.js: 0,766). Correção: ler o `data.js`. (15/09/2026)
+- [BAIXA · código morto] `portfolio_analytics.html:1909-2040` (`fetchAllOnChain` e cia, sem
+  chamador) · `portfolio_analytics.html:4196-4210` e `pools.html:1822-1834` (`LP_REFS`/`REFS` +
+  `setRef`, sem `.ref-btn`) · `pools.html:2601-2608` (escreve em `lp-weth-usd` inexistente) ·
+  `index.html:1559` (`loginAccess` sem chamador; `#access-error` não existe) ·
+  `index.html:2486-2581` (drill-down anual sem canvas, com array `MR` de retornos estimados à mão
+  que contradiz a curva — armadilha se reativar). (15/09/2026)
+- [BAIXA] `.github/workflows/{briefing,networth,onchain,sync-emprestimos}.yml` ainda em
+  `checkout@v4`/`setup-node@v4`/Node 20 (os outros em v5/Node 22). Previsto na Fase 5. (15/09/2026)
+- [BAIXA] `Design.md:203` diz que o pools tem 2 `<nav>`; o duplicado foi removido em 13/07.
+  (15/09/2026)
+- [A CONFIRMAR] LT real da SOL na Kamino — a API pública só dá `maxLtv` 0,74. Se o
+  `emprestimos.html` usa 0,82/0,80, o card de lá também erra o preço de liquidação. Precisa do LT
+  por ativo (`klend/loans`) ou print da Kamino. (15/09/2026)
+- [A CONFIRMAR] `bc-lang` preso em "en": nenhum dashboard tem botão de idioma; se o navegador tiver
+  `bc-lang = en` salvo, portfolio/pools/ferramentas ficam em EN sem volta pela interface.
+  (15/09/2026)
 - [DECISÃO DO LUCAS] `scripts/fetch-briefing.js` usa LT 0,825/0,775 no HF; o `data.js` usa CF
   0,83/0,78. Números diferentes no card de pools. (14/09/2026)
 
@@ -57,7 +116,11 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   `jurosAcumulados`, yield no CoinGecko acumulando, Diário com patrimônio líquido.
 
 ## Estado atual
-- Última varredura completa: 04/09/2026 e revisão de gráficos em 11/09/2026 (44 gráficos, 0 NaN).
+- Última varredura completa: **15/09/2026** (subagente `bugs`, HEAD `af2c418`). 109/109 testes
+  verdes e invariantes do `data.js` OK, mas 3 números visíveis errados (P&L da landing, lending
+  do relatório, colateral do pools) — todos por valor fixo ou cache lido errado, não por cálculo.
+  Actions rodando todo dia de 20/08 a 14/09.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — 1ª varredura completa do agente: 3 ALTA, 6 MÉDIA, 5 BAIXA (+ código morto), 2 a confirmar.
 - 15/09/2026 — caderno criado; fila semeada com os achados abertos das sessões de 14/09 e 15/09.
