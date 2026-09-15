@@ -37,11 +37,6 @@
 ## Achados em aberto
 _(varredura de 15/09/2026: todos os achados existem no HEAD commitado `af2c418`, nenhum veio da
 Fase 3 não commitada)_
-- [ALTA] `pools.html:2535-2540` — tabela "Colateral em Empréstimos · LIVE"
-  (`#collateralTokenBody`) com quantidades de 13/03: ETH 1,87 · USDT 1.652,03 · SOL 20,31 · USDS
-  300,42 (data.js: 2,2255 · 2.016,82 · 24,95 · 304,86). Total ≈ US$ 8.639 contra ≈ 10.359
-  (−16,6%). Fallback de preço na linha 2620 também parado. `FEE_TOKENS` (~2528) ainda cita fees
-  "uncollected" de pool fechada. Correção: montar de `BAROLO_DATA.defi.*.supply`. (15/09/2026)
 - [MÉDIA] `pools.html:1798-1813` (Meta de Alocação) — `QTYS` próprio com dados de junho (BTC
   0,00204 × 0,00434 · ETH 2,376 × 2,233 · SOL 23,31 × 24,95; falta SCR; fallback `7900`). O erro
   líquido hoje é só +US$ 18 **por coincidência** (os desvios se cancelam). Correção: ler
@@ -126,6 +121,12 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   do `data.js` (2.479,19). Antes → depois: Total Investido $9.011 → $10.608 (= custo de aquisição
   do dashboard), P&L +$2.033 (+22,6%) → +$437 (+4,1%), linha STABLES +$1.624 (+184%) → +$27
   (+1,1%, = yield de lending). Conferido também na cópia exata do commit.
+- 15/09/2026 · `aab2279` — [ALTA] pools, tabela "Colateral em Empréstimos" + nota abaixo dela:
+  quantidades e dívidas do print de 13/03 (total $8.637,95). Agora vêm de `data.js → defi.*`
+  (total $10.357,95 = conta com os mesmos preços). O `catch` usa o último preço salvo em vez de
+  ETH 2.074 / SOL 86 fixos; sem preço de ETH/SOL o total mostra "—". Linha ETH/WETH da tabela de
+  fees não chama mais de "ativa (uncollected)" a pool fechada em 14/07. Conferido na cópia exata
+  do commit.
 - 15/09/2026 — `.claude/commands/fecharmes.md` desatualizado (mandava adicionar a curva em
   `portfolio_analytics.html` e preencher `monthlyReturns`, que hoje são automáticos). Reescrito:
   curva pela Action `close-month.yml`, checagem de `contributions`, `RENDA_2026`,

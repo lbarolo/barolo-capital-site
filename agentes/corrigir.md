@@ -53,10 +53,10 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
    `feat: ...`, com a linha de atribuição indicada pelo sistema. `pull --rebase`, `push origin main`.
    Conflito em `emprestimos.html`: `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
    - **Arquivo com trabalho alheio não commitado** (ex.: `index.html`/`relatorio.html` em 15/09):
-     não dá `git add` nele, e `git add -p` não funciona aqui (interativo). Método que funciona:
-     **arquivo da pasta (o que você testou) com só os trechos alheios desfeitos** — pegue os
-     trechos alheios de `git diff -U0 HEAD -- <arquivo>` e, no texto da pasta, troque cada bloco
-     `+` pelo bloco `-`; grave com `git hash-object -w <tmp>` e
+     não dá `git add` nele, e `git add -p` não funciona aqui (interativo). Método que funciona
+     para qualquer tipo de trecho (inclusive remoção pura): **HEAD + só os seus trechos, aplicados
+     pelas posições exatas de linha** de `git diff -U0 HEAD -- <arquivo>` (de baixo para cima,
+     conferindo que cada linha `-` é igual à do HEAD); grave com `git hash-object -w <tmp>` e
      `git update-index --cacheinfo 100644,<hash>,<arquivo>`. Antes de commitar, confira:
      scripts compilam, `git diff <HEAD> <hash>` tem só os seus trechos, e depois do commit
      `git diff -U0 HEAD -- <arquivo>` mostra só os trechos alheios.
@@ -78,17 +78,19 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (15/09/2026)
-- Fila de bugs: resolvidos hoje a landing (`7b1902d`), o bloco de lending do relatório
-  (`e49aadc` + `9fe0b8f`) e o custo das stables do relatório (`4b700a8`). Último ALTA aberto:
-  `pools.html` (tabela "Colateral em Empréstimos" com quantidades de 13/03).
-- Script de stage parcial seguro: `stage-mine.js` (scratchpad da sessão de 15/09) — recria-se em
-  1 min pelo método descrito no passo 8.
+- Fila de bugs: **nenhum ALTA aberto** — resolvidos em 15/09 a landing (`7b1902d`), o lending do
+  relatório (`e49aadc` + `9fe0b8f`), as stables do relatório (`4b700a8`) e o colateral do pools
+  (`aab2279`). Próximos MÉDIA: Meta de Alocação do pools (`QTYS` de junho), APY Scanner do
+  ferramentas (The Graph desligado), "SOL liquida em" do briefing, resumo de pools do relatório,
+  funções mortas do pools que ainda fazem rede, merge do Diário.
+- Script de stage parcial: `stage-mine2.js` (scratchpad de 15/09; recria-se pelo método do passo 8).
 - Plano de arquitetura em andamento: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
   **Fase 3 (`barolo-ui.js`) com trabalho não commitado no working tree em 15/09** (Design.md, 5
   páginas, `tests/ui*.test.js`) — de outra sessão; não commitar sem o Lucas confirmar que é para
   seguir. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
 
 ## Histórico (mais recente no topo)
+- 15/09/2026 — pools: tabela "Colateral em Empréstimos" + nota leem o `data.js` ($8.638 → $10.358) — `aab2279`.
 - 15/09/2026 — relatório: custo das stables vem do `data.js` (P&L do PDF +$2.033 → +$437) — `4b700a8`.
 - 15/09/2026 — relatório: bloco de lending/dívida/caixa/período passa a ler o `data.js` — `e49aadc` (publicado quebrado: blocos deslocados pelo stage parcial) + `9fe0b8f` (correção).
 - 15/09/2026 — landing: card "Portfolio Assets" lia o cache de preços errado (+53,8% → +4,9%) — `7b1902d`.
