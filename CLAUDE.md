@@ -6493,8 +6493,8 @@ para o mesmo dado** (pools × relatório).
   aportado" mas mostra custo de aquisição ($10.608 × aporte $8.162), e o P&L é bruto sem dívida
   (+4,1% × ≈ +16% / ≈ −10% do dashboard); (3) HF do briefing com LT × CF.
 - `/seguranca` ainda não rodou nenhuma vez.
-- **Fase 3 (`lib/barolo-ui.js`)** segue não commitada no working tree, de outra sessão — não
-  commitar sem o Lucas confirmar. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar) pendentes.
+- ~~**Fase 3 (`lib/barolo-ui.js`)** segue não commitada no working tree~~ — ✅ **publicada em
+  15/09/2026 (`b4523fa`)**, ver a sessão seguinte. Fases 4 (rede), 5 (Actions) e 6 (des-bundlar) pendentes.
 - Pendências antigas mantidas: yield a lançar no CoinGecko acumulando (~US$ 11,23 — lembrar no
   fechamento); borrow da AAVE 5,63% (reavaliar se > 5% por 2 semanas); rewards da Kamino
   (~US$ 5,76); confirmar a Action `close-month.yml` em 01/10; `RENDA_2026` de setembro; mai–jun/26
@@ -6508,6 +6508,120 @@ atualizado; **1ª varredura de bugs** e **7 correções publicadas** (landing +5
 com lending de 20/06 e ganho fantasma de US$ 1.624; colateral e Meta do pools; 285 linhas mortas
 removidas); **histórico de pools vira fonte única em `data.js → poolHistory`**; lição registrada:
 stage parcial só pelas posições de linha, e sempre testar a cópia do commit
+
+---
+
+## Sessão 14–15/09/2026 — Fase 3: tema e idioma compartilhados em `lib/barolo-ui.js` (publicada) + e-mail de CI falho explicado
+
+### Contexto
+Continuação da revisão de arquitetura de 14/09 (Fases 1 e 2 já publicadas). O Lucas pediu
+"podemos fazer a fase 3". O trabalho ficou pronto na noite de 14/09, mas **não foi commitado** até
+o Lucas responder. Em 15/09 a sessão `/corrigir` publicou 12 commits mexendo nos mesmos arquivos,
+separando linha por linha para não levar a Fase 3 junto. Depois a sessão "Agente inspetor de
+bugs" repassou a autorização do Lucas para finalizar, e o Lucas confirmou ("Tentar novamente").
+Nesse intervalo chegou um e-mail do GitHub com "All jobs have failed" na Action de testes.
+
+### Implementado
+
+#### 1. `lib/barolo-ui.js` (novo) — `window.BaroloUI`, UMD (browser + `require` no Node)
+- **Constantes:** `THEME_KEY='bc-theme'`, `LANG_KEY='bc-lang'`, `THEME_ICON={dark:'☾',light:'☀'}` e
+  `THEME_BUTTONS='#themeToggle, button[onclick="toggleTheme()"]'`, que cobre o botão da landing e o dos dashboards.
+- **Tema:**
+  - `currentTheme()` devolve 'light' só se o atributo for 'light'; qualquer outra coisa é 'dark'.
+  - `syncThemeButtons()` acerta o ícone de todos os botões de tema.
+  - `bootTheme(padrão)` aplica o tema salvo, ou o padrão, e acerta o ícone no `DOMContentLoaded` se a página ainda estiver carregando.
+  - `toggleTheme(gancho)` troca o tema, salva, acerta o ícone e depois chama `gancho(next)`.
+- **Idioma:**
+  - `currentLang()`.
+  - `applyI18n(strings, lang, htmlKey)` grava `data-lang`, troca o texto do `#langBtn` e aplica
+    `[data-i18n]` como texto ou, se `htmlKey(key)` for verdadeiro, como `innerHTML`.
+  - `bootLang(apply)` e `toggleLang(apply)`.
+- **localStorage:** toda leitura e escrita fica em try/catch; storage bloqueado não quebra a página.
+
+#### 2. As 5 páginas: cada uma fica só com o que é dela
+| Página | O que mudou |
+|---|---|
+| `index.html` | `<head>`: módulo + `BaroloUI.bootTheme('dark')`. Removido o 2º anti-flash duplicado. `toggleTheme()` só chama o módulo. `toggleIndexLang` segue da landing. |
+| `portfolio_analytics.html` | `bootTheme('light')`, porque na 1ª visita esta página sempre abriu clara. `toggleTheme` passa o gancho de rebuild (`chartsBuilt` → destroy/`renderUI`). Saiu do `init()` o reaplicar do tema, que no escuro trocava o ícone por "◑ Tema". Idioma pelo módulo. |
+| `pools.html` | `bootTheme('dark')`, mantendo o `scrollRestoration`. Gancho = `rebuildPoolCharts`. Saíram o reaplicar no `DOMContentLoaded` e o bloco de moeda morto. Idioma pelo módulo. |
+| `ferramentas.html` | `bootTheme('dark')`. Gancho = `renderEvoChart()` + `Ciclo.rebuild()`. Saíram o `savedTheme` e o bloco de moeda morto. Idioma: `langHtmlKey(key)` mantém `innerHTML` em `page-title`, `sz-header-desc*` e `sz-notes-*`; `applyLang` grava o `lang` do `<html>` e recalcula o Sizing & Risk (calcKellyPool, calcKellyMerton, calcHedge, calcLevHedge). |
+| `relatorio.html` | `bootTheme('dark')`. `toggleTheme` pelo módulo, que agora também troca o ícone. |
+
+- **Moeda USD/BRL morta:** `currentCurrency`, `usdBrlRate`, `fetchRate` e `toggleCurrency` foram removidos de pools e ferramentas. Nenhuma das duas páginas tinha botão de moeda nem elementos `[data-usd]`. O bloco só chamava o **exchangerate-api a cada carregamento**, sem ninguém usar o valor. A régua USD/BRL/BTC/ETH existe só no portfolio.
+- **Ícones:** os IIFEs que acertavam o ícone no fim de cada página foram removidos; isso agora é papel do módulo.
+- **`Design.md`:** atualizado com os três módulos de `lib/`, o boot do tema no `<head>`, o gancho de rebuild do `toggleTheme` e o "`npm test`" no checklist. Também registra que a moeda existe só no portfolio e que nenhum dashboard tem botão de idioma.
+
+#### 3. Testes
+- `tests/ui.test.js` — unidade do módulo em DOM falso:
+  - boot com e sem tema salvo;
+  - toggle, ícone e gancho;
+  - storage bloqueado;
+  - idioma com chaves HTML.
+- `tests/ui-equivalence.test.js` compara o código antigo com o novo, lado a lado, nas 5 páginas. O antigo é **literal do commit `5a334fc`**, em `tests/fixtures/legacy-ui.js`, gerado por `tests/fixtures/build-legacy-ui.js`, que confere que os trechos extraídos batem. Para o portfolio há um PRELUDE que modela o estado real (`chartsBuilt=true`) e um teste separado para "gráficos ainda não prontos".
+- `tests/helpers/fakedom.js`: `makeFakeDom({htmlTheme, elements, storage})` com `ready()` e `snapshot()`, e `makeCtx(dom, extra)`, onde window === ctx.
+- `tests/pages.test.js`:
+  - confere que as 5 páginas carregam `lib/barolo-ui.js` **dentro do `<head>`**, antes de qualquer `BaroloUI.`;
+  - novo teste: **todo `onclick` aponta para algo definido**, olhando o JS da página e das 3 libs; palavras-chave de JS ficam de fora.
+- **Total: 110/110** no seu computador e no Actions.
+
+#### 4. Como foi finalizado em 15/09, por cima dos 12 commits da `/corrigir`
+- `git pull --rebase --autostash` e releitura de `agentes/README.md` e `agentes/corrigir.md`.
+- Conferi `git diff` arquivo por arquivo: a pasta era exatamente o HEAD novo mais o diff da Fase 3, sem nenhum trecho alheio. Por isso o `git add` direto dos 13 arquivos da Fase 3 foi seguro, sem precisar de stage parcial. Nenhuma correção de 15/09 foi desfeita.
+- Verificação no navegador, com as 5 páginas carregadas em iframe, cada uma testada com tema salvo escuro, salvo claro e sem tema:
+  - Tema: o ícone bate com o tema nos 3 casos; o toggle vai e volta e grava `bc-theme`; na 1ª visita o portfolio abre claro e as outras escuras.
+  - Idioma: PT⇄EN funciona e é salvo em portfolio, pools e ferramentas; no ferramentas o `lang` do `<html>` troca e o `page-title` mantém o HTML.
+  - Moeda: a régua do portfolio cicla R$ → ₿ → Ξ → $.
+  - Console: **0 exceções de JS**. Os erros que aparecem são CORS do CoinGecko e da GeckoTerminal, do ambiente.
+  - Rede: nenhuma chamada ao exchangerate-api nas páginas.
+- Commit, push e CI verde (conferido pela API pública do GitHub, porque o `gh` não está no PATH desta máquina).
+- `agentes/corrigir.md`: mapa, "Estado atual" (Fase 3 ✅) e "Histórico" atualizados.
+
+#### 5. E-mail "All jobs have failed" (Action de testes)
+Era a execução do commit `d666f1d` (correção do `price.jup.ag`, 14/09 às 19:19). A causa foi o `prices.test.js`, que usava `git show`, e o checkout do Actions é raso. Isso já tinha sido corrigido em `7c867da`, e todas as execuções seguintes passaram. O GitHub só manda e-mail de falha, nunca de recuperação. Os scripts `tests/fixtures/build-legacy*.js` continuam usando `git show`, mas só geram fixtures e rodam na mão; **nenhum teste depende do histórico do git**.
+
+### Dados atualizados
+Nenhuma posição alterada. Chaves de `localStorage` inalteradas: `bc-theme`, `bc-lang`, `bc-currency`.
+
+### Bugs corrigidos
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| Portfolio no tema escuro mostrava "◑ Tema" no botão em vez de ☾ | `init()` reaplicava o tema e trocava o texto do botão | O tema sai do `init()`; o ícone é acertado pelo módulo |
+| Relatório não trocava o ícone ☾/☀ no toggle | `toggleTheme` próprio só trocava o atributo | O módulo acerta o ícone em todo botão de tema |
+| Pools e ferramentas chamavam o exchangerate-api a cada carregamento, sem usar o valor | Cópia morta da moeda USD/BRL, sem botão nem `[data-usd]` | Bloco removido |
+| Index com dois scripts de tema no `<head>` | Anti-flash duplicado de sessões antigas | Um só: `BaroloUI.bootTheme('dark')` |
+
+### O que ainda falta
+- **Fila de bugs liberada pela Fase 3** (`agentes/bugs.md`); a sessão de bugs foi avisada:
+  - aba Pools APY do ferramentas (The Graph desligado);
+  - Etherscan V1 com `YourApiKeyToken` no ticker do pools;
+  - formatação da tabela de pools do relatório;
+  - valores fixos da Convexidade.
+- **Idioma nos dashboards:** nenhum dashboard tem botão de idioma. Se `bc-lang` ficar em "en", não há como voltar pela interface. Isso já estava na fila "a confirmar".
+- **Card ADA nunca mostra USD:** `window._livePrices` não é gravado por ninguém.
+- **Fases do plano:** 4 (rede: preço único com cache entre páginas, logo num tamanho só, pausar polling em aba oculta), 5 (Actions: um workflow diário, checkout v5 / Node 22 em networth, onchain, briefing e sync-emprestimos) e 6 (des-bundlar o `emprestimos.html`).
+- **Decisão do Lucas:** HF com duas fórmulas, CF 0,83/0,78 no `data.js` contra LT 0,825/0,775 no `fetch-briefing.js`.
+- **Não commitados e não são deste projeto:** `.agents/`, `.claude/skills/`, `skills-lock.json`.
+- **Pendências antigas mantidas:**
+  - yield a lançar no CoinGecko, acumulando; lembrar no fechamento de 01/10;
+  - `RENDA_2026` de setembro;
+  - confirmar a Action `close-month.yml` em 01/10;
+  - borrow da AAVE e rewards da Kamino;
+  - maio e junho de 2026 na Acumulação;
+  - chaves de API sem restrição por domínio;
+  - repositório dentro do OneDrive.
+
+### Commits (push direto na main, CI verde)
+| Hash | Mensagem |
+|---|---|
+| `b4523fa` | refactor: tema e idioma compartilhados (lib/barolo-ui.js) + testes de equivalencia |
+| `584a48a` | docs: caderno corrigir - Fase 3 (lib/barolo-ui.js) entregue em b4523fa |
+
+---
+
+Atualizado: 15/09/2026 — **Fase 3 publicada**: tema e idioma das 5 páginas em `lib/barolo-ui.js`
+(`b4523fa`), com equivalência provada contra o código antigo e zero mudança de UX. Removidas a moeda
+morta de pools e ferramentas (fim das chamadas ao exchangerate-api) e o "◑ Tema" do portfolio. Fases
+1–3 da arquitetura concluídas. O e-mail de CI falho era o `d666f1d`, já corrigido.
 
 ---
 
