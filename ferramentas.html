@@ -812,8 +812,8 @@ body, input, button, select, textarea {
  </div>
  <div>
  <div class="field"><label data-i18n="lbl-eth-price">Preço ETH atual ($)</label><input type="number" id="aave-ethprice" value="2070" step="1" oninput="calcAave()"></div>
- <div class="field"><label data-i18n="lbl-aave-ltv">LTV máximo Aave (%)</label><input type="number" id="aave-ltv-max" value="82.5" step=".5" oninput="calcAave()"></div>
- <div class="field"><label data-i18n="lbl-liq-thresh">Limiar liquidação (%)</label><input type="number" id="aave-liq-thresh" value="86" step=".5" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-aave-cf-weth">Collateral Factor WETH (%)</label><input type="number" id="aave-cf-weth" value="83" step=".5" oninput="calcAave()"></div>
+ <div class="field"><label data-i18n="lbl-aave-cf-usdt">Collateral Factor USDT (%)</label><input type="number" id="aave-cf-usdt" value="78" step=".5" oninput="calcAave()"></div>
  </div>
  </div>
  <div class="result-grid" id="aave-results"></div>
@@ -2405,13 +2405,16 @@ function calcAave(){
  const usdt = parseFloat(document.getElementById('aave-usdt').value)||0;
  const debt = parseFloat(document.getElementById('aave-debt').value)||0;
  const ethPrice = parseFloat(document.getElementById('aave-ethprice').value)||1;
- const liqThresh= parseFloat(document.getElementById('aave-liq-thresh').value)/100||0.86;
+ // Fórmula oficial da Aave V4 (conferida pelo MCP em 09/09/2026): HF = Σ(colateral × CF) / dívida,
+ // CF por ativo — WETH 83% · USDT 78% (mesmos do data.js → lendingSnapshot). Antes: um limiar único de 86%.
+ const cfW = parseFloat(document.getElementById('aave-cf-weth').value)/100||0.83;
+ const cfU = parseFloat(document.getElementById('aave-cf-usdt').value)/100||0.78;
 
  const ethVal = ethQty*ethPrice;
  const totalCol = ethVal+usdt;
  const netWorth = totalCol-debt;
- const hf = debt>0?(totalCol*liqThresh)/debt : 99;
- const liqPrice = debt>0?(debt/(liqThresh*ethQty))-(usdt/(liqThresh*ethQty)) : 0;
+ const hf = debt>0?(ethVal*cfW+usdt*cfU)/debt : 99;
+ const liqPrice = (debt>0&&ethQty>0)?(debt-usdt*cfU)/(cfW*ethQty) : 0;  // ≤ 0 ⇒ o USDT sozinho cobre a dívida
  const distPct = ethPrice>0?((ethPrice-liqPrice)/ethPrice*100):100;
 
  const res=document.getElementById('aave-results');
@@ -2421,7 +2424,7 @@ function calcAave(){
  <div class="result-card"><div class="result-label">Net Worth</div><div class="result-value ${netWorth>0?'c-green':'c-red'}">${fmt(netWorth)}</div></div>
  <div class="result-card"><div class="result-label">Health Factor</div><div class="result-value ${hf>4?'c-green':hf>2?'c-gold':'c-red'}">${hf>99?'∞':hf.toFixed(2)}</div></div>
  <div class="result-card"><div class="result-label">Preço Liquidação ETH</div><div class="result-value c-red">${liqPrice>0?fmt(liqPrice):'N/A'}</div></div>
- <div class="result-card"><div class="result-label">Distância Liquidação</div><div class="result-value ${distPct>40?'c-green':distPct>20?'c-gold':'c-red'}">${distPct.toFixed(1)}%</div><div class="result-sub">↓ ${fmt(ethPrice-liqPrice)} para liq.</div></div>
+ <div class="result-card"><div class="result-label">Distância Liquidação</div>${liqPrice>0?`<div class="result-value ${distPct>40?'c-green':distPct>20?'c-gold':'c-red'}">${distPct.toFixed(1)}%</div><div class="result-sub">↓ ${fmt(ethPrice-liqPrice)} para liq.</div>`:`<div class="result-value c-green">Protegido</div><div class="result-sub">USDT sozinho cobre a dívida</div>`}</div>
  `;
 
  const hfPct=Math.min((hf/8)*100,100);
@@ -2434,7 +2437,7 @@ function calcAave(){
  if(hf<1.5){warn.style.display='flex';warn.className='liq-warning liq-danger';warn.innerHTML='PERIGO CRÍTICO — Liquidação iminente! Reduza dívida imediatamente.';}
  else if(hf<2.5){warn.style.display='flex';warn.className='liq-warning liq-warn';warn.innerHTML='ATENÇÃO — Health Factor baixo. Monitore de perto.';}
  else if(hf<4){warn.style.display='flex';warn.className='liq-warning liq-ok';warn.innerHTML='Posição segura mas com margem moderada. HF '+hf.toFixed(2);}
- else{warn.style.display='flex';warn.className='liq-warning liq-ok';warn.innerHTML='Posição muito segura. HF '+hf.toFixed(2)+' · Liquidação em $'+liqPrice.toFixed(0);}
+ else{warn.style.display='flex';warn.className='liq-warning liq-ok';warn.innerHTML='Posição muito segura. HF '+hf.toFixed(2)+(liqPrice>0?' · Liquidação em $'+liqPrice.toFixed(0):' · WETH não liquida (USDT cobre a dívida)');}
 }
 
 // ══════════════════════════════════════════════
@@ -2511,7 +2514,7 @@ var BASE = {
  altVal:150, // ADA+RDNT+ZK+etc rough
  aaveDebt:755.28, aaveUSDT:1300, aaveETH:2.16,  // 26/06/2026
  kamDebt:816.79, kamPYUSD:302.41, kamSOL:23.38,
- kamLiqThresh:0.7579, aaveLiqThresh:0.86,
+ kamLiqThresh:0.7579, aaveCfWeth:0.83, aaveCfUsdt:0.78, // CF oficiais da Aave V4 (ver calcAave)
  uniRangeMin:1822.61, uniRangeMax:2401.90,
  totalBase:5620
 };
@@ -2560,8 +2563,7 @@ function calcScenario(){
  // Portfolio value estimate
  const ethHolding = (BASE.ethQty)*newETH;
  const solHolding = (BASE.solQty)*newSOL;
- const totalCol_aave = BASE.aaveETH*newETH+BASE.aaveUSDT;
- const aaveHF = BASE.aaveDebt>0?(totalCol_aave*BASE.aaveLiqThresh)/BASE.aaveDebt:99;
+ const aaveHF = BASE.aaveDebt>0?(BASE.aaveETH*newETH*BASE.aaveCfWeth+BASE.aaveUSDT*BASE.aaveCfUsdt)/BASE.aaveDebt:99;
  const kamTotalCol = BASE.kamSOL*newSOL+BASE.kamPYUSD;
  const kamLTV = kamTotalCol>0?(BASE.kamDebt/kamTotalCol*100):0;
  const netPortfolio = ethHolding+solHolding+newAlt+BASE.aaveUSDT+BASE.kamPYUSD-(BASE.aaveDebt+BASE.kamDebt);
@@ -4206,7 +4208,8 @@ var LANG_STRINGS = {
   'lbl-usdt-col':  {pt:'USDT colateral ($)',   en:'USDT collateral ($)'},
   'lbl-usdc-debt-aave':{pt:'Dívida USDC ($)',  en:'USDC Debt ($)'},
   'lbl-eth-price': {pt:'Preço ETH atual ($)',  en:'Current ETH price ($)'},
-  'lbl-aave-ltv':  {pt:'LTV máximo Aave (%)', en:'Aave max LTV (%)'},
+  'lbl-aave-cf-weth':{pt:'Collateral Factor WETH (%)', en:'WETH collateral factor (%)'},
+ 'lbl-aave-cf-usdt':{pt:'Collateral Factor USDT (%)', en:'USDT collateral factor (%)'},
   'lbl-liq-thresh':{pt:'Limiar liquidação (%)',en:'Liquidation threshold (%)'},
   'lbl-pos-health':{pt:'SAÚDE DA POSIÇÃO',     en:'POSITION HEALTH'},
   'lbl-sim-eth':   {pt:'SIMULAÇÃO DE PREÇO ETH',en:'ETH PRICE SIMULATION'},
