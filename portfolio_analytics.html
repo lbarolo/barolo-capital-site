@@ -7,6 +7,7 @@ window.addEventListener('error',function(e){if(!e.message||e.message.includes('S
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 <script src="lib/barolo-ui.js"></script><!-- tema e idioma compartilhados (no <head>: aplica o tema antes de pintar) -->
 <script>BaroloUI.bootTheme('light'); // 1ª visita, sem tema salvo: claro (era o init(), que pintava escuro antes)</script>
+<script src="lib/barolo-prices.js"></script><!-- preço compartilhado entre as páginas + polling que pausa com a aba oculta -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%231a1a24'/><text x='16' y='23' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23ffffff' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <link rel="canonical" href="/portfolio">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -1851,7 +1852,9 @@ async function fetchPrices(){
      ? coin.sparkline_in_7d.price.filter(function(_, i){ return i % 6 === 0; }) : null,
  };
  const asset = PORTFOLIO_DATA.find(a => a.cgId === coin.id);
- if (asset && coin.image) asset.logo = coin.image;
+ // Só se faltar: o logo fixo acima já vem da CDN. Trocar pelo coin.image (tamanho "large")
+ // fazia o navegador baixar cada logo duas vezes — 13 requisições a mais por carregamento.
+ if (asset && coin.image && !asset.logo) asset.logo = coin.image;
  });
  ethPrice = getPrice('ethereum');
  solPrice = getPrice('solana');
@@ -4328,8 +4331,8 @@ async function init(){
  buildWealthEvolution();
  }
 
- // Auto-refresh prices every 60 seconds
- setInterval(async () => {
+ // Auto-refresh a cada 60 s — pausa com a aba oculta (lib/barolo-prices.js)
+ BaroloPrices.poll(async () => {
  const refreshed = await fetchPrices();
  if (refreshed) {
  const e3 = buildEnriched();
@@ -5255,7 +5258,7 @@ BaroloUI.bootLang(applyLang);
 
   document.addEventListener('DOMContentLoaded', function() {
     load();
-    setInterval(load, 5 * 60 * 1000);
+    BaroloPrices.poll(load, 5 * 60 * 1000);   // pausa com a aba oculta
   });
 })();
 
@@ -5277,10 +5280,8 @@ BaroloUI.bootLang(applyLang);
 
   async function fetchMkTicker() {
     try {
-      const priceRes = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true',
-        { signal: AbortSignal.timeout(8000) }
-      ).then(r => r.json());
+      // lib/barolo-prices.js: aproveita o preço que a própria página (ou outra) acabou de buscar.
+      const priceRes = await BaroloPrices.get(['bitcoin', 'ethereum', 'solana'], { maxAge: 60000 });
 
       if (priceRes.bitcoin)  { setEl('mkBtcPrice', fmtPrice(priceRes.bitcoin.usd));  setChg('mkBtcChg', priceRes.bitcoin.usd_24h_change);  }
       if (priceRes.ethereum) { setEl('mkEthPrice', fmtPrice(priceRes.ethereum.usd)); setChg('mkEthChg', priceRes.ethereum.usd_24h_change); }
@@ -5304,7 +5305,7 @@ BaroloUI.bootLang(applyLang);
   }
 
   fetchMkTicker();
-  setInterval(fetchMkTicker, 60000);
+  BaroloPrices.poll(fetchMkTicker, 60000);   // pausa com a aba oculta
 })();
 </script>
 

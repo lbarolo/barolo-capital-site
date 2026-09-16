@@ -12,6 +12,7 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
 <script src="lib/barolo-ui.js"></script><!-- tema compartilhado (no <head>: aplica o tema antes de pintar) -->
 <script>BaroloUI.bootTheme('dark');</script>
+<script src="lib/barolo-prices.js"></script><!-- preço compartilhado entre as páginas -->
 <style>
 /* ── Reset & Base ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -849,10 +850,11 @@ renderAssetTable();
 
 // ── Preços ao vivo (com cache 30 min) — roda por último, após todas as definições ──
 (function fetchLivePrices() {
-  var CACHE_KEY = 'bc-prices-cache'; // compartilha com portfolio_analytics
+  // lib/barolo-prices.js: aproveita o preço salvo por qualquer página (portfolio, landing, pools)
+  // se tiver menos de 30 min e só busca o que falta. Até 15/09/2026 este bloco regravava o
+  // bc-prices-cache do portfolio só com { usd }, apagando a sparkline de 7 dias e as variações
+  // de 7d/30d/1a que o portfolio guarda ali (as sparklines viravam reta por até 5 min).
   var CACHE_TTL = 30 * 60 * 1000;
-  function loadCache() { try { var r=localStorage.getItem(CACHE_KEY); return r?JSON.parse(r):null; } catch(e){return null;} }
-  function saveCache(data) { try { localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data:data})); } catch(e){} }
 
   function applyPrices(cacheData) {
     PORTFOLIO_DATA.forEach(function(a){
@@ -862,25 +864,12 @@ renderAssetTable();
     renderKPIs();
   }
 
-  var cached = loadCache();
-  if (cached && (Date.now() - cached.ts < CACHE_TTL)) {
-    applyPrices(cached.data);
-    return;
-  }
-
-  var allIds = PORTFOLIO_DATA.map(function(a){ return a.cgId; }).join(',');
-  fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + allIds + '&vs_currencies=usd')
-    .then(function(r){ return r.json(); })
-    .then(function(p) {
-      var cacheData = {};
-      PORTFOLIO_DATA.forEach(function(a){ if (p[a.cgId] && p[a.cgId].usd) { a.price = p[a.cgId].usd; cacheData[a.cgId] = {usd: p[a.cgId].usd}; LIVE_PRICES = true; } });
-      saveCache(cacheData);
-      renderAssetTable();
-      renderKPIs();
-    })
-    .catch(function(){
-      if (cached) applyPrices(cached.data); // fallback: cache desatualizado
-    });
+  // CoinGecko fora → último preço conhecido (como antes, com o cache desatualizado); sem nada salvo,
+  // ficam os preços de fallback do render inicial.
+  var allIds = PORTFOLIO_DATA.map(function(a){ return a.cgId; });
+  BaroloPrices.get(allIds, { maxAge: CACHE_TTL }).then(function(p) {
+    if (Object.keys(p).length) applyPrices(p);
+  });
 })();
 </script>
 </body>

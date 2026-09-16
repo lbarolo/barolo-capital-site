@@ -10,6 +10,7 @@ const H = require('./extract');
 
 const RESPONSES = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'chain', 'responses.json'), 'utf8'));
 const CHAIN_SRC = H.read('lib/barolo-chain.js');
+const PRICES_SRC = H.read('lib/barolo-prices.js');
 const DATA_SRC = H.read('data.js');
 
 const A = {
@@ -118,7 +119,7 @@ function makeDocument(ids) {
 }
 
 // Roda um bloco de página (IIFE) como o browser rodaria, com o data.js carregado antes.
-// withChain: carrega lib/barolo-chain.js antes do bloco (código novo).
+// withChain: carrega lib/barolo-chain.js e lib/barolo-prices.js antes do bloco (código novo).
 async function runBlock(code, { responses = RESPONSES, fail = {}, ids = [], withChain = false } = {}) {
   const calls = [], timers = [], intervals = [];
   const ctx = vm.createContext({ console: { log() {}, warn() {}, error() {}, debug() {} } });
@@ -129,7 +130,7 @@ async function runBlock(code, { responses = RESPONSES, fail = {}, ids = [], with
   ctx.setInterval = (fn, ms) => { intervals.push(ms); return intervals.length; };
   ctx.localStorage = { getItem: () => null, setItem() {}, removeItem() {} };
   vm.runInContext(DATA_SRC, ctx);
-  if (withChain) vm.runInContext(CHAIN_SRC, ctx);
+  if (withChain) { vm.runInContext(CHAIN_SRC, ctx); vm.runInContext(PRICES_SRC, ctx); }
   vm.runInContext(code, ctx);
   while (timers.length) await timers.shift()();
   return { ctx, calls, intervals, doc: ctx.document };

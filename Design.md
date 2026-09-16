@@ -154,9 +154,10 @@ Chart.defaults.plugins.tooltip.callbacks.labelColor = (ctx) => {
 
 ## 5. Interações (funções JS)
 
-> Desde 14/09/2026 há três módulos compartilhados em `lib/`, carregados por `<script src>`:
-> `barolo-core.js` (cálculo de performance/patrimônio), `barolo-chain.js` (leitura AAVE/Kamino/ADA)
-> e `barolo-ui.js` (tema e idioma). O resto continua inline em cada página — buscar
+> Desde 14/09/2026 há quatro módulos compartilhados em `lib/`, carregados por `<script src>`:
+> `barolo-core.js` (cálculo de performance/patrimônio), `barolo-chain.js` (leitura AAVE/Kamino/ADA),
+> `barolo-ui.js` (tema e idioma) e `barolo-prices.js` (preço do CoinGecko compartilhado entre as páginas +
+> polling que pausa com a aba oculta, desde 15/09/2026). O resto continua inline em cada página — buscar
 > `function nomeDaFuncao` no arquivo. Mudou algo de tema/idioma? Muda no módulo e roda `npm test`.
 
 | Função | O que faz | Observações por página |
@@ -167,6 +168,8 @@ Chart.defaults.plugins.tooltip.callbacks.labelColor = (ctx) => {
 | `toggleIndexLang()` | EN⇄PT na landing | **só index**. Strings em `INDEX_LANG_STRINGS`. |
 | `toggleLang()` / `applyLang()` | EN⇄PT via `BaroloUI.applyI18n(LANG_STRINGS, lang)`, salva `bc-lang` | portfolio, pools, ferramentas (esta passa `langHtmlKey` e recalcula o Sizing & Risk). ⚠️ Nenhum dashboard tem botão de idioma hoje — só o valor salvo é aplicado no carregamento. |
 | `toggleCurrency()` | cicla régua USD→BRL→BTC→ETH, salva `bc-currency` | **só portfolio**. |
+| `BaroloPrices.get(ids,{maxAge})` | preço `/simple/price` com cache `bc-px` compartilhado entre as páginas; busca só o que está velho, nunca rejeita (falha → último preço salvo, marcado `_stale`) | as 5 páginas. Não criar fetch próprio de `/simple/price`: o teste `tests/prices.test.js` conta as chamadas diretas. |
+| `BaroloPrices.poll(fn,ms)` | `setInterval` que não roda com a aba oculta e roda na volta se o intervalo já passou | todo timer que faz rede. Timer só local (ex.: `renderAll`, `checkAlerts`) segue `setInterval`. |
 | `window.Ciclo` | aba Ciclo (indicadores on-chain BTC) | **só ferramentas** (IIFE, escopo `#panel-ciclo`, lê `btc-onchain.json`). |
 
 Anti-flash de tema: `lib/barolo-ui.js` + `BaroloUI.bootTheme(...)` no `<head>` de cada página (o teste `tests/pages.test.js` garante que o módulo está no `<head>`). Não mover para o fim do `<body>` — a página piscaria no tema errado.
@@ -179,12 +182,12 @@ Anti-flash de tema: `lib/barolo-ui.js` + `BaroloUI.bootTheme(...)` no `<head>` d
 |---|---|---|---|
 | **index.html** | Landing pública (EN padrão, toggle PT) | âncoras + hamburger | Hero editorial 2 colunas + painel "Barolo · Live" (φ/razão áurea, espiral, aurora, efeito de digitação), token board com sparklines, widget de gwei fixo, seções `01 Sobre · 02 Portfolio · 03 Strategies · 04 Contact`. JS: `initTicker`, `toggleIndexLang`, sparklines, φ-spiral. |
 | **portfolio_analytics.html** | Dashboard principal (PT) | dashboard | Exec bar, abas (Ativos/Performance/Métricas/Risco & Convexidade/DeFi & Mercado), donut de alocação, curva de patrimônio, heatmap, drawdown, DCA, Evolução Patrimonial (com **benchmark CDI/IPCA** — `CDI_MONTHLY_BY_YEAR`/`IPCA_MONTHLY_BY_YEAR` + `_fixedIncomeSeries()`, só na régua USD; atualizar as taxas 1×/ano), **Renda Passiva Realizada** (livro-razão mensal, `RENDA_2026` + `buildRendaPassiva()`, aba DeFi & Mercado), régua USD/BRL/BTC/ETH, KPI "vs HODL", ~32 canvases Chart.js. `toggleTheme` reconstrói gráficos. |
-| **pools.html** | Pools de liquidez + DeFi (PT) | dashboard (**2 navs**) | Meta 5%, P&L YTD, card pool ativa (WETH/USDC **Base**), gráficos, iframes lazy (Revert/GeckoTerminal/AAVE), explorador de APR. Array `POOLS`. |
+| **pools.html** | Pools de liquidez + DeFi (PT) | dashboard | Meta 5%, P&L YTD, card pool ativa (WETH/USDC **Base**), gráficos, iframes lazy (Revert/GeckoTerminal/AAVE), explorador de APR. Array `POOLS`. |
 | **ferramentas.html** | Ferramentas + Diário (PT, toggle EN) | dashboard | 11 abas (calculadoras Kelly/Merton/Hedge/LevHedge, Liquidação, Cenários, Diário, Alertas, **Ciclo** on-chain BTC, **Fiscal** custo BRL/IR). `window.Ciclo`, `window.Fiscal`, `switchTab(id,btn)`. |
 | **relatorio.html** | Relatório/PDF (PT) | dashboard (compacto, `no-print`) | Resumo executivo, tabela de ativos, posições DeFi, evolução, `window.print()` com `@media print`. Menor/mais limpo. |
 | **emprestimos.html** | Lending AAVE/Kamino | (no bundle) | ⚠️ **Bundle minificado** — não editar aqui. Fonte + rebuild. |
 
-**Assets compartilhados:** `data.js` (posições), `ui-polish.css` (polish), `btc-onchain.json` (dados do Ciclo, gerado por GitHub Action diária), `lib/barolo-core.js` · `lib/barolo-chain.js` · `lib/barolo-ui.js` (ver §5).
+**Assets compartilhados:** `data.js` (posições), `ui-polish.css` (polish), `btc-onchain.json` (dados do Ciclo, gerado por GitHub Action diária), `lib/barolo-core.js` · `lib/barolo-chain.js` · `lib/barolo-ui.js` · `lib/barolo-prices.js` (ver §5).
 
 ---
 

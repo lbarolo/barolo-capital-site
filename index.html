@@ -27,6 +27,7 @@ if(window.Chart){
 </script>
 <script src="lib/barolo-ui.js"></script><!-- tema e idioma compartilhados (no <head>: aplica o tema antes de pintar) -->
 <script>BaroloUI.bootTheme('dark');</script>
+<script src="lib/barolo-prices.js"></script><!-- preço compartilhado entre as páginas + polling que pausa com a aba oculta -->
 
 <style>
 /* ── Reset ── */
@@ -1971,14 +1972,15 @@ function toggleMobile() {
 
   async function fetchTicker() {
     try {
-      var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + allIds + '&vs_currencies=usd&include_24hr_change=true', { signal: AbortSignal.timeout(8000) });
-      var d = await r.json();
+      // lib/barolo-prices.js: usa o preço salvo por qualquer página se tiver < 60 s e só busca o que falta.
+      var d = await BaroloPrices.get(allIds.split(','), { maxAge: 60000 });
+      if (!Object.keys(d).length) throw new Error('sem preço');
       var prices = {};
       Object.keys(d).forEach(function(id) {
         prices[id] = d[id].usd;
         prices[id + '_change'] = d[id].usd_24h_change || 0;
       });
-      saveIndexCache(prices);
+      if (!d._stale) saveIndexCache(prices);   // preço velho (CoinGecko fora) não renova o cache
       renderTicker(prices);
       updateHeroReturn(prices);
     } catch(e) {
@@ -2001,8 +2003,8 @@ function toggleMobile() {
   }
   fetchTicker();
   fetchSparklines();
-  setInterval(fetchTicker, 60000);
-  setInterval(fetchSparklines, 10 * 60 * 1000);
+  BaroloPrices.poll(fetchTicker, 60000);               // pausa com a aba oculta
+  BaroloPrices.poll(fetchSparklines, 10 * 60 * 1000);
 })();
 
 // ══════════════════════════════════
@@ -2477,7 +2479,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch(e) { /* mantém último valor */ }
   }
   fetchGwei();
-  setInterval(fetchGwei, 45000);
+  BaroloPrices.poll(fetchGwei, 45000);                 // pausa com a aba oculta
 })();
 </script>
 

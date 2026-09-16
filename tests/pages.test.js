@@ -50,6 +50,16 @@ test('as 5 páginas carregam lib/barolo-ui.js no <head>, antes de qualquer Barol
   }
 });
 
+test('as 5 páginas carregam lib/barolo-prices.js no <head>, antes de qualquer BaroloPrices.*', () => {
+  for (const page of PAGES) {
+    const html = H.read(page);
+    const tag = html.indexOf('<script src="lib/barolo-prices.js">');
+    assert.ok(tag > 0, `${page} não carrega lib/barolo-prices.js`);
+    assert.ok(tag < html.indexOf('</head>'), `${page}: lib/barolo-prices.js deve estar no <head>`);
+    assert.ok(html.indexOf('BaroloPrices.') > tag, `${page} usa BaroloPrices antes de carregar`);
+  }
+});
+
 // Todo onclick="fn(...)" / onclick="Obj.fn(...)" precisa ter o que chamar na página — pega
 // botão que ficou apontando para função removida.
 test('todo onclick das páginas aponta para algo definido', () => {

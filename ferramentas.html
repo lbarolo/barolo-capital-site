@@ -7,6 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <script src="lib/barolo-ui.js"></script><!-- tema e idioma compartilhados (no <head>: aplica o tema antes de pintar) -->
 <script>BaroloUI.bootTheme('dark');</script>
+<script src="lib/barolo-prices.js"></script><!-- preço compartilhado entre as páginas + polling que pausa com a aba oculta -->
 <link rel="canonical" href="/ferramentas">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
@@ -2360,9 +2361,10 @@ window.Fiscal = (function(){
 // ══════════════════════════════════════════════
 async function fetchLivePrices(){
  try{
- const url='https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana&vs_currencies=usd&include_24hr_change=true';
- const r=await fetch(url);
- const d=await r.json();
+ // lib/barolo-prices.js: preço salvo por qualquer página se tiver < 60 s. CoinGecko fora → o
+ // mesmo "Preços offline" de antes (os campos seguem com o último valor digitado/calculado).
+ const d=await BaroloPrices.get(['ethereum','solana'],{maxAge:60000});
+ if(d._stale) throw new Error('offline');
  if(d.ethereum?.usd){
  liveETH=d.ethereum.usd; liveETH24h=d.ethereum.usd_24h_change||0;
  liveSOL=d.solana.usd; liveSOL24h=d.solana.usd_24h_change||0;
@@ -2380,8 +2382,10 @@ async function fetchLivePrices(){
  }
  }catch(e){document.getElementById('prices-status').textContent='Preços offline — usando fallback';}
 }
-fetchLivePrices();
-setInterval(fetchLivePrices,5*60*1000);
+// 1ª chamada só depois do parse: com o preço no cache a resposta é imediata e chegaria antes do
+// <script> que define tStr (usado pelo calcHedge). A busca antiga pela rede escondia isso.
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fetchLivePrices); else fetchLivePrices();
+BaroloPrices.poll(fetchLivePrices,5*60*1000); // pausa com a aba oculta
 
 // ══════════════════════════════════════════════
 // SLIDER SYNC
@@ -4543,7 +4547,7 @@ window.Ciclo = (function(){
     return j;
   }
   async function fetchSpot(){
-    try{ var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',{headers:{Accept:'application/json'}}); if(!r.ok) return null; var j=await r.json(); return (j.bitcoin&&j.bitcoin.usd)||null; }catch(e){ return null; }
+    try{ var j=await BaroloPrices.get(['bitcoin'],{maxAge:60000}); if(j._stale) return null; return (j.bitcoin&&j.bitcoin.usd)||null; }catch(e){ return null; } // lib/barolo-prices.js
   }
   function buildDATA(j){
     var s=j.series, labels=[], price=[], realized=[], cvdd=[];
