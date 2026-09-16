@@ -93,7 +93,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - 15–16/09: sacou 300 USDT da AAVE; 200 viraram +0,083615374 ETH (2 compras de US$ 100). **Rotação, não
   aporte** — invested ETH +200 / USDT −200. Os outros ~100 USDT seguem fora da AAVE (holding não muda).
 - HF AAVE 7,60 · pool: nenhuma aberta.
-- ⚠️ `cgMirror.USDT` = 1.998,08879 **ASSUMIDO** (−200 do USDT no CoinGecko). Confirmar com o Lucas.
+- ✅ `cgMirror.USDT` = 1.998,08879 confirmado (ele debitou os 200 no CoinGecko); os outros 100 USDT estão na carteira.
 
 **Pendências que o `/prints` deve lembrar:**
 - ⏸ **Yield a lançar no CoinGecko ACUMULANDO** (decisão do Lucas, 11/09): ~US$ 13,44 em 16/09

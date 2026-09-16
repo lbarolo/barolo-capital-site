@@ -729,7 +729,7 @@ window.BAROLO_DATA = {
     SOL:  24.94,
     USDS: 304.69,
     ETH:  2.314235374,   // 2,23062 + 0,083615374 das compras de 15-16/09 (lancadas por ele); juro do aWETH segue pendente
-    USDT: 1998.08879     // ASSUMIDO 16/09: 2198,08879 - 200 USDT gastos no ETH — confirmar com o Lucas se debitou la
+    USDT: 1998.08879     // 2198,08879 - 200 USDT gastos no ETH (CONFIRMADO pelo Lucas 16/09: debitou no CoinGecko; os outros 100 do saque estao na carteira)
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de
     // 11/09 — iguais ao holding, nada pendente.
   },
