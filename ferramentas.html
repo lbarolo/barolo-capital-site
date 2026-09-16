@@ -723,7 +723,6 @@ body, input, button, select, textarea {
  <button class="tab" onclick="switchTab('diario',this)" data-i18n="tab-diario">Diário DeFi</button>
  <button class="tab" onclick="switchTab('alertas',this)" data-i18n="tab-alertas">Alertas</button>
  <button class="tab" onclick="switchTab('evolucao',this)" data-i18n="tab-evolucao">Evolução</button>
- <button class="tab" onclick="switchTab('apyscanner',this)" data-i18n="tab-apy">Pools APY</button>
  <button class="tab" onclick="switchTab('ciclo',this)" data-i18n="tab-ciclo">Ciclo</button>
  <button class="tab" onclick="switchTab('fiscal',this)" data-i18n="tab-fiscal">Fiscal</button>
  <button class="tab" onclick="switchTab('semanal',this)" data-i18n="tab-semanal">Semanal</button>
@@ -1874,85 +1873,6 @@ body, input, button, select, textarea {
  </div>
  </div>
 
- <!-- ══════════════════════════════════════════════
- TAB 6 — POOLS APY SCANNER
- ══════════════════════════════════════════════ -->
- <div class="panel" id="panel-apyscanner">
- <div class="section" style="margin-bottom:16px;">
- <div class="section-title" data-i18n="apy-title">Scanner de APY — Pools de Interesse</div>
- <div style="font-size:9px;color:var(--muted);margin-bottom:14px;line-height:1.7;">
- Consulta os dados mais recentes das pools que você está montando ou monitorando. Selecione os pares, redes e protocolos e clique em Buscar.
- </div>
-
- <!-- FILTROS -->
- <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;margin-bottom:16px;">
- <div>
- <div style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;">PARES</div>
- <div style="display:flex;flex-direction:column;gap:5px;">
- <label style="display:flex;align-items:center;gap:6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="pair-weth-usdc" checked style="accent-color:var(--accent);"> WETH/USDC</label>
- <label style="display:flex;align-items:center;gap=6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="pair-eth-usdt" checked style="accent-color:var(--accent);"> ETH/USDT</label>
- <label style="display:flex;align-items:center;gap:6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="pair-eth-usdc" checked style="accent-color:var(--accent);"> ETH/USDC (raw)</label>
- </div>
- </div>
- <div>
- <div style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;">REDES</div>
- <div style="display:flex;flex-direction:column;gap:5px;">
- <label style="display:flex;align-items:center;gap:6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="net-eth" checked style="accent-color:var(--accent);"> Ethereum</label>
- <label style="display:flex;align-items:center;gap:6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="net-base" checked style="accent-color:var(--accent);"> Base</label>
- <label style="display:flex;align-items:center;gap:6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="net-arb" checked style="accent-color:var(--accent);"> Arbitrum</label>
- </div>
- </div>
- <div>
- <div style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;">PROTOCOLOS</div>
- <div style="display:flex;flex-direction:column;gap:5px;">
- <label style="display:flex;align-items:center;gap:6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="proto-v3" checked style="accent-color:var(--accent);"> Uniswap V3</label>
- <label style="display:flex;align-items:center;gap:6px;font-size:10px;cursor:pointer;"><input type="checkbox" id="proto-v4" checked style="accent-color:var(--accent);"> Uniswap V4</label>
- </div>
- </div>
- <div>
- <button class="btn btn-primary" onclick="scanPools()" id="scan-btn" style="padding:10px 20px;font-size:10px;">BUSCAR</button>
- </div>
- </div>
-
- <!-- RESULTS -->
- <div id="apy-results-wrap">
- <div style="text-align:center;padding:40px;color:var(--muted);font-size:11px;" id="apy-placeholder">
- Selecione os filtros e clique em <strong style="color:var(--accent);">Buscar</strong> para consultar os APYs atuais
- </div>
- <div id="apy-loading" style="display:none;text-align:center;padding:40px;">
- <div style="width:32px;height:32px;border:2px solid rgba(138,104,32,.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px;"></div>
- <div style="font-size:10px;color:var(--muted);">Consultando pools via Uniswap API...</div>
- </div>
- <div id="apy-table-wrap" style="display:none;">
- <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
- <div style="font-size:9px;color:var(--muted);" id="apy-count"></div>
- <div style="font-size:9px;color:var(--muted);" id="apy-updated"></div>
- </div>
- <div style="overflow-x:auto;">
- <table style="width:100%;border-collapse:collapse;font-size:10px;" id="apy-table">
- <thead>
- <tr style="border-bottom:1px solid var(--border);">
- <th style="text-align:left;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">PAR</th>
- <th style="text-align:left;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">REDE</th>
- <th style="text-align:left;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">PROTOCOLO</th>
- <th style="text-align:right;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">FEE TIER</th>
- <th style="text-align:right;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">APR 24h</th>
- <th style="text-align:right;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">TVL</th>
- <th style="text-align:right;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">VOL 24h</th>
- <th style="text-align:center;padding:8px 10px;font-size:8px;color:var(--muted);letter-spacing:1px;font-weight:600;">LINK</th>
- </tr>
- </thead>
- <tbody id="apy-tbody"></tbody>
- </table>
- </div>
- <div style="margin-top:12px;background:rgba(59,130,246,0.04);border:1px solid rgba(59,130,246,0.1);border-radius:6px;padding:10px 14px;font-size:9px;color:var(--muted);line-height:1.6;">
- <strong style="color:var(--text);">Como interpretar:</strong> O APR 24h é baseado nas fees coletadas nas últimas 24h, anualizado. Alta volatilidade do ETH = mais volume = mais fees. O APR do Uniswap V4 tende a ser mais eficiente por usar hooks que concentram liquidez automaticamente.
- </div>
- </div>
- <div id="apy-error" style="display:none;text-align:center;padding:30px;color:var(--red);font-size:10px;"></div>
- </div>
- </div>
- </div>
 
 </div>
 
@@ -3754,142 +3674,6 @@ calcAave(); calcKamino(); calcUni(); calcScenario();
 setTimeout(renderEvoChart, 300);
 setInterval(()=>checkAlerts(false), 5*60*1000);
 
-// ══════════════════════════════════════════════
-// APY SCANNER — Uniswap Subgraph
-// ══════════════════════════════════════════════
-var POOL_TARGETS = [
- // Ethereum Uniswap V3
- { pair:'WETH/USDC', network:'Ethereum', protocol:'Uniswap V3', fee:'0.05%', id:'0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640', subgraph:'ethereum' },
- { pair:'WETH/USDC', network:'Ethereum', protocol:'Uniswap V3', fee:'0.30%', id:'0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8', subgraph:'ethereum' },
- { pair:'WETH/USDT', network:'Ethereum', protocol:'Uniswap V3', fee:'0.05%', id:'0x4e68ccd3e89f51c3074ca5072bbac773960dfa36', subgraph:'ethereum' },
- // Base Uniswap V3
- { pair:'WETH/USDC', network:'Base', protocol:'Uniswap V3', fee:'0.05%', id:'0xd0b53d9277642d899df5c87a3966a349a798f224', subgraph:'base' },
- { pair:'WETH/USDC', network:'Base', protocol:'Uniswap V3', fee:'0.30%', id:'0x4c36388be6f416a29c8d8eee81c771ce6be14b18', subgraph:'base' },
- // Arbitrum Uniswap V3
- { pair:'WETH/USDC', network:'Arbitrum', protocol:'Uniswap V3', fee:'0.05%', id:'0xc31e54c7a869b9fcbecc14363cf510d1c41fa443', subgraph:'arbitrum' },
- { pair:'WETH/USDT', network:'Arbitrum', protocol:'Uniswap V3', fee:'0.05%', id:'0x641c00a822e8b671738d32a431a4fb6074e5c79d', subgraph:'arbitrum' },
-];
-
-var SUBGRAPH_URLS = {
- ethereum: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
- base: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3-base',
- arbitrum: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3-arbitrum',
-};
-
-async function fetchPoolData(pool) {
- const url = SUBGRAPH_URLS[pool.subgraph];
- if (!url) return null;
- const query = `{
- pool(id:"${pool.id}"){
- feeTier token0{symbol} token1{symbol}
- poolDayData(first:2 orderBy:date orderDirection:desc){
- feesUSD volumeUSD tvlUSD date
- }
- }
- }`;
- try {
- const r = await fetch(url, {
- method:'POST',
- headers:{'Content-Type':'application/json'},
- body: JSON.stringify({query}),
- signal: AbortSignal.timeout(8000)
- });
- const j = await r.json();
- return j.data?.pool || null;
- } catch(e) {
- return null;
- }
-}
-
-function fmtUSD(v) {
- if (v >= 1e9) return '$'+(v/1e9).toFixed(2)+'B';
- if (v >= 1e6) return '$'+(v/1e6).toFixed(1)+'M';
- if (v >= 1e3) return '$'+(v/1e3).toFixed(0)+'K';
- return '$'+v.toFixed(0);
-}
-
-function aprColor(apr) {
- if (apr >= 100) return 'var(--green)';
- if (apr >= 30) return 'var(--accent)';
- if (apr >= 10) return 'var(--yellow)';
- return 'var(--muted)';
-}
-
-var NET_COLORS = { Ethereum:'#627EEA', Base:'#0052FF', Arbitrum:'#12AAFF' };
-var PROTO_COLORS = { 'Uniswap V3':'#FF007A', 'Uniswap V4':'#8b5cf6' };
-
-async function scanPools() {
- const pairs = {
- 'WETH/USDC': document.getElementById('pair-weth-usdc').checked,
- 'ETH/USDT': document.getElementById('pair-eth-usdt').checked,
- 'ETH/USDC': document.getElementById('pair-eth-usdc').checked,
- };
- const nets = {
- 'Ethereum': document.getElementById('net-eth').checked,
- 'Base': document.getElementById('net-base').checked,
- 'Arbitrum': document.getElementById('net-arb').checked,
- };
- const protos = {
- 'Uniswap V3': document.getElementById('proto-v3').checked,
- 'Uniswap V4': document.getElementById('proto-v4').checked,
- };
-
- const targets = POOL_TARGETS.filter(p =>
- (pairs[p.pair] || pairs['ETH/USDT'] && p.pair==='WETH/USDT' || pairs['ETH/USDC'] && p.pair==='WETH/USDC') &&
- nets[p.network] && protos[p.protocol]
- );
-
- document.getElementById('apy-placeholder').style.display = 'none';
- document.getElementById('apy-error').style.display = 'none';
- document.getElementById('apy-table-wrap').style.display = 'none';
- document.getElementById('apy-loading').style.display = 'block';
- document.getElementById('scan-btn').disabled = true;
-
- const results = [];
- for (const t of targets) {
- const data = await fetchPoolData(t);
- if (data && data.poolDayData && data.poolDayData.length >= 1) {
- const d = data.poolDayData[0];
- const tvl = parseFloat(d.tvlUSD);
- const fees24h = parseFloat(d.feesUSD);
- const apr = tvl > 0 ? (fees24h / tvl) * 365 * 100 : 0;
- results.push({ ...t, apr, tvl, vol24h: parseFloat(d.volumeUSD), fees24h });
- }
- }
-
- document.getElementById('apy-loading').style.display = 'none';
- document.getElementById('scan-btn').disabled = false;
-
- if (results.length === 0) {
- document.getElementById('apy-error').textContent = 'Não foi possível obter dados. A API do Subgraph pode estar indisponível ou os filtros não retornaram resultados.';
- document.getElementById('apy-error').style.display = 'block';
- return;
- }
-
- results.sort((a,b) => b.apr - a.apr);
-
- const tbody = document.getElementById('apy-tbody');
- tbody.innerHTML = '';
- results.forEach((r, i) => {
- const uniLink = `https://app.uniswap.org/explore/pools/${r.subgraph}/${r.id}`;
- const isTop = i === 0;
- tbody.innerHTML += `
- <tr style="border-bottom:1px solid var(--border);${isTop?'background:rgba(63,185,80,0.04);':''}">
- <td style="padding:9px 10px;font-weight:600;color:var(--text);">${isTop?'':''}<span style="color:${NET_COLORS[r.network]||'var(--text)'};">⬡</span> ${r.pair}</td>
- <td style="padding:9px 10px;"><span style="background:${(NET_COLORS[r.network]||'#444')}22;color:${NET_COLORS[r.network]||'var(--text)'};border-radius:4px;padding:2px 7px;font-size:9px;font-weight:600;">${r.network}</span></td>
- <td style="padding:9px 10px;"><span style="background:${(PROTO_COLORS[r.protocol]||'#444')}22;color:${PROTO_COLORS[r.protocol]||'var(--text)'};border-radius:4px;padding:2px 7px;font-size:9px;">${r.protocol}</span></td>
- <td style="padding:9px 10px;text-align:right;font-size:9px;color:var(--muted);">${r.fee}</td>
- <td style="padding:9px 10px;text-align:right;font-weight:700;font-size:13px;color:${aprColor(r.apr)};">${r.apr.toFixed(1)}%</td>
- <td style="padding:9px 10px;text-align:right;font-size:10px;color:var(--text);">${fmtUSD(r.tvl)}</td>
- <td style="padding:9px 10px;text-align:right;font-size:10px;color:var(--muted);">${fmtUSD(r.vol24h)}</td>
- <td style="padding:9px 10px;text-align:center;"><a href="${uniLink}" target="_blank" style="color:var(--accent);font-size:9px;text-decoration:none;border:1px solid rgba(59,130,246,0.3);border-radius:4px;padding:3px 8px;">Ver ↗</a></td>
- </tr>`;
- });
-
- document.getElementById('apy-count').textContent = results.length + ' pools encontradas';
- document.getElementById('apy-updated').textContent = '⏱ ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
- document.getElementById('apy-table-wrap').style.display = 'block';
-}
 </script>
 
 <script>
@@ -4232,7 +4016,6 @@ var LANG_STRINGS = {
   'poison-note':{pt:'Nota: um endereço aparecer “enviando” tokens de nome falso não significa que a contraparte seja maliciosa — contratos de spam forjam eventos de transferência usando endereços de alto volume como remetente, para ganhar credibilidade.',en:'Note: an address appearing to “send” fake-named tokens does not mean the counterparty is malicious — spam contracts forge transfer events using high-volume addresses as the sender to gain credibility.'},
 'tab-alertas':   {pt:'Alertas',     en:'Alerts'},
   'tab-evolucao':  {pt:'Evolução',    en:'Evolution'},
-  'tab-apy':       {pt:'Pools APY',   en:'Pools APY'},
   'tab-ciclo':     {pt:'Ciclo',       en:'Cycle'},
   'tab-fiscal':    {pt:'Fiscal',      en:'Tax'},
   // liquidação — AAVE labels
@@ -4315,8 +4098,6 @@ var LANG_STRINGS = {
   'evo-chart-title':{pt:'Evolução do Portfolio',      en:'Portfolio Evolution'},
   'evo-chart-badge':{pt:'SEMANAL',                    en:'WEEKLY'},
   'evo-history':   {pt:'Histórico de Snapshots',      en:'Snapshot History'},
-  // apy scanner
-  'apy-title':     {pt:'Scanner de APY — Pools de Interesse',en:'APY Scanner — Pools of Interest'},
   // semanal
   'tab-semanal':   {pt:'Semanal',                             en:'Weekly'},
   // ── SIZING & RISK ──
