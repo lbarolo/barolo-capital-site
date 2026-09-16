@@ -2133,19 +2133,29 @@ function renderUI(enriched){
    const debtRatio = (totalDebtLive / netTotal * 100).toFixed(1);
    const aaveHF = window._liveAaveHF || WEEKLY_UPDATE.defi.aave.healthFactor || 6.00;
    const liveSol = window._liveSolPrice || solPrice || 86.84;
-   const kaminoSupplyUsd = (WEEKLY_UPDATE.defi.kamino.solSupplied * liveSol) + WEEKLY_UPDATE.defi.kamino.pyusdSupplied;
+   const liveEth = getPrice('ethereum');
+   // Posições e APYs de fallback vêm do data.js (antes: WEEKLY_UPDATE.defi de 20/06, sem o WETH).
+   const _D = (window.BAROLO_DATA && window.BAROLO_DATA.defi) || {};
+   const _q = (p, side, t, fb) => (p && p[side] && p[side][t] && typeof p[side][t].qty === 'number') ? p[side][t].qty : fb;
+   const _apy = (p, side, t, fb) => (p && p[side] && p[side][t] && typeof p[side][t].apy === 'number') ? p[side][t].apy * 100 : fb;
+   const aaveWethQty = _q(_D.aave, 'supply', 'WETH', WEEKLY_UPDATE.defi.aave.wethSupplied);
+   const aaveUsdtQty = _q(_D.aave, 'supply', 'USDT', WEEKLY_UPDATE.defi.aave.usdtSupplied);
+   const kamSolQty   = _q(_D.kamino, 'supply', 'SOL', WEEKLY_UPDATE.defi.kamino.solSupplied);
+   const kamUsdsQty  = _q(_D.kamino, 'supply', 'USDS', WEEKLY_UPDATE.defi.kamino.pyusdSupplied);
+   const kaminoSupplyUsd = (kamSolQty * liveSol) + kamUsdsQty;
    const kaminoLTV = (kaminoDebtLive2 / kaminoSupplyUsd * 100).toFixed(1);
    // Monthly interest cost — live APYs via AAVE DataProvider + Kamino API (fallback to current rates)
-   const aaveBorrowApy  = window._liveAaveBorrowApy  || 5.38;
-   const kaminoBorrowApy= window._liveKaminoBorrowApy || 5.69;
-   const aaveUsdtApy    = window._liveAaveUsdtApy    || 1.60;
-   const kaminoSolApy   = window._liveKaminoSolApy   || 4.89;
-   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || 5.00;
+   const aaveBorrowApy  = window._liveAaveBorrowApy  || _apy(_D.aave, 'borrow', 'USDC', 5.38);
+   const kaminoBorrowApy= window._liveKaminoBorrowApy || _apy(_D.kamino, 'borrow', 'USDC', 5.69);
+   const aaveUsdtApy    = window._liveAaveUsdtApy    || _apy(_D.aave, 'supply', 'USDT', 1.60);
+   const aaveWethApy    = window._liveAaveWethApy    || _apy(_D.aave, 'supply', 'WETH', 0);
+   const kaminoSolApy   = window._liveKaminoSolApy   || _apy(_D.kamino, 'supply', 'SOL', 4.89);
+   const kaminoUsdsApy  = window._liveKaminoUsdsApy  || _apy(_D.kamino, 'supply', 'USDS', 5.00);
    const monthlyInterest = (aaveDebtLive2 * (aaveBorrowApy/100) + kaminoDebtLive2 * (kaminoBorrowApy/100)) / 12;
    // Monthly yield from lending positions
-   const aaveSupplyYield = WEEKLY_UPDATE.defi.aave.usdtSupplied * (aaveUsdtApy/100) / 12;
-   const kaminoSolYield = (WEEKLY_UPDATE.defi.kamino.solSupplied * liveSol) * (kaminoSolApy/100) / 12;
-   const kaminoStableYield = WEEKLY_UPDATE.defi.kamino.pyusdSupplied * (kaminoUsdsApy/100) / 12;
+   const aaveSupplyYield = aaveUsdtQty * (aaveUsdtApy/100) / 12 + (aaveWethQty * liveEth) * (aaveWethApy/100) / 12;
+   const kaminoSolYield = (kamSolQty * liveSol) * (kaminoSolApy/100) / 12;
+   const kaminoStableYield = kamUsdsQty * (kaminoUsdsApy/100) / 12;
    const monthlyYield = aaveSupplyYield + kaminoSolYield + kaminoStableYield;
    const netMonthly = monthlyYield - monthlyInterest;
 
