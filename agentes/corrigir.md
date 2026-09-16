@@ -10,6 +10,7 @@
 | Cálculo (retornos, TWR, TIR, patrimônio) | `lib/barolo-core.js` |
 | Leitura on-chain (AAVE, Kamino, Cardano) | `lib/barolo-chain.js` |
 | Tema/idioma compartilhados | `lib/barolo-ui.js` (`BaroloUI.bootTheme`/`toggleTheme(gancho)`/`applyI18n`) — carregado no `<head>` das 5 páginas |
+| Preço do CoinGecko + polling | `lib/barolo-prices.js` (`BaroloPrices.get(ids,{maxAge})` / `poll(fn,ms)`) — cache `bc-px` entre as páginas; timer que faz rede usa `poll` |
 | UX/design (cores, componentes, "quero mudar X → vá aqui") | `Design.md` |
 | Páginas | `index.html` (landing pública), `portfolio_analytics.html`, `pools.html`, `emprestimos.html`, `ferramentas.html`, `relatorio.html` |
 | Testes | `npm test` (`tests/*.test.js`), roda também no Actions (`tests.yml`) em todo push |
@@ -77,7 +78,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - `ETH.invested` diferente do CoinGecko (migração de custo deliberada para o USDT).
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
-## Estado atual (15/09/2026)
+## Estado atual (16/09/2026)
 - Fila de bugs: **nenhum ALTA aberto** — resolvidos em 15/09 a landing (`7b1902d`), o lending do
   relatório (`e49aadc` + `9fe0b8f`), as stables do relatório (`4b700a8`) e o colateral do pools
   (`aab2279`); MÉDIA da Meta de Alocação do pools (`a80a193`), das funções mortas do pools
@@ -87,13 +88,16 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - Script de stage parcial: `stage-mine2.js` (scratchpad de 15/09; recria-se pelo método do passo 8).
 - Plano de arquitetura: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
   **Fase 3 (`barolo-ui.js`) ✅ `b4523fa`** (15/09). Tema/idioma de qualquer página: mudar no
-  módulo; a `toggleTheme()` da página só passa o gancho de rebuild dos gráficos. Fases 4 (rede),
-  5 (Actions) e 6 (des-bundlar `emprestimos.html`) pendentes.
-- Com a Fase 3 no ar, os itens da fila que esperavam por ela estão liberados: aba Pools APY do
-  ferramentas, Etherscan no ticker do pools, formatação da tabela de pools do relatório,
+  módulo; a `toggleTheme()` da página só passa o gancho de rebuild dos gráficos.
+  **Fase 4 (`barolo-prices.js`) ✅ `0121e9e`** (16/09): preço compartilhado + polling que pausa
+  com a aba oculta. Pools 34→25 requisições, portfolio 64→50. Cuidado aprendido: resposta do cache
+  é imediata — chamada de preço no meio do HTML pode rodar antes de um `<script>` posterior (foi o
+  `tStr` do ferramentas); disparar depois do parse. Fases 5 (Actions) e 6 (des-bundlar) pendentes.
+- Itens da fila liberados pela Fase 3 ainda abertos: aba Pools APY do ferramentas, formatação da tabela de pools do relatório,
   fallbacks fixos da Convexidade.
 
 ## Histórico (mais recente no topo)
+- 16/09/2026 — Fase 4: preço compartilhado e polling em `lib/barolo-prices.js` (5 páginas), Etherscan morto do pools removido, logo em um tamanho, relatório para de apagar o `spark7d`; zero mudança de UX — `0121e9e`.
 - 15/09/2026 — Fase 3: tema e idioma compartilhados em `lib/barolo-ui.js` (5 páginas), moeda morta de pools/ferramentas removida; zero mudança de UX, conferido nas 5 páginas — `b4523fa`.
 - 15/09/2026 — histórico de pools vira fonte única (`data.js → poolHistory`); relatório agrega dela e para de divergir — `b97e713`.
 - 15/09/2026 — pools: removidas `fetchAaveData`/`fetchKaminoData` (285 linhas mortas, −6 chamadas de rede) — `f84856b`.

@@ -92,8 +92,6 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
 - [BAIXA] `relatorio.html:445` — "Última Compra" fixa em "+0.999 SOL @ $78.78 (Abr/2026)"; há
   compra mais recente no Diário (SOL 0,374988 @ $76,01 em 05/08/2026). Correção: ler a última
   entrada `type:'trade'` do `diario.js` (carregar o arquivo na página) ou tirar a linha. (15/09/2026)
-- [BAIXA] `pools.html:2410` — ticker chama a Etherscan V1 com `apikey=YourApiKeyToken` a cada 60 s
-  (endpoint deprecado; resultado não usado — o gas vem da Alchemy). Correção: remover. (15/09/2026)
 - [BAIXA] `portfolio_analytics.html:2629, 2654-2658` — Convexidade com fallbacks fixos (dívida
   754,65 + 815,97, stables 2.536,40, colateral AAVE 6.000) e `kaminoLTVlimit = 0.7722` sempre
   (data.js: 0,766). Correção: ler o `data.js`. (15/09/2026)
@@ -105,8 +103,6 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
   que contradiz a curva — armadilha se reativar). Linhas podem ter andado com a Fase 3. (15/09/2026)
 - [BAIXA] `.github/workflows/{briefing,networth,onchain,sync-emprestimos}.yml` ainda em
   `checkout@v4`/`setup-node@v4`/Node 20 (os outros em v5/Node 22). Previsto na Fase 5. (15/09/2026)
-- [BAIXA] `Design.md:203` diz que o pools tem 2 `<nav>`; o duplicado foi removido em 13/07 (a Fase 3
-  editou a linha vizinha e não corrigiu esta). (15/09/2026)
 - [A CONFIRMAR] `data.js → poolHistory`, "ETH/USDC 0.05%" Arbitrum (01/08/2023 → 26/03/2024):
   `days: 209`, mas as datas dão 238 dias (o `fcr` 3,8 bate com 209). Ou a abertura ou os dias estão
   errados — precisa do Diário. O teste só confere `result = fees − il`. (2ª varredura 15/09/2026)
@@ -131,6 +127,9 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 16/09/2026 · `0121e9e` — [BAIXA] pools: ticker chamava a Etherscan V1 com `YourApiKeyToken` a
+  cada 60 s sem usar o resultado. Removido na Fase 4 (preço via `lib/barolo-prices.js`).
+- 16/09/2026 · `0121e9e` — [BAIXA] `Design.md` dizia que o pools tem 2 `<nav>`. Corrigido.
 - 15/09/2026 · `7b1902d` — [ALTA] landing, card "Portfolio Assets": `prices()` lia o nível de
   cima de `bc-index-prices-cache` (gravado como `{ts, data}`) e caía sempre nos preços `FB` —
   P&L +53,8%. Agora lê `data`. Verificado: +7,5% com preços semeados (= conta em Node) e +4,9%
