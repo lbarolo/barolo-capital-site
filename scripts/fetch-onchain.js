@@ -43,12 +43,36 @@ const METRICS = {
   cum_destroyed:'cointime_statistics/coinblock_value_cum_destroyed'
 };
 
+// Até 16/09/2026 uma única resposta ruim (429, 5xx, rede) derrubava a Action inteira. Agora tenta
+// de novo com espera crescente; 401/403 (token inválido/expirado ou limite do plano) não adianta
+// repetir — falha na hora, dizendo o que conferir.
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function getJson(url, pathSeg, tries = 4) {
+  for (let i = 1; ; i++) {
+    let why;
+    try {
+      const r = await fetch(url, { headers: { 'X-API-Token': TOKEN, 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' } });
+      if (r.ok) return await r.json();
+      const body = (await r.text()).slice(0, 200);
+      if (r.status === 401 || r.status === 403) {
+        const e = new Error(`${pathSeg} → HTTP ${r.status}: ${body}\n  → confira o secret RB_TOKEN (expirado/revogado?) ou o limite do plano (365 dias).`);
+        e.fatal = true; throw e;
+      }
+      why = `HTTP ${r.status}: ${body}`;
+    } catch (e) {
+      if (e.fatal) throw e;
+      why = e.message;
+    }
+    if (i >= tries) throw new Error(`${pathSeg} → falhou ${tries}x; última: ${why}`);
+    console.log(`\n  ! ${pathSeg} tentativa ${i}: ${why} — nova tentativa em ${15 * i}s`);
+    await sleep(15000 * i);
+  }
+}
+
 async function fetchMetric(pathSeg) {
   const field = pathSeg.split('/').pop();
   const url = `${BASE}/${pathSeg}?resolution=d1&output_format=json&from_time=${iso(from)}&to_time=${iso(now)}`;
-  const r = await fetch(url, { headers: { 'X-API-Token': TOKEN, 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' } });
-  if (!r.ok) throw new Error(`${pathSeg} → HTTP ${r.status}`);
-  const j = await r.json();
+  const j = await getJson(url, pathSeg);
   if (!j.data) throw new Error(`${pathSeg} → sem data (${j.message || 'erro'})`);
   const map = {};
   for (const row of j.data) {
