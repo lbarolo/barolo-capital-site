@@ -155,13 +155,13 @@
        reconhecidos em 22/08, os 406,27 acima e o DCA de SOL de 05/08).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-09-11',
+  asOf: '2026-09-16',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.23317,    invested:4474.26 },  // qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.31739,    invested:4674.26 },  // qty 2,23317->2,31739 e invested 4474,26->4674,26 (16/09/2026): compras de 0,041698997 (15/09) + 0,041916377 (16/09) = +0,083615374 ETH por US$ 200, pagos com USDT sacado da AAVE (ROTACAO, nao aporte — custo migra do USDT) + 0,000607 ETH de juro do aWETH desde 11/09 (0,015754006 -> 0,016361105, MCP).  qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
     // SOL 24,765222 -> 24,93 em 04/09/2026: MESMO caso do USDS logo abaixo — o holding
     // estava ABAIXO do supply da Kamino (24,93), violando o invariante de que holdings
     // incluem o colateral (o piso do holding e sempre o supply). A diferenca (0,164778 SOL,
@@ -191,7 +191,10 @@ window.BAROLO_DATA = {
     // ficou em 2198,08879 (22/08 + o deposito de 408,56 em 28/08, que e principal) —
     // pendente de lancar, ver cgMirror. Conferencia: AAVE 2016,818486 + corretora 185
     // + carteira ~0,27 = 2202,09 (o ~0,27 de diferenca e arredondamento de 22/08).
-    { ticker:'USDT', cgId:'tether',           qty:2201.81879, invested:2179.19  },
+    // USDT 2201,81879 -> 2002,77816 e invested 2179,19 -> 1979,19 (16/09/2026): 200 USDT viraram ETH (rotacao;
+    // o custo migra para o ETH, total investido nao muda) + 0,959374 de juro do aUSDT desde 11/09
+    // (20,917508 -> 21,876882, MCP). Saque de 300 USDT da AAVE em 15/09: 200 foram pro ETH, 100 seguem fora da AAVE.
+    { ticker:'USDT', cgId:'tether',           qty:2002.77816, invested:1979.19  },
     // USDS 300 -> 304.66 em 04/09/2026: o holding estava ABAIXO do supply da Kamino
     // (304,66), o que viola o invariante de que holdings incluem o colateral — o piso
     // do holding e sempre o supply. A diferenca e yield acumulado que o CoinGecko nunca
@@ -221,8 +224,8 @@ window.BAROLO_DATA = {
       //   Deposited $7.672 · Borrowing Power $6.266,59 · HF 8,2135 (MCP).
       //   Os tres principals conferem na casa decimal com o bloco `principals`. Sem
       //   deposito/saque/reemprestimo -> principals INALTERADOS.
-      supply: { WETH:{ qty:2.225494, apy:0.0178 }, USDT:{ qty:2016.818486, apy:0.0321 } },
-      borrow: { USDC:{ qty:763.052538, apy:0.0563 } },
+      supply: { WETH:{ qty:2.226101, apy:0.0184 }, USDT:{ qty:1717.77786, apy:0.0320 } },   // MCP 16/09/2026 (saque de 300 USDT em 15/09)
+      borrow: { USDC:{ qty:763.594136, apy:0.0293 } },   // MCP 16/09/2026: netBorrowApy 2,93% (base 4,05%)
       // ══ HEALTH FACTOR — FORMULA DEFINITIVA (resolvido 09/09/2026 via MCP da Aave) ══
       //
       //   HF = Borrowing Power / divida = SOMA(colateral_i x CF_i) / divida
@@ -295,7 +298,7 @@ window.BAROLO_DATA = {
       // holding para supply + total da varredura, a custo zero.
       // ✅ 11/09/2026: a partir de agora o juro do aWETH entra no holding (custo zero,
       // pendente no cgMirror) — o holding acompanha o supply e a margem deixa de encolher.
-      healthFactor: 8.21   // FALLBACK. 6.266,59 borrowing power / 762,96 divida (MCP 11/09/2026)
+      healthFactor: 7.60   // FALLBACK. 5.799,29 borrowing power / 763,51 divida (MCP 16/09/2026)
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -612,7 +615,7 @@ window.BAROLO_DATA = {
   principals: {
     aave:   {
       WETH: 2.209740,      // ON-CHAIN EXATO (08/09/2026): 1,88 (01/04) + 0,269740 (05/06) + 0,06 (28/08), zero saques
-      USDT: 1995.900978,   // ON-CHAIN EXATO (08/09/2026): supply 3.443,900978 - saques 1.448,00
+      USDT: 1695.900978,   // ON-CHAIN EXATO: 1.995,900978 - saque de 300 em 15/09/2026 (MCP confere). Antes: supply 3.443,900978 - saques 1.448,00
       USDC: 748.00    // borrow inicial (refin. 10/04/2026). Confere: 760,17 − 748 =
                       // 12,17 = exatamente o 'fees paid' do print AAVE.
     },
@@ -725,8 +728,8 @@ window.BAROLO_DATA = {
     // Print do CoinGecko de 11/09/2026 — o que esta LA hoje:
     SOL:  24.94,
     USDS: 304.69,
-    ETH:  2.23062,       // juro do aWETH nunca espelhado desde 22/08 (+0,00255)
-    USDT: 2198.08879     // juro do aUSDT desde 22/08 (+3,73)
+    ETH:  2.314235374,   // 2,23062 + 0,083615374 das compras de 15-16/09 (lancadas por ele); juro do aWETH segue pendente
+    USDT: 1998.08879     // ASSUMIDO 16/09: 2198,08879 - 200 USDT gastos no ETH — confirmar com o Lucas se debitou la
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de
     // 11/09 — iguais ao holding, nada pendente.
   },

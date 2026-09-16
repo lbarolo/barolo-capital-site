@@ -78,25 +78,26 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — review de 11/09/2026 (`asOf` 2026-09-11)
-**Juros da AAVE no último review (base para a regra 4):** WETH **0,015754006** · USDT **20,917508**
+## Estado atual — movimentação de 16/09/2026 (`asOf` 2026-09-16)
+**Juros da AAVE no último review (base para a regra 4):** WETH **0,016361105** · USDT **21,876882**
 
 | | Qtd | APY | Principal |
 |---|---|---|---|
-| AAVE WETH supply | 2,225494 | 1,78% | 2,209740 |
-| AAVE USDT supply | 2.016,818486 | 3,21% | 1.995,900978 |
-| AAVE USDC borrow | 763,052538 | 5,63% (net) | 748,00 |
-| Kamino SOL supply | 24,95 | 4,04% | 23,645990 |
+| AAVE WETH supply | 2,226101 | 1,84% | 2,209740 |
+| AAVE USDT supply | 1.717,77786 | 3,20% | 1.695,900978 (saque de 300 em 15/09) |
+| AAVE USDC borrow | 763,594136 | 2,93% (net) · base 4,05% | 748,00 |
+| Kamino SOL supply | 24,95 | 4,04% | 23,645990 (sem print desde 11/09) |
 | Kamino USDS supply | 304,86 | 3,31% | 300,392689 |
 | Kamino USDC borrow | 764,14 | 5,56% | 690,834084 |
 
-- HF AAVE 8,21 · LTV Kamino 26,68% (liq. 76,60%) · dívida total US$ 1.527,19
-- Patrimônio líquido US$ 9.691 (preços do print de 11/09) · aporte líquido acumulado US$ 8.162
-- **Pool:** nenhuma aberta (`defi.uniswapV3.status: 'closed'` desde ~28/08/2026).
+- 15–16/09: sacou 300 USDT da AAVE; 200 viraram +0,083615374 ETH (2 compras de US$ 100). **Rotação, não
+  aporte** — invested ETH +200 / USDT −200. Os outros ~100 USDT seguem fora da AAVE (holding não muda).
+- HF AAVE 7,60 · pool: nenhuma aberta.
+- ⚠️ `cgMirror.USDT` = 1.998,08879 **ASSUMIDO** (−200 do USDT no CoinGecko). Confirmar com o Lucas.
 
 **Pendências que o `/prints` deve lembrar:**
-- ⏸ **Yield a lançar no CoinGecko ACUMULANDO** (decisão do Lucas, 11/09): ~US$ 11,39
-  (ETH +0,00255 · SOL +0,01 · USDT +3,73 · USDS +0,17). Informar o total atualizado em todo
+- ⏸ **Yield a lançar no CoinGecko ACUMULANDO** (decisão do Lucas, 11/09): ~US$ 13,44 em 16/09
+  (ETH +0,003155 · SOL +0,01 · USDT +4,69 · USDS +0,17). Informar o total atualizado em todo
   review e no fechamento. Não igualar `cgMirror` sem ele confirmar.
 - Borrow da AAVE (5,63%) acima do supply de USDT na própria AAVE (3,21%). Se ficar > 5% por
   2 semanas seguidas, sugerir quitar a AAVE com o USDT (decisão dele).
@@ -105,6 +106,8 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Fechamento de setembro: 01/10 (Action `close-month.yml` + `/fecharmes`).
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 16/09/2026 — 2 compras de ETH (US$ 200) pagas com USDT sacado da AAVE: rotação, não aporte; AAVE via MCP
+  (principal USDT 1.695,90, borrow net 2,93%, HF 7,60); yield pendente ~US$ 13,44.
 - 11/09/2026 — review via MCP da Aave (principals bateram na casa decimal); juro da AAVE passou a
   entrar no holding; yield pendente no CoinGecko fica acumulando; líquido US$ 9.691.
 - 05/09/2026 — refresh semanal; ciclo do `cgMirror` fechado (Lucas lançou SOL/USDS); agregados
