@@ -99,6 +99,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   fallbacks fixos da Convexidade.
 
 ## Histórico (mais recente no topo)
+- 16/09/2026 — simulador de Cenários parte do preço e do patrimônio atuais (BTC e stables incluídos, pool fechada tratada) — `f863c6f`.
 - 16/09/2026 — HF da calculadora de liquidação e do simulador de cenários na fórmula oficial da Aave (CF por ativo) — `429a5ba`. ⚠️ `String.replace` com `$'` no texto novo duplica o resto do arquivo: usar `split().join()`.
 - 16/09/2026 — os 3 MÉDIA de valor fixo de 20/06: executive bar do portfolio (`d2d83ab`), calculadora de liquidação e alertas do ferramentas (`3f2b996`).
 - 16/09/2026 — Fase 4: preço compartilhado e polling em `lib/barolo-prices.js` (5 páginas), Etherscan morto do pools removido, logo em um tamanho, relatório para de apagar o `spark7d`; zero mudança de UX — `0121e9e`.
