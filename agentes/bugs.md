@@ -38,10 +38,6 @@
 _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
 `b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
 20/06 que já existiam)_
-- [MÉDIA] `ferramentas.html:3724-3726` — APY Scanner (aba "Pools APY") nunca funciona: as 3 URLs
-  são o serviço hospedado `api.thegraph.com/subgraphs/name/uniswap/...`, que responde
-  301 → `error.thegraph.com`. Correção: GeckoTerminal (já usado no pools) ou gateway do The Graph
-  com chave. (15/09/2026)
 - [MÉDIA] `scripts/fetch-briefing.js:29,205` — "SOL liquida em" usa LT SOL 0,82 / USDS 0,80
   (Liq. LTV implícito 0,818), mas a Kamino informa 0,766 (`data.js → liqLtv`). Card do pools
   mostra US$ 25,43 (−75%); a conta com o `liqLtv` dá ≈ US$ 27,76 (−72%). Correção: usar o
@@ -106,6 +102,8 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 16/09/2026 · `fdc603c` — [MÉDIA] ferramentas, aba Pools APY (The Graph desligado): **removida** a
+  pedido do Lucas (não usava mais). O APR geral das DEX segue no explorador do `pools.html`.
 - 16/09/2026 · `f863c6f` — [MÉDIA] ferramentas, simulador de Cenários: preço base de junho, BTC
   ignorado, alts fixos e stables incompletas ("sem mudança" = US$ 5.811 e −38,9%). Agora parte do
   preço atual e do patrimônio do `data.js`: "sem mudança" = US$ 9.273 e 0%; BTC +50% e o preset Bear

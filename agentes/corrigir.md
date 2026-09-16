@@ -79,13 +79,11 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (16/09/2026)
-- 16/09: resolvidos os 3 MÉDIA de valor fixo de 20/06 (`d2d83ab`, `3f2b996`). MÉDIA restantes: APY Scanner
-  (The Graph), "SOL liquida em" do briefing, merge do Diário.
+- 16/09: resolvidos os 3 MÉDIA de valor fixo de 20/06 (`d2d83ab`, `3f2b996`). MÉDIA restantes: "SOL liquida em" do briefing, merge do Diário.
 - Fila de bugs: **nenhum ALTA aberto** — resolvidos em 15/09 a landing (`7b1902d`), o lending do
   relatório (`e49aadc` + `9fe0b8f`), as stables do relatório (`4b700a8`) e o colateral do pools
   (`aab2279`); MÉDIA da Meta de Alocação do pools (`a80a193`), das funções mortas do pools
-  (`f84856b`) e do resumo de pools do relatório (`b97e713`). Próximos MÉDIA: APY Scanner do
-  ferramentas (The Graph desligado), "SOL liquida em" do briefing, merge do Diário.
+  (`f84856b`) e do resumo de pools do relatório (`b97e713`). Próximos MÉDIA: "SOL liquida em" do briefing, merge do Diário.
 - `pools.html` passou a carregar `lib/barolo-core.js` (15/09) — cálculo novo no pools usa a lib.
 - Script de stage parcial: `stage-mine2.js` (scratchpad de 15/09; recria-se pelo método do passo 8).
 - Plano de arquitetura: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
@@ -95,10 +93,11 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   com a aba oculta. Pools 34→25 requisições, portfolio 64→50. Cuidado aprendido: resposta do cache
   é imediata — chamada de preço no meio do HTML pode rodar antes de um `<script>` posterior (foi o
   `tStr` do ferramentas); disparar depois do parse. Fases 5 (Actions) e 6 (des-bundlar) pendentes.
-- Itens da fila liberados pela Fase 3 ainda abertos: aba Pools APY do ferramentas, formatação da tabela de pools do relatório,
+- Itens da fila liberados pela Fase 3 ainda abertos: formatação da tabela de pools do relatório,
   fallbacks fixos da Convexidade.
 
 ## Histórico (mais recente no topo)
+- 16/09/2026 — aba Pools APY removida do ferramentas (não usada; The Graph desligado) — `fdc603c`.
 - 16/09/2026 — simulador de Cenários parte do preço e do patrimônio atuais (BTC e stables incluídos, pool fechada tratada) — `f863c6f`.
 - 16/09/2026 — HF da calculadora de liquidação e do simulador de cenários na fórmula oficial da Aave (CF por ativo) — `429a5ba`. ⚠️ `String.replace` com `$'` no texto novo duplica o resto do arquivo: usar `split().join()`.
 - 16/09/2026 — os 3 MÉDIA de valor fixo de 20/06: executive bar do portfolio (`d2d83ab`), calculadora de liquidação e alertas do ferramentas (`3f2b996`).
