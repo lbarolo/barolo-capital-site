@@ -38,27 +38,6 @@
 _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
 `b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
 20/06 que já existiam)_
-- [MÉDIA] `portfolio_analytics.html:1619-1633` e `:2133-2146` — executive bar lê
-  `WEEKLY_UPDATE.defi` com quantidades de 20/06 (USDT 1300, SOL 23,36, USDS 302,25) e deixa de fora
-  o yield do WETH. "Yield DeFi/Mês" (`ev-yield`) mostra ≈ +US$ 5,06 × esperado **+US$ 15,57** (=
-  carry do `briefing.json` e do card "Leitura da carteira" do pools; o WETH sozinho vale
-  US$ 8,05/mês). "Kamino LTV" (`ev-hf-kamino`) 28,9% × **27,3%**. Correção: quantidades de
-  `BAROLO_DATA.defi`/`lendingSnapshot`, somar o supply do WETH e trocar os APYs de fallback de junho
-  (5,38 / 5,69 / 1,60 / 4,89 / 5,00) pelos do `data.js`. (2ª varredura 15/09/2026)
-- [MÉDIA] `ferramentas.html:808-810, 838-840, 845` — calculadora de liquidação (aba Liquidação)
-  abre com as posições de 20/06: `aave-eth` 2.16 · `aave-usdt` 1300 · `aave-debt` 754.65 ·
-  `kam-sol` 23.36 · `kam-pyusd` 302.25 · `kam-debt` 815.97 · `kam-liq-thresh` 75.79 × `data.js`
-  2,225494 · 2.016,82 · 763,05 · 24,95 · 304,86 · 764,14 · liqLtv 0,766. O override do `BASE`
-  (2515-2527) só alimenta o simulador de cenários; ninguém preenche esses inputs. Correção: no load,
-  copiar `BASE.aaveETH/aaveUSDT/aaveDebt/kamSOL/kamPYUSD/kamDebt/kamLiqThresh` para os `value`
-  antes de `calcAave()`/`calcKamino()`. (2ª varredura 15/09/2026)
-- [MÉDIA] `ferramentas.html:3465-3469` — `checkAlerts()` (a cada 5 min e a cada preço) usa as
-  quantidades de junho com fator 0,86: HF 7,48 × **7,96** (fórmula CF do `data.js`), LTV Kamino
-  30,9% × **27,3%** (erro conservador, mas o limite do Lucas deixa de significar o que ele pensa). O
-  alerta "Uniswap Fora do Range" usa o range 1822,61–2401,90 de uma pool fechada e **dispara com ETH
-  a 2.438 sem existir pool aberta** (`defi.uniswapV3.status: 'closed'`). Correção: mesma fonte do
-  item acima (CF 0,83/0,78); tirar o alerta de range ou ligá-lo a `defi.uniswapV3` só com pool
-  aberta. `aaveHFEl` (3461) não é usada. (2ª varredura 15/09/2026)
 - [MÉDIA] `ferramentas.html:3724-3726` — APY Scanner (aba "Pools APY") nunca funciona: as 3 URLs
   são o serviço hospedado `api.thegraph.com/subgraphs/name/uniswap/...`, que responde
   301 → `error.thegraph.com`. Correção: GeckoTerminal (já usado no pools) ou gateway do The Graph
@@ -127,6 +106,17 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 16/09/2026 · `d2d83ab` — [MÉDIA] portfolio, executive bar: "Yield DeFi/Mês" e "Kamino LTV" liam
+  `WEEKLY_UPDATE.defi` de 20/06 e ignoravam o WETH. Agora posições e APYs de fallback vêm do
+  `data.js` e o yield do WETH entra. Verificado: +US$ 7 → **+US$ 17/mês** e 29,5% → **27,8%**, iguais
+  à conta independente com os mesmos preços e APYs ao vivo.
+- 16/09/2026 · `3f2b996` — [MÉDIA] ferramentas, calculadora de liquidação: inputs abriam com as
+  posições de 20/06. Agora abrem com o `data.js` (via `BASE`), editáveis. ⚠️ O HF da calculadora
+  (8,34) segue a fórmula antiga com o "Limiar liquidação" 86% digitável — diferente do HF oficial
+  (7,92). Não mexido: é o modelo da ferramenta, não valor fixo.
+- 16/09/2026 · `3f2b996` — [MÉDIA] ferramentas, `checkAlerts()`: HF/LTV de junho com fator 0,86 e
+  alerta de range de pool fechada. Agora usa `lendingSnapshot` (HF 7,92 / LTV 27,8%, iguais ao
+  dashboard) e o alerta de range só avalia com pool aberta no `data.js`, com o range dela.
 - 16/09/2026 · `0121e9e` — [BAIXA] pools: ticker chamava a Etherscan V1 com `YourApiKeyToken` a
   cada 60 s sem usar o resultado. Removido na Fase 4 (preço via `lib/barolo-prices.js`).
 - 16/09/2026 · `0121e9e` — [BAIXA] `Design.md` dizia que o pools tem 2 `<nav>`. Corrigido.

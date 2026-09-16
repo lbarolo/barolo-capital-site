@@ -79,6 +79,8 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (16/09/2026)
+- 16/09: resolvidos os 3 MÉDIA de valor fixo de 20/06 (`d2d83ab`, `3f2b996`). MÉDIA restantes: APY Scanner
+  (The Graph), "SOL liquida em" do briefing, merge do Diário.
 - Fila de bugs: **nenhum ALTA aberto** — resolvidos em 15/09 a landing (`7b1902d`), o lending do
   relatório (`e49aadc` + `9fe0b8f`), as stables do relatório (`4b700a8`) e o colateral do pools
   (`aab2279`); MÉDIA da Meta de Alocação do pools (`a80a193`), das funções mortas do pools
@@ -97,6 +99,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   fallbacks fixos da Convexidade.
 
 ## Histórico (mais recente no topo)
+- 16/09/2026 — os 3 MÉDIA de valor fixo de 20/06: executive bar do portfolio (`d2d83ab`), calculadora de liquidação e alertas do ferramentas (`3f2b996`).
 - 16/09/2026 — Fase 4: preço compartilhado e polling em `lib/barolo-prices.js` (5 páginas), Etherscan morto do pools removido, logo em um tamanho, relatório para de apagar o `spark7d`; zero mudança de UX — `0121e9e`.
 - 15/09/2026 — Fase 3: tema e idioma compartilhados em `lib/barolo-ui.js` (5 páginas), moeda morta de pools/ferramentas removida; zero mudança de UX, conferido nas 5 páginas — `b4523fa`.
 - 15/09/2026 — histórico de pools vira fonte única (`data.js → poolHistory`); relatório agrega dela e para de divergir — `b97e713`.
