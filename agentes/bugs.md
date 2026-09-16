@@ -38,6 +38,10 @@
 _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
 `b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
 20/06 que já existiam)_
+- [MÉDIA] `ferramentas.html` (`BASE.ethPrice:1550.85, solPrice:63.01`) — o simulador de Cenários parte
+  dos preços de junho, não do preço atual: "sem alteração" mostra HF 5,51 (a ETH 1.551) e o delta
+  contra `totalBase` mistura preço de junho com patrimônio de agosto. `altVal:150` também é fixo.
+  Correção provável: `fetchLivePrices` gravar `BASE.ethPrice/solPrice` antes do `calcScenario()`. (16/09/2026)
 - [MÉDIA] `ferramentas.html:3724-3726` — APY Scanner (aba "Pools APY") nunca funciona: as 3 URLs
   são o serviço hospedado `api.thegraph.com/subgraphs/name/uniswap/...`, que responde
   301 → `error.thegraph.com`. Correção: GeckoTerminal (já usado no pools) ou gateway do The Graph
@@ -106,6 +110,11 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 16/09/2026 · `429a5ba` — [MÉDIA] ferramentas: HF da calculadora de liquidação e do simulador de
+  cenários usava limiar único de 86% (8,34 × 7,92 oficial). Agora Σ(colateral × CF)/dívida com CF
+  WETH 83% / USDT 78%, iguais ao `lendingSnapshot`. Verificado: 7,59 = 7,592 do snapshot; com dívida
+  de US$ 5.000 HF 1,16 e liquidação em US$ 1.981, iguais à conta à mão. Card de distância mostra
+  "Protegido" quando o USDT cobre a dívida (antes: 112,9%).
 - 16/09/2026 · `d2d83ab` — [MÉDIA] portfolio, executive bar: "Yield DeFi/Mês" e "Kamino LTV" liam
   `WEEKLY_UPDATE.defi` de 20/06 e ignoravam o WETH. Agora posições e APYs de fallback vêm do
   `data.js` e o yield do WETH entra. Verificado: +US$ 7 → **+US$ 17/mês** e 29,5% → **27,8%**, iguais
