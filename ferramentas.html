@@ -130,6 +130,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .result-value{font-family:var(--font-head);font-size:20px;font-weight:700;}
 .result-sub{font-size:10px;color:var(--muted);margin-top:4px;}
 .c-green{color:var(--green)!important;}
+.c-muted{color:var(--muted)!important;}
 .c-red{color:var(--red)!important;}
 .c-gold{color:var(--gold)!important;}
 .c-accent{color:var(--accent)!important;}
@@ -916,7 +917,7 @@ body, input, button, select, textarea {
  <button class="btn btn-sm" style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.3);color:var(--orange);justify-content:space-between;" onclick="setScenario(-20,-25,-15,-40)">Correção moderada -20%</button>
  <button class="btn btn-sm btn-primary" onclick="setScenario(0,0,0,0)">Lateral (sem mudança)</button>
  <button class="btn btn-sm" style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);color:var(--green);justify-content:space-between;" onclick="setScenario(30,35,25,80)">Rally +30% ETH / +35% SOL</button>
- <button class="btn btn-sm" style="background:rgba(240,160,40,.08);border:1px solid rgba(240,160,40,.3);color:var(--gold);justify-content:space-between;" onclick="setScenario(80,100,70,200)">ATH ETH $3500 / SOL $160</button>
+ <button class="btn btn-sm" style="background:rgba(240,160,40,.08);border:1px solid rgba(240,160,40,.3);color:var(--gold);justify-content:space-between;" onclick="setScenarioPrices(3500,160,70,200)">ATH ETH $3500 / SOL $160</button>
  <button class="btn btn-sm" style="background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);justify-content:space-between;" onclick="setScenario(-55,-60,-50,-85)">Flash Crash -55%</button>
  </div>
  </div>
@@ -2385,7 +2386,9 @@ async function fetchLivePrices(){
 // 1ª chamada só depois do parse: com o preço no cache a resposta é imediata e chegaria antes do
 // <script> que define tStr (usado pelo calcHedge). A busca antiga pela rede escondia isso.
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fetchLivePrices); else fetchLivePrices();
-BaroloPrices.poll(fetchLivePrices,5*60*1000); // pausa com a aba oculta
+BaroloPrices.poll(fetchLivePrices,5*60*1000);
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',syncScenarioBase); else syncScenarioBase();
+BaroloPrices.poll(syncScenarioBase,5*60*1000); // pausa com a aba oculta
 
 // ══════════════════════════════════════════════
 // SLIDER SYNC
@@ -2520,7 +2523,9 @@ var BASE = {
 };
 // Override de posições a partir da fonte única (data.js).
 (function(){ var B=(typeof window!=='undefined')?window.BAROLO_DATA:null; if(!B) return; var h={}; (B.holdings||[]).concat(B.stables||[]).forEach(function(x){h[x.ticker]=x;});
-  if(h.ETH) BASE.ethQty=h.ETH.qty; if(h.SOL) BASE.solQty=h.SOL.qty;
+  if(h.ETH) BASE.ethQty=h.ETH.qty; if(h.SOL) BASE.solQty=h.SOL.qty; if(h.BTC) BASE.btcQty=h.BTC.qty;
+  if(typeof B.stablesTotalUSD==='number') BASE.stablesUSD=B.stablesTotalUSD;
+  if(B.debt && typeof B.debt.total==='number') BASE.debtTotal=B.debt.total;
   var a=B.defi&&B.defi.aave, k=B.defi&&B.defi.kamino;
   if(a){ BASE.aaveDebt=a.borrow.USDC.qty; BASE.aaveUSDT=a.supply.USDT.qty; BASE.aaveETH=a.supply.WETH.qty; }
   if(k){ BASE.kamDebt=k.borrow.USDC.qty; BASE.kamPYUSD=k.supply.USDS.qty; BASE.kamSOL=k.supply.SOL.qty;
@@ -2534,6 +2539,31 @@ var BASE = {
     BASE.totalBase = Math.round(wc.values[wc.values.length-1] - (B.debt.total||0));
   }
 })();
+
+// O simulador parte do preço ATUAL (antes: ETH 1.550,85 / SOL 63,01 de junho, BTC ignorado e
+// alts fixos em $150), e a base do delta é o patrimônio a esse preço — "sem mudança" = 0%.
+// Patrimônio = holdings (BTC/ETH/SOL + alts) + stables − dívida, a mesma conta do dashboard.
+function scenarioNet(eth,sol,btc,alt){
+ return (BASE.ethQty||0)*eth + (BASE.solQty||0)*sol + (BASE.btcQty||0)*btc + alt
+   + (BASE.stablesUSD!=null?BASE.stablesUSD:BASE.aaveUSDT+BASE.kamPYUSD)
+   - (BASE.debtTotal!=null?BASE.debtTotal:BASE.aaveDebt+BASE.kamDebt);
+}
+async function syncScenarioBase(){
+ const B=window.BAROLO_DATA; if(!B||!window.BaroloPrices) return;
+ const hs=B.holdings||[];
+ const px=await BaroloPrices.get(hs.map(x=>x.cgId),{maxAge:60000});
+ const p=t=>{const x=hs.find(y=>y.ticker===t); return x&&px[x.cgId]?px[x.cgId].usd:null;};
+ if(!(p('ETH')>0&&p('SOL')>0)) return;   // sem preço nenhum: fica com a base anterior
+ BASE.ethPrice=p('ETH'); BASE.solPrice=p('SOL'); if(p('BTC')>0) BASE.btcPrice=p('BTC');
+ BASE.altVal=hs.filter(x=>!['BTC','ETH','SOL'].includes(x.ticker)).reduce((a,x)=>a+x.qty*((px[x.cgId]&&px[x.cgId].usd)||0),0);
+ BASE.totalBase=scenarioNet(BASE.ethPrice,BASE.solPrice,BASE.btcPrice||0,BASE.altVal);
+ calcScenario();
+}
+// Preset por preço-alvo (o botão "ATH ETH $3500 / SOL $160" assumia a base de junho).
+function setScenarioPrices(ethTarget,solTarget,btc,alt){
+ const pct=(t,b)=>b>0?Math.round((t/b-1)*100/5)*5:0;
+ setScenario(pct(ethTarget,BASE.ethPrice),pct(solTarget,BASE.solPrice),btc,alt);
+}
 
 function setScenario(eth,sol,btc,alt){
  document.getElementById('sc-eth').value=eth;
@@ -2559,16 +2589,18 @@ function calcScenario(){
  const newETH = BASE.ethPrice*(1+ethPct/100);
  const newSOL = BASE.solPrice*(1+solPct/100);
  const newAlt = BASE.altVal*(1+altPct/100);
+ const newBTC = (BASE.btcPrice||0)*(1+btcPct/100);
 
  // Portfolio value estimate
- const ethHolding = (BASE.ethQty)*newETH;
- const solHolding = (BASE.solQty)*newSOL;
  const aaveHF = BASE.aaveDebt>0?(BASE.aaveETH*newETH*BASE.aaveCfWeth+BASE.aaveUSDT*BASE.aaveCfUsdt)/BASE.aaveDebt:99;
  const kamTotalCol = BASE.kamSOL*newSOL+BASE.kamPYUSD;
  const kamLTV = kamTotalCol>0?(BASE.kamDebt/kamTotalCol*100):0;
- const netPortfolio = ethHolding+solHolding+newAlt+BASE.aaveUSDT+BASE.kamPYUSD-(BASE.aaveDebt+BASE.kamDebt);
+ const netPortfolio = scenarioNet(newETH,newSOL,newBTC,newAlt);
  const delta = netPortfolio-BASE.totalBase;
- const uniIn = newETH>=BASE.uniRangeMin && newETH<=BASE.uniRangeMax;
+ // Status da pool: só com pool aberta no data.js (antes: range fixo de uma pool já fechada).
+ const lp=window.BAROLO_DATA&&BAROLO_DATA.defi&&BAROLO_DATA.defi.uniswapV3;
+ const lpOpen=!!(lp&&lp.status!=='closed'&&lp.rangeMin>0&&lp.rangeMax>0);
+ const uniIn = lpOpen && newETH>=lp.rangeMin && newETH<=lp.rangeMax;
 
  const fmt = n=>'$'+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
  document.getElementById('sc-eth-price').textContent=`$${BASE.ethPrice.toFixed(0)} → $${newETH.toFixed(0)}`;
@@ -2589,8 +2621,8 @@ function calcScenario(){
  ltvEl.className=kamLTV<50?'c-green':kamLTV<65?'c-gold':'c-red';
 
  const uniEl=document.getElementById('sc-uni-status');
- uniEl.textContent=uniIn?'IN RANGE':'FORA DO RANGE';
- uniEl.className=uniIn?'c-green':'c-red';
+ uniEl.textContent=!lpOpen?'SEM POOL ABERTA':uniIn?'IN RANGE':'FORA DO RANGE';
+ uniEl.className=!lpOpen?'c-muted':uniIn?'c-green':'c-red';
 
  const liqRisk=document.getElementById('sc-liq-risk');
  const risks=[];
