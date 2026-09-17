@@ -38,6 +38,14 @@
 _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
 `b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
 20/06 que já existiam)_
+- [ALTA · depende do Lucas] `.github/workflows/onchain.yml` — falha desde 16/09 (runs de 16 e 17/09),
+  o `btc-onchain.json` parou em 15/09 (aba Ciclo congelada, não quebrada). O passo "Gerar
+  btc-onchain.json" falha em **~1 s** mesmo com o retry do `fdef079`, que espera ≥15 s em erro
+  passageiro — então é erro **401/403**, que o script trata como fatal: token `RB_TOKEN`
+  expirado/revogado ou mudança no plano grátis (limite de dias). A API está no ar (sem token responde
+  401 normal). O log com a mensagem exata só abre logado no GitHub. Correção: ver a linha "FALHOU:" no
+  log do run; se for token, gerar outro na researchbitcoin.net e trocar o secret; se for "Insufficient
+  user tier", reduzir `DAYS` no script. (17/09/2026)
 - [MÉDIA] `scripts/fetch-briefing.js:29,205` — "SOL liquida em" usa LT SOL 0,82 / USDS 0,80
   (Liq. LTV implícito 0,818), mas a Kamino informa 0,766 (`data.js → liqLtv`). Card do pools
   mostra US$ 25,43 (−75%); a conta com o `liqLtv` dá ≈ US$ 27,76 (−72%). Correção: usar o
