@@ -78,21 +78,22 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — review de 18/09/2026 (`asOf` 2026-09-18)
-**Juros da AAVE no último review (base para a regra 4):** WETH **0,016605882** · USDT **22,367076**
+## Estado atual — review de 18/09/2026 + depósito de 0,08 ETH na AAVE no mesmo dia (`asOf` 2026-09-18)
+**Juros da AAVE no último review (base para a regra 4):** WETH **0,016646349** · USDT **22,408426** (lidos depois do depósito)
 
 | | Qtd | APY | Principal |
 |---|---|---|---|
-| AAVE WETH supply | 2,226346 | 1,84% | 2,209740 |
-| AAVE USDT supply | 1.718,268054 | 3,31% | 1.695,900978 |
-| AAVE USDC borrow | 763,958325 | 6,10% (net) · base 6,82% | 748,00 |
+| AAVE WETH supply | 2,306386 | 2,29% | **2,289740** (+0,08 depositado em 18/09) |
+| AAVE USDT supply | 1.718,309404 | 3,27% | 1.695,900978 |
+| AAVE USDC borrow | 763,990329 | 2,81% (net) · base 3,87% (oscilou 6,10% no mesmo dia) | 748,00 |
 | Kamino SOL supply | 24,98 | 5,81% | 23,645990 |
 | Kamino USDS supply | 305,05 | 3,27% | 300,392689 |
 | Kamino USDC borrow | 764,96 | 5,43% | 690,834084 |
 
 - Semana sem movimentação: principals da AAVE conferem na casa decimal (MCP); Kamino cresceu só o juro.
 - CoinGecko = `cgMirror` exatamente (nenhuma compra/venda nova).
-- HF AAVE 7,79 · LTV Kamino 25,94% (Liq. 76,55%) · SOL liquida em ~US$ 27,79 · pool: nenhuma aberta.
+- 18/09: depositou **0,08 ETH** na AAVE (dos 0,0836 comprados em 15–16/09; ~0,0036 ETH ficam na carteira). Holding não muda, só o principal.
+- HF AAVE 8,35 (após o depósito) · LTV Kamino 25,94% (Liq. 76,55%) · SOL liquida em ~US$ 27,79 · pool: nenhuma aberta.
 - Patrimônio líquido US$ 9.710 (preços do print) · bruto US$ 11.239 · dívida US$ 1.528,92 · carry +US$ 19,57/mês.
 
 **Pendências que o `/prints` deve lembrar:**
@@ -104,6 +105,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Fechamento de setembro: 01/10 (Action `close-month.yml` + `/fecharmes`).
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 18/09/2026 — depósito de 0,08 ETH na AAVE (principal WETH 2,289740, HF 8,35); yield pendente ~US$ 19,16.
 - 18/09/2026 — verificação pós-publicação: local = origin/main, 121 testes e Actions verdes, site no ar com asOf 18/09 (portfolio líquido $9.716, HF 7,79, empréstimos com juros 0,0166 WETH / 22,37 USDT), 0 erro de console.
 - 18/09/2026 — review semanal sem movimentação (principals conferem); só juros; borrow AAVE 6,10%; líquido US$ 9.710; yield pendente ~US$ 18,27.
 - 16/09/2026 — 2 compras de ETH (US$ 200) pagas com USDT sacado da AAVE: rotação, não aporte; AAVE via MCP
