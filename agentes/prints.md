@@ -78,7 +78,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — review de 18/09/2026 ( 2026-09-18)
+## Estado atual — review de 18/09/2026 (`asOf` 2026-09-18)
 **Juros da AAVE no último review (base para a regra 4):** WETH **0,016605882** · USDT **22,367076**
 
 | | Qtd | APY | Principal |
@@ -91,17 +91,17 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 | Kamino USDC borrow | 764,96 | 5,43% | 690,834084 |
 
 - Semana sem movimentação: principals da AAVE conferem na casa decimal (MCP); Kamino cresceu só o juro.
-- CoinGecko =  exatamente (nenhuma compra/venda nova).
+- CoinGecko = `cgMirror` exatamente (nenhuma compra/venda nova).
 - HF AAVE 7,79 · LTV Kamino 25,94% (Liq. 76,55%) · SOL liquida em ~US$ 27,79 · pool: nenhuma aberta.
 - Patrimônio líquido US$ 9.710 (preços do print) · bruto US$ 11.239 · dívida US$ 1.528,92 · carry +US$ 19,57/mês.
 
-**Pendências que o  deve lembrar:**
+**Pendências que o `/prints` deve lembrar:**
 - ⏸ **Yield a lançar no CoinGecko ACUMULANDO** (decisão do Lucas, 11/09): **~US$ 18,27** em 18/09
   (ETH +0,0034 · SOL +0,04 · USDT +5,18 · USDS +0,36). Informar o total em todo review e no fechamento.
 - Borrow da AAVE voltou a 6,10% (16/09 era 2,93%; 11/09 5,63%) contra supply do USDT 3,31%. Se ficar
   > 5% no próximo review também (2 seguidos), sugerir quitar a AAVE com o USDT (decisão dele).
 - Rewards da Kamino não resgatados (~US$ 6,10: USDS 1,59 · PYUSD 0,07 · KMNO 4,44) — não lançar.
-- Fechamento de setembro: 01/10 (Action  + ).
+- Fechamento de setembro: 01/10 (Action `close-month.yml` + `/fecharmes`).
 
 ## Histórico (mais recente no topo, 1 linha por execução)
 - 18/09/2026 — review semanal sem movimentação (principals conferem); só juros; borrow AAVE 6,10%; líquido US$ 9.710; yield pendente ~US$ 18,27.
