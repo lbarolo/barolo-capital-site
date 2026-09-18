@@ -107,7 +107,8 @@ _(o `/corrigir` move os itens para cá, com data e hash do commit)_
   o anterior era de 17/06). Lucas gerou outro e trocou o secret em 17/09. Causa 2, que apareceu no
   Re-run: o passo de commit fazia `git push` sem `pull --rebase` e o Re-run parte do commit antigo →
   push recusado. Corrigido no workflow (+ checkout/setup-node v5, Node 22) e a falha do script agora
-  vira anotação `::error::` (motivo aparece no e-mail, sem logar). **Próxima expiração ≈ 16/12/2026.**
+  vira anotação `::error::` (motivo aparece no e-mail, sem logar). **Próxima expiração ≈ 16/12/2026** —
+  renovação automática em `rb-token.yml` (precisa do secret `RB_RENEW_PAT`; login no site segue manual a cada 180 dias).
 - 16/09/2026 · `fdc603c` — [MÉDIA] ferramentas, aba Pools APY (The Graph desligado): **removida** a
   pedido do Lucas (não usava mais). O APR geral das DEX segue no explorador do `pools.html`.
 - 16/09/2026 · `f863c6f` — [MÉDIA] ferramentas, simulador de Cenários: preço base de junho, BTC

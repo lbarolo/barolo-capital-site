@@ -14,7 +14,7 @@
 | UX/design (cores, componentes, "quero mudar X → vá aqui") | `Design.md` |
 | Páginas | `index.html` (landing pública), `portfolio_analytics.html`, `pools.html`, `emprestimos.html`, `ferramentas.html`, `relatorio.html` |
 | Testes | `npm test` (`tests/*.test.js`), roda também no Actions (`tests.yml`) em todo push |
-| Automação | `.github/workflows/` (networth, onchain, briefing, benchmark, close-month, sync-emprestimos, tests, eth-sweep) |
+| Automação | `.github/workflows/` (networth, onchain, rb-token, briefing, benchmark, close-month, sync-emprestimos, tests, eth-sweep) |
 
 Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (Grep), não ler inteiro.
 

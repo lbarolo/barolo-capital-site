@@ -1,0 +1,38 @@
+name: Renovar token da Bitcoin Lab (RB_TOKEN)
+
+# O token da researchbitcoin.net vale 90 dias. Todo dia confere a validade; faltando ≤ 7 dias,
+# renova pela API e grava a chave nova no secret RB_TOKEN. A cada 180 dias o site exige login
+# manual: aí este workflow FALHA de propósito com 10 dias de antecedência — o e-mail é o lembrete.
+# Detalhes em scripts/renew-rb-token.js.
+#
+# Secret extra necessário: RB_RENEW_PAT — token fine-grained do GitHub, só deste repositório,
+# permissão "Secrets: Read and write". O GITHUB_TOKEN padrão não pode gravar secrets.
+
+on:
+  schedule:
+    - cron: '0 8 * * *'     # ~05:00 BRT, antes do onchain.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Mesmo grupo do onchain.yml: nunca trocar a chave no meio de uma coleta.
+concurrency:
+  group: onchain-update
+  cancel-in-progress: false
+
+jobs:
+  renew:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Conferir validade e renovar se faltar ≤ 7 dias
+        env:
+          RB_TOKEN: ${{ secrets.RB_TOKEN }}
+          RB_RENEW_PAT: ${{ secrets.RB_RENEW_PAT }}
+        run: node scripts/renew-rb-token.js
