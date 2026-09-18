@@ -124,4 +124,12 @@ async function fetchMetric(pathSeg) {
   console.log(`\nOK → btc-onchain.json (${series.length} pts). Último (${last.t}): ` +
     `MVRV ${last.mvrv} · STH ${last.mvrv_sth} · LTH ${last.mvrv_lth} · ` +
     `SOPR_LTH ${last.sopr_lth} · AVIV ${last.aviv} · Realized $${last.realized} · CVDD $${last.cvdd}`);
-})().catch(e => { console.error('FALHOU:', e.message); process.exit(1); });
+})().catch(e => {
+  console.error('FALHOU:', e.message);
+  // No Actions vira anotação: aparece no resumo do run e no e-mail de falha, sem precisar logar.
+  if (process.env.GITHUB_ACTIONS) {
+    const esc = String(e.message).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+    console.log('::error title=fetch-onchain::' + esc);
+  }
+  process.exit(1);
+});
