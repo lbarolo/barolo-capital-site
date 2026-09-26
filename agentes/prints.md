@@ -78,7 +78,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — aporte de 24/09 + refresh da AAVE (`asOf` 2026-09-25)
+## Estado atual — compra de ETH em 24/09 (rotação) + refresh da AAVE (`asOf` 2026-09-26)
 **Juros da AAVE no último review (base para a regra 4):** WETH **0,017646465** · USDT **23,986154**
 
 | | Qtd | APY | Principal |
@@ -90,10 +90,16 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 | Kamino USDS supply | 305,05 | 3,27% | 300,392689 |
 | Kamino USDC borrow | 764,96 | 5,43% | 690,834084 |
 
-- **24/09: APORTE de US$ 50** (+0,0189 ETH @ ~US$ 2.645), fiat novo → linha em `contributions`;
-  o `close-month.js` soma no fechamento de 01/10. Ficou na carteira (principal da AAVE não mudou).
+- **24/09: compra de +0,0189 ETH por US$ 50** — paga com 50 dos 100 USDT que sobraram do saque da AAVE
+  de 15/09. **ROTAÇÃO, não aporte** (o Lucas corrigiu em 26/09): USDT −50 na qty e no invested, ETH +50 de
+  invested. `contributions` de 09/26 voltou a ficar VAZIA. Os outros 50 USDT estão em ordem limite
+  esperando uma queda — não acionada, seguem contados como USDT.
+- ⚠️ Lição: "aporte" na fala dele nem sempre é dinheiro de fora. Sempre perguntar a ORIGEM antes de
+  escrever em `contributions`.
 - ⚠️ **No CoinGecko ele digitou 0,189 (10x a mais)** — ele confirmou o erro e vai corrigir para 0,0189.
   `cgMirror.ETH` = 2,333135374 já assume a correção. Se não corrigir, o CoinGecko infla ~US$ 460.
+- ⚠️ `cgMirror.USDT` = 1.948,08879 assume que ele debitou os 50 USDT no CoinGecko (como fez em 16/09) — confirmar.
+- `diario.js` sincronizado em 26/09 (44 entradas; as 39 do localStorage dele + as 5 escritas por mim).
 - HF AAVE 8,53 · pool: nenhuma aberta.
 
 **Pendências que o `/prints` deve lembrar:**
@@ -105,6 +111,8 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Fechamento de setembro: 01/10 (Action `close-month.yml` + `/fecharmes`).
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 26/09/2026 — correção: a compra de 24/09 era rotação (USDT da AAVE), não aporte — `contributions` de 09/26
+  esvaziada, USDT −50; `diario.js` sincronizado (44 entradas).
 - 25/09/2026 — aporte de US$ 50 (+0,0189 ETH) em 24/09, 1ª linha de `contributions` de 09/26; qty errada no
   CoinGecko (0,189) confirmada pelo Lucas; AAVE via MCP (HF 8,53); yield pendente ~US$ 23,96.
 - 18/09/2026 — depósito de 0,08 ETH na AAVE (principal WETH 2,289740, HF 8,35); yield pendente ~US$ 19,16.

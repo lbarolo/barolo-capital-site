@@ -161,7 +161,7 @@ window.BAROLO_DATA = {
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
   holdings: [
     { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00434195, invested:270.47  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.337575,   invested:4724.26 },  // qty 2,317675->2,337575 e invested 4674,26->4724,26 (25/09/2026): APORTE de US$ 50 em 24/09 (+0,0189 ETH @ ~US$ 2.645 — no CoinGecko ele digitou 0,189, 10x a mais; ver contributions e cgMirror) + 0,001000116 de juro do aWETH desde 18/09 (0,016646349 -> 0,017646465, MCP). qty 2,317635->2,317675 (18/09, apos o deposito): juro do aWETH 0,016605882 -> 0,016646349 (MCP). Deposito de 0,08 ETH na AAVE em 18/09 so muda de lugar (carteira -> supply), nao a qty. qty 2,31739->2,317635 (18/09): +0,000244777 ETH de juro do aWETH desde 16/09 (0,016361105 -> 0,016605882, MCP), custo zero.  qty 2,23317->2,31739 e invested 4474,26->4674,26 (16/09/2026): compras de 0,041698997 (15/09) + 0,041916377 (16/09) = +0,083615374 ETH por US$ 200, pagos com USDT sacado da AAVE (ROTACAO, nao aporte — custo migra do USDT) + 0,000607 ETH de juro do aWETH desde 11/09 (0,015754006 -> 0,016361105, MCP).  qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.337575,   invested:4724.26 },  // qty 2,317675->2,337575 e invested 4674,26->4724,26 (25/09/2026): compra de 24/09 (+0,0189 ETH @ ~US$ 2.645) paga com 50 dos 100 USDT sacados da AAVE em 15/09 — ROTACAO, nao aporte (custo migra do USDT). No CoinGecko ele digitou 0,189, 10x a mais; ver cgMirror + 0,001000116 de juro do aWETH desde 18/09 (0,016646349 -> 0,017646465, MCP). qty 2,317635->2,317675 (18/09, apos o deposito): juro do aWETH 0,016605882 -> 0,016646349 (MCP). Deposito de 0,08 ETH na AAVE em 18/09 so muda de lugar (carteira -> supply), nao a qty. qty 2,31739->2,317635 (18/09): +0,000244777 ETH de juro do aWETH desde 16/09 (0,016361105 -> 0,016605882, MCP), custo zero.  qty 2,23317->2,31739 e invested 4474,26->4674,26 (16/09/2026): compras de 0,041698997 (15/09) + 0,041916377 (16/09) = +0,083615374 ETH por US$ 200, pagos com USDT sacado da AAVE (ROTACAO, nao aporte — custo migra do USDT) + 0,000607 ETH de juro do aWETH desde 11/09 (0,015754006 -> 0,016361105, MCP).  qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
     // SOL 24,765222 -> 24,93 em 04/09/2026: MESMO caso do USDS logo abaixo — o holding
     // estava ABAIXO do supply da Kamino (24,93), violando o invariante de que holdings
     // incluem o colateral (o piso do holding e sempre o supply). A diferenca (0,164778 SOL,
@@ -194,7 +194,7 @@ window.BAROLO_DATA = {
     // USDT 2201,81879 -> 2002,77816 e invested 2179,19 -> 1979,19 (16/09/2026): 200 USDT viraram ETH (rotacao;
     // o custo migra para o ETH, total investido nao muda) + 0,959374 de juro do aUSDT desde 11/09
     // (20,917508 -> 21,876882, MCP). Saque de 300 USDT da AAVE em 15/09: 200 foram pro ETH, 100 seguem fora da AAVE.
-    { ticker:'USDT', cgId:'tether',           qty:2004.887432, invested:1979.19  },  // 2003,309704->2004,887432 (25/09/2026): +1,577728 de juro do aUSDT desde 18/09 (22,408426 -> 23,986154, MCP).  2003,268354->2003,309704 (18/09, apos o deposito): juro do aUSDT 22,367076 -> 22,408426 (MCP).  2002,77816->2003,268354 (18/09): +0,490194 USDT de juro do aUSDT desde 16/09 (21,876882 -> 22,367076, MCP), custo zero
+    { ticker:'USDT', cgId:'tether',           qty:1954.887432, invested:1929.19  },  // -50 (26/09/2026): 50 dos 100 USDT sacados da AAVE em 15/09 viraram ETH em 24/09 — ROTACAO, nao aporte (o custo migra para o ETH, total investido nao muda). Sobram 50 USDT em ordem limite, nao acionada.  2003,309704->2004,887432 (25/09/2026): +1,577728 de juro do aUSDT desde 18/09 (22,408426 -> 23,986154, MCP).  2003,268354->2003,309704 (18/09, apos o deposito): juro do aUSDT 22,367076 -> 22,408426 (MCP).  2002,77816->2003,268354 (18/09): +0,490194 USDT de juro do aUSDT desde 16/09 (21,876882 -> 22,367076, MCP), custo zero
     // USDS 300 -> 304.66 em 04/09/2026: o holding estava ABAIXO do supply da Kamino
     // (304,66), o que viola o invariante de que holdings incluem o colateral — o piso
     // do holding e sempre o supply. A diferenca e yield acumulado que o CoinGecko nunca
@@ -730,7 +730,8 @@ window.BAROLO_DATA = {
     USDS: 304.69,
     ETH:  2.333135374,   // 2,314235374 + 0,0189 do aporte de 24/09. ⚠️ O CoinGecko esta com 2,503235374 porque a
                          // compra foi digitada como 0,189 (10x a mais) — ele vai corrigir para 0,0189. Juro do aWETH segue pendente.
-    USDT: 1998.08879     // 2198,08879 - 200 USDT gastos no ETH (CONFIRMADO pelo Lucas 16/09: debitou no CoinGecko; os outros 100 do saque estao na carteira)
+    USDT: 1948.08879     // 1998,08879 - 50 USDT gastos no ETH em 24/09 (ASSUMIDO que debitou la, igual fez em 16/09 — confirmar).
+                         // Antes: 2198,08879 - 200 gastos em 15-16/09. Dos 300 sacados da AAVE, sobram 50 em ordem limite.
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de
     // 11/09 — iguais ao holding, nada pendente.
   },
@@ -748,7 +749,6 @@ window.BAROLO_DATA = {
   // lista cobre 09/2026 em diante. `scripts/close-month.js` soma os aportes do
   // mes que fechou e acrescenta o ponto novo.
   contributions: [
-    { date:'2026-09-24', usd: 50, note:'aporte novo (fiat) em ETH: +0,0189 ETH @ ~US$ 2.645 — ficou na carteira, nao foi pra AAVE' },
     // { date:'2026-09-15', usd: 250, note:'DCA mensal SOL' },
     //
     // RECEBIDOS EM CRIPTO (nao passaram por fiat/corretora). Sao entradas de FORA
