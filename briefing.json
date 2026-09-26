@@ -1,272 +1,458 @@
 {
- "updated": "2026-09-25T14:45:06.744Z",
- "date": "2026-09-25",
+ "updated": "2026-09-26T13:53:38.688Z",
+ "date": "2026-09-26",
  "source": "CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 83773,
-   "d24": -0.72,
-   "d7": 7.63,
-   "d30": 7.15,
+   "price": 83926,
+   "d24": 0.08,
+   "d7": 3.41,
+   "d30": 5.75,
    "ath": 126080,
-   "athPct": -33.6,
+   "athPct": -33.4,
    "athDate": "2025-10-06",
-   "mcap": 1683408626798,
-   "vol": 38206364893,
+   "mcap": 1686307690153,
+   "vol": 24156190938,
    "spark": [
-    80014.12,
-    80930.73,
-    81233.28,
-    81260.24,
-    81024.68,
-    81301.08,
-    81323.97,
-    81451.7,
-    81077.19,
-    81062.07,
-    80464.44,
-    80440.85,
-    80531.5,
-    81121.31,
-    80900.97,
-    80978.56,
-    81533.65,
-    84619.92,
-    85458.24,
-    85873.13,
-    86582.73,
-    85588.86,
-    85407.07,
-    86207.64,
-    86311.08,
-    86587.14,
-    86187.63,
-    86347.69,
-    86478.44,
-    85840.42,
-    85790.33,
-    84315.19,
-    84412.28,
-    84092.36,
-    83981.51,
-    83238.12,
-    84175.07,
-    84066.22,
-    84319.77,
-    84568.85,
-    84185.21,
-    84569.42,
-    84439.4
+    81303.83,
+    81817.26,
+    81107.41,
+    81267.5,
+    80398.79,
+    80231.02,
+    80450.67,
+    81300.36,
+    81071.43,
+    81592.86,
+    81374.91,
+    83733.75,
+    85288.13,
+    85982.66,
+    86968.8,
+    85912.67,
+    85425.68,
+    86180.11,
+    85998.97,
+    86395.88,
+    86250.64,
+    86450.11,
+    87158.43,
+    85890.48,
+    85476.41,
+    84058.65,
+    84226.42,
+    84305.16,
+    84025.88,
+    83608.58,
+    83591.51,
+    84405.41,
+    84334.44,
+    84567.96,
+    84178.35,
+    84395.68,
+    84439.4,
+    83752.06,
+    83858.72,
+    83893.02,
+    83967.98,
+    84194.74,
+    84158.89
    ]
   },
   "eth": {
-   "price": 2689.06,
-   "d24": 0.31,
-   "d7": 7.82,
-   "d30": 9.79,
+   "price": 2684.83,
+   "d24": -0.32,
+   "d7": 1.86,
+   "d30": 7.44,
    "ath": 4946.05,
-   "athPct": -45.6,
+   "athPct": -45.7,
    "athDate": "2025-08-24",
-   "mcap": 328316036374,
-   "vol": 15833646355,
+   "mcap": 327805906797,
+   "vol": 8964792295,
    "spark": [
-    2552.3,
-    2604.63,
-    2627.48,
-    2612.02,
-    2628.61,
-    2640.72,
-    2637.6,
-    2645.89,
-    2627.47,
-    2618.21,
-    2577,
-    2579.12,
-    2579.7,
-    2625.02,
-    2629.27,
-    2650.15,
-    2664.63,
-    2719.62,
-    2732.42,
-    2742.47,
-    2768.86,
-    2747.97,
-    2733.08,
-    2749.49,
-    2758.31,
-    2754.39,
-    2747.6,
-    2753.22,
-    2756.9,
-    2733.38,
-    2715.89,
-    2667.54,
-    2677.09,
-    2674.44,
-    2683.15,
-    2642.06,
-    2668.13,
-    2668.08,
-    2685.65,
-    2688.65,
-    2679.68,
-    2704.15,
-    2716.5
+    2641.04,
+    2649.26,
+    2634.08,
+    2626.44,
+    2578.66,
+    2573.91,
+    2578.84,
+    2639.04,
+    2633.82,
+    2689.28,
+    2663.18,
+    2695.08,
+    2733.79,
+    2755.7,
+    2782.33,
+    2755.23,
+    2728.01,
+    2748.2,
+    2755.42,
+    2744.76,
+    2750.89,
+    2760.1,
+    2779.64,
+    2734.55,
+    2721.13,
+    2661.22,
+    2670.85,
+    2682.05,
+    2681.49,
+    2667.65,
+    2648.74,
+    2684.08,
+    2686.98,
+    2689.64,
+    2679.66,
+    2690.26,
+    2716.5,
+    2683.99,
+    2683.91,
+    2686.7,
+    2689.16,
+    2690.54,
+    2688.98
    ]
   },
   "sol": {
-   "price": 119.89,
-   "d24": 3.59,
-   "d7": 13.12,
-   "d30": 23.18,
+   "price": 120.72,
+   "d24": 1.28,
+   "d7": 8.21,
+   "d30": 16.39,
    "ath": 293.31,
-   "athPct": -59.1,
+   "athPct": -58.8,
    "athDate": "2025-01-19",
-   "mcap": 70466134105,
-   "vol": 5954498520,
+   "mcap": 70963185919,
+   "vol": 4599005002,
    "spark": [
-    108.45,
-    112.41,
-    113.24,
-    113.38,
-    112,
-    111.82,
-    111.61,
-    111.42,
-    110.55,
-    110.1,
-    108.73,
-    108.26,
-    108.17,
-    109.87,
-    109.84,
-    110.98,
-    111.76,
-    115.83,
-    118.19,
-    117.13,
-    119.13,
-    117.54,
-    116.88,
-    117.4,
-    117.89,
-    117.98,
-    118.09,
-    118.26,
-    118.4,
-    117.38,
+    111.75,
+    111.93,
+    111.06,
+    110.91,
+    108.98,
+    108.04,
+    108.35,
+    110.23,
+    110.11,
+    112.29,
+    111.45,
+    115.29,
     116.8,
-    114.51,
-    114.69,
-    114.7,
-    114.87,
-    113.1,
-    114.86,
-    116.69,
-    116.81,
-    117.43,
-    116.42,
-    118.33,
-    120.77
+    117.57,
+    119.11,
+    118.28,
+    116.34,
+    117.49,
+    117.42,
+    117.46,
+    117.96,
+    118.81,
+    119.51,
+    117.37,
+    116.88,
+    114.39,
+    114.01,
+    115.11,
+    115.38,
+    114.05,
+    113.84,
+    116.92,
+    116.79,
+    117.38,
+    116.39,
+    117.26,
+    120.77,
+    120.96,
+    121.56,
+    121.52,
+    120.66,
+    120.68,
+    121.27
    ]
   },
-  "stableMcap": 259022653215
+  "stableMcap": 259120853724
  },
  "fng": {
-  "value": 71,
+  "value": 74,
   "label": "Greed",
   "prev": 71
  },
  "broad": {
-  "btcDom": 58.2,
-  "ethDom": 11.4,
+  "btcDom": 58.3,
+  "ethDom": 11.3,
   "altDom": 30.4,
-  "totalMcap": 2891785076166.332,
-  "totalVol": 115869196354.76448,
-  "mcapChange24h": -2.24,
-  "ethBtc": 0.0321,
-  "stableMcap": 259022653215
+  "totalMcap": 2889178836837.5845,
+  "totalVol": 77511311891.58673,
+  "mcapChange24h": -3.38,
+  "ethBtc": 0.03199,
+  "stableMcap": 259120853724
  },
  "onchain": {
-  "t": "2026-09-24",
-  "price": 84084.26,
-  "mvrv": 1.574532,
-  "mvrv_sth": 1.15648,
-  "mvrv_lth": 1.708646,
-  "realized": 53516.49,
-  "realized_sth": 72862,
-  "realized_lth": 49315.91,
-  "sopr_lth": 1.029292,
-  "aviv": 1.093434,
-  "cvdd": 48580.13,
-  "sma200": 70802.73,
-  "mayer": 1.188
+  "t": "2026-09-25",
+  "price": 84168.21,
+  "mvrv": 1.569991,
+  "mvrv_sth": 1.15167,
+  "mvrv_lth": 1.704441,
+  "realized": 53544.74,
+  "realized_sth": 72993.8,
+  "realized_lth": 49321.01,
+  "sopr_lth": 1.145529,
+  "aviv": 1.090449,
+  "cvdd": 48621.15,
+  "sma200": 70884.87,
+  "mayer": 1.187
  },
  "risk": {
-  "score": 0.287,
+  "score": 0.306,
   "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.574532,
-    "s": 0.267
+    "v": 1.569991,
+    "s": 0.266
    },
    {
     "key": "Mayer",
-    "v": 1.188,
-    "s": 0.327
+    "v": 1.187,
+    "s": 0.326
    },
    {
     "key": "STH MVRV",
-    "v": 1.15648,
-    "s": 0.427
+    "v": 1.15167,
+    "s": 0.419
    },
    {
     "key": "AVIV",
-    "v": 1.093434,
-    "s": 0.297
+    "v": 1.090449,
+    "s": 0.295
    },
    {
     "key": "SOPR LTH",
-    "v": 1.029292,
-    "s": 0.118
+    "v": 1.145529,
+    "s": 0.223
    }
   ]
  },
  "portfolio": {
-  "netWorth": 10603.99,
-  "gross": 9824.19,
-  "stables": 2309.56,
+  "netWorth": 10566.4,
+  "gross": 9836.59,
+  "stables": 2259.57,
   "lp": 0,
   "debt": 1529.76,
-  "invested": 10657.98,
-  "roi": -0.5,
-  "move24": 128.73,
-  "move24Pct": 1.23,
+  "invested": 10607.98,
+  "roi": -0.4,
+  "move24": 26.14,
+  "move24Pct": 0.25,
   "aave": {
-   "hf": 8.44,
-   "collateral": 7928.03,
+   "hf": 8.43,
+   "collateral": 7914.83,
    "debt": 764.8,
-   "ltv": 9.6,
+   "ltv": 9.7,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 23.2,
+   "ltv": 23,
    "liqLtv": 76.5,
-   "collateral": 3302.15,
+   "collateral": 3320.64,
    "debt": 764.96,
    "liqSol": 25.43,
-   "dropToLiq": 78.8
+   "dropToLiq": 78.9
   },
   "carry": {
    "monthlyInterest": 5.44,
-   "monthlySupply": 32.98
+   "monthlySupply": 33.05
   },
   "dataAsOf": "2026-09-25"
  },
  "news": [
+  {
+   "source": "Cointelegraph",
+   "title": "Kalshi loses appeal, setting up potential Supreme Court case",
+   "url": "<![CDATA[https://cointelegraph.com/news/kalshi-loses-appeal-setting-up-potential-supreme-court-case?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790428872000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Google Just Made Free 1080p AI Video Generation Available to Anyone",
+   "url": "https://decrypt.co/379353/google-free-1080p-ai-video-generation",
+   "ts": 1790427663000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Binance deal gives Circle a boost in stablecoin race with Tether, analysts say",
+   "url": "https://www.coindesk.com/business/2026/09/26/binance-deal-gives-circle-a-boost-in-stablecoin-race-with-tether-analysts-say",
+   "ts": 1790427600000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitget hacker moves $83 million in stolen XRP that Ripple cannot freeze",
+   "url": "https://www.coindesk.com/markets/2026/09/26/bitget-hacker-moves-usd83-million-in-stolen-xrp-that-ripple-cannot-freeze",
+   "ts": 1790427401000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Here’s what happened in crypto today",
+   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790425020000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin could soon get Zcash-style 'shielded' privacy without changing its rules",
+   "url": "https://www.coindesk.com/tech/2026/09/25/bitcoin-could-soon-get-zcash-style-shielded-privacy-without-changing-its-rules",
+   "ts": 1790424000000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "SEC Commissioner Hester Peirce to leave post on Oct. 2",
+   "url": "<![CDATA[https://cointelegraph.com/news/sec-commissioner-hester-peirce-to-leave-post-on-oct-2?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790413342000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "CFTC sues Cash FX, alleges $950M crypto-linked forex scheme",
+   "url": "<![CDATA[https://cointelegraph.com/news/cftc-sues-cash-fx-alleges-950m-crypto-linked-forex-scheme?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790405969000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Solana’s 150-millisecond settlement upgrade reaches second public test network",
+   "url": "https://www.coindesk.com/tech/2026/09/26/solana-s-150-millisecond-settlement-upgrade-reaches-second-public-test-network",
+   "ts": 1790398800000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "XRP Ledger’s Batch upgrade slips to Oct. 9 after validator support resets",
+   "url": "https://www.coindesk.com/tech/2026/09/26/xrp-ledger-s-batch-upgrade-slips-to-oct-9-after-validator-support-resets",
+   "ts": 1790397000000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "U.S. SEC's steadiest crypto advocate, Hester Peirce, to depart next week",
+   "url": "https://www.coindesk.com/policy/2026/09/25/u-s-sec-s-steadiest-crypto-advocate-hester-peirce-to-depart-next-week",
+   "ts": 1790374658000
+  },
+  {
+   "source": "Decrypt",
+   "title": "US Prosecutors Want $84.2 Million From a Bank Tied to Tether",
+   "url": "https://decrypt.co/379380/us-prosecutors-84-million-bank-tether-and-bitfinex",
+   "ts": 1790371535000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Another appeals court rules against prediction market provider Kalshi, says sports contracts are subject to state regulations",
+   "url": "https://www.coindesk.com/policy/2026/09/25/another-appeals-court-rules-against-prediction-market-provider-kalshi-says-sports-contracts-are-subject-to-state-regulations",
+   "ts": 1790371050000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "OG.com seeks CFTC approval for single-stock perpetual futures",
+   "url": "<![CDATA[https://cointelegraph.com/news/og-com-seeks-cftc-approval-single-stock-perpetual-futures?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790368641000
+  },
+  {
+   "source": "The Block",
+   "title": "SEC crypto FAQ addresses token buybacks, network upgrades and promises of profit",
+   "url": "https://www.theblock.co/news/regulation/2026-09-25-sec-crypto-faq-addresses-token-buybacks-network-upgrades-promises-profit-416914",
+   "ts": 1790368360000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Ex-CFTC leader to leave Blockchain Association after CLARITY vote fails",
+   "url": "<![CDATA[https://cointelegraph.com/news/cftc-commissioner-leaving-blockchain-association-ceo?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790368000000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Blockchain Association sees leadership shift shortly after crypto Clarity Act fizzles",
+   "url": "https://www.coindesk.com/policy/2026/09/25/blockchain-association-sees-leadership-shift-shortly-after-crypto-clarity-act-fizzles",
+   "ts": 1790366465000
+  },
+  {
+   "source": "The Block",
+   "title": "Blockchain Association CEO Summer Mersinger to step down, Kristin Smith to return as interim CEO",
+   "url": "https://www.theblock.co/news/regulation/2026-09-25-blockchain-association-ceo-summer-mersinger-tstep-down-kristin-smith-interim-ceo-416913",
+   "ts": 1790365687000
+  },
+  {
+   "source": "Decrypt",
+   "title": "AI Agents Hacked Their Own Test Environment to Cheat, Cybersecurity Firm Finds",
+   "url": "https://decrypt.co/379369/ai-agents-hacked-test-environment-cheat-darktrace",
+   "ts": 1790365539000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Google Built an AI That Hunts Its Own Security Bugs",
+   "url": "https://decrypt.co/379364/google-built-ai-hunts-security-bugs",
+   "ts": 1790363764000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Tether says it had ‘limited’ exposure to bank linked to $84M US seizure",
+   "url": "<![CDATA[https://cointelegraph.com/news/us-authorities-seize-accounts-tether-bitfinex?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790362613000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Circle and Tether Freeze Stablecoins Tied to Bitget Hack—But Most Funds Slip Away",
+   "url": "https://decrypt.co/379365/circle-tether-freeze-stablecoins-bitget-hack",
+   "ts": 1790361771000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Former Hack VC partner Hsin-Ju Chuang’s death ruled a suicide",
+   "url": "<![CDATA[https://cointelegraph.com/news/former-hack-vc-partner-hsin-ju-chuang-found-dead?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790361229000
+  },
+  {
+   "source": "The Block",
+   "title": "Man charged in $16 million crypto ‘massive pig butchering’ scam",
+   "url": "https://www.theblock.co/news/regulation/2026-09-25-man-charged-in-16-million-crypto-massive-pig-butchering-scam-416895",
+   "ts": 1790358496000
+  },
+  {
+   "source": "Decrypt",
+   "title": "OpenAI Is Building a $500 per Month ChatGPT Pro Max Plan, Leaks Suggest",
+   "url": "https://decrypt.co/379359/openai-500-per-month-chatgpt-pro-max-plan",
+   "ts": 1790358365000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitget clarifies $388M in assets affected by security breach",
+   "url": "<![CDATA[https://cointelegraph.com/news/bitget-clarifies-assets-affected-security-breach?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790356665000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitget Hack Losses Climb to $387M: Here’s What Happened, and Why North Korea Is a Suspect",
+   "url": "https://decrypt.co/379350/bitget-hack-387m-what-happened-why-north-korea-suspect",
+   "ts": 1790356137000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Strategy seeks shareholder approval for daily preferred stock dividends",
+   "url": "<![CDATA[https://cointelegraph.com/news/strategy-seeks-shareholder-approval-daily-preferred-stock-dividends?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790354056000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Magic Eden Warns Old Ethereum NFT Listings Are Exposed to Payment Processor Exploit",
+   "url": "https://decrypt.co/379342/magic-eden-old-ethereum-nft-listings-exposed-exploit",
+   "ts": 1790353039000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin Rally Slows as $15.6 Billion Options Expiry Hits—XRP and Solana Keep Climbing",
+   "url": "https://decrypt.co/379319/bitcoin-slows-billion-options-expiry-xrp-solana",
+   "ts": 1790352383000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Crypto Biz: Wall Street and crypto fight for the same turf",
+   "url": "<![CDATA[https://cointelegraph.com/news/crypto-biz-crypto-tradfi-stablecoins-tokenized-assets?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1790351374000
+  },
   {
    "source": "CoinDesk",
    "title": "Circle and Tether step in to freeze hacker wallet after massive Bitget crypto heist",
@@ -311,12 +497,6 @@
   },
   {
    "source": "Cointelegraph",
-   "title": "Here’s what happened in crypto today",
-   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790343169000
-  },
-  {
-   "source": "Cointelegraph",
    "title": "Exchanges reporting crypto gains to IRS becomes tax nightmare",
    "url": "<![CDATA[https://cointelegraph.com/magazine/exchanges-reporting-crypto-gains-to-irs-becomes-tax-nightmare?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
    "ts": 1790343000000
@@ -326,186 +506,6 @@
    "title": "Strategy Wants Its Preferred Stock Dividends to Accrue 365 Days a Year",
    "url": "https://decrypt.co/379309/strategy-wants-its-preferred-stock-dividends-to-accrue-365-days-a-year",
    "ts": 1790342520000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Morgan Stanley Joins NEXTPredict as Prediction Markets Bet on 'More Institutional' Play",
-   "url": "https://decrypt.co/379218/morgan-stanley-joins-nextpredict-as-prediction-markets-bet-on-more-institutional-play",
-   "ts": 1790342163000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Morning Minute: BlackRock Leans Deeper Into Tokenization with Ondo",
-   "url": "https://decrypt.co/379292/morning-minute-blackrock-leans-deeper-into-tokenization-with-ondo",
-   "ts": 1790341446000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "CoinMarketCap buys CoinGlass to expand crypto derivatives data",
-   "url": "<![CDATA[https://cointelegraph.com/news/coinmarketcap-coinglass-expand-crypto-derivatives-data?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790340270000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "SlowMist has yet to confirm crypto theft from iPhone Safari attack",
-   "url": "<![CDATA[https://cointelegraph.com/news/no-confirmed-crypto-theft-iphone-safari-attack-slowmist?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790338774000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Defense Secretary Pete Hegseth Holds Bitcoin in a Coinbase Wallet, Filing Shows",
-   "url": "https://decrypt.co/379290/defense-secretary-pete-hegseth-holds-bitcoin-in-a-coinbase-wallet-filing-shows",
-   "ts": 1790337675000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bond volatility surges while bitcoin and Wall Street stay calm",
-   "url": "https://www.coindesk.com/markets/2026/09/25/bond-volatility-surges-while-bitcoin-and-wall-street-stay-calm",
-   "ts": 1790337268000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin holders are cashing out, just not the way they did at prior market tops",
-   "url": "https://www.coindesk.com/daybook-us/2026/09/25/bitcoin-holders-are-cashing-out-just-not-the-way-they-did-at-prior-market-tops",
-   "ts": 1790335744000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "IBIT options price trading more calmly after Bitcoin rebound",
-   "url": "<![CDATA[https://cointelegraph.com/markets/ibit-options-trading-bitcoins-rebound?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790334693000
-  },
-  {
-   "source": "Decrypt",
-   "title": "KelpDAO Developer Sues LayerZero Over $292M Bridge Exploit",
-   "url": "https://decrypt.co/379288/kelpdao-developer-sues-layerzero-over-292m-bridge-exploit",
-   "ts": 1790334592000
-  },
-  {
-   "source": "The Block",
-   "title": "Ethena expands USDe backing strategy into bStocks and equity perpetuals on Binance",
-   "url": "https://www.theblock.co/news/deals/2026-09-25-ethena-expands-usde-backing-strategy-into-bstocks-and-equity-perpetuals-on-binance-416367",
-   "ts": 1790334000000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Altcoins rally across the board as bitcoin consolidates near $84,000",
-   "url": "https://www.coindesk.com/markets/2026/09/25/altcoins-rally-across-the-board-as-bitcoin-consolidates-near-usd84-000",
-   "ts": 1790330385000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Researchers Publish 'Zcash-Style' Design for Private Bitcoin Transfers",
-   "url": "https://decrypt.co/379280/researchers-publish-zcash-style-design-for-private-bitcoin-transfers",
-   "ts": 1790329801000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Magic Eden scare puts 3,832 NFTs in whitehat protective custody",
-   "url": "<![CDATA[https://cointelegraph.com/news/magic-eden-nft-whitehat-vulnerability?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790329733000
-  },
-  {
-   "source": "The Block",
-   "title": "KelpDAO sues LayerZero, claims it endorsed setup used in $292 million rsETH exploit",
-   "url": "https://www.theblock.co/news/regulation/2026-09-25-kelpdao-sues-layerzero-claims-it-endorsed-setup-used-in-292-million-rseth-exploit-416361",
-   "ts": 1790327588000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin ETF flows turn positive for 2026 after erasing $5.8 billion deficit",
-   "url": "https://www.coindesk.com/markets/2026/09/25/bitcoin-etfs-have-erased-a-usd5-8-billion-hole",
-   "ts": 1790327581000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "KelpDAO sues LayerZero for the largest exploit 2026 has seen so far",
-   "url": "https://www.coindesk.com/business/2026/09/25/kelpdao-sues-layerzero-for-the-largest-exploit-2026-has-seen-so-far",
-   "ts": 1790326683000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "KelpDAO sues LayerZero, CEO over $292M rsETH bridge exploit",
-   "url": "<![CDATA[https://cointelegraph.com/news/kelpdao-layerzero-lawsuit-rseth-exploit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790326277000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bitcoin ETF inflows slow to $191M as six-day streak reaches $2.8B",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-etf-six-day-streak-2-8-billion?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790322096000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Samourai Wallet co-founder faces transfer after 30-day jail ordeal",
-   "url": "<![CDATA[https://cointelegraph.com/news/samourai-wallet-co-founder-30-day-prison-transfer?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790321298000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Live updates: Bitcoin reverses early gains; Saylor's Strategy moves toward daily dividends",
-   "url": "https://www.coindesk.com/markets/2026/09/25/live-updates-bitcoin-steadies-near-usd84-000-as-the-bond-selloff-pauses",
-   "ts": 1790320151000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Australian PM warns of AI’s ‘furious pace’ after agent breached government site",
-   "url": "<![CDATA[https://cointelegraph.com/news/australia-pm-warns-of-ais-furious-pace-after-agent-breached-government-site?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790312782000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Researchers propose Zcash-style private Bitcoin transfers without a soft fork",
-   "url": "<![CDATA[https://cointelegraph.com/news/shielded-bitcoin-zcash-style-privacy-no-soft-fork?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790311266000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitget's $352 million hack happened via spoofed transfers, not private keys, CEO Gracy Chen says",
-   "url": "https://www.coindesk.com/markets/2026/09/25/bitget-s-usd351-million-hack-happened-via-spoofed-transfers-not-private-keys-ceo-gray-chen-says",
-   "ts": 1790310574000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Block brings Bitcoin Lightning payments to x402 for AI agents",
-   "url": "<![CDATA[https://cointelegraph.com/news/block-brings-bitcoin-lightning-payments-to-x402-for-ai-agents?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1790301654000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "New York sues Polymarket, alleging it is running an illegal gambling operation",
-   "url": "https://www.coindesk.com/policy/2026/09/24/new-york-sues-polymarket-alleging-it-is-running-an-illegal-gambling-operation",
-   "ts": 1790289704000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Federal Reserve Unveils Stablecoin Rules on Reserves and Capital",
-   "url": "https://decrypt.co/379274/federal-reserve-unveils-stablecoin-rules-on-reserves-and-capital",
-   "ts": 1790286963000
-  },
-  {
-   "source": "The Block",
-   "title": "Bitget confirms $387.5 million security breach affecting exchange hot wallets",
-   "url": "https://www.theblock.co/news/markets/2026-09-24-more-than-170-million-in-crypto-moves-from-bitget-wallets-unidentified-address-416345",
-   "ts": 1790284847000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Bitget Hacked as $350 Million Vanishes From Crypto Exchange Wallets",
-   "url": "https://decrypt.co/379275/bitget-hack-183-million-crypto-exchange-wallets",
-   "ts": 1790284538000
-  },
-  {
-   "source": "The Block",
-   "title": "Fed proposes reserve limits, capital standards for stablecoin issuers under GENIUS Act",
-   "url": "https://www.theblock.co/news/regulation/2026-09-24-fed-proposes-reserve-limits-capital-standards-stablecoin-issuers-genius-act-416336",
-   "ts": 1790281186000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Humans Are Reading Your ChatGPT Chats, New Lawsuit Claims",
-   "url": "https://decrypt.co/379272/humans-reading-chatgpt-chats-lawsuit",
-   "ts": 1790280063000
   }
  ],
  "narrative": null
