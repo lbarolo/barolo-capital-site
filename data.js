@@ -728,9 +728,9 @@ window.BAROLO_DATA = {
     // Print do CoinGecko de 11/09/2026 — o que esta LA hoje:
     SOL:  24.94,
     USDS: 304.69,
-    ETH:  2.333135374,   // 2,314235374 + 0,0189 do aporte de 24/09. ⚠️ O CoinGecko esta com 2,503235374 porque a
-                         // compra foi digitada como 0,189 (10x a mais) — ele vai corrigir para 0,0189. Juro do aWETH segue pendente.
-    USDT: 1948.08879     // 1998,08879 - 50 USDT gastos no ETH em 24/09 (ASSUMIDO que debitou la, igual fez em 16/09 — confirmar).
+    ETH:  2.333135374,   // 2,314235374 + 0,0189 do aporte de 24/09. a compra de 24/09 tinha sido digitada como 0,189
+                         // (10x a mais) e o Lucas CORRIGIU para 0,0189 em 27/09. Juro do aWETH segue pendente.
+    USDT: 1948.08879     // 1998,08879 - 50 USDT gastos no ETH em 24/09 (CONFIRMADO pelo Lucas 27/09: debitou la, igual fez em 16/09).
                          // Antes: 2198,08879 - 200 gastos em 15-16/09. Dos 300 sacados da AAVE, sobram 50 em ordem limite.
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de
     // 11/09 — iguais ao holding, nada pendente.

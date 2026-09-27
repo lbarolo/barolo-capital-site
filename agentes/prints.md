@@ -96,9 +96,8 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   esperando uma queda — não acionada, seguem contados como USDT.
 - ⚠️ Lição: "aporte" na fala dele nem sempre é dinheiro de fora. Sempre perguntar a ORIGEM antes de
   escrever em `contributions`.
-- ⚠️ **No CoinGecko ele digitou 0,189 (10x a mais)** — ele confirmou o erro e vai corrigir para 0,0189.
-  `cgMirror.ETH` = 2,333135374 já assume a correção. Se não corrigir, o CoinGecko infla ~US$ 460.
-- ⚠️ `cgMirror.USDT` = 1.948,08879 assume que ele debitou os 50 USDT no CoinGecko (como fez em 16/09) — confirmar.
+- ✅ CoinGecko acertado em 27/09: ele corrigiu a qty da compra de 24/09 (0,189 -> 0,0189) e debitou os 50 USDT.
+  `cgMirror` (ETH 2,333135374 · USDT 1.948,08879) confere com o que está lá; o pendente é só yield.
 - `diario.js` sincronizado em 26/09 (44 entradas; as 39 do localStorage dele + as 5 escritas por mim).
 - HF AAVE 8,53 · pool: nenhuma aberta.
 
