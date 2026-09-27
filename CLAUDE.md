@@ -6623,6 +6623,130 @@ Atualizado: 15/09/2026 — **Fase 3 publicada**: tema e idioma das 5 páginas em
 morta de pools e ferramentas (fim das chamadas ao exchangerate-api) e o "◑ Tema" do portfolio. Fases
 1–3 da arquitetura concluídas. O e-mail de CI falho era o `d666f1d`, já corrigido.
 
+
+## Sessão 16–27/09/2026 — Chat dedicado do agente `/prints`: 3 movimentações de ETH computadas, `diario.js` sincronizado (44 entradas) e a lição "aporte ≠ rotação"
+
+### Contexto
+Primeiro chat criado **só para o papel `/prints`** (arquitetura de agentes de 15/09). O Lucas abriu
+dizendo: *"aqui vou fazer o chat para o agente de PRINTS, onde vou mandar os prints e ele altera no
+site o que for preciso toda semana"*. A sessão cobriu 4 eventos reais, cada um publicado na hora, e
+terminou com o Diário DeFi sincronizado. **Nenhum print da Kamino chegou** — por isso o bloco
+`defi.kamino` continua com os números de 18/09 (refresh feito por outra sessão).
+
+### O que foi computado (em ordem)
+
+#### 1. Duas compras de ETH (15 e 16/09) — `7d822dc`
+Print do CoinGecko: 0,041698997 ETH (15/09, US$ 2.398,14) + 0,041916377 ETH (16/09, US$ 2.385,70),
+**US$ 100 cada**. Perguntei a origem antes de editar; ele respondeu *"eu tirei do supply da aave"*.
+O MCP confirmou: **saque de 300 USDT em 15/09** (`WithdrawActivity`, principal 1.995,900978 →
+1.695,900978). Logo: **rotação, não aporte**.
+- `holdings.ETH` 2,23317 → **2,31739** · `invested` 4.474,26 → **4.674,26**
+- `stables.USDT` 2.201,81879 → **2.002,77816** · `invested` 2.179,19 → **1.979,19** (o custo migra)
+- `principals.aave.USDT` → **1.695,900978** · AAVE borrow net **5,63% → 2,93%** · HF 8,21 → **7,60**
+- Confirmado por ele depois: **debitou os 200 USDT no CoinGecko** e **os outros 100 ficaram na
+  carteira** (`ec35c5f`).
+
+#### 2. Depósito de 0,08 ETH na AAVE (18/09) — `e68d0cd`
+Print "Depositing ETH · 0,08 ETH · $210,67". MCP confirmou o principal do WETH **2,209740 →
+2,289740**, sem mexer em qty do holding (o ETH só muda de lugar).
+⚠️ **Outra sessão já tinha rodado o review semanal de 18/09 horas antes** (`57ac3f6`) — reapliquei
+por cima com os números pós-depósito. HF **7,79 → 8,35**; APY do WETH 1,84% → 2,29%.
+**Curiosidade registrada:** o borrow da AAVE marcou 6,10% no review da manhã e **2,81%** à tarde —
+a taxa oscila muito no mesmo dia, então não decidir nada olhando uma leitura só.
+
+#### 3. Compra de 24/09 — o erro de digitação e a classificação errada — `4471000` + `16c5c8f`
+Print mostrava **+0,189 ETH por US$ 50** (preço implícito US$ 264,55, 10x abaixo do mercado).
+Apontei a inconsistência antes de lançar; ele confirmou: *"ta errado é 0.0189"*.
+Depois veio a segunda correção, mais importante: eu tinha registrado como **aporte** (ele usou a
+palavra "aporte" na mensagem), e ele esclareceu — *"esse aporte foi aqueles USDT que foram retirados
+da AAVE"*. Reclassificado para **rotação**:
+- `contributions` de 09/2026 **voltou a ficar vazia** (a linha de US$ 50 foi removida)
+- `stables.USDT` −50 na qty **e** no invested; `holdings.ETH.invested` +50
+- Sobram **50 USDT em ordem limite** esperando queda — não acionada, seguem contados como USDT
+- CoinGecko acertado por ele em 27/09 (qty 0,0189 + débito dos 50 USDT) → `cgMirror` confere
+
+#### 4. `diario.js` sincronizado — `16c5c8f`
+Ele clicou em "📤 Sincronizar" e colou o dump. O repo tinha **5 entradas** (as que eu escrevi:
+fechamentos de julho e agosto, nota de revisão, briefing de 05/08, pool de 21/08) e o localStorage
+dele tinha **39** que nunca chegaram ao git — as duas listas eram **disjuntas**.
+Merge por `id` (script no scratchpad): 5 + 39 = **44 entradas**, ordenadas por id, sem duplicata.
+⚠️ **Mantive a versão do repo nos ids compartilhados** — a do navegador é mais pobre (ex.: o id
+`1787433600000` tem no repo um parágrafo a mais, "REGRA DE CONTABILIDADE FIRMADA HOJE", que o dump
+não traz). O arquivo foi regravado com `JSON.stringify(...,null,2)`, mantendo o cabeçalho original;
+o formato antigo (concatenação com `+`) virou JSON literal — continua sendo JS válido.
+
+### Dados atualizados (`data.js`, `asOf` 2026-09-11 → **2026-09-26**)
+
+| Campo | Início da sessão | Fim |
+|---|---:|---:|
+| `holdings.ETH` qty | 2,23317 | **2,337575** |
+| `holdings.ETH` invested | 4.474,26 | **4.724,26** |
+| `stables.USDT` qty | 2.201,81879 | **1.954,887432** |
+| `stables.USDT` invested | 2.179,19 | **1.929,19** |
+| AAVE supply WETH | 2,225494 @1,78% | **2,307387 @2,23%** |
+| AAVE supply USDT | 2.016,818486 @3,21% | **1.719,887132 @4,26%** |
+| AAVE borrow USDC | 763,052538 @5,63% | **764,799656 @3,10%** (net) |
+| `principals.aave.WETH` | 2,209740 | **2,289740** |
+| `principals.aave.USDT` | 1.995,900978 | **1.695,900978** |
+| `healthFactor` (fallback) | 8,21 | **8,53** |
+| `cgMirror.ETH` | 2,23062 | **2,333135374** |
+| `cgMirror.USDT` | 2.198,08879 | **1.948,08879** |
+| Yield pendente no CoinGecko | ~US$ 11,39 | **~US$ 24,07** |
+| `contributions` 09/2026 | — | **vazia** (nenhum aporte externo no mês) |
+
+**Total investido inalterado** em toda a sessão: as duas operações foram rotação, e o custo só migrou
+entre USDT e ETH.
+
+### Bugs corrigidos
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| Compra de 24/09 lançada como **aporte** (subiria o capital aportado e inflaria o retorno) | A palavra "aporte" na mensagem dele; eu não perguntei a origem antes de gravar | Linha removida de `contributions`, USDT −50 qty e invested (`16c5c8f`) |
+| CoinGecko com **+0,189 ETH por US$ 50** (~US$ 460 de lucro fantasma) | Digitação: quantidade 10x a mais | Apontado antes de lançar; `data.js` já entrou com 0,0189 e ele corrigiu no CoinGecko em 27/09 |
+| Juro da AAVE que nunca chegava ao holding | Regra 4 do caderno aplicada a cada leitura do MCP | ETH +0,001892 e USDT +8,10 ao longo da sessão, sempre a custo zero |
+
+### Lições registradas no caderno (`agentes/prints.md`)
+1. **"Aporte" na fala do Lucas nem sempre é dinheiro de fora.** Perguntar SEMPRE a origem antes de
+   escrever em `contributions`. O teste é *de onde veio*, não *em que virou*.
+2. **Conferir a aritmética do print antes de lançar** — preço implícito fora do mercado denuncia erro
+   de digitação (foi o caso dos 0,189 ETH).
+3. **O MCP da Aave decide sozinho** se houve saque/depósito: `principal` muda, `interest` não. Não
+   precisa de print para isso.
+4. **Outra sessão pode ter mexido no `data.js` no mesmo dia** — sempre `git pull --rebase --autostash`
+   e reler os valores antes de aplicar (aconteceu em 18/09).
+
+### O que ainda falta
+- **Kamino sem print desde 18/09** — `defi.kamino` está com SOL 24,98 / USDS 305,05 / borrow 764,96.
+  Pedir print no próximo review.
+- **Yield a lançar no CoinGecko: ~US$ 24,07**, acumulando por decisão dele (11/09). Lembrar no
+  fechamento de 01/10 (ETH +0,00444 · SOL +0,04 · USDT +6,80 · USDS +0,36).
+- **50 USDT em ordem limite** — quando executar, será rotação (não aporte).
+- **Fechamento de setembro (01/10):** `close-month.yml` roda sozinha; `contributions` do mês está
+  vazia, então o aporte de setembro é **zero** e todo o resultado do mês é retorno.
+- **`RENDA_2026`** de setembro continua manual.
+- Pendências antigas seguem: `monthlyReturns[2026]` Out–Dez, CDI/IPCA anual, `FISCAL_ENTRADAS`
+  (lacuna a partir de ago/2026 — pedir extrato novo da OKX), `US_CPI_CUMULATIVE_PCT`, Registro
+  Histórico em `pools.html`, rewards da Kamino (~US$ 5,76), chaves de API sem restrição por domínio,
+  repositório dentro do OneDrive, Fases 4–6 da arquitetura.
+
+### Commits (push direto na main, CI verde)
+| Hash | Mensagem |
+|---|---|
+| `7d822dc` | data: compras de ETH 15-16/09 com USDT sacado da AAVE (rotacao) + AAVE via MCP |
+| `ec35c5f` | docs: confirma USDT do CoinGecko e os 100 USDT na carteira (16/09) |
+| `e68d0cd` | data: deposito de 0,08 ETH na AAVE (18/09) - principal WETH 2,289740 |
+| `4471000` | data: aporte de US$ 50 em ETH (24/09) + refresh da AAVE via MCP |
+| `16c5c8f` | data: compra de ETH de 24-25/09 e rotacao (USDT da AAVE), nao aporte + diario sincronizado |
+| `352907f` | docs: CoinGecko acertado (qty 0,0189 e -50 USDT) confirmado pelo Lucas |
+
+---
+
+Atualizado: 27/09/2026 — **chat dedicado do `/prints` funcionando de ponta a ponta**: 2 compras de ETH
+(15–16/09) e 1 compra (24/09) reclassificadas corretamente como **rotação** de USDT sacado da AAVE
+(capital aportado intocado, setembro sem aporte), depósito de 0,08 ETH na AAVE registrado no
+`principals`, erro de digitação de 10x no CoinGecko pego antes de entrar no site, e **`diario.js`
+sincronizado com 44 entradas** (merge por id, sem duplicata). Lição nova no caderno: perguntar a
+ORIGEM do dinheiro antes de chamar qualquer coisa de aporte.
+
 ---
 
 <!-- KB-START -->
