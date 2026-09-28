@@ -16,6 +16,7 @@ sem precisar reler o CLAUDE.md inteiro, que tem mais de 3 mil linhas e é um log
 | Corrigir o site | `/corrigir <o quê>` | comando | [corrigir.md](corrigir.md) | **sim** |
 | Caçar bugs | `/bugs` | subagente **só leitura** | [bugs.md](bugs.md) | não |
 | Segurança | `/seguranca` | subagente **só leitura** | [seguranca.md](seguranca.md) | não |
+| Quant macro | `/quant <pergunta>` | comando | [quant.md](quant.md) + `../QUANT.md` | não (só caderno/QUANT.md) |
 
 ## Como os papéis se passam trabalho
 
