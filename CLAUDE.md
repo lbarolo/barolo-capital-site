@@ -24,7 +24,7 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 > Só o `CONHECIMENTO-POOLIANA.md` fica neste repo, por pedido do Lucas — para reusar em outros
 > agentes.
 
-> 🤖 **AGENTES POR PAPEL (desde 15/09/2026)** — `/prints` (review semanal → `data.js`), `/contas`,
+> 🤖 **AGENTES POR PAPEL (desde 15/09/2026)** — `/prints` (review semanal → `data.js`), `/contas`, `/quant` (quant macro, desde 28/09 — base em `QUANT.md`),
 > `/corrigir`, `/bugs` e `/seguranca` (os dois últimos são subagentes **só leitura**). Cada papel
 > tem um **caderno** em `agentes/` com as regras, o estado atual e o histórico dele. **Ao fazer
 > qualquer uma dessas tarefas, leia primeiro o caderno do papel** em vez deste arquivo inteiro —
@@ -6746,6 +6746,108 @@ Atualizado: 27/09/2026 — **chat dedicado do `/prints` funcionando de ponta a p
 `principals`, erro de digitação de 10x no CoinGecko pego antes de entrar no site, e **`diario.js`
 sincronizado com 44 entradas** (merge por id, sem duplicata). Lição nova no caderno: perguntar a
 ORIGEM do dinheiro antes de chamar qualquer coisa de aporte.
+
+---
+
+## Sessão 28/09/2026 — Agente QUANT macro criado (`/quant`, `QUANT.md`, `scripts/quant-report.js`) + primeiro relatório quant
+
+### Contexto
+Lucas pediu: *"Quero que você vire meu agente QUANT macro, visando nossos padrões de longo prazo,
+que me traga métricas e ajustes no site pra se tornar tudo mais QUANT. É um mundo novo pra mim,
+então o que for preciso ser explicado pode explicar também; vamos salvar um novo .md de quant."*
+Criado o 6º papel da arquitetura de agentes (15/09), rodado o primeiro relatório com dados reais
+e proposto (sem implementar) um backlog de ajustes no site.
+
+### Implementado (commit `d24954f`, push na main)
+- **`QUANT.md` (raiz, novo)** — base de conhecimento autocontida do papel:
+  §0 o que é "ser quant" aqui (medir risco, regra antes do dado, backtest antes de adotar; não é
+  previsão nem trading) · §1 **glossário explicado sem jargão** (retorno log, vol realizada, correlação,
+  beta, beta do portfólio, contribuição de risco de Euler, N efetivo, drawdown, VaR, CVaR, Sharpe,
+  Sortino, Calmar, σ até a liquidação, probabilidade de toque, juro real, M2, DXY, VIX, backtest,
+  overfitting) · §2 as 4 camadas (portfólio, alavancagem, macro+ciclo, regras testadas) ·
+  §3 fotografia de 28/09 · §4 **5 regras propostas (nenhuma valendo)** · §5 diário de backtests ·
+  §6 **backlog Q1–Q7 de ajustes no site** · §7 fontes de dados sem chave · §8 limitações.
+- **`scripts/quant-report.js` (novo, SÓ LEITURA — não grava nada)** — `node scripts/quant-report.js`
+  (texto) ou `--json`. Busca candles diários BTC/ETH/SOL na **Coinbase Exchange** (300 por chamada,
+  5 chamadas ≈ 4 anos, desde 21/08/2022) e 6 séries do **FRED** via `fredgraph.csv?id=`
+  (`DGS10`, `T10YIE`, `DFF`, `DTWEXBGS`, `WM2NS`, `VIXCLS`); lê `btc-onchain.json`, `data.js`,
+  `benchmark-data.js` e `lib/barolo-core.js`. Calcula: vol 30d/90d/1a, correlações e betas ao BTC,
+  tendência (vs MM200 dias, MM200 semanas = 1400 dias, queda do topo 4a, retorno 90d/1a), pesos sobre o
+  patrimônio líquido, beta do portfólio, VaR/CVaR histórico 1 dia (365d com quantidades atuais
+  constantes), VaR 30d paramétrico, contribuição de risco de Euler, HHI/N efetivo, liquidação do SOL na
+  Kamino `(dívida/liqLtv − USDS)/SOL` em σ e probabilidade de toque `2·N(ln(B/P)/(σ√T))`, preço de
+  liquidação do WETH na AAVE (CF 0,83/0,78), `performanceMetrics` do track, macro (juro real =
+  DGS10 − T10YIE, Δ3m do 10a e do dólar, M2 a.a.), on-chain (MVRV/STH/LTH/Mayer/AVIV/SOPR) e o backtest
+  DCA fixo × DCA-Mayer.
+- **`agentes/quant.md` (caderno)** — regras do papel, estado atual, histórico.
+- **`.claude/commands/quant.md`** — comando `/quant <pergunta ou "relatório">`: lê caderno + QUANT.md,
+  roda o relatório, responde número → significado simples → o que não mede → implicação de longo prazo;
+  regra nova só após backtest; ajuste de site só com aprovação (via `/corrigir`).
+- **`agentes/README.md`** — linha nova na tabela de papéis (Quant macro, não edita o site).
+
+### Dados — primeiro relatório (28/09/2026; posições do `data.js` de 25/09)
+Preços: BTC US$ 83.732 · ETH US$ 2.694,70 · SOL US$ 120,05.
+
+| Métrica | Valor |
+|---|---|
+| Patrimônio líquido | ≈ US$ 10,5 mil · exposição cripto 91% do líquido |
+| Pesos (sobre o líquido) | ETH 60% · SOL 28% · BTC 3,5% · stables 21% · dívida −15% |
+| Beta do portfólio ao BTC | **1,17** (ETH 1,28 · SOL 1,31) |
+| Vol anual / VaR95 1d / CVaR95 / pior dia 1a | 59% / −4,6% (~US$ 480) / −7,7% / −19,8% |
+| VaR95 30 dias (paramétrico) | ≈ −28% |
+| Contribuição de risco | **ETH 66% · SOL 32% · BTC 2,5%** · N efetivo 2,6 |
+| Correlação 1a | BTC-ETH 0,91 · BTC-SOL 0,87 · ETH-SOL 0,89 |
+| Vol 30d / 1a | BTC 42%/45% · ETH 45%/64% · SOL 65%/68% |
+| vs MM200 dias / MM200 semanas | BTC +17%/+27% · ETH +27%/+6% · SOL +39%/+8% |
+| Liquidação SOL (Kamino) | ~US$ 28 (−77%) = 2,1σ de 1 ano · P(toque 1a) ≈ 3% gaussiano (tratar ~10%) |
+| AAVE | WETH imune (USDT cobre a dívida) · HF 8,45 |
+| Track | TWR 0,34% a.a. · TIR 14,2% · Sharpe −0,03 · MaxDD −50,9% |
+| Macro | 10a EUA 5,18% (+0,80 p.p. em 3m) · juro real 2,84% · Fed 3,88% · dólar −0,7% 3m · M2 +6,1% a.a. · VIX 14 |
+| On-chain BTC (26/09) | MVRV 1,57 · STH 1,15 · LTH 1,71 · Mayer 1,18 · AVIV 1,09 · LTH SOPR 1,29 → meio de ciclo |
+| Backtest DCA-Mayer (mar/23→set/26, 186 semanas) | preço médio US$ 56.045 vs 55.563 do DCA fixo → **−0,9% de BTC → não adotar** |
+
+**Leituras principais:** o maior risco é a **concentração** (ETH/SOL), não a dívida; diversificação dentro
+de cripto é ~nula (corr ~0,9); o BTC é o ativo de menor vol e pesa 3,5% — direcionar aporte para BTC é o
+que mais reduz risco por dólar (coerente com a tese de focar nos maiores players de 09/09). Macro misto
+(juro real alto e subindo × M2 crescendo) → argumento para **não aumentar alavancagem agora**.
+
+### Regras propostas em `QUANT.md §4` (aguardando decisão do Lucas — NENHUMA em vigor)
+1. Teto de ~60% de contribuição de risco por ativo (ajustar pelo aporte, nunca vendendo).
+2. Aumentar dívida só com juro real em queda **e** MVRV < 2.
+3. Liquidação ≥ 3σ de 1 ano como piso (Kamino hoje 2,1σ — aceitável só porque LTV 23%).
+4. Orçamento de VaR95 30d ≤ 30% do líquido (hoje ~28%).
+5. Toda regra nova passa por backtest registrado em `QUANT.md §5`.
+
+### Bugs corrigidos
+Nenhum no site. No script: `wc is not defined` (sobra de variável ao montar o arquivo a partir do
+rascunho) — linha removida. ⚠️ **Gotcha Windows/Git Bash:** `require()` com caminho `/c/Users/...` falha
+no Node — usar `C:/Users/...` ou `path.join(__dirname, ...)` (o script do repo já usa `__dirname`).
+
+### Verificação
+`node scripts/quant-report.js` roda limpo; `npm test` **133/133 verdes** (o `pages.test.js` compila os
+scripts de `scripts/`). Coinbase e FRED respondem sem chave nesta máquina.
+
+### O que ainda falta
+- **Lucas escolher a prioridade do backlog Q1–Q7** (`QUANT.md §6`): Q1 painel "Risco Quant" na aba Risco
+  (beta, VaR/CVaR, contribuição de risco, N efetivo — substituindo/complementando a Convexidade com λ
+  arbitrários) · Q2 liquidação em σ + probabilidade de toque em empréstimos/pools · Q3 painel Macro na aba
+  Ciclo · Q4 Action `macro.yml` gerando `macro.json`/`quant.json` diários · Q5 Sortino/Calmar na aba
+  Métricas · Q6 correlação/vol rolantes 90d · Q7 métricas diárias do `networth-history.json` quando passar
+  de 180 pontos. **Nada implementado — regra de zero mudança de UX sem aprovação.**
+- **Lucas decidir as 5 regras da §4.**
+- Retestar o DCA-Mayer quando houver um ciclo completo com bear na série (candles só desde ago/2022);
+  candidato a testar depois: DCA por MVRV/STH-MVRV e banda de rebalanceamento por contribuição de risco.
+- Pendências anteriores seguem: yield a lançar no CoinGecko (acumulando — lembrar no fechamento de
+  01/10), `RENDA_2026` de setembro, confirmar a Action `close-month.yml` em 01/10, Kamino sem print
+  desde 18/09, 50 USDT em ordem limite (rotação quando executar), Fases 4–6 da arquitetura.
+
+---
+
+Atualizado: 28/09/2026 — **agente QUANT macro criado** (`/quant` + caderno + `QUANT.md` com glossário
+explicado + `scripts/quant-report.js` só leitura, Coinbase + FRED sem chave); primeiro relatório: beta
+1,17 ao BTC, ETH gera 66% do risco, VaR95 1d −4,6%, SOL liquida a 2,1σ, macro misto, meio de ciclo;
+backtest DCA-Mayer perdeu para o DCA fixo (não adotar); backlog Q1–Q7 de ajustes no site aguardando
+prioridade do Lucas
 
 ---
 
