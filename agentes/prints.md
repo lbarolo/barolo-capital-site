@@ -95,8 +95,8 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   estavam parados lá desde o saque da AAVE de 15/09. **ROTAÇÃO, não aporte** — USDT −49,98 na qty e no
   invested, BTC +49,98 de invested. `contributions` de 09/26 segue VAZIA. Bate com o print:
   BTC 0,00494132 · custo total US$ 320,45.
-- Ele já lançou as 2 compras no CoinGecko. ⚠️ `cgMirror.USDT` = 1.898,08879 **assume** que ele debitou
-  os 49,98 lá (padrão de 16/09 e 27/09) — confirmar.
+- ✅ CoinGecko acertado em 29/09 (confirmado por ele): lançou as 2 compras de BTC e debitou os 49,98 USDT.
+  `cgMirror` (BTC = holding · USDT 1.898,08879) confere; o pendente é só yield.
 - HF AAVE 8,57 · pool: nenhuma aberta. **Acabou o caixa em corretora** (era a última pendência de USDT
   parado); o próximo dinheiro novo tende a ser aporte de verdade.
 

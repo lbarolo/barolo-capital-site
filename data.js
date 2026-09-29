@@ -733,7 +733,7 @@ window.BAROLO_DATA = {
     USDS: 304.69,
     ETH:  2.333135374,   // 2,314235374 + 0,0189 do aporte de 24/09. a compra de 24/09 tinha sido digitada como 0,189
                          // (10x a mais) e o Lucas CORRIGIU para 0,0189 em 27/09. Juro do aWETH segue pendente.
-    USDT: 1898.08879     // 1948,08879 - 49,98 gastos no BTC em 28/09 (ele lancou as 2 compras no CoinGecko; ASSUMIDO que debitou o USDT tambem — confirmar).
+    USDT: 1898.08879     // 1948,08879 - 49,98 gastos no BTC em 28/09 (CONFIRMADO pelo Lucas 29/09: lancou as 2 compras e debitou o USDT no CoinGecko).
                          // Antes: 2198,08879 - 200 gastos em 15-16/09. Dos 300 sacados da AAVE, sobram 50 em ordem limite.
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de
     // 11/09 — iguais ao holding, nada pendente.
