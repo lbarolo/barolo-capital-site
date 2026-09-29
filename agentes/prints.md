@@ -78,28 +78,27 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — compra de ETH em 24/09 (rotação) + refresh da AAVE (`asOf` 2026-09-26)
-**Juros da AAVE no último review (base para a regra 4):** WETH **0,017646465** · USDT **23,986154**
+## Estado atual — compra de BTC em 28/09 (rotação) + refresh da AAVE (`asOf` 2026-09-29)
+**Juros da AAVE no último review (base para a regra 4):** WETH **0,018125328** · USDT **24,699359**
 
 | | Qtd | APY | Principal |
 |---|---|---|---|
-| AAVE WETH supply | 2,307387 | 2,23% | 2,289740 |
-| AAVE USDT supply | 1.719,887132 | 4,26% | 1.695,900978 |
-| AAVE USDC borrow | 764,799656 | 3,10% (net) · base 4,22% | 748,00 |
+| AAVE WETH supply | 2,307865 | 1,84% | 2,289740 |
+| AAVE USDT supply | 1.720,600337 | 2,82% | 1.695,900978 |
+| AAVE USDC borrow | 765,316080 | 3,12% (net) · base 4,24% | 748,00 |
 | Kamino SOL supply | 24,98 | 5,81% | 23,645990 (sem print desde 18/09) |
 | Kamino USDS supply | 305,05 | 3,27% | 300,392689 |
 | Kamino USDC borrow | 764,96 | 5,43% | 690,834084 |
 
-- **24/09: compra de +0,0189 ETH por US$ 50** — paga com 50 dos 100 USDT que sobraram do saque da AAVE
-  de 15/09. **ROTAÇÃO, não aporte** (o Lucas corrigiu em 26/09): USDT −50 na qty e no invested, ETH +50 de
-  invested. `contributions` de 09/26 voltou a ficar VAZIA. Os outros 50 USDT estão em ordem limite
-  esperando uma queda — não acionada, seguem contados como USDT.
-- ⚠️ Lição: "aporte" na fala dele nem sempre é dinheiro de fora. Sempre perguntar a ORIGEM antes de
-  escrever em `contributions`.
-- ✅ CoinGecko acertado em 27/09: ele corrigiu a qty da compra de 24/09 (0,189 -> 0,0189) e debitou os 50 USDT.
-  `cgMirror` (ETH 2,333135374 · USDT 1.948,08879) confere com o que está lá; o pendente é só yield.
-- `diario.js` sincronizado em 26/09 (44 entradas; as 39 do localStorage dele + as 5 escritas por mim).
-- HF AAVE 8,53 · pool: nenhuma aberta.
+- **28/09: 2 ordens limite de BTC executadas na OKX** (+0,00023934 @ US$ 83.521,35 = 19,99 e
+  +0,00036003 @ US$ 83.298,61 = 29,99) = **+0,00059937 BTC por US$ 49,98**, pagas com os 50 USDT que
+  estavam parados lá desde o saque da AAVE de 15/09. **ROTAÇÃO, não aporte** — USDT −49,98 na qty e no
+  invested, BTC +49,98 de invested. `contributions` de 09/26 segue VAZIA. Bate com o print:
+  BTC 0,00494132 · custo total US$ 320,45.
+- Ele já lançou as 2 compras no CoinGecko. ⚠️ `cgMirror.USDT` = 1.898,08879 **assume** que ele debitou
+  os 49,98 lá (padrão de 16/09 e 27/09) — confirmar.
+- HF AAVE 8,57 · pool: nenhuma aberta. **Acabou o caixa em corretora** (era a última pendência de USDT
+  parado); o próximo dinheiro novo tende a ser aporte de verdade.
 
 **Pendências que o `/prints` deve lembrar:**
 - ⏸ **Yield a lançar no CoinGecko ACUMULANDO** (decisão do Lucas, 11/09): **~US$ 18,27** em 18/09
@@ -110,6 +109,8 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Fechamento de setembro: 01/10 (Action `close-month.yml` + `/fecharmes`).
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 29/09/2026 — 2 compras de BTC (US$ 49,98) com os 50 USDT da ordem limite: rotação; AAVE via MCP (HF 8,57);
+  yield pendente ~US$ 26.
 - 26/09/2026 — correção: a compra de 24/09 era rotação (USDT da AAVE), não aporte — `contributions` de 09/26
   esvaziada, USDT −50; `diario.js` sincronizado (44 entradas).
 - 25/09/2026 — aporte de US$ 50 (+0,0189 ETH) em 24/09, 1ª linha de `contributions` de 09/26; qty errada no
