@@ -20,6 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const Core = require('../lib/barolo-core.js');
+const { spotPrices } = require('./lib/spot-prices.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'briefing.json');
@@ -69,10 +70,25 @@ function downsample(arr, n) {
   return out;
 }
 
-async function fetchMarket() {
+// ATH, sparkline, 7d e 30d só existem no CoinGecko. Desde 29/09/2026 ele responde
+// 403 sem chave, então isto virou BEST-EFFORT: se falhar, `fromSpot` monta o mesmo
+// objeto com preço e 24h da cascata (scripts/lib/spot-prices.js) e os campos
+// exclusivos ficam null. O card "E daí, pra mim?" do pools.html usa só `portfolio`,
+// então nada na página depende deste bloco.
+async function fetchMarket(spot) {
+  try { return await fetchMarketCG(); }
+  catch (e) { console.log('CoinGecko (mercado) indisponível:', e.message, '— seguindo com preço da cascata'); }
+  const fromSpot = id => spot.usd[id] == null ? null : {
+    price: num(spot.usd[id]), d24: num(spot.change24[id]),
+    d7: null, d30: null, ath: null, athPct: null, athDate: null, mcap: null, vol: null, spark: null
+  };
+  return { btc: fromSpot('bitcoin'), eth: fromSpot('ethereum'), sol: fromSpot('solana'), stableMcap: null };
+}
+
+async function fetchMarketCG() {
   // tether + usd-coin entram só para somar o supply de stablecoins (não viram card)
   const rows = await get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd' +
-    '&ids=bitcoin,ethereum,solana,tether,usd-coin&price_change_percentage=24h,7d,30d&sparkline=true');
+    '&ids=bitcoin,ethereum,solana,tether,usd-coin&price_change_percentage=24h,7d,30d&sparkline=true', { tries: 2 });
   const pick = id => {
     const c = rows.find(x => x.id === id);
     if (!c) return null;
@@ -169,14 +185,23 @@ function readPositions() {
   return sandbox.BAROLO_DATA;
 }
 
-async function buildPortfolio(B, mkt) {
-  const ids = [...new Set([...B.holdings, ...B.stables].map(a => a.cgId))];
-  const prices = await get(`https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`);
-  const px = id => (prices[id] && typeof prices[id].usd === 'number') ? prices[id].usd : null;
-  const ch = id => (prices[id] && typeof prices[id].usd_24h_change === 'number') ? prices[id].usd_24h_change : 0;
+// Último preço conhecido por ticker — o ponto mais recente do networth-history.json
+// (gerado pelo fetch-networth.js) fecha a cauda quando nenhuma fonte cobre o token.
+function readLastKnownPrices() {
+  const p = path.join(ROOT, 'networth-history.json');
+  if (!fs.existsSync(p)) return {};
+  try {
+    const d = JSON.parse(fs.readFileSync(p, 'utf8'));
+    const h = Array.isArray(d.history) ? d.history : [];
+    return (h.length && h[h.length - 1].prices) ? h[h.length - 1].prices : {};
+  } catch (e) { return {}; }
+}
 
-  const missing = ids.filter(id => px(id) === null);
-  if (missing.length) throw new Error('CoinGecko sem preço para: ' + missing.join(','));
+function buildPortfolio(B, spot) {
+  const px = id => (typeof spot.usd[id] === 'number') ? spot.usd[id] : null;
+  const ch = id => (typeof spot.change24[id] === 'number') ? spot.change24[id] : 0;
+
+  if (spot.missing.length) throw new Error('Sem preço (nenhuma fonte) para: ' + spot.missing.join(','));
 
   const val = a => a.qty * px(a.cgId);
   // Mesma conta do snapshot diário (fetch-networth.js) — uma implementação em lib/barolo-core.js
@@ -337,14 +362,17 @@ Responda SOMENTE com JSON válido, sem cercas de código, neste formato:
   const B = readPositions();
   if (!B) throw new Error('BAROLO_DATA não carregou do data.js');
 
-  const market = await fetchMarket();
-  if (!market.btc || !market.eth || !market.sol) throw new Error('CoinGecko não retornou os 3 ativos');
+  // Uma cotação só para a página inteira: alimenta o card de mercado e o portfólio.
+  const spot = await spotPrices([...B.holdings, ...B.stables], { lastKnown: readLastKnownPrices() });
+
+  const market = await fetchMarket(spot);
+  if (!market.btc || !market.eth || !market.sol) throw new Error('Nenhuma fonte retornou BTC/ETH/SOL');
 
   const fng     = await fetchFng();
   const global  = await fetchGlobal();
   const onchain = readOnchain();
   const risk    = riskIndex(onchain);
-  const portfolio = await buildPortfolio(B, market);
+  const portfolio = buildPortfolio(B, spot);
   const news    = await fetchNews();
 
   if (!isFinite(portfolio.netWorth) || portfolio.netWorth < 1000 || portfolio.netWorth > 1e6) {
@@ -383,7 +411,8 @@ Responda SOMENTE com JSON válido, sem cercas de código, neste formato:
   const doc = {
     updated: new Date().toISOString(),
     date: new Date().toISOString().slice(0, 10),
-    source: 'CoinGecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku',
+    source: 'preço: ' + [...new Set(Object.values(spot.source))].join('/')
+      + ' · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku',
     ...payload,
     narrative
   };

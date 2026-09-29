@@ -1,6 +1,6 @@
 name: Snapshot diário do patrimônio (networth-history.json)
 
-# Calcula o patrimônio líquido do dia (preços CoinGecko × posições do data.js)
+# Calcula o patrimônio líquido do dia (preços em cascata × posições do data.js)
 # e commita 1 ponto/dia em networth-history.json. Sem secrets — APIs públicas.
 
 on:
@@ -19,11 +19,11 @@ jobs:
   snapshot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Gerar snapshot do patrimônio
         run: node scripts/fetch-networth.js

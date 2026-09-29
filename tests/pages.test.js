@@ -79,9 +79,15 @@ test('todo onclick das páginas aponta para algo definido', () => {
 });
 
 test('scripts Node compilam', () => {
-  const dir = path.join(H.ROOT, 'scripts');
-  for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.js'))) {
-    const src = fs.readFileSync(path.join(dir, f), 'utf8').replace(/^#!.*/, '');
-    assert.doesNotThrow(() => vm.compileFunction(src, ['require', 'module', 'exports', '__dirname', '__filename']), f);
+  // recursivo: pega também scripts/lib/ (spot-prices.js e o que vier depois)
+  const walk = dir => fs.readdirSync(dir, { withFileTypes: true }).flatMap(e => {
+    const p = path.join(dir, e.name);
+    return e.isDirectory() ? walk(p) : (e.name.endsWith('.js') ? [p] : []);
+  });
+  const files = walk(path.join(H.ROOT, 'scripts'));
+  assert.ok(files.length >= 6, 'esperava achar os scripts de cron');
+  for (const p of files) {
+    const src = fs.readFileSync(p, 'utf8').replace(/^#!.*/, '');
+    assert.doesNotThrow(() => vm.compileFunction(src, ['require', 'module', 'exports', '__dirname', '__filename']), p);
   }
 });
