@@ -11,6 +11,7 @@
 | Leitura on-chain (AAVE, Kamino, Cardano) | `lib/barolo-chain.js` |
 | Tema/idioma compartilhados | `lib/barolo-ui.js` (`BaroloUI.bootTheme`/`toggleTheme(gancho)`/`applyI18n`) — carregado no `<head>` das 5 páginas |
 | Preço do CoinGecko + polling | `lib/barolo-prices.js` (`BaroloPrices.get(ids,{maxAge})` / `poll(fn,ms)`) — cache `bc-px` entre as páginas; timer que faz rede usa `poll` |
+| Preço nos scripts de cron (Node) | `scripts/lib/spot-prices.js` — cascata Coinbase → CoinPaprika → Yahoo → CoinGecko → último conhecido. ⚠️ fonte nova só entra com o NOME conferido |
 | UX/design (cores, componentes, "quero mudar X → vá aqui") | `Design.md` |
 | Páginas | `index.html` (landing pública), `portfolio_analytics.html`, `pools.html`, `emprestimos.html`, `ferramentas.html`, `relatorio.html` |
 | Testes | `npm test` (`tests/*.test.js`), roda também no Actions (`tests.yml`) em todo push |
@@ -78,25 +79,19 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - `ETH.invested` diferente do CoinGecko (migração de custo deliberada para o USDT).
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
-## Estado atual (16/09/2026)
-- 16/09: resolvidos os 3 MÉDIA de valor fixo de 20/06 (`d2d83ab`, `3f2b996`). MÉDIA restantes: "SOL liquida em" do briefing, merge do Diário.
-- Fila de bugs: **nenhum ALTA aberto** — resolvidos em 15/09 a landing (`7b1902d`), o lending do
-  relatório (`e49aadc` + `9fe0b8f`), as stables do relatório (`4b700a8`) e o colateral do pools
-  (`aab2279`); MÉDIA da Meta de Alocação do pools (`a80a193`), das funções mortas do pools
-  (`f84856b`) e do resumo de pools do relatório (`b97e713`). Próximos MÉDIA: "SOL liquida em" do briefing, merge do Diário.
-- `pools.html` passou a carregar `lib/barolo-core.js` (15/09) — cálculo novo no pools usa a lib.
-- Script de stage parcial: `stage-mine2.js` (scratchpad de 15/09; recria-se pelo método do passo 8).
-- Plano de arquitetura: Fase 1 (`barolo-core`) ✅ · Fase 2 (`barolo-chain`) ✅ ·
-  **Fase 3 (`barolo-ui.js`) ✅ `b4523fa`** (15/09). Tema/idioma de qualquer página: mudar no
-  módulo; a `toggleTheme()` da página só passa o gancho de rebuild dos gráficos.
-  **Fase 4 (`barolo-prices.js`) ✅ `0121e9e`** (16/09): preço compartilhado + polling que pausa
-  com a aba oculta. Pools 34→25 requisições, portfolio 64→50. Cuidado aprendido: resposta do cache
-  é imediata — chamada de preço no meio do HTML pode rodar antes de um `<script>` posterior (foi o
-  `tStr` do ferramentas); disparar depois do parse. Fases 5 (Actions) e 6 (des-bundlar) pendentes.
-- Itens da fila liberados pela Fase 3 ainda abertos: formatação da tabela de pools do relatório,
-  fallbacks fixos da Convexidade.
+## Estado atual (29/09/2026)
+- 29/09: **o CoinGecko caiu como fonte** (403 de WAF sem chave, no runner e na máquina do Lucas).
+  Os crons foram para a cascata (`scripts/lib/spot-prices.js`) — `4ef9439`. **O navegador ainda
+  não foi**: as 5 páginas caem nos `FALLBACK_PRICES` e mostram patrimônio errado ($7.572 × $10.437).
+  É o ALTA no topo de `agentes/bugs.md`; Coinbase e CoinPaprika já foram conferidas com CORS aberto.
+- Fila de bugs: 1 ALTA (o do navegador, acima). MÉDIA: "SOL liquida em" do briefing, merge do Diário.
+- Plano de arquitetura: Fases 1–4 ✅ (`barolo-core`, `barolo-chain`, `barolo-ui`, `barolo-prices`).
+  Fase 5 (Actions) andou metade: `networth`/`briefing` agora em checkout/setup-node v5 + Node 22;
+  faltam `onchain.yml` e `sync-emprestimos.yml`. Fase 6 (des-bundlar o `emprestimos.html`) pendente.
+- ⚠️ `ferramentas.html` tem trabalho não commitado de outra sessão desde 16/09 — não incluir em commit.
 
 ## Histórico (mais recente no topo)
+- 29/09/2026 — preço dos crons em cascata (CoinGecko passou a dar 403); bloqueio no navegador registrado como ALTA — `4ef9439`.
 - 16/09/2026 — aba Pools APY removida do ferramentas (não usada; The Graph desligado) — `fdc603c`.
 - 16/09/2026 — simulador de Cenários parte do preço e do patrimônio atuais (BTC e stables incluídos, pool fechada tratada) — `f863c6f`.
 - 16/09/2026 — HF da calculadora de liquidação e do simulador de cenários na fórmula oficial da Aave (CF por ativo) — `429a5ba`. ⚠️ `String.replace` com `$'` no texto novo duplica o resto do arquivo: usar `split().join()`.

@@ -35,16 +35,16 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
-- [ALTA] **CoinGecko passou a bloquear os runners do GitHub (HTTP 403)** — `networth.yml` e
-  `briefing.yml` falharam em 29/09/2026 (exit 1 em ~9s, sem retry: o retry só cobre 429).
-  `networth-history.json` e `briefing.json` pararam em 28/09; `onchain.yml` (ResearchBitcoin) e
-  `benchmark.yml` (Coinbase) rodaram normalmente no mesmo dia — ou seja, é a fonte, não o código.
-  Mesmo padrão do 451 da Binance em 20/08: API que responde no sandbox e bloqueia no runner.
-  Correção sugerida: preço em cascata (Coinbase Exchange → Yahoo → CoinGecko) para BTC/ETH/SOL/ADA,
-  stables a US$ 1 e, para os alts sem par na Coinbase (RDNT, ZK, XAI, ZETA, SCR, EIGEN, POL),
-  reusar o último preço do ponto anterior de `networth-history.json` (≈1% do book) — registrando
-  no ponto quais preços vieram de fallback. Tratar 403 como permanente (não adianta re-rodar).
-  Afeta também o card "E daí, pra mim?" do `pools.html`, que lê o `briefing.json`. (29/09/2026)
+- [ALTA] **O mesmo bloqueio do CoinGecko derruba o preco ao vivo no NAVEGADOR** — medido em
+  29/09/2026 no preview: `portfolio_analytics.html` faz 22 chamadas ao CoinGecko, todas 403, fica
+  sem cache e cai nos `FALLBACK_PRICES` estaticos: patrimonio exibido **$7.572** contra **$10.437**
+  reais (o snapshot do mesmo dia). Vale para as 5 paginas — tudo que mostra preco esta errado, nao
+  so desatualizado. Nao e regressao do site: o CloudFront do CoinGecko passou a recusar as rotas de
+  dados sem chave. Correcao: `lib/barolo-prices.js` usar a mesma cascata do cron — Coinbase
+  (`api.exchange.coinbase.com/products/{T}-USD/stats`) e CoinPaprika cobrem os 13 tokens e as duas
+  respondem com `access-control-allow-origin: *` (conferido). O mapa verificado ticker -> id ja
+  existe em `scripts/lib/spot-prices.js`. ⚠️ Manter a conferencia de NOME: XAI e SCR tem homonimos
+  em ambas as fontes. (29/09/2026)
 _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
 `b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
 20/06 que já existiam)_
@@ -112,6 +112,11 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 29/09/2026 · `4ef9439` — [ALTA] CoinGecko 403 derrubando `networth.yml` e `briefing.yml`.
+  Preco agora e cascata em `scripts/lib/spot-prices.js` (Coinbase → CoinPaprika → Yahoo → CoinGecko
+  → ultimo preco conhecido → paridade da stable), com o NOME conferido em toda fonte fora da
+  Coinbase. `point.prices` passou a guardar os 13 tickers (e a fonte do fallback do dia seguinte);
+  workflows em v5/Node 22. 9 testes novos. **O bloqueio no navegador ficou aberto** — item ALTA acima.
 - 18/09/2026 · `bb47221` — [ALTA] `onchain.yml` falhando desde 16/09. Causa 1: `RB_TOKEN` **expirou**
   (log: `"reason":"token_expired"`; a API da researchbitcoin dá **90 dias** de validade por token, e
   o anterior era de 17/06). Lucas gerou outro e trocou o secret em 17/09. Causa 2, que apareceu no
