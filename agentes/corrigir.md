@@ -80,17 +80,20 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (29/09/2026)
-- 29/09: **o CoinGecko caiu como fonte** (403 de WAF sem chave, no runner e na máquina do Lucas).
-  Os crons foram para a cascata (`scripts/lib/spot-prices.js`) — `4ef9439`. **O navegador ainda
-  não foi**: as 5 páginas caem nos `FALLBACK_PRICES` e mostram patrimônio errado ($7.572 × $10.437).
-  É o ALTA no topo de `agentes/bugs.md`; Coinbase e CoinPaprika já foram conferidas com CORS aberto.
-- Fila de bugs: 1 ALTA (o do navegador, acima). MÉDIA: "SOL liquida em" do briefing, merge do Diário.
-- Plano de arquitetura: Fases 1–4 ✅ (`barolo-core`, `barolo-chain`, `barolo-ui`, `barolo-prices`).
-  Fase 5 (Actions) andou metade: `networth`/`briefing` agora em checkout/setup-node v5 + Node 22;
-  faltam `onchain.yml` e `sync-emprestimos.yml`. Fase 6 (des-bundlar o `emprestimos.html`) pendente.
-- ⚠️ `ferramentas.html` tem trabalho não commitado de outra sessão desde 16/09 — não incluir em commit.
+- **O CoinGecko caiu como fonte** (403 de WAF sem chave, no runner e no navegador). Resolvido dos
+  dois lados: crons em `4ef9439`, site em `7f7ce5b`. A cascata é Coinbase → CoinPaprika → Yahoo/
+  CoinGecko, e **fonte nova só entra com o NOME conferido** (XAI e SCR têm homônimos).
+  Câmbio USD/BRL agora em `BaroloPrices.usdBrl()` (AwesomeAPI).
+- As páginas ainda tentam o CoinGecko primeiro de propósito: se ele voltar, sparkline/7d/30d voltam
+  sozinhos. O custo é 2 requisições que falham rápido e sujam o console.
+- Fila de bugs: **nenhum ALTA aberto**. MÉDIA: "SOL liquida em" do briefing, merge do Diário.
+- Plano de arquitetura: Fases 1–4 ✅. Fase 5 (Actions) pela metade: `networth`/`briefing` em v5 +
+  Node 22; faltam `onchain.yml` e `sync-emprestimos.yml`. Fase 6 (des-bundlar) pendente.
+- ⚠️ `ferramentas.html` tem trabalho não commitado de outra sessão (CSS do bloco quant do Semanal).
+  Em 29/09 commitei só o meu trecho pelo método do passo 8 — o CSS dela segue na pasta, intocado.
 
 ## Histórico (mais recente no topo)
+- 29/09/2026 — preço ao vivo do site em cascata + câmbio USD/BRL; fecha o ALTA do navegador — `7f7ce5b`.
 - 29/09/2026 — preço dos crons em cascata (CoinGecko passou a dar 403); bloqueio no navegador registrado como ALTA — `4ef9439`.
 - 16/09/2026 — aba Pools APY removida do ferramentas (não usada; The Graph desligado) — `fdc603c`.
 - 16/09/2026 — simulador de Cenários parte do preço e do patrimônio atuais (BTC e stables incluídos, pool fechada tratada) — `f863c6f`.

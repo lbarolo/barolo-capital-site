@@ -35,19 +35,12 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
-- [ALTA] **O mesmo bloqueio do CoinGecko derruba o preco ao vivo no NAVEGADOR** — medido em
-  29/09/2026 no preview: `portfolio_analytics.html` faz 22 chamadas ao CoinGecko, todas 403, fica
-  sem cache e cai nos `FALLBACK_PRICES` estaticos: patrimonio exibido **$7.572** contra **$10.437**
-  reais (o snapshot do mesmo dia). Vale para as 5 paginas — tudo que mostra preco esta errado, nao
-  so desatualizado. Nao e regressao do site: o CloudFront do CoinGecko passou a recusar as rotas de
-  dados sem chave. Correcao: `lib/barolo-prices.js` usar a mesma cascata do cron — Coinbase
-  (`api.exchange.coinbase.com/products/{T}-USD/stats`) e CoinPaprika cobrem os 13 tokens e as duas
-  respondem com `access-control-allow-origin: *` (conferido). O mapa verificado ticker -> id ja
-  existe em `scripts/lib/spot-prices.js`. ⚠️ Manter a conferencia de NOME: XAI e SCR tem homonimos
-  em ambas as fontes. (29/09/2026)
 _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
 `b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
 20/06 que já existiam)_
+- [BAIXA] `ferramentas.html` (aba Fiscal, `fx-result-sub`) — o texto diz "sobre R$ 35.498 aportados"
+  fixo, mas a porcentagem ao lado ja usa `APORTADO_BRL` = R$ 37.582,97 (atualizado em 09/09/2026).
+  Rotulo e conta discordam. Correcao: montar o texto com `APORTADO_BRL`. (visto em 29/09/2026)
 - [MÉDIA] `scripts/fetch-briefing.js:29,205` — "SOL liquida em" usa LT SOL 0,82 / USDS 0,80
   (Liq. LTV implícito 0,818), mas a Kamino informa 0,766 (`data.js → liqLtv`). Card do pools
   mostra US$ 25,43 (−75%); a conta com o `liqLtv` dá ≈ US$ 27,76 (−72%). Correção: usar o
@@ -112,6 +105,12 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
 
 ## Resolvidos
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
+- 29/09/2026 · `7f7ce5b` — [ALTA] preco ao vivo das 5 paginas caindo nos FALLBACK_PRICES por causa do
+  403 do CoinGecko (patrimonio $7.572 contra $10.437). `lib/barolo-prices.js` passou a usar a mesma
+  cascata dos crons (Coinbase /products/stats em lote → CoinPaprika na cauda → CoinGecko) e ganhou
+  `usdBrl()` (AwesomeAPI → CoinGecko → ultimo salvo) para a regua BRL e a aba Fiscal, que estavam no
+  cambio 4,95 do data.js contra 5,21 real. Conferido no preview com cache limpo: $10.534 no dashboard,
+  $10.536 na Meta do pools, cambio R$ 5,21, 0 NaN.
 - 29/09/2026 · `4ef9439` — [ALTA] CoinGecko 403 derrubando `networth.yml` e `briefing.yml`.
   Preco agora e cascata em `scripts/lib/spot-prices.js` (Coinbase → CoinPaprika → Yahoo → CoinGecko
   → ultimo preco conhecido → paridade da stable), com o NOME conferido em toda fonte fora da
