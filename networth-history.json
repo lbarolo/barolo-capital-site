@@ -1,5 +1,5 @@
 {
- "methodology": "netWorth = holdings×preço (inclui colateral DeFi) + stables + LP(pooled+unc fees) − dívida · qty/dívida/LP do data.js · preços CoinGecko",
+ "methodology": "netWorth = holdings×preço (inclui colateral DeFi) + stables + LP(pooled+unc fees) − dívida · qty/dívida/LP do data.js · preços em cascata Coinbase → CoinPaprika → Yahoo → CoinGecko → último conhecido",
  "history": [
   {
    "date": "2026-07-08",
@@ -2259,7 +2259,43 @@
     "ethLendV4": 0.018125,
     "solLend": 1.33401
    }
+  },
+  {
+   "date": "2026-09-30",
+   "netWorth": 10524.51,
+   "gross": 9845.23,
+   "stables": 2209.56,
+   "lp": 0,
+   "debt": 1530.28,
+   "dataAsOf": "2026-09-29",
+   "prices": {
+    "BTC": 84186.28,
+    "ETH": 2683.3,
+    "SOL": 119.43,
+    "ADA": 0.24734,
+    "EIGEN": 0.24794,
+    "POL": 0.11312,
+    "ZK": 0.012196,
+    "ZETA": 0.05319,
+    "USDT": 0.9994,
+    "USDS": 1.0001,
+    "RDNT": 0.0004641919540921195,
+    "XAI": 0.009434527979465257,
+    "SCR": 0.0248485326539581
+   },
+   "defi": {
+    "aaveCol": 7913.29,
+    "kamCol": 3288.41,
+    "aaveDebt": 765.32,
+    "kamDebt": 764.96,
+    "hf": 8.47,
+    "kLtv": 23.26,
+    "accEth": 0.103925,
+    "accSol": 3.40401,
+    "ethLendV4": 0.018125,
+    "solLend": 1.33401
+   }
   }
  ],
- "updated": "2026-09-29T17:54:15.288Z"
+ "updated": "2026-09-30T16:03:20.402Z"
 }
