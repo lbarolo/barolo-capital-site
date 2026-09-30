@@ -2243,9 +2243,15 @@ window.Fiscal = (function(){
     var prices;
     if(cache && Date.now()-cache.ts < 5*60*1000){ prices = cache.data; }
     else {
-      var r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids.join(',')+'&vs_currencies=usd,brl');
-      if(!r.ok) throw new Error('CoinGecko '+r.status);
-      prices = await r.json();
+      // Preço em USD pela cascata compartilhada e câmbio à parte (o
+      // `vs_currencies=usd,brl` do CoinGecko caiu em 29/09/2026). O BRL de cada
+      // token passa a ser usd × câmbio — o resto do bloco não muda.
+      var usd = await BaroloPrices.get(ids, { maxAge: 5*60*1000 });
+      var fx  = await BaroloPrices.usdBrl();
+      if(!Object.keys(usd).length) throw new Error('sem preço');
+      if(!(fx > 0)) fx = B.brlRate || 4.95;
+      prices = {};
+      Object.keys(usd).forEach(function(id){ prices[id] = { usd: usd[id].usd, brl: usd[id].usd * fx }; });
       try{ localStorage.setItem('bc-fiscal-prices', JSON.stringify({ts:Date.now(),data:prices})); }catch(e){}
     }
     var usdt = prices['tether']||{};

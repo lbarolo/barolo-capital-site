@@ -1,8 +1,11 @@
 // Preço compartilhado (lib/barolo-prices.js) e o getLivePrice do pools, que hoje só delega a ele.
 //
 // 1) Equivalência com a versão ANTIGA do getLivePrice (tests/fixtures/legacy-chain.js →
-//    poolsPrice, com o fallback morto do price.jup.ag): caminho feliz com o mesmo preço e a mesma
-//    requisição; na falha, a antiga disparava uma requisição morta por token e devolvia nada.
+//    poolsPrice, com o fallback morto do price.jup.ag): caminho feliz com o MESMO PREÇO; na
+//    falha, a antiga disparava uma requisição morta por token e devolvia nada.
+//    ⚠️ A requisição deixou de ser a mesma em 29/09/2026: o CoinGecko passou a responder 403
+//    sem chave e o preço virou cascata (Coinbase /products/stats → CoinPaprika → CoinGecko).
+//    O que se compara agora é o preço entregue, não a URL.
 // 2) O que a Fase 4 (15/09/2026) acrescentou: cache entre páginas, busca só do que está velho,
 //    pedidos simultâneos juntos, pausa depois de falha, e o polling que para com a aba oculta.
 // Não usa `git show`: o checkout do GitHub Actions só baixa o último commit.
@@ -23,7 +26,18 @@ const CG = { ethereum: { usd: 2539.37, usd_24h_change: 1.5 }, solana: { usd: 102
   'radiant-capital': { usd: 0.0061 }, eigenlayer: { usd: 1.12 }, 'polygon-ecosystem-token': { usd: 0.23 }, zksync: { usd: 0.051 },
   'xai-blockchain': { usd: 0.031 }, zetachain: { usd: 0.19 }, bitcoin: { usd: 77378, usd_24h_change: 0.4 } };
 
-function makeCtx(src, { coingecko = 'ok', storage = {}, doc = null, slow = false } = {}) {
+// Como cada fonte enxerga os mesmos ativos do CG acima.
+const TICKER = { bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL', cardano: 'ADA', eigenlayer: 'EIGEN',
+  'polygon-ecosystem-token': 'POL', zksync: 'ZK', zetachain: 'ZETA', usds: 'USDS' };
+// A cauda que a Coinbase não lista (é por isso que a CoinPaprika entra na cascata).
+const PAP = { 'radiant-capital': { id: 'rdnt-radiant-capital', name: 'Radiant Capital', sym: 'RDNT' },
+  'xai-blockchain': { id: 'xai-xai-games', name: 'Xai Games', sym: 'XAI' },
+  scroll: { id: 'scr-scroll', name: 'Scroll', sym: 'SCR' } };
+const CB_URL = 'https://api.exchange.coinbase.com/products/stats';
+const CG_URL = 'https://api.coingecko.com/api/v3/simple/price';
+
+// `net: 'down'` derruba TODAS as fontes (a opção antiga era por CoinGecko, de quando só havia uma).
+function makeCtx(src, { net = 'ok', storage = {}, doc = null, slow = false } = {}) {
   const calls = [], urls = [], intervals = [];
   const store = Object.assign({}, storage);
   let release;
@@ -39,12 +53,30 @@ function makeCtx(src, { coingecko = 'ok', storage = {}, doc = null, slow = false
       urls.push(url);
       if (gate) await gate;
       if (url.includes('jup.ag')) throw new TypeError('Failed to fetch'); // DNS não resolve mais
-      if (coingecko === 'ok') {
-        const want = new URL(url).searchParams.get('ids').split(',');
-        const body = Object.fromEntries(want.filter(id => CG[id]).map(id => [id, CG[id]]));
-        return { ok: true, status: 200, json: async () => JSON.parse(JSON.stringify(body)) };
+      const down = { ok: false, status: 429, json: async () => ({}) };
+      if (net !== 'ok') return down;
+
+      // Coinbase: um objeto com TODOS os pares. `open` é derivado da variação para
+      // que o preço e o 24h saiam iguais aos do CoinGecko (base da equivalência).
+      if (url.startsWith(CB_URL)) {
+        const body = {};
+        Object.keys(CG).forEach(id => {
+          if (!TICKER[id]) return;
+          const chg = CG[id].usd_24h_change || 0;
+          body[TICKER[id] + '-USD'] = { stats_24hour: { last: String(CG[id].usd), open: String(CG[id].usd / (1 + chg / 100)) } };
+        });
+        return { ok: true, status: 200, json: async () => body };
       }
-      return { ok: false, status: 429, json: async () => ({}) };
+      if (url.includes('coinpaprika.com')) {
+        const pid = url.split('/tickers/')[1];
+        const id = Object.keys(PAP).find(k => PAP[k].id === pid);
+        if (!id || !CG[id]) return { ok: false, status: 404, json: async () => ({}) };
+        return { ok: true, status: 200, json: async () => ({ name: PAP[id].name, symbol: PAP[id].sym,
+          quotes: { USD: { price: CG[id].usd, percent_change_24h: CG[id].usd_24h_change || 0 } } }) };
+      }
+      const want = new URL(url).searchParams.get('ids').split(',');
+      const body = Object.fromEntries(want.filter(id => CG[id]).map(id => [id, CG[id]]));
+      return { ok: true, status: 200, json: async () => JSON.parse(JSON.stringify(body)) };
     }
   });
   if (doc) ctx.document = doc;
@@ -57,33 +89,45 @@ const usdOnly = o => Object.fromEntries(Object.entries(plain(o)).map(([k, v]) =>
 const idsOf = url => new URL(url).searchParams.get('ids').split(',').sort();
 
 // ── 1) Equivalência com a versão antiga ─────────────────────────────────────
-test('CoinGecko respondendo: mesmo preço e mesma requisição que a versão antiga', async () => {
+test('fontes no ar: mesmo preço que a versão antiga entregava pelo CoinGecko', async () => {
   for (const ids of [['ethereum'], ['solana'], ['ethereum', 'solana', 'tether', 'usds'], IDS]) {
     const o = makeCtx(OLD_SRC), n = makeCtx(NEW_SRC);
     assert.deepStrictEqual(usdOnly(await n.ctx.getLivePrice(ids)), usdOnly(await o.ctx.getLivePrice(ids)));
-    assert.deepStrictEqual(n.calls, o.calls);
   }
 });
 
-test('CoinGecko fora (429) sem nada salvo: a antiga fazia 1 requisição morta por token; a nova, nenhuma', async () => {
-  const o = makeCtx(OLD_SRC, { coingecko: 429 }), n = makeCtx(NEW_SRC, { coingecko: 429 });
+test('cascata: 1 requisição em lote na Coinbase + 1 por token da cauda, sem chegar ao CoinGecko', async () => {
+  const n = makeCtx(NEW_SRC);
+  await n.ctx.getLivePrice(IDS);
+  const cauda = IDS.filter(id => PAP[id]);                         // radiant-capital e xai-blockchain
+  assert.ok(cauda.length >= 2, 'o cenário precisa ter tokens fora da Coinbase');
+  assert.strictEqual(n.calls.filter(u => u === CB_URL).length, 1, 'a Coinbase é uma chamada só para todos os pares');
+  assert.strictEqual(n.calls.filter(u => u.includes('coinpaprika')).length, cauda.length);
+  assert.strictEqual(n.calls.filter(u => u.startsWith(CG_URL)).length, 0, 'com as duas primeiras fontes servindo, o CoinGecko nem é consultado');
+});
+
+test('todas as fontes fora, sem nada salvo: a antiga fazia 1 requisição morta por token; a nova tenta a cascata e devolve nada', async () => {
+  const o = makeCtx(OLD_SRC, { net: 'down' }), n = makeCtx(NEW_SRC, { net: 'down' });
   assert.deepStrictEqual(plain(await o.ctx.getLivePrice(IDS)), {});
   assert.deepStrictEqual(plain(await n.ctx.getLivePrice(IDS)), {});
   assert.strictEqual(o.calls.filter(u => u.includes('jup.ag')).length, IDS.length);
-  assert.deepStrictEqual(n.calls, ['https://api.coingecko.com/api/v3/simple/price']);
+  assert.strictEqual(n.calls[0], CB_URL, 'começa pela Coinbase');
+  assert.ok(n.calls[n.calls.length - 1].startsWith(CG_URL), 'e só então tenta o CoinGecko');
 });
 
-test('CoinGecko fora depois de uma resposta boa: devolve o último preço real, marcado _stale', async () => {
+test('fontes fora depois de uma resposta boa: devolve o último preço real, marcado _stale', async () => {
   const n = makeCtx(NEW_SRC);
   await n.ctx.getLivePrice(IDS);                                   // resposta boa → salva em bc-px
   const px = JSON.parse(n.store['bc-px']);
   for (const id of IDS) px[id].ts -= 10 * 60 * 1000;               // 10 min depois: velho
-  const later = makeCtx(NEW_SRC, { coingecko: 429, storage: Object.assign({}, n.store, { 'bc-px': JSON.stringify(px) }) });
+  const later = makeCtx(NEW_SRC, { net: 'down', storage: Object.assign({}, n.store, { 'bc-px': JSON.stringify(px) }) });
   const r = await later.ctx.getLivePrice(['ethereum', 'cardano']);
-  assert.deepStrictEqual(plain(r), { ethereum: CG.ethereum, cardano: CG.cardano });
+  assert.deepStrictEqual(usdOnly(r), { ethereum: { usd: CG.ethereum.usd }, cardano: { usd: CG.cardano.usd } });
+  // a variação vem recalculada de last/open na Coinbase — mesma coisa, com ruído de float
+  assert.ok(Math.abs(r.ethereum.usd_24h_change - CG.ethereum.usd_24h_change) < 1e-9);
   assert.strictEqual(r._stale, true);
   assert.ok(!Object.keys(r).includes('_stale'), '_stale não pode aparecer ao iterar o resultado');
-  assert.deepStrictEqual(later.calls, ['https://api.coingecko.com/api/v3/simple/price']);
+  assert.strictEqual(later.calls[0], CB_URL);
 });
 
 test('fallback aproveita os caches do portfolio, da landing e o antigo do pools, e fica com o mais recente', async () => {
@@ -92,14 +136,14 @@ test('fallback aproveita os caches do portfolio, da landing e o antigo do pools,
     'bc-index-prices-cache': JSON.stringify({ ts: 3000, data: { ethereum: 2600, ethereum_change: 2 } }),
     'bc-pools-last-prices': JSON.stringify({ solana: { usd: 90, ts: 1000 } })
   };
-  const n = makeCtx(NEW_SRC, { coingecko: 429, storage });
+  const n = makeCtx(NEW_SRC, { net: 'down', storage });
   // ETH: landing (ts 3000) mais novo que o portfolio (2000). SOL: portfolio (2000) mais novo que o do pools (1000).
   assert.deepStrictEqual(plain(await n.ctx.getLivePrice(['ethereum', 'solana', 'zksync'])),
     { ethereum: { usd: 2600, usd_24h_change: 2 }, solana: { usd: 100 } });
 });
 
 test('localStorage corrompido ou bloqueado não quebra', async () => {
-  const n = makeCtx(NEW_SRC, { coingecko: 429, storage: { 'bc-px': '[1,2', 'bc-prices-cache': '{lixo', 'bc-pools-last-prices': 'null' } });
+  const n = makeCtx(NEW_SRC, { net: 'down', storage: { 'bc-px': '[1,2', 'bc-prices-cache': '{lixo', 'bc-pools-last-prices': 'null' } });
   assert.deepStrictEqual(plain(await n.ctx.getLivePrice(['ethereum'])), {});
   const blocked = makeCtx(NEW_SRC);
   blocked.ctx.localStorage = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };
@@ -125,11 +169,18 @@ test('o cache do portfolio (bc-prices-cache) recente também serve, com a varia�
 
 test('só os ids velhos vão para a requisição', async () => {
   const t = Date.now();
-  const storage = { 'bc-px': JSON.stringify({ ethereum: { usd: 2400, chg: 1, ts: t }, solana: { usd: 90, chg: 0, ts: t - 5 * 60 * 1000 } }) };
+  const storage = { 'bc-px': JSON.stringify({
+    ethereum: { usd: 2400, chg: 1, ts: t },
+    solana: { usd: 90, chg: 0, ts: t - 5 * 60 * 1000 },
+    'radiant-capital': { usd: 0.005, chg: 0, ts: t }
+  }) };
   const n = makeCtx(LIB, { storage });
-  const r = await n.ctx.BaroloPrices.get(['ethereum', 'solana']);
-  assert.deepStrictEqual(n.urls.map(idsOf), [['solana']]);
+  const r = await n.ctx.BaroloPrices.get(['ethereum', 'solana', 'radiant-capital']);
+  // A Coinbase é em lote (a URL não leva ids), então o que se mede é: buscou uma vez só e
+  // não foi à paprika atrás do RDNT, que estava fresco.
+  assert.deepStrictEqual(n.calls, [CB_URL]);
   assert.strictEqual(r.ethereum.usd, 2400);                        // fresco: não buscou
+  assert.strictEqual(r['radiant-capital'].usd, 0.005);             // fresco (e da cauda): não buscou
   assert.strictEqual(r.solana.usd, CG.solana.usd);                 // velho: buscou
   // maxAge maior aceita o velho sem buscar
   const m = makeCtx(LIB, { storage });
@@ -143,25 +194,29 @@ test('pedidos simultâneos da mesma página se juntam (cada id pedido uma vez s�
   const all = Promise.all([P.get(['ethereum', 'solana']), P.get(['solana', 'ethereum']), P.get(['solana', 'cardano'])]);
   n.release();
   const [a, b, c] = await all;
-  assert.deepStrictEqual(n.urls.map(idsOf), [['ethereum', 'solana'], ['cardano']]);
+  // 2 buscas: a 1ª junta ethereum+solana (os 2 primeiros pedidos), a 2ª só o cardano —
+  // o 2º pedido não refez nada, porque os ids dele já estavam em voo.
+  assert.deepStrictEqual(n.calls, [CB_URL, CB_URL]);
   assert.strictEqual(a.solana.usd, CG.solana.usd);
   assert.strictEqual(b.ethereum.usd, CG.ethereum.usd);
   assert.strictEqual(c.cardano.usd, CG.cardano.usd);
 });
 
 test('depois de uma falha espera 30 s antes de bater de novo (sem rajada de 429)', async () => {
-  const n = makeCtx(LIB, { coingecko: 429 });
+  const n = makeCtx(LIB, { net: 'down' });
   await n.ctx.BaroloPrices.get(['ethereum']);
+  const gastas = n.calls.length;                                    // a cascata inteira, uma vez
   const again = await n.ctx.BaroloPrices.get(['ethereum', 'solana']);
-  assert.strictEqual(n.calls.length, 1);
+  assert.strictEqual(n.calls.length, gastas, 'na pausa não pode sair nenhuma requisição nova');
   assert.strictEqual(again._stale, true);
 });
 
-test('id que o CoinGecko não devolve não é pedido de novo a cada chamada', async () => {
+test('id que nenhuma fonte devolve não é pedido de novo a cada chamada', async () => {
   const n = makeCtx(LIB);
   await n.ctx.BaroloPrices.get(['ethereum', 'tether']);             // o mock não conhece tether
+  const gastas = n.calls.length;
   await n.ctx.BaroloPrices.get(['ethereum', 'tether']);
-  assert.strictEqual(n.calls.length, 1);
+  assert.strictEqual(n.calls.length, gastas);
 });
 
 test('poll: não roda com a aba oculta e, ao voltar, roda na hora se já passou o intervalo', async () => {
@@ -197,9 +252,9 @@ test('nenhuma página chama mais o price.jup.ag', () => {
 });
 
 test('preço em USD do CoinGecko só pelo módulo: /simple/price direto só onde a moeda é outra', () => {
-  // Exceções que ficam: portfolio (fallback do /coins/markets e o câmbio tether→BRL) e a aba Fiscal
-  // do ferramentas (usd+brl). O resto usa BaroloPrices.get.
-  const allowed = { 'index.html': 0, 'pools.html': 0, 'relatorio.html': 0, 'ferramentas.html': 1, 'portfolio_analytics.html': 2 };
+  // Só sobrou a 2ª tentativa do portfolio (fallback do /coins/markets, antes da cascata).
+  // O câmbio BRL do portfolio e da aba Fiscal passaram para BaroloPrices.usdBrl() em 29/09/2026.
+  const allowed = { 'index.html': 0, 'pools.html': 0, 'relatorio.html': 0, 'ferramentas.html': 0, 'portfolio_analytics.html': 1 };
   for (const f of PAGES) {
     const js = H.inlineScripts(H.read(f)).join('\n');
     const n = (js.match(/api\.coingecko\.com\/api\/v3\/simple\/price/g) || []).length;

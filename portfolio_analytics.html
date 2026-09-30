@@ -1878,6 +1878,25 @@ async function fetchPrices(){
  setPriceStatus(true, 'CoinGecko simple');
  return true;
  } catch(e2) {
+ // 3ª fonte: cascata compartilhada (Coinbase → CoinPaprika → CoinGecko) do
+ // lib/barolo-prices.js. Desde 29/09/2026 é ela que segura a página: as duas
+ // tentativas acima batem no 403 do CoinGecko e o site caía nos FALLBACK_PRICES
+ // (patrimônio $7.572 contra $10.437 reais). Só traz usd + 24h — spark7d, 7d e
+ // 30d ficam sem valor novo, que é o comportamento de quando o rico falha.
+ try {
+ const px = await window.BaroloPrices.get(PORTFOLIO.map(a=>a.cgId), { maxAge: 60000 });
+ if (px && Object.keys(px).length && !px._stale) {
+ Object.keys(px).forEach(id => {
+   liveData[id] = Object.assign({}, liveData[id], { usd: px[id].usd, usd_24h_change: px[id].usd_24h_change || 0 });
+ });
+ ethPrice = getPrice('ethereum');
+ solPrice = getPrice('solana');
+ savePriceCache(liveData);
+ setPriceStatus(true, 'Coinbase/CoinPaprika');
+ return true;
+ }
+ } catch(e3) { /* segue para o cache abaixo */ }
+
  // Último recurso: cache desatualizado (melhor que fallback de mar/2026)
  if (cached) {
    Object.assign(liveData, cached.data);
@@ -4234,10 +4253,10 @@ window.usdBrlRate = 5.33;
 
 async function fetchBrlRate() {
  try {
- const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=brl');
- if (!r.ok) return;
- const d = await r.json();
- if (d.tether && d.tether.brl) { usdBrlRate = d.tether.brl; }
+ // AwesomeAPI → CoinGecko → último câmbio salvo (lib/barolo-prices.js). O
+ // tether→BRL do CoinGecko sozinho parou de responder em 29/09/2026.
+ const rate = await window.BaroloPrices.usdBrl();
+ if (rate > 0) usdBrlRate = rate;
  const badge = document.getElementById('brlRateBadge');
  if (badge) badge.textContent = 'R$ ' + usdBrlRate.toFixed(2);
  } catch(e) {}
