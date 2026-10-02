@@ -88,7 +88,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 | AAVE USDC borrow | 765,737952 | 3,04% (net) · base 4,13% | 748,00 |
 | Kamino SOL supply | 25,03 | 5,53% | 23,645990 |
 | Kamino USDS supply | **0 — encerrada** | — | 0 |
-| Kamino USDC borrow | 465,07 | 5,95% | 388,689923 |
+| Kamino USDC borrow | 454,97957 | 5,95% | 378,599493 |
 
 - ✅ **ESPELHO EM DIA — pendente ZERO.** Ele lançou tudo em 02/10, em duas rodadas: o acumulado de
   11-29/09 (~US$ 25,89) e depois os ~US$ 7,99 (juro de 30/09 em diante + supply novo da Kamino).
@@ -128,6 +128,13 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   A **posição de USDS foi encerrada**: resgatou o reward (+1,59364), trocou 307,051 USDS por 307,05707
   USDC (1:1, **sem slippage material** — ao contrário do que dizia o 1º registro), enviou 4,91291 USDC
   e repagou 302,14416. PYUSD 0,07 e KMNO 6,38 **seguem claimable**, não foram convertidos.
+- ⚡ **2º REPAY no mesmo dia, pago com KMNO** — resgatou +164,51055 KMNO do stake, somou ao saldo e
+  aos rewards, trocou **255,21922 KMNO por 10,09033 USDC** e repagou **10,09043** na Kamino. Dívida
+  **465,07 → 454,98**, LTV ~**15,42%**, preço de liquidação do SOL **US$ 24,24**. O KMNO nunca esteve
+  contabilizado no site (rewards não lançados), então isso é **ganho puro**: o passivo cai US$ 10,09
+  sem nenhum ativo do site sair. Rewards da Kamino depois: **KMNO zerado**, sobra PYUSD US$ 0,07.
+  *(Os 0,0001 USDC de diferença entre a troca e o repay são o dust do address poisoning, que estava
+  parado na carteira e acabou entrando no repay. Inócuo — é só valor.)*
 - ⚠️ **PENDENTE: destino dos 4,91291 USDC** enviados para `BjQh...kA7X` antes do repay. Se é carteira
   dele, é ativo e falta lançar — hoje não está em lugar nenhum do site.
 - ⚠️ **No CoinGecko falta dar SAÍDA no USDS** (305,46 → 0). **Transferência de saída, não venda**: o
@@ -143,6 +150,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - `RENDA_2026` de setembro continua manual.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 02/10/2026 (6) — 2º repay com KMNO convertido (−10,09 USDC): dívida Kamino 454,98, total 1.220,72; ganho puro (o KMNO não estava no site).
 - 02/10/2026 (5) — repay na Kamino (767,21 → 465,07) com o USDS inteiro; corrigidos APY do SOL, LTV e liq.LTV que a sessão do /quant deixou do print anterior (liq.LTV 76,4% → 75% muda o preço de liquidação de 24,32 para 24,77).
 - 02/10/2026 (4) — ele lançou os ~US$ 7,99 restantes; `cgMirror` igualado ao holding, pendente ZERO, 13 tokens conferidos.
 - 02/10/2026 (3) — print do saldo da OKX (134,98 USDT — o caixa NÃO acabou) + Kamino de 02/10 (SOL 25,03 · USDS 305,46 · borrow 767,21 · LTV 23,40%).
