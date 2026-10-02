@@ -163,7 +163,7 @@ window.BAROLO_DATA = {
     // BTC 0,00434195 -> 0,00494132 e invested 270,47 -> 320,45 (29/09/2026): 2 ordens limite executadas em 28/09 na OKX
     // (+0,00023934 @ US$ 83.521,35 = 19,99 e +0,00036003 @ US$ 83.298,61 = 29,99) pagas com os 50 USDT que estavam
     // parados la — ROTACAO, nao aporte (o custo migra do USDT). Confere com o print do CoinGecko (custo total 320,45).
-    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00494132, invested:320.47  },  // invested 320,45->320,47 (02/10): o historico de ordens da OKX mostra que as 2 compras de 28/09 foram US$ 30,00 (16:38) + US$ 20,00 (16:33) = US$ 50,00, nao 49,98 — o CoinGecko tinha 29,99+19,99. Qty inalterada (0,00036003 + 0,00023934 brutos). Em 02/10 o CoinGecko estava com 0,00530135 porque a compra de 0,00036003 tinha sido lancada DUAS vezes (uma datada 28 Oct 2026, data futura); ele apagou a duplicata e acertou os centavos no mesmo dia — CoinGecko e site conferem (0,00494132 / US$ 320,47).
+    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00494132, invested:320.47  },  // invested 320,45->320,47 (02/10): o historico de ordens da OKX mostra que as 2 compras de 28/09 foram US$ 30,00 (16:38) + US$ 20,00 (16:33) = US$ 50,00, nao 49,98 — o CoinGecko tinha 29,99+19,99. Qty inalterada (0,00036003 + 0,00023934 brutos). Em 02/10 o CoinGecko estava com 0,00530135 porque a compra de 0,00036003 tinha sido lancada DUAS vezes (uma datada 28 Oct 2026, data futura); ele apagou a duplicata e acertou os centavos no mesmo dia — CoinGecko e site conferem (0,00494132 / US$ 320,47). NOTA: o saldo REAL na OKX e 0,00492638 (print 02/10) — 0,00001494 a menos (~US$ 1,26), que e a soma das taxas das 8 compras, cobradas em BTC. O CoinGecko (e o site) contam a quantidade BRUTA de cada ordem. Diferenca conhecida e aceita; se um dia valer acertar, lancar uma saida de 0,00001494 como taxa.
     { ticker:'ETH',   cgId:'ethereum',                 qty:2.338483,   invested:4724.26 },  // qty 2,338054->2,338483 (02/10): juro do aWETH 0,018125328 -> 0,018554029 (MCP), custo zero.  // qty 2,337575->2,338054 (29/09): juro do aWETH 0,017646465 -> 0,018125328 (MCP). qty 2,317675->2,337575 e invested 4674,26->4724,26 (25/09/2026): compra de 24/09 (+0,0189 ETH @ ~US$ 2.645) paga com 50 dos 100 USDT sacados da AAVE em 15/09 — ROTACAO, nao aporte (custo migra do USDT). No CoinGecko ele digitou 0,189, 10x a mais; ver cgMirror + 0,001000116 de juro do aWETH desde 18/09 (0,016646349 -> 0,017646465, MCP). qty 2,317635->2,317675 (18/09, apos o deposito): juro do aWETH 0,016605882 -> 0,016646349 (MCP). Deposito de 0,08 ETH na AAVE em 18/09 so muda de lugar (carteira -> supply), nao a qty. qty 2,31739->2,317635 (18/09): +0,000244777 ETH de juro do aWETH desde 16/09 (0,016361105 -> 0,016605882, MCP), custo zero.  qty 2,23317->2,31739 e invested 4474,26->4674,26 (16/09/2026): compras de 0,041698997 (15/09) + 0,041916377 (16/09) = +0,083615374 ETH por US$ 200, pagos com USDT sacado da AAVE (ROTACAO, nao aporte — custo migra do USDT) + 0,000607 ETH de juro do aWETH desde 11/09 (0,015754006 -> 0,016361105, MCP).  qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
     // SOL 24,765222 -> 24,93 em 04/09/2026: MESMO caso do USDS logo abaixo — o holding
     // estava ABAIXO do supply da Kamino (24,93), violando o invariante de que holdings
@@ -176,7 +176,7 @@ window.BAROLO_DATA = {
     // ✅ CONFIRMADO PELO LUCAS (05/09/2026): "esse 0.1648sol foram ganhos mesmo, custo zero"
     // — ele vai espelhar no CoinGecko como 'transferencia de entrada' (custo 0). O valor
     // aqui esta certo; NAO puxar de volta para 24,765222 na proxima leitura de print.
-    { ticker:'SOL',   cgId:'solana',                   qty:24.98,      invested:2498.84 },  // 24,95->24,98 (18/09): supply da Kamino, yield custo zero.  24,94->24,95 (11/09): supply da Kamino, yield custo zero.  // invested = "Custo total" do CoinGecko (print 09/09/2026), fonte canonica. Era 2.533,36: o lancamento de 04/07 somou 53,92 por 0,66 SOL (preco do DIA do registro, $81,70) quando a compra real foi 0,661425 @ $62,26 = $41,18. Qty 24,93->24,94 acompanha o supply da Kamino (yield, custo zero).
+    { ticker:'SOL',   cgId:'solana',                   qty:25.03,      invested:2498.84 },  // 24,98->25,03 (02/10): supply da Kamino, yield custo zero.  // 24,95->24,98 (18/09): supply da Kamino, yield custo zero.  24,94->24,95 (11/09): supply da Kamino, yield custo zero.  // invested = "Custo total" do CoinGecko (print 09/09/2026), fonte canonica. Era 2.533,36: o lancamento de 04/07 somou 53,92 por 0,66 SOL (preco do DIA do registro, $81,70) quando a compra real foi 0,661425 @ $62,26 = $41,18. Qty 24,93->24,94 acompanha o supply da Kamino (yield, custo zero).
     { ticker:'ADA',   cgId:'cardano',                  qty:375.245,    invested:530.95  },
     { ticker:'EIGEN', cgId:'eigenlayer',               qty:131.44388802, invested:45.87 },
     { ticker:'RDNT',  cgId:'radiant-capital',          qty:7290.46,    invested:0       },
@@ -197,6 +197,16 @@ window.BAROLO_DATA = {
     // USDT 2201,81879 -> 2002,77816 e invested 2179,19 -> 1979,19 (16/09/2026): 200 USDT viraram ETH (rotacao;
     // o custo migra para o ETH, total investido nao muda) + 0,959374 de juro do aUSDT desde 11/09
     // (20,917508 -> 21,876882, MCP). Saque de 300 USDT da AAVE em 15/09: 200 foram pro ETH, 100 seguem fora da AAVE.
+    // 🔸 BABY (Babylon) 16,96916228 = US$ 0,23 na OKX (print 02/10/2026) NAO entra na
+    // contabilidade — mesmo tratamento dos ~0,05 SOL de gas na carteira (decisao de
+    // 15/07/2026): valor abaixo do custo de registrar. Se um dia virar posicao, criar
+    // entrada em holdings. O BRL 0,00003629 da OKX idem.
+    // ✅ CONFERIDO contra o saldo da OKX (print 02/10/2026): dos 1.906,15 de USDT, 1.721,13
+    // estao no supply da AAVE e 185,02 fora dela — 134,98 na OKX + ~50 na carteira EVM
+    // (4 centavos de diferenca, arredondamento). Corrige a nota de 29/09 que dizia que o
+    // caixa em corretora tinha acabado: NAO acabou. Reconstrucao: os 185 de caixa de 22/08
+    // viraram 135 quando 50 compraram BTC na OKX em 28/09; e dos 300 sacados da AAVE em
+    // 15/09, 200 viraram ETH em 15-16/09 e 50 em 24/09, sobrando ~50 na carteira EVM.
     { ticker:'USDT', cgId:'tether',           qty:1906.148819, invested:1879.19  },  // qty +0,528182 e invested -0,02 (02/10/2026): juro do aUSDT desde 29/09 (24,699359 -> 25,227541, MCP) e as compras de BTC de 28/09 custaram US$ 50,00 (OKX), nao 49,98 — 2 centavos a mais migram para o BTC.  // -49,98 (29/09/2026): os 50 USDT da ordem limite viraram BTC em 28/09 (rotacao; custo migra para o BTC) e +0,713205 de juro do aUSDT desde 25/09 (23,986154 -> 24,699359, MCP).  -50 (26/09/2026): 50 dos 100 USDT sacados da AAVE em 15/09 viraram ETH em 24/09 — ROTACAO, nao aporte (o custo migra para o ETH, total investido nao muda). Sobram 50 USDT em ordem limite, nao acionada.  2003,309704->2004,887432 (25/09/2026): +1,577728 de juro do aUSDT desde 18/09 (22,408426 -> 23,986154, MCP).  2003,268354->2003,309704 (18/09, apos o deposito): juro do aUSDT 22,367076 -> 22,408426 (MCP).  2002,77816->2003,268354 (18/09): +0,490194 USDT de juro do aUSDT desde 16/09 (21,876882 -> 22,367076, MCP), custo zero
     // USDS 300 -> 304.66 em 04/09/2026: o holding estava ABAIXO do supply da Kamino
     // (304,66), o que viola o invariante de que holdings incluem o colateral — o piso
@@ -206,7 +216,7 @@ window.BAROLO_DATA = {
     // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
     // ✅ Mesma confirmacao do SOL (Lucas, 05/09/2026): e yield, custo zero, e ele espelha
     // no CoinGecko como 'transferencia de entrada'. NAO puxar de volta para 300.
-    { ticker:'USDS', cgId:'usds',            qty:305.05,   invested:300      }  // 304,86->305,05 (18/09): supply da Kamino, yield custo zero.  304,69->304,86 (11/09): supply da Kamino, yield custo zero.  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
+    { ticker:'USDS', cgId:'usds',            qty:305.46,   invested:300      }  // 305,05->305,46 (02/10): supply da Kamino, yield custo zero.  // 304,86->305,05 (18/09): supply da Kamino, yield custo zero.  304,69->304,86 (11/09): supply da Kamino, yield custo zero.  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
@@ -328,9 +338,9 @@ window.BAROLO_DATA = {
       // Interest Earned lifetime +$163,95 · LTV 26,68% · Liq.LTV 76,60%. So juros, sem
       // deposito/saque/repay -> principals.kamino INALTERADO. Rewards claimable a parte
       // (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,10.
-      supply: { SOL:{ qty:24.98, apy:0.0581 }, USDS:{ qty:305.05, apy:0.0327 } },   // print 18/09/2026
-      borrow: { USDC:{ qty:764.96, apy:0.0543 } },
-      ltv: 0.2594, liqLtv: 0.7655   // print 18/09/2026 (Interest Earned +$166,36; rewards nao resgatados USDS 1,59 · PYUSD 0,07 · KMNO 4,44)
+      supply: { SOL:{ qty:25.03, apy:0.0547 }, USDS:{ qty:305.46, apy:0.0363 } },   // print 02/10/2026
+      borrow: { USDC:{ qty:767.21, apy:0.0595 } },
+      ltv: 0.2340, liqLtv: 0.7640   // print 02/10/2026 (Net Value $2,51K · Net APY 5,11% · Interest Earned lifetime +$171,79; principals INALTERADOS, so juro; rewards nao resgatados USDS 1,59 · PYUSD 0,07 · KMNO 6,43 = ~US$ 8,09)
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'closed',
