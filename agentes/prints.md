@@ -86,9 +86,9 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 | AAVE WETH supply | 2,308294 | 1,70% | 2,289740 |
 | AAVE USDT supply | 1.721,128519 | 3,67% | 1.695,900978 |
 | AAVE USDC borrow | 765,737952 | 3,04% (net) · base 4,13% | 748,00 |
-| Kamino SOL supply | 25,03 | 5,47% | 23,645990 |
-| Kamino USDS supply | 305,46 | 3,63% | 300,392689 |
-| Kamino USDC borrow | 767,21 | 5,95% | 690,834084 |
+| Kamino SOL supply | 25,03 | 5,53% | 23,645990 |
+| Kamino USDS supply | **0 — encerrada** | — | 0 |
+| Kamino USDC borrow | 465,07 | 5,95% | 388,689923 |
 
 - ✅ **ESPELHO EM DIA — pendente ZERO.** Ele lançou tudo em 02/10, em duas rodadas: o acumulado de
   11-29/09 (~US$ 25,89) e depois os ~US$ 7,99 (juro de 30/09 em diante + supply novo da Kamino).
@@ -123,13 +123,27 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   em 02/10 — o 403 era temporário.
 
 **Pendências que o `/prints` deve lembrar:**
-- Yield pendente: **ZERO** (02/10). Volta a acumular com o juro dos próximos dias.
+- ⚡ **REPAY NA KAMINO (02/10, fim da tarde)** — dívida **767,21 → 465,07 USDC**, LTV 23,40% → **15,80%**,
+  liq. LTV 76,40% → **75,00%** (o colateral virou SOL puro) e preço de liquidação do SOL **US$ 24,77**.
+  A **posição de USDS foi encerrada**: resgatou o reward (+1,59364), trocou 307,051 USDS por 307,05707
+  USDC (1:1, **sem slippage material** — ao contrário do que dizia o 1º registro), enviou 4,91291 USDC
+  e repagou 302,14416. PYUSD 0,07 e KMNO 6,38 **seguem claimable**, não foram convertidos.
+- ⚠️ **PENDENTE: destino dos 4,91291 USDC** enviados para `BjQh...kA7X` antes do repay. Se é carteira
+  dele, é ativo e falta lançar — hoje não está em lugar nenhum do site.
+- ⚠️ **No CoinGecko falta dar SAÍDA no USDS** (305,46 → 0). **Transferência de saída, não venda**: o
+  USDC foi direto abater dívida, que o CoinGecko não acompanha, então venda criaria receita fantasma.
+  Enquanto isso o `yield-to-mirror` mostra NEGATIVO no USDS — é o lembrete.
+- 🚨 **ADDRESS POISONING em curso.** Logo depois do envio para `BjQh...kA7X` entrou um dust de
+  **+0,0001 USDC** de `BjQh...BA7X` — mesmo começo, fim diferente. É o golpista plantando o endereço
+  no histórico para a PRÓXIMA transferência. Na próxima vez, não copiar do histórico: conferir o
+  endereço inteiro ou usar contato salvo. Terceiro caso registrado (ver aba Alertas do site).
 - Borrow da AAVE em 4,13% base / 3,04% net contra supply do USDT em 3,67%: o carry voltou a ser
   favorável, não há mais o alerta de quitar que estava aberto desde 18/09.
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 02/10/2026 (5) — repay na Kamino (767,21 → 465,07) com o USDS inteiro; corrigidos APY do SOL, LTV e liq.LTV que a sessão do /quant deixou do print anterior (liq.LTV 76,4% → 75% muda o preço de liquidação de 24,32 para 24,77).
 - 02/10/2026 (4) — ele lançou os ~US$ 7,99 restantes; `cgMirror` igualado ao holding, pendente ZERO, 13 tokens conferidos.
 - 02/10/2026 (3) — print do saldo da OKX (134,98 USDT — o caixa NÃO acabou) + Kamino de 02/10 (SOL 25,03 · USDS 305,46 · borrow 767,21 · LTV 23,40%).
 - 02/10/2026 (2) — duplicata do BTC apagada por ele; CoinGecko e site conferem (0,00494132 / US$ 320,47); `cgMirror` limpo.
