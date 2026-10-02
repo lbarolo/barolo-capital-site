@@ -216,7 +216,7 @@ window.BAROLO_DATA = {
     // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
     // ✅ Mesma confirmacao do SOL (Lucas, 05/09/2026): e yield, custo zero, e ele espelha
     // no CoinGecko como 'transferencia de entrada'. NAO puxar de volta para 300.
-    { ticker:'USDS', cgId:'usds',            qty:0,        invested:0        }  // 305,46->0 e invested 300->0 (02/10): USDS sacado da Kamino + rewards (USDS 1,59 · PYUSD 0,07 · KMNO ~6,43) convertidos em 302,144161 USDC e usados no repay da Kamino. ROTACAO, nao aporte. Slippage/taxas da conversao ≈ US$ 11 (≈3,3 sobre o USDS do site + os ~8 de rewards que nunca entraram no site).  // 305,05->305,46 (02/10): supply da Kamino, yield custo zero.  // 304,86->305,05 (18/09): supply da Kamino, yield custo zero.  304,69->304,86 (11/09): supply da Kamino, yield custo zero.  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
+    { ticker:'USDS', cgId:'usds',            qty:0,        invested:0        }  // 305,46->0 e invested 300->0 (02/10): posicao de USDS ENCERRADA no repay da Kamino. ROTACAO, nao aporte. Extrato da carteira Solana (02/10), em ordem: resgate do reward +1,59364 USDS -> troca de 307,051 USDS por 307,05707 USDC (praticamente 1:1, SEM slippage material) -> envio de 4,91291 USDC para BjQh...kA7X -> repay de 302,14416 USDC na Kamino. Confere: 305,46 (supply) + 1,59364 (reward) = 307,05364 trocados, e 307,05707 - 4,91291 = 302,14416 = o repay exato. ⚠️ PYUSD 0,07 e KMNO 6,38 seguem CLAIMABLE no print pos-repay — NAO foram convertidos. ⚠️ PENDENTE: confirmar o destino dos 4,91291 USDC; se for carteira do Lucas, e ativo e falta lancar (hoje nao esta em lugar nenhum).  // 305,05->305,46 (02/10): supply da Kamino, yield custo zero.  // 304,86->305,05 (18/09): supply da Kamino, yield custo zero.  304,69->304,86 (11/09): supply da Kamino, yield custo zero.  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
@@ -338,9 +338,9 @@ window.BAROLO_DATA = {
       // Interest Earned lifetime +$163,95 · LTV 26,68% · Liq.LTV 76,60%. So juros, sem
       // deposito/saque/repay -> principals.kamino INALTERADO. Rewards claimable a parte
       // (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,10.
-      supply: { SOL:{ qty:25.03, apy:0.0547 }, USDS:{ qty:0, apy:0.0363 } },   // print 02/10/2026; USDS 305,46->0 (02/10, repay)
+      supply: { SOL:{ qty:25.03, apy:0.0553 }, USDS:{ qty:0, apy:0 } },   // print 02/10/2026 POS-REPAY; USDS 305,46->0 (posicao encerrada)
       borrow: { USDC:{ qty:465.07, apy:0.0595 } },   // 767,21->465,07 (02/10): repay de 302,144161 USDC (print)
-      ltv: 0.1579, liqLtv: 0.7640   // ltv 0,2340->0,1579 (print pos-repay 02/10); liqLtv ainda do mix SOL+USDS — conferir no proximo print (agora so SOL)   // print 02/10/2026 (Net Value $2,51K · Net APY 5,11% · Interest Earned lifetime +$171,79; principals INALTERADOS, so juro; rewards nao resgatados USDS 1,59 · PYUSD 0,07 · KMNO 6,43 = ~US$ 8,09)
+      ltv: 0.1580, liqLtv: 0.7500   // print 02/10/2026 POS-REPAY (Net Value $2,48K · Net APY 5,45% · Interest Earned lifetime +$171,79 · Liq. Price US$ 24,77). O liqLtv caiu de 76,40% para 75,00% porque o colateral virou SOL puro — o USDS, que puxava a media para cima, saiu. Manter 0,764 subestimaria o risco (preco de liquidacao daria US$ 24,32 contra os 24,77 reais).
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'closed',
@@ -743,7 +743,7 @@ window.BAROLO_DATA = {
     // de setembro. A rotina do fechamento de mes continua valendo para o juro que vier.
     // Print do CoinGecko de 02/10/2026 — o que esta LA hoje (= holdings, os 13 conferidos):
     SOL:  25.03,
-    USDS: 305.46,
+    USDS: 0,            // 305,46->0 (02/10): posicao de USDS encerrada no repay da Kamino. Ele ainda precisa lancar a SAIDA no CoinGecko — transferencia de saida, NAO venda: o USDC foi direto abater divida, que o CoinGecko nao acompanha, entao lancar como venda criaria receita fantasma.
     ETH:  2.338483,      // no CoinGecko esta 2,338483374; o site arredonda em 6 casas (US$ 0,001 de diferenca).
     USDT: 1906.148819,
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de 02/10 —
