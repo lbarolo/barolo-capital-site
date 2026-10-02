@@ -90,10 +90,11 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 | Kamino USDS supply | 305,46 | 3,63% | 300,392689 |
 | Kamino USDC borrow | 767,21 | 5,95% | 690,834084 |
 
-- ✅ **Ele lançou o yield acumulado no CoinGecko em 02/10** ("adcionei os valores ao coingecko"):
-  ~US$ 25,89 de ETH/SOL/USDT/USDS entraram como transferência de entrada, custo zero. **Fim da fase
-  "acumulando"** aberta em 11/09. SOL e USDS bateram na vírgula; no USDT ele lançou 7,56 contra
-  7,531847 de pendente (3 centavos a mais, absorvidos pelo juro dos dias seguintes).
+- ✅ **ESPELHO EM DIA — pendente ZERO.** Ele lançou tudo em 02/10, em duas rodadas: o acumulado de
+  11-29/09 (~US$ 25,89) e depois os ~US$ 7,99 (juro de 30/09 em diante + supply novo da Kamino).
+  **Fim da fase "acumulando"** aberta em 11/09. Os 13 tokens conferidos contra o print, todos batem.
+  Datou como 30/09 fazendo em 02/10 — **correto**: a data não entra em nenhuma conta do site (só a
+  qty e o custo zero), e datar no fechamento mantém o yield de setembro dentro de setembro.
 - ✅ **BTC reconciliado em 02/10.** Tinha duplicata no CoinGecko (0,00530135): a compra de 0,00036003
   de 28/09 estava lançada duas vezes, uma datada **28 Oct 2026** (data futura). Quem resolveu foi o
   **histórico de ordens da OKX** — só DUAS execuções em 28/09: 0,00036003 @ US$ 30,00 (16:38:06) e
@@ -122,14 +123,14 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   em 02/10 — o 403 era temporário.
 
 **Pendências que o `/prints` deve lembrar:**
-- Yield pendente: **~US$ 7,99** (ETH +0,000429 · SOL +0,05 · USDT +0,500029 · USDS +0,41) — o do
-  ETH/USDT é o juro de 30/09 em diante; o de SOL/USDS é o supply novo da Kamino do print de 02/10.
+- Yield pendente: **ZERO** (02/10). Volta a acumular com o juro dos próximos dias.
 - Borrow da AAVE em 4,13% base / 3,04% net contra supply do USDT em 3,67%: o carry voltou a ser
   favorável, não há mais o alerta de quitar que estava aberto desde 18/09.
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 02/10/2026 (4) — ele lançou os ~US$ 7,99 restantes; `cgMirror` igualado ao holding, pendente ZERO, 13 tokens conferidos.
 - 02/10/2026 (3) — print do saldo da OKX (134,98 USDT — o caixa NÃO acabou) + Kamino de 02/10 (SOL 25,03 · USDS 305,46 · borrow 767,21 · LTV 23,40%).
 - 02/10/2026 (2) — duplicata do BTC apagada por ele; CoinGecko e site conferem (0,00494132 / US$ 320,47); `cgMirror` limpo.
 - 02/10/2026 — yields lançados por ele no CoinGecko (fim da fase "acumulando"); duplicata de BTC detectada pelo

@@ -734,15 +734,18 @@ window.BAROLO_DATA = {
     // ✅ LANCADO POR ELE em 05/09/2026 ("Coloquei la no coingecko"): +0,174778 SOL
     // e +4,69 USDS entraram como transferencia de entrada, custo zero. Espelho
     // igualado ao holding -> pendente ZERO e o card do dashboard some sozinho.
-    // ✅ LANCADO POR ELE em 02/10/2026 ("adcionei os valores ao coingecko"): o acumulado
-    // desde 11/09 (~US$ 25,89 em ETH/SOL/USDT/USDS) entrou como transferencia de entrada,
-    // custo zero. Fim da fase "acumulando" aberta em 11/09. O que sobra abaixo e so o
-    // juro dos dias seguintes — a rotina do fechamento de mes continua valendo.
-    // Print do CoinGecko de 02/10/2026 — o que esta LA hoje:
-    SOL:  24.98,
-    USDS: 305.05,
-    ETH:  2.338054374,   // ele lancou o pendente de 11-29/09; o juro do aWETH de 30/09 em diante segue pendente.
-    USDT: 1905.64879,    // lancou +7,56 (o pendente era 7,531847) — 3 centavos a mais que o juro dos dias seguintes absorve.
+    // ✅ ESPELHO EM DIA em 02/10/2026 — pendente ZERO, o card do dashboard some sozinho.
+    // Ele lancou tudo em duas rodadas no mesmo dia: primeiro o acumulado de 11-29/09
+    // (~US$ 25,89, fim da fase "acumulando" aberta em 11/09) e depois os ~US$ 7,99 do juro
+    // de 30/09 em diante + o supply novo da Kamino do print de 02/10. Entrou como
+    // transferencia de entrada datada 30/09, custo zero — a data nao entra em nenhuma conta
+    // do site (so a qty e o custo) e datar no fechamento mantem o yield de setembro dentro
+    // de setembro. A rotina do fechamento de mes continua valendo para o juro que vier.
+    // Print do CoinGecko de 02/10/2026 — o que esta LA hoje (= holdings, os 13 conferidos):
+    SOL:  25.03,
+    USDS: 305.46,
+    ETH:  2.338483,      // no CoinGecko esta 2,338483374; o site arredonda em 6 casas (US$ 0,001 de diferenca).
+    USDT: 1906.148819,
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de 02/10 —
     // iguais ao holding, nada pendente.
   },
