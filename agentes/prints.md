@@ -135,11 +135,14 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   sem nenhum ativo do site sair. Rewards da Kamino depois: **KMNO zerado**, sobra PYUSD US$ 0,07.
   *(Os 0,0001 USDC de diferença entre a troca e o repay são o dust do address poisoning, que estava
   parado na carteira e acabou entrando no repay. Inócuo — é só valor.)*
-- ⚠️ **PENDENTE: destino dos 4,91291 USDC** enviados para `BjQh...kA7X` antes do repay. Se é carteira
-  dele, é ativo e falta lançar — hoje não está em lugar nenhum do site.
-- ⚠️ **No CoinGecko falta dar SAÍDA no USDS** (305,46 → 0). **Transferência de saída, não venda**: o
-  USDC foi direto abater dívida, que o CoinGecko não acompanha, então venda criaria receita fantasma.
-  Enquanto isso o `yield-to-mirror` mostra NEGATIVO no USDS — é o lembrete.
+- ✅ **Os 4,91291 USDC (e o 0,00137 SOL do 2º repay) eram TAXA do protocolo de swap** — confirmado
+  por ele em 02/10. **Não são ativo**, saíram de vez. Custo real da operação: ~1,6% do valor trocado.
+  A troca em si foi 1:1 no preço; o custo veio como taxa à parte, não como slippage. Efeito líquido
+  no patrimônio: **−US$ 3,32** (taxa 4,91 menos o reward de 1,59 que nunca esteve no site).
+- ✅ **USDS resolvido no CoinGecko**: ele **excluiu a moeda** do portfólio em vez de dar saída
+  ("provável que eu não compre mais USDS"). `cgMirror` zerado, pendente ZERO. Efeito colateral bom:
+  sumiu de lá um **ganho fantasma de US$ 305** — o USDS tinha entrado a custo zero no reset de
+  março/2026, então o CoinGecko contava o saldo inteiro como lucro. O rastro para IR fica no `data.js`.
 - 🚨 **ADDRESS POISONING em curso.** Logo depois do envio para `BjQh...kA7X` entrou um dust de
   **+0,0001 USDC** de `BjQh...BA7X` — mesmo começo, fim diferente. É o golpista plantando o endereço
   no histórico para a PRÓXIMA transferência. Na próxima vez, não copiar do histórico: conferir o
@@ -150,6 +153,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - `RENDA_2026` de setembro continua manual.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 02/10/2026 (7) — pendências fechadas: os 4,91 USDC eram taxa do protocolo (não ativo) e ele excluiu o USDS do CoinGecko; espelho zerado.
 - 02/10/2026 (6) — 2º repay com KMNO convertido (−10,09 USDC): dívida Kamino 454,98, total 1.220,72; ganho puro (o KMNO não estava no site).
 - 02/10/2026 (5) — repay na Kamino (767,21 → 465,07) com o USDS inteiro; corrigidos APY do SOL, LTV e liq.LTV que a sessão do /quant deixou do print anterior (liq.LTV 76,4% → 75% muda o preço de liquidação de 24,32 para 24,77).
 - 02/10/2026 (4) — ele lançou os ~US$ 7,99 restantes; `cgMirror` igualado ao holding, pendente ZERO, 13 tokens conferidos.
