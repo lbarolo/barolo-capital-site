@@ -17,5 +17,6 @@ a AAVE é neutra (borrow ≈ supply do USDT); mover a dívida para a AAVE ganha 
 Backtest DCA-Mayer: −0,9% vs DCA fixo → não adotar. Backlog Q1–Q7 em `QUANT.md §6`, sem prioridade.
 
 ## Histórico
+- 02/10/2026 — plano do Lucas: USDS parcial + pool SOL/USDC 140–190 (~2,83 SOL, saída média US$ 163) + aporte; contas em §9.
 - 02/10/2026 — análise trocar/quitar dívidas: quitar a Kamino vence (§9); decisão do Lucas.
 - 28/09/2026 — agente criado; `QUANT.md` + `scripts/quant-report.js`; primeiro relatório.

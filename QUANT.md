@@ -200,3 +200,16 @@ Kamino ganha ~US$ 25/ano contra o status quo e zera esse risco. O SOL continua d
 rendendo o supply de 5,5%. Na média histórica, a opção 2 ganha bem menos, porque fica exposta aos
 picos de taxa da AAVE. Valores pequenos (≈0,2% do patrimônio): **o ganho principal é de risco**.
 Pegar a dívida de volta é 1 transação se a pool reabrir.
+
+**Plano do Lucas (02/10, em estudo):** quitar parte com os 305 USDS e o resto com a valorização do SOL
+via **pool SOL/USDC no range US$ 140–190**, além de capital novo aos poucos. Contas (SOL a US$ 118,
+vol 68%):
+- Quitar só com o USDS: dívida 767 → 462 · +US$ 7/ano · SOL liquida em US$ 24,1 (2,3σ, era 2,1σ).
+- A pool 140–190 aberta abaixo do range entra 100% em SOL e **vende SOL por USDC conforme sobe**:
+  preço médio de saída √(140·190) = **US$ 163**. Para gerar os 462 USDC bastam **~2,83 SOL**. É a mesma
+  lógica da saída gradual (§2.3 da KB), e o USDC que ela gera paga a Kamino.
+- Retirar 2,9 SOL da Kamino para a pool leva a liquidação a US$ 27,3 (2,15σ), quase igual a hoje.
+- Chance de tocar no preço, sem prever direção: US$ 140 → 61% em 90 dias, 80% em 1 ano · US$ 163 →
+  34% / 63% · US$ 190 (pool toda em USDC) → 16% / 48%. **Abaixo de US$ 140 a pool não gera taxa.**
+- Capital novo usado para quitar a Kamino rende **~5,8% garantido em USD** (o juro que deixa de pagar),
+  acima de qualquer supply de stable disponível. Entra como `contributions` normalmente.
