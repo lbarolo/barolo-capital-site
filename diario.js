@@ -649,5 +649,29 @@ window.BAROLO_DIARY = [
       "qty": 0.0189,
       "totalCost": 50
     }
+  },
+  {
+    "id": 1790964663430,
+    "date": "2026-10-02",
+    "type": "trade",
+    "title": "Comprei BTC",
+    "body": "Com o USDT que tinha na OKX comprei +0.00023934 BTC por $19,99",
+    "pnl": null,
+    "tags": []
+  },
+  {
+    "id": 1790964780006,
+    "date": "2026-10-02",
+    "type": "trade",
+    "title": "Comprei BTC",
+    "body": "Com os USDT que tenho na OKX comprei 0,00036003 BTC por $30,00",
+    "pnl": null,
+    "tags": [],
+    "trade": {
+      "token": "BTC",
+      "side": "buy",
+      "qty": 0.00036003,
+      "totalCost": 30
+    }
   }
 ];
