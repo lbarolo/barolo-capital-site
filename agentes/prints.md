@@ -94,12 +94,14 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   ~US$ 25,89 de ETH/SOL/USDT/USDS entraram como transferência de entrada, custo zero. **Fim da fase
   "acumulando"** aberta em 11/09. SOL e USDS bateram na vírgula; no USDT ele lançou 7,56 contra
   7,531847 de pendente (3 centavos a mais, absorvidos pelo juro dos dias seguintes).
-- ⚠️ **BTC com DUPLICATA no CoinGecko** (0,00530135 lá contra 0,00494132 aqui): a compra de
-  0,00036003 de 28/09 foi lançada duas vezes — uma datada **28 Oct 2026** (data futura) por US$ 30,00
-  e outra 28 Sep 9:06AM por US$ 29,99. O **histórico de ordens da OKX** tem só DUAS execuções em
-  28/09: 0,00036003 @ US$ 30,00 (16:38:06) e 0,00023934 @ US$ 20,00 (16:33:20). Enquanto ele não
-  apagar uma das duas, o `yield-to-mirror` avisa **NEGATIVO** no BTC de propósito — é o lembrete.
-  Ao apagar: remover a linha `BTC` do `cgMirror`.
+- ✅ **BTC reconciliado em 02/10.** Tinha duplicata no CoinGecko (0,00530135): a compra de 0,00036003
+  de 28/09 estava lançada duas vezes, uma datada **28 Oct 2026** (data futura). Quem resolveu foi o
+  **histórico de ordens da OKX** — só DUAS execuções em 28/09: 0,00036003 @ US$ 30,00 (16:38:06) e
+  0,00023934 @ US$ 20,00 (16:33:20). Ele apagou a duplicata e acertou os centavos no mesmo dia;
+  CoinGecko e site conferem (**0,00494132 / US$ 320,47**).
+  ⚡ **Lição:** quantidade idêntica nas 8 casas decimais em datas diferentes = duplicata, não compra
+  nova (preço diferente daria quantidade diferente). E o extrato da corretora é o árbitro — o
+  CoinGecko é digitado à mão, a corretora não.
 - Custo das compras de 28/09 corrigido de US$ 49,98 para **US$ 50,00** (valor real da OKX): BTC
   `invested` 320,45 → **320,47**, USDT `invested` 1879,21 → **1879,19**. Qty inalterada.
 - HF AAVE **8,47** · pool: nenhuma aberta · sem caixa em corretora.
@@ -108,8 +110,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
   em 02/10 — o 403 era temporário.
 
 **Pendências que o `/prints` deve lembrar:**
-- Apagar a duplicata de BTC no CoinGecko (acima) e me avisar para limpar o `cgMirror`.
-- Yield pendente após o lançamento: só o juro de 30/09 em diante (~US$ 1,65 em 02/10).
+- Yield pendente: só o juro de 30/09 em diante — **~US$ 1,65** (ETH +0,000429 · USDT +0,500029).
 - Kamino **sem print desde 18/09** — pedir no próximo review.
 - Borrow da AAVE em 4,13% base / 3,04% net contra supply do USDT em 3,67%: o carry voltou a ser
   favorável, não há mais o alerta de quitar que estava aberto desde 18/09.
@@ -117,6 +118,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - `RENDA_2026` de setembro continua manual.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 02/10/2026 (2) — duplicata do BTC apagada por ele; CoinGecko e site conferem (0,00494132 / US$ 320,47); `cgMirror` limpo.
 - 02/10/2026 — yields lançados por ele no CoinGecko (fim da fase "acumulando"); duplicata de BTC detectada pelo
   histórico da OKX (0,00036003 lançada 2x, uma com data futura); custo das compras de 28/09 corrigido para US$ 50,00;
   AAVE via MCP (HF 8,47); setembro fechou em +9,2% sem aporte.
