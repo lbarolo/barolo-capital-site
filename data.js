@@ -346,8 +346,8 @@ window.BAROLO_DATA = {
       // Interest Earned lifetime +$163,95 · LTV 26,68% · Liq.LTV 76,60%. So juros, sem
       // deposito/saque/repay -> principals.kamino INALTERADO. Rewards claimable a parte
       // (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,10.
-      supply: { SOL:{ qty:25.03, apy:0.0553 }, USDS:{ qty:0, apy:0 } },   // print 02/10/2026 POS-REPAY; USDS 305,46->0 (posicao encerrada)
-      borrow: { USDC:{ qty:454.97957, apy:0.0595 } },   // 2o repay de 02/10: -10,09043 USDC, pagos com KMNO (stake + rewards) convertidos   // 767,21->465,07 (02/10): repay de 302,144161 USDC (print)
+      supply: { SOL:{ qty:25.03, apy:0.0549 }, USDS:{ qty:0, apy:0 } },   // print 02/10/2026 POS-REPAY; USDS 305,46->0 (posicao encerrada)
+      borrow: { USDC:{ qty:454.97957, apy:0.0593 } },   // APYs do print final 02/10 (Borrowing 454,98 @5,93% · SOL 5,49%)   // 2o repay de 02/10: -10,09043 USDC, pagos com KMNO (stake + rewards) convertidos   // 767,21->465,07 (02/10): repay de 302,144161 USDC (print)
       ltv: 0.1542, liqLtv: 0.7500   // 02/10/2026, APOS OS DOIS REPAYS. O liqLtv 75,00% e do print pos-1o repay e nao muda com repay (o colateral e SOL puro — o USDS, que puxava a media para cima, saiu). Preco de liquidacao do SOL: US$ 24,24 (era 24,77 antes do 2o repay). LTV derivado com SOL a US$ 117,85; o print do 1o repay dava 15,80% com a divida em 465,07. Interest Earned lifetime +$171,79 · Net APY 5,45%.
     },
     uniswapV3: {
@@ -751,7 +751,7 @@ window.BAROLO_DATA = {
     // de setembro. A rotina do fechamento de mes continua valendo para o juro que vier.
     // Print do CoinGecko de 02/10/2026 — o que esta LA hoje (= holdings, os 13 conferidos):
     SOL:  25.03,
-    USDS: 0,            // 305,46->0 (02/10): posicao de USDS encerrada no repay da Kamino. Ele ainda precisa lancar a SAIDA no CoinGecko — transferencia de saida, NAO venda: o USDC foi direto abater divida, que o CoinGecko nao acompanha, entao lancar como venda criaria receita fantasma.
+    USDS: 305.46,       // ⚠️ o CoinGecko AINDA tem 305,46 — a posicao foi encerrada no repay de 02/10 mas ele ainda nao deu a saida la. Enquanto nao der, o yield-to-mirror avisa NEGATIVO aqui de proposito (e o lembrete). Lancar como TRANSFERENCIA DE SAIDA, nao venda: o USDC foi direto abater divida, que o CoinGecko nao acompanha, entao venda criaria receita fantasma. Depois de lancar, zerar esta linha.
     ETH:  2.338483,      // no CoinGecko esta 2,338483374; o site arredonda em 6 casas (US$ 0,001 de diferenca).
     USDT: 1906.148819,
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de 02/10 —
