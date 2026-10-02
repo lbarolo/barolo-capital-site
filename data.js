@@ -155,7 +155,7 @@
        reconhecidos em 22/08, os 406,27 acima e o DCA de SOL de 05/08).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-09-29',
+  asOf: '2026-10-02',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -163,8 +163,8 @@ window.BAROLO_DATA = {
     // BTC 0,00434195 -> 0,00494132 e invested 270,47 -> 320,45 (29/09/2026): 2 ordens limite executadas em 28/09 na OKX
     // (+0,00023934 @ US$ 83.521,35 = 19,99 e +0,00036003 @ US$ 83.298,61 = 29,99) pagas com os 50 USDT que estavam
     // parados la — ROTACAO, nao aporte (o custo migra do USDT). Confere com o print do CoinGecko (custo total 320,45).
-    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00494132, invested:320.45  },
-    { ticker:'ETH',   cgId:'ethereum',                 qty:2.338054,   invested:4724.26 },  // qty 2,337575->2,338054 (29/09): juro do aWETH 0,017646465 -> 0,018125328 (MCP). qty 2,317675->2,337575 e invested 4674,26->4724,26 (25/09/2026): compra de 24/09 (+0,0189 ETH @ ~US$ 2.645) paga com 50 dos 100 USDT sacados da AAVE em 15/09 — ROTACAO, nao aporte (custo migra do USDT). No CoinGecko ele digitou 0,189, 10x a mais; ver cgMirror + 0,001000116 de juro do aWETH desde 18/09 (0,016646349 -> 0,017646465, MCP). qty 2,317635->2,317675 (18/09, apos o deposito): juro do aWETH 0,016605882 -> 0,016646349 (MCP). Deposito de 0,08 ETH na AAVE em 18/09 so muda de lugar (carteira -> supply), nao a qty. qty 2,31739->2,317635 (18/09): +0,000244777 ETH de juro do aWETH desde 16/09 (0,016361105 -> 0,016605882, MCP), custo zero.  qty 2,23317->2,31739 e invested 4474,26->4674,26 (16/09/2026): compras de 0,041698997 (15/09) + 0,041916377 (16/09) = +0,083615374 ETH por US$ 200, pagos com USDT sacado da AAVE (ROTACAO, nao aporte — custo migra do USDT) + 0,000607 ETH de juro do aWETH desde 11/09 (0,015754006 -> 0,016361105, MCP).  qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
+    { ticker:'BTC',   cgId:'bitcoin',                  qty:0.00494132, invested:320.47  },  // invested 320,45->320,47 (02/10): o historico de ordens da OKX mostra que as 2 compras de 28/09 foram US$ 30,00 (16:38) + US$ 20,00 (16:33) = US$ 50,00, nao 49,98 — o CoinGecko tinha 29,99+19,99. Qty inalterada (0,00036003 + 0,00023934 brutos). ATENCAO: em 02/10 o CoinGecko estava com 0,00530135 porque a compra de 0,00036003 foi lancada DUAS vezes (uma datada 28 Oct 2026, data futura) — ver cgMirror.
+    { ticker:'ETH',   cgId:'ethereum',                 qty:2.338483,   invested:4724.26 },  // qty 2,338054->2,338483 (02/10): juro do aWETH 0,018125328 -> 0,018554029 (MCP), custo zero.  // qty 2,337575->2,338054 (29/09): juro do aWETH 0,017646465 -> 0,018125328 (MCP). qty 2,317675->2,337575 e invested 4674,26->4724,26 (25/09/2026): compra de 24/09 (+0,0189 ETH @ ~US$ 2.645) paga com 50 dos 100 USDT sacados da AAVE em 15/09 — ROTACAO, nao aporte (custo migra do USDT). No CoinGecko ele digitou 0,189, 10x a mais; ver cgMirror + 0,001000116 de juro do aWETH desde 18/09 (0,016646349 -> 0,017646465, MCP). qty 2,317635->2,317675 (18/09, apos o deposito): juro do aWETH 0,016605882 -> 0,016646349 (MCP). Deposito de 0,08 ETH na AAVE em 18/09 so muda de lugar (carteira -> supply), nao a qty. qty 2,31739->2,317635 (18/09): +0,000244777 ETH de juro do aWETH desde 16/09 (0,016361105 -> 0,016605882, MCP), custo zero.  qty 2,23317->2,31739 e invested 4474,26->4674,26 (16/09/2026): compras de 0,041698997 (15/09) + 0,041916377 (16/09) = +0,083615374 ETH por US$ 200, pagos com USDT sacado da AAVE (ROTACAO, nao aporte — custo migra do USDT) + 0,000607 ETH de juro do aWETH desde 11/09 (0,015754006 -> 0,016361105, MCP).  qty 2,23062->2,23317 (11/09/2026): +0,00255 ETH de juro da AAVE desde a reconciliacao de 22/08 (earnings 0,0132 -> 0,015754, MCP), custo zero — pendente no CoinGecko, ver cgMirror. -406,27: custo do ETH que virou a pool e foi vendido no fechamento dela (transferido para o USDT, total investido nao muda)
     // SOL 24,765222 -> 24,93 em 04/09/2026: MESMO caso do USDS logo abaixo — o holding
     // estava ABAIXO do supply da Kamino (24,93), violando o invariante de que holdings
     // incluem o colateral (o piso do holding e sempre o supply). A diferenca (0,164778 SOL,
@@ -197,7 +197,7 @@ window.BAROLO_DATA = {
     // USDT 2201,81879 -> 2002,77816 e invested 2179,19 -> 1979,19 (16/09/2026): 200 USDT viraram ETH (rotacao;
     // o custo migra para o ETH, total investido nao muda) + 0,959374 de juro do aUSDT desde 11/09
     // (20,917508 -> 21,876882, MCP). Saque de 300 USDT da AAVE em 15/09: 200 foram pro ETH, 100 seguem fora da AAVE.
-    { ticker:'USDT', cgId:'tether',           qty:1905.620637, invested:1879.21  },  // -49,98 (29/09/2026): os 50 USDT da ordem limite viraram BTC em 28/09 (rotacao; custo migra para o BTC) e +0,713205 de juro do aUSDT desde 25/09 (23,986154 -> 24,699359, MCP).  -50 (26/09/2026): 50 dos 100 USDT sacados da AAVE em 15/09 viraram ETH em 24/09 — ROTACAO, nao aporte (o custo migra para o ETH, total investido nao muda). Sobram 50 USDT em ordem limite, nao acionada.  2003,309704->2004,887432 (25/09/2026): +1,577728 de juro do aUSDT desde 18/09 (22,408426 -> 23,986154, MCP).  2003,268354->2003,309704 (18/09, apos o deposito): juro do aUSDT 22,367076 -> 22,408426 (MCP).  2002,77816->2003,268354 (18/09): +0,490194 USDT de juro do aUSDT desde 16/09 (21,876882 -> 22,367076, MCP), custo zero
+    { ticker:'USDT', cgId:'tether',           qty:1906.148819, invested:1879.19  },  // qty +0,528182 e invested -0,02 (02/10/2026): juro do aUSDT desde 29/09 (24,699359 -> 25,227541, MCP) e as compras de BTC de 28/09 custaram US$ 50,00 (OKX), nao 49,98 — 2 centavos a mais migram para o BTC.  // -49,98 (29/09/2026): os 50 USDT da ordem limite viraram BTC em 28/09 (rotacao; custo migra para o BTC) e +0,713205 de juro do aUSDT desde 25/09 (23,986154 -> 24,699359, MCP).  -50 (26/09/2026): 50 dos 100 USDT sacados da AAVE em 15/09 viraram ETH em 24/09 — ROTACAO, nao aporte (o custo migra para o ETH, total investido nao muda). Sobram 50 USDT em ordem limite, nao acionada.  2003,309704->2004,887432 (25/09/2026): +1,577728 de juro do aUSDT desde 18/09 (22,408426 -> 23,986154, MCP).  2003,268354->2003,309704 (18/09, apos o deposito): juro do aUSDT 22,367076 -> 22,408426 (MCP).  2002,77816->2003,268354 (18/09): +0,490194 USDT de juro do aUSDT desde 16/09 (21,876882 -> 22,367076, MCP), custo zero
     // USDS 300 -> 304.66 em 04/09/2026: o holding estava ABAIXO do supply da Kamino
     // (304,66), o que viola o invariante de que holdings incluem o colateral — o piso
     // do holding e sempre o supply. A diferenca e yield acumulado que o CoinGecko nunca
@@ -227,8 +227,8 @@ window.BAROLO_DATA = {
       //   Deposited $7.672 · Borrowing Power $6.266,59 · HF 8,2135 (MCP).
       //   Os tres principals conferem na casa decimal com o bloco `principals`. Sem
       //   deposito/saque/reemprestimo -> principals INALTERADOS.
-      supply: { WETH:{ qty:2.307865, apy:0.0184 }, USDT:{ qty:1720.600337, apy:0.0282 } },   // MCP 29/09/2026 (principals conferem, sem movimentacao na AAVE desde o deposito de 0,08 ETH em 18/09)
-      borrow: { USDC:{ qty:765.316080, apy:0.0312 } },   // MCP 29/09/2026: netBorrowApy 3,12% (base 4,24%) — a taxa oscila muito no dia
+      supply: { WETH:{ qty:2.308294, apy:0.0170 }, USDT:{ qty:1721.128519, apy:0.0367 } },   // MCP 02/10/2026 (principals conferem, sem movimentacao na AAVE desde o deposito de 0,08 ETH em 18/09)
+      borrow: { USDC:{ qty:765.737952, apy:0.0304 } },   // MCP 02/10/2026: netBorrowApy 3,04% (base 4,13%) — a taxa oscila muito no dia
       // ══ HEALTH FACTOR — FORMULA DEFINITIVA (resolvido 09/09/2026 via MCP da Aave) ══
       //
       //   HF = Borrowing Power / divida = SOMA(colateral_i x CF_i) / divida
@@ -301,7 +301,7 @@ window.BAROLO_DATA = {
       // holding para supply + total da varredura, a custo zero.
       // ✅ 11/09/2026: a partir de agora o juro do aWETH entra no holding (custo zero,
       // pendente no cgMirror) — o holding acompanha o supply e a margem deixa de encolher.
-      healthFactor: 8.57   // FALLBACK. 6.560,38 borrowing power / 765,29 divida (MCP 29/09/2026)
+      healthFactor: 8.47   // FALLBACK. 6.484,70 borrowing power / 765,69 divida (MCP 02/10/2026)
     },
     kamino: {
       // Print 07/08/2026: SOL supply 24.46 @ 4.49% / USDS 303.83 @ 4.00% (rewards claimable
@@ -724,19 +724,24 @@ window.BAROLO_DATA = {
     // ✅ LANCADO POR ELE em 05/09/2026 ("Coloquei la no coingecko"): +0,174778 SOL
     // e +4,69 USDS entraram como transferencia de entrada, custo zero. Espelho
     // igualado ao holding -> pendente ZERO e o card do dashboard some sozinho.
-    // ⏸ DECISAO DO LUCAS (11/09/2026): NAO lancar ainda — "ta muito baixo os valores"
-    // (~US$ 11,39). Deixar ACUMULAR aqui e lembrar ele no fechamento de cada mes com o
-    // total atualizado (node scripts/yield-to-mirror.js); ele decide quando compensa.
-    // NAO igualar este bloco ao holding antes de ele confirmar que lancou.
-    // Print do CoinGecko de 11/09/2026 — o que esta LA hoje:
-    SOL:  24.94,
-    USDS: 304.69,
-    ETH:  2.333135374,   // 2,314235374 + 0,0189 do aporte de 24/09. a compra de 24/09 tinha sido digitada como 0,189
-                         // (10x a mais) e o Lucas CORRIGIU para 0,0189 em 27/09. Juro do aWETH segue pendente.
-    USDT: 1898.08879     // 1948,08879 - 49,98 gastos no BTC em 28/09 (CONFIRMADO pelo Lucas 29/09: lancou as 2 compras e debitou o USDT no CoinGecko).
-                         // Antes: 2198,08879 - 200 gastos em 15-16/09. Dos 300 sacados da AAVE, sobram 50 em ordem limite.
-    // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de
-    // 11/09 — iguais ao holding, nada pendente.
+    // ✅ LANCADO POR ELE em 02/10/2026 ("adcionei os valores ao coingecko"): o acumulado
+    // desde 11/09 (~US$ 25,89 em ETH/SOL/USDT/USDS) entrou como transferencia de entrada,
+    // custo zero. Fim da fase "acumulando" aberta em 11/09. O que sobra abaixo e so o
+    // juro dos dias seguintes — a rotina do fechamento de mes continua valendo.
+    // Print do CoinGecko de 02/10/2026 — o que esta LA hoje:
+    SOL:  24.98,
+    USDS: 305.05,
+    ETH:  2.338054374,   // ele lancou o pendente de 11-29/09; o juro do aWETH de 30/09 em diante segue pendente.
+    USDT: 1905.64879,    // lancou +7,56 (o pendente era 7,531847) — 3 centavos a mais que o juro dos dias seguintes absorve.
+    // ⚠️ BTC: o CoinGecko esta com 0,00530135 contra 0,00494132 do site porque a compra de
+    // 0,00036003 de 28/09 foi lancada DUAS vezes — uma delas datada "28 Oct 2026" (data que
+    // ainda nao chegou), US$ 30,00, e a outra 28 Sep 9:06AM, US$ 29,99. O historico de ordens
+    // da OKX tem so DUAS execucoes em 28/09: 0,00036003 @ US$ 30,00 (16:38) e 0,00023934 @
+    // US$ 20,00 (16:33). Enquanto ele nao apagar a duplicata, o yield-to-mirror avisa
+    // NEGATIVO aqui de proposito — e o lembrete. Quando apagar, remover esta linha.
+    BTC:  0.00530135,
+    // ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de 02/10 —
+    // iguais ao holding, nada pendente.
   },
 
   // ── APORTES EXTERNOS (dinheiro que entrou DE FORA: fiat -> cripto/stable) ──

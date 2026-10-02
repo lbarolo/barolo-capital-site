@@ -78,37 +78,48 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — compra de BTC em 28/09 (rotação) + refresh da AAVE (`asOf` 2026-09-29)
-**Juros da AAVE no último review (base para a regra 4):** WETH **0,018125328** · USDT **24,699359**
+## Estado atual — yields lançados no CoinGecko + duplicata de BTC a apagar (`asOf` 2026-10-02)
+**Juros da AAVE no último review (base para a regra 4):** WETH **0,018554028543753534** · USDT **25,227541**
 
 | | Qtd | APY | Principal |
 |---|---|---|---|
-| AAVE WETH supply | 2,307865 | 1,84% | 2,289740 |
-| AAVE USDT supply | 1.720,600337 | 2,82% | 1.695,900978 |
-| AAVE USDC borrow | 765,316080 | 3,12% (net) · base 4,24% | 748,00 |
+| AAVE WETH supply | 2,308294 | 1,70% | 2,289740 |
+| AAVE USDT supply | 1.721,128519 | 3,67% | 1.695,900978 |
+| AAVE USDC borrow | 765,737952 | 3,04% (net) · base 4,13% | 748,00 |
 | Kamino SOL supply | 24,98 | 5,81% | 23,645990 (sem print desde 18/09) |
 | Kamino USDS supply | 305,05 | 3,27% | 300,392689 |
 | Kamino USDC borrow | 764,96 | 5,43% | 690,834084 |
 
-- **28/09: 2 ordens limite de BTC executadas na OKX** (+0,00023934 @ US$ 83.521,35 = 19,99 e
-  +0,00036003 @ US$ 83.298,61 = 29,99) = **+0,00059937 BTC por US$ 49,98**, pagas com os 50 USDT que
-  estavam parados lá desde o saque da AAVE de 15/09. **ROTAÇÃO, não aporte** — USDT −49,98 na qty e no
-  invested, BTC +49,98 de invested. `contributions` de 09/26 segue VAZIA. Bate com o print:
-  BTC 0,00494132 · custo total US$ 320,45.
-- ✅ CoinGecko acertado em 29/09 (confirmado por ele): lançou as 2 compras de BTC e debitou os 49,98 USDT.
-  `cgMirror` (BTC = holding · USDT 1.898,08879) confere; o pendente é só yield.
-- HF AAVE 8,57 · pool: nenhuma aberta. **Acabou o caixa em corretora** (era a última pendência de USDT
-  parado); o próximo dinheiro novo tende a ser aporte de verdade.
+- ✅ **Ele lançou o yield acumulado no CoinGecko em 02/10** ("adcionei os valores ao coingecko"):
+  ~US$ 25,89 de ETH/SOL/USDT/USDS entraram como transferência de entrada, custo zero. **Fim da fase
+  "acumulando"** aberta em 11/09. SOL e USDS bateram na vírgula; no USDT ele lançou 7,56 contra
+  7,531847 de pendente (3 centavos a mais, absorvidos pelo juro dos dias seguintes).
+- ⚠️ **BTC com DUPLICATA no CoinGecko** (0,00530135 lá contra 0,00494132 aqui): a compra de
+  0,00036003 de 28/09 foi lançada duas vezes — uma datada **28 Oct 2026** (data futura) por US$ 30,00
+  e outra 28 Sep 9:06AM por US$ 29,99. O **histórico de ordens da OKX** tem só DUAS execuções em
+  28/09: 0,00036003 @ US$ 30,00 (16:38:06) e 0,00023934 @ US$ 20,00 (16:33:20). Enquanto ele não
+  apagar uma das duas, o `yield-to-mirror` avisa **NEGATIVO** no BTC de propósito — é o lembrete.
+  Ao apagar: remover a linha `BTC` do `cgMirror`.
+- Custo das compras de 28/09 corrigido de US$ 49,98 para **US$ 50,00** (valor real da OKX): BTC
+  `invested` 320,45 → **320,47**, USDT `invested` 1879,21 → **1879,19**. Qty inalterada.
+- HF AAVE **8,47** · pool: nenhuma aberta · sem caixa em corretora.
+- **Fechamento de setembro rodou sozinho em 01/10**: patrimônio 11.037 → **12.055**, aporte externo
+  **zero** → **+9,2% de retorno puro**. As Actions do CoinGecko (networth/briefing) voltaram a rodar
+  em 02/10 — o 403 era temporário.
 
 **Pendências que o `/prints` deve lembrar:**
-- ⏸ **Yield a lançar no CoinGecko ACUMULANDO** (decisão do Lucas, 11/09): **~US$ 18,27** em 18/09
-  (ETH +0,0034 · SOL +0,04 · USDT +5,18 · USDS +0,36). Informar o total em todo review e no fechamento.
-- Borrow da AAVE voltou a 6,10% (16/09 era 2,93%; 11/09 5,63%) contra supply do USDT 3,31%. Se ficar
-  > 5% no próximo review também (2 seguidos), sugerir quitar a AAVE com o USDT (decisão dele).
-- Rewards da Kamino não resgatados (~US$ 6,10: USDS 1,59 · PYUSD 0,07 · KMNO 4,44) — não lançar.
-- Fechamento de setembro: 01/10 (Action `close-month.yml` + `/fecharmes`).
+- Apagar a duplicata de BTC no CoinGecko (acima) e me avisar para limpar o `cgMirror`.
+- Yield pendente após o lançamento: só o juro de 30/09 em diante (~US$ 1,65 em 02/10).
+- Kamino **sem print desde 18/09** — pedir no próximo review.
+- Borrow da AAVE em 4,13% base / 3,04% net contra supply do USDT em 3,67%: o carry voltou a ser
+  favorável, não há mais o alerta de quitar que estava aberto desde 18/09.
+- Rewards da Kamino não resgatados (~US$ 6,10) — não lançar.
+- `RENDA_2026` de setembro continua manual.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 02/10/2026 — yields lançados por ele no CoinGecko (fim da fase "acumulando"); duplicata de BTC detectada pelo
+  histórico da OKX (0,00036003 lançada 2x, uma com data futura); custo das compras de 28/09 corrigido para US$ 50,00;
+  AAVE via MCP (HF 8,47); setembro fechou em +9,2% sem aporte.
 - 29/09/2026 — 2 compras de BTC (US$ 49,98) com os 50 USDT da ordem limite: rotação; AAVE via MCP (HF 8,57);
   yield pendente ~US$ 26.
 - 26/09/2026 — correção: a compra de 24/09 era rotação (USDT da AAVE), não aporte — `contributions` de 09/26
