@@ -171,3 +171,32 @@ no padrão visual existente, um por vez, com aprovação.
 - Probabilidades "gaussianas" em cripto **subestimam** eventos extremos — por isso a regra 3σ.
 - A carteira de ALTS (ADA, EIGEN, XAI…) fica fora do risco diário (≈ US$ 125, peso desprezível).
 - Não é recomendação de investimento; é instrumento de medição para as decisões do Lucas.
+
+---
+
+## 9. Análises pontuais
+
+### 02/10/2026 — Trocar ou quitar as dívidas (AAVE × Kamino)
+
+Base: `data.js` de 02/10 · ETH US$ 2.663 · SOL US$ 117,98 · taxas médias de 23 snapshots do
+`data.js` (jun→out/26): borrow AAVE 3,79% (dp 1,1 p.p., faixa 1,9–5,6%) · borrow Kamino 5,81%
+(dp 0,3 p.p., faixa 5,3–6,4%) · supply USDT AAVE 2,84% · supply USDS Kamino 3,69%.
+A Kamino foi mais cara que a AAVE em 22 de 23 leituras.
+
+| Opção | Carry/ano hoje | Carry/ano média | HF AAVE | SOL liquida | Dívida | Stables |
+|---|---:|---:|---:|---|---:|---:|
+| 0 · como está | +5 | −13 | 8,4 | US$ 28 (2,1σ) | 1.533 | 2.212 |
+| **1 · quitar Kamino** (USDS + USDT parado + ~277 USDT da AAVE) | **+30** | **+12** | 8,1 | **sem risco** | 766 | 1.444 |
+| 2 · levar a dívida da Kamino para a AAVE | +28 | +2 | 4,2 (ETH liq. US$ 99) | sem risco | 1.533 | 2.212 |
+| 3 · quitar a AAVE com o USDT da AAVE | +1 | −6 | — | US$ 28 (2,1σ) | 767 | 1.446 |
+| 4 · quitar as duas | +25 | +19 | — | sem risco | 0 | 679 |
+
+*Carry = juro recebido nas stables em protocolo − juro pago nas dívidas.*
+
+**Leitura:** a dívida não financia nada desde que a pool fechou (28/08); ela só mantém stables
+paradas. A AAVE (3% contra USDT rendendo ~3%) é praticamente neutra. A Kamino (≈6% contra USDS a
+≈3,6%) custa ~2 p.p. a mais e é a única perna com risco de liquidação abaixo de 3σ. Quitar a
+Kamino ganha ~US$ 25/ano contra o status quo e zera esse risco. O SOL continua depositado,
+rendendo o supply de 5,5%. Na média histórica, a opção 2 ganha bem menos, porque fica exposta aos
+picos de taxa da AAVE. Valores pequenos (≈0,2% do patrimônio): **o ganho principal é de risco**.
+Pegar a dívida de volta é 1 transação se a pool reabrir.
