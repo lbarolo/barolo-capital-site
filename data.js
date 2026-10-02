@@ -216,7 +216,7 @@ window.BAROLO_DATA = {
     // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
     // ✅ Mesma confirmacao do SOL (Lucas, 05/09/2026): e yield, custo zero, e ele espelha
     // no CoinGecko como 'transferencia de entrada'. NAO puxar de volta para 300.
-    { ticker:'USDS', cgId:'usds',            qty:305.46,   invested:300      }  // 305,05->305,46 (02/10): supply da Kamino, yield custo zero.  // 304,86->305,05 (18/09): supply da Kamino, yield custo zero.  304,69->304,86 (11/09): supply da Kamino, yield custo zero.  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
+    { ticker:'USDS', cgId:'usds',            qty:0,        invested:0        }  // 305,46->0 e invested 300->0 (02/10): USDS sacado da Kamino + rewards (USDS 1,59 · PYUSD 0,07 · KMNO ~6,43) convertidos em 302,144161 USDC e usados no repay da Kamino. ROTACAO, nao aporte. Slippage/taxas da conversao ≈ US$ 11 (≈3,3 sobre o USDS do site + os ~8 de rewards que nunca entraram no site).  // 305,05->305,46 (02/10): supply da Kamino, yield custo zero.  // 304,86->305,05 (18/09): supply da Kamino, yield custo zero.  304,69->304,86 (11/09): supply da Kamino, yield custo zero.  // 304,66->304,69: acompanha o supply da Kamino (print 05/09). Yield puro, custo zero.
   ],
 
   // View do lending (NÃO aditivo ao total de holdings).
@@ -338,9 +338,9 @@ window.BAROLO_DATA = {
       // Interest Earned lifetime +$163,95 · LTV 26,68% · Liq.LTV 76,60%. So juros, sem
       // deposito/saque/repay -> principals.kamino INALTERADO. Rewards claimable a parte
       // (nao lancados): USDS $1,59 · PYUSD $0,07 · KMNO $4,10.
-      supply: { SOL:{ qty:25.03, apy:0.0547 }, USDS:{ qty:305.46, apy:0.0363 } },   // print 02/10/2026
-      borrow: { USDC:{ qty:767.21, apy:0.0595 } },
-      ltv: 0.2340, liqLtv: 0.7640   // print 02/10/2026 (Net Value $2,51K · Net APY 5,11% · Interest Earned lifetime +$171,79; principals INALTERADOS, so juro; rewards nao resgatados USDS 1,59 · PYUSD 0,07 · KMNO 6,43 = ~US$ 8,09)
+      supply: { SOL:{ qty:25.03, apy:0.0547 }, USDS:{ qty:0, apy:0.0363 } },   // print 02/10/2026; USDS 305,46->0 (02/10, repay)
+      borrow: { USDC:{ qty:465.07, apy:0.0595 } },   // 767,21->465,07 (02/10): repay de 302,144161 USDC (print)
+      ltv: 0.1579, liqLtv: 0.7640   // ltv 0,2340->0,1579 (print pos-repay 02/10); liqLtv ainda do mix SOL+USDS — conferir no proximo print (agora so SOL)   // print 02/10/2026 (Net Value $2,51K · Net APY 5,11% · Interest Earned lifetime +$171,79; principals INALTERADOS, so juro; rewards nao resgatados USDS 1,59 · PYUSD 0,07 · KMNO 6,43 = ~US$ 8,09)
     },
     uniswapV3: {
       pool:'WETH/USDG 0.01%', network:'Robinhood Chain', status:'closed',
@@ -634,8 +634,8 @@ window.BAROLO_DATA = {
     },
     kamino: {
       SOL:  23.645990,   // 23,274227 (CSV ate 15/07) + 0,371763411 depositados 27/08/2026
-      USDS: 300.392689,  // depósito único 19/03/2026 (CSV Kamino)
-      USDC: 690.834084   // 754,183048 (CSV ate 15/07) − 63,348964 repagos 27/08/2026
+      USDS: 0,           // 300,392689->0 (02/10): USDS inteiro sacado para o repay
+      USDC: 388.689923   // 690,834084->388,689923 (02/10): repay de 302,144161. Antes: 754,183048 (CSV ate 15/07) − 63,348964 repagos 27/08/2026
     }
     // ── Kamino: derivados do CSV oficial (Transaction History), 65 movimentos
     //    01/02/2025 → 15/07/2026. Cobrem a obrigação INTEIRA (ciclos K1–K4), não
