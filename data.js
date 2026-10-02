@@ -216,7 +216,7 @@ window.BAROLO_DATA = {
     // tratamento dado ao SOL e ao proprio USDS na reconciliacao de 15/07/2026.
     // ✅ Mesma confirmacao do SOL (Lucas, 05/09/2026): e yield, custo zero, e ele espelha
     // no CoinGecko como 'transferencia de entrada'. NAO puxar de volta para 300.
-    { ticker:'USDS', cgId:'usds',            qty:0,        invested:0        }  // 305,46->0 e invested 300->0 (02/10): posicao de USDS ENCERRADA no repay da Kamino. ROTACAO, nao aporte. Extrato da carteira Solana (02/10), em ordem: resgate do reward +1,59364 USDS -> troca de 307,051 USDS por 307,05707 USDC (praticamente 1:1, SEM slippage material) -> envio de 4,91291 USDC para BjQh...kA7X -> repay de 302,14416 USDC na Kamino. Confere: 305,46 (supply) + 1,59364 (reward) = 307,05364 trocados, e 307,05707 - 4,91291 = 302,14416 = o repay exato. ⚠️ PYUSD 0,07 e KMNO 6,38 seguem CLAIMABLE no print pos-repay — NAO foram convertidos. ⚠️ PENDENTE: confirmar o destino dos 4,91291 USDC; se for carteira do Lucas, e ativo e falta lancar (hoje nao esta em lugar nenhum).
+    { ticker:'USDS', cgId:'usds',            qty:0,        invested:0        }  // 305,46->0 e invested 300->0 (02/10): posicao de USDS ENCERRADA no repay da Kamino. ROTACAO, nao aporte. Extrato da carteira Solana (02/10), em ordem: resgate do reward +1,59364 USDS -> troca de 307,051 USDS por 307,05707 USDC (praticamente 1:1, SEM slippage material) -> envio de 4,91291 USDC para BjQh...kA7X -> repay de 302,14416 USDC na Kamino. Confere: 305,46 (supply) + 1,59364 (reward) = 307,05364 trocados, e 307,05707 - 4,91291 = 302,14416 = o repay exato. ⚠️ PYUSD 0,07 e KMNO 6,38 seguem CLAIMABLE no print pos-repay — NAO foram convertidos. ✅ Os 4,91291 USDC (e 0,00137 SOL no 2o repay) para BjQh...kA7X foram TAXA do protocolo usado no swap (Lucas, 02/10) — custo real, ~1,6% do valor trocado; ja refletido (nao e ativo).
     // 2o REPAY no mesmo dia (02/10), pago com KMNO: recebeu +164,51055 KMNO do stake
     // (Ar48...V5c6), somou ao saldo/rewards e trocou 255,21922 KMNO por 10,09033 USDC;
     // repagou 10,09043 na Kamino (os 0,0001 de diferenca sao o dust de USDC do address
@@ -751,7 +751,7 @@ window.BAROLO_DATA = {
     // de setembro. A rotina do fechamento de mes continua valendo para o juro que vier.
     // Print do CoinGecko de 02/10/2026 — o que esta LA hoje (= holdings, os 13 conferidos):
     SOL:  25.03,
-    USDS: 305.46,       // ⚠️ o CoinGecko AINDA tem 305,46 — a posicao foi encerrada no repay de 02/10 mas ele ainda nao deu a saida la. Enquanto nao der, o yield-to-mirror avisa NEGATIVO aqui de proposito (e o lembrete). Lancar como TRANSFERENCIA DE SAIDA, nao venda: o USDC foi direto abater divida, que o CoinGecko nao acompanha, entao venda criaria receita fantasma. Depois de lancar, zerar esta linha.
+    USDS: 0,            // 305,46->0 (02/10): Lucas EXCLUIU o USDS do CoinGecko (nao vai mais comprar). Ok assim: o historico do USDS no CoinGecko ja nao tinha custo real (entrou a custo zero no reset de mar/26) e o site nao depende dele.
     ETH:  2.338483,      // no CoinGecko esta 2,338483374; o site arredonda em 6 casas (US$ 0,001 de diferenca).
     USDT: 1906.148819,
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de 02/10 —
