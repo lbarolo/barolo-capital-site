@@ -1,13 +1,24 @@
 name: Atualizar benchmark de aporte equivalente (benchmark-data.js)
 
-# Regenera benchmark-data.js (preços mensais reais BTC/ETH via Binance + CDI via BCB SGS)
-# e commita se mudou. Sem secrets — APIs públicas. Roda diariamente para manter o mês
-# corrente (candle parcial) atualizado; o mês fecha e vira definitivo sozinho com o tempo.
+# Regenera benchmark-data.js (preços mensais BTC/ETH e CDI % a.m., cada um com sua
+# cascata de fontes — ver o cabeçalho de scripts/fetch-benchmark.js) e commita se mudou.
+# Sem secrets — APIs públicas. Roda diariamente para manter o mês corrente (candle
+# parcial) atualizado; o mês fecha e vira definitivo sozinho com o tempo.
 
 on:
   schedule:
     - cron: '0 10 * * *'   # ~07:00 BRT diariamente (depois do onchain/networth das 09:20/09:40 UTC)
   workflow_dispatch:        # permite rodar manualmente pela aba Actions
+  # Roda também quando o próprio script/workflow muda. ⚠️ Isto existe porque o
+  # botão "Re-run" do GitHub replaya o COMMIT ORIGINAL do run — então re-rodar um
+  # run antigo nunca testa uma correção nova (aconteceu no #47, 3 tentativas no
+  # mesmo sha). Com este gatilho, o push da correção já dispara um run limpo.
+  # Não entra em loop: benchmark-data.js (o que o job commita) não está no paths.
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/fetch-benchmark.js'
+      - '.github/workflows/benchmark.yml'
 
 permissions:
   contents: write

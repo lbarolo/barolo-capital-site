@@ -13,10 +13,15 @@
  *   2. Yahoo Finance (query1.finance.yahoo.com) — candles mensais direto.
  *   3. Binance klines (interval=1M) — ⚠️ responde HTTP 451 para IPs dos EUA,
  *      então NÃO funciona no GitHub Actions; fica só como fallback local.
- *   - CDI: BCB SGS série 4391 (% a.m.) desde Jan/2022. O BCB cai com frequência
- *     (foi o que derrubou o run #47 em 03/10/2026); como a série é histórica e
- *     não muda retroativamente, uma falha ali NÃO aborta o job: reaproveita o
- *     CDI que já está no benchmark-data.js e emite um ::warning::.
+ *   - CDI (% a.m. desde Jan/2022), também em CASCATA:
+ *       1. BCB SGS 4391 (api.bcb.gov.br) — a fonte oficial.
+ *       2. IPEAData (www.ipeadata.gov.br, série BM12_TJCDI12) — espelha a MESMA
+ *          série SGS 4391 em outro host. Existe porque o modo de falha real foi
+ *          api.bcb.gov.br sumir inteiro (run #47, 03/10/2026, 3 tentativas).
+ *       3. O cdiMonthlyPct que já está no benchmark-data.js. A série é histórica
+ *          e não muda retroativamente, então reaproveitar perde no máximo o
+ *          acumulado parcial do mês em curso — nunca vale derrubar a atualização
+ *          de preços por causa disso. Emite ::warning:: quando chega aqui.
  *
  * ⚠️ LIÇÃO (20/08/2026): a versão original usava só a Binance e passou no teste
  * local (sandbox sai por proxy fora dos EUA) mas quebrou na primeira execução
@@ -181,38 +186,83 @@ function anotar(tipo, titulo, msg) {
   console.log(`::${tipo} title=${titulo}::${esc}`);
 }
 
-// CDI do BCB (SGS 4391). Se o BCB estiver fora do ar, cai para a série que já
-// está no benchmark-data.js em vez de abortar o job inteiro.
+// ── CDI, fonte 1: BCB SGS 4391 direto (api.bcb.gov.br) ─────────────────────
+async function cdiDoBcb(now) {
+  const raw = await fetchWithRetry('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
+    + `&dataInicial=01/01/2022&dataFinal=${new Date(now).toLocaleDateString('pt-BR')}`);
+  if (!Array.isArray(raw) || !raw.length) throw new Error('resposta vazia/inesperada');
+  const map = {};
+  raw.forEach(r => {
+    const [, mm, yyyy] = r.data.split('/');          // dd/mm/aaaa
+    map[yyyy + '-' + mm] = parseFloat(r.valor);
+  });
+  return map;
+}
+
+// ── CDI, fonte 2: IPEAData (www.ipeadata.gov.br) ───────────────────────────
+// Espelha a MESMA série SGS 4391 sob o código BM12_TJCDI12, em outro host — o
+// que importa, porque o modo de falha observado é o host do BCB sumir inteiro.
+// Conferido em 03/10/2026: 08/26 1.09 · 09/26 1.08 · 10/26 0.05, idênticos ao
+// que o BCB vinha devolvendo.
+async function cdiDoIpea() {
+  const j = await fetchWithRetry(
+    "https://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='BM12_TJCDI12')");
+  const v = j && j.value;
+  if (!Array.isArray(v) || !v.length) throw new Error('resposta vazia/inesperada');
+  const map = {};
+  v.forEach(r => {
+    const d = String(r.VALDATA || '');               // 2026-10-01T00:00:00-03:00
+    const k = d.slice(0, 7);                         // aaaa-mm
+    if (!/^\d{4}-\d{2}$/.test(k) || k < '2022-01') return;
+    if (r.VALVALOR == null) return;
+    map[k] = Number(r.VALVALOR);
+  });
+  if (!Object.keys(map).length) throw new Error('nenhum mês a partir de 2022-01');
+  return map;
+}
+
+// ── CDI, fonte 3: a série que já está no benchmark-data.js ─────────────────
+function cdiDoArquivo(atual) {
+  const map = {};
+  if (!atual || !Array.isArray(atual.labels) || !Array.isArray(atual.cdiMonthlyPct)) return map;
+  atual.labels.forEach((lbl, i) => {
+    const v = atual.cdiMonthlyPct[i];
+    if (v == null) return;
+    const [mm, yy] = lbl.split('/');
+    map['20' + yy + '-' + mm] = v;
+  });
+  return map;
+}
+
+// Cascata do CDI. A série é histórica e não muda retroativamente, então o pior
+// caso (reaproveitar o arquivo) perde no máximo o acumulado parcial do mês em
+// curso — nunca vale derrubar o job de preços por causa disso.
 async function cdiPorMes(now, atual) {
-  const url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
-    + `&dataInicial=01/01/2022&dataFinal=${new Date(now).toLocaleDateString('pt-BR')}`;
-  try {
-    const raw = await fetchWithRetry(url);
-    if (!Array.isArray(raw) || !raw.length) throw new Error('resposta vazia/inesperada');
-    const map = {};
-    raw.forEach(r => {
-      const [, mm, yyyy] = r.data.split('/');
-      map[yyyy + '-' + mm] = parseFloat(r.valor);
-    });
-    return { map, stale: false };
-  } catch (e) {
-    console.log('CDI: BCB falhou — ' + e.message);
-    const map = {};
-    if (atual && Array.isArray(atual.labels) && Array.isArray(atual.cdiMonthlyPct)) {
-      atual.labels.forEach((lbl, i) => {
-        const v = atual.cdiMonthlyPct[i];
-        if (v == null) return;
-        const [mm, yy] = lbl.split('/');
-        map['20' + yy + '-' + mm] = v;
-      });
+  const chain = [
+    ['BCB SGS 4391', () => cdiDoBcb(now)],
+    ['IPEAData',     () => cdiDoIpea()],
+  ];
+  const erros = [];
+  for (const [nome, fn] of chain) {
+    try {
+      const map = await fn();
+      const n = Object.keys(map).length;
+      if (n < 12) throw new Error(`só ${n} meses retornados`);
+      console.log(`CDI: ${n} meses via ${nome}`);
+      return { map, fonte: nome, stale: false };
+    } catch (e) {
+      console.log(`CDI: ${nome} falhou — ${e.message}`);
+      erros.push(`${nome}: ${e.message}`);
     }
-    if (!Object.keys(map).length) {
-      throw new Error('CDI indisponível no BCB e sem série anterior no benchmark-data.js — ' + e.message);
-    }
-    console.log(`CDI: reaproveitando ${Object.keys(map).length} meses do benchmark-data.js atual.`);
-    anotar('warning', 'fetch-benchmark', 'BCB indisponível (' + e.message + '); CDI reaproveitado do arquivo anterior.');
-    return { map, stale: true };
   }
+  const map = cdiDoArquivo(atual);
+  if (!Object.keys(map).length) {
+    throw new Error('CDI indisponível em todas as fontes e sem série anterior no benchmark-data.js — ' + erros.join(' | '));
+  }
+  console.log(`CDI: reaproveitando ${Object.keys(map).length} meses do benchmark-data.js atual.`);
+  anotar('warning', 'fetch-benchmark',
+    'CDI indisponível (' + erros.join(' | ') + '); reaproveitado do arquivo anterior.');
+  return { map, fonte: 'benchmark-data.js anterior', stale: true };
 }
 
 (async () => {
@@ -254,8 +304,8 @@ async function cdiPorMes(now, atual) {
     btcUsd,
     ethUsd,
     cdiMonthlyPct,
-    source: `BTC via ${btc.fonte} · ETH via ${eth.fonte} (fechamento mensal em USD) + BCB SGS série 4391 (CDI % a.m.)`
-      + (cdi.stale ? ' — ⚠️ CDI reaproveitado da execução anterior (BCB indisponível nesta)' : ''),
+    source: `BTC via ${btc.fonte} · ETH via ${eth.fonte} (fechamento mensal em USD) + CDI % a.m. via ${cdi.fonte}`
+      + (cdi.stale ? ' — ⚠️ nenhuma fonte de CDI respondeu nesta execução' : ''),
     fetchedAt: new Date().toISOString(),
     methodology: 'btcUsd/ethUsd = preço de fechamento do candle mensal em USD (fonte em cascata: Coinbase Exchange → Yahoo Finance → Binance); mês corrente usa o candle parcial mais recente. cdiMonthlyPct = taxa CDI acumulada no mês (% a.m., BCB SGS 4391) — null no mês ainda em curso (só fecha no fim do mês). Alinhado mês a mês com WEEKLY_UPDATE.wealthCurve.labels. Usado para simular "o mesmo aporte, no mesmo mês, comprando 100% deste ativo" (ver simulateDcaEquivalent/simulateCdiEquivalent em portfolio_analytics.html).',
   };
