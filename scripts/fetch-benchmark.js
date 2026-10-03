@@ -13,7 +13,10 @@
  *   2. Yahoo Finance (query1.finance.yahoo.com) — candles mensais direto.
  *   3. Binance klines (interval=1M) — ⚠️ responde HTTP 451 para IPs dos EUA,
  *      então NÃO funciona no GitHub Actions; fica só como fallback local.
- *   - CDI: BCB SGS série 4391 (% a.m.) desde Jan/2022.
+ *   - CDI: BCB SGS série 4391 (% a.m.) desde Jan/2022. O BCB cai com frequência
+ *     (foi o que derrubou o run #47 em 03/10/2026); como a série é histórica e
+ *     não muda retroativamente, uma falha ali NÃO aborta o job: reaproveita o
+ *     CDI que já está no benchmark-data.js e emite um ::warning::.
  *
  * ⚠️ LIÇÃO (20/08/2026): a versão original usava só a Binance e passou no teste
  * local (sandbox sai por proxy fora dos EUA) mas quebrou na primeira execução
@@ -36,10 +39,24 @@ const START = Date.UTC(2022, 0, 1); // Jan/2022 — mesmo início de WEEKLY_UPDA
 
 async function fetchWithRetry(url, tries = 4) {
   for (let i = 0; i < tries; i++) {
-    const r = await fetch(url, { headers: {
-      'Accept': 'application/json',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36'
-    }});
+    let r;
+    try {
+      r = await fetch(url, { headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36'
+      }});
+    } catch (e) {
+      // fetch REJEITA (não devolve status) em falha de DNS/TLS/socket — era o
+      // buraco que derrubava a Action inteira num blip de rede. Isso é
+      // transitório por definição, então entra no mesmo backoff dos 5xx.
+      if (i < tries - 1) {
+        const wait = 15000 * (i + 1);
+        console.log(`Falha de rede em ${url} (${e.message}) — aguardando ${wait / 1000}s (tentativa ${i + 2}/${tries})…`);
+        await new Promise(res => setTimeout(res, wait));
+        continue;
+      }
+      throw new Error(`rede: ${e.message} — ${url}`);
+    }
     if (r.ok) return r.json();
     // 451 (geo-bloqueio) e 4xx em geral são permanentes: não adianta reesperar.
     if ((r.status === 429 || r.status >= 500) && i < tries - 1) {
@@ -143,23 +160,74 @@ function monthLabels(fromMs, toMs) {
   return out;
 }
 
+// Lê o benchmark-data.js que já está no repo. Serve de rede de segurança: a
+// série do CDI é histórica e NÃO muda retroativamente, então um apagão do BCB
+// não deve derrubar a atualização de preços — reaproveita o que já temos.
+function lerArquivoAtual() {
+  try {
+    const src = fs.readFileSync(OUT, 'utf8');
+    const win = {};
+    new Function('window', src)(win);
+    return win.BENCHMARK_DATA || null;
+  } catch (e) {
+    console.log('Não consegui ler o benchmark-data.js atual — ' + e.message);
+    return null;
+  }
+}
+
+function anotar(tipo, titulo, msg) {
+  if (!process.env.GITHUB_ACTIONS) return;
+  const esc = String(msg).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+  console.log(`::${tipo} title=${titulo}::${esc}`);
+}
+
+// CDI do BCB (SGS 4391). Se o BCB estiver fora do ar, cai para a série que já
+// está no benchmark-data.js em vez de abortar o job inteiro.
+async function cdiPorMes(now, atual) {
+  const url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
+    + `&dataInicial=01/01/2022&dataFinal=${new Date(now).toLocaleDateString('pt-BR')}`;
+  try {
+    const raw = await fetchWithRetry(url);
+    if (!Array.isArray(raw) || !raw.length) throw new Error('resposta vazia/inesperada');
+    const map = {};
+    raw.forEach(r => {
+      const [, mm, yyyy] = r.data.split('/');
+      map[yyyy + '-' + mm] = parseFloat(r.valor);
+    });
+    return { map, stale: false };
+  } catch (e) {
+    console.log('CDI: BCB falhou — ' + e.message);
+    const map = {};
+    if (atual && Array.isArray(atual.labels) && Array.isArray(atual.cdiMonthlyPct)) {
+      atual.labels.forEach((lbl, i) => {
+        const v = atual.cdiMonthlyPct[i];
+        if (v == null) return;
+        const [mm, yy] = lbl.split('/');
+        map['20' + yy + '-' + mm] = v;
+      });
+    }
+    if (!Object.keys(map).length) {
+      throw new Error('CDI indisponível no BCB e sem série anterior no benchmark-data.js — ' + e.message);
+    }
+    console.log(`CDI: reaproveitando ${Object.keys(map).length} meses do benchmark-data.js atual.`);
+    anotar('warning', 'fetch-benchmark', 'BCB indisponível (' + e.message + '); CDI reaproveitado do arquivo anterior.');
+    return { map, stale: true };
+  }
+}
+
 (async () => {
   const now = Date.now();
+  const atual = lerArquivoAtual();
 
   // Sequencial de propósito: a cascata já é tolerante a falha, e serializar
   // evita estourar rate limit das fontes públicas.
   const btc = await monthlyCloses({ label: 'BTC', coinbase: 'BTC-USD', yahoo: 'BTC-USD', binance: 'BTCUSDT' });
   const eth = await monthlyCloses({ label: 'ETH', coinbase: 'ETH-USD', yahoo: 'ETH-USD', binance: 'ETHUSDT' });
-  const cdiRaw = await fetchWithRetry(
-    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json&dataInicial=01/01/2022&dataFinal=${new Date(now).toLocaleDateString('pt-BR')}`);
+  const cdi = await cdiPorMes(now, atual);
 
   const btcMap = btc.map;
   const ethMap = eth.map;
-  const cdiMap = {};
-  cdiRaw.forEach(r => {
-    const [dd, mm, yyyy] = r.data.split('/');
-    cdiMap[yyyy + '-' + mm] = parseFloat(r.valor);
-  });
+  const cdiMap = cdi.map;
 
   const labels = monthLabels(START, now);
   const btcUsd = [], ethUsd = [], cdiMonthlyPct = [];
@@ -186,7 +254,8 @@ function monthLabels(fromMs, toMs) {
     btcUsd,
     ethUsd,
     cdiMonthlyPct,
-    source: `BTC via ${btc.fonte} · ETH via ${eth.fonte} (fechamento mensal em USD) + BCB SGS série 4391 (CDI % a.m.)`,
+    source: `BTC via ${btc.fonte} · ETH via ${eth.fonte} (fechamento mensal em USD) + BCB SGS série 4391 (CDI % a.m.)`
+      + (cdi.stale ? ' — ⚠️ CDI reaproveitado da execução anterior (BCB indisponível nesta)' : ''),
     fetchedAt: new Date().toISOString(),
     methodology: 'btcUsd/ethUsd = preço de fechamento do candle mensal em USD (fonte em cascata: Coinbase Exchange → Yahoo Finance → Binance); mês corrente usa o candle parcial mais recente. cdiMonthlyPct = taxa CDI acumulada no mês (% a.m., BCB SGS 4391) — null no mês ainda em curso (só fecha no fim do mês). Alinhado mês a mês com WEEKLY_UPDATE.wealthCurve.labels. Usado para simular "o mesmo aporte, no mesmo mês, comprando 100% deste ativo" (ver simulateDcaEquivalent/simulateCdiEquivalent em portfolio_analytics.html).',
   };
@@ -194,4 +263,9 @@ function monthLabels(fromMs, toMs) {
   const jsContent = 'window.BENCHMARK_DATA = ' + JSON.stringify(output, null, 1) + ';\n';
   fs.writeFileSync(OUT, jsContent);
   console.log(`OK ${labels[labels.length - 1]}: BTC $${lastBtc} · ETH $${lastEth} · ${labels.length} meses (Jan/22 → ${labels[labels.length - 1]})`);
-})().catch(e => { console.error('ERRO:', e.message); process.exit(1); });
+})().catch(e => {
+  console.error('ERRO:', e.message);
+  // Vira anotação no resumo do run e no e-mail de falha — sem precisar abrir o log.
+  anotar('error', 'fetch-benchmark', e.message);
+  process.exit(1);
+});
