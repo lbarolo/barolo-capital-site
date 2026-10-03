@@ -9,14 +9,17 @@
 - Explicar cada métrica em linguagem simples (o Lucas está aprendendo quant).
 - Não é recomendação de investimento; decisão é do Lucas.
 
-## Estado atual (02/10/2026)
+## Estado atual (03/10/2026)
 Beta ao BTC 1,17 · vol 59% · VaR95 1d −4,6% · risco: ETH 66% / SOL 32% / BTC 2,5% · N efetivo 2,6 ·
-SOL liquida a 2,1σ · juro real 2,84% subindo · M2 +6,1% · MVRV 1,57 (meio de ciclo).
-Dívidas (02/10): quitar a Kamino é a melhor opção (+US$ 25/ano vs hoje, zera a perna de 2,1σ);
-a AAVE é neutra (borrow ≈ supply do USDT); mover a dívida para a AAVE ganha pouco na média. Ver QUANT.md §9.
-Backtest DCA-Mayer: −0,9% vs DCA fixo → não adotar. Backlog Q1–Q7 em `QUANT.md §6`, sem prioridade.
+juro real 2,84% subindo · M2 +6,1% · MVRV 1,57 (meio de ciclo) — números de 28/09, rodar o relatório de novo.
+**Kamino após os 2 repays de 02/10:** 25,03 SOL @5,49% · dívida 454,98 USDC @5,93% · LTV ~15,4% ·
+liqLtv 75% · SOL liquida ~US$ 24,24 (≈2,3σ). USDS zerado. AAVE inalterada (765,74 USDC, neutra).
+Plano em aberto (QUANT.md §9): pool SOL/USDC 140–190 (~2,83 SOL, saída média US$ 163) e/ou aporte
+para quitar o resto (~US$ 27/ano de juros). Backlog Q1–Q7 e regras da §4 sem decisão do Lucas.
+Backtest DCA-Mayer: −0,9% vs DCA fixo → não adotar.
 
 ## Histórico
+- 03/10/2026 — handoff da sessão salvo fora do repo (pasta temp); estado atualizado após os repays.
 - 02/10/2026 — Lucas executou o 1o passo (repay com USDS): Kamino 465,07 USDC, SOL liquida ~US$ 24,3 (2,3σ). Falta: pool SOL/USDC 140–190 / aporte.
 - 02/10/2026 — plano do Lucas: USDS parcial + pool SOL/USDC 140–190 (~2,83 SOL, saída média US$ 163) + aporte; contas em §9.
 - 02/10/2026 — análise trocar/quitar dívidas: quitar a Kamino vence (§9); decisão do Lucas.

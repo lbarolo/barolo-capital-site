@@ -6851,6 +6851,40 @@ prioridade do Lucas
 
 ---
 
+## Sessão 02–03/10/2026 — /quant: dívidas AAVE × Kamino, plano da pool SOL/USDC, Kamino paga 41%
+
+### Implementado
+- **Análise trocar/quitar dívidas** (`QUANT.md §9`, `6a33856`): taxas de 23 snapshots do `data.js` (jun→out); Kamino
+  ≈2 p.p. mais cara que a AAVE em 22/23 leituras. Quitar a Kamino venceu (+~US$ 25/ano e zera a perna de liquidação
+  de 2,1σ). AAVE neutra (borrow ≈ supply do USDT) — manter.
+- **Plano do Lucas** (`c6ab99a`): repay parcial com USDS + pool SOL/USDC 140–190 (~2,83 SOL, saída média US$ 163,
+  P(tocar 140) 61%/90d) + aporte novo aos poucos.
+- **Executado em 02/10:** 1º repay 302,14 USDC (USDS 305,46 + reward 1,59) e 2º repay 10,09 USDC (255,22 KMNO de
+  stake+rewards). `data.js`: USDS zerado (holding, supply, principals, cgMirror — Lucas excluiu o USDS do CoinGecko),
+  Kamino 454,98 USDC @5,93%, SOL @5,49%, liqLtv 75%, principal USDC 378,599493.
+- **Skill `handoff`** (mattpocock/skills) instalada localmente (`.agents/skills/handoff`, não versionada); handoff
+  salvo em `%TEMP%handoff-barolo-quant-2026-10-03.md`.
+
+### Dados atualizados
+| Campo | Antes | Depois |
+|---|---:|---:|
+| Kamino borrow USDC | 767,21 @5,95% | **454,98 @5,93%** |
+| Kamino supply USDS | 305,46 | **0** |
+| LTV Kamino / liqLtv | 23,4% / 76,4% | **15,4% / 75,0%** |
+| SOL liquida em | ~US$ 28 | **~US$ 24,24** |
+| `stables.USDS` / `cgMirror.USDS` | 305,46 | **0 / 0** |
+
+### Bugs / incidentes
+- 4,91 USDC + 0,00137 SOL para endereço desconhecido = **taxa do protocolo de swap** (~1,6%, cara; preferir Jupiter).
+- Commit `a4e50cc` levou alterações não commitadas de OUTRA sessão (`/prints`) com mensagem errada; dados corretos,
+  histórico não reescrito. Lição: duas sessões escrevendo no `data.js` ao mesmo tempo — sempre pull + status antes.
+
+### O que ainda falta
+- Decidir/abrir a pool SOL/USDC 140–190; aporte para quitar os ~455 restantes (entra em `contributions`).
+- Backlog Q1–Q7 (`QUANT.md §6`) e regras da §4 aguardando o Lucas. Prints da semana (sessão `/prints`).
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
