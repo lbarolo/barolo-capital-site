@@ -79,7 +79,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - `ETH.invested` diferente do CoinGecko (migração de custo deliberada para o USDT).
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
-## Estado atual (29/09/2026)
+## Estado atual (03/10/2026)
 - **O CoinGecko caiu como fonte** (403 de WAF sem chave, no runner e no navegador). Resolvido dos
   dois lados: crons em `4ef9439`, site em `7f7ce5b`. A cascata é Coinbase → CoinPaprika → Yahoo/
   CoinGecko, e **fonte nova só entra com o NOME conferido** (XAI e SCR têm homônimos).
@@ -91,8 +91,11 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   Node 22; faltam `onchain.yml` e `sync-emprestimos.yml`. Fase 6 (des-bundlar) pendente.
 - ⚠️ `ferramentas.html` tem trabalho não commitado de outra sessão (CSS do bloco quant do Semanal).
   Em 29/09 commitei só o meu trecho pelo método do passo 8 — o CSS dela segue na pasta, intocado.
+- **Actions**: `benchmark.yml` falhou em 03/10 (run #47) por um blip do BCB; corrigido em `cc4a363`.
+  Os outros scripts de cron (`fetch-onchain`, `fetch-briefing`, `spot-prices`) já tratavam rejeição do `fetch` — conferido.
 
 ## Histórico (mais recente no topo)
+- 03/10/2026 — `benchmark.yml` deixa de cair num blip do BCB: `fetchWithRetry` passa a repetir rejeição do `fetch` (rede), e o CDI vira não-fatal (reaproveita a série do próprio `benchmark-data.js`, que é histórica, com `::warning::`) — `cc4a363`.
 - 29/09/2026 — preço ao vivo do site em cascata + câmbio USD/BRL; fecha o ALTA do navegador — `7f7ce5b`.
 - 29/09/2026 — preço dos crons em cascata (CoinGecko passou a dar 403); bloqueio no navegador registrado como ALTA — `4ef9439`.
 - 16/09/2026 — aba Pools APY removida do ferramentas (não usada; The Graph desligado) — `fdc603c`.
