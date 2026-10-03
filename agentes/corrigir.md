@@ -91,10 +91,18 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   Node 22; faltam `onchain.yml` e `sync-emprestimos.yml`. Fase 6 (des-bundlar) pendente.
 - ⚠️ `ferramentas.html` tem trabalho não commitado de outra sessão (CSS do bloco quant do Semanal).
   Em 29/09 commitei só o meu trecho pelo método do passo 8 — o CSS dela segue na pasta, intocado.
-- **Actions**: `benchmark.yml` falhou em 03/10 (run #47) por um blip do BCB; corrigido em `cc4a363`.
-  Os outros scripts de cron (`fetch-onchain`, `fetch-briefing`, `spot-prices`) já tratavam rejeição do `fetch` — conferido.
+- **Actions**: `benchmark.yml` verde de novo (run #48, `d89c984`). O `api.bcb.gov.br` está fora
+  para os runners desde 03/10 — quem está servindo o CDI hoje é o **IPEAData** (série
+  `BM12_TJCDI12`, espelho do SGS 4391). O step leva ~96s por causa dos 90s de retry no BCB; se
+  ele não voltar em algumas semanas, vale inverter a ordem da cascata. Os outros crons
+  (`fetch-onchain`, `fetch-briefing`, `spot-prices`) já tratavam rejeição do `fetch` — conferido.
+- ⚠️ **"Re-run" do GitHub replaya o COMMIT ORIGINAL do run** — re-rodar um run antigo NUNCA testa
+  uma correção nova (custou 3 tentativas vermelhas no #47). Para testar fix de Action: **Run
+  workflow** na `main`, ou um gatilho `push` com `paths` no próprio workflow (foi o que o
+  `benchmark.yml` ganhou). Mesma armadilha já registrada para o `onchain.yml`.
 
 ## Histórico (mais recente no topo)
+- 03/10/2026 — CDI em cascata (BCB → IPEAData → arquivo) e `benchmark.yml` passa a rodar no push do próprio script; run #48 verde com o CDI vindo do IPEAData — `d89c984`.
 - 03/10/2026 — `benchmark.yml` deixa de cair num blip do BCB: `fetchWithRetry` passa a repetir rejeição do `fetch` (rede), e o CDI vira não-fatal (reaproveita a série do próprio `benchmark-data.js`, que é histórica, com `::warning::`) — `cc4a363`.
 - 29/09/2026 — preço ao vivo do site em cascata + câmbio USD/BRL; fecha o ALTA do navegador — `7f7ce5b`.
 - 29/09/2026 — preço dos crons em cascata (CoinGecko passou a dar 403); bloqueio no navegador registrado como ALTA — `4ef9439`.
