@@ -117,7 +117,7 @@ window.BENCHMARK_DATA = {
   62825.9,
   78562.74,
   83556.14,
-  85293.01
+  86105.97
  ],
  "ethUsd": [
   2689.72,
@@ -177,7 +177,7 @@ window.BENCHMARK_DATA = {
   1860.66,
   2467.29,
   2683.93,
-  2697.19
+  2719.11
  ],
  "cdiMonthlyPct": [
   0.73,
@@ -237,9 +237,10 @@ window.BENCHMARK_DATA = {
   1.22,
   1.09,
   1.08,
-  0.05
+  0.1
  ],
- "source": "BTC via Coinbase Exchange · ETH via Coinbase Exchange (fechamento mensal em USD) + CDI % a.m. via benchmark-data.js anterior — ⚠️ nenhuma fonte de CDI respondeu nesta execução",
- "fetchedAt": "2026-10-04T15:10:01.769Z",
- "methodology": "btcUsd/ethUsd = preço de fechamento do candle mensal em USD (fonte em cascata: Coinbase Exchange → Yahoo Finance → Binance); mês corrente usa o candle parcial mais recente. cdiMonthlyPct = taxa CDI acumulada no mês (% a.m., BCB SGS 4391) — null no mês ainda em curso (só fecha no fim do mês). Alinhado mês a mês com WEEKLY_UPDATE.wealthCurve.labels. Usado para simular \"o mesmo aporte, no mesmo mês, comprando 100% deste ativo\" (ver simulateDcaEquivalent/simulateCdiEquivalent em portfolio_analytics.html)."
+ "source": "BTC via Coinbase Exchange · ETH via Coinbase Exchange (fechamento mensal em USD) + CDI % a.m. via BCB SGS 4391",
+ "cdiEstimados": [],
+ "fetchedAt": "2026-10-05T13:10:13.495Z",
+ "methodology": "btcUsd/ethUsd = preço de fechamento do candle mensal em USD (cascata: Coinbase Exchange → Yahoo Finance → Binance); mês corrente usa o candle parcial mais recente. cdiMonthlyPct = taxa CDI acumulada no mês (% a.m.), cascata BCB SGS 4391 → IPEAData (BM12_TJCDI12, espelho do SGS) → série anterior deste arquivo + BrasilAPI para o que faltar. Os meses listados em cdiEstimados NÃO são o dado oficial: saem da taxa CDI anual corrente pela fórmula oficial (1+a)^(du/252)−1, com dias úteis seg–sex sem desconto de feriado — erro na casa de 0,01 p.p., e some assim que o BCB ou o IPEAData voltarem a responder. Alinhado mês a mês com WEEKLY_UPDATE.wealthCurve.labels. Usado para simular \"o mesmo aporte, no mesmo mês, comprando 100% deste ativo\" (ver simulateDcaEquivalent/simulateCdiEquivalent em portfolio_analytics.html)."
 };
