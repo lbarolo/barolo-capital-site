@@ -78,7 +78,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — yields lançados no CoinGecko + duplicata de BTC a apagar (`asOf` 2026-10-02)
+## Estado atual (ANTERIOR — ver o bloco de 05/10 logo acima do histórico) — yields lançados no CoinGecko + duplicata de BTC a apagar (`asOf` 2026-10-02)
 **Juros da AAVE no último review (base para a regra 4):** WETH **0,018554028543753534** · USDT **25,227541**
 
 | | Qtd | APY | Principal |
@@ -152,7 +152,27 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
+## ⚡ APORTE NOVO — 05/10/2026 (primeiro de outubro, e o primeiro aporte externo desde agosto)
+Print da ordem OKX (par USDT/BRL, 398...010, 09:51:14): **R$ 400,00 @ 5,0558 = 79,11706 USDT bruto**,
+taxa 0,07911706 (0,1%), **líquido 79,03794294 USDT**. Aritmética fecha: 79,11706 × 5,0558 = R$ 400,00.
+
+**FIAT → CRIPTO = dinheiro de FORA**, então desta vez é **aporte de verdade** (diferente das compras
+de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lugares:
+- `data.js → contributions`: **US$ 79,12** (o bruto — é o que saiu do bolso; a taxa de 8 centavos é
+  custo real e aparece como perda, não some da conta).
+- `data.js → stables.USDT`: qty **1.906,148819 → 1.985,186762** (+79,038 líquido) · invested
+  **1.879,19 → 1.958,31** (+79,12).
+- `ferramentas.html → FISCAL_ENTRADAS` USDT **2.979,78 → 3.058,90 un** · **R$ 16.016,57 → 16.416,57**
+  · câmbio médio 5,38 → **5,37**. `APORTADO_BRL` **37.582,97 → 37.982,97**.
+- `cgMirror.USDT` subido junto porque ele disse que ia lançar na hora. ⚠️ **Se ele lançar o BRUTO
+  (79,11706) em vez do líquido, vai sobrar 0,079 de diferença** — conferir no próximo print.
+
+⚠️ **Efeito no fechamento de outubro:** outubro deixa de ser mês sem aporte. O `close-month.js` soma
+`contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
+
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 05/10/2026 — **aporte de R$ 400 → 79,04 USDT** (fiat→cripto, 1ª contribuição externa desde ago/26);
+  Fiscal e `contributions` atualizados.
 - 02/10/2026 (7) — pendências fechadas: os 4,91 USDC eram taxa do protocolo (não ativo) e ele excluiu o USDS do CoinGecko; espelho zerado.
 - 02/10/2026 (6) — 2º repay com KMNO convertido (−10,09 USDC): dívida Kamino 454,98, total 1.220,72; ganho puro (o KMNO não estava no site).
 - 02/10/2026 (5) — repay na Kamino (767,21 → 465,07) com o USDS inteiro; corrigidos APY do SOL, LTV e liq.LTV que a sessão do /quant deixou do print anterior (liq.LTV 76,4% → 75% muda o preço de liquidação de 24,32 para 24,77).

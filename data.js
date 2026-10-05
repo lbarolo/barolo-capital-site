@@ -155,7 +155,7 @@
        reconhecidos em 22/08, os 406,27 acima e o DCA de SOL de 05/08).
    ════════════════════════════════════════════════════════════════════ */
 window.BAROLO_DATA = {
-  asOf: '2026-10-02',
+  asOf: '2026-10-05',
   brlRate: 4.95,
 
   // Holdings (CoinGecko — já inclui colateral DeFi). qty + custo de aquisição (invested em USD).
@@ -207,7 +207,7 @@ window.BAROLO_DATA = {
     // caixa em corretora tinha acabado: NAO acabou. Reconstrucao: os 185 de caixa de 22/08
     // viraram 135 quando 50 compraram BTC na OKX em 28/09; e dos 300 sacados da AAVE em
     // 15/09, 200 viraram ETH em 15-16/09 e 50 em 24/09, sobrando ~50 na carteira EVM.
-    { ticker:'USDT', cgId:'tether',           qty:1906.148819, invested:1879.19  },  // qty +0,528182 e invested -0,02 (02/10/2026): juro do aUSDT desde 29/09 (24,699359 -> 25,227541, MCP) e as compras de BTC de 28/09 custaram US$ 50,00 (OKX), nao 49,98 — 2 centavos a mais migram para o BTC.  // -49,98 (29/09/2026): os 50 USDT da ordem limite viraram BTC em 28/09 (rotacao; custo migra para o BTC) e +0,713205 de juro do aUSDT desde 25/09 (23,986154 -> 24,699359, MCP).  -50 (26/09/2026): 50 dos 100 USDT sacados da AAVE em 15/09 viraram ETH em 24/09 — ROTACAO, nao aporte (o custo migra para o ETH, total investido nao muda). Sobram 50 USDT em ordem limite, nao acionada.  2003,309704->2004,887432 (25/09/2026): +1,577728 de juro do aUSDT desde 18/09 (22,408426 -> 23,986154, MCP).  2003,268354->2003,309704 (18/09, apos o deposito): juro do aUSDT 22,367076 -> 22,408426 (MCP).  2002,77816->2003,268354 (18/09): +0,490194 USDT de juro do aUSDT desde 16/09 (21,876882 -> 22,367076, MCP), custo zero
+    { ticker:'USDT', cgId:'tether',           qty:1985.186762, invested:1958.31  },  // +79,03794294 qty e +79,12 invested (05/10/2026): APORTE DE VERDADE — R$ 400,00 convertidos em USDT na OKX @ 5,0558 (ordem 398...010, 09:51). Bruto 79,11706 - taxa 0,07911706 (0,1%) = 79,03794294 liquido. O invested leva o BRUTO (US$ 79,12, o que saiu do bolso); a diferenca de 8 centavos e a taxa, custo real.  // qty +0,528182 e invested -0,02 (02/10/2026): juro do aUSDT desde 29/09 (24,699359 -> 25,227541, MCP) e as compras de BTC de 28/09 custaram US$ 50,00 (OKX), nao 49,98 — 2 centavos a mais migram para o BTC.  // -49,98 (29/09/2026): os 50 USDT da ordem limite viraram BTC em 28/09 (rotacao; custo migra para o BTC) e +0,713205 de juro do aUSDT desde 25/09 (23,986154 -> 24,699359, MCP).  -50 (26/09/2026): 50 dos 100 USDT sacados da AAVE em 15/09 viraram ETH em 24/09 — ROTACAO, nao aporte (o custo migra para o ETH, total investido nao muda). Sobram 50 USDT em ordem limite, nao acionada.  2003,309704->2004,887432 (25/09/2026): +1,577728 de juro do aUSDT desde 18/09 (22,408426 -> 23,986154, MCP).  2003,268354->2003,309704 (18/09, apos o deposito): juro do aUSDT 22,367076 -> 22,408426 (MCP).  2002,77816->2003,268354 (18/09): +0,490194 USDT de juro do aUSDT desde 16/09 (21,876882 -> 22,367076, MCP), custo zero
     // USDS 300 -> 304.66 em 04/09/2026: o holding estava ABAIXO do supply da Kamino
     // (304,66), o que viola o invariante de que holdings incluem o colateral — o piso
     // do holding e sempre o supply. A diferenca e yield acumulado que o CoinGecko nunca
@@ -753,7 +753,7 @@ window.BAROLO_DATA = {
     SOL:  25.03,
     USDS: 0,            // 305,46->0 (02/10): Lucas EXCLUIU o USDS do CoinGecko (nao vai mais comprar). Ok assim: o historico do USDS no CoinGecko ja nao tinha custo real (entrou a custo zero no reset de mar/26) e o site nao depende dele.
     ETH:  2.338483,      // no CoinGecko esta 2,338483374; o site arredonda em 6 casas (US$ 0,001 de diferenca).
-    USDT: 1906.148819,
+    USDT: 1985.186762,  // +79,037943 (05/10): o aporte de R$ 400. Ele disse que ia lancar no CoinGecko na hora — se lancar o BRUTO (79,11706) em vez do liquido, vai sobrar 0,079 de diferenca; conferir no proximo print.
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de 02/10 —
     // iguais ao holding, nada pendente.
   },
@@ -771,6 +771,7 @@ window.BAROLO_DATA = {
   // lista cobre 09/2026 em diante. `scripts/close-month.js` soma os aportes do
   // mes que fechou e acrescenta o ponto novo.
   contributions: [
+    { date:'2026-10-05', usd: 79.12, note:'aporte DCA — R$ 400,00 convertidos em USDT na OKX @ 5,0558 (par USDT/BRL, ordem 398...010). FIAT -> CRIPTO = dinheiro de FORA, por isso entra aqui. Tambem lancado em ferramentas.html -> FISCAL_ENTRADAS (BRL).' },
     // { date:'2026-09-15', usd: 250, note:'DCA mensal SOL' },
     //
     // RECEBIDOS EM CRIPTO (nao passaram por fiat/corretora). Sao entradas de FORA

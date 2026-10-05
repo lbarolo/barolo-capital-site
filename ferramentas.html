@@ -543,6 +543,26 @@ body, input, button, select, textarea {
 .sw-history-q .sw-hq-text{font-size:13.5px;color:var(--text);line-height:1.65;white-space:pre-wrap;}
 .sw-history-q .sw-hq-empty{font-size:12.5px;color:var(--muted);font-style:italic;}
 .sw-copy-notice{font-size:11px;color:var(--green);display:none;margin-left:8px;}
+/* Bloco quantitativo do Semanal (28/09/2026) — números calculados dos snapshots diários */
+.swq{border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:6px;background:var(--s2);}
+.swq-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.swq-title{font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:1.8px;color:var(--accent);text-transform:uppercase;}
+.swq-tag{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.5px;}
+.swq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;}
+.swq-cell{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:9px 11px;}
+.swq-l{font-size:9.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.swq-v{font-family:var(--font-mono);font-size:15px;font-weight:600;color:var(--text);}
+.swq-s{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:2px;}
+.swq-v.up,.swq-s.up{color:var(--green);} .swq-v.dn,.swq-s.dn{color:var(--red);}
+.swq-sub{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:1.5px;margin:4px 0 8px;}
+.swq-note{font-size:10.5px;color:var(--muted);line-height:1.5;}
+.sw-score{display:flex;align-items:center;gap:6px;margin:-6px 0 18px;flex-wrap:wrap;}
+.sw-score .sw-score-l{font-size:11px;color:var(--muted);margin-right:4px;}
+.sw-score button{width:30px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--s2);color:var(--muted);font-family:var(--font-mono);font-size:12px;cursor:pointer;}
+.sw-score button:hover{border-color:var(--accent);color:var(--text);}
+.sw-score button.on{background:rgba(201,160,80,.18);border-color:var(--accent);color:var(--accent);font-weight:700;}
+.sw-score .sw-score-e{font-size:10px;color:var(--muted);font-family:var(--font-mono);}
+.sw-hsum{font-family:var(--font-mono);font-size:11px;}
 @media print {
   * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   body > *:not(#print-semanal){display:none !important;}
@@ -2193,6 +2213,8 @@ window.Fiscal = (function(){
   //      05/06  76,39353 USDT @ 5,2398 = R$   400,29
   //      17/06  96,26852 USDT @ 5,1938 = R$   500,00
   //    subtotal 218,35806 USDT por R$ 1.134,78 (câmbio médio 5,1969)
+  //  + 1 conversão USDT/BRL de 05/10/2026 (print da ordem 398...010):
+  //      05/10 → 79,11706 USDT @ 5,0558 = R$ 400,00 (taxa 0,079 USDT). APORTE novo.
   //  + 2 conversões USDT/BRL de julho (print de ordens OKX 09/09/2026):
   //      10/07  97,11566 USDT @ 5,1485 = R$   500,00
   //      14/07  88,06262 USDT @ 5,1100 = R$   450,00
@@ -2202,14 +2224,14 @@ window.Fiscal = (function(){
   // Conferido que NÃO duplica: a planilha termina em 08/05/2026, todas as cinco são posteriores.
   // As compras BTC/USDT do mesmo print (24/06 e 01/07) são cripto↔cripto e NÃO entram aqui —
   // já estão em data.js → holdings.BTC (invested $38,84 e $95,89).
-  var APORTADO_BRL = 37582.97;   // Binance 29.664,20 + OKX 7.150,28 (fiat→cripto)
+  var APORTADO_BRL = 37982.97;   // Binance 29.664,20 + OKX 7.550,28 (fiat→cripto)
   var FISCAL_ENTRADAS = [
     { t:'BTC',  qty:'0,00337',    brl:998.11,   avg:'296.174,15' },
     { t:'ETH',  qty:'0,3872',     brl:5844.80,  avg:'15.096,18'  },
     { t:'SOL',  qty:'1,012',      brl:914.48,   avg:'903,63'     },
     { t:'ADA',  qty:'307,99',     brl:3713.84,  avg:'12,06'      },
     { t:'XAI',  qty:'79',         brl:101.52,   avg:'1,29'       },
-    { t:'USDT', qty:'2.979,78',   brl:16016.57, avg:'5,38'       },
+    { t:'USDT', qty:'3.058,90',   brl:16416.57, avg:'5,37'       },
     { t:'USDC', qty:'531,13',     brl:2900.35,  avg:'5,46'       },
     { t:'BUSD', qty:'1.231,66',   brl:6433.55,  avg:'5,22'       },
     { t:'DOT',  qty:'2,97',       brl:352.77,   avg:'118,78'     },
