@@ -15,13 +15,14 @@
  *      então NÃO funciona no GitHub Actions; fica só como fallback local.
  *   - CDI (% a.m. desde Jan/2022), também em CASCATA:
  *       1. BCB SGS 4391 (api.bcb.gov.br) — a fonte oficial.
- *       2. IPEAData (www.ipeadata.gov.br, série BM12_TJCDI12) — espelha a MESMA
- *          série SGS 4391 em outro host. Existe porque o modo de falha real foi
- *          api.bcb.gov.br sumir inteiro (run #47, 03/10/2026, 3 tentativas).
- *       3. O cdiMonthlyPct que já está no benchmark-data.js. A série é histórica
- *          e não muda retroativamente, então reaproveitar perde no máximo o
- *          acumulado parcial do mês em curso — nunca vale derrubar a atualização
- *          de preços por causa disso. Emite ::warning:: quando chega aqui.
+ *       2. IPEAData (www.ipeadata.gov.br, BM12_TJCDI12) — espelho exato do SGS.
+ *       3. A série que já está no benchmark-data.js (histórica, não muda) +
+ *          BrasilAPI para os meses que faltarem (ver cdiAnualBrasilApi).
+ *     ⚠️ Em 04-05/10/2026 os DOIS hosts gov.br pararam de responder ao runner do
+ *     GitHub (respondem normalmente de uma máquina no Brasil) — provavelmente o
+ *     mesmo geo-bloqueio da Binance. Sem o nível 3 o CDI congelaria no acumulado
+ *     parcial de outubro (0,05) e a linha "estou batendo a renda fixa?" iria
+ *     apodrecendo mês a mês. A BrasilAPI roda em CDN global e cobre esse buraco.
  *
  * ⚠️ LIÇÃO (20/08/2026): a versão original usava só a Binance e passou no teste
  * local (sandbox sai por proxy fora dos EUA) mas quebrou na primeira execução
@@ -189,7 +190,7 @@ function anotar(tipo, titulo, msg) {
 // ── CDI, fonte 1: BCB SGS 4391 direto (api.bcb.gov.br) ─────────────────────
 async function cdiDoBcb(now) {
   const raw = await fetchWithRetry('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json'
-    + `&dataInicial=01/01/2022&dataFinal=${new Date(now).toLocaleDateString('pt-BR')}`);
+    + `&dataInicial=01/01/2022&dataFinal=${new Date(now).toLocaleDateString('pt-BR')}`, 2);
   if (!Array.isArray(raw) || !raw.length) throw new Error('resposta vazia/inesperada');
   const map = {};
   raw.forEach(r => {
@@ -206,7 +207,7 @@ async function cdiDoBcb(now) {
 // que o BCB vinha devolvendo.
 async function cdiDoIpea() {
   const j = await fetchWithRetry(
-    "https://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='BM12_TJCDI12')");
+    "https://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='BM12_TJCDI12')", 2);
   const v = j && j.value;
   if (!Array.isArray(v) || !v.length) throw new Error('resposta vazia/inesperada');
   const map = {};
@@ -221,7 +222,37 @@ async function cdiDoIpea() {
   return map;
 }
 
-// ── CDI, fonte 3: a série que já está no benchmark-data.js ─────────────────
+// ── CDI, fonte 3: BrasilAPI (taxa anual corrente) + fórmula oficial ────────
+// Último recurso para os meses que o arquivo não cobre. A BrasilAPI roda em CDN
+// global (responde do runner, ao contrário dos dois hosts gov.br) mas só dá a
+// taxa ANUAL corrente — o mensal sai da fórmula oficial do CDI, que capitaliza
+// em dias ÚTEIS sobre base 252: acumulado = (1+anual)^(du/252) − 1.
+// Conferido em 05/10/2026: com 13,65% a.a. a fórmula devolve 0,0508% para 1 dia
+// útil (o arquivo trazia 0,05 em 10/26) e 1,072% para 21 dias úteis (o CDI real
+// de 09/26 foi 1,08). Erro na casa de 0,01 p.p. — bom o bastante para um
+// benchmark, e some assim que uma fonte exata voltar a responder.
+async function cdiAnualBrasilApi() {
+  const j = await fetchWithRetry('https://brasilapi.com.br/api/taxas/v1/CDI');
+  const v = j && Number(j.valor);
+  if (!(v > 0) || v > 100) throw new Error('valor implausível: ' + JSON.stringify(j));
+  return v;
+}
+
+// Dias úteis (seg–sex) do mês 'aaaa-mm' até 'ate'. Não desconta feriado
+// nacional: cada feriado ignorado infla o mês em ~0,05 p.p.
+function diasUteis(chave, ate) {
+  const [y, m] = chave.split('-').map(Number);
+  const fim = new Date(Date.UTC(y, m, 0));           // último dia do mês
+  const limite = ate < fim ? ate : fim;
+  let n = 0;
+  for (let d = new Date(Date.UTC(y, m - 1, 1)); d <= limite; d.setUTCDate(d.getUTCDate() + 1)) {
+    const dow = d.getUTCDay();
+    if (dow !== 0 && dow !== 6) n++;
+  }
+  return n;
+}
+
+// ── CDI, fonte 4: a série que já está no benchmark-data.js ─────────────────
 function cdiDoArquivo(atual) {
   const map = {};
   if (!atual || !Array.isArray(atual.labels) || !Array.isArray(atual.cdiMonthlyPct)) return map;
@@ -237,7 +268,9 @@ function cdiDoArquivo(atual) {
 // Cascata do CDI. A série é histórica e não muda retroativamente, então o pior
 // caso (reaproveitar o arquivo) perde no máximo o acumulado parcial do mês em
 // curso — nunca vale derrubar o job de preços por causa disso.
-async function cdiPorMes(now, atual) {
+async function cdiPorMes(now, atual, chavesDesejadas) {
+  // 2 tentativas (não 4) nos dois hosts gov.br: o modo de falha observado é
+  // geo-bloqueio do runner, que é permanente — insistir só queima minuto de CI.
   const chain = [
     ['BCB SGS 4391', () => cdiDoBcb(now)],
     ['IPEAData',     () => cdiDoIpea()],
@@ -249,20 +282,50 @@ async function cdiPorMes(now, atual) {
       const n = Object.keys(map).length;
       if (n < 12) throw new Error(`só ${n} meses retornados`);
       console.log(`CDI: ${n} meses via ${nome}`);
-      return { map, fonte: nome, stale: false };
+      return { map, fonte: nome, estimados: [] };
     } catch (e) {
       console.log(`CDI: ${nome} falhou — ${e.message}`);
       erros.push(`${nome}: ${e.message}`);
     }
   }
+
+  // Nenhuma fonte exata respondeu. Base = o que já está no arquivo (histórico,
+  // não muda retroativamente) e a BrasilAPI cobre o que falta.
   const map = cdiDoArquivo(atual);
+  const corrente = monthKey(now);
+  // O mês corrente do arquivo é um acumulado PARCIAL de outro dia: recalcula.
+  delete map[corrente];
+  const faltam = chavesDesejadas.filter(k => map[k] == null);
+  const estimados = [];
+  if (faltam.length) {
+    try {
+      const anual = await cdiAnualBrasilApi();
+      const fatorDia = Math.pow(1 + anual / 100, 1 / 252);
+      const ontem = new Date(now - 86400000);        // o CDI do dia só publica no dia seguinte
+      faltam.forEach(k => {
+        const du = diasUteis(k, ontem);
+        if (du <= 0) return;                         // mês ainda sem dia útil apurado
+        map[k] = Number(((Math.pow(fatorDia, du) - 1) * 100).toFixed(2));
+        estimados.push(k);
+      });
+      console.log(`CDI: ${estimados.length} mês(es) estimado(s) pela BrasilAPI `
+        + `(${anual}% a.a.): ${estimados.join(', ') || '—'}`);
+    } catch (e) {
+      console.log('CDI: BrasilAPI falhou — ' + e.message);
+      erros.push('BrasilAPI: ' + e.message);
+    }
+  }
+
   if (!Object.keys(map).length) {
     throw new Error('CDI indisponível em todas as fontes e sem série anterior no benchmark-data.js — ' + erros.join(' | '));
   }
-  console.log(`CDI: reaproveitando ${Object.keys(map).length} meses do benchmark-data.js atual.`);
+  const fonte = estimados.length
+    ? 'benchmark-data.js anterior + BrasilAPI (estimativa) nos meses ' + estimados.join(', ')
+    : 'benchmark-data.js anterior';
+  console.log(`CDI: ${Object.keys(map).length} meses — ${fonte}`);
   anotar('warning', 'fetch-benchmark',
-    'CDI indisponível (' + erros.join(' | ') + '); reaproveitado do arquivo anterior.');
-  return { map, fonte: 'benchmark-data.js anterior', stale: true };
+    'Nenhuma fonte exata de CDI respondeu (' + erros.join(' | ') + '); usando ' + fonte + '.');
+  return { map, fonte, estimados };
 }
 
 (async () => {
@@ -273,13 +336,14 @@ async function cdiPorMes(now, atual) {
   // evita estourar rate limit das fontes públicas.
   const btc = await monthlyCloses({ label: 'BTC', coinbase: 'BTC-USD', yahoo: 'BTC-USD', binance: 'BTCUSDT' });
   const eth = await monthlyCloses({ label: 'ETH', coinbase: 'ETH-USD', yahoo: 'ETH-USD', binance: 'ETHUSDT' });
-  const cdi = await cdiPorMes(now, atual);
+
+  const labels = monthLabels(START, now);
+  const chaves = labels.map(l => { const [mm, yy] = l.split('/'); return '20' + yy + '-' + mm; });
+  const cdi = await cdiPorMes(now, atual, chaves);
 
   const btcMap = btc.map;
   const ethMap = eth.map;
   const cdiMap = cdi.map;
-
-  const labels = monthLabels(START, now);
   const btcUsd = [], ethUsd = [], cdiMonthlyPct = [];
   const missing = [];
   labels.forEach(lbl => {
@@ -304,10 +368,10 @@ async function cdiPorMes(now, atual) {
     btcUsd,
     ethUsd,
     cdiMonthlyPct,
-    source: `BTC via ${btc.fonte} · ETH via ${eth.fonte} (fechamento mensal em USD) + CDI % a.m. via ${cdi.fonte}`
-      + (cdi.stale ? ' — ⚠️ nenhuma fonte de CDI respondeu nesta execução' : ''),
+    source: `BTC via ${btc.fonte} · ETH via ${eth.fonte} (fechamento mensal em USD) + CDI % a.m. via ${cdi.fonte}`,
+    cdiEstimados: cdi.estimados,
     fetchedAt: new Date().toISOString(),
-    methodology: 'btcUsd/ethUsd = preço de fechamento do candle mensal em USD (fonte em cascata: Coinbase Exchange → Yahoo Finance → Binance); mês corrente usa o candle parcial mais recente. cdiMonthlyPct = taxa CDI acumulada no mês (% a.m., BCB SGS 4391) — null no mês ainda em curso (só fecha no fim do mês). Alinhado mês a mês com WEEKLY_UPDATE.wealthCurve.labels. Usado para simular "o mesmo aporte, no mesmo mês, comprando 100% deste ativo" (ver simulateDcaEquivalent/simulateCdiEquivalent em portfolio_analytics.html).',
+    methodology: 'btcUsd/ethUsd = preço de fechamento do candle mensal em USD (cascata: Coinbase Exchange → Yahoo Finance → Binance); mês corrente usa o candle parcial mais recente. cdiMonthlyPct = taxa CDI acumulada no mês (% a.m.), cascata BCB SGS 4391 → IPEAData (BM12_TJCDI12, espelho do SGS) → série anterior deste arquivo + BrasilAPI para o que faltar. Os meses listados em cdiEstimados NÃO são o dado oficial: saem da taxa CDI anual corrente pela fórmula oficial (1+a)^(du/252)−1, com dias úteis seg–sex sem desconto de feriado — erro na casa de 0,01 p.p., e some assim que o BCB ou o IPEAData voltarem a responder. Alinhado mês a mês com WEEKLY_UPDATE.wealthCurve.labels. Usado para simular "o mesmo aporte, no mesmo mês, comprando 100% deste ativo" (ver simulateDcaEquivalent/simulateCdiEquivalent em portfolio_analytics.html).',
   };
 
   const jsContent = 'window.BENCHMARK_DATA = ' + JSON.stringify(output, null, 1) + ';\n';
