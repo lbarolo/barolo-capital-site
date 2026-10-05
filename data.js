@@ -753,7 +753,7 @@ window.BAROLO_DATA = {
     SOL:  25.03,
     USDS: 0,            // 305,46->0 (02/10): Lucas EXCLUIU o USDS do CoinGecko (nao vai mais comprar). Ok assim: o historico do USDS no CoinGecko ja nao tinha custo real (entrou a custo zero no reset de mar/26) e o site nao depende dele.
     ETH:  2.338483,      // no CoinGecko esta 2,338483374; o site arredonda em 6 casas (US$ 0,001 de diferenca).
-    USDT: 1985.186762,  // +79,037943 (05/10): o aporte de R$ 400. Ele disse que ia lancar no CoinGecko na hora — se lancar o BRUTO (79,11706) em vez do liquido, vai sobrar 0,079 de diferenca; conferir no proximo print.
+    USDT: 1985.186762,  // +79,037943 (05/10): o aporte de R$ 400. ✅ CONFIRMADO pelo Lucas: ele lancou o LIQUIDO no CoinGecko, igual ao holding — espelho em dia, sem diferenca de taxa.
     // BTC, ADA, EIGEN, RDNT, POL, ZK, XAI, ZETA, SCR: conferidos no print de 02/10 —
     // iguais ao holding, nada pendente.
   },
