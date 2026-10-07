@@ -152,6 +152,25 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
+## 07/10/2026 — compra de 0,02 ETH (ROTAÇÃO) + 1,54 USDC de troco que estava fora do site
+Extrato da carteira EVM: 1,54 USDC → 1,54 USDT no 1inch (tx `0x8eb7…d735`) e, minutos depois,
+**51,54 USDT → 0,0200 ETH** (tx `0xeff6cb…1aa167`). Gas 0,0001 ETH (US$ 0,25).
+
+**É rotação, e a conferência prova:** antes da operação o site tinha **264,06 USDT fora da AAVE** =
+OKX 134,98 + carteira EVM ~50 + aporte de 05/10 79,04 (4 centavos de arredondamento). Os 50 da
+carteira são exatamente o resto do saque da AAVE de 15/09 — dos 300 sacados, 200 viraram ETH em
+15-16/09, 50 em 24/09 e **estes 50 agora**. Fecha com a fala dele e confirma a reconstrução de 02/10.
+
+- `holdings.ETH`: qty **2,338483 → 2,358483** · invested **4.724,26 → 4.775,80** (+51,54)
+- `stables.USDT`: qty **1.985,186762 → 1.935,186762** · invested **1.958,31 → 1.908,31** (−50,00)
+- `contributions` **inalterada** — nenhum dinheiro veio de fora.
+
+⚠️ **Os 1,54 do USDC não estavam contabilizados no site** (não existe entrada de USDC nos stables).
+Por isso o ETH leva +51,54 de custo e o USDT só baixa 50: o **total investido sobe 1,54**. Isso é
+**correção de registro** — o patrimônio estava subestimado nesse valor — e não aporte nem ganho.
+Lançar como ganho inflaria a performance; lançar como aporte inflaria o capital.
+**Gas de 0,0001 ETH não descontado**, mesmo tratamento do gas em SOL (decisão de 15/07/2026).
+
 ## ⚡ APORTE NOVO — 05/10/2026 (primeiro de outubro, e o primeiro aporte externo desde agosto)
 Print da ordem OKX (par USDT/BRL, 398...010, 09:51:14): **R$ 400,00 @ 5,0558 = 79,11706 USDT bruto**,
 taxa 0,07911706 (0,1%), **líquido 79,03794294 USDT**. Aritmética fecha: 79,11706 × 5,0558 = R$ 400,00.
@@ -171,6 +190,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 07/10/2026 — compra de 0,02 ETH com os 50 USDT que sobravam na carteira EVM (rotação) + 1,54 USDC de troco incorporado.
 - 05/10/2026 — **aporte de R$ 400 → 79,04 USDT** (fiat→cripto, 1ª contribuição externa desde ago/26);
   Fiscal e `contributions` atualizados.
 - 02/10/2026 (7) — pendências fechadas: os 4,91 USDC eram taxa do protocolo (não ativo) e ele excluiu o USDS do CoinGecko; espelho zerado.
