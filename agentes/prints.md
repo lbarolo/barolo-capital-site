@@ -14,10 +14,13 @@
    Nunca somar o bloco `defi` por cima (dupla contagem).
 3. **Piso do holding = supply do protocolo** (SOL e USDS: holding = supply da Kamino).
    `tests/data.test.js` quebra se o holding ficar abaixo.
-4. **Juro/yield entra a custo zero**: a qty sobe, `invested` NÃO muda.
-   - SOL/USDS: holding = supply da Kamino.
-   - ETH/USDT: holding += (juro da AAVE hoje − juro da AAVE no último review). Os juros do
-     último review ficam em "Estado atual" abaixo — por isso é obrigatório atualizá-lo.
+4. **Juro/yield entra a custo zero**: a qty sobe, `invested` NÃO muda. **Todos por DELTA:**
+   - ETH/USDT: holding += (juro da AAVE hoje − juro da AAVE no último review).
+   - ⚠️ **SOL mudou em 07/10/2026**: antes era `holding = supply da Kamino`, porque todo o SOL
+     estava no protocolo. Agora há **0,36367745 SOL na OKX** além do supply — então o yield da
+     Kamino entra por **delta do supply**, igual ao ETH/USDT. **Igualar o holding ao supply agora
+     APAGA o SOL da corretora.** Mesma lógica vale se ele comprar USDS fora da Kamino.
+   - Os juros do último review ficam em "Estado atual" abaixo — por isso é obrigatório atualizá-lo.
 5. **`principals` só mudam com depósito, saque ou reempréstimo.** Se o principal devolvido pelo
    MCP da Aave for diferente do `data.js`, houve movimentação — investigar com
    `get_user_activity` antes de gravar. Esquecer isso faz depósito aparecer como rendimento
@@ -152,6 +155,19 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
+## 07/10/2026 (2) — compra de 0,365138 SOL na OKX (ROTAÇÃO) · ⚠️ a regra do SOL mudou
+Print da ordem `398…648` (09:58:21): **0,365138 SOL @ US$ 116,37 = US$ 42,48**, taxa **0,00146055 SOL
+(0,4%, cobrada em SOL)** → **líquido 0,36367745 SOL**. Pago com USDT que já estava na OKX — rotação.
+
+- `holdings.SOL`: qty **25,03 → 25,39367745** · invested **2.498,84 → 2.541,32** (+42,48)
+- `stables.USDT`: qty **1.935,186762 → 1.892,706762** · invested **1.908,31 → 1.865,83** (−42,48)
+- USDT na corretora: **214,06 → 171,58** · `contributions` inalterada
+
+⚠️ **MUDANÇA DE REGRA (está na regra 4 acima e comentada no `data.js`):** o holding de SOL **deixou
+de ser igual ao supply da Kamino**. Agora são duas partes — supply 25,03 + **0,36367745 na OKX**.
+A regra antiga valia enquanto todo o SOL estava no protocolo. **Num review futuro, igualar o holding
+ao supply apagaria o SOL da corretora.** O yield da Kamino passa a entrar por delta, igual ao ETH/USDT.
+
 ## 07/10/2026 — compra de 0,02 ETH (ROTAÇÃO) + 1,54 USDC de troco que estava fora do site
 Extrato da carteira EVM: 1,54 USDC → 1,54 USDT no 1inch (tx `0x8eb7…d735`) e, minutos depois,
 **51,54 USDT → 0,0200 ETH** (tx `0xeff6cb…1aa167`). Gas 0,0001 ETH (US$ 0,25).
@@ -190,6 +206,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 07/10/2026 (2) — compra de 0,365138 SOL na OKX com USDT da corretora (rotação); **regra do SOL mudou**: holding ≠ supply da Kamino, yield agora por delta.
 - 07/10/2026 — compra de 0,02 ETH com os 50 USDT que sobravam na carteira EVM (rotação) + 1,54 USDC de troco incorporado.
 - 05/10/2026 — **aporte de R$ 400 → 79,04 USDT** (fiat→cripto, 1ª contribuição externa desde ago/26);
   Fiscal e `contributions` atualizados.
