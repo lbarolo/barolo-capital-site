@@ -24,6 +24,12 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 > Só o `CONHECIMENTO-POOLIANA.md` fica neste repo, por pedido do Lucas — para reusar em outros
 > agentes.
 
+> 🔎 **`FONTES-PESQUISA.md`** (raiz, desde 07/10/2026) — catálogo de 40 ferramentas gratuitas de
+> pesquisa on-chain (whale tracking, rug check, unlocks/vesting, funding e open interest, TVL e
+> receita, fluxo de ETF). **Consulta manual**; a lista canônica para automação continua sendo
+> `QUANT.md §7`. Traz regras de segurança na abertura (nenhum deles precisa de carteira conectada;
+> domínios não verificados) — ler antes de abrir qualquer link de lá.
+
 > 🤖 **AGENTES POR PAPEL (desde 15/09/2026)** — `/prints` (review semanal → `data.js`), `/contas`, `/quant` (quant macro, desde 28/09 — base em `QUANT.md`),
 > `/corrigir`, `/bugs` e `/seguranca` (os dois últimos são subagentes **só leitura**). Cada papel
 > tem um **caderno** em `agentes/` com as regras, o estado atual e o histórico dele. **Ao fazer

@@ -157,6 +157,14 @@ no padrão visual existente, um por vez, com aprovação.
 
 ## 7. Fontes de dados (todas sem chave)
 
+> Esta tabela é a lista **canônica para automação** — só o que tem API pública e já foi testado no
+> runner do GitHub. Para pesquisa manual (whale tracking, unlocks, funding/OI, fluxo de ETF, TVL),
+> ver **`FONTES-PESQUISA.md`** na raiz. Candidatos de lá a virar Action, em ordem: fluxo de ETF
+> (farside.co.uk), funding e open interest (velo.xyz/coinglass — hoje premissa fixa de 5% a.a. na
+> §8.3/§8.4 da KB), TVL e fees (defillama.com), supply e queima do ETH (ultrasound.money).
+> ⚠️ Testar por `workflow_dispatch` numa branch antes de confiar: a Binance responde aqui e dá
+> **451** no runner (foi o bug da `benchmark.yml` em 20/08/2026).
+
 | Dado | Fonte | Observação |
 |---|---|---|
 | Preços diários BTC/ETH/SOL | Coinbase Exchange `/products/X-USD/candles?granularity=86400` | 300 candles por chamada; ~4 anos com 5 chamadas. Funciona no runner do GitHub (Binance dá 451). |
