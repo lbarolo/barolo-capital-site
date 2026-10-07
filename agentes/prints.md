@@ -155,6 +155,19 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
+## 07/10/2026 (3) — compra de 0,0004855 BTC na OKX (ROTAÇÃO)
+Ordem `398…408` (10:02:30): **0,0004855 BTC @ US$ 83.417 = US$ 40,49**, taxa **0,00000048 BTC (0,1%)**
+→ líquido **0,00048502**. Pago com USDT da corretora — rotação.
+- `holdings.BTC`: qty **0,00494132 → 0,00542634** · invested **320,47 → 360,96**
+- `stables.USDT`: qty **1.892,706762 → 1.852,216762** · invested **1.865,83 → 1.825,34**
+- USDT na corretora: **171,58 → 131,09** · `contributions` inalterada
+*(O BTC não está no `cgMirror` — foi tirado em 02/10 quando a duplicata foi corrigida; sem entrada ali,
+o script assume espelho igual ao holding.)*
+
+**Os três movimentos de 07/10 juntos** (0,02 ETH + 0,365 SOL + 0,000485 BTC = US$ 134,51) consumiram
+os 50 USDT da carteira EVM e US$ 82,97 do caixa da OKX. **Nenhum foi aporte** — todo o dinheiro já
+estava no portfólio. O único aporte do mês segue sendo os R$ 400 de 05/10.
+
 ## 07/10/2026 (2) — compra de 0,365138 SOL na OKX (ROTAÇÃO) · ⚠️ a regra do SOL mudou
 Print da ordem `398…648` (09:58:21): **0,365138 SOL @ US$ 116,37 = US$ 42,48**, taxa **0,00146055 SOL
 (0,4%, cobrada em SOL)** → **líquido 0,36367745 SOL**. Pago com USDT que já estava na OKX — rotação.
@@ -206,6 +219,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 07/10/2026 (3) — compra de 0,0004855 BTC na OKX com USDT da corretora (rotação); caixa da OKX 171,58 → 131,09.
 - 07/10/2026 (2) — compra de 0,365138 SOL na OKX com USDT da corretora (rotação); **regra do SOL mudou**: holding ≠ supply da Kamino, yield agora por delta.
 - 07/10/2026 — compra de 0,02 ETH com os 50 USDT que sobravam na carteira EVM (rotação) + 1,54 USDC de troco incorporado.
 - 05/10/2026 — **aporte de R$ 400 → 79,04 USDT** (fiat→cripto, 1ª contribuição externa desde ago/26);
