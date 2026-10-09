@@ -155,6 +155,50 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
+## 08/10/2026 (2) — RDNT ZERADO: vendeu tudo e virou 0,0031 ETH (ROTAÇÃO de custo ZERO)
+
+**A posição de RDNT acabou.** Dois swaps no 1inch (Arbitrum): 6.913,01 (tx `0xd4ed...ee8b`) +
+365,05 (tx `0xf218...2d54`) = **7.278,06 RDNT por 7,9029 USDC** (US$ 0,001086/un). Os 7,91 USDC
+viraram **0,0031 ETH** na Uniswap V4 (tx `0x0431...dc2d`). Palavras dele: *"RDNT subiu 150% e
+aproveitei e vendi o que eu tinha... pra não ver mais"*. Já **excluiu o token do CoinGecko**
+(mesmo tratamento que deu ao USDS em 02/10).
+
+⚡ **O ponto contábil que importa — airdrop vendido NÃO cria custo.** O RDNT tinha `invested: 0`.
+Na rotação o custo que migra é **zero**, então o `invested` do ETH fica **INALTERADO** em 4.775,80.
+Somar os US$ 7,91 ali criaria custo do nada: o `TOTAL_INVESTED` subiria sem nenhum dólar novo ter
+entrado e o ROI cairia por artefato. Regra geral: **na rotação migra o CUSTO, não o VALOR** — e o
+custo de um airdrop é zero. (Conferido: `TOTAL_INVESTED` continua **10.388,64** depois das duas
+operações do dia.)
+
+⚡ **Como ele deve lançar no CoinGecko:** os +0,0031 ETH entram como **transferência de entrada a
+custo ZERO**, não como compra de US$ 7,91. Ele excluiu o RDNT de lá, e o RDNT não tinha custo —
+logo o custo total do CoinGecko não caiu na saída; lançar o ETH como compra faria esse custo subir
+US$ 7,91 e divergir do site. **Pendente de confirmação** (é o único item do `cgMirror` hoje).
+
+✅ **FECHA A PENDÊNCIA DE 22/08/2026.** O site tinha 7.290,46 e o CoinGecko 7.278,07 — 12,39 de
+diferença, deixada de lado na época por valer 1 centavo. A venda on-chain de **7.278,06** prova que
+**o CoinGecko estava certo** e o site contava 12,40 a mais. Com a posição zerada dos dois lados, a
+divergência deixa de existir. (O protocolo Radiant foi hackeado em 2025 — 1.079,17 ARB em stake
+perdidos, ~US$ 671 — então a posição já estava economicamente morta há mais de um ano.)
+
+---
+
+## 08/10/2026 — compras de BTC e SOL na OKX com o caixa que já estava lá (ROTAÇÃO)
+
+| Ordem | Par | Qtd bruta | Preço | Valor | Taxa (0,1%) | Líquido |
+|---|---|---|---|---|---|---|
+| 398...384 · 00:21 | BTC/USDT | 0,00047025 | US$ 82.745 | US$ 38,88 | 0,00000047 BTC | **0,00046978** |
+| 399...400 · 14:26 | SOL/USDT | 0,404077 | US$ 105,90 | US$ 42,75 | 0,00040407 SOL | **0,40367293** |
+
+Pagas com os US$ 81,63 de USDT que já estavam na corretora — **rotação, não aporte**. Caixa da OKX
+**131,09 → 49,46**. As duas ele confirmou ter lançado no CoinGecko (*"já coloquei no coingecko"*),
+então o `cgMirror` de BTC, SOL e USDT acompanha.
+
+⚠️ **Taxa de 0,1% nas duas** — contra os 0,4% da compra de SOL de 07/10. Confirma o que eu tinha
+levantado naquele dia: **a de 07/10 é que destoou**, provável ordem a mercado contra limite.
+
+---
+
 ## 07/10/2026 (3) — compra de 0,0004855 BTC na OKX (ROTAÇÃO)
 Ordem `398…408` (10:02:30): **0,0004855 BTC @ US$ 83.417 = US$ 40,49**, taxa **0,00000048 BTC (0,1%)**
 → líquido **0,00048502**. Pago com USDT da corretora — rotação.
@@ -219,6 +263,9 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 08/10/2026 — **RDNT zerado** (7.278,06 vendidos por US$ 7,90 → 0,0031 ETH; custo zero migra, `invested` do ETH
+  intocado) + compras de BTC e SOL na OKX com o caixa de lá; tudo rotação, `TOTAL_INVESTED` segue 10.388,64;
+  fecha a divergência de 12,39 RDNT aberta em 22/08; pendente no CoinGecko: só os 0,0031 ETH.
 - 07/10/2026 (3) — compra de 0,0004855 BTC na OKX com USDT da corretora (rotação); caixa da OKX 171,58 → 131,09.
 - 07/10/2026 (2) — compra de 0,365138 SOL na OKX com USDT da corretora (rotação); **regra do SOL mudou**: holding ≠ supply da Kamino, yield agora por delta.
 - 07/10/2026 — compra de 0,02 ETH com os 50 USDT que sobravam na carteira EVM (rotação) + 1,54 USDC de troco incorporado.
