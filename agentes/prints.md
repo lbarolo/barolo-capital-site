@@ -173,14 +173,9 @@ bruto 0,00011916 @ US$ 82.781, taxa 0,09%). Ele já lançou no CoinGecko.
 `TOTAL_INVESTED` 10.388,64 → **10.398,50** (+9,86, o aporte). Outubro agora tem **dois**: os
 R$ 400 de 05/10 (US$ 79,12) e estes R$ 50.
 
-⚠️ **AMBIGUIDADE A CONFIRMAR — "50$" é R$ 50 ou US$ 50?** Ele aportou **R$ 50 (US$ 9,86)**.
-
-| Leitura | Por mês | Por ano | vs. histórico (~US$ 1.100–1.500/ano) |
-|---|---|---|---|
-| **R$ 50/sem** (o que ele fez) | R$ 217 | **US$ 513** | menos da metade |
-| US$ 50/sem | R$ 1.098 | **US$ 2.600** | quase o dobro |
-
-Até confirmar, a régua de cobrança é **R$ 50/semana**.
+✅ **CONFIRMADO NO MESMO DIA: são 50 REAIS** — *"é 50 reais mesmo, pode cobrar assim"*. Régua fechada:
+**R$ 50/semana = R$ 217/mês = R$ 2.600/ano ≈ US$ 513/ano**. Valor pode variar na semana; o que não
+pode é a sexta passar em branco. **Não reabrir.**
 
 ---
 
@@ -294,7 +289,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 ## Histórico (mais recente no topo, 1 linha por execução)
 - 09/10/2026 — **regra nova: aporte toda sexta** (ele pediu para ser cobrado); 1o da série R$ 50 → 9,86463 USDT
   → 0,00011905 BTC; fiat→USDT é aporte (US$ 9,86 em `contributions`), USDT→BTC é rotação; `TOTAL_INVESTED` 10.398,50;
-  ambiguidade R$ 50 vs US$ 50 em aberto.
+  régua confirmada por ele no mesmo dia: 50 REAIS, não dólares.
 - 08/10/2026 — **RDNT zerado** (7.278,06 vendidos por US$ 7,90 → 0,0031 ETH; custo zero migra, `invested` do ETH
   intocado) + compras de BTC e SOL na OKX com o caixa de lá; tudo rotação, `TOTAL_INVESTED` segue 10.388,64;
   fecha a divergência de 12,39 RDNT aberta em 22/08; pendente no CoinGecko: só os 0,0031 ETH.

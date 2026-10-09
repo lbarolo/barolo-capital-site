@@ -779,7 +779,7 @@ window.BAROLO_DATA = {
   // lista cobre 09/2026 em diante. `scripts/close-month.js` soma os aportes do
   // mes que fechou e acrescenta o ponto novo.
   contributions: [
-    { date:'2026-10-09', usd:  9.86, note:'aporte DCA SEMANAL (o 1o da regra nova) — R$ 50,00 convertidos em USDT na OKX @ 5,0686 (par USDT/BRL, 13:49:47), taxa ZERO, 9,86463 USDT recebidos. FIAT -> CRIPTO = dinheiro de fora, aporte de verdade. Virou 0,00011905 BTC 4 minutos depois (13:53), mas essa compra e rotacao: o aporte ja foi contado aqui. ⚡ REGRA NOVA combinada neste dia: aportar toda SEXTA-FEIRA, ~R$ 50 (podendo ser mais ou menos). Ver a rotina 2 no CLAUDE.md — ele pediu para ser cobrado.' },
+    { date:'2026-10-09', usd:  9.86, note:'aporte DCA SEMANAL (o 1o da regra nova) — R$ 50,00 convertidos em USDT na OKX @ 5,0686 (par USDT/BRL, 13:49:47), taxa ZERO, 9,86463 USDT recebidos. FIAT -> CRIPTO = dinheiro de fora, aporte de verdade. Virou 0,00011905 BTC 4 minutos depois (13:53), mas essa compra e rotacao: o aporte ja foi contado aqui. ⚡ REGRA NOVA combinada neste dia: aportar toda SEXTA-FEIRA, ~R$ 50 — CONFIRMADO por ele que sao 50 REAIS, nao dolares ("e 50 reais mesmo, pode cobrar assim"). O valor pode variar na semana; o que nao pode e a sexta passar em branco. Ver a rotina 2 no CLAUDE.md — ele pediu para ser cobrado.' },
     { date:'2026-10-05', usd: 79.12, note:'aporte DCA — R$ 400,00 convertidos em USDT na OKX @ 5,0558 (par USDT/BRL, ordem 398...010). FIAT -> CRIPTO = dinheiro de FORA, por isso entra aqui. Tambem lancado em ferramentas.html -> FISCAL_ENTRADAS (BRL).' },
     // { date:'2026-09-15', usd: 250, note:'DCA mensal SOL' },
     //

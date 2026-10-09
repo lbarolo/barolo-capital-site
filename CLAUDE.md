@@ -139,15 +139,10 @@ cobrar também, e hoje começamos assim."*
 **O primeiro aporte da regra:** sexta 09/10/2026, **R$ 50,00 → 9,86463 USDT** (OKX, par USDT/BRL
 @ 5,0686, taxa zero), que virou 0,00011905 BTC quatro minutos depois.
 
-⚠️ **AMBIGUIDADE NÃO RESOLVIDA — confirmar com ele:** ele escreveu "50$", e o aporte real foi
-**R$ 50,00 (≈ US$ 9,86)**. A diferença entre as duas leituras é enorme no longo prazo:
-
-| Leitura | Por mês | Por ano | vs. histórico (~US$ 1.100–1.500/ano) |
-|---|---|---|---|
-| **R$ 50/semana** (o que ele fez) | R$ 217 | **US$ 513** | menos da metade |
-| US$ 50/semana | R$ 1.098 | **US$ 2.600** | quase o dobro |
-
-Enquanto não confirmar, **a régua de cobrança é R$ 50/semana** (foi o que ele efetivamente fez).
+✅ **RÉGUA CONFIRMADA POR ELE (09/10/2026): são 50 REAIS, não dólares** — *"é 50 reais mesmo, pode
+cobrar assim"*. **Não reabrir esse ponto.** Em ritmo: **R$ 50/semana = R$ 217/mês = R$ 2.600/ano
+≈ US$ 513/ano** ao câmbio de hoje. O "podendo ser mais ou menos" é dele — semana com valor maior ou
+menor **não é falha**; o que conta é a sexta não passar em branco.
 
 **Como cobrar, sem ser chato:** na primeira conversa de cada semana, se a última entrada de
 `contributions` for de mais de 7 dias atrás, avisar em UMA linha — quantas sextas se passaram e
