@@ -155,6 +155,35 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
+## ⚡ 09/10/2026 — REGRA NOVA: aporte toda SEXTA-FEIRA (e o primeiro já entrou)
+
+**Ele pediu para ser cobrado.** *"Criei uma regra nova agora, vou aportar cerca de 50$ toda
+sexta-feira, podendo ser mais ou menos, porém com aportes semanais. Anote isso pra me cobrar
+também, e hoje começamos assim."* Rotina 2 do CLAUDE.md + memória `project_aporte_semanal.md`.
+
+**Primeiro da série** (sexta, 09/10): R$ 50,00 → **9,86463 USDT** (OKX, par USDT/BRL @ 5,0686,
+13:49:47, **taxa ZERO**) → **0,00011905 BTC** líquido 4 minutos depois (ordem 399...584, 13:53,
+bruto 0,00011916 @ US$ 82.781, taxa 0,09%). Ele já lançou no CoinGecko.
+
+⚡ **As duas pernas têm tratamentos diferentes — não confundir:**
+- **fiat → USDT** = **APORTE** (dinheiro de fora). Vai para `contributions`: US$ 9,86.
+- **USDT → BTC** = **ROTAÇÃO**. O custo migra do USDT para o BTC; contar de novo seria dupla
+  contagem do mesmo aporte.
+
+`TOTAL_INVESTED` 10.388,64 → **10.398,50** (+9,86, o aporte). Outubro agora tem **dois**: os
+R$ 400 de 05/10 (US$ 79,12) e estes R$ 50.
+
+⚠️ **AMBIGUIDADE A CONFIRMAR — "50$" é R$ 50 ou US$ 50?** Ele aportou **R$ 50 (US$ 9,86)**.
+
+| Leitura | Por mês | Por ano | vs. histórico (~US$ 1.100–1.500/ano) |
+|---|---|---|---|
+| **R$ 50/sem** (o que ele fez) | R$ 217 | **US$ 513** | menos da metade |
+| US$ 50/sem | R$ 1.098 | **US$ 2.600** | quase o dobro |
+
+Até confirmar, a régua de cobrança é **R$ 50/semana**.
+
+---
+
 ## 08/10/2026 (2) — RDNT ZERADO: vendeu tudo e virou 0,0031 ETH (ROTAÇÃO de custo ZERO)
 
 **A posição de RDNT acabou.** Dois swaps no 1inch (Arbitrum): 6.913,01 (tx `0xd4ed...ee8b`) +
@@ -263,6 +292,9 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 09/10/2026 — **regra nova: aporte toda sexta** (ele pediu para ser cobrado); 1o da série R$ 50 → 9,86463 USDT
+  → 0,00011905 BTC; fiat→USDT é aporte (US$ 9,86 em `contributions`), USDT→BTC é rotação; `TOTAL_INVESTED` 10.398,50;
+  ambiguidade R$ 50 vs US$ 50 em aberto.
 - 08/10/2026 — **RDNT zerado** (7.278,06 vendidos por US$ 7,90 → 0,0031 ETH; custo zero migra, `invested` do ETH
   intocado) + compras de BTC e SOL na OKX com o caixa de lá; tudo rotação, `TOTAL_INVESTED` segue 10.388,64;
   fecha a divergência de 12,39 RDNT aberta em 22/08; pendente no CoinGecko: só os 0,0031 ETH.
