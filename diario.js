@@ -673,5 +673,17 @@ window.BAROLO_DIARY = [
       "qty": 0.00036003,
       "totalCost": 30
     }
+  },
+  {
+    "id": 1791576000000,
+    "date": "2026-10-09",
+    "type": "insight",
+    "title": "Diário Semanal — Semana 41 · 2026 (5–11 Out)",
+    "body": "🧠 REFLEXÃO DA SEMANA\nComo me senti: Confiança.\nO mercado já precificou? Acredito que essa queda que tivemos essa semana, o mercado reagiu bem, foi um bom momento para compras.\nConsenso otimista demais / cenário ruim no preço? Sentimento coletivo ainda é de alta, porém num tom mais neutro.\n\n📊 REVISÃO DE ESTRATÉGIA\nTese principal continua válida? Sim.\nMudança significativa que exige revisão? Não.\nNovas ideias/estudos? Continuo estudando DeFi e macroeconomia/geopolítica.\n\n🔍 RISCOS ATUAIS\nExtremo risco? Não, estamos neutro.\nRisco alto ou baixo / exposição? Risco baixo ainda.\nMercado complacente / desconforto? Mercado está animando, estou confortável — mas eu geralmente fico confortável no meio do caos.\n\n📌 CONTEXTO (números do dia, 09/10): BTC US$ 82.689 · ETH US$ 2.490 (−8,2% em 7d) · SOL US$ 109,50 (−9,1% em 7d) · Fear & Greed 59 (Ganância, vinha de 73 em 06/10) · risco de ciclo on-chain 0,32 (de-risking) · patrimônio líquido ~US$ 9.903 · HF AAVE 7,98 · LTV Kamino 16,6% (SOL liquida em US$ 22,73). Compras da semana: SOL e BTC na OKX (07–08/10, rotação de USDT) + ETH com USDT da carteira (07/10) + aporte de R$ 400 (05/10). RDNT vendido por inteiro (08/10).",
+    "pnl": null,
+    "tags": [
+      "semanal",
+      "reflexão"
+    ]
   }
 ];
