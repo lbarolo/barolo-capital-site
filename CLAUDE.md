@@ -30,6 +30,15 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 > `QUANT.md §7`. Traz regras de segurança na abertura (nenhum deles precisa de carteira conectada;
 > domínios não verificados) — ler antes de abrir qualquer link de lá.
 
+> 📈 **`REPOS-TRADING.md`** (raiz, desde 17/10/2026) — os 10 repos de trading open source que o
+> Lucas mandou guardar, com estrelas/licença/atividade **conferidos na API do GitHub**. ⚠️ É
+> **material de estudo, não backlog**: ele decidiu em 17/10 que **não vai criar bot por enquanto**
+> — não propor isso. O interesse declarado é o item 10 (`stefan-jansen/machine-learning-for-trading`),
+> e a §3 de lá traz a trilha de leitura dos 27 capítulos adaptada a cripto. Traz também regras de
+> segurança (nunca apontar para carteira com fundos nem chave com permissão de ordem) e o buraco
+> honesto: **nenhum dos 10 faz matemática de LP/range do Uniswap V3** — para pools, o que já existe
+> (`CONHECIMENTO-POOLIANA.md`, `CONHECIMENTO-BAROLO.md §8.3`, aba Sizing & Risk) é mais específico.
+
 > 🤖 **AGENTES POR PAPEL (desde 15/09/2026)** — `/prints` (review semanal → `data.js`), `/contas`, `/quant` (quant macro, desde 28/09 — base em `QUANT.md`),
 > `/corrigir`, `/bugs` e `/seguranca` (os dois últimos são subagentes **só leitura**). Cada papel
 > tem um **caderno** em `agentes/` com as regras, o estado atual e o histórico dele. **Ao fazer
