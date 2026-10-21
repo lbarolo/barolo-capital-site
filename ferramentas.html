@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA); fallback abaixo -->
+<script src="lib/barolo-core.js"></script><!-- cálculo compartilhado (aqui: LVR da calculadora do Sizing & Risk) -->
 <script src="diario.js"></script><!-- cópia git-tracked do Diário DeFi (window.BAROLO_DIARY); merge com localStorage no load -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
 <script src="lib/barolo-ui.js"></script><!-- tema e idioma compartilhados (no <head>: aplica o tema antes de pintar) -->
@@ -1321,6 +1322,67 @@ body, input, button, select, textarea {
 
            <div id="lh-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
            <div id="lh-note" data-i18n="sz-lh-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">Sharpe = APR / vol_estratégia. Drawdown 1σ anual = 1 desvio-padrão esperado. Maior Sharpe = melhor relação risco-retorno.</div>
+         </div>
+       </div>
+     </div>
+   </div>
+
+   <!-- ── LVR: as taxas cobrem a volatilidade? (Milionis et al., arXiv 2208.06046) ── -->
+   <div class="section">
+     <div class="section-title"><span data-i18n="sz-lvr-title">Taxas cobrem o LVR?</span> <span data-i18n="sz-lvr-badge">LOSS-VERSUS-REBALANCING</span></div>
+     <div style="margin-bottom:14px;">
+       <button type="button" class="btn btn-sm" onclick="loadLvrExample()" data-i18n="sz-lvr-preset-btn" style="background:rgba(201,160,80,.10);border:1px solid var(--accent);color:var(--accent);font-size:10px;letter-spacing:1px;padding:8px 14px;">↓ Exemplo: pool WETH/USDG</button>
+     </div>
+     <div class="two-col">
+       <div>
+         <div class="field">
+           <label data-i18n="sz-lvr-pa">Preço mínimo do range ($)</label>
+           <input type="number" id="lvr-pa" value="1852.38" step="10" oninput="calcLvr()">
+         </div>
+         <div class="field">
+           <label data-i18n="sz-lvr-pb">Preço máximo do range ($)</label>
+           <input type="number" id="lvr-pb" value="2166.83" step="10" oninput="calcLvr()">
+         </div>
+         <div class="field">
+           <label data-i18n="sz-lvr-p">Preço atual / de entrada ($)</label>
+           <input type="number" id="lvr-p" value="1852.38" step="10" oninput="calcLvr()">
+         </div>
+         <div class="field">
+           <label data-i18n="sz-lvr-fee">Fee APR enquanto no range (%)</label>
+           <input type="number" id="lvr-fee" value="51" step="1" oninput="calcLvr()">
+         </div>
+         <div class="field">
+           <label data-i18n="sz-lvr-vol">Volatilidade anualizada do ativo (%)</label>
+           <input type="number" id="lvr-vol" value="45" step="5" oninput="calcLvr()">
+         </div>
+       </div>
+       <div>
+         <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+           <div data-i18n="sz-lvr-out" style="font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:14px;">CUSTO DE VENDER VOLATILIDADE</div>
+
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span data-i18n="sz-lvr-cost" style="color:var(--muted);font-size:11px;">LVR (a.a., % da posição)</span>
+             <span id="lvr-cost" style="font-family:var(--font-mono);font-weight:500;color:var(--red);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span data-i18n="sz-lvr-fee-out" style="color:var(--muted);font-size:11px;">Fee APR informado</span>
+             <span id="lvr-fee-out" style="font-family:var(--font-mono);font-weight:500;color:var(--green);">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span data-i18n="sz-lvr-net" style="color:var(--muted);font-size:11px;">Taxa − LVR (pontos % a.a.)</span>
+             <span id="lvr-net" style="font-family:var(--font-mono);font-weight:600;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+             <span data-i18n="sz-lvr-ratio" style="color:var(--muted);font-size:11px;">Taxa ÷ LVR</span>
+             <span id="lvr-ratio" style="font-family:var(--font-mono);font-weight:500;">—</span>
+           </div>
+           <div style="display:flex;justify-content:space-between;padding:8px 0;">
+             <span data-i18n="sz-lvr-sigma" style="color:var(--muted);font-size:11px;">Vol de empate σ*</span>
+             <span id="lvr-sigma" style="font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--accent);">—</span>
+           </div>
+
+           <div id="lvr-verdict" style="margin-top:14px;padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-align:center;">—</div>
+           <div id="lvr-note" data-i18n="sz-lvr-note" style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.5;">—</div>
          </div>
        </div>
      </div>
@@ -2969,6 +3031,60 @@ function calcLevHedge(){
    : baseNote;
 }
 
+// ── LVR: as taxas cobrem o custo de vender volatilidade? ──
+// Fórmula em lib/barolo-core.js (BaroloCore.lvrRate / lvrBreakEvenVol). Só conta enquanto a posição está em range.
+function calcLvr(){
+ var pa  = parseFloat(document.getElementById('lvr-pa').value)||0;
+ var pb  = parseFloat(document.getElementById('lvr-pb').value)||0;
+ var P   = parseFloat(document.getElementById('lvr-p').value)||0;
+ var fee = (parseFloat(document.getElementById('lvr-fee').value)||0)/100;
+ var vol = (parseFloat(document.getElementById('lvr-vol').value)||0)/100;
+
+ var set = function(id, txt, color){ var el = document.getElementById(id); el.textContent = txt; el.style.color = color || ''; };
+ var pct = function(n){ return (n*100).toFixed(1)+'%'; };
+ var v = document.getElementById('lvr-verdict'), note = document.getElementById('lvr-note');
+ var paint = function(bg, col){ v.style.background = bg; v.style.color = col; v.style.border = '1px solid '+col; };
+
+ var cost  = BaroloCore.lvrRate(vol, pa, pb, P);
+ var sigma = BaroloCore.lvrBreakEvenVol(fee, pa, pb, P);
+ if (cost === null) {
+   ['lvr-cost','lvr-fee-out','lvr-net','lvr-ratio','lvr-sigma'].forEach(function(id){ set(id, '—'); });
+   v.textContent = tStr('sz-lvr-v-invalid');
+   paint('rgba(184,134,11,.10)', 'var(--yellow)');
+   note.textContent = tStr('sz-lvr-n-invalid');
+   return;
+ }
+ var net = fee - cost;
+ var ratio = cost > 0 ? fee / cost : Infinity;
+ set('lvr-cost', pct(cost), 'var(--red)');
+ set('lvr-fee-out', pct(fee), 'var(--green)');
+ set('lvr-net', (net>0?'+':'')+(net*100).toFixed(1)+' pp', net >= 0 ? 'var(--green)' : 'var(--red)');
+ set('lvr-ratio', isFinite(ratio) ? ratio.toFixed(2)+'x' : '—');
+ set('lvr-sigma', sigma === null ? '—' : pct(sigma));
+
+ if (ratio >= 1.5) {
+   v.textContent = tStr('sz-lvr-v-good');
+   paint('rgba(63,185,80,.15)', 'var(--green)');
+ } else if (ratio >= 0.8) {
+   v.textContent = tStr('sz-lvr-v-edge');
+   paint('rgba(184,134,11,.10)', 'var(--yellow)');
+ } else {
+   v.textContent = tStr('sz-lvr-v-bad');
+   paint('rgba(248,81,73,.10)', 'var(--red)');
+ }
+ note.textContent = tStr('sz-lvr-note');
+}
+
+// Exemplo: pool WETH/USDG da Robinhood Chain (range +17%, fee APR lifetime da Revert, vol ~30d do ETH)
+function loadLvrExample(){
+ var set = function(id, val){ var el = document.getElementById(id); if (el) el.value = val; };
+ set('lvr-pa', 1852.38); set('lvr-pb', 2166.83); set('lvr-p', 1852.38);
+ set('lvr-fee', 51); set('lvr-vol', 45);
+ calcLvr();
+ flashHighlight(['lvr-pa','lvr-pb','lvr-p','lvr-fee','lvr-vol']);
+ showToast(tStr('sz-lvr-toast'));
+}
+
 // ── Helper: Feedback Visual ──
 function flashHighlight(elementIds, duration){
   duration = duration || 800;
@@ -3051,6 +3167,7 @@ setTimeout(function(){
   if (document.getElementById('km-apr')) calcKellyMerton();
   if (document.getElementById('hd-capital')) syncHedgeLivePrice();
   if (document.getElementById('lh-capital')) calcLevHedge();
+  if (document.getElementById('lvr-pa')) calcLvr();
 }, 200);
 
 // ══════════════════════════════════════════════
@@ -4243,6 +4360,30 @@ var LANG_STRINGS = {
                            en:'⚠ Hedge >70% cancels the gradual ETH→USDC exit strategy. Use only for pure fee-capture pools.'},
   'sz-lh-warn-borrow80':  {pt:'⚠ Borrow >80% do LP: próximo do limite de liquidação. Monitorar HF.',
                            en:'⚠ Borrow >80% of LP: close to the liquidation limit. Monitor HF.'},
+  // LVR — as taxas cobrem a volatilidade?
+  'sz-lvr-title':   {pt:'Taxas cobrem o LVR?',                       en:'Do fees cover LVR?'},
+  'sz-lvr-badge':   {pt:'LOSS-VERSUS-REBALANCING',                   en:'LOSS-VERSUS-REBALANCING'},
+  'sz-lvr-preset-btn': {pt:'↓ Exemplo: pool WETH/USDG',              en:'↓ Example: WETH/USDG pool'},
+  'sz-lvr-pa':      {pt:'Preço mínimo do range ($)',                 en:'Range lower price ($)'},
+  'sz-lvr-pb':      {pt:'Preço máximo do range ($)',                 en:'Range upper price ($)'},
+  'sz-lvr-p':       {pt:'Preço atual / de entrada ($)',              en:'Current / entry price ($)'},
+  'sz-lvr-fee':     {pt:'Fee APR enquanto no range (%)',             en:'Fee APR while in range (%)'},
+  'sz-lvr-vol':     {pt:'Volatilidade anualizada do ativo (%)',      en:'Asset annualized volatility (%)'},
+  'sz-lvr-out':     {pt:'CUSTO DE VENDER VOLATILIDADE',              en:'COST OF SELLING VOLATILITY'},
+  'sz-lvr-cost':    {pt:'LVR (a.a., % da posição)',                  en:'LVR (per year, % of position)'},
+  'sz-lvr-fee-out': {pt:'Fee APR informado',                         en:'Fee APR entered'},
+  'sz-lvr-net':     {pt:'Taxa − LVR (pontos % a.a.)',                en:'Fees − LVR (% points per year)'},
+  'sz-lvr-ratio':   {pt:'Taxa ÷ LVR',                                en:'Fees ÷ LVR'},
+  'sz-lvr-sigma':   {pt:'Vol de empate σ*',                          en:'Break-even vol σ*'},
+  'sz-lvr-v-good':  {pt:'TAXAS COBREM O LVR',                        en:'FEES COVER LVR'},
+  'sz-lvr-v-edge':  {pt:'NO LIMITE — DEPENDE DA VOL FICAR BAIXA',    en:'ON THE EDGE — NEEDS VOL TO STAY LOW'},
+  'sz-lvr-v-bad':   {pt:'TAXAS NÃO COBREM O LVR',                    en:'FEES DO NOT COVER LVR'},
+  'sz-lvr-v-invalid': {pt:'RANGE INVÁLIDO OU PREÇO FORA DO RANGE',   en:'INVALID RANGE OR PRICE OUTSIDE RANGE'},
+  'sz-lvr-n-invalid': {pt:'Fora do range a pool não negocia: sem taxa e sem LVR. Exige 0 < mínimo < máximo e o preço entre os dois.',
+                       en:'Outside the range the pool does not trade: no fees and no LVR. Needs 0 < lower < upper and the price between them.'},
+  'sz-lvr-note':    {pt:'LVR = custo de negociar contra arbitradores a preço atrasado (Milionis et al., arXiv 2208.06046): (σ²/4) ÷ (2 − √(P/máx) − √(mín/P)). Só vale enquanto a posição está no range. Não é perda contra segurar o ativo (esse efeito direcional fica de fora). σ* = vol em que taxa = LVR. Range estreito eleva taxa e LVR quase na mesma proporção: o que decide é a razão, não o APR sozinho.',
+                     en:'LVR = cost of trading against arbitrageurs at stale prices (Milionis et al., arXiv 2208.06046): (σ²/4) ÷ (2 − √(P/upper) − √(lower/P)). Only applies while the position is in range. It is not the loss versus holding the asset (that directional effect is left out). σ* = the vol at which fees = LVR. A narrow range raises fees and LVR almost proportionally: the ratio decides, not the APR alone.'},
+  'sz-lvr-toast':   {pt:'Exemplo carregado (range +17%, fee APR 51%, vol 45%)', en:'Example loaded (+17% range, 51% fee APR, 45% vol)'},
   // Notas/fundamentos
   'sz-notes-title':{pt:'Notas',                               en:'Notes'},
   'sz-notes-badge':{pt:'FUNDAMENTOS',                         en:'FUNDAMENTALS'},
@@ -4332,6 +4473,7 @@ function applyLang(lang) {
   if (document.getElementById('km-apr')) calcKellyMerton();
   if (document.getElementById('hd-capital')) calcHedge();
   if (document.getElementById('lh-capital')) calcLevHedge();
+  if (document.getElementById('lvr-pa')) calcLvr();
 }
 
 function toggleLang() { BaroloUI.toggleLang(applyLang); }

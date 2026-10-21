@@ -107,6 +107,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   `benchmark.yml` ganhou). Mesma armadilha já registrada para o `onchain.yml`.
 
 ## Histórico (mais recente no topo)
+- 21/10/2026 — calculadora "Taxas cobrem o LVR?" no Sizing & Risk (ferramentas): `BaroloCore.lvrRate`/`lvrBreakEvenVol` (fórmula do paper arXiv 2208.06046, conferida: σ²/8 no range cheio) + 4 testes + i18n PT/EN; pedido do Lucas, aditivo (nenhum elemento existente mudou).
 - 05/10/2026 — CDI ganha o nível 3 da cascata (arquivo + BrasilAPI pela fórmula oficial em dias úteis): sem ele o CDI de outubro congelaria em 0,05, porque os dois hosts gov.br pararam de responder ao runner — `fc2aeb9`.
 - 03/10/2026 — CDI em cascata (BCB → IPEAData → arquivo) e `benchmark.yml` passa a rodar no push do próprio script; run #48 verde com o CDI vindo do IPEAData — `d89c984`.
 - 03/10/2026 — `benchmark.yml` deixa de cair num blip do BCB: `fetchWithRetry` passa a repetir rejeição do `fetch` (rede), e o CDI vira não-fatal (reaproveita a série do próprio `benchmark-data.js`, que é histórica, com `::warning::`) — `cc4a363`.

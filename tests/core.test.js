@@ -57,3 +57,24 @@ test('patrimônio: NÃO soma o bloco defi por cima dos holdings (colateral já e
   const r = Core.netWorth(D, id => ({ ethereum: 1000, tether: 1 })[id]);
   assert.deepStrictEqual(r, { gross: 2000, stables: 100, lp: 55, debt: 300, netWorth: 1855 });
 });
+
+test('LVR: range quase cheio converge para σ²/8 (resultado do paper para produto constante)', () => {
+  close(Core.lvrRate(0.6, 1e-9, 1e9, 1), 0.36 / 8, 1e-5);
+});
+
+test('LVR: posição mono-ativo na borda de um range +17% com σ=60% ≈ 119% ao ano', () => {
+  const r = Core.lvrRate(0.6, 1852.38, 2166.83, 1852.38);
+  assert.ok(Math.abs(r - 1.1937) < 0.002, String(r));
+});
+
+test('LVR: fora do range ou range inválido não tem LVR', () => {
+  assert.strictEqual(Core.lvrRate(0.6, 100, 120, 130), null);
+  assert.strictEqual(Core.lvrRate(0.6, 120, 100, 110), null);
+  assert.strictEqual(Core.lvrRate(0.6, 0, 100, 50), null);
+});
+
+test('vol de empate: é a inversa de lvrRate', () => {
+  const sigma = Core.lvrBreakEvenVol(0.51, 1852.38, 2166.83, 1852.38);
+  close(sigma, 0.392, 0.002);
+  close(Core.lvrRate(sigma, 1852.38, 2166.83, 1852.38), 0.51, 1e-9);
+});
