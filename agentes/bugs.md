@@ -35,6 +35,19 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
+_(varredura 22/10/2026, nova)_
+- [MÉDIA] `CLAUDE.md` duplicado: a partir da ~linha 7765 (comando bash truncado) repete "Estrutura de arquivos", sessões e KB inteira (≈7,6k linhas de cópia, lidas a cada sessão). Truncar no fim do 1º bloco (KB-END) e restaurar "Rotinas combinadas" do trecho íntegro — decisão do Lucas (é o arquivo de instruções dele).
+- [MÉDIA] `scripts/eth-sweep.js` lê carteiras/key do `CLAUDE.md` (que o `.gitignore` manda tirar do git): ler de `lib/barolo-chain.js` CONFIG ou aposentar o workflow.
+- [MÉDIA] `portfolio_analytics.html` ~3592-3690 (`loadDenomHistory`): CoinGecko `market_chart` dá 401; fallback tem 54 meses (wealthCurve 57) e `pxAt` usa preço de hoje p/ meses faltantes. Usar `BENCHMARK_DATA.btcUsd/ethUsd`.
+- [BAIXA] pools: blocos mortos (simulador IL, buildLicoes, buildPoolTable, heatmap, btnNotif) e `runAll` chamando `getLivePrice` sem ler o resultado; funções sem chamador (index `calculateInflationData`/`fmtMoney`, portfolio `buildAnnualChartWrapped`/`toDisplay`, pools `reloadFrame`/`toggleHeight`/`ttOpts`, ferramentas `toggleMobileNav`).
+- [BAIXA] F&G (`portfolio_analytics.html` ~5266): no erro grava 13/"Medo Extremo" fixo e alimenta o λ₃ da Convexidade; manter último valor ou usar `briefing.json.fng`.
+- [BAIXA] `portfolio_analytics.html` sem `<!DOCTYPE html>` (quirks mode; testar layout antes de adicionar) e `<link rel=canonical>` solto nos 3 dashboards.
+- [BAIXA] fallbacks de preço divergentes (index `FB`/`FALLBACK`, portfolio `FALLBACK_PRICES`, ferramentas `liveETH/SOL`): usar último `networth-history.json.prices`.
+- [BAIXA] `fetchPrices` do portfolio tenta CoinGecko antes da cascata e valida só `current_price` do 1º item.
+- [BAIXA] card "Leitura da carteira" (pools) não mostra data do `briefing.json` nem esconde se velho.
+- [BAIXA] `data.js`: `cgMirror.BTC` 0,00601623 > `holdings.BTC` 0,00601517 (negativo, conferir) e `contributions` fora de ordem (09/10 antes de 05/10).
+- [A CONFIRMAR] `parseKaminoLoan` usa `obligations[0]`; `parseAaveV4` descarta `hf>1e15` (dívida zerada deixaria o fetch em null).
+- Resolvidos em 22/10 (`31ad424`): `fetchSparklines` gravando erro como cache; `JSON.parse(localStorage)` sem proteção em ferramentas/pools.
 _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, depois da Fase 3
 `b4523fa`. A Fase 3 não introduziu regressão; os itens novos da 2ª varredura são valores fixos de
 20/06 que já existiam)_
@@ -104,6 +117,7 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
   0,83/0,78. Números diferentes no card de pools (HF 7,92 × 7,96 em 15/09). (14/09/2026)
 
 ## Resolvidos
+- 22/10/2026 · `31ad424` — index `fetchSparklines` só grava cache com sparkline válida; ferramentas/pools leem localStorage sem derrubar o script; bloco morto `fetchAllOnChain` do portfolio removido (também no caderno de segurança).
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
 - 29/09/2026 · `7f7ce5b` — [ALTA] preco ao vivo das 5 paginas caindo nos FALLBACK_PRICES por causa do
   403 do CoinGecko (patrimonio $7.572 contra $10.437). `lib/barolo-prices.js` passou a usar a mesma
