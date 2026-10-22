@@ -12,6 +12,7 @@
 <link rel="canonical" href="/ferramentas">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>Barolo Capital · Ferramentas</title>
 <link rel="stylesheet" href="ui-polish.css"><!-- camada de polish compartilhada -->
 <script>
@@ -21,7 +22,7 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" integrity="sha384-DhxhYObIMeMNGyAG7iK11OHzBIKyEIeRL0ad1iFPAOwZB8iirUlTT0O/WJJUk8+o" crossorigin="anonymous"></script>
 <script>/* tooltip padrão (Design.md §4.6): bolinha cheia da cor da série, sem borda */
 if(window.Chart){
   Chart.defaults.plugins.tooltip.usePointStyle=true;
@@ -2214,21 +2215,24 @@ var STORAGE_SNAP = 'bc-snapshots-v2';
 var STORAGE_ALERTS= 'bc-alerts-v2';
 var STORAGE_ALOG = 'bc-alert-log-v2';
 
+// localStorage pode vir corrompido/adulterado/bloqueado: lista vazia em vez de derrubar o script inteiro.
+function readList(key){ try{ var v=JSON.parse(localStorage.getItem(key)||"[]"); return Array.isArray(v)?v.filter(function(e){return e&&typeof e==="object";}):[]; }catch(e){ return []; } }
+
 var diaryEntries = (function(){
  // Merge diario.js (cópia git-tracked, lida por sessões sem browser) com o
  // localStorage (armazenamento vivo). localStorage vence em conflito de id.
  var fileEntries = (window.BAROLO_DIARY || []);
- var localEntries = JSON.parse(localStorage.getItem(STORAGE_DIARY)||'[]');
+ var localEntries = readList(STORAGE_DIARY);
  var map = {};
- fileEntries.forEach(function(e){ map[e.id] = e; });
- localEntries.forEach(function(e){ map[e.id] = e; });
+ fileEntries.forEach(function(e){ if(e && e.id!=null) map[e.id] = e; });
+ localEntries.forEach(function(e){ if(e.id!=null) map[e.id] = e; });
  var merged = Object.keys(map).map(function(k){ return map[k]; });
  merged.sort(function(a,b){ return b.id - a.id; });
- localStorage.setItem(STORAGE_DIARY, JSON.stringify(merged));
+ try{ localStorage.setItem(STORAGE_DIARY, JSON.stringify(merged)); }catch(e){}
  return merged;
 })();
-var snapshots = JSON.parse(localStorage.getItem(STORAGE_SNAP)||'[]');
-var alertLog = JSON.parse(localStorage.getItem(STORAGE_ALOG)||'[]');
+var snapshots = readList(STORAGE_SNAP);
+var alertLog = readList(STORAGE_ALOG);
 var currentDiaryFilter = 'all';
 var evoChart = null;
 var currentEvoView = 'all';
@@ -3471,12 +3475,12 @@ function renderDiary(){
    let structBadge = '';
    if (e.lending) {
      const L = e.lending;
-     const eventLabel = {borrow:'Borrow',repay:'Repay','add-collateral':'Supply','remove-collateral':'Retirada',open:'Abriu ciclo',close:'Fechou ciclo'}[L.event]||L.event;
-     const tokStr = (L.token && L.tokenQty) ? `${fmtQty(L.tokenQty, L.token)}` : '';
+     const eventLabel = {borrow:'Borrow',repay:'Repay','add-collateral':'Supply','remove-collateral':'Retirada',open:'Abriu ciclo',close:'Fechou ciclo'}[L.event]||escHtml(L.event);
+     const tokStr = (L.token && L.tokenQty) ? `${escHtml(fmtQty(L.tokenQty, L.token))}` : '';
      const usdStr = L.amount ? `$${L.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '';
      const parts = [tokStr, usdStr].filter(Boolean).join(' · ');
      structBadge = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
-       <span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;">${L.proto?.toUpperCase()||''} · ${eventLabel}</span>
+       <span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;">${escHtml(L.proto?.toUpperCase()||'')} · ${eventLabel}</span>
        ${parts?`<span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;">${parts}</span>`:''}
        ${L.debtAfter!=null?`<span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;">Dívida → $${L.debtAfter.toLocaleString('en-US',{minimumFractionDigits:2})}</span>`:''}
      </div>`;
@@ -3484,7 +3488,7 @@ function renderDiary(){
    if (e.trade) {
      const T = e.trade;
      const sideLabel = T.side==='buy'?'Compra':'Venda';
-     const qtyStr = fmtQty(T.qty, T.token);
+     const qtyStr = escHtml(fmtQty(T.qty, T.token));
      const costStr = T.totalCost ? `$${T.totalCost.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '';
      structBadge = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
        <span style="font-size:9px;padding:2px 7px;border-radius:3px;background:var(--border);color:${T.side==='buy'?'var(--green)':'var(--red)'};font-family:'JetBrains Mono',monospace;letter-spacing:.08em;">${sideLabel}</span>
@@ -3636,10 +3640,10 @@ function renderAlertLog(){
  <div style="background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;">
  <span style="font-size:16px;flex-shrink:0;">${icons[e.level]||''}</span>
  <div style="flex:1;">
- <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px;">${e.title}</div>
- <div style="font-size:10px;color:var(--muted);">${e.msg}</div>
+ <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px;">${escHtml(e.title)}</div>
+ <div style="font-size:10px;color:var(--muted);">${escHtml(e.msg)}</div>
  </div>
- <span style="font-size:9px;color:var(--muted);white-space:nowrap;">${e.ts}</span>
+ <span style="font-size:9px;color:var(--muted);white-space:nowrap;">${escHtml(e.ts)}</span>
  </div>
  `).join('');
 }
@@ -3844,7 +3848,7 @@ document.addEventListener('DOMContentLoaded',function(){
 // DIÁRIO SEMANAL DE GESTÃO
 // ══════════════════════════════════════════════
 var STORAGE_WEEKLY = 'bc-weekly-diary-v1';
-var swEntries = JSON.parse(localStorage.getItem(STORAGE_WEEKLY) || '[]');
+var swEntries = readList(STORAGE_WEEKLY);
 var swCurrentOffset = 0; // 0 = semana atual, -1 = semana passada, etc.
 
 var SW_QUESTIONS = [
@@ -4005,15 +4009,15 @@ function swRenderHistory() {
 
     return '<div class="sw-history-item">' +
       '<div class="sw-history-hd" onclick="swToggleHist(this,' + i + ')">' +
-        '<span class="sw-hw">Semana ' + entry.week + ' · ' + entry.year + '</span>' +
-        '<span class="sw-hdate">' + entry.range + '</span>' +
+        '<span class="sw-hw">Semana ' + escHtml(entry.week) + ' · ' + escHtml(entry.year) + '</span>' +
+        '<span class="sw-hdate">' + escHtml(entry.range) + '</span>' +
         (hasContent ? '' : '<span style="font-size:9px;color:var(--muted);font-family:var(--font-mono);">VAZIO</span>') +
         '<span class="sw-htoggle">▾</span>' +
       '</div>' +
       '<div class="sw-history-body" id="sw-hb-' + i + '">' + questionsHtml +
         '<div style="display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">' +
-          '<button class="btn btn-sm btn-primary" onclick="swLoadEntry(\'' + entry.key + '\')" style="font-size:9px;">EDITAR</button>' +
-          '<button class="btn btn-sm" onclick="swDeleteEntry(\'' + entry.key + '\')" style="font-size:9px;color:var(--red);border-color:var(--red);">EXCLUIR</button>' +
+          '<button class="btn btn-sm btn-primary" onclick="swLoadEntry(\'' + String(entry.key).replace(/[^0-9A-Za-z_-]/g,'') + '\')" style="font-size:9px;">EDITAR</button>' +
+          '<button class="btn btn-sm" onclick="swDeleteEntry(\'' + String(entry.key).replace(/[^0-9A-Za-z_-]/g,'') + '\')" style="font-size:9px;color:var(--red);border-color:var(--red);">EXCLUIR</button>' +
         '</div>' +
       '</div>' +
     '</div>';

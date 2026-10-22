@@ -11,6 +11,9 @@ name: Varredura de ETH nas carteiras (diagnostico)
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   sweep:
     runs-on: ubuntu-latest

@@ -19,6 +19,7 @@ window.scrollTo(0, 0);
 <link rel="canonical" href="/pools">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>Barolo Capital · Pools & DeFi</title>
 <link rel="stylesheet" href="ui-polish.css"><!-- camada de polish compartilhada -->
 <style>
@@ -442,7 +443,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .me-cell .am-v{font-family:var(--mono);font-size:15px;font-weight:500;}
 .me-cell .up{color:var(--green);} .me-cell .dn{color:var(--red);} .me-cell .neu{color:var(--muted);} .me-cell .gold{color:var(--accent);}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD" crossorigin="anonymous"></script>
 <script>/* tooltip padrão (Design.md §4.6): bolinha cheia da cor da série, sem borda */
 if(window.Chart){
   Chart.defaults.plugins.tooltip.usePointStyle=true;
@@ -454,7 +455,6 @@ if(window.Chart){
   };
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 </head>
 <body>
@@ -662,7 +662,7 @@ if(window.Chart){
     <div class="spinner"></div>
     <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
   </div>
-  <iframe id="revertFrame" data-src="https://revert.finance/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+  <iframe id="revertFrame" data-src="https://revert.finance/" style="width:100%;height:100%;border:none;border-radius:8px;" sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms" referrerpolicy="no-referrer"></iframe>
   <div id="revertFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
     <p>⚠ Revert Finance bloqueado — <a href="https://revert.finance/" target="_blank" style="color:var(--gold);">abra em nova aba →</a></p>
   </div>
@@ -763,7 +763,7 @@ if(window.Chart){
       <div class="spinner"></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
     </div>
-    <iframe id="uniswapFrame" data-src="https://defillama.com/yields" style="width:100%;height:100%;border:none;border-radius:8px;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" allow="*"></iframe>
+    <iframe id="uniswapFrame" data-src="https://defillama.com/yields" style="width:100%;height:100%;border:none;border-radius:8px;" sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms" referrerpolicy="no-referrer"></iframe>
     <div id="uniswapFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
       <p>⚠ DefiLlama bloqueado — <a href="https://defillama.com/yields" target="_blank" style="color:#FF007A;">abra em nova aba →</a></p>
     </div>
@@ -789,7 +789,7 @@ if(window.Chart){
       <div class="spinner"></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
     </div>
-    <iframe id="aaveFrame" data-src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+    <iframe id="aaveFrame" data-src="https://pro.aave.com/" style="width:100%;height:100%;border:none;border-radius:8px;" sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms" referrerpolicy="no-referrer"></iframe>
     <div id="aaveAppFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
       <p>⚠ AAVE Pro bloqueado — <a href="https://pro.aave.com/" target="_blank" style="color:#b6509e;">abra em nova aba →</a></p>
     </div>
@@ -816,7 +816,7 @@ if(window.Chart){
       <div class="spinner"></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Carregando…</div>
     </div>
-    <iframe id="raydiumFrame" data-src="https://raydium.io/liquidity-pools/" style="width:100%;height:100%;border:none;border-radius:8px;"></iframe>
+    <iframe id="raydiumFrame" data-src="https://raydium.io/liquidity-pools/" style="width:100%;height:100%;border:none;border-radius:8px;" sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms" referrerpolicy="no-referrer"></iframe>
     <div id="raydiumFallback" style="display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px;">
       <p>⚠ Raydium bloqueado — <a href="https://raydium.io/liquidity-pools/" target="_blank" style="color:#15b66a;">abra em nova aba →</a></p>
     </div>
@@ -949,7 +949,7 @@ if(window.Chart){
  let _sortDir = 'desc';      // 'asc' | 'desc'
  let _showOnlyFavs = false;
  // Favoritos persistidos em localStorage — chave formato `${net}:${addr}`
- let _favs = new Set(JSON.parse(localStorage.getItem('bc-fav-pools') || '[]'));
+ let _favs = new Set((function(){ try{ var v=JSON.parse(localStorage.getItem('bc-fav-pools')||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } })());
  function saveFavs() { localStorage.setItem('bc-fav-pools', JSON.stringify([..._favs])); }
  function isFav(net, addr) { return _favs.has(net+':'+addr); }
  // Labels e cores curtos por rede
@@ -1056,8 +1056,12 @@ if(window.Chart){
  return pools;
  }
 
+ // Nome/endereço vêm do GeckoTerminal (símbolo de token é livre p/ qualquer um criar):
+ // escapa antes de ir para innerHTML e restringe o id a [0-9A-Za-z] (vai em onclick/URL).
+ function escHtml(s) { return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
  function rowHtml(p, opts) {
  opts = opts || {};
+ p = Object.assign({}, p, { addr: String(p.addr||'').replace(/[^0-9A-Za-z]/g,'') });
  const net = p.net || opts.net;
  const isTop = !!opts.isTop;
  const aprStr = p.apr!=null ? (p.apr>999?'>999':p.apr.toFixed(1))+'%' : '—';
@@ -1066,8 +1070,8 @@ if(window.Chart){
  const chgStr = isNaN(p.chg)?'—':(p.chg>=0?'+':'')+p.chg.toFixed(2)+'%';
  const feeStr = p.fee!=null ? p.fee+'%' : '';
  const link = UNI_LINK[net]+p.addr;
- const cleanName = p.name.replace(/\s*[\d.]+%\s*$/,'').trim();
- const symBadge = p.sym ? `<span style="font-size:9px;background:rgba(201,160,80,.1);border:1px solid rgba(201,160,80,.3);border-radius:4px;padding:1px 6px;color:var(--accent);font-family:'JetBrains Mono',monospace;">${p.sym}</span>` : '';
+ const cleanName = escHtml(String(p.name).replace(/\s*[\d.]+%\s*$/,'').trim());
+ const symBadge = p.sym ? `<span style="font-size:9px;background:rgba(201,160,80,.1);border:1px solid rgba(201,160,80,.3);border-radius:4px;padding:1px 6px;color:var(--accent);font-family:'JetBrains Mono',monospace;">${escHtml(p.sym)}</span>` : '';
  const protoBadge = (p.net === 'solana' && p.proto && p.proto !== 'DEX') ? `<span style="font-size:9px;background:${p.proto==='Orca'?'rgba(20,241,149,0.08)':'rgba(200,80,200,0.08)'};border:1px solid ${p.proto==='Orca'?'rgba(20,241,149,0.25)':'rgba(200,80,200,0.25)'};border-radius:4px;padding:1px 6px;color:${p.proto==='Orca'?'#14F195':'#c841f5'};font-family:'JetBrains Mono',monospace;">${p.proto}</span>` : '';
  const volTvl = p.tvl>0 ? p.vol/p.tvl : 0;
  const volTvlStr = volTvl > 0 ? volTvl.toFixed(2)+'x' : '—';
@@ -1080,7 +1084,7 @@ if(window.Chart){
  const netColor = NET_COLOR[net] || '#888';
  const netShort = NET_SHORT[net] || (net||'').toUpperCase();
  const rowStyle = isTop ? 'background:rgba(201,160,80,.04);box-shadow:inset 3px 0 0 var(--accent);' : '';
- return `<tr style="${rowStyle}cursor:pointer;" onclick="window.open('${link}','_blank')">
+ return `<tr style="${rowStyle}cursor:pointer;" onclick="window.open('${link}','_blank','noopener')">
  <td>
    <div class="apr-pair-name">
      <span onclick="event.stopPropagation();toggleFav('${net}','${p.addr}')" title="Favoritar" style="color:${fav?'var(--accent)':'var(--muted)'};cursor:pointer;font-size:14px;user-select:none;flex-shrink:0;">${fav?'★':'☆'}</span>
@@ -1500,144 +1504,10 @@ function setRef(ref){
  var _pnlEl=document.getElementById('lp-pnl'); if(_pnlEl) _pnlEl.className='lp-mv '+(r.pos?'pos':'neg');
 }
 
-// ── UNISWAP V3 LP LIVE DATA ──
-(async function fetchUniswapLPData() {
-  // ⚠ Pool Base DESMONTADA em 06/07/2026 → remontada na Robinhood Chain (WETH/USDG 0.01%).
-  // Fetch on-chain DESATIVADO: card estático (chain nova, sem RPC público/CORS confiável).
-  // Valores no HTML (lp-pooled/lp-apr) e em data.js uniswapV3. Reativar quando houver RPC + contratos.
-  return;
-  // eslint-disable-next-line no-unreachable
-  // Pool ATIVA: WETH/USDC 0.30% na BASE (chain_id=8453) — aberta em 03/06/2026 (rollover da anterior)
-  const NFT_MGR  = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1'; // Base Uniswap V3 NonfungiblePositionManager
-  const POOL     = '0x6c561B446416E1A00E8E93E221854d6eA4171372'; // Base WETH/USDC 0.30%
-  const TOKEN_ID = 5247352;
-  const BASE_RPCS = [
-    'https://mainnet.base.org',
-    'https://base.llamarpc.com',
-    'https://base.drpc.org',
-    'https://base.publicnode.com'
-  ];
-  const Q96  = 2n ** 96n;
-  const Q128 = 2n ** 128n;
-  const Q256 = 2n ** 256n;
-
-  function w(hex, i) { return BigInt('0x' + hex.slice(i*64,(i+1)*64)); }
-  function signed256(b) { return b >= (1n<<255n) ? Number(b-(1n<<256n)) : Number(b); }
-  function mod256(x) { return ((x%Q256)+Q256)%Q256; }
-  function encodeInt(n) { return (n<0?(BigInt(n)+Q256):BigInt(n)).toString(16).padStart(64,'0'); }
-  function sqrtTickX96(t) { return BigInt(Math.floor(Math.sqrt(Math.pow(1.0001,t))*2**96)); }
-
-  async function ethcall(to, data) {
-    for (const rpc of BASE_RPCS) {
-      try {
-        const r = await fetchTimeout(rpc,{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({jsonrpc:'2.0',method:'eth_call',params:[{to,data},'latest'],id:1})
-        },7000);
-        if (!r.ok) continue;
-        const j = await r.json();
-        if (j.error||!j.result||j.result==='0x') continue;
-        return j.result.slice(2);
-      } catch(e){ console.debug('[LP]',rpc,'—',e.message); }
-    }
-    throw new Error('Todos os RPCs falharam');
-  }
-
-  // 1. Posição (NonfungiblePositionManager)
-  const pH = await ethcall(NFT_MGR,'0x99fbab88'+TOKEN_ID.toString(16).padStart(64,'0'));
-  const tickLow  = signed256(w(pH,5));
-  const tickHig  = signed256(w(pH,6));
-  const liq      = w(pH,7);
-  const fg0Last  = w(pH,8), fg1Last = w(pH,9);
-  const owed0    = w(pH,10), owed1  = w(pH,11);
-
-  // 2. Pool slot0 (sqrtPriceX96 + currentTick)
-  const s0H = await ethcall(POOL,'0x3850c7bd');
-  const sqrtPX96 = w(s0H,0);
-  const curTick  = signed256(w(s0H,1));
-
-  // 3. feeGrowthGlobal
-  const [fg0H,fg1H] = await Promise.all([ethcall(POOL,'0xf3058399'),ethcall(POOL,'0x46141319')]);
-  const fgG0 = w(fg0H,0), fgG1 = w(fg1H,0);
-
-  // 4. ticks (feeGrowthOutside)
-  const [tkLH,tkUH] = await Promise.all([
-    ethcall(POOL,'0xf30dba93'+encodeInt(tickLow)),
-    ethcall(POOL,'0xf30dba93'+encodeInt(tickHig))
-  ]);
-  const fgo0L=w(tkLH,2),fgo1L=w(tkLH,3),fgo0U=w(tkUH,2),fgo1U=w(tkUH,3);
-
-  // 5. Token amounts a partir da liquidez
-  const spL = sqrtTickX96(tickLow), spU = sqrtTickX96(tickHig);
-  let a0=0n, a1=0n;
-  if      (curTick < tickLow)  { a0 = liq*Q96*(spU-spL)/(spL*spU); }
-  else if (curTick >= tickHig) { a1 = liq*(spU-spL)/Q96; }
-  else { a0 = liq*Q96*(spU-sqrtPX96)/(sqrtPX96*spU); a1 = liq*(sqrtPX96-spL)/Q96; }
-  const wethAmt = Number(a0)/1e18, usdcAmt = Number(a1)/1e6;
-
-  // 6. Fees não coletadas
-  function fgi(fgG,fgoL,fgoU,tL,tU,tC) {
-    const below = tC>=tL ? fgoL : mod256(fgG-fgoL);
-    const above = tC< tU ? fgoU : mod256(fgG-fgoU);
-    return mod256(fgG-below-above);
-  }
-  const fi0 = fgi(fgG0,fgo0L,fgo0U,tickLow,tickHig,curTick);
-  const fi1 = fgi(fgG1,fgo1L,fgo1U,tickLow,tickHig,curTick);
-  const uf0 = owed0 + liq*mod256(fi0-fg0Last)/Q128;
-  const uf1 = owed1 + liq*mod256(fi1-fg1Last)/Q128;
-  const uncWeth = Number(uf0)/1e18, uncUsdc = Number(uf1)/1e6;
-
-  // 7. Preço ETH
-  const prices = await getLivePrice(['ethereum']);
-  const eth = prices?.ethereum?.usd || 1800;
-  const pooledUsd = wethAmt*eth + usdcAmt;
-  const uncFeeUsd = uncWeth*eth + uncUsdc;
-
-  // 8. APR via on-chain (fees acumuladas desde abertura, sem coletas manuais)
-  // Se ocorrer um Collect event, o contador de uncollected reseta — APR ficaria subestimado.
-  // Por enquanto a posição não teve coletas, então uncollected = total acumulado desde 24/02/2026.
-  const ENTRY_CAPITAL = 329; // 0.18 WETH @ ETH $1.828 (03/06/2026)
-  const OPEN_TS = new Date('2026-06-03T17:20:00Z').getTime() / 1000;
-  let pnl=null, il=null, apr=null, feeApr=null, dailyFees=null;
-  let aprSource = 'acumulado desde abertura';
-
-  if (uncFeeUsd > 0) {
-    const days = Math.max(1, (Date.now()/1000 - OPEN_TS)/86400);
-    feeApr    = uncFeeUsd/ENTRY_CAPITAL/days*365*100;
-    dailyFees = uncFeeUsd/days;
-    console.debug('[LP] APR via on-chain Base:', feeApr.toFixed(1)+'%');
-  }
-
-  // 9. Atualiza REFS e UI
-  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  const AAVE_BORROW_RATE = (window.BAROLO_DATA&&window.BAROLO_DATA.defi&&window.BAROLO_DATA.defi.aave.borrow.USDC.apy*100) || 3.63; // fonte: data.js
-
-  // POOLED
-  set('lp-pooled', '$'+pooledUsd.toFixed(2));
-  set('lp-pooled-sub', wethAmt.toFixed(4)+' WETH + '+usdcAmt.toFixed(2)+' USDC');
-
-  // Compartilha valor com portfolio_analytics.html via localStorage
-  window._liveLP = pooledUsd;
-  try {
-    localStorage.setItem('bc-lp-pooled', JSON.stringify({ value: pooledUsd, timestamp: Date.now() }));
-  } catch(e) {}
-
-  // APR BRUTO + APR LÍQUIDO
-  if (feeApr !== null) {
-    const aprNet = feeApr - AAVE_BORROW_RATE;
-    const fmtApr = v => (v>=0?'+':'')+v.toFixed(1)+'%';
-    set('lp-apr',     fmtApr(feeApr));
-    set('lp-apr-sub', apr!=null ? 'c/ IL: '+fmtApr(apr) : aprSource);
-    set('lp-apr-net', fmtApr(aprNet));
-    set('lp-apr-net-sub', fmtApr(feeApr)+' − '+AAVE_BORROW_RATE+'%');
-    const netEl = document.getElementById('lp-apr-net');
-    if (netEl) netEl.className = 'lp-mv '+(aprNet>=0?'pos':'neg');
-  } else {
-    set('lp-apr', '0.0%');
-    set('lp-apr-sub', 'sem fees acumuladas — preço fora do range');
-  }
-
-})().catch(e => console.debug('[LP] dados LP falharam:',e.message));
+// ── UNISWAP V3 LP LIVE DATA ── (removido em 22/10/2026)
+// O fetch on-chain da pool da Base estava desativado (`return`) desde 14/07/2026 e carregava
+// token ID + RPCs de uma posição fechada. O card da pool ativa é estático: lê data.js → defi.uniswapV3.
+// Para reativar: obter RPC + NonfungiblePositionManager + pool WETH/USDG + token ID da Robinhood Chain (git log p/ o código antigo).
 
 // Generic reload — used by all 4 panels
 function reloadPanel(frameId, loadingId, fallbackId) {
