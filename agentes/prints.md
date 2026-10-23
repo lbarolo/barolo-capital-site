@@ -155,7 +155,48 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
-## Estado atual — review 16/10/2026 (`asOf` 2026-10-16)
+## Estado atual — review 23/10/2026 (`asOf` 2026-10-23)
+**Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020878497926142669** · USDT **28,723036**
+
+| | Qtd | APY | Principal |
+|---|---|---|---|
+| AAVE WETH supply | 2,310619 | 1,67% | 2,289740 (inalterado) |
+| AAVE USDT supply | 1.724,624014 | 3,22% | 1.695,900978 (inalterado) |
+| AAVE USDC borrow | 768,395695 | **6,12%** (net do print; base 5,05% no MCP) | 748,00 |
+| Kamino SOL supply | 25,09 | 4,05% | 23,645990 |
+| Kamino USDC borrow | 456,71 | **6,06%** | 378,599493 |
+
+- **Patrimônio líquido US$ 9.540,96** · HF AAVE **7,74** (MCP) · Kamino LTV **17,52%** (liq. 80%, SOL
+  liquida em **US$ 22,75**) · sem pool. Dívida total **US$ 1.225,11**.
+- ✅ **Borrow das duas CEDEU**: AAVE 8,79% → **6,12%**, Kamino 8,88% → **6,06%**. O alerta de quitar
+  aberto em 16/10 perde força — mas o USDT da AAVE rende 3,22% contra 6,12% da dívida, então o carry
+  dessa perna segue negativo. Regra de 11/09 (reavaliar se >5% por 2 semanas) continua valendo.
+- **Aporte semanal de 23/10 (sexta) FEITO**: R$ 100,00 → 19,67667291 USDT @ 5,0822 (taxa ZERO,
+  16:06:21) → 0,0002417 BTC bruto / **0,00024074 líquido** @ US$ 81.409,30 (16:07:05, taxa 0,4%).
+  `contributions` +US$ 19,68. Dobro da régua (R$ 50) — o "podendo ser mais ou menos" é dele.
+- **Fiscal atualizado**: `FISCAL_ENTRADAS` USDT 3.058,90 → **3.088,44 un** · R$ 16.416,57 →
+  **16.566,57** (câmbio médio 5,37 → **5,36**) · `APORTADO_BRL` → **R$ 38.132,97**. Inclui os R$ 50 de
+  **09/10 que nunca tinham sido lançados lá**.
+- **Yield pendente no CoinGecko: ~US$ 15,08** (ETH +0,002324 · SOL +0,058135 · USDT +3,500170),
+  acumulando desde 16/10.
+- OKX: USDT **49,32** (inalterado desde 16/10) · SOL 0,76735037 confere · **BABY 25,82880465
+  (US$ 0,34)** segue FORA da contabilidade (recompensa do Simple Earn — decisão de 02/10, mesma do gas).
+  BRL zerado depois do depósito.
+
+🚨 **PENDENTE — falta uma compra de BTC de ~US$ 19,3 no site (NÃO lancei, falta o print):**
+  - CoinGecko (print 23/10): **0,00649607** · OKX: **0,00647885** · site: **0,00625591**.
+  - Conta: CoinGecko de 16/10 (0,00601623) + 0,0002417 (bruto de hoje) = 0,00625793. Faltam
+    **0,00023814** (~US$ 19,4). A OKX confirma pelo outro lado (0,00022294 acima do site).
+  - A reconciliação do portfólio inteiro fecha com isso: site US$ 10.783,39 contra CoinGecko
+    US$ 10.784,78 = −1,39, que é exatamente **−19,31 do BTC + 17,92 de yield pendente**.
+  - Hipótese: **o aporte da sexta 16/10 foi feito DEPOIS do review daquele dia** (o caderno de
+    16/10 registra "ainda não feito") e nunca entrou no site, embora ele tenha lançado no CoinGecko.
+  - ⚠️ **Não inventei o lançamento.** Precisa do print da ordem: data, R$, câmbio, preço do BTC e
+    taxa — para saber se vai para `contributions` (aporte) ou se foi rotação. Até lá o patrimônio
+    está **subestimado em ~US$ 19** e o `cgMirror` do BTC fica com delta negativo de propósito,
+    para o `yield-to-mirror.js` continuar gritando.
+
+## Estado atual (ANTERIOR) — review 16/10/2026 (`asOf` 2026-10-16)
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020084290403746695** · USDT **27,707815**
 
 | | Qtd | APY | Principal |
@@ -309,6 +350,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 23/10/2026 — review semanal + aporte de sexta (R$ 100 → 19,68 USDT → 0,00024074 BTC); AAVE e Kamino pelo MCP/print, principals intocados; borrow CEDEU nas duas (AAVE 6,12%, Kamino 6,06%); HF 7,74; LTV 17,52%; líquido US$ 9.540,96; Fiscal +R$ 150 (o de 09/10 faltava lá); 🚨 falta uma compra de BTC de ~US$ 19,3 (provável aporte de 16/10 pós-review) — pedido o print.
 - 16/10/2026 — review semanal sem movimentação (principals conferem pelo MCP); só juros; borrow AAVE 8,79% e Kamino 8,88% (dobraram); HF 7,92; LTV 17,14%; yield pendente ~US$ 10,23; RDNT→ETH lançado no CoinGecko.
 - 09/10/2026 — **regra nova: aporte toda sexta** (ele pediu para ser cobrado); 1o da série R$ 50 → 9,86463 USDT
   → 0,00011905 BTC; fiat→USDT é aporte (US$ 9,86 em `contributions`), USDT→BTC é rotação; `TOTAL_INVESTED` 10.398,50;
