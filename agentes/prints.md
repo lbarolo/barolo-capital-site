@@ -233,9 +233,13 @@ entrou nem saiu do portfólio).
 🔸 **Sobraram 0,74 USDC** na carteira (769,14 recebidos − 768,40 repagos). Ficam **fora da
 contabilidade**, como o BABY e o gas (valor < US$ 1). Anotado para não se perder o rastro.
 
-🚨 **AÇÃO PENDENTE DELE — dar SAÍDA de 770 USDT no CoinGecko.** Não é yield: é ativo que saiu do
-portfólio. Até lá o `yield-to-mirror.js` acusa **−766,50 USDT** (negativo = CoinGecko com mais que o
-site). O resto do pendente segue normal: ETH +0,002328 · SOL +0,058135 · BTC −0,000002 (taxas).
+✅ **ELE JÁ DEU A SAÍDA dos 770 USDT no CoinGecko**, no mesmo dia. `cgMirror.USDT`
+1.770,58676194 → **1.000,58676194**; o delta para o holding volta a ser só o juro do aUSDT
+(**+3,50**), pendente normal. Não era yield — era ativo saindo do portfólio, por isso saída e não
+transferência de entrada.
+
+**Yield pendente no CoinGecko depois disso: ~US$ 14,94** — ETH +0,002328 · SOL +0,058135 ·
+USDT +3,504950 · BTC −0,000002 (as taxas das 5 compras, diferença conhecida e explicada).
 
 ⚠️ **O HF deixou de existir — e isso quebrava 3 telas.** Com `healthFactor: null`, os consumidores
 caíam em **fallbacks fixos** e mostrariam um HF inventado numa carteira sem dívida:
