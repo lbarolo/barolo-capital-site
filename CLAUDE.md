@@ -6917,6 +6917,186 @@ prioridade do Lucas
 
 ---
 
+## Sessão 19–23/10/2026 — Regra da fee de pool esclarecida (memória obsoleta corrigida) + 2 aportes semanais + review semanal, com o aporte de 16/10 achado por divergência do CoinGecko
+
+### Contexto
+Começou em 19/10 com o Lucas pedindo "Aportes" (consulta ao estado de `contributions`) e uma
+pergunta de metodologia sobre fee de pool. Em 23/10 (sexta) ele mandou o aporte da semana e pediu
+para fechar o review semanal. Três commits de dados e um achado contábil relevante.
+
+### 1. ⚡ REGRA ESCLARECIDA — fee de pool sacada entra a CUSTO ZERO (e uma memória minha estava errada)
+
+Pergunta dele: *"Se eu sacar taxas de uma pool, como devem ser entradas no portfólio? como entrada
+a preço zero?"* **Sim.** A regra vigente está no bloco `(f)` de `defi.uniswapV3` no `data.js`
+(21–22/08/2026): *"Yield em qualquer token (aToken da AAVE que cresce sozinho, fee de pool recebida
+em ETH) ENTRA no CoinGecko como quantidade, com custo zero. O `invested` nunca sobe com yield."*
+
+| Lugar | Fee coletada |
+|---|---|
+| `holdings`/`stables` | qty **sobe**, `invested` **inalterado** |
+| `contributions` | **NÃO** — não é dinheiro de fora |
+| `poolHistory` / `defi.uniswapV3.totalFees` | sim, renda de pool realizada na data da coleta |
+| `FISCAL_ENTRADAS` (BRL) | **NÃO** — lá só entra fiat→cripto |
+
+Três pontos que importam e foram explicados a ele:
+1. **Sacar fee não muda o patrimônio.** Enquanto não coletada ela já entra por
+   `defi.uniswapV3.uncollectedFees` (`Patrimônio = holdings + pooled + unc. fees − dívida`).
+   Coletar só move de bolso.
+2. **Não é dupla contagem** aparecer no holding *e* em `totalFees` — o patrimônio é contado uma vez
+   só (pelo holding); `totalFees` mede o desempenho da operação de pool.
+3. **Fee reinvestida na pool não entra no holding** — vira `capital` (foi o que se fez em
+   20/08/2026, `capital` 364,28 → 388,06; entra nos dois lados e por isso não infla o `pnl`).
+
+⚠️ **A memória `project_fees_eth_fora_do_coingecko.md` estava OBSOLETA e teria me feito errar de
+novo.** Ela guardava a regra de 21/08 de manhã ("Lucas não lança fee em ETH no CoinGecko, nunca
+subtrair de holdings"), que foi **explicitamente revogada no mesmo dia** no próprio `data.js` por
+manter rendimento real fora da contabilidade. Substituída por `project_fees_pool_custo_zero.md`
+(com as 3 nuances acima) e o índice `MEMORY.md` atualizado.
+
+### 2. Aporte semanal de 23/10 — commit `573d90f`
+
+Prints: conversão OKX (**R$ 100,00 → 19,67667291 USDT @ 5,0822**, 16:06:21, taxa ZERO) + ordem
+BTC/USDT (**0,0002417 BTC @ US$ 81.409,30**, 16:07:05, taxa 0,00000096 BTC = 0,4%).
+
+| Campo | Antes | Depois |
+|---|---|---|
+| `contributions` | — | **+US$ 19,68** (23/10) |
+| `holdings.BTC` qty | 0,00601517 | **0,00625591** (+0,00024074 líquido) |
+| `holdings.BTC` invested | 409,70 | **429,38** (+19,68) |
+| `stables.USDT` | 1773,071666 | 1773,071711 (entra e sai, sobra 0,0000451) |
+| `cgMirror.BTC` | 0,00601623 | 0,00625793 (bruto — é como ele lança) |
+
+⚡ A compra consumiu **praticamente todo** o USDT (0,0002417 × 81.409,30 = 19,6766 dos 19,67667291
+recebidos). **A perna fiat→USDT é APORTE; a perna USDT→BTC é ROTAÇÃO** — contar as duas seria dupla
+contagem do mesmo dinheiro. `TOTAL_INVESTED` sobe exatamente 19,68.
+
+🔸 **Descoberta sobre a coluna "$" da OKX:** ela mostra **USD, não USDT**. O print diz "$19,65" para
+19,6766 USDT (× ~0,9986). Mesmo padrão na ordem de 16/10 ("$19,37" para 19,3965 USDT). Não tentar
+reconciliar a diferença como taxa.
+
+### 3. Review semanal 23/10 — commit `72c66f3`
+
+AAVE pelo MCP (`get_user_positions` → `get_position_items`): **os 3 principals batem na casa
+decimal** com o `data.js` — sem movimentação na semana.
+
+| | Antes (16/10) | Depois (23/10) |
+|---|---|---|
+| AAVE WETH supply | 2,309824 @1,65% | **2,310619 @1,67%** (juro 0,020878497926142669) |
+| AAVE USDT supply | 1.723,608793 @3,00% | **1.724,624014 @3,22%** (juro 28,723036) |
+| AAVE USDC borrow | 767,459613 @**8,79%** | **768,395695 @6,12%** (net do print; base 5,05% MCP) |
+| HF AAVE | 7,92 | **7,74** |
+| Kamino SOL supply | 25,07 @4,22% | **25,09 @4,05%** |
+| Kamino USDC borrow | 456,11 @**8,88%** | **456,71 @6,06%** |
+| Kamino LTV | 17,14% | **17,52%** (liq. LTV 80%, SOL liquida em US$ 22,75) |
+| `holdings.ETH` | 2,363113 | **2,363907** (+0,000794 juro aWETH, custo zero) |
+| `holdings.SOL` | 25,83735038 | **25,85735038** (+0,02 yield Kamino **por delta**, regra 4) |
+| `stables.USDT` | 1773,071711 | **1774,086932** (+1,015221 juro aUSDT, custo zero) |
+
+✅ **O borrow cedeu nas duas** (AAVE 8,79% → 6,12%; Kamino 8,88% → 6,06%). O alerta de quitar aberto
+em 16/10 perde força, mas o USDT da AAVE rende 3,22% contra 6,12% da dívida — essa perna segue com
+carry negativo (~US$ 22/ano). Regra de 11/09 (reavaliar se >5% por 2 semanas) continua valendo.
+
+**Patrimônio líquido US$ 9.540,96** · dívida total US$ 1.225,11 · sem pool aberta.
+
+### 4. 🎯 O ACHADO — faltava o aporte de 16/10 no site, descoberto pela divergência do BTC — commit `1b674e4`
+
+Ao conferir o print do CoinGecko contra o `data.js`, o BTC não fechava: **CoinGecko 0,00649607 ·
+OKX 0,00647885 · site 0,00625591**. Os outros 10 tokens batiam exatamente (ADA, EIGEN, POL, ZK, XAI,
+ZETA, SCR na casa decimal; ETH/SOL/USDT com o yield pendente esperado).
+
+A conta isolou o buraco: CoinGecko de 16/10 (0,00601623) + 0,0002417 (bruto de hoje) = 0,00625793 →
+**faltavam 0,00023814 (~US$ 19,4)**. **Não inventei o lançamento** — pedi o print, como manda o
+caderno. Ele confirmou: *"foi o aporte da sexta 16/10 que fiz depois do review"*.
+
+Prints: conversão **R$ 100,00 @ 5,1555 = 19,39657 USDT** (16:32:30, taxa ZERO) → **0,00023814 BTC
+@ US$ 81.450** (16:34:29, taxa 0,00000023) = **0,00023791 líquido**.
+
+**A reconciliação fecha dos DOIS lados, na casa decimal:**
+- site **0,00649382** vs CoinGecko 0,00649607 = **0,00000225**, que é *exatamente* a soma das taxas
+  das 5 compras de 07–23/10 (0,00000048 + 0,00000047 + 0,00000011 + 0,00000023 + 0,00000096) —
+  CoinGecko lança bruto, o site lança líquido;
+- vs OKX 0,00647885 = 0,00001497, a diferença já conhecida e documentada em 02/10 (taxas das 8
+  compras antigas).
+- E explica o caixa da OKX ter ficado **parado em 49,32 de 16/10 a 23/10**: o USDT entrou e saiu no
+  mesmo dia, nas duas semanas.
+
+⚠️ **LIÇÃO REGISTRADA NO CADERNO (`agentes/prints.md`):** *o review de sexta pode rodar ANTES do
+aporte do dia*. Em 16/10 o caderno registrou "aporte ainda não feito" e ele aportou às 16:32.
+**A partir de agora, conferir o extrato da OKX da semana inteira no review seguinte, não só os
+prints do dia.** Minha cobrança de 19/10 ("a sexta 16/10 passou em branco") estava errada por isso.
+
+🔸 **Spread da OKX, achado novo:** a corretora mostra o lado BRL da conversão de 16/10 como
+**US$ 19,97** (câmbio comercial ~5,0075) contra os 19,39657 USDT entregues @ 5,1555 — **~2,9%
+embutido no câmbio, mesmo com "taxa zero"**. Na régua de R$ 50/semana isso é ~R$ 75/ano. O aporte
+entra pelo USDT recebido, que é a medida do site. Acompanhar nas próximas para ver se é padrão.
+
+### 5. Aba Fiscal (`ferramentas.html`) — 3 aportes lançados de uma vez
+
+O Fiscal estava 2 aportes atrás (só tinha até os R$ 400 de 05/10).
+
+| Campo | Antes | Depois |
+|---|---|---|
+| `FISCAL_ENTRADAS` USDT qty | 3.058,90 | **3.107,84** (+48,93787291) |
+| `FISCAL_ENTRADAS` USDT BRL | R$ 16.416,57 | **R$ 16.666,57** (+R$ 250) |
+| câmbio médio USDT | 5,37 | **5,36** |
+| `APORTADO_BRL` | R$ 37.982,97 | **R$ 38.232,97** (OKX 7.550,28 → 7.800,28) |
+
+Os três: 09/10 R$ 50 @ 5,0686 · 16/10 R$ 100 @ 5,1555 · 23/10 R$ 100 @ 5,0822. As compras de BTC
+feitas logo depois **não entram** (cripto↔cripto; já estão em `data.js → holdings.BTC`).
+
+### Dados atualizados (resumo)
+
+| Campo | Antes | Depois |
+|---|---|---|
+| `asOf` | 2026-10-16 | **2026-10-23** |
+| `holdings.BTC` | 0,00601517 / $409,70 | **0,00649382 / $448,78** |
+| `holdings.ETH` | 2,363113 | **2,363907** |
+| `holdings.SOL` | 25,83735038 | **25,85735038** |
+| `stables.USDT` | 1773,071666 | **1774,087002** |
+| `contributions` out/26 | 2 linhas, US$ 88,98 | **4 linhas, US$ 128,06** |
+| `TOTAL_INVESTED` | 10.398,50 | **10.437,58** |
+| Dívida total | 1.223,57 | **1.225,11** |
+| Yield pendente no CoinGecko | ~US$ 10,23 | **~US$ 14,90** (ETH +0,002324 · SOL +0,058135 · USDT +3,50) |
+
+### Bugs corrigidos
+
+| Bug | Causa raiz | Fix |
+|---|---|---|
+| Memória sobre fee de pool guardava regra revogada | A regra de 21/08 de manhã foi revogada no mesmo dia no `data.js`, mas a memória ficou | `project_fees_eth_fora_do_coingecko.md` removida; `project_fees_pool_custo_zero.md` criada + `MEMORY.md` atualizado |
+| Aporte de 16/10 nunca lançado (patrimônio ~US$ 19 subestimado) | O review de 16/10 rodou ANTES do aporte daquele dia; nada conferiu o extrato depois | Lançado em 23/10; lição registrada no caderno para conferir o extrato da semana |
+| Fiscal 2 aportes atrás (09/10 e 16/10) | Review semanal não cobria a aba Fiscal | +R$ 250 lançados; `APORTADO_BRL` 38.232,97 |
+
+### Validação
+`npm test` **147/147** em cada commit · `node scripts/close-month.js --dry-run` → "nada a fazer,
+curva fechada e consistente até 09/26" · `node scripts/yield-to-mirror.js` → US$ 14,90 pendentes ·
+reconciliação do portfólio inteiro contra o print do CoinGecko: site US$ 10.783,39 vs CoinGecko
+US$ 10.784,78 = **−1,39**, decomposto em −19,31 do BTC (antes do fix) + 17,92 de yield pendente.
+Os 3 commits confirmados no `origin/main` por `git merge-base --is-ancestor`.
+
+### O que ainda falta
+- **Yield pendente no CoinGecko ~US$ 14,90** — acumulando desde 16/10 por decisão dele (11/09).
+  Lembrar no fechamento de outubro (01/11).
+- **Fechamento de outubro (01/11)**: `close-month.yml` roda sozinha. Outubro tem **US$ 128,06 de
+  aporte externo** em 4 linhas, então o retorno do mês já sai descontado disso.
+- **`RENDA_2026` de outubro** continua manual.
+- **Spread de ~2,9% da OKX no câmbio** — confirmar nas próximas conversões se é padrão.
+- **Rewards da Kamino** (~US$ 6,89: PYUSD 0,07 + KMNO 6,82) não resgatados, não lançados.
+- ⚠️ **`CLAUDE.md` está com o corpo DUPLICADO** — ver nota no fim desta seção.
+- Pendências antigas: CDI/IPCA anual, `US_CPI_CUMULATIVE_PCT`, Registro Histórico em `pools.html`,
+  backlog Q1–Q7 do `QUANT.md`, Fases 4–6 da arquitetura, chaves de API sem restrição por domínio.
+
+### ⚠️ ACHADO NÃO CORRIGIDO — este arquivo está com o corpo duplicado
+`CLAUDE.md` tem **15.386 linhas** quando deveria ter ~7.800: todo o bloco de logs + a Base de
+Conhecimento aparecem **duas vezes** (o marcador `KB-START` está nas linhas **6920 e 14539**; o
+texto "Atualizado: 19/08/2026 — Base de Conhecimento Consolidada" nas linhas 7767 e 15386). A 2ª
+cópia começa por volta da linha 7790 ("## Estrutura de arquivos") e repete o mesmo conteúdo da 1ª,
+sem o bloco de avisos do topo. **Efeito: toda sessão lê o arquivo inteiro duas vezes**, gastando
+contexto à toa. Não corrigi porque remover ~7.600 linhas do arquivo mais importante do projeto é
+destrutivo e não foi pedido — **aguardando o OK do Lucas**. Este log foi inserido só na 1ª cópia,
+antes do primeiro `KB-START`.
+
+---
+
 <!-- KB-START -->
 
 # 📚 BASE DE CONHECIMENTO CONSOLIDADA — BAROLO CAPITAL (Lucas)
