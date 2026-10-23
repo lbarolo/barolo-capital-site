@@ -177,24 +177,29 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - **Fiscal atualizado**: `FISCAL_ENTRADAS` USDT 3.058,90 → **3.088,44 un** · R$ 16.416,57 →
   **16.566,57** (câmbio médio 5,37 → **5,36**) · `APORTADO_BRL` → **R$ 38.132,97**. Inclui os R$ 50 de
   **09/10 que nunca tinham sido lançados lá**.
-- **Yield pendente no CoinGecko: ~US$ 15,08** (ETH +0,002324 · SOL +0,058135 · USDT +3,500170),
+- **Yield pendente no CoinGecko: ~US$ 14,90** (ETH +0,002324 · SOL +0,058135 · USDT +3,500170),
   acumulando desde 16/10.
 - OKX: USDT **49,32** (inalterado desde 16/10) · SOL 0,76735037 confere · **BABY 25,82880465
   (US$ 0,34)** segue FORA da contabilidade (recompensa do Simple Earn — decisão de 02/10, mesma do gas).
   BRL zerado depois do depósito.
 
-🚨 **PENDENTE — falta uma compra de BTC de ~US$ 19,3 no site (NÃO lancei, falta o print):**
-  - CoinGecko (print 23/10): **0,00649607** · OKX: **0,00647885** · site: **0,00625591**.
-  - Conta: CoinGecko de 16/10 (0,00601623) + 0,0002417 (bruto de hoje) = 0,00625793. Faltam
-    **0,00023814** (~US$ 19,4). A OKX confirma pelo outro lado (0,00022294 acima do site).
-  - A reconciliação do portfólio inteiro fecha com isso: site US$ 10.783,39 contra CoinGecko
-    US$ 10.784,78 = −1,39, que é exatamente **−19,31 do BTC + 17,92 de yield pendente**.
-  - Hipótese: **o aporte da sexta 16/10 foi feito DEPOIS do review daquele dia** (o caderno de
-    16/10 registra "ainda não feito") e nunca entrou no site, embora ele tenha lançado no CoinGecko.
-  - ⚠️ **Não inventei o lançamento.** Precisa do print da ordem: data, R$, câmbio, preço do BTC e
-    taxa — para saber se vai para `contributions` (aporte) ou se foi rotação. Até lá o patrimônio
-    está **subestimado em ~US$ 19** e o `cgMirror` do BTC fica com delta negativo de propósito,
-    para o `yield-to-mirror.js` continuar gritando.
+✅ **RESOLVIDO no mesmo dia — era o aporte da sexta 16/10, lançado com atraso.** Print da ordem:
+  **R$ 100,00 @ 5,1555 = 19,39657 USDT** (16:32:30, taxa ZERO) → **0,00023814 BTC bruto @ US$ 81.450**
+  (16:34:29, taxa 0,00000023) = **0,00023791 líquido**. `contributions` +US$ 19,40; BTC `invested`
+  +19,40; Fiscal +R$ 100. **Outubro fecha com QUATRO aportes: US$ 128,06** (05, 09, 16 e 23/10).
+  - A reconciliação fecha dos dois lados: site **0,00649382** vs CoinGecko 0,00649607 = **0,00000225**,
+    que é exatamente a soma das taxas das 5 compras de 07–23/10 (CoinGecko lança bruto, site líquido);
+    e vs OKX 0,00647885 = 0,00001497, a diferença já conhecida de 02/10.
+  - Explica o caixa da OKX ter ficado parado em 49,32 de 16/10 a 23/10: entrou e saiu no mesmo dia.
+  - ⚠️ **LIÇÃO PARA O PRÓXIMO REVIEW DE SEXTA:** o review pode rodar ANTES do aporte do dia (foi o que
+    aconteceu em 16/10 — o caderno registrou "ainda não feito" e ele aportou às 16:32). **Conferir o
+    extrato da OKX da semana inteira no review seguinte, não só os prints do dia.** Foi a divergência
+    do BTC no CoinGecko que denunciou.
+  - 🔸 **Spread da OKX:** a corretora mostra o lado BRL dessa conversão como US$ 19,97 (câmbio comercial
+    ~5,0075) contra os 19,39657 USDT entregues @ 5,1555 — **~2,9% embutido no câmbio, mesmo com "taxa
+    zero"**. O aporte entra pelo USDT recebido, que é a medida do site. Vale observar nas próximas.
+
+~~PENDENTE — falta uma compra de BTC (resolvido acima)~~
 
 ## Estado atual (ANTERIOR) — review 16/10/2026 (`asOf` 2026-10-16)
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020084290403746695** · USDT **27,707815**
@@ -350,7 +355,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
-- 23/10/2026 — review semanal + aporte de sexta (R$ 100 → 19,68 USDT → 0,00024074 BTC); AAVE e Kamino pelo MCP/print, principals intocados; borrow CEDEU nas duas (AAVE 6,12%, Kamino 6,06%); HF 7,74; LTV 17,52%; líquido US$ 9.540,96; Fiscal +R$ 150 (o de 09/10 faltava lá); 🚨 falta uma compra de BTC de ~US$ 19,3 (provável aporte de 16/10 pós-review) — pedido o print.
+- 23/10/2026 — review semanal + aporte de sexta (R$ 100 → 19,68 USDT → 0,00024074 BTC); AAVE e Kamino pelo MCP/print, principals intocados; borrow CEDEU nas duas (AAVE 6,12%, Kamino 6,06%); HF 7,74; LTV 17,52%; líquido US$ 9.540,96; Fiscal +R$ 150 (o de 09/10 faltava lá); achado e lançado o aporte de 16/10 que faltava (R$ 100 → 0,00023791 BTC) — outubro fecha com 4 aportes, US$ 128,06.
 - 16/10/2026 — review semanal sem movimentação (principals conferem pelo MCP); só juros; borrow AAVE 8,79% e Kamino 8,88% (dobraram); HF 7,92; LTV 17,14%; yield pendente ~US$ 10,23; RDNT→ETH lançado no CoinGecko.
 - 09/10/2026 — **regra nova: aporte toda sexta** (ele pediu para ser cobrado); 1o da série R$ 50 → 9,86463 USDT
   → 0,00011905 BTC; fiat→USDT é aporte (US$ 9,86 em `contributions`), USDT→BTC é rotação; `TOTAL_INVESTED` 10.398,50;
