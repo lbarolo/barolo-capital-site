@@ -19,7 +19,14 @@ test('AAVE: resposta real → HF, colateral e dívida críveis e coerentes com o
   assert.ok(r, 'fetchAave devolveu null');
   assert.ok(r.hf > 1 && r.hf < 100, 'HF ' + r.hf);
   assert.ok(r.collateral > r.debt);
-  assert.ok(Math.abs(r.debt - D.debt.aave) / D.debt.aave < 0.02, `dívida ${r.debt} vs data.js ${D.debt.aave}`);
+  // A divida da AAVE foi QUITADA em 23/10/2026, entao D.debt.aave pode ser 0 — e dividir por 0
+  // daria NaN aqui. A comparacao cruzada so faz sentido quando ha divida registrada; sem ela, a
+  // fixture (gravada em 14/09) e historica e o que o teste ainda garante e a coerencia do parser.
+  if (D.debt.aave > 0) {
+    assert.ok(Math.abs(r.debt - D.debt.aave) / D.debt.aave < 0.02, `dívida ${r.debt} vs data.js ${D.debt.aave}`);
+  } else {
+    assert.ok(r.debt >= 0 && isFinite(r.debt), `dívida impossivel na fixture: ${r.debt}`);
+  }
 });
 
 test('AAVE: decodifica o struct V4 nas escalas certas', async () => {

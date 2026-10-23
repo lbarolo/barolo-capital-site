@@ -687,7 +687,9 @@ function renderKPIs() {
   paint('r-aave-usdt-usd',   usd0(AAVE_USDT_QTY));
   paint('r-aave-borrow-qty', n(AAVE_BORROW,2)+' USDC');
   paint('r-aave-borrow-usd', '−'+usd0(AAVE_BORROW));
+  // Sem divida na AAVE o HF nao existe (desde 23/10/2026): mostra travessao em vez de valor velho.
   if(hf) paint('r-aave-hf', n(hf,2), hf>=3?'var(--green)':hf>=1.5?'var(--yellow,#e3b341)':'var(--red)');
+  else if(!(AAVE_BORROW > 0)) paint('r-aave-hf', '—', 'var(--green)');
   paint('r-aave-rate',       n(AAVE_BORROW_APY*100,2)+'% a.a.');
   paint('r-aave-interest',   '~$'+n(AAVE_BORROW*AAVE_BORROW_APY/12,2));
 

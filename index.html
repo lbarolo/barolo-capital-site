@@ -2607,7 +2607,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if(!document.getElementById('dashDonut')) return;
     var brlRate = D.brlRate || 4.95;
     var debt = (D.debt && D.debt.total) || 1572.07;
-    var hf = (D.defi && D.defi.aave && D.defi.aave.healthFactor) || 4.0;
+    // Sem divida na AAVE o HF nao existe (divisao por zero). Desde 23/10/2026 e esse o caso.
+    var aaveHasDebt = !!(D.debt && D.debt.aave > 0);
+    var hf = aaveHasDebt ? ((D.defi && D.defi.aave && D.defi.aave.healthFactor) || 4.0) : null;
     var holdings = D.holdings || [];
     var stables = D.stables || [];
     var META = {
@@ -2691,8 +2693,8 @@ document.addEventListener('DOMContentLoaded', function() {
       var pnlEl=document.getElementById('dashPnl');
       if(pnlEl){ pnlEl.textContent=(m.pnlPct>=0?'+':'\u2212')+Math.abs(m.pnlPct).toFixed(1).replace('.',',')+'%'; pnlEl.style.color=m.pnlPct>=0?'var(--green)':'var(--red)'; }
       setText('dashPnlSub', 'sobre o capital investido');
-      setText('dashHf', hf.toFixed(2).replace('.',','));
-      setText('dashHfSub', hf>=2?'zona segura · liq. < 1,0':'atenção');
+      setText('dashHf', hf ? hf.toFixed(2).replace('.',',') : '—');
+      setText('dashHfSub', hf ? (hf>=2?'zona segura · liq. < 1,0':'atenção') : 'sem dívida na AAVE');
       renderDonut(m.alloc); renderLegend(m.alloc); renderDenomBtns();
     }
     var box=document.getElementById('dashDenom');

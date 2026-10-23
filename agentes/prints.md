@@ -201,6 +201,62 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 
 ~~PENDENTE — falta uma compra de BTC (resolvido acima)~~
 
+## ⚡ 23/10/2026 (fim do dia) — DÍVIDA DA AAVE QUITADA (decisão dele, desalavancagem parcial)
+
+**Palavras dele:** *"repaguei a divida na aave hoje, decidi fazer isso, pq o dinheiro parado não
+justificava mais a espera por quedas que eu esperava, então com o restante deixo como caixa de
+oportunidade, e caso caia muito mais do que o esperado, resolvo se pego mais divida dai pra comprar
+mais barato ETH"*.
+
+**Sequência on-chain (17:14–17:19, block 26257675):** withdraw **770 USDT** do supply da AAVE
+(`0xc150...5250`) → approve 1inch (`0x8954...aba1`) → swap **770 USDT → 769,14 USDC**
+(`0x5709...7846`, slippage 0,11%) → multicall repay **768,40 USDC** (`0x6ae9...6e17`).
+Taxa de borrow no momento do repay: **5,11%**. Gas total ~US$ 0,45, pago com ETH do Gas Deposit.
+
+| | Antes | Depois |
+|---|---|---|
+| AAVE USDT supply | 1.724,624014 | **954,628724** |
+| AAVE WETH supply | 2,310619 | 2,310622 (só juro) |
+| AAVE USDC borrow | 768,395695 @6,12% | **0 — QUITADA** |
+| `principals.aave.USDT` | 1.695,900978 | **925,900978** (caiu exatamente 770, MCP confere) |
+| `principals.aave.USDC` | 748 | **0** |
+| HF AAVE | 7,74 | **null** (sem dívida não existe; MCP devolve null) |
+| `stables.USDT` | 1.774,087002 / $1.743,71 | **1.004,091712 / $973,71** |
+| **Dívida total** | US$ 1.225,11 | **US$ 456,71** (só Kamino) |
+| Patrimônio líquido | ~US$ 9.577 | **US$ 9.576,74** |
+
+⚡ **Como lançar um repay (não é compra nem venda):** o ativo sai e o passivo some junto, então o
+patrimônio quase não muda. Aqui caiu **US$ 0,91** — o slippage do swap. O `invested` do USDT migra
+**1:1** com a qty (mesmo tratamento das compras). **Nada vai para `contributions`** (nenhum dinheiro
+entrou nem saiu do portfólio).
+
+🔸 **Sobraram 0,74 USDC** na carteira (769,14 recebidos − 768,40 repagos). Ficam **fora da
+contabilidade**, como o BABY e o gas (valor < US$ 1). Anotado para não se perder o rastro.
+
+🚨 **AÇÃO PENDENTE DELE — dar SAÍDA de 770 USDT no CoinGecko.** Não é yield: é ativo que saiu do
+portfólio. Até lá o `yield-to-mirror.js` acusa **−766,50 USDT** (negativo = CoinGecko com mais que o
+site). O resto do pendente segue normal: ETH +0,002328 · SOL +0,058135 · BTC −0,000002 (taxas).
+
+⚠️ **O HF deixou de existir — e isso quebrava 3 telas.** Com `healthFactor: null`, os consumidores
+caíam em **fallbacks fixos** e mostrariam um HF inventado numa carteira sem dívida:
+`index.html` (`|| 4.0`), `portfolio_analytics.html` exec bar (`|| 6.00`) e convexidade (`|| 5.00`).
+Corrigidos para detectar dívida zero: as telas mostram **— / "sem dívida na AAVE"**, e a convexidade
+entra com HF 99 (sem fragilidade de liquidação) em vez de 5. `relatorio.html` ganhou o traço também.
+`tests/chain.test.js` ajustado: a comparação fixture×`data.js` dividia por `D.debt.aave` e dava NaN
+com dívida 0 — agora só compara quando há dívida (a **regra** mudou, não o código).
+
+🔸 **Leitura da posição:** sobra só a Kamino (456,71 @6,06%, LTV 17,52%, SOL liquida em US$ 22,75).
+Borrowing power livre na AAVE: **US$ 5.334,89** — é a "opção de compra" que ele descreveu, disponível
+a custo zero enquanto não for usada. O carry negativo da perna USDT (3,22% de supply contra 6,12% de
+borrow, ~US$ 22/ano) **acabou**.
+
+⚠️ **LIÇÃO TÉCNICA (vale para todo script de edição):** `io.open(p,'w')` no Windows grava **CRLF**,
+e o `.gitattributes` do repo é `eol=lf`. Isso converteu 4 arquivos e quebrou um teste que procura
+uma string com `\n` literal. **Sempre usar `newline=''`.** O git mascara no commit, então o CI fica
+verde e só o teste local quebra — confuso de diagnosticar. E `open(...,'w')` **trunca na abertura**:
+uma falha no meio do write zera o arquivo (zerou este caderno; recuperado com `git checkout HEAD --`).
+Escrever em temporário e só depois substituir.
+
 ## Estado atual (ANTERIOR) — review 16/10/2026 (`asOf` 2026-10-16)
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020084290403746695** · USDT **27,707815**
 
@@ -355,6 +411,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 23/10/2026 (2) — **dívida da AAVE QUITADA** (768,40 USDC, com 770 USDT sacados do supply via swap no 1inch); dívida total 1.225,11 → **456,71** (só Kamino); HF deixa de existir (null) e 3 telas que mostrariam HF inventado foram corrigidas; custo da operação US$ 0,91 (slippage); pendente: dar saída de 770 USDT no CoinGecko.
 - 23/10/2026 — review semanal + aporte de sexta (R$ 100 → 19,68 USDT → 0,00024074 BTC); AAVE e Kamino pelo MCP/print, principals intocados; borrow CEDEU nas duas (AAVE 6,12%, Kamino 6,06%); HF 7,74; LTV 17,52%; líquido US$ 9.540,96; Fiscal +R$ 150 (o de 09/10 faltava lá); achado e lançado o aporte de 16/10 que faltava (R$ 100 → 0,00023791 BTC) — outubro fecha com 4 aportes, US$ 128,06.
 - 16/10/2026 — review semanal sem movimentação (principals conferem pelo MCP); só juros; borrow AAVE 8,79% e Kamino 8,88% (dobraram); HF 7,92; LTV 17,14%; yield pendente ~US$ 10,23; RDNT→ETH lançado no CoinGecko.
 - 09/10/2026 — **regra nova: aporte toda sexta** (ele pediu para ser cobrado); 1o da série R$ 50 → 9,86463 USDT

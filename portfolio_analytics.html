@@ -2007,7 +2007,9 @@ function renderUI(enriched){
    const kaminoDebtLive2 = window._liveKaminoDebt || KAMINO_DEBT;
    const totalDebtLive = aaveDebtLive2 + kaminoDebtLive2;
    const debtRatio = (totalDebtLive / netTotal * 100).toFixed(1);
-   const aaveHF = window._liveAaveHF || WEEKLY_UPDATE.defi.aave.healthFactor || 6.00;
+   // Sem divida na AAVE nao ha HF: `lendingSnapshot` e o MCP devolvem null (desde 23/10/2026).
+   const _aaveHasDebt = aaveDebtLive2 > 0;
+   const aaveHF = !_aaveHasDebt ? null : (window._liveAaveHF || WEEKLY_UPDATE.defi.aave.healthFactor || 6.00);
    const liveSol = window._liveSolPrice || solPrice || 86.84;
    const liveEth = getPrice('ethereum');
    // Posições e APYs de fallback vêm do data.js (antes: WEEKLY_UPDATE.defi de 20/06, sem o WETH).
@@ -2042,9 +2044,9 @@ function renderUI(enriched){
 
    const hfEl = document.getElementById('ev-hf-aave');
    if(hfEl){
-     const hfNum = typeof aaveHF === 'number' ? aaveHF : parseFloat(aaveHF);
+     const hfNum = aaveHF == null ? NaN : (typeof aaveHF === 'number' ? aaveHF : parseFloat(aaveHF));
      hfEl.textContent = isNaN(hfNum) ? '—' : hfNum.toFixed(2);
-     hfEl.style.color = hfNum > 3 ? 'var(--green)' : hfNum > 1.5 ? 'var(--yellow)' : 'var(--red)';
+     hfEl.style.color = isNaN(hfNum) ? 'var(--green)' : hfNum > 3 ? 'var(--green)' : hfNum > 1.5 ? 'var(--yellow)' : 'var(--red)';
    }
    const kHfEl = document.getElementById('ev-hf-kamino');
    if(kHfEl){
@@ -2559,7 +2561,10 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
 
 function buildConvexityUI(W){
   const enriched = buildEnriched();
-  const aaveHF = window._liveAaveHF || WEEKLY_UPDATE.defi.aave.healthFactor || 5.00;
+  // Sem divida a posicao nao tem fragilidade de liquidacao: entra com HF alto, nao com o fallback de 5.
+  const _aaveDebtNow = (window._liveAaveDebt != null) ? window._liveAaveDebt
+                     : ((window.BAROLO_DATA && window.BAROLO_DATA.debt && window.BAROLO_DATA.debt.aave) || 0);
+  const aaveHF = _aaveDebtNow > 0 ? (window._liveAaveHF || WEEKLY_UPDATE.defi.aave.healthFactor || 5.00) : 99;
   const kaminoLTV = window._liveKaminoLTV || 0.401;
   // W.holdings é objeto {ticker:qty}, não array — usa o helper de preço live
   const liveETH = getPrice('ethereum') || 1470;
