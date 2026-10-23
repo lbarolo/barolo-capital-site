@@ -2290,14 +2290,17 @@ window.Fiscal = (function(){
   // Conferido que NÃO duplica: a planilha termina em 08/05/2026, todas as cinco são posteriores.
   // As compras BTC/USDT do mesmo print (24/06 e 01/07) são cripto↔cripto e NÃO entram aqui —
   // já estão em data.js → holdings.BTC (invested $38,84 e $95,89).
-  var APORTADO_BRL = 37982.97;   // Binance 29.664,20 + OKX 7.550,28 (fiat→cripto)
+  var APORTADO_BRL = 38132.97;   // Binance 29.664,20 + OKX 7.700,28 (fiat→cripto)
+  // +R$ 150,00 / +29,54130291 USDT em 23/10/2026: os dois aportes semanais que faltavam aqui —
+  // 09/10 R$ 50,00 @ 5,0686 (9,86463 USDT) e 23/10 R$ 100,00 @ 5,0822 (19,67667291 USDT), ambos taxa ZERO na OKX.
+  // As compras de BTC feitas logo depois sao cripto<->cripto e NAO entram aqui (ja estao em data.js -> holdings.BTC).
   var FISCAL_ENTRADAS = [
     { t:'BTC',  qty:'0,00337',    brl:998.11,   avg:'296.174,15' },
     { t:'ETH',  qty:'0,3872',     brl:5844.80,  avg:'15.096,18'  },
     { t:'SOL',  qty:'1,012',      brl:914.48,   avg:'903,63'     },
     { t:'ADA',  qty:'307,99',     brl:3713.84,  avg:'12,06'      },
     { t:'XAI',  qty:'79',         brl:101.52,   avg:'1,29'       },
-    { t:'USDT', qty:'3.058,90',   brl:16416.57, avg:'5,37'       },
+    { t:'USDT', qty:'3.088,44',   brl:16566.57, avg:'5,36'       },
     { t:'USDC', qty:'531,13',     brl:2900.35,  avg:'5,46'       },
     { t:'BUSD', qty:'1.231,66',   brl:6433.55,  avg:'5,22'       },
     { t:'DOT',  qty:'2,97',       brl:352.77,   avg:'118,78'     },
