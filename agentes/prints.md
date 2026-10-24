@@ -81,6 +81,57 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
+## Estado atual — 24/10/2026 (`asOf` 2026-10-24) — saque de 200 USDT da AAVE para 2 ordens limite de ETH
+**Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020961978554540399** · USDT **28,791148**
+
+| | Qtd | APY | Principal |
+|---|---|---|---|
+| AAVE WETH supply | 2,310702073288126125 | 1,64% | 2,289740094733585726 (inalterado) |
+| AAVE USDT supply | 754,692126 | 3,23% | **725,900978** (−200 no saque de hoje) |
+| AAVE USDC borrow | **0 — quitada em 23/10** | — | 0 |
+| Kamino SOL supply | 25,09 | 4,05% | 23,645990 |
+| Kamino USDC borrow | 456,71 | 6,06% | 378,599493 |
+
+**Palavras dele:** *"tirei $200 USDT na aave e fiz 2 ordens limits pra comprar mais a baixo... ainda nao
+lancei no coingecko, vou esperar confirmar as ordens e dai retiro os USDT e coloco os tokens"*.
+
+**O saque** (MCP `get_user_activity`, único movimento do dia): **200 USDT**, 24/10 **14:41:35 UTC**,
+tx `0xf25c138e...aec00`, US$ 199,7242, gas 0,0001 ETH (US$ 0,19). O principal caiu exatamente 200 —
+925,900978 → **725,900978**, MCP confere na casa decimal.
+
+⚡ **Saque da AAVE NÃO é venda nem aporte — não mexe em `stables.USDT`.** O USDT só muda de lugar
+(supply → carteira EVM) e os holdings já incluem o colateral (regra 2). Mudam só o bloco `defi.aave`
+e o `principals`. Foi o mesmo tratamento dos saques de 15/09 e 23/10.
+
+**As 2 ordens limite (Uniswap, pendentes, criadas 24/10 11:42–11:43):**
+
+| | Paga | Recebe | Preço | Expira |
+|---|---|---|---|---|
+| (a) | 100 USDT | 0,04332 ETH | **2.308,60** USDT/ETH (−1,4% do mercado) | 31/10/2026 |
+| (b) | 100 USDT | 0,04564 ETH | **2.191,11** USDT/ETH (−6,4% do mercado) | 23/11/2026 |
+
+Mercado na hora: **US$ 2.341,12**. Network cost US$ 0 nas duas (ordem off-chain, só paga gas se executar).
+**Enquanto não executarem, nada muda no site** — os 200 USDT continuam contados como USDT. Quando
+executarem será **ROTAÇÃO** (o custo migra do USDT para o ETH), **nunca aporte**: esse dinheiro já
+estava no portfólio desde sempre, e lançar como aporte infla o capital e derruba o ROI por artefato.
+
+🔸 **CoinGecko: ele vai lançar só depois da execução**, de uma vez (saída do USDT + entrada do ETH).
+Decisão dele, e está certa — lançar a saída agora deixaria o CoinGecko 200 abaixo do site por dias.
+Até lá o `yield-to-mirror` segue acusando só o yield normal.
+
+- **Patrimônio líquido US$ 9.348,80** (ETH 2.344,97 · SOL 100,46 · BTC 80.217) contra US$ 9.540,96 em
+  23/10 = **−US$ 192 (−2,0%)**, tudo preço (não houve entrada nem saída). Dívida total **US$ 456,71**,
+  só Kamino. **Sem HF na AAVE** (sem dívida). Kamino LTV **17,52%**, SOL liquida em **US$ 22,75** (−77%).
+- Borrowing power livre na AAVE depois do saque: **US$ 5.088,85** (era 5.334,89) — a "opção de compra"
+  que ele descreveu em 23/10 continua de pé, só encolheu o colateral em USDT.
+- **Yield pendente no CoinGecko: ~US$ 14,87** (ETH +0,002408 · SOL +0,058135 · USDT +3,568352 ·
+  BTC −0,000002, a diferença conhecida das taxas). Sem relação com os 200 USDT das ordens.
+- 🔸 **O gas do saque (0,0001 ETH, US$ 0,19) comeu o juro da semana do aWETH (+0,00008 ETH, US$ 0,19).**
+  Pela decisão de 15/07/2026 o gas não é descontado — mantido, mas vale registrar que nesta semana o
+  ETH ficou de fato empatado.
+- Kamino **sem print nesta execução** — os números dela são os de 23/10 (supply 25,09 SOL, borrow
+  456,71 @6,06%). Pedir no próximo review.
+
 ## Estado atual (ANTERIOR — ver o bloco de 05/10 logo acima do histórico) — yields lançados no CoinGecko + duplicata de BTC a apagar (`asOf` 2026-10-02)
 **Juros da AAVE no último review (base para a regra 4):** WETH **0,018554028543753534** · USDT **25,227541**
 
@@ -155,7 +206,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 - Rewards da Kamino não resgatados (~US$ 8,09: USDS 1,59 · PYUSD 0,07 · KMNO 6,43) — não lançar.
 - `RENDA_2026` de setembro continua manual.
 
-## Estado atual — review 23/10/2026 (`asOf` 2026-10-23)
+## Estado atual (ANTERIOR) — review 23/10/2026 (`asOf` 2026-10-23)
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020878497926142669** · USDT **28,723036**
 
 | | Qtd | APY | Principal |
@@ -415,6 +466,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 24/10/2026 — **saque de 200 USDT da AAVE** (tx `0xf25c...ec00`, 14:41 UTC) para duas ordens limite de compra de ETH na Uniswap (100 @ 2.308,60 venc. 31/10 · 100 @ 2.191,11 venc. 23/11; mercado 2.341,12). Saque não mexe em `stables.USDT` — só `defi.aave` e `principals` (925,900978 → 725,900978, MCP confere). Ordens **pendentes**: quando executarem é rotação, não aporte. Juros da semana: WETH +0,00008 · USDT +0,063402. Líquido US$ 9.348,80 (−2,0% vs 23/10, só preço); dívida só Kamino 456,71; yield pendente ~US$ 14,87. Kamino sem print.
 - 23/10/2026 (2) — **dívida da AAVE QUITADA** (768,40 USDC, com 770 USDT sacados do supply via swap no 1inch); dívida total 1.225,11 → **456,71** (só Kamino); HF deixa de existir (null) e 3 telas que mostrariam HF inventado foram corrigidas; custo da operação US$ 0,91 (slippage); pendente: dar saída de 770 USDT no CoinGecko.
 - 23/10/2026 — review semanal + aporte de sexta (R$ 100 → 19,68 USDT → 0,00024074 BTC); AAVE e Kamino pelo MCP/print, principals intocados; borrow CEDEU nas duas (AAVE 6,12%, Kamino 6,06%); HF 7,74; LTV 17,52%; líquido US$ 9.540,96; Fiscal +R$ 150 (o de 09/10 faltava lá); achado e lançado o aporte de 16/10 que faltava (R$ 100 → 0,00023791 BTC) — outubro fecha com 4 aportes, US$ 128,06.
 - 16/10/2026 — review semanal sem movimentação (principals conferem pelo MCP); só juros; borrow AAVE 8,79% e Kamino 8,88% (dobraram); HF 7,92; LTV 17,14%; yield pendente ~US$ 10,23; RDNT→ETH lançado no CoinGecko.
