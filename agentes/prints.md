@@ -81,7 +81,7 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — 24/10/2026 (`asOf` 2026-10-24) — saque de 200 USDT da AAVE para 2 ordens limite de ETH
+## Estado atual — 24/10/2026 (`asOf` 2026-10-24) — saque de 200 USDT da AAVE, 2 ordens limite de ETH e a PRIMEIRA já executou
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020961978554540399** · USDT **28,791148**
 
 | | Qtd | APY | Principal |
@@ -131,6 +131,42 @@ Até lá o `yield-to-mirror` segue acusando só o yield normal.
   ETH ficou de fato empatado.
 - Kamino **sem print nesta execução** — os números dela são os de 23/10 (supply 25,09 SOL, borrow
   456,71 @6,06%). Pedir no próximo review.
+
+
+### ⚡ Fim da tarde de 24/10 — a ordem (a) EXECUTOU (ROTAÇÃO)
+
+**100 USDT → 0,04332 ETH @ 2.308,60.** O ETH furou o preço da ordem na mesma tarde: **mínima de
+US$ 2.286,76 às 15:30 UTC** (OHLC do CoinGecko), pouco depois do saque das 14:41. A ordem **(b)**
+(0,04564 ETH @ **2.191,11**, vence 23/11) **não executou** — a mínima do dia ficou bem acima dela, e
+os outros 100 USDT seguem reservados.
+
+| | Antes | Depois |
+|---|---|---|
+| `holdings.ETH` | 2,363991 / US$ 4.775,80 | **2,407311 / US$ 4.875,80** |
+| `stables.USDT` | 1.004,155114 / US$ 973,71 | **904,155114 / US$ 873,71** |
+| `contributions` | — | **INALTERADA** |
+| `TOTAL_INVESTED` | 9.667,58 | **9.667,58** (rotação não muda) |
+
+⚡ **É rotação, não aporte** — os 100 USDT saíram do supply da AAVE no mesmo dia, já eram do
+portfólio. O custo migra 1:1 do USDT para o ETH. Lançar em `contributions` inflaria o capital e
+derrubaria o ROI por artefato.
+
+🔸 **Sem gas extra.** Ordem limite da Uniswap é off-chain: o filler executa e paga o gas, que já
+está embutido no preço (o card mostra "Network cost US$ 0"). Os 0,04332 são líquidos.
+
+⚠️ **Ele digitou 0,0433 no CoinGecko, não 0,04332** (print da tela "Adicionar transação": Gasto total
+US$ 100, Quantidade 0,0433, preço derivado 2.309,4688, 24 Oct 6:35PM). São **0,00002 ETH a menos
+(~US$ 0,05)** — irrelevante em dinheiro, mas o `cgMirror` acusaria isso como pendente para sempre.
+**Pedido a ele: corrigir para 0,04332** (o preço vira 2.308,60 sozinho).
+
+**Pendente no CoinGecko — DOIS lançamentos, não um:** a compra do ETH **e a saída de 100 USDT**.
+Enquanto só a compra entrar, o espelho fica com 100 USDT a mais. Por isso o `yield-to-mirror` mostra
+hoje **ETH +0,045728** (0,002408 de yield + 0,04332 da compra) e **USDT −96,43** (−100 da compra
++3,57 de yield) — os dois são esperados e somem quando ele lançar os dois lados. **Só igualar o
+`cgMirror` depois que ele confirmar.**
+
+- **Patrimônio líquido US$ 9.356,56** com ETH a 2.337,75 (a rotação em si é neutra; comprar a
+  2.308,60 com o ETH a ~2.338 já nasceu ~US$ 1,26 no azul).
 
 ## Estado atual (ANTERIOR — ver o bloco de 05/10 logo acima do histórico) — yields lançados no CoinGecko + duplicata de BTC a apagar (`asOf` 2026-10-02)
 **Juros da AAVE no último review (base para a regra 4):** WETH **0,018554028543753534** · USDT **25,227541**
@@ -466,6 +502,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.
 - 24/10/2026 — **saque de 200 USDT da AAVE** (tx `0xf25c...ec00`, 14:41 UTC) para duas ordens limite de compra de ETH na Uniswap (100 @ 2.308,60 venc. 31/10 · 100 @ 2.191,11 venc. 23/11; mercado 2.341,12). Saque não mexe em `stables.USDT` — só `defi.aave` e `principals` (925,900978 → 725,900978, MCP confere). Ordens **pendentes**: quando executarem é rotação, não aporte. Juros da semana: WETH +0,00008 · USDT +0,063402. Líquido US$ 9.348,80 (−2,0% vs 23/10, só preço); dívida só Kamino 456,71; yield pendente ~US$ 14,87. Kamino sem print.
 - 23/10/2026 (2) — **dívida da AAVE QUITADA** (768,40 USDC, com 770 USDT sacados do supply via swap no 1inch); dívida total 1.225,11 → **456,71** (só Kamino); HF deixa de existir (null) e 3 telas que mostrariam HF inventado foram corrigidas; custo da operação US$ 0,91 (slippage); pendente: dar saída de 770 USDT no CoinGecko.
 - 23/10/2026 — review semanal + aporte de sexta (R$ 100 → 19,68 USDT → 0,00024074 BTC); AAVE e Kamino pelo MCP/print, principals intocados; borrow CEDEU nas duas (AAVE 6,12%, Kamino 6,06%); HF 7,74; LTV 17,52%; líquido US$ 9.540,96; Fiscal +R$ 150 (o de 09/10 faltava lá); achado e lançado o aporte de 16/10 que faltava (R$ 100 → 0,00023791 BTC) — outubro fecha com 4 aportes, US$ 128,06.
