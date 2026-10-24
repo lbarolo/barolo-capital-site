@@ -168,6 +168,32 @@ hoje **ETH +0,045728** (0,002408 de yield + 0,04332 da compra) e **USDT −96,43
 - **Patrimônio líquido US$ 9.356,56** com ETH a 2.337,75 (a rotação em si é neutra; comprar a
   2.308,60 com o ETH a ~2.338 já nasceu ~US$ 1,26 no azul).
 
+
+### 24/10 (3) — compra de 0,00061885 BTC na OKX (ROTAÇÃO) + `cgMirror` da ordem (a)
+
+**Ordem BTC/USDT, 12:09:57:** 0,00061885 BTC @ US$ 79.705 = **US$ 49,26**, taxa 0,00000061 BTC (0,1%)
+→ líquido **0,00061824**. BTC 0,00649382 → **0,00711206** (invested 448,78 → **498,04**);
+USDT 904,155114 → **854,895114** (invested 873,71 → **824,45**).
+
+⚡ **Rotação, e a aritmética prova de onde veio:** o caixa da OKX tinha **49,32 USDT parados desde
+16/10** e a compra consumiu 49,26 — sobraram **0,06**. **NÃO são os 200 sacados da AAVE**: aqueles
+estão na rede Ethereum, reservados nas ordens limite da Uniswap criadas às 11:42–11:43, 27 minutos
+antes desta compra. (Se algum dia aparecer um depósito novo de BRL nesse intervalo, é só mover os
+49,26 para `contributions` — mas com o caixa batendo assim, não é o caso.)
+
+**`cgMirror` depois dos lançamentos dele:** ETH 2,361583374 → **2,404903374** (+0,04332) e USDT
+1.000,58676194 → **900,58676194** (−100).
+
+⚠️ **ATENÇÃO — "igualar o `cgMirror`" NÃO é copiar o holding.** O `cgMirror` é o que está no
+CoinGecko; aqui ele lançou **a transação**, não o yield. Copiar o holding apagaria o yield pendente
+(ETH +0,002408 · SOL +0,058135 · USDT +3,568352) e o site pararia de cobrar. O certo é aplicar o
+**delta da transação lançada**. Depois disso o relatório voltou a mostrar o ETH com só +0,002408 ✓.
+
+🔸 **USDT ficou negativo de propósito (−45,69)**: ele ainda não lançou a saída dos 49,26 da compra de
+BTC (= −49,26 + 3,57 de yield). Some quando lançar. O BTC aparece como +0,000616 pelo mesmo motivo —
+quando ele lançar, o espelho fica 0,00711492 (ele lança **bruto**), uns 0,00000286 acima do site, que
+é a diferença acumulada das taxas das compras, já conhecida e aceita desde 02/10.
+
 ## Estado atual (ANTERIOR — ver o bloco de 05/10 logo acima do histórico) — yields lançados no CoinGecko + duplicata de BTC a apagar (`asOf` 2026-10-02)
 **Juros da AAVE no último review (base para a regra 4):** WETH **0,018554028543753534** · USDT **25,227541**
 
@@ -502,6 +528,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Yield pendente real ~US$ 15,31; USDT acusa −45,69 até ele lançar a saída da compra de BTC.
 - 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.
 - 24/10/2026 — **saque de 200 USDT da AAVE** (tx `0xf25c...ec00`, 14:41 UTC) para duas ordens limite de compra de ETH na Uniswap (100 @ 2.308,60 venc. 31/10 · 100 @ 2.191,11 venc. 23/11; mercado 2.341,12). Saque não mexe em `stables.USDT` — só `defi.aave` e `principals` (925,900978 → 725,900978, MCP confere). Ordens **pendentes**: quando executarem é rotação, não aporte. Juros da semana: WETH +0,00008 · USDT +0,063402. Líquido US$ 9.348,80 (−2,0% vs 23/10, só preço); dívida só Kamino 456,71; yield pendente ~US$ 14,87. Kamino sem print.
 - 23/10/2026 (2) — **dívida da AAVE QUITADA** (768,40 USDC, com 770 USDT sacados do supply via swap no 1inch); dívida total 1.225,11 → **456,71** (só Kamino); HF deixa de existir (null) e 3 telas que mostrariam HF inventado foram corrigidas; custo da operação US$ 0,91 (slippage); pendente: dar saída de 770 USDT no CoinGecko.
