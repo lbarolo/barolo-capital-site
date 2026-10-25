@@ -8,6 +8,15 @@
 - Extrato de corretora (conversão BRL→USDT) para a aba Fiscal.
 
 ## Regras que não podem quebrar
+0. ⚡ **PEDIDO EXPLÍCITO DO LUCAS (25/10/2026): conferir o TOPO do dashboard em TODA atualização de
+   valores.** Palavras dele: *"nessa parte, importa muito pra mim e pro site, sempre corrija junto
+   essa parte do site, quando atualizar os valores"* — sobre a faixa do `portfolio_analytics.html`
+   com **Health Factors · Lifetime Return · Yield líq./mês** e os 4 cards **SPOT · POOLS LP ·
+   DÍVIDAS · STABLES**. Depois de mexer no `data.js`, abrir a página e conferir que esses 7 números
+   e as legendas batem com o que foi lançado. Foi ali que a dívida quitada da AAVE ficou aparecendo
+   como −US$ 1.211 por dois dias (corrigido em 25/10). **Checagem rápida no console:**
+   `['ev-hf-aave','ev-hf-sub','ev-growth-pct','ev-yield','s-spot','s-pool','s-pool-sub','s-debt','s-debt-sub','s-stables'].map(i=>i+': '+(document.getElementById(i)||{}).textContent)`
+
 1. **`data.js` é a fonte única de posições.** As 6 páginas leem dele. `emprestimos.html` recebe
    sozinho pela Action `sync-emprestimos.yml` depois do push — não editar à mão para dados.
 2. **Holdings JÁ incluem o colateral de AAVE/Kamino.** Patrimônio = holdings + stables + LP − dívida.

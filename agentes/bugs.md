@@ -36,6 +36,7 @@
 
 ## Achados em aberto
 _(varredura 22/10/2026, nova)_
+- [BAIXA] `portfolio_analytics.html` ~2254-2261: `Canvas is already in use. Chart with ID 'N' must be destroyed before the canvas with ID 'spark_ETH' can be reused` no console. O `renderUI` roda de novo quando o preço chega e recria as sparklines sem `destroy()` nas anteriores. Pré-existente (reproduz no HEAD); não quebra a tela, só suja o console e vaza instâncias do Chart.js. Achado em 25/10/2026 enquanto se corrigia a dívida.
 - [MÉDIA] `CLAUDE.md` duplicado: a partir da ~linha 7765 (comando bash truncado) repete "Estrutura de arquivos", sessões e KB inteira (≈7,6k linhas de cópia, lidas a cada sessão). Truncar no fim do 1º bloco (KB-END) e restaurar "Rotinas combinadas" do trecho íntegro — decisão do Lucas (é o arquivo de instruções dele).
 - [MÉDIA] `scripts/eth-sweep.js` lê carteiras/key do `CLAUDE.md` (que o `.gitignore` manda tirar do git): ler de `lib/barolo-chain.js` CONFIG ou aposentar o workflow.
 - [MÉDIA] `portfolio_analytics.html` ~3592-3690 (`loadDenomHistory`): CoinGecko `market_chart` dá 401; fallback tem 54 meses (wealthCurve 57) e `pxAt` usa preço de hoje p/ meses faltantes. Usar `BENCHMARK_DATA.btcUsd/ethUsd`.

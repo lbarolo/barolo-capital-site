@@ -738,12 +738,12 @@ body, input, button, select, textarea {
  <div class="stat-card">
   <div class="stat-label">POOLS LP</div>
   <div class="stat-value sensitive" style="color:#FF007A;" id="s-pool">—</div>
-  <div class="stat-sub">WETH/USDC · Uniswap V3 · Base</div>
+  <div class="stat-sub" id="s-pool-sub">—</div>
  </div>
  <div class="stat-card">
   <div class="stat-label">DÍVIDAS</div>
   <div class="stat-value neg sensitive" id="s-debt">—</div>
-  <div class="stat-sub">Aave USDC + Kamino USDC</div>
+  <div class="stat-sub" id="s-debt-sub">—</div>
  </div>
  <div class="stat-card" style="border-color:rgba(58,126,200,0.3);background:linear-gradient(135deg,var(--surface),rgba(58,126,200,0.04));">
   <div class="stat-label" style="color:var(--blue,#3a7ec8);">STABLES</div>
@@ -1620,7 +1620,7 @@ var WEEKLY_UPDATE = {
  usdtSupplied: 1300,
  usdcBorrowed: 754.65,
  usdcBorrowApy: 5.38,
- healthFactor: (window.BAROLO_DATA && window.BAROLO_DATA.defi && window.BAROLO_DATA.defi.aave && window.BAROLO_DATA.defi.aave.healthFactor) || 5.00,
+ healthFactor: (function(){ var _a = window.BAROLO_DATA && window.BAROLO_DATA.defi && window.BAROLO_DATA.defi.aave; var _h = _a ? _a.healthFactor : undefined; return (typeof _h === 'number' || _h === null) ? _h : 5.00; })(), // null = sem divida na AAVE (23/10/2026). NAO usar `|| 5.00`: null e 0 sao falsy e cairiam no fallback, inventando um HF numa carteira sem divida.
  },
  kamino: {
  solSupplied: 23.36,
@@ -1764,11 +1764,19 @@ var LP_POOLED = (function() {
   return _u ? (_u.pooled || 0) + (_u.uncollectedFees || 0) : 0;
 })();
 // Card POOLS LP — mostra valor da pool (cache live do pools.html ou fallback acima)
-(function(){ var el = document.getElementById('s-pool'); if (el && LP_POOLED > 0) el.textContent = '$' + Math.round(LP_POOLED); })();
+(function(){
+  var el = document.getElementById('s-pool'); if (el && LP_POOLED > 0) el.textContent = '$' + Math.round(LP_POOLED);
+  // Legenda pelo data.js: o par e a rede MIGRAM, e pode nao haver pool aberta (era fixa em 'WETH/USDC · Uniswap V3 · Base').
+  var sub = document.getElementById('s-pool-sub');
+  var _up = (window.BAROLO_DATA && window.BAROLO_DATA.defi) ? window.BAROLO_DATA.defi.uniswapV3 : null;
+  if (sub) sub.textContent = (_up && LP_POOLED > 0)
+    ? [_up.pool, _up.network].filter(Boolean).join(' · ')
+    : 'sem posição aberta';
+})();
 var STABLES_USD = 0; // USDT e USDS agora em PORTFOLIO_DATA — sem dupla contagem
 var _BD = (typeof window !== 'undefined' && window.BAROLO_DATA) ? window.BAROLO_DATA : null;
-var AAVE_DEBT = (_BD && _BD.debt && _BD.debt.aave) || 754.65;     // USDC @ 5.38% APY (fallback 20/06/2026)
-var KAMINO_DEBT = (_BD && _BD.debt && _BD.debt.kamino) || 815.97; // USDC @ 5.69% APY (fallback 20/06/2026)
+var AAVE_DEBT = (_BD && _BD.debt && typeof _BD.debt.aave === 'number') ? _BD.debt.aave : 754.65;     // ⚠️ typeof, NAO `||`: a divida da AAVE e 0 desde 23/10/2026 e `0 || 754.65` devolvia 754,65 — era a raiz do card DIVIDAS mostrar -$1.211 e do HF aparecer 5,00 numa carteira quitada.
+var KAMINO_DEBT = (_BD && _BD.debt && typeof _BD.debt.kamino === 'number') ? _BD.debt.kamino : 815.97; // mesmo motivo do AAVE_DEBT acima
 var TOTAL_DEBT = AAVE_DEBT + KAMINO_DEBT; // $754.65 + $815.97 = $1,570.62
 var TOTAL_INVESTED = PORTFOLIO.reduce((s,a)=>s+a.invested, 0);
 
@@ -1931,8 +1939,8 @@ function renderUI(enriched){
  var tokensVolatilesTotal = enriched.filter(a=>!a.isStable).reduce((s,a)=>s+a.currentValue, 0);
  _livePortfolioGross = tokensVolatilesTotal + stablesTotal; // CoinGecko total (já inclui LP)
  const cgTotal = _livePortfolioGross; // Total de ativos conforme CoinGecko
- const aaveDebtLive = window._liveAaveDebt || AAVE_DEBT;
- const kaminoDebtLive = window._liveKaminoDebt || KAMINO_DEBT;
+ const aaveDebtLive = (typeof window._liveAaveDebt === 'number') ? window._liveAaveDebt : AAVE_DEBT;
+ const kaminoDebtLive = (typeof window._liveKaminoDebt === 'number') ? window._liveKaminoDebt : KAMINO_DEBT;
  // Patrimônio Líquido = CoinGecko total − Dívida total (card próprio; a dívida aparece SÓ aqui)
  const netTotal = _livePortfolioGross - (aaveDebtLive + kaminoDebtLive);
  const totalPnL = _livePortfolioGross - TOTAL_DEBT - TOTAL_INVESTED;
@@ -1965,7 +1973,13 @@ function renderUI(enriched){
  set('s-spot', fmtCurrency(tokensVolatilesTotal, 0));
  set('s-spot-sub', enriched.filter(a=>!a.isStable).length+' ativos');
  // LP já incluído em _livePortfolioGross (CoinGecko total)
- set('s-debt', '-'+fmtCurrency(TOTAL_DEBT, 0));
+ // Card DIVIDAS pelo valor AO VIVO (antes usava TOTAL_DEBT estatico e ignorava a quitacao).
+ var _debtNow = aaveDebtLive + kaminoDebtLive;
+ set('s-debt', (_debtNow > 0 ? '-' : '') + fmtCurrency(_debtNow, 0));
+ var _debtParts = [];
+ if (aaveDebtLive > 0) _debtParts.push('Aave USDC');
+ if (kaminoDebtLive > 0) _debtParts.push('Kamino USDC');
+ set('s-debt-sub', _debtParts.length ? _debtParts.join(' + ') : 'sem dívida');
  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
 
  const pnlEl = document.getElementById('s-pnl');
@@ -2003,8 +2017,8 @@ function renderUI(enriched){
 
  // ── EXEC BAR ──
  (function(){
-   const aaveDebtLive2 = window._liveAaveDebt || AAVE_DEBT;
-   const kaminoDebtLive2 = window._liveKaminoDebt || KAMINO_DEBT;
+   const aaveDebtLive2 = (typeof window._liveAaveDebt === 'number') ? window._liveAaveDebt : AAVE_DEBT;
+   const kaminoDebtLive2 = (typeof window._liveKaminoDebt === 'number') ? window._liveKaminoDebt : KAMINO_DEBT;
    const totalDebtLive = aaveDebtLive2 + kaminoDebtLive2;
    const debtRatio = (totalDebtLive / netTotal * 100).toFixed(1);
    // Sem divida na AAVE nao ha HF: `lendingSnapshot` e o MCP devolvem null (desde 23/10/2026).
@@ -2048,6 +2062,8 @@ function renderUI(enriched){
      hfEl.textContent = isNaN(hfNum) ? '—' : hfNum.toFixed(2);
      hfEl.style.color = isNaN(hfNum) ? 'var(--green)' : hfNum > 3 ? 'var(--green)' : hfNum > 1.5 ? 'var(--yellow)' : 'var(--red)';
    }
+   var _kLiq = (window.BAROLO_DATA && window.BAROLO_DATA.defi && window.BAROLO_DATA.defi.kamino && typeof window.BAROLO_DATA.defi.kamino.liqLtv === 'number') ? window.BAROLO_DATA.defi.kamino.liqLtv : null;
+   set('ev-hf-sub', (_aaveHasDebt ? '' : 'sem dívida na AAVE · ') + (_kLiq != null ? 'liq. LTV Kamino: ' + (_kLiq*100).toFixed(1) + '%' : ''));
    const kHfEl = document.getElementById('ev-hf-kamino');
    if(kHfEl){
      kHfEl.textContent = kaminoLTV+'%';
@@ -2517,7 +2533,8 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
   const weightedConvex = Object.keys(weights).reduce((s,t)=>s+weights[t]*convexities[t], 0);
 
   // 2. FRAGILITY INDEX (F)
-  const debt = (window._liveAaveDebt || 754.65) + (window._liveKaminoDebt || 815.97);
+  const debt = ((typeof window._liveAaveDebt === 'number') ? window._liveAaveDebt : AAVE_DEBT)
+            + ((typeof window._liveKaminoDebt === 'number') ? window._liveKaminoDebt : KAMINO_DEBT);
   const leverage = debt > 0 ? grossAssets / (grossAssets - debt) : 1.0;
   const leverageComp = Math.max(0, (leverage - 1.0) * 0.3);
 
@@ -2544,9 +2561,9 @@ function calculatePortfolioConvexity(enriched, aaveHF, kaminoLTV, liveETH, liveB
   // Calcula margens de liquidação (dinâmico)
   const stablesPct = (window._stablesTotalUSD || 2536.40) / grossAssets;
   const aaveLTVlimit = 0.825; // 82.5% max
-  const aaveLTVcurrent = (window._liveAaveDebt || 754.65) / (window._liveAaveCollateral || 6000);
+  const aaveLTVcurrent = ((typeof window._liveAaveDebt === 'number') ? window._liveAaveDebt : AAVE_DEBT) / (window._liveAaveCollateral || 6000);
   const aaveMargin = ((aaveLTVlimit - aaveLTVcurrent) / aaveLTVlimit) * 100;
-  const kaminoLTVlimit = 0.7722; // 77.22% liq threshold
+  const kaminoLTVlimit = (window.BAROLO_DATA && window.BAROLO_DATA.defi && window.BAROLO_DATA.defi.kamino && typeof window.BAROLO_DATA.defi.kamino.liqLtv === 'number') ? window.BAROLO_DATA.defi.kamino.liqLtv : 0.7722; // do data.js (era 0,7722 fixo; hoje 0,80)
   const kaminoMargin = ((kaminoLTVlimit - kaminoLTV) / kaminoLTV) * 100;
 
   return {

@@ -1482,7 +1482,9 @@ setTimeout(function() {
  // Sem preço de BTC/ETH/SOL o número sairia muito baixo: mostra '—' em vez de um valor errado.
  if (['bitcoin','ethereum','solana'].some(function(id){ return !priceOf(id); })) { paint(window._livePatrimonio || null); return; }
  var r = BaroloCore.netWorth(D, priceOf);
- var debt = (window._liveAaveDebt || D.debt.aave) + (window._liveKaminoDebt || D.debt.kamino);
+ // typeof, nao `||`: divida 0 (AAVE quitada em 23/10/2026) e falsy e cairia no fallback.
+ var debt = ((typeof window._liveAaveDebt === 'number') ? window._liveAaveDebt : D.debt.aave)
+          + ((typeof window._liveKaminoDebt === 'number') ? window._liveKaminoDebt : D.debt.kamino);
  var net = r.gross + r.stables + r.lp - debt;
  window._livePatrimonio = net;
  paint(net);

@@ -80,6 +80,10 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 - USDT/USDS com custo zero no CoinGecko (reset de março/2026).
 
 ## Estado atual (05/10/2026)
+- ⚡ **Padrão `valor || fallback` é armadilha quando o valor legítimo é 0** (25/10/2026): a dívida
+  da AAVE quitada ficou aparecendo como US$ 754,65 em 4 arquivos. Ao ler número do `data.js`, usar
+  **`typeof x === 'number' ? x : fallback`**. Vale para dívida, LTV, qty, APY e HF (`null` = sem
+  dívida, não é "sem dado"). Já corrigido onde havia; se aparecer `|| <número>` novo, é suspeito.
 - **O CoinGecko caiu como fonte** (403 de WAF sem chave, no runner e no navegador). Resolvido dos
   dois lados: crons em `4ef9439`, site em `7f7ce5b`. A cascata é Coinbase → CoinPaprika → Yahoo/
   CoinGecko, e **fonte nova só entra com o NOME conferido** (XAI e SCR têm homônimos).
@@ -107,6 +111,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   `benchmark.yml` ganhou). Mesma armadilha já registrada para o `onchain.yml`.
 
 ## Histórico (mais recente no topo)
+- 25/10/2026 — **dívida da AAVE quitada aparecia como US$ 754,65 em todo o site**: a raiz era `valor || fallback`, e `0` é falsy em JS. Corrigido em 4 arquivos (portfolio, empréstimos, relatório, pools) trocando por `typeof === 'number'`; de quebra, 3 legendas fixas viraram dinâmicas (card DÍVIDAS, card POOLS LP e o sub do HF com a liq. LTV da Kamino, que dizia 77,2% quando hoje é 80%). Card DÍVIDAS **−$1.211 → −$457**, HF **5,00 → "—"**, patrimônio **$8.613 → $9.347**.
 - 21/10/2026 — calculadora "Taxas cobrem o LVR?" no Sizing & Risk (ferramentas): `BaroloCore.lvrRate`/`lvrBreakEvenVol` (fórmula do paper arXiv 2208.06046, conferida: σ²/8 no range cheio) + 4 testes + i18n PT/EN; pedido do Lucas, aditivo (nenhum elemento existente mudou).
 - 05/10/2026 — CDI ganha o nível 3 da cascata (arquivo + BrasilAPI pela fórmula oficial em dias úteis): sem ele o CDI de outubro congelaria em 0,05, porque os dois hosts gov.br pararam de responder ao runner — `fc2aeb9`.
 - 03/10/2026 — CDI em cascata (BCB → IPEAData → arquivo) e `benchmark.yml` passa a rodar no push do próprio script; run #48 verde com o CDI vindo do IPEAData — `d89c984`.
