@@ -1,25 +1,19 @@
 {
- "updated": "2026-10-24T13:37:25.428Z",
- "date": "2026-10-24",
+ "updated": "2026-10-25T13:56:12.856Z",
+ "date": "2026-10-25",
  "source": "preço: coinbase/coinpaprika · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 80632,
-   "d24": -1.26,
-   "d7": -0.94,
-   "d30": -3.26,
+   "price": 80318,
+   "d24": -0.36,
+   "d7": -1.95,
+   "d30": -4.98,
    "ath": 126080,
-   "athPct": -36,
+   "athPct": -36.3,
    "athDate": "2025-10-06",
-   "mcap": 1621057425749,
-   "vol": 21276407536,
+   "mcap": 1614791745711,
+   "vol": 19143754270,
    "spark": [
-    81418.26,
-    81169.26,
-    81569.77,
-    81467.87,
-    81720.31,
-    81665.35,
     81892.41,
     81002.14,
     80895.39,
@@ -56,26 +50,26 @@
     80553.26,
     80811.01,
     80635.73,
-    80516.54
+    80709.72,
+    80155.27,
+    80456.51,
+    80803.45,
+    80847.24,
+    80324.58,
+    80505.09
    ]
   },
   "eth": {
-   "price": 2364.82,
-   "d24": -1.47,
-   "d7": -2.64,
-   "d30": -10.53,
+   "price": 2334,
+   "d24": -1.34,
+   "d7": -3.41,
+   "d30": -14.17,
    "ath": 4946.05,
-   "athPct": -52.2,
+   "athPct": -52.8,
    "athDate": "2025-08-24",
-   "mcap": 288898664741,
-   "vol": 7786024679,
+   "mcap": 285178746770,
+   "vol": 9329580787,
    "spark": [
-    2423.72,
-    2401.01,
-    2419.38,
-    2403.65,
-    2414.19,
-    2409.03,
     2415.29,
     2364.18,
     2348.76,
@@ -112,26 +106,26 @@
     2372.11,
     2380.59,
     2366.97,
-    2363.05
+    2367.23,
+    2316.35,
+    2344.94,
+    2358.52,
+    2365.92,
+    2332.83,
+    2337.85
    ]
   },
   "sol": {
-   "price": 101.34,
-   "d24": -2.9,
-   "d7": -2.92,
-   "d30": -10.38,
+   "price": 100.97,
+   "d24": -0.33,
+   "d7": -2.81,
+   "d30": -16.48,
    "ath": 293.31,
-   "athPct": -65.4,
+   "athPct": -65.6,
    "athDate": "2025-01-19",
-   "mcap": 59766750739,
-   "vol": 2194404768,
+   "mcap": 59563515280,
+   "vol": 2059560034,
    "spark": [
-    103.82,
-    103.07,
-    104.09,
-    103.35,
-    103.76,
-    103.12,
     103.96,
     102,
     101.11,
@@ -168,85 +162,91 @@
     102.19,
     102.61,
     101.85,
-    101.41
+    101.51,
+    100.41,
+    101.49,
+    102.38,
+    102.54,
+    100.73,
+    101.23
    ]
   },
-  "stableMcap": 254103019612
+  "stableMcap": 254013514374
  },
  "fng": {
-  "value": 51,
+  "value": 54,
   "label": "Neutral",
-  "prev": 50
+  "prev": 51
  },
  "broad": {
-  "btcDom": 59.6,
-  "ethDom": 10.6,
-  "altDom": 29.8,
-  "totalMcap": 2718824799980.9204,
-  "totalVol": 59896068460.688126,
-  "mcapChange24h": -4.01,
-  "ethBtc": 0.02933,
-  "stableMcap": 254103019612
+  "btcDom": 59.5,
+  "ethDom": 10.5,
+  "altDom": 30,
+  "totalMcap": 2707317313318.1025,
+  "totalVol": 53186452358.844475,
+  "mcapChange24h": -3.02,
+  "ethBtc": 0.02906,
+  "stableMcap": 254013514374
  },
  "onchain": {
-  "t": "2026-10-23",
-  "price": 81525.12,
-  "mvrv": 1.493051,
-  "mvrv_sth": 1.065715,
-  "mvrv_lth": 1.644863,
-  "realized": 54089.52,
-  "realized_sth": 75778.66,
-  "realized_lth": 49097.37,
-  "sopr_lth": 1.086172,
-  "aviv": 1.037902,
-  "cvdd": 49314.35,
-  "sma200": 72813.06,
-  "mayer": 1.12
+  "t": "2026-10-24",
+  "price": 80528.13,
+  "mvrv": 1.488656,
+  "mvrv_sth": 1.062795,
+  "mvrv_lth": 1.639778,
+  "realized": 54089.33,
+  "realized_sth": 75762.86,
+  "realized_lth": 49104.45,
+  "sopr_lth": 1.315893,
+  "aviv": 1.034723,
+  "cvdd": 49313.67,
+  "sma200": 72871.98,
+  "mayer": 1.105
  },
  "risk": {
-  "score": 0.248,
+  "score": 0.287,
   "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.493051,
-    "s": 0.239
+    "v": 1.488656,
+    "s": 0.237
    },
    {
     "key": "Mayer",
-    "v": 1.12,
-    "s": 0.289
+    "v": 1.105,
+    "s": 0.281
    },
    {
     "key": "STH MVRV",
-    "v": 1.065715,
-    "s": 0.276
+    "v": 1.062795,
+    "s": 0.271
    },
    {
     "key": "AVIV",
-    "v": 1.037902,
-    "s": 0.269
+    "v": 1.034723,
+    "s": 0.267
    },
    {
     "key": "SOPR LTH",
-    "v": 1.086172,
-    "s": 0.169
+    "v": 1.315893,
+    "s": 0.378
    }
   ]
  },
  "portfolio": {
-  "netWorth": 9418.22,
-  "gross": 8872.11,
-  "stables": 1002.82,
+  "netWorth": 9333.6,
+  "gross": 8936.54,
+  "stables": 853.77,
   "lp": 0,
   "debt": 456.71,
   "invested": 9667.58,
-  "roi": -2.6,
-  "move24": -214.61,
-  "move24Pct": -2.23,
+  "roi": -3.5,
+  "move24": -90,
+  "move24Pct": -0.96,
   "aave": {
    "hf": null,
-   "collateral": 6415.41,
+   "collateral": 6146.16,
    "debt": 0,
    "ltv": 0,
    "liqEth": null,
@@ -255,18 +255,102 @@
   "kamino": {
    "ltv": 18,
    "liqLtv": 80,
-   "collateral": 2542.37,
+   "collateral": 2532.33,
    "debt": 456.71,
    "liqSol": 22.2,
-   "dropToLiq": 78.1
+   "dropToLiq": 78
   },
   "carry": {
    "monthlyInterest": 2.31,
-   "monthlySupply": 18.74
+   "monthlySupply": 17.95
   },
-  "dataAsOf": "2026-10-23"
+  "dataAsOf": "2026-10-24"
  },
  "news": [
+  {
+   "source": "CoinDesk",
+   "title": "UK banks face 10,000 complaints in 3 months over crypto restrictions",
+   "url": "https://www.coindesk.com/policy/2026/10/22/uk-banks-face-10-000-complaints-in-3-months-over-crypto-restrictions",
+   "ts": 1792933200000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Netanyahu floats use of blockchain as solution to potential financial sanctions",
+   "url": "<![CDATA[https://cointelegraph.com/news/netanyahu-floats-use-of-blockchain-as-solution-to-potential-financial-sanctions?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1792928520000
+  },
+  {
+   "source": "The Block",
+   "title": "Crypto longs lose $404 million in four hours as bitcoin briefly slips below $80,000",
+   "url": "https://www.theblock.co/news/markets/2026-10-24-crypto-longs-lose-404-million-in-four-hours-as-bitcoin-briefly-slips-below-80000-431608",
+   "ts": 1792863876000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Google Quietly Updates Privacy Policy to Let Gmail and Photos Data Feed Ads",
+   "url": "https://decrypt.co/381775/google-quietly-updates-privacy-policy-gmail-photos-ads",
+   "ts": 1792861262000
+  },
+  {
+   "source": "The Block",
+   "title": "Argentine judge clears Milei and 10 others in LIBRA case, finding no ‘criminally relevant deception’",
+   "url": "https://www.theblock.co/news/regulation/2026-10-24-argentine-judge-clears-milei-and-10-others-in-libra-case-finding-no-criminally-relevant-deception-431606",
+   "ts": 1792859053000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Sweden's Government Offices Block ChatGPT and Claude, Keep Microsoft Copilot",
+   "url": "https://decrypt.co/381763/sweden-government-offices-block-chatgpt-claude",
+   "ts": 1792857663000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Strategy, Strive face balancing act between bitcoin buying and preferred stock dividends",
+   "url": "https://www.coindesk.com/business/2026/10/24/strategy-strive-face-balancing-act-between-bitcoin-buying-and-preferred-stock-dividends",
+   "ts": 1792857600000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Block's new voice AI sounds eerily human, sparking awe and scam fears",
+   "url": "https://www.coindesk.com/tech/2026/10/24/block-s-new-voice-ai-sounds-eerily-human-sparking-awe-and-scam-fears",
+   "ts": 1792855266000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto under weekend pressure, bitcoin slides below $80,000 on U.S. Middle East evacuations",
+   "url": "https://www.coindesk.com/markets/2026/10/24/crypto-under-weekend-pressure-bitcoin-slides-below-usd80-000-on-u-s-middle-east-evacuations",
+   "ts": 1792854684000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Game Publishers Have Pushed to Cut Discs Since 2007, Infinity Ward Veteran Says",
+   "url": "https://decrypt.co/381674/game-publishers-have-pushed-to-cut-discs-since-2007-infinity-ward-veteran-says",
+   "ts": 1792854062000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Why McDonalds, Microsoft and Google saying no to tokenized stocks isn't a dealbreaker",
+   "url": "https://www.coindesk.com/business/2026/10/23/why-mcdonalds-microsoft-and-google-saying-no-to-tokenized-stocks-isn-t-a-dealbreaker",
+   "ts": 1792854000000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Argentina drops criminal probe into President Milei over crashed memecoin LIBRA",
+   "url": "https://www.coindesk.com/business/2026/10/24/argentina-drops-criminal-probe-into-president-milei-over-crashed-memecoin-libra",
+   "ts": 1792852727000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Wells Fargo, Cisco, Marvell among latest firms objecting to OKXICE's tokenized stock plan",
+   "url": "https://www.coindesk.com/business/2026/10/24/wells-fargo-cisco-marvell-among-latest-firms-objecting-to-okxice-s-tokenized-stock-plan",
+   "ts": 1792850784000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin’s wealthy holders turning to loans and yield as investment habits mature: Xapo CEO",
+   "url": "https://www.coindesk.com/business/2026/10/24/bitcoin-s-wealthy-holders-turning-to-loans-and-yield-as-investment-habits-mature-xapo-ceo",
+   "ts": 1792850400000
+  },
   {
    "source": "Decrypt",
    "title": "Hong Kong’s Biggest Bank Puts a Stablecoin in 3 Million Wallets",
@@ -392,120 +476,6 @@
    "title": "Robinhood sees surge in bitcoin, gold prediction markets as traders move beyond sports",
    "url": "https://www.coindesk.com/markets/2026/10/23/robinhood-sees-surge-in-bitcoin-gold-prediction-markets-as-traders-move-beyond-sports",
    "ts": 1792763936000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Here’s what happened in crypto today",
-   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1792762733000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Morning Minute: a16z Drops 'Crypto' From Its Fund",
-   "url": "https://decrypt.co/381691/morning-minute-a16z-drops-crypto-from-its-fund",
-   "ts": 1792762161000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "China targets 2030 for its national blockchain network buildout",
-   "url": "<![CDATA[https://cointelegraph.com/news/china-2030-national-blockchain-network-buildout?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1792761667000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Interpol Recovers $105M in African Cybercrime Sweep That Shut Illegal Crypto Mines",
-   "url": "https://decrypt.co/381690/interpol-recovers-105m-in-african-cybercrime-sweep-that-shut-illegal-crypto-mines",
-   "ts": 1792761498000
-  },
-  {
-   "source": "The Block",
-   "title": "Phantom rolls out Kalshi prediction markets to US users, says it’s ‘confident and comfortable’ amid state lawsuits",
-   "url": "https://www.theblock.co/news/markets/2026-10-23-phantom-rolls-out-kalshi-prediction-markets-us-421652",
-   "ts": 1792760400000
-  },
-  {
-   "source": "The Block",
-   "title": "Singapore, Malaysia and Thailand central banks expand cross-border stablecoin initiative involving Ripple, Visa and Mastercard",
-   "url": "https://www.theblock.co/news/regulation/2026-10-23-singapore-malaysia-and-thailand-central-banks-expand-cross-border-stablecoin-initiative-involving-ripple-visa-and-mastercard-426492",
-   "ts": 1792760126000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "New York AG seeks $1.37B from NovaTech founders over Ponzi scheme",
-   "url": "<![CDATA[https://cointelegraph.com/news/new-york-ag-novatech-founders-companies-crypto-ponzi?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1792758817000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bitcoin consolidates after 3% loss as AI fears stoke fresh stock-market weakness",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-consolidates-after-3-loss-as-ai-fears-stoke-fresh-stock-market-weakness?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1792758238000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin Core changes security rules as AI makes finding code bugs dangerously easy",
-   "url": "https://www.coindesk.com/tech/2026/10/23/bitcoin-will-now-stop-hiding-bugs-an-ai-can-find-in-one-prompt",
-   "ts": 1792757033000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Ethereum Delays Glamsterdam Testnet Fork Over Gas Security Flaws",
-   "url": "https://decrypt.co/381681/ethereum-delays-glamsterdam-testnet-fork-over-gas-security-flaws",
-   "ts": 1792756177000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Was crypto self-custody ever designed for beginners?",
-   "url": "<![CDATA[https://cointelegraph.com/news/self-custody-crypto-beginners-mainstream-adoption?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1792756067000
-  },
-  {
-   "source": "The Block",
-   "title": "Bitcoin ETFs swing back to net outflows as $636 million in withdrawals erase previous day’s inflows",
-   "url": "https://www.theblock.co/news/markets/2026-10-23-bitcoin-etfs-swing-back-to-net-outflows-erase-previous-day-inflows-426483",
-   "ts": 1792755585000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin's price is as jumpy as Nvidia's and eight times more turbulent than the euro",
-   "url": "https://www.coindesk.com/daybook-us/2026/10/23/bitcoin-s-volatility-is-well-above-euro-dollar-gyrations-though-it-has-calmed-to-rival-nvidia-s",
-   "ts": 1792754553000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Live updates: Bitcoin holds above $81,000 as oil prices hit six-month high",
-   "url": "https://www.coindesk.com/markets/2026/10/23/live-updates-bitcoin-holds-above-usd81-000-as-the-ai-rout-fades-and-oil-climbs",
-   "ts": 1792753981000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin steadies near $81,700 as altcoins rebound, pepe climbs 13%",
-   "url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-steadies-near-usd81-700-as-altcoins-rebound-pepe-climbs-13",
-   "ts": 1792752881000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin appears to have decoupled from midterm cycle bottom history",
-   "url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-approaches-midterms-as-july-low-challenges-historical-cycle-pattern",
-   "ts": 1792752789000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "HSBC rolls out its first stablecoin to over 3 million everyday app users",
-   "url": "https://www.coindesk.com/business/2026/10/23/hsbc-rolls-out-its-first-stablecoin-to-over-3-million-everyday-app-users",
-   "ts": 1792750976000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Cysic dangles a 10% bounty, hacker pours loot into Tornado Cash",
-   "url": "<![CDATA[https://cointelegraph.com/news/cysic-exploiter-eth-tornado-cash-white-hat-offer?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1792750386000
-  },
-  {
-   "source": "The Block",
-   "title": "New York seeks over $1.3 billion from NovaTech founders after couple fled the US",
-   "url": "https://www.theblock.co/news/regulation/2026-10-23-new-york-seeks-over-1-3-billion-from-novatech-founders-after-couple-fled-the-us-424453",
-   "ts": 1792750322000
   }
  ],
  "narrative": null
