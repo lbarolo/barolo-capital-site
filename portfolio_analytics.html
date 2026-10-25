@@ -2197,7 +2197,13 @@ function set(id, val){ const el=document.getElementById(id); if(el) el.textConte
 // ASSET TABLE
 // ──────────────────────────────────────────────────
 var sparkCharts = {};
+var _sparkRaf = null;
 function renderTable(enriched, totalVal){
+ // O desenho das sparklines e adiado por requestAnimationFrame. Como `renderUI` roda de novo
+ // quando o preco chega, dois rAF ficavam enfileirados: o primeiro criava os charts nos canvases
+ // JA remontados pelo segundo, e o segundo batia em 'Canvas is already in use'. Cancelar o
+ // pendente resolve na raiz (e evita desenhar duas vezes a mesma tabela).
+ if(_sparkRaf !== null){ cancelAnimationFrame(_sparkRaf); _sparkRaf = null; }
  Object.values(sparkCharts).forEach(c=>{ try{c.destroy();}catch(e){} });
  sparkCharts = {};
  const tbody = document.getElementById('assetTable');
@@ -2250,10 +2256,15 @@ function renderTable(enriched, totalVal){
  </tr>`;
  });
 
- requestAnimationFrame(()=>{
+ _sparkRaf = requestAnimationFrame(()=>{
+ _sparkRaf = null;
+ // Redes de seguranca, caso um rAF escape do cancelamento acima.
+ Object.keys(sparkCharts).forEach(k=>{ try{ sparkCharts[k].destroy(); }catch(e){} delete sparkCharts[k]; });
  [...volatile,...stables].forEach(a=>{
  const canvas = document.getElementById('spark_'+a.ticker);
  if(!canvas) return;
+ // Rede de seguranca: instancia orfa presa a ESTE canvas (ex.: render concorrente).
+ if(typeof Chart.getChart === 'function'){ const _prev = Chart.getChart(canvas); if(_prev) _prev.destroy(); }
  const c24=a.change24h||0;
  const _sp = (liveData[a.cgId] && liveData[a.cgId].spark7d) || null;
  const sparkData = (_sp && _sp.length > 1) ? _sp.concat([a.price]) : genSpark(a.price, c24);

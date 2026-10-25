@@ -36,7 +36,6 @@
 
 ## Achados em aberto
 _(varredura 22/10/2026, nova)_
-- [BAIXA] `portfolio_analytics.html` ~2254-2261: `Canvas is already in use. Chart with ID 'N' must be destroyed before the canvas with ID 'spark_ETH' can be reused` no console. O `renderUI` roda de novo quando o preço chega e recria as sparklines sem `destroy()` nas anteriores. Pré-existente (reproduz no HEAD); não quebra a tela, só suja o console e vaza instâncias do Chart.js. Achado em 25/10/2026 enquanto se corrigia a dívida.
 - [MÉDIA] `CLAUDE.md` duplicado: a partir da ~linha 7765 (comando bash truncado) repete "Estrutura de arquivos", sessões e KB inteira (≈7,6k linhas de cópia, lidas a cada sessão). Truncar no fim do 1º bloco (KB-END) e restaurar "Rotinas combinadas" do trecho íntegro — decisão do Lucas (é o arquivo de instruções dele).
 - [MÉDIA] `scripts/eth-sweep.js` lê carteiras/key do `CLAUDE.md` (que o `.gitignore` manda tirar do git): ler de `lib/barolo-chain.js` CONFIG ou aposentar o workflow.
 - [MÉDIA] `portfolio_analytics.html` ~3592-3690 (`loadDenomHistory`): CoinGecko `market_chart` dá 401; fallback tem 54 meses (wealthCurve 57) e `pxAt` usa preço de hoje p/ meses faltantes. Usar `BENCHMARK_DATA.btcUsd/ethUsd`.
@@ -118,6 +117,7 @@ _(varreduras de 15/09/2026: a 1ª no HEAD `af2c418`, a 2ª no HEAD `584a48a`, de
   0,83/0,78. Números diferentes no card de pools (HF 7,92 × 7,96 em 15/09). (14/09/2026)
 
 ## Resolvidos
+- ✅ 25/10/2026 — `Canvas is already in use` das sparklines (portfolio). **Não era falta de `destroy()`**: `renderTable` já destruía antes de recriar. A causa era o **adiamento por `requestAnimationFrame`** — quando o preço chegava, `renderUI` rodava de novo e ficavam DOIS rAF na fila: o primeiro desenhava nos canvases já remontados pelo segundo, e o segundo batia no canvas ocupado. Fix: guardar o id do rAF e `cancelAnimationFrame` no pendente, mais duas redes de segurança dentro do callback. Reproduzido e verificado com fila de rAF manual (HEAD: 1 erro · corrigido: 0 erros, 1 rAF cancelado, as 13 sparklines seguem desenhando) — `(hash no commit)`.
 - 22/10/2026 · `31ad424` — index `fetchSparklines` só grava cache com sparkline válida; ferramentas/pools leem localStorage sem derrubar o script; bloco morto `fetchAllOnChain` do portfolio removido (também no caderno de segurança).
 _(o `/corrigir` move os itens para cá, com data e hash do commit)_
 - 29/09/2026 · `7f7ce5b` — [ALTA] preco ao vivo das 5 paginas caindo nos FALLBACK_PRICES por causa do
