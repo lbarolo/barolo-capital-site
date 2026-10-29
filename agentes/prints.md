@@ -149,6 +149,33 @@ ETH entrar no range; fora dele, a posição rende **zero** contra os 13,11% gara
   criamos recentemente lá no notion"* — há uma página de controle de pool no Notion para preencher
   conforme a posição andar. Não é para agora.
 
+
+### ⚠️ 29/10 — REWARDS da AAVE: existem, são SEPARADOS do juro e NÃO foram resgatados
+
+Ele perguntou se os rewards já estavam nos tokens sacados. **Juro sim, reward não** — são dois
+mecanismos diferentes e vale não confundir de novo:
+
+| | O que é | Onde está | No site? |
+|---|---|---|---|
+| **Juro do aToken** | o saldo cresce sozinho | **dentro** dos 755,119968 sacados | ✅ sim |
+| **Reward (Merkl)** | incentivo pago à parte, em USDC | contrato da Merkl, **não resgatado** | ❌ não |
+
+**Juro — conferido e fecha na casa decimal.** `get_position_items` dá juro final **29,218990** no
+USDT; a reconciliação de 22/08/2026 partiu de 17,19. A soma dos **13 lançamentos semanais** feitos
+desde então (3,727508 + 0,959374 + 0,490194 + 0,041350 + 1,577728 + 0,713205 + 0,528182 + 1,422459
++ 1,057815 + 1,015221 + 0,004710 + 0,063402 + 0,427842) = **12,028990**, e 29,218990 − 17,19 =
+**12,028990**. Nada escapou. Mesma coisa no WETH, cujo juro (**0,021492079899159378**, ~US$ 50)
+continua na AAVE rendendo — só o do USDT saiu com o saque.
+
+**Reward — `get_user_rewards` (29/10/2026): 1,467188 USDC (~US$ 1,47) claimable.** A v4 mostra como
+5 janelas semanais de 27/08 a 01/10 (~0,2929 cada) e a v3 devolve o total agregado já com a
+transação de claim pronta — é o MESMO reward em duas visões, não some os dois.
+- **Não lançar no `data.js`** enquanto não for resgatado (mesma regra dos rewards da Kamino).
+- 🔸 **Pode não compensar resgatar**: é Ethereum mainnet, e o gas de um claim costuma comer boa
+  parte (ou tudo) de US$ 1,47. Deixar acumular e resgatar junto com outra operação é mais barato.
+- As janelas pararam em 01/10 — provavelmente o programa de incentivo do USDT acabou; agora que o
+  supply de USDT é zero, não deve gerar mais.
+
 ## Estado atual (ANTERIOR) — 24/10/2026 (`asOf` 2026-10-24) — saque de 200 USDT da AAVE, 2 ordens limite de ETH e a PRIMEIRA já executou
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020961978554540399** · USDT **28,791148**
 
