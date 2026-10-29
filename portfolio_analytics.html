@@ -1937,8 +1937,14 @@ function renderUI(enriched){
 
  var stablesTotal = enriched.filter(a=>a.isStable).reduce((s,a)=>s+a.currentValue, 0);
  var tokensVolatilesTotal = enriched.filter(a=>!a.isStable).reduce((s,a)=>s+a.currentValue, 0);
- _livePortfolioGross = tokensVolatilesTotal + stablesTotal; // CoinGecko total (já inclui LP)
- const cgTotal = _livePortfolioGross; // Total de ativos conforme CoinGecko
+ // ⚠️ O token que entra numa pool SAI dos holdings (senão o mesmo dinheiro conta duas
+ // vezes), então o LP TEM de ser somado aqui. É o que `BaroloCore.netWorth` faz, e o que
+ // o pools.html e o snapshot diário já faziam — esta página era a única divergente.
+ // Ficou invisível de 28/08 a 29/10/2026 porque não houve pool aberta nesse intervalo;
+ // com a pool ETH/USDC v4 de volta, o patrimônio aparecia US$ 743 abaixo do real.
+ var _assetsOnly = tokensVolatilesTotal + stablesTotal; // só o que está listado na tabela
+ _livePortfolioGross = _assetsOnly + LP_POOLED;         // ativos + pool = bruto de verdade
+ const cgTotal = _assetsOnly; // denominador da coluna % da tabela: só os ativos listados
  const aaveDebtLive = (typeof window._liveAaveDebt === 'number') ? window._liveAaveDebt : AAVE_DEBT;
  const kaminoDebtLive = (typeof window._liveKaminoDebt === 'number') ? window._liveKaminoDebt : KAMINO_DEBT;
  // Patrimônio Líquido = CoinGecko total − Dívida total (card próprio; a dívida aparece SÓ aqui)

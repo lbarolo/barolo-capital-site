@@ -90,7 +90,66 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
-## Estado atual — 24/10/2026 (`asOf` 2026-10-24) — saque de 200 USDT da AAVE, 2 ordens limite de ETH e a PRIMEIRA já executou
+## Estado atual — 29/10/2026 (`asOf` 2026-10-29) — AAVE sem USDT e POOL NOVA ETH/USDC v4
+**Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,021492079899159378** ·
+USDT **29,218990** (o USDT foi todo sacado — no próximo review não há delta de USDT para aplicar).
+
+| | Qtd | APY | Principal |
+|---|---|---|---|
+| AAVE WETH supply | 2,311232174632745104 | 1,59% | 2,289740094733585726 (inalterado) |
+| AAVE USDT supply | **0 — sacado por inteiro** | (marcava **13,11%** na hora) | **0** |
+| AAVE USDC borrow | 0 — quitada em 23/10 | — | 0 |
+| Kamino SOL supply | 25,09 | 4,05% | 23,645990 |
+| Kamino USDC borrow | 456,71 | 6,06% | 378,599493 |
+
+**Palavras dele:** *"Retirei os USDT da Aave para montar uma pool de compra de ETH na uniswap v4,
+anotei meus pensamentos e tudo no notion, no diario de DeFi."*
+
+**Sequência (29/10, Ethereum):** 17:12 withdraw **755,119968 USDT** (tx `0x73ed...1a04`, MCP
+confirma e o item de USDT sumiu do spoke) → approve Velora → swap por **742,37 USDC**
+(tx `0xe685...a22e`) → approve Permit2 → multicall Uniswap v4 com **743,12 USDC**
+(tx `0xbe2c...e927`). Gas das 5 txs ~US$ 1,14, não descontado.
+
+**A pool** (`defi.uniswapV3` + 1ª linha do `poolHistory`): **ETH/USDC v4 · Ethereum · Dynamic ·
+VolatilePairHook**, capital **US$ 743,12**, range **2.190,79–2.347,75**, market 2.348,87 →
+**fora do range por cima, 0% ETH / 100% USDC**. APR do painel **72,09%** = 50,25% de taxa (24h) +
+21,85% de reward em USDC. Fees earned US$ 0 (recém-aberta).
+
+⚡ **É pool de COMPRA — a inversão da saída gradual.** Entra 100% USDC e vira ETH conforme o preço
+CAI dentro do range; preço médio se percorrer tudo: **~US$ 2.268**. Enquanto o ETH não recuar
+abaixo de 2.347,75 ela não compra nem gera taxa. ⚠️ **Mesma tese do ciclo de 26/08 que fechou 0 a 0**
+(o ETH nunca voltou ao range) — a diferença é que agora o range começa 0,05% ABAIXO do mercado,
+não 0,04% acima.
+
+⚡ **Contabilidade: a qty sai, o `invested` FICA.** `stables.USDT` 854,895114 → **100,202988**, mas
+`invested` segue **824,45**. A qty sai porque a pool já é contada em `uniswapV3.pooled` (dupla
+contagem); o custo fica porque `uniswapV3` não tem campo de custo e baixá-lo derrubaria o
+`TOTAL_INVESTED` em 755, inflando o ROI por artefato. É o mesmo tratamento do ETH em 14/07/2026
+(o custo só migrou no fechamento). **Conferido: `TOTAL_INVESTED` segue 9.667,58.** O USDT fica com
+qty 100,20 e custo 824,45 até a pool fechar — esperado, não é erro.
+
+🔸 **Os 743,12 são 742,37 do swap + 0,74 USDC** que sobraram da quitação de 23/10 e estavam fora da
+contabilidade. Correção de registro, não ganho.
+
+⚠️ **O SWAP CUSTOU 1,58% (US$ 11,91)** — 755,119968 USDT valiam US$ 754,28 (USDT a 0,99889) e
+vieram 742,37 USDC. Em stable→stable o normal é 0,01–0,05%. **É a segunda vez**: em 02/10 a troca de
+USDS por USDC custou ~1,6%. Não é slippage de liquidez (USDT/USDC é dos pares mais profundos que
+existem) — é taxa de roteador/interface. **Vale testar Curve ou Uniswap direto no próximo.**
+
+🔸 **Ele abriu mão de 13,11% de APY no supply do USDT** (era 3,23% em 24/10 — o pico veio da
+utilização) para entrar numa pool de 72% nominal. Faz sentido pela régua, mas os 72% só valem se o
+ETH entrar no range; fora dele, a posição rende **zero** contra os 13,11% garantidos que havia.
+
+- **Patrimônio líquido US$ 9.299** (ETH 2.327) · dívida só Kamino **456,71** · sem HF na AAVE ·
+  Kamino LTV 18,1% (SOL liquida em ~US$ 22,75) · **colateral da AAVE agora é só WETH**.
+- **Yield pendente no CoinGecko: ~US$ 12,71** (ETH +0,002958 · SOL +0,058135) **mais a SAÍDA de
+  754,69 USDT**, que ele ainda não lançou. ⚠️ O relatório vai acusar USDT **−754,69** até lá — é a
+  pool, não erro. BTC −0,000003 é a taxa das compras, não se lança.
+- 📌 **Ele pediu**: *"Depois com o decorrer da pool, peço pra vc preencher o controle da pool que
+  criamos recentemente lá no notion"* — há uma página de controle de pool no Notion para preencher
+  conforme a posição andar. Não é para agora.
+
+## Estado atual (ANTERIOR) — 24/10/2026 (`asOf` 2026-10-24) — saque de 200 USDT da AAVE, 2 ordens limite de ETH e a PRIMEIRA já executou
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,020961978554540399** · USDT **28,791148**
 
 | | Qtd | APY | Principal |
@@ -571,6 +630,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 29/10/2026 — **AAVE sem USDT e POOL NOVA**: sacou os 755,119968 USDT (todo o supply, que marcava 13,11% de APY), trocou por 742,37 USDC na Velora e montou **ETH/USDC v4 na Ethereum** com US$ 743,12 — **pool de COMPRA**, range 2.190,79–2.347,75, abriu fora do range por cima (100% USDC), APR do painel 72,09%. Qty do USDT sai, **`invested` fica** (TOTAL_INVESTED segue 9.667,58). ⚠️ Swap custou **1,58%** (2ª vez ~1,6%); vale testar Curve. Patrimônio US$ 9.299. **Bug achado e corrigido no caminho**: o patrimônio do dashboard e do relatório não somava o LP (−US$ 743) — invisível desde 28/08 por não haver pool aberta.
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
 - 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Ele lançou os dois lados no mesmo dia e o espelho fechou (BTC 0,00711492 · USDT 851,32676194); sobra só o yield normal, **~US$ 14,86**, mais o −0,000003 de BTC que é taxa e não se lança.
 - 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.

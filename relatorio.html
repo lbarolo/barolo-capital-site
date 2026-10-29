@@ -626,8 +626,13 @@ function calcTotals() {
   // Stables entram no P&L pelo custo pago (data.js) — o ganho delas é só o yield. Sem dívida.
   costTotal += STABLES_COST;
   plTotal   += (STABLES_USD - STABLES_COST);
-  // netTotal (Patrimônio Líquido) é o único lugar que desconta a dívida
-  return { spotTotal:spotTotal, costTotal:costTotal, plTotal:plTotal, netTotal:spotTotal+STABLES_USD-DEBT_TOTAL };
+  // netTotal (Patrimônio Líquido) é o único lugar que desconta a dívida.
+  // O LP entra porque o token que está na pool SAI dos holdings (senão conta duas vezes) —
+  // mesma conta de `BaroloCore.netWorth`. Sem isso o relatório ficava US$ 743 abaixo do
+  // dashboard quando havia pool aberta (achado em 29/10/2026).
+  var _u = (window.BAROLO_DATA && window.BAROLO_DATA.defi) ? window.BAROLO_DATA.defi.uniswapV3 : null;
+  var lpTotal = _u ? ((_u.pooled||0) + (_u.uncollectedFees||0)) : 0;
+  return { spotTotal:spotTotal, costTotal:costTotal, plTotal:plTotal, lpTotal:lpTotal, netTotal:spotTotal+STABLES_USD+lpTotal-DEBT_TOTAL };
 }
 
 function renderKPIs() {
@@ -638,7 +643,7 @@ function renderKPIs() {
   // Patrimônio líquido
   document.getElementById('r-net').textContent = fmt(t.netTotal);
   document.getElementById('r-net').className = 'kpi-value ' + (t.netTotal>=0?'pos':'neg');
-  document.getElementById('r-net-sub').textContent = 'SPOT $'+Math.round(t.spotTotal).toLocaleString('pt-BR')+' + Stables $'+Math.round(STABLES_USD).toLocaleString('pt-BR')+' − Dívida';
+  document.getElementById('r-net-sub').textContent = 'SPOT $'+Math.round(t.spotTotal).toLocaleString('pt-BR')+' + Stables $'+Math.round(STABLES_USD).toLocaleString('pt-BR')+(t.lpTotal>0?' + Pool $'+Math.round(t.lpTotal).toLocaleString('pt-BR'):'')+' − Dívida';
 
   // Total investido (dinâmico)
   document.getElementById('r-invested').textContent = fmt(t.costTotal);
