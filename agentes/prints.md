@@ -91,6 +91,36 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
 
+
+### 30/10 (2) — print do portfólio: `cgMirror` acertado em 3 pontos, 7 tokens batem
+
+**Saldo do CoinGecko US$ 8.635,37** · **GP −US$ 398,28 (−3,9%)**. Os 7 tokens sem movimento batem
+na casa decimal (ADA, EIGEN, POL, ZK, XAI, ZETA, SCR) ✓.
+
+| `cgMirror` | Antes | Depois | Por quê |
+|---|---|---|---|
+| ETH | 2,404883374 | **2,404903374** | ✅ **ele corrigiu para 0,04332** — os 0,00002 pendentes sumiram |
+| BTC | 0,00711492 | **0,00735063** | lançou a compra de hoje (qty bruta) |
+| USDT | 854,89676194 | **100,20676194** | deu a saída dos USDT que viraram a pool |
+
+**A saída do USDT fecha:** ele usou o número redondo que o `yield-to-mirror` mostrava (754,693774
+→ **754,69**), que já era o líquido da saída de 755,119968 com o juro de 0,427842 dentro.
+854,89676194 − 754,69 = **100,20676194**, exato.
+
+🔸 **Sobra +0,013066 (1,3 centavo)** contra o holding, e decompõe certinho: **+0,01684** do aporte
+de hoje (18,20684 que entrou − 18,19 que virou BTC), que ele **não lançou no USDT**, **−0,003774**
+do arredondamento da saída. Não vale perseguir; fica aqui para não virar mistério no próximo review.
+
+⚠️ **O "Total de ganhos/perdas" do CoinGecko virou NEGATIVO (−US$ 398,28)** — era +US$ 793,39 em
+24/10. **Não é perda**: é artefato da saída dos 754,69 USDT. O USDT de lá aparece com
+**GP −561,47 (−84,9%)**, ou seja, a quantidade saiu mas boa parte do custo ficou. O mesmo acontece
+aqui de propósito (o custo da pool fica estacionado nos US$ 824,47 do USDT), só que o site tem o
+card POOLS LP para mostrar onde o dinheiro está e o CoinGecko não tem. **O número canônico é o do
+site**; o GP de lá vai se normalizar quando a pool fechar e o resultado voltar para o portfólio.
+
+**Yield pendente depois disso: ~US$ 11,83** (ETH +0,002938 · SOL +0,058135 · USDT +0,013066), mais
+o BTC −0,00000309 que é taxa e não se lança.
+
 ### ✅ 30/10/2026 (sexta) — APORTE SEMANAL feito, régua cumprida
 
 **R$ 100,00 → 18,20684 USDT** @ **5,4924** (par USDT/BRL, 14:19:14, taxa ZERO) → **0,00023571 BTC
@@ -683,6 +713,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 30/10/2026 (2) — **print do portfólio**: `cgMirror` acertado em 3 (ETH **2,404903374** — ele corrigiu para 0,04332; BTC **0,00735063**; USDT **100,20676194**, saída dos que viraram a pool). 7 tokens batem na casa decimal. Sobra 1,3 centavo de USDT (o aporte de hoje não lançado lá). ⚠️ O GP do CoinGecko virou −US$ 398,28 por **artefato** da saída do USDT (custo ficou, qty saiu) — não é perda; o canônico é o site. Yield pendente ~US$ 11,83.
 - 30/10/2026 — **aporte semanal (sexta)**: R$ 100,00 → 18,20684 USDT @ **5,4924** (taxa zero) → 0,00023548 BTC líquido @ 77.244. `contributions` +US$ 18,21 (outubro fecha com **5 aportes, US$ 146,27**); BTC 0,00711206 → **0,00734754**; `TOTAL_INVESTED` → **9.685,79**; Fiscal → **R$ 38.332,97**. ⚠️ Câmbio +8,1% na semana (5,0822 → 5,4924): os mesmos R$ 100 renderam US$ 18,21 contra 19,68. Topo do dashboard conferido (regra 0): cards fecham, HF "—", pool US$ 743.
 - 29/10/2026 — **AAVE sem USDT e POOL NOVA**: sacou os 755,119968 USDT (todo o supply, que marcava 13,11% de APY), trocou por 742,37 USDC na Velora e montou **ETH/USDC v4 na Ethereum** com US$ 743,12 — **pool de COMPRA**, range 2.190,79–2.347,75, abriu fora do range por cima (100% USDC), APR do painel 72,09%. Qty do USDT sai, **`invested` fica** (TOTAL_INVESTED segue 9.667,58). ⚠️ Swap custou **1,58%** (2ª vez ~1,6%); vale testar Curve. Patrimônio US$ 9.299. **Bug achado e corrigido no caminho**: o patrimônio do dashboard e do relatório não somava o LP (−US$ 743) — invisível desde 28/08 por não haver pool aberta.
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
