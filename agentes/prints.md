@@ -90,6 +90,32 @@ APY no `data.js` é **decimal** (5,63% → `0.0563`).
    `git checkout --ours emprestimos.html && node scripts/refresh-emprestimos-data.js`.
 8. Atualizar "Estado atual" e "Histórico" abaixo.
 
+
+### ✅ 30/10/2026 (sexta) — APORTE SEMANAL feito, régua cumprida
+
+**R$ 100,00 → 18,20684 USDT** @ **5,4924** (par USDT/BRL, 14:19:14, taxa ZERO) → **0,00023571 BTC
+bruto @ US$ 77.244**, taxa 0,00000023 (0,1%) → **0,00023548 líquido** (14:26:01, 7 min depois).
+
+| | Antes | Depois |
+|---|---|---|
+| `contributions` out/26 | 4 linhas, US$ 128,06 | **5 linhas, US$ 146,27** |
+| `holdings.BTC` | 0,00711206 / 498,04 | **0,00734754 / 516,23** |
+| `stables.USDT` | 100,202988 / 824,45 | **100,219828 / 824,47** |
+| `TOTAL_INVESTED` | 9.667,58 | **9.685,79** (+18,21, o aporte) |
+| Fiscal `APORTADO_BRL` | R$ 38.232,97 | **R$ 38.332,97** |
+
+As duas pernas, como sempre: **fiat→USDT é APORTE** (US$ 18,21 em `contributions`), **USDT→BTC é
+ROTAÇÃO** (o custo migra, não conta de novo).
+
+⚠️ **O CÂMBIO SALTOU 8,1% EM UMA SEMANA: 5,0822 (23/10) → 5,4924.** Os mesmos R$ 100 renderam
+**US$ 18,21** contra US$ 19,68 na semana passada — US$ 1,47 a menos pelo mesmo dinheiro. Na régua de
+R$ 50/semana isso é ~US$ 38/ano de poder de compra se o câmbio ficar aqui. Nada a fazer (ele aporta
+em BRL), mas vale acompanhar: se o real continuar caindo, o DCA em dólar encolhe sozinho.
+
+🔸 **Spread da OKX melhorou**: ela mostra o lado BRL como US$ 18,41 (comercial ~5,432) contra os
+18,20684 entregues = **~1,2%**, contra os 2,9% de 16/10. Continua valendo medir o aporte pelo USDT
+recebido, que é o que entra no site.
+
 ## Estado atual — 29/10/2026 (`asOf` 2026-10-29) — AAVE sem USDT e POOL NOVA ETH/USDC v4
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,021492079899159378** ·
 USDT **29,218990** (o USDT foi todo sacado — no próximo review não há delta de USDT para aplicar).
@@ -657,6 +683,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 30/10/2026 — **aporte semanal (sexta)**: R$ 100,00 → 18,20684 USDT @ **5,4924** (taxa zero) → 0,00023548 BTC líquido @ 77.244. `contributions` +US$ 18,21 (outubro fecha com **5 aportes, US$ 146,27**); BTC 0,00711206 → **0,00734754**; `TOTAL_INVESTED` → **9.685,79**; Fiscal → **R$ 38.332,97**. ⚠️ Câmbio +8,1% na semana (5,0822 → 5,4924): os mesmos R$ 100 renderam US$ 18,21 contra 19,68. Topo do dashboard conferido (regra 0): cards fecham, HF "—", pool US$ 743.
 - 29/10/2026 — **AAVE sem USDT e POOL NOVA**: sacou os 755,119968 USDT (todo o supply, que marcava 13,11% de APY), trocou por 742,37 USDC na Velora e montou **ETH/USDC v4 na Ethereum** com US$ 743,12 — **pool de COMPRA**, range 2.190,79–2.347,75, abriu fora do range por cima (100% USDC), APR do painel 72,09%. Qty do USDT sai, **`invested` fica** (TOTAL_INVESTED segue 9.667,58). ⚠️ Swap custou **1,58%** (2ª vez ~1,6%); vale testar Curve. Patrimônio US$ 9.299. **Bug achado e corrigido no caminho**: o patrimônio do dashboard e do relatório não somava o LP (−US$ 743) — invisível desde 28/08 por não haver pool aberta.
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
 - 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Ele lançou os dois lados no mesmo dia e o espelho fechou (BTC 0,00711492 · USDT 851,32676194); sobra só o yield normal, **~US$ 14,86**, mais o −0,000003 de BTC que é taxa e não se lança.
