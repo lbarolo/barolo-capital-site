@@ -118,8 +118,17 @@ aqui de propósito (o custo da pool fica estacionado nos US$ 824,47 do USDT), s�
 card POOLS LP para mostrar onde o dinheiro está e o CoinGecko não tem. **O número canônico é o do
 site**; o GP de lá vai se normalizar quando a pool fechar e o resultado voltar para o portfólio.
 
-**Yield pendente depois disso: ~US$ 11,83** (ETH +0,002938 · SOL +0,058135 · USDT +0,013066), mais
-o BTC −0,00000309 que é taxa e não se lança.
+✅ **FECHADO no mesmo dia — ele lançou os três a custo zero** (ETH +0,002938 · SOL +0,058135 ·
+USDT +0,013066). `cgMirror` igualado ao holding nos três. **Pendente ZERO.**
+
+🔸 **O BTC fica com 0,00000309 a mais no espelho, por decisão dele** (*"os 3 do BTC não se lança,
+pode deixar assim mesmo"*). É a soma das taxas das compras: o CoinGecko conta a qty **bruta** e o
+site a **líquida**. **Nunca lançar** — vai aparecer como negativo no `yield-to-mirror` para sempre,
+e é o comportamento certo. A nota está no próprio `cgMirror.BTC` do `data.js`.
+
+⚠️ **Não houve print depois dos lançamentos**, então o espelho foi acertado pelos valores que ele
+confirmou. **Conferir no próximo print do portfólio** — foi exatamente assim que os 0,0433 vs
+0,04332 passaram em 24/10 (ele digitou menos casas do que disse).
 
 ### ✅ 30/10/2026 (sexta) — APORTE SEMANAL feito, régua cumprida
 
