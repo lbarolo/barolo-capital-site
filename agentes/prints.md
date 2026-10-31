@@ -215,6 +215,15 @@ espelho tinha sido acertado sem print.
 - **Carry +US$ 15,85/mês** (supply 216,03/ano − borrow 25,85/ano). Colateral da AAVE é só WETH, US$ 5.200.
 - **Yield pendente no CoinGecko: ~US$ 3,76** (ETH +0,000389 · SOL +0,03). BTC −0,000003 é a taxa das
   compras, **nunca se lança**.
+- ⏸ **SEGURANDO O LANÇAMENTO POR DECISÃO DELE (31/10/2026)**, palavras dele: *"pode segurar esses
+  valores que tem que lançar no coingecko vou lançar no final do mês pode deixar no site que esta
+  pendente"*. ⚠ **NÃO igualar o `cgMirror` ao holding até ele CONFIRMAR que lançou** — ele quer a
+  pendência visível no card para usar como lista no fechamento. Registrado também no comentário do
+  `cgMirror` no `data.js`, para nenhuma sessão futura zerar por hábito.
+  O card renderiza **"$3,47 a lançar"** e não $3,71: o total soma as 3 linhas, e a do BTC entra
+  **negativa** (−US$ 0,24). O que ele deve lançar são as duas linhas verdes (ETH + SOL = US$ 3,71);
+  a do BTC é a taxa das compras e **não se lança**. Se o total misturado virar confusão no
+  fechamento, a saída é somar só os deltas positivos no card — **mudança de UI, pedir antes**.
 - 🔸 **BABY (Babylon) 29,20272757 — US$ 0,36 — aparece na OKX e não está em lugar nenhum do site.** Dust,
   mesmo critério dos 0,74 USDC e do gas. Só vale lançar se um dia crescer.
 - ✅ **Topo do dashboard conferido (regra 0)** com preços injetados: `ev-net` $9.007 · `ev-debt` $458 ·

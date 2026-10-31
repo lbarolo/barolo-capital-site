@@ -801,6 +801,16 @@ window.BAROLO_DATA = {
   // (igualando o holding) — o pendente zera sozinho. Se um ticker nao estiver
   // listado aqui, assume-se que CoinGecko == holding (nada pendente).
   // Base: print do CoinGecko de 05/09/2026.
+  //
+  // ⏸ SEGURANDO POR DECISAO DELE (31/10/2026), palavras dele: "pode segurar esses
+  // valores que tem que lancar no coingecko vou lancar no final do mes pode deixar no
+  // site que esta pendente". Pendente de hoje ~US$ 3,71 (ETH +0,000389 · SOL +0,03).
+  // ⚠ NAO igualar o `cgMirror` ao holding antes dele CONFIRMAR que lancou: o card
+  // "Yield a lancar no CoinGecko" do dashboard tem que seguir aparecendo ate la, e e
+  // assim que ele pretende usar no fechamento. Igualar agora apaga a pendencia que ele
+  // pediu para manter visivel.
+  // O BTC (-0,000003) NAO entra nesse total: e a soma das taxas das compras (CoinGecko
+  // lanca bruto, o site liquido), nunca se lanca — ver a nota do BTC abaixo.
   cgMirror: {
     // ✅ LANCADO POR ELE em 05/09/2026 ("Coloquei la no coingecko"): +0,174778 SOL
     // e +4,69 USDS entraram como transferencia de entrada, custo zero. Espelho
