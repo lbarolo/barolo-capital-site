@@ -1,511 +1,511 @@
 {
- "updated": "2026-10-30T16:15:46.446Z",
- "date": "2026-10-30",
+ "updated": "2026-10-31T15:30:18.861Z",
+ "date": "2026-10-31",
  "source": "preço: coinbase/coinpaprika · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 77427,
-   "d24": -5.17,
-   "d7": -5.14,
-   "d30": -7.48,
+   "price": 77367,
+   "d24": -0.5,
+   "d7": -3.93,
+   "d30": -7.63,
    "ath": 126080,
    "athPct": -38.6,
    "athDate": "2025-10-06",
-   "mcap": 1556604017287,
-   "vol": 181087972121,
+   "mcap": 1555488241842,
+   "vol": 83293626667,
    "spark": [
-    81591.49,
-    81201.17,
-    81102.31,
-    80878.95,
-    80653.61,
-    80516.54,
-    79730.04,
-    80431.4,
-    80810.57,
-    80784.78,
-    80599.49,
-    80505.09,
-    80556.8,
-    80485.73,
-    80048.85,
-    79514.19,
-    79966.13,
-    80312.41,
-    80318.68,
-    79911.72,
-    80029.43,
-    79703.86,
-    79706.49,
-    79786.88,
-    80472.57,
-    80711.14,
-    80800.83,
-    81029.84,
-    80992.73,
-    81237.84,
-    80450.7,
-    81515.6,
-    81274.37,
-    79761.64,
-    79782.36,
-    80087.48,
-    81691.75,
-    80769.04,
-    77838.81,
-    78062.24,
-    78050.84,
-    77311.46,
-    77090.78
+    80142.57,
+    80463.98,
+    80525.44,
+    80844.18,
+    80416.16,
+    80196.26,
+    80560.49,
+    80581.49,
+    80388.22,
+    79489.87,
+    80027.97,
+    80283.62,
+    80267.93,
+    79887.75,
+    79876.22,
+    79709.26,
+    79547.72,
+    79845.09,
+    80266.65,
+    80533.75,
+    80809.64,
+    80843.1,
+    80776.66,
+    81400.76,
+    80505.69,
+    80949.29,
+    81184.45,
+    79885.31,
+    79886.04,
+    80202.56,
+    81144.77,
+    80792.66,
+    78880.16,
+    77229.77,
+    78522.54,
+    77693.3,
+    77090.78,
+    76360.18,
+    76861.9,
+    77352.71,
+    77337,
+    77330.66,
+    77426.85
    ]
   },
   "eth": {
-   "price": 2230.51,
-   "d24": -5.74,
-   "d7": -7.48,
-   "d30": -16.86,
+   "price": 2246.56,
+   "d24": 0.42,
+   "d7": -5.1,
+   "d30": -16.66,
    "ath": 4946.05,
-   "athPct": -54.9,
+   "athPct": -54.6,
    "athDate": "2025-08-24",
-   "mcap": 272447563863,
-   "vol": 27117095427,
+   "mcap": 274478574500,
+   "vol": 7788633193,
    "spark": [
-    2404.93,
-    2392.21,
-    2384.75,
-    2379.8,
-    2372.63,
-    2363.05,
-    2304.39,
-    2338.62,
-    2356.57,
-    2360.52,
-    2345.71,
-    2337.85,
-    2341.95,
-    2348.8,
-    2326.83,
-    2300.6,
-    2316.41,
-    2330.91,
-    2325.13,
-    2315.34,
-    2320.67,
-    2311.34,
-    2311.66,
-    2312.29,
-    2344.3,
-    2345.35,
-    2347.32,
-    2357.65,
-    2358.24,
-    2358.82,
-    2331.6,
-    2369.21,
-    2357.47,
-    2306.17,
-    2308.06,
-    2323.03,
-    2366.02,
-    2334.55,
-    2249.48,
-    2232.43,
-    2233.69,
-    2233.98,
-    2235.94
+    2340.72,
+    2335.81,
+    2343.82,
+    2363.84,
+    2338.77,
+    2323.65,
+    2340.88,
+    2352.45,
+    2339.92,
+    2301.77,
+    2317.48,
+    2325.85,
+    2323.18,
+    2311.46,
+    2310.22,
+    2310.62,
+    2301.75,
+    2312.81,
+    2331.97,
+    2341.3,
+    2347.54,
+    2354.47,
+    2349.29,
+    2365.72,
+    2330.26,
+    2352.83,
+    2357.24,
+    2309.03,
+    2311.18,
+    2325.9,
+    2343.07,
+    2329.84,
+    2270.68,
+    2205.58,
+    2250.23,
+    2246.95,
+    2235.94,
+    2230.38,
+    2233.57,
+    2244.17,
+    2243.79,
+    2242.8,
+    2249.54
    ]
   },
   "sol": {
-   "price": 95.04,
-   "d24": -7.32,
-   "d7": -9.49,
-   "d30": -20.28,
+   "price": 95.89,
+   "d24": 1.05,
+   "d7": -5.57,
+   "d30": -18.79,
    "ath": 293.31,
-   "athPct": -67.6,
+   "athPct": -67.3,
    "athDate": "2025-01-19",
-   "mcap": 56067503528,
-   "vol": 5882602773,
+   "mcap": 56586387756,
+   "vol": 2437309434,
    "spark": [
-    104.65,
-    103.48,
-    102.74,
-    102.54,
-    101.82,
-    101.41,
-    99.68,
-    101.13,
-    102.27,
-    102.33,
-    101.55,
-    101.23,
+    100.32,
+    101.21,
     101.52,
-    101.69,
-    101.24,
-    100.1,
-    100.62,
-    101.58,
-    101.79,
-    100.36,
-    100.75,
-    100.02,
-    99.94,
+    102.36,
+    101.23,
+    100.63,
+    101.25,
+    101.7,
+    101.5,
+    100.49,
+    100.89,
+    101.25,
+    101.92,
+    100.32,
+    100.2,
+    100.14,
+    99.42,
     99.97,
-    100.85,
-    101.05,
-    101.2,
-    101.89,
-    102.23,
-    102.6,
-    100.92,
-    102.91,
-    102.32,
-    99.56,
-    99.69,
-    100.28,
-    102.57,
-    99.77,
-    95.47,
-    96.98,
-    97.17,
-    96.44,
-    94.48
+    100.6,
+    100.83,
+    101.17,
+    101.53,
+    101.86,
+    102.83,
+    100.8,
+    102.06,
+    102.38,
+    99.96,
+    100,
+    100.5,
+    101.72,
+    100.55,
+    96.88,
+    95.17,
+    98.13,
+    97.15,
+    94.48,
+    94.12,
+    95.78,
+    96.75,
+    95.91,
+    95.52,
+    95.7
    ]
   },
-  "stableMcap": 251908612678
+  "stableMcap": 251718180311
  },
  "fng": {
   "value": 30,
   "label": "Fear",
-  "prev": 51
+  "prev": 30
  },
  "broad": {
-  "btcDom": 59.3,
+  "btcDom": 59.2,
   "ethDom": 10.4,
-  "altDom": 30.3,
-  "totalMcap": 2622735648426.91,
-  "totalVol": 153066529248.78134,
-  "mcapChange24h": -7.26,
-  "ethBtc": 0.02881,
-  "stableMcap": 251908612678
+  "altDom": 30.4,
+  "totalMcap": 2624251919795.3677,
+  "totalVol": 120123855230.59842,
+  "mcapChange24h": -2.35,
+  "ethBtc": 0.02904,
+  "stableMcap": 251718180311
  },
  "onchain": {
-  "t": "2026-10-29",
-  "price": 80307.14,
-  "mvrv": 1.457984,
-  "mvrv_sth": 1.039515,
-  "mvrv_lth": 1.608577,
-  "realized": 54088.83,
-  "realized_sth": 75862.89,
-  "realized_lth": 49025.09,
-  "sopr_lth": 0.849255,
-  "aviv": 1.013493,
-  "cvdd": 49401.61,
-  "sma200": 73081.06,
-  "mayer": 1.099
+  "t": "2026-10-30",
+  "price": 77347.51,
+  "mvrv": 1.420634,
+  "mvrv_sth": 1.014327,
+  "mvrv_lth": 1.567351,
+  "realized": 54057.16,
+  "realized_sth": 75710.76,
+  "realized_lth": 48996.98,
+  "sopr_lth": 1.013663,
+  "aviv": 0.987763,
+  "cvdd": 49437.3,
+  "sma200": 73109.73,
+  "mayer": 1.058
  },
  "risk": {
-  "score": 0.199,
-  "label": "fundo / capitulação",
+  "score": 0.201,
+  "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.457984,
-    "s": 0.227
+    "v": 1.420634,
+    "s": 0.214
    },
    {
     "key": "Mayer",
-    "v": 1.099,
-    "s": 0.277
+    "v": 1.058,
+    "s": 0.254
    },
    {
     "key": "STH MVRV",
-    "v": 1.039515,
-    "s": 0.233
+    "v": 1.014327,
+    "s": 0.191
    },
    {
     "key": "AVIV",
-    "v": 1.013493,
-    "s": 0.257
+    "v": 0.987763,
+    "s": 0.244
    },
    {
     "key": "SOPR LTH",
-    "v": 0.849255,
-    "s": 0
+    "v": 1.013663,
+    "s": 0.103
    }
   ]
  },
  "portfolio": {
-  "netWorth": 8892.66,
-  "gross": 8506.18,
-  "stables": 100.07,
-  "lp": 743.12,
-  "debt": 456.71,
-  "invested": 9667.58,
-  "roi": -8,
-  "move24": -493.54,
-  "move24Pct": -5.26,
+  "netWorth": 8992.33,
+  "gross": 8587.98,
+  "stables": 100.11,
+  "lp": 761.79,
+  "debt": 457.56,
+  "invested": 9685.79,
+  "roi": -7.2,
+  "move24": 85.24,
+  "move24Pct": 0.96,
   "aave": {
    "hf": null,
-   "collateral": 5154.28,
+   "collateral": 5190.49,
    "debt": 0,
    "ltv": 0,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 19.2,
+   "ltv": 19,
    "liqLtv": 80,
-   "collateral": 2381.79,
-   "debt": 456.71,
-   "liqSol": 22.2,
-   "dropToLiq": 76.6
+   "collateral": 2406.5,
+   "debt": 457.56,
+   "liqSol": 22.21,
+   "dropToLiq": 76.8
   },
   "carry": {
-   "monthlyInterest": 2.31,
-   "monthlySupply": 14.87
+   "monthlyInterest": 2.15,
+   "monthlySupply": 17.97
   },
-  "dataAsOf": "2026-10-29"
+  "dataAsOf": "2026-10-31"
  },
  "news": [
   {
-   "source": "The Block",
-   "title": "Strategy’s preferred-stock fix sets up renewed bitcoin buying, analysts say",
-   "url": "https://www.theblock.co/news/business/2026-10-30-strategy-mstr-preferred-stock-bitcoin-buying-analysts-432214",
-   "ts": 1793370649000
+   "source": "Cointelegraph",
+   "title": "Bitcoin held up better than expected after Binance hack, Strive CEO says",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-binance-hack-strive-ceo?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793460406000
   },
   {
-   "source": "Decrypt",
-   "title": "What is EIP-7702? The Ethereum Upgrade Behind the $6.4B Binance Hack",
-   "url": "https://decrypt.co/resources/what-is-eip-7702-the-ethereum-upgrade-behind-the-6-4b-binance-hack",
-   "ts": 1793369854000
+   "source": "The Block",
+   "title": "Hackers hijack a dozen DeFi websites, all registered with Name.com, and steal about $138,000",
+   "url": "https://www.theblock.co/news/defi/2026-10-31-hackers-hijack-a-dozen-defi-websites-all-registered-with-name-com-and-steal-about-138000-432251",
+   "ts": 1793460387000
   },
   {
    "source": "CoinDesk",
-   "title": "Wall Street analysts urge investors to buy crypto stocks after $6.3 billion Binance hack",
-   "url": "https://www.coindesk.com/markets/2026/10/30/wall-street-analysts-urge-investors-to-buy-crypto-stocks-on-weakness-after-usd6-3-billion-binance-hack",
-   "ts": 1793369614000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Live updates: Binance says $6.34B set aside to cover hack losses",
-   "url": "<![CDATA[https://cointelegraph.com/news/live-updates-binance-63b-hack-linked-to-north-koreas-tradertraitor?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793369546000
+   "title": "Binance says it has replaced 90% of stolen crypto after massive $6.3 billion breach",
+   "url": "https://www.coindesk.com/business/2026/10/31/binance-says-it-has-replaced-90-of-stolen-crypto-after-massive-usd6-3-billion-breach",
+   "ts": 1793460250000
   },
   {
    "source": "Cointelegraph",
    "title": "Here’s what happened in crypto today",
    "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793369262000
+   "ts": 1793459395000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Binance Hack: Everything You Need to Know About the Biggest Crypto Heist in History",
+   "url": "https://decrypt.co/382306/binance-hack-everything-you-need-to-know",
+   "ts": 1793458862000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Institutions embrace crypto staking despite shrinking yields",
+   "url": "https://www.coindesk.com/business/2026/10/26/institutions-embrace-crypto-staking-despite-shrinking-yields",
+   "ts": 1793458800000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Uber tests how tokenization can put idle cash to work with HSBC, Franklin Templeton",
+   "url": "https://www.coindesk.com/business/2026/10/31/uber-tests-how-tokenization-can-put-idle-cash-to-work-with-hsbc-franklin-templeton",
+   "ts": 1793457629000
   },
   {
    "source": "Cointelegraph",
-   "title": "Will gold’s ‘infinite mint bug’ make Bitcoin more valuable?",
-   "url": "<![CDATA[https://cointelegraph.com/magazine/will-golds-infinite-mint-bug-make-bitcoin-more-valuable?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793367000000
+   "title": "Bitcoin turns 18: Has the original rebel grown up?",
+   "url": "<![CDATA[https://cointelegraph.com/magazine/bitcoin-turns-18-has-the-original-rebel-grown-up?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793456872000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "As big bitcoin miners chase AI profits, individuals get another shot at the rewards",
+   "url": "https://www.coindesk.com/tech/2026/10/31/as-big-bitcoin-miners-chase-ai-profits-individuals-get-another-shot-at-the-rewards",
+   "ts": 1793455200000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Texas brothers sentenced to 15 years in prison for armed crypto robbery, kidnapping",
+   "url": "<![CDATA[https://cointelegraph.com/news/texas-brothers-sentenced-to-15-years-in-prison-for-armed-crypto-robbery-kidnapping?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793453869000
   },
   {
    "source": "The Block",
-   "title": "Binance says it has $6.34 billion ready to cover hack losses",
-   "url": "https://www.theblock.co/news/ecosystems/2026-10-30-binance-says-it-has-6-34-billion-ready-to-cover-hack-losses-432208",
-   "ts": 1793366096000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Binance working with FBI to recover assets following $6.3B hack",
-   "url": "<![CDATA[https://cointelegraph.com/news/binance-fbi-recover-assets-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793365870000
+   "title": "Chainalysis says hacker using ‘offensive agentic techniques’ accessed its customers’ names and emails",
+   "url": "https://www.theblock.co/news/business/2026-10-31-chainalysis-says-hacker-using-offensive-agentic-techniques-accessed-its-customers-names-and-emails-432244",
+   "ts": 1793453237000
   },
   {
    "source": "Decrypt",
-   "title": "Israel Extradites Alleged Nomad Bridge Exploiter to US Over $2.8M Theft: Report",
-   "url": "https://decrypt.co/382230/israel-extradites-alleged-nomad-bridge-exploiter-to-us-over-2-8m-theft-report",
-   "ts": 1793365209000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Binance says it holds $5B in matching tokens to cover hack losses",
-   "url": "<![CDATA[https://cointelegraph.com/news/binance-5-billion-replacement-crypto-in-custody?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793364103000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Morning Minute: Binance’s $6.4B Hack Overshadows Hyperliquid’s Biggest Day",
-   "url": "https://decrypt.co/382225/morning-minute-binances-6-4b-hack-overshadows-hyperliquids-biggest-day",
-   "ts": 1793363490000
-  },
-  {
-   "source": "Decrypt",
-   "title": "TRM and Chainalysis Tie $6.4B Binance Hack to North Korea's TraderTraitor",
-   "url": "https://decrypt.co/382224/trm-and-chainalysis-tie-6-4b-binance-hack-to-north-koreas-tradertraitor",
-   "ts": 1793362924000
+   "title": "Why AI Models Cheat: Reward Hacking, Explained",
+   "url": "https://decrypt.co/382274/why-ai-models-cheat-reward-hacking-explained",
+   "ts": 1793451663000
   },
   {
    "source": "CoinDesk",
-   "title": "Binance arranges $6.34 billion to cover losses from record crypto hack",
-   "url": "https://www.coindesk.com/business/2026/10/30/binance-arranges-usd6-34-billion-to-cover-losses-from-record-crypto-hack",
-   "ts": 1793362382000
+   "title": "18 years in, what has Bitcoin truly done?",
+   "url": "https://www.coindesk.com/opinion/2026/10/31/18-years-in-what-has-bitcoin-truly-done",
+   "ts": 1793451600000
   },
   {
    "source": "CoinDesk",
-   "title": "Here's how big bitcoin traders responded after the Binance hack hit",
-   "url": "https://www.coindesk.com/daybook-us/2026/10/30/here-s-how-big-bitcoin-traders-responded-after-the-binance-hack-hit",
-   "ts": 1793361086000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Zcash grants group offers $124M compromise as governance backlash grows",
-   "url": "<![CDATA[https://cointelegraph.com/news/zcash-grants-46m-proposal-governance-backlash?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793360183000
+   "title": "A Nasdaq-listed company may sell $450 million bitcoin, citing Binance hack and quantum fears",
+   "url": "https://www.coindesk.com/markets/2026/10/31/a-nasdaq-listed-company-may-sell-usd450-million-bitcoin-citing-binance-hack-and-quantum-fears",
+   "ts": 1793450987000
   },
   {
    "source": "CoinDesk",
-   "title": "Here’s how an Ethereum upgrade helped drain part of Binance’s $6 billion loss",
-   "url": "https://www.coindesk.com/tech/2026/10/30/here-s-how-one-ethereum-permission-let-an-attacker-drain-usd2-5-billion-from-binance",
-   "ts": 1793360116000
+   "title": "The $6.3 billion Binance hack paradox: Centralization made the hack possible, but also saved $3 billion",
+   "url": "https://www.coindesk.com/business/2026/10/31/the-usd6-3-billion-binance-hack-paradox-centralization-made-the-hack-possible-but-also-saved-usd3-billion",
+   "ts": 1793448000000
   },
   {
    "source": "Cointelegraph",
-   "title": "Bitcoin price metrics hint at rebound as $1.6B liquidations follow Binance hack",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-price-metrics-hint-at-rebound-as-16b-liquidations-follow-binance-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793359763000
+   "title": "Blockchain investigator Chainalysis hit by cybersecurity incident",
+   "url": "<![CDATA[https://cointelegraph.com/news/blockchain-investigator-chainalysis-hit-by-cybersecurity-incident?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793445769000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Binance $6.3B record hack sparks pre-election political clashes",
+   "url": "<![CDATA[https://cointelegraph.com/news/binance-63b-record-hack-sparks-pre-election-political-chatter?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793440730000
   },
   {
    "source": "CoinDesk",
-   "title": "Crypto liquidations jump to $1.57 billion as Binance hack sends bitcoin, ether lower",
-   "url": "https://www.coindesk.com/markets/2026/10/30/crypto-liquidations-jump-to-usd1-57-billion-as-binance-hack-sends-bitcoin-ether-lower",
-   "ts": 1793358564000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "EIP-7702 didn’t cause Binance hack, but may have amplified losses",
-   "url": "<![CDATA[https://cointelegraph.com/news/binance-hack-security-ethereum-eip-7702-role?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793358010000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Binance hacker’s Bitcoin haul tops Coinbase’s corporate treasury",
-   "url": "<![CDATA[https://cointelegraph.com/news/binance-hacker-bitcoin-holdings-exceed-coinbase-btc-treasury?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793357670000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Trezor Warns CryptoBilis Buyers After Report of Hardware Implant in Safe 5",
-   "url": "https://decrypt.co/382216/trezor-warns-cryptobilis-buyers-after-report-of-hardware-implant-in-safe-5",
-   "ts": 1793354849000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "THORChain’s RUNE jumps 13% after Binance’s record $6.3B hack",
-   "url": "<![CDATA[https://cointelegraph.com/markets/rune-token-surges-binance-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793353949000
+   "title": "Bitcoin stolen from Binance tops Tesla’s holdings and is over twice El Salvador’s reserve",
+   "url": "https://www.coindesk.com/markets/2026/10/31/bitcoin-stolen-from-binance-tops-tesla-s-holdings-and-is-over-twice-el-salvador-s-reserve",
+   "ts": 1793422892000
   },
   {
    "source": "CoinDesk",
-   "title": "Strategy CFO Andrew Kang resigns as company posts record operating profit",
-   "url": "https://www.coindesk.com/markets/2026/10/30/strategy-cfo-resigns-as-company-posts-record-quarterly-profit-mstr-stock-falls-6",
-   "ts": 1793353267000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Binance Finds 'Additional Points of Breach' in $6.3B Hack",
-   "url": "https://decrypt.co/382203/binance-finds-additional-points-of-breach-in-6-3b-hack",
-   "ts": 1793352719000
+   "title": "OpenAI reportedly cuts fundraising and valuation targets amid AI jitters",
+   "url": "https://www.coindesk.com/business/2026/10/30/openai-reportedly-cuts-fundraising-target-amid-ai-jitters",
+   "ts": 1793407736000
   },
   {
    "source": "Cointelegraph",
-   "title": "Trezor warns CryptoBilis buyers to move funds over suspected implant",
-   "url": "<![CDATA[https://cointelegraph.com/news/trezor-cryptobilis-wallet-implant-funds-warning?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793352405000
+   "title": "Binance hackers raced to move billions before it could be frozen",
+   "url": "<![CDATA[https://cointelegraph.com/magazine/binance-hackers-raced-to-move-billions-before-could-be-frozen?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793397600000
   },
   {
    "source": "The Block",
-   "title": "Coinbase Q3 net income jumps 66% as prediction markets gain traction",
-   "url": "https://www.theblock.co/news/business/2026-10-30-coinbase-q3-net-income-jumps-432189",
-   "ts": 1793350629000
+   "title": "Inside the largest crypto hack on record: How attackers breached Binance for $6.3 billion",
+   "url": "https://www.theblock.co/news/business/2026-10-30-binance-hack-largest-crypto-hack-north-korea-432225",
+   "ts": 1793395223000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Binance Hack Shows Why Offshore Exchanges Need US Oversight, CFTC Chair Says",
+   "url": "https://decrypt.co/382285/binance-hack-why-offshore-exchanges-need-us-oversight-cftc-chair",
+   "ts": 1793394964000
   },
   {
    "source": "The Block",
-   "title": "Trezor reports suspected hardware implant in Safe 5 sold by CryptoBilis",
-   "url": "https://www.theblock.co/news/ecosystems/2026-10-30-trezor-reports-suspected-hardware-implant-432196",
-   "ts": 1793350539000
+   "title": "President Trump says they’re looking into Binance hack as calls grow for crypto rules",
+   "url": "https://www.theblock.co/news/regulation/2026-10-30-trump-looking-into-binance-hack-calls-grow-for-crypto-rules-432236",
+   "ts": 1793394363000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Intel Stock Suffers Worst Crash in 50 Years as Weak Forecast Overshadows AI Chip Demand",
+   "url": "https://decrypt.co/382287/intel-stock-suffers-worst-crash-in-50-years-as-weak-forecast-overshadows-ai-chip-demand",
+   "ts": 1793393603000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Worried About Crypto Hacks? Buy Bitcoin Proxies in Stock Market Instead, Say Wall Street Firms",
+   "url": "https://decrypt.co/382282/crypto-hacks-buy-bitcoin-proxies-stock-market-wall-street",
+   "ts": 1793390763000
   },
   {
    "source": "CoinDesk",
-   "title": "Live updates: Bitcoin falls to $77,000 as Binance exploit combines with tech woes",
-   "url": "https://www.coindesk.com/markets/2026/10/30/live-news-binance-hack-rattles-crypto-as-intel-plunges-and-ai-spending-fears-hit-tech",
-   "ts": 1793349412000
+   "title": "Experts divided over Binance hack asset freezes, warn recovery is another matter",
+   "url": "https://www.coindesk.com/business/2026/10/30/experts-divided-over-binance-hack-asset-freezes-warn-recovery-is-another-matter",
+   "ts": 1793390100000
   },
   {
-   "source": "CoinDesk",
-   "title": "Binance hacker dumps a little-known 2017 token and it crashes 90%",
-   "url": "https://www.coindesk.com/markets/2026/10/30/binance-hacker-dumps-a-little-known-2017-token-and-it-crashes-90",
-   "ts": 1793346847000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin, ether and XRP selloff wipes out $1.5 billion in leveraged crypto bets",
-   "url": "https://www.coindesk.com/markets/2026/10/30/bitcoin-ether-and-xrp-selloff-wipes-out-usd1-5-billion-in-leveraged-crypto-bets",
-   "ts": 1793341320000
+   "source": "Decrypt",
+   "title": "Reddit Stock Plunges 30% as Google's AI Search Hits Traffic and User Growth",
+   "url": "https://decrypt.co/382276/reddit-stock-plunges-30-googles-ai-search",
+   "ts": 1793388662000
   },
   {
    "source": "Cointelegraph",
-   "title": "Strategy eyes more Bitcoin buys as Saylor touts $30B credit capacity",
-   "url": "<![CDATA[https://cointelegraph.com/news/strategy-30-billion-digital-credit-capacity-bitcoin-buys?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793339587000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "XRP Ledger developers tighten the rules for who can hold 'restricted' tokens",
-   "url": "https://www.coindesk.com/tech/2026/10/30/xrp-ledger-developers-tighten-the-rules-for-who-can-hold-restricted-tokens",
-   "ts": 1793339127000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Binance hack bites India's largest crypto exchange as it curbs futures trading",
-   "url": "https://www.coindesk.com/markets/2026/10/30/coindcx-halts-new-crypto-futures-bets-as-binance-incident-disrupts-liquidity",
-   "ts": 1793338987000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Binance hacker splits $1.4 billion of bitcoin into 19 wallets that no one can freeze",
-   "url": "https://www.coindesk.com/markets/2026/10/30/binance-hacker-splits-usd1-4-billion-of-bitcoin-into-19-wallets-that-no-one-can-freeze",
-   "ts": 1793335842000
-  },
-  {
-   "source": "The Block",
-   "title": "Bitcoin slides below $77,000, BNB drops amid Binance hack",
-   "url": "https://www.theblock.co/news/markets/2026-10-29-bitcoin-slides-below-77000-binance-hack-432183",
-   "ts": 1793326951000
+   "title": "Tether’s excess reserves nearly double to $8B as Q3 profit hits $1.5B",
+   "url": "<![CDATA[https://cointelegraph.com/news/tethers-excess-reserves-nearly-double-to-8b-as-q3-profit-hits-15b?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793386918000
   },
   {
    "source": "Decrypt",
-   "title": "Binance Hacker Hunts for Exit Ramps as DeFi Exchanges Pause Markets",
-   "url": "https://decrypt.co/382194/binance-hack-exit-ramps-defi-exchange-ethereum",
-   "ts": 1793314668000
-  },
-  {
-   "source": "The Block",
-   "title": "Binance investigating hack as suspicious outflows reach up to $5.8 billion",
-   "url": "https://www.theblock.co/news/markets/2026-10-29-binance-investigating-hack-suspicious-outflows-5-billion-432171",
-   "ts": 1793310556000
+   "title": "Binance Hack: Why Bitcoin Didn't Crash Like It Did in 2018",
+   "url": "https://decrypt.co/382257/binance-hack-why-bitcoin-didnt-crash",
+   "ts": 1793385903000
   },
   {
    "source": "Decrypt",
-   "title": "Binance Drained of $5.5 Billion in Suspected Hack, Tether and Circle Freeze $1.8 Billion",
-   "url": "https://decrypt.co/382191/binance-suspected-hack-5-billion-tether-circle-freeze-crypto",
-   "ts": 1793309784000
-  },
-  {
-   "source": "The Block",
-   "title": "Strategy reports $19.5 billion in Q3 net income as preferred shareholders approve daily dividends",
-   "url": "https://www.theblock.co/news/business/2026-10-29-strategy-q3-net-income-preferred-daily-dividends-432141",
-   "ts": 1793307515000
+   "title": "$8 Million Crypto Kidnapping Lands Texas Brothers 15-Year Prison Terms",
+   "url": "https://decrypt.co/382269/crypto-kidnapping-texas-brothers-15-year-prison",
+   "ts": 1793384162000
   },
   {
    "source": "Decrypt",
-   "title": "Coinbase Swings to $719 Million Q3 Profit on Crypto Gains",
-   "url": "https://decrypt.co/382188/coinbase-beats-719-million-q3-profit-crypto-gains",
-   "ts": 1793306803000
+   "title": "Secret Service, FBI Join Binance Hack Probe as Circle Freezes $823 Million",
+   "url": "https://decrypt.co/382268/secret-service-fbi-binance-hack-probe",
+   "ts": 1793382626000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Coinbase leads crypto stock selloff following $6.3B Binance hack",
+   "url": "<![CDATA[https://cointelegraph.com/markets/coinbase-leads-crypto-stock-selloff-shares-tumble?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793382507000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Crypto Biz: Bitcoin’s quantum threat is becoming an economic problem",
+   "url": "<![CDATA[https://cointelegraph.com/news/bitcoin-quantum-threat-ripple-bank-usdc-vaneck-crypto-biz?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793380171000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Recap: How Binance’s record $6.3B hack unfolded",
+   "url": "<![CDATA[https://cointelegraph.com/news/recap-binances-record-63b-hack-unfolded?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793379226000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "As it happened: Binance’s record $6.3B crypto hack",
+   "url": "<![CDATA[https://cointelegraph.com/news/live-updates-binance-63b-hack-linked-to-north-koreas-tradertraitor?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793378990000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Binance Sets Aside $6.34B to Cover Hack Losses, CEO Says 'Your Assets Are Safe'",
+   "url": "https://decrypt.co/382237/binance-sets-aside-6-34b-to-cover-hack-losses-ceo-says-your-assets-are-safe",
+   "ts": 1793378061000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Binance uncovers wider breach in $6.3 billion exploit, targets Sunday withdrawal restart",
+   "url": "https://www.coindesk.com/tech/2026/10/30/binance-uncovers-wider-breach-in-usd6-3-billion-exploit-targets-sunday-withdrawal-restart",
+   "ts": 1793377877000
+  },
+  {
+   "source": "The Block",
+   "title": "Texas brothers sentenced to 15 years for holding Minnesota family at gunpoint in $8 million crypto heist",
+   "url": "https://www.theblock.co/news/regulation/2026-10-30-texas-brothers-sentenced-15-years-8-million-crypto-robbery-minnesota-432221",
+   "ts": 1793377567000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Elon Musk, CZ Trade Blows Over SpaceX Shares After $6.4B Binance Hack",
+   "url": "https://decrypt.co/382236/elon-musk-cz-trade-blows-spacex-shares-binance-hack",
+   "ts": 1793377506000
+  },
+  {
+   "source": "The Block",
+   "title": "Strategy’s preferred-stock fix sets up renewed bitcoin buying, analysts say",
+   "url": "https://www.theblock.co/news/business/2026-10-30-strategy-mstr-preferred-stock-bitcoin-buying-analysts-432214",
+   "ts": 1793370649000
   }
  ],
  "narrative": null
