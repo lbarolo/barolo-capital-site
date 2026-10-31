@@ -155,7 +155,74 @@ em BRL), mas vale acompanhar: se o real continuar caindo, o DCA em dólar encolh
 18,20684 entregues = **~1,2%**, contra os 2,9% de 16/10. Continua valendo medir o aporte pelo USDT
 recebido, que é o que entra no site.
 
-## Estado atual — 29/10/2026 (`asOf` 2026-10-29) — AAVE sem USDT e POOL NOVA ETH/USDC v4
+## Estado atual — 31/10/2026 (`asOf` 2026-10-31) — review semanal: a POOL ENTROU NO RANGE e já comprou 62% em ETH
+**Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,021881502** · USDT **0** (sem supply
+desde o saque de 29/10 — não há delta de USDT para aplicar).
+
+⚠️ **Sem MCP da Aave nesta sessão** — o juro do WETH foi **derivado do print**, não lido do MCP:
+`deposits 5.192,34 − earnings 49,15 = 5.143,19`, dividido pelo principal `2,289740094733585726` dá o
+preço do oráculo **US$ 2.246,19**; `49,15 / 2.246,19 = 0,021881502`. Soma com o principal: **2,311621502**,
+e o card mostra **2,3116** ✓. **No próximo review, conferir esse 0,021881502 contra o MCP** — se divergir,
+o delta do ETH desta semana (+0,000389422) foi estimado com 1–2 casas a menos de precisão.
+
+| | Qtd | APY | Principal |
+|---|---|---|---|
+| AAVE WETH supply | 2,3116215 | **2,43%** (era 1,59%) | 2,289740094733585726 (inalterado) |
+| AAVE USDT supply | 0 | — | 0 |
+| AAVE USDC borrow | 0 — quitada em 23/10 | — | 0 |
+| Kamino SOL supply | **25,12** | **3,72%** (era 4,05%) | 23,645990 |
+| Kamino USDC borrow | **457,56** | **5,65%** (era 6,06%) | 378,599493 |
+
+**Prints recebidos (5):** carteira/CEX (OKX), portfólio CoinGecko, pool Uniswap v4, Kamino, AAVE.
+O print da AAVE veio **cortado na seção de colateral** — só aparece "Borrowing Opportunities" abaixo,
+que é o que a tela mostra quando não há empréstimo. Consistente com `borrow 0` desde 23/10.
+
+⚡ **A POOL ENTROU NO RANGE E FEZ O QUE FOI DESENHADA PARA FAZER.** Abriu em 29/10 100% USDC com o ETH a
+2.348,87 (fora do range por cima); o ETH caiu para **2.248,51** e em 2 dias a posição está **in range** e
+**62,32% convertida em ETH** — 0,203 ETH (US$ 457,01) + 276,28 USDC. É o oposto do ciclo de 26/08, que
+fechou 0 a 0 porque o ETH nunca voltou ao range.
+
+| Pool ETH/USDC v4 | Abertura 29/10 | Hoje 31/10 |
+|---|---|---|
+| Composição | 100% USDC | **62,32% ETH / 37,68% USDC** |
+| Pooled | 743,12 | **733,29** |
+| Fees (não coletadas) | 0 | **28,50** (14,58 ETH + 13,92 USDC) |
+| Rewards | 0 | 2,35 USDC — **não lançado** (não resgatado) |
+| PnL | 0 | **+18,67 (+2,5% em 2 dias)** |
+
+`il` 9,83 = `capital − pooled`: é a divergência de ter comprado ETH enquanto ele caía, medida contra ter
+ficado 100% em USDC. **As taxas cobriram quase o triplo disso.**
+🔸 `apr`/`poolApr`/`feeApr` seguem os do painel da **abertura** (72,09 / 50,25) de propósito: 28,50 em 2
+dias anualiza para **~700%**, que é ruído e não taxa. **Pedir o APR do painel no próximo print.**
+
+🔸 **O reward de 2,35 USDC fica de fora** pela mesma regra dos rewards da AAVE e da Kamino: só entra
+quando for resgatado. Somando os três da casa, há **US$ 7,60 de reward não resgatado** (Uniswap 2,35 +
+Kamino KMNO 5,18 + PYUSD 0,07) mais os **1,47 USDC da AAVE** parados na Merkl.
+
+✅ **A melhor validação que a linha do SOL já teve.** O holding passou a 25,88735038 pelo delta do supply
+(25,09 → 25,12) e isso **fecha exato contra a corretora**: Kamino 25,12 + OKX 0,76735037 (print de hoje)
+= **25,88735037**, diferença de 1e-8. A regra nova de 07/10 (SOL por delta, não por igualar ao supply)
+está confirmada na prática.
+
+✅ **`cgMirror` conferido contra print** — os 11 tokens batem. ETH acertado para **2,407841374** (o site
+vinha com 3 casas a menos, 0,000000374, fração de centavo): isso **resolve o alerta de 30/10** de que o
+espelho tinha sido acertado sem print.
+
+- **Patrimônio líquido US$ 9.006,51** (ETH 2.249,52 · SOL 95,96 · BTC 77.395) contra US$ 9.299 em 29/10 =
+  **−US$ 292 (−3,1%)**, tudo preço. Dívida **US$ 457,56**, só Kamino. **Sem HF na AAVE.** Kamino LTV
+  **18,99%** (era 17,52%) — subiu sem dívida nova, foi o SOL caindo; **SOL liquida em US$ 22,77** (−76,3%),
+  valor que a Kamino agora mostra direto no card. Dívida/patrimônio **5,1%**.
+- **Carry +US$ 15,85/mês** (supply 216,03/ano − borrow 25,85/ano). Colateral da AAVE é só WETH, US$ 5.200.
+- **Yield pendente no CoinGecko: ~US$ 3,76** (ETH +0,000389 · SOL +0,03). BTC −0,000003 é a taxa das
+  compras, **nunca se lança**.
+- 🔸 **BABY (Babylon) 29,20272757 — US$ 0,36 — aparece na OKX e não está em lugar nenhum do site.** Dust,
+  mesmo critério dos 0,74 USDC e do gas. Só vale lançar se um dia crescer.
+- ✅ **Topo do dashboard conferido (regra 0)** com preços injetados: `ev-net` $9.007 · `ev-debt` $458 ·
+  `ev-lev` 5,1% · `ev-hf-aave` "—" com "sem dívida na AAVE" · `ev-hf-kamino` 19,0% · `ev-yield` +$16 líq.
+  · `s-spot` $8.602 · `s-pool` $762 com o nome da pool v4 · `s-debt` −$458 "Kamino USDC" · `s-stables` $100.
+  Os 4 cards somam: 8.602 + 762 + 100 − 458 = **9.006** ✓
+
+## Estado atual (ANTERIOR) — 29/10/2026 (`asOf` 2026-10-29) — AAVE sem USDT e POOL NOVA ETH/USDC v4
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,021492079899159378** ·
 USDT **29,218990** (o USDT foi todo sacado — no próximo review não há delta de USDT para aplicar).
 
@@ -722,6 +789,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 31/10/2026 — **review semanal (5 prints)**: a **pool v4 entrou no range em 2 dias** e já está **62% comprada em ETH** (0,203 ETH + 276,28 USDC), fees **US$ 28,50** não coletadas, **PnL +18,67 (+2,5%)** — o oposto do ciclo de 26/08 que fechou 0 a 0. AAVE: WETH 2,3116215 @**2,43%** (CF subiu p/ 84%), sem dívida, juro derivado do print por falta do MCP. Kamino: SOL 25,12 @3,72%, borrow **457,56 @5,65%** (3ª semana cedendo), LTV 18,99%, liq. US$ 22,77. Holdings: ETH +0,000389422 e SOL +0,03 de yield custo zero — **o SOL fecha exato contra a OKX (25,12 + 0,76735037 = 25,88735037)**. `cgMirror` conferido nos 11 tokens. Líquido **US$ 9.006,51** (−3,1% vs 29/10, só preço). Regra 0 conferida. 🔸 BABY US$ 0,36 na OKX fora do site (dust).
 - 30/10/2026 (2) — **print do portfólio**: `cgMirror` acertado em 3 (ETH **2,404903374** — ele corrigiu para 0,04332; BTC **0,00735063**; USDT **100,20676194**, saída dos que viraram a pool). 7 tokens batem na casa decimal. Sobra 1,3 centavo de USDT (o aporte de hoje não lançado lá). ⚠️ O GP do CoinGecko virou −US$ 398,28 por **artefato** da saída do USDT (custo ficou, qty saiu) — não é perda; o canônico é o site. Yield pendente ~US$ 11,83.
 - 30/10/2026 — **aporte semanal (sexta)**: R$ 100,00 → 18,20684 USDT @ **5,4924** (taxa zero) → 0,00023548 BTC líquido @ 77.244. `contributions` +US$ 18,21 (outubro fecha com **5 aportes, US$ 146,27**); BTC 0,00711206 → **0,00734754**; `TOTAL_INVESTED` → **9.685,79**; Fiscal → **R$ 38.332,97**. ⚠️ Câmbio +8,1% na semana (5,0822 → 5,4924): os mesmos R$ 100 renderam US$ 18,21 contra 19,68. Topo do dashboard conferido (regra 0): cards fecham, HF "—", pool US$ 743.
 - 29/10/2026 — **AAVE sem USDT e POOL NOVA**: sacou os 755,119968 USDT (todo o supply, que marcava 13,11% de APY), trocou por 742,37 USDC na Velora e montou **ETH/USDC v4 na Ethereum** com US$ 743,12 — **pool de COMPRA**, range 2.190,79–2.347,75, abriu fora do range por cima (100% USDC), APR do painel 72,09%. Qty do USDT sai, **`invested` fica** (TOTAL_INVESTED segue 9.667,58). ⚠️ Swap custou **1,58%** (2ª vez ~1,6%); vale testar Curve. Patrimônio US$ 9.299. **Bug achado e corrigido no caminho**: o patrimônio do dashboard e do relatório não somava o LP (−US$ 743) — invisível desde 28/08 por não haver pool aberta.
