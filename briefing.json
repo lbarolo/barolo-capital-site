@@ -1,216 +1,216 @@
 {
- "updated": "2026-10-31T15:30:18.861Z",
- "date": "2026-10-31",
+ "updated": "2026-11-01T16:26:07.944Z",
+ "date": "2026-11-01",
  "source": "preço: coinbase/coinpaprika · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 77367,
-   "d24": -0.5,
-   "d7": -3.93,
-   "d30": -7.63,
+   "price": 77994,
+   "d24": 0.53,
+   "d7": -3.27,
+   "d30": -9.07,
    "ath": 126080,
-   "athPct": -38.6,
+   "athPct": -38.1,
    "athDate": "2025-10-06",
-   "mcap": 1555488241842,
-   "vol": 83293626667,
+   "mcap": 1568095782865,
+   "vol": 57514112333,
    "spark": [
-    80142.57,
-    80463.98,
-    80525.44,
-    80844.18,
-    80416.16,
-    80196.26,
-    80560.49,
-    80581.49,
-    80388.22,
-    79489.87,
-    80027.97,
-    80283.62,
-    80267.93,
-    79887.75,
-    79876.22,
-    79709.26,
-    79547.72,
-    79845.09,
-    80266.65,
-    80533.75,
-    80809.64,
-    80843.1,
-    80776.66,
-    81400.76,
-    80505.69,
-    80949.29,
-    81184.45,
-    79885.31,
-    79886.04,
-    80202.56,
-    81144.77,
-    80792.66,
-    78880.16,
-    77229.77,
-    78522.54,
-    77693.3,
-    77090.78,
-    76360.18,
-    76861.9,
-    77352.71,
-    77337,
-    77330.66,
-    77426.85
+    80556.8,
+    80485.73,
+    80048.85,
+    79514.19,
+    79966.13,
+    80312.41,
+    80318.68,
+    79911.72,
+    80029.43,
+    79703.86,
+    79706.49,
+    79786.88,
+    80472.57,
+    80711.14,
+    80800.83,
+    81029.84,
+    80992.73,
+    81237.84,
+    80450.7,
+    81515.6,
+    81274.37,
+    79761.64,
+    79782.36,
+    80087.48,
+    81691.75,
+    80769.04,
+    77838.81,
+    78062.24,
+    78050.84,
+    77311.46,
+    77546.31,
+    76826.39,
+    77223.17,
+    77068.8,
+    77252.04,
+    77543.65,
+    77511.1,
+    77475.54,
+    77474.08,
+    77725.13,
+    77875.37,
+    77879.28,
+    77971.57
    ]
   },
   "eth": {
-   "price": 2246.56,
-   "d24": 0.42,
-   "d7": -5.1,
-   "d30": -16.66,
+   "price": 2268.76,
+   "d24": 0.78,
+   "d7": -3.24,
+   "d30": -16.4,
    "ath": 4946.05,
-   "athPct": -54.6,
+   "athPct": -54.1,
    "athDate": "2025-08-24",
-   "mcap": 274478574500,
-   "vol": 7788633193,
+   "mcap": 277199246846,
+   "vol": 4689078975,
    "spark": [
-    2340.72,
-    2335.81,
-    2343.82,
-    2363.84,
-    2338.77,
-    2323.65,
-    2340.88,
-    2352.45,
-    2339.92,
-    2301.77,
-    2317.48,
-    2325.85,
-    2323.18,
-    2311.46,
-    2310.22,
-    2310.62,
-    2301.75,
-    2312.81,
-    2331.97,
-    2341.3,
-    2347.54,
-    2354.47,
-    2349.29,
-    2365.72,
-    2330.26,
-    2352.83,
-    2357.24,
-    2309.03,
-    2311.18,
-    2325.9,
-    2343.07,
-    2329.84,
-    2270.68,
-    2205.58,
-    2250.23,
-    2246.95,
-    2235.94,
-    2230.38,
-    2233.57,
-    2244.17,
-    2243.79,
-    2242.8,
-    2249.54
+    2341.95,
+    2348.8,
+    2326.83,
+    2300.6,
+    2316.41,
+    2330.91,
+    2325.13,
+    2315.34,
+    2320.67,
+    2311.34,
+    2311.66,
+    2312.29,
+    2344.3,
+    2345.35,
+    2347.32,
+    2357.65,
+    2358.24,
+    2358.82,
+    2331.6,
+    2369.21,
+    2357.47,
+    2306.17,
+    2308.06,
+    2323.03,
+    2366.02,
+    2334.55,
+    2249.48,
+    2232.43,
+    2233.69,
+    2233.98,
+    2224.14,
+    2236.7,
+    2242.5,
+    2237.83,
+    2241.44,
+    2246.14,
+    2248.82,
+    2252.43,
+    2254.13,
+    2266.92,
+    2268.92,
+    2268.46,
+    2269.91
    ]
   },
   "sol": {
-   "price": 95.89,
-   "d24": 1.05,
-   "d7": -5.57,
-   "d30": -18.79,
+   "price": 94.78,
+   "d24": -1.26,
+   "d7": -6.46,
+   "d30": -21.5,
    "ath": 293.31,
-   "athPct": -67.3,
+   "athPct": -67.7,
    "athDate": "2025-01-19",
-   "mcap": 56586387756,
-   "vol": 2437309434,
+   "mcap": 55936630277,
+   "vol": 1332245801,
    "spark": [
-    100.32,
-    101.21,
     101.52,
-    102.36,
-    101.23,
-    100.63,
-    101.25,
-    101.7,
-    101.5,
-    100.49,
-    100.89,
-    101.25,
-    101.92,
-    100.32,
-    100.2,
-    100.14,
-    99.42,
+    101.69,
+    101.24,
+    100.1,
+    100.62,
+    101.58,
+    101.79,
+    100.36,
+    100.75,
+    100.02,
+    99.94,
     99.97,
-    100.6,
-    100.83,
-    101.17,
-    101.53,
-    101.86,
-    102.83,
-    100.8,
-    102.06,
-    102.38,
-    99.96,
-    100,
-    100.5,
-    101.72,
-    100.55,
-    96.88,
-    95.17,
-    98.13,
-    97.15,
-    94.48,
-    94.12,
+    100.85,
+    101.05,
+    101.2,
+    101.89,
+    102.23,
+    102.6,
+    100.92,
+    102.91,
+    102.32,
+    99.56,
+    99.69,
+    100.28,
+    102.57,
+    99.77,
+    95.47,
+    96.98,
+    97.17,
+    96.44,
+    94.68,
+    94.68,
+    96.25,
+    96.12,
+    95.51,
     95.78,
-    96.75,
-    95.91,
-    95.52,
-    95.7
+    95.85,
+    95.76,
+    95.42,
+    95.54,
+    95.5,
+    95.24,
+    94.93
    ]
   },
-  "stableMcap": 251718180311
+  "stableMcap": 251505307751
  },
  "fng": {
-  "value": 30,
+  "value": 34,
   "label": "Fear",
   "prev": 30
  },
  "broad": {
-  "btcDom": 59.2,
-  "ethDom": 10.4,
-  "altDom": 30.4,
-  "totalMcap": 2624251919795.3677,
-  "totalVol": 120123855230.59842,
-  "mcapChange24h": -2.35,
-  "ethBtc": 0.02904,
-  "stableMcap": 251718180311
+  "btcDom": 60,
+  "ethDom": 10.6,
+  "altDom": 29.4,
+  "totalMcap": 2610231574616.0376,
+  "totalVol": 83300248579.00798,
+  "mcapChange24h": -3.23,
+  "ethBtc": 0.02909,
+  "stableMcap": 251505307751
  },
  "onchain": {
-  "t": "2026-10-30",
-  "price": 77347.51,
-  "mvrv": 1.420634,
-  "mvrv_sth": 1.014327,
-  "mvrv_lth": 1.567351,
-  "realized": 54057.16,
-  "realized_sth": 75710.76,
-  "realized_lth": 48996.98,
-  "sopr_lth": 1.013663,
-  "aviv": 0.987763,
-  "cvdd": 49437.3,
-  "sma200": 73109.73,
+  "t": "2026-10-31",
+  "price": 77329.06,
+  "mvrv": 1.431688,
+  "mvrv_sth": 1.022289,
+  "mvrv_lth": 1.579371,
+  "realized": 54065.86,
+  "realized_sth": 75717.77,
+  "realized_lth": 49010.27,
+  "sopr_lth": 1.180746,
+  "aviv": 0.995692,
+  "cvdd": 49452.58,
+  "sma200": 73123.65,
   "mayer": 1.058
  },
  "risk": {
-  "score": 0.201,
+  "score": 0.236,
   "label": "de-risking",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.420634,
-    "s": 0.214
+    "v": 1.431688,
+    "s": 0.218
    },
    {
     "key": "Mayer",
@@ -219,54 +219,150 @@
    },
    {
     "key": "STH MVRV",
-    "v": 1.014327,
-    "s": 0.191
+    "v": 1.022289,
+    "s": 0.204
    },
    {
     "key": "AVIV",
-    "v": 0.987763,
-    "s": 0.244
+    "v": 0.995692,
+    "s": 0.248
    },
    {
     "key": "SOPR LTH",
-    "v": 1.013663,
-    "s": 0.103
+    "v": 1.180746,
+    "s": 0.255
    }
   ]
  },
  "portfolio": {
-  "netWorth": 8992.33,
-  "gross": 8587.98,
-  "stables": 100.11,
+  "netWorth": 9021.08,
+  "gross": 8616.76,
+  "stables": 100.09,
   "lp": 761.79,
   "debt": 457.56,
   "invested": 9685.79,
-  "roi": -7.2,
-  "move24": 85.24,
-  "move24Pct": 0.96,
+  "roi": -6.9,
+  "move24": 26.36,
+  "move24Pct": 0.29,
   "aave": {
    "hf": null,
-   "collateral": 5190.49,
+   "collateral": 5241.32,
    "debt": 0,
    "ltv": 0,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 19,
+   "ltv": 19.2,
    "liqLtv": 80,
-   "collateral": 2406.5,
+   "collateral": 2379.12,
    "debt": 457.56,
    "liqSol": 22.21,
-   "dropToLiq": 76.8
+   "dropToLiq": 76.5
   },
   "carry": {
    "monthlyInterest": 2.15,
-   "monthlySupply": 17.97
+   "monthlySupply": 17.99
   },
   "dataAsOf": "2026-10-31"
  },
  "news": [
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin ETF Investors Head for the Exits After Record Binance Hack",
+   "url": "https://decrypt.co/382309/bitcoin-etf-investors-exits-record-binance-hack",
+   "ts": 1793548862000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "The key races to watch for the 2026 election",
+   "url": "https://www.coindesk.com/policy/2026/11/01/the-key-races-to-watch-for-the-2026-election",
+   "ts": 1793545200000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto card startups are racking up losses just to buy your loyalty with big rewards",
+   "url": "https://www.coindesk.com/business/2026/11/01/crypto-card-startups-are-racking-up-losses-just-to-buy-your-loyalty-with-big-rewards",
+   "ts": 1793545200000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Here’s what happened in crypto today",
+   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793542620000
+  },
+  {
+   "source": "Decrypt",
+   "title": "How to Run an AI Model Locally—And Why You Might Want To",
+   "url": "https://decrypt.co/382295/how-to-run-ai-model-locally-why-you-might-want",
+   "ts": 1793541662000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto PACs made big Republican push in final weeks before November 3 election",
+   "url": "https://www.coindesk.com/policy/2026/11/01/crypto-pacs-made-big-republican-push-in-final-weeks-before-november-3-election",
+   "ts": 1793541600000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "DeepSeek developing AI agent requiring less human input: Report",
+   "url": "<![CDATA[https://cointelegraph.com/news/deepseek-developing-ai-agent-requiring-less-human-input-report?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793540433000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Sherrod Brown's Ohio edge threatens a rough go for crypto next year",
+   "url": "https://www.coindesk.com/news-analysis/2026/11/01/sherrod-brown-s-ohio-edge-threatens-a-rough-go-for-crypto-next-year",
+   "ts": 1793538000000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Binance opens crypto withdrawals in phases starting with bitcoin following $6.3 billion hack",
+   "url": "https://www.coindesk.com/markets/2026/11/01/binance-opens-crypto-withdrawals-in-phases-starting-with-bitcoin-following-usd6-3-billion-hack",
+   "ts": 1793529342000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Binance says phase one of withdrawals opens after $6.3B hack",
+   "url": "<![CDATA[https://cointelegraph.com/news/binance-says-phase-one-of-withdrawals-opens-after-63b-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793525898000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "FBI blames North Korea for record $6.3B Binance hack",
+   "url": "<![CDATA[https://cointelegraph.com/news/fbi-blames-north-korea-for-record-63b-binance-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793519078000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "FBI confirms North Korea's role in $6 billion Binance hack, asks DeFi community to block BTC, ETH, SOL addresses",
+   "url": "https://www.coindesk.com/policy/2026/10/31/fbi-confirms-north-korea-s-role-in-usd6-billion-binance-hack-asks-defi-community-to-block-btc-eth-sol-addresses",
+   "ts": 1793495405000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin's white paper turns 18, and small businesses are still paying for the bailouts it answered",
+   "url": "https://www.coindesk.com/opinion/2026/10/31/bitcoin-s-white-paper-turns-18-and-small-businesses-are-still-paying-for-the-bailouts-it-answered",
+   "ts": 1793469600000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "A stolen iPhone, $14,000 in losses and London's crypto theft problem",
+   "url": "https://www.coindesk.com/business/2026/11/01/a-stolen-iphone-usd14-000-in-losses-and-london-s-crypto-theft-problem",
+   "ts": 1793462970000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Traders are already placing leveraged bets on Anthropic’s IPO using crypto contracts",
+   "url": "https://www.coindesk.com/business/2026/10/31/traders-are-already-placing-leveraged-bets-on-anthropic-s-ipo-using-crypto-contracts",
+   "ts": 1793462400000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Binance says 90% of stolen assets replenished, targets Sunday withdrawals",
+   "url": "<![CDATA[https://cointelegraph.com/news/binance-hack-90-percent-replenished?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1793460961000
+  },
   {
    "source": "Cointelegraph",
    "title": "Bitcoin held up better than expected after Binance hack, Strive CEO says",
@@ -284,12 +380,6 @@
    "title": "Binance says it has replaced 90% of stolen crypto after massive $6.3 billion breach",
    "url": "https://www.coindesk.com/business/2026/10/31/binance-says-it-has-replaced-90-of-stolen-crypto-after-massive-usd6-3-billion-breach",
    "ts": 1793460250000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Here’s what happened in crypto today",
-   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793459395000
   },
   {
    "source": "Decrypt",
@@ -316,12 +406,6 @@
    "ts": 1793456872000
   },
   {
-   "source": "CoinDesk",
-   "title": "As big bitcoin miners chase AI profits, individuals get another shot at the rewards",
-   "url": "https://www.coindesk.com/tech/2026/10/31/as-big-bitcoin-miners-chase-ai-profits-individuals-get-another-shot-at-the-rewards",
-   "ts": 1793455200000
-  },
-  {
    "source": "Cointelegraph",
    "title": "Texas brothers sentenced to 15 years in prison for armed crypto robbery, kidnapping",
    "url": "<![CDATA[https://cointelegraph.com/news/texas-brothers-sentenced-to-15-years-in-prison-for-armed-crypto-robbery-kidnapping?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
@@ -340,24 +424,6 @@
    "ts": 1793451663000
   },
   {
-   "source": "CoinDesk",
-   "title": "18 years in, what has Bitcoin truly done?",
-   "url": "https://www.coindesk.com/opinion/2026/10/31/18-years-in-what-has-bitcoin-truly-done",
-   "ts": 1793451600000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "A Nasdaq-listed company may sell $450 million bitcoin, citing Binance hack and quantum fears",
-   "url": "https://www.coindesk.com/markets/2026/10/31/a-nasdaq-listed-company-may-sell-usd450-million-bitcoin-citing-binance-hack-and-quantum-fears",
-   "ts": 1793450987000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "The $6.3 billion Binance hack paradox: Centralization made the hack possible, but also saved $3 billion",
-   "url": "https://www.coindesk.com/business/2026/10/31/the-usd6-3-billion-binance-hack-paradox-centralization-made-the-hack-possible-but-also-saved-usd3-billion",
-   "ts": 1793448000000
-  },
-  {
    "source": "Cointelegraph",
    "title": "Blockchain investigator Chainalysis hit by cybersecurity incident",
    "url": "<![CDATA[https://cointelegraph.com/news/blockchain-investigator-chainalysis-hit-by-cybersecurity-incident?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
@@ -368,18 +434,6 @@
    "title": "Binance $6.3B record hack sparks pre-election political clashes",
    "url": "<![CDATA[https://cointelegraph.com/news/binance-63b-record-hack-sparks-pre-election-political-chatter?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
    "ts": 1793440730000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin stolen from Binance tops Tesla’s holdings and is over twice El Salvador’s reserve",
-   "url": "https://www.coindesk.com/markets/2026/10/31/bitcoin-stolen-from-binance-tops-tesla-s-holdings-and-is-over-twice-el-salvador-s-reserve",
-   "ts": 1793422892000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "OpenAI reportedly cuts fundraising and valuation targets amid AI jitters",
-   "url": "https://www.coindesk.com/business/2026/10/30/openai-reportedly-cuts-fundraising-target-amid-ai-jitters",
-   "ts": 1793407736000
   },
   {
    "source": "Cointelegraph",
@@ -418,12 +472,6 @@
    "ts": 1793390763000
   },
   {
-   "source": "CoinDesk",
-   "title": "Experts divided over Binance hack asset freezes, warn recovery is another matter",
-   "url": "https://www.coindesk.com/business/2026/10/30/experts-divided-over-binance-hack-asset-freezes-warn-recovery-is-another-matter",
-   "ts": 1793390100000
-  },
-  {
    "source": "Decrypt",
    "title": "Reddit Stock Plunges 30% as Google's AI Search Hits Traffic and User Growth",
    "url": "https://decrypt.co/382276/reddit-stock-plunges-30-googles-ai-search",
@@ -454,58 +502,10 @@
    "ts": 1793382626000
   },
   {
-   "source": "Cointelegraph",
-   "title": "Coinbase leads crypto stock selloff following $6.3B Binance hack",
-   "url": "<![CDATA[https://cointelegraph.com/markets/coinbase-leads-crypto-stock-selloff-shares-tumble?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793382507000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Crypto Biz: Bitcoin’s quantum threat is becoming an economic problem",
-   "url": "<![CDATA[https://cointelegraph.com/news/bitcoin-quantum-threat-ripple-bank-usdc-vaneck-crypto-biz?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793380171000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Recap: How Binance’s record $6.3B hack unfolded",
-   "url": "<![CDATA[https://cointelegraph.com/news/recap-binances-record-63b-hack-unfolded?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793379226000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "As it happened: Binance’s record $6.3B crypto hack",
-   "url": "<![CDATA[https://cointelegraph.com/news/live-updates-binance-63b-hack-linked-to-north-koreas-tradertraitor?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1793378990000
-  },
-  {
    "source": "Decrypt",
    "title": "Binance Sets Aside $6.34B to Cover Hack Losses, CEO Says 'Your Assets Are Safe'",
    "url": "https://decrypt.co/382237/binance-sets-aside-6-34b-to-cover-hack-losses-ceo-says-your-assets-are-safe",
    "ts": 1793378061000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Binance uncovers wider breach in $6.3 billion exploit, targets Sunday withdrawal restart",
-   "url": "https://www.coindesk.com/tech/2026/10/30/binance-uncovers-wider-breach-in-usd6-3-billion-exploit-targets-sunday-withdrawal-restart",
-   "ts": 1793377877000
-  },
-  {
-   "source": "The Block",
-   "title": "Texas brothers sentenced to 15 years for holding Minnesota family at gunpoint in $8 million crypto heist",
-   "url": "https://www.theblock.co/news/regulation/2026-10-30-texas-brothers-sentenced-15-years-8-million-crypto-robbery-minnesota-432221",
-   "ts": 1793377567000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Elon Musk, CZ Trade Blows Over SpaceX Shares After $6.4B Binance Hack",
-   "url": "https://decrypt.co/382236/elon-musk-cz-trade-blows-spacex-shares-binance-hack",
-   "ts": 1793377506000
-  },
-  {
-   "source": "The Block",
-   "title": "Strategy’s preferred-stock fix sets up renewed bitcoin buying, analysts say",
-   "url": "https://www.theblock.co/news/business/2026-10-30-strategy-mstr-preferred-stock-bitcoin-buying-analysts-432214",
-   "ts": 1793370649000
   }
  ],
  "narrative": null
