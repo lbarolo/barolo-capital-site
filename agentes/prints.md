@@ -195,8 +195,20 @@ LTV 19,64% → 19,06% · Collateral 2,33K → 2,40K). **O depósito em si não f
 - Conferência fecha na casa decimal: 25,13 + 0,762311673 = **25,892311673** = o holding.
 - ⚠️ **A composição do SOL mudou**: era Kamino + **OKX**, agora é Kamino + **carteira Solana**.
 
-**O que FALTA quando ele confirmar:** supply → **25,892311673** e `principals.kamino.SOL` →
-**24,408301673** (23,645990 + 0,762311673). Está escrito no comentário do `data.js`.
+✅ **CONFIRMADO por ele no mesmo dia.** supply → **25,892311673**, `principals.kamino.SOL` →
+**24,408301673**, LTV → **19,06%** (o valor que o card simulava). O juro retido seguiu em
+**1,484010 SOL**, idêntico ao de antes do depósito — prova de que o principal subiu junto e os
+0,7623 não viraram "rendimento".
+
+🔸 **A carteira Solana zerou** (ele usou o Max), então o holding voltou a ser igual ao supply da
+Kamino, como era antes de 07/10. **Mesmo assim o yield continua entrando por DELTA** (regra 4), não
+igualando: se ele comprar SOL fora de novo, igualar apagaria a compra. A regra não volta atrás.
+
+⚠️ **Um teste quebrou e foi o TESTE que estava errado**, não o dado. `tests/chain.test.js` exigia
+que `defi.kamino.supply.SOL.qty` ficasse a 1% da **fixture gravada em 14/09/2026** — um retrato que
+nem o USDS encerrado reflete. Passava por coincidência (0,6%) e o depósito levou para 3,7%. O teste
+agora compara o parser com o valor da própria fixture, que é o que ele existe para provar; conferir
+se o `data.js` está em dia é papel do `/prints` (MCP + print), não de um teste de unidade.
 
 🔸 **A tela da Kamino agora se chama "SOL/BTC Market"** (antes era só o market principal). Os
 números batem com a nossa posição (dívida 457,82, supply 25,13), então é a MESMA, só renomeada ou
@@ -849,7 +861,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
-- 04/11/2026 — **consolidação**: ETH da carteira → AAVE (**+0,0652**, confirmado on-chain, principal 2,289740 → **2,354959342722521912**) e SOL da OKX → carteira Solana (chegaram **0,762311673** dos 0,76735038: **0,005038707 de taxa de saque**). Depósito na Kamino **PENDENTE** — quando confirmar, supply → 25,892311673 e principal → 24,408301673. Holding do SOL já ajustado (+0,01 de yield − a taxa). Patrimônio US$ 9.088, cards fecham. 🔸 A Kamino renomeou a tela para "SOL/BTC Market".
+- 04/11/2026 — **consolidação**: ETH da carteira → AAVE (**+0,0652**, confirmado on-chain, principal 2,289740 → **2,354959342722521912**) e SOL da OKX → carteira Solana (chegaram **0,762311673** dos 0,76735038: **0,005038707 de taxa de saque**). Depósito na Kamino **confirmado no mesmo dia**: supply **25,892311673**, principal **24,408301673**, LTV 19,06%, juro retido intacto em 1,484010. Holding do SOL já ajustado (+0,01 de yield − a taxa). Patrimônio US$ 9.088, cards fecham. 🔸 A Kamino renomeou a tela para "SOL/BTC Market".
 - 31/10/2026 — **review semanal (5 prints)**: a **pool v4 entrou no range em 2 dias** e já está **62% comprada em ETH** (0,203 ETH + 276,28 USDC), fees **US$ 28,50** não coletadas, **PnL +18,67 (+2,5%)** — o oposto do ciclo de 26/08 que fechou 0 a 0. AAVE: WETH 2,3116215 @**2,43%** (CF subiu p/ 84%), sem dívida, juro derivado do print por falta do MCP. Kamino: SOL 25,12 @3,72%, borrow **457,56 @5,65%** (3ª semana cedendo), LTV 18,99%, liq. US$ 22,77. Holdings: ETH +0,000389422 e SOL +0,03 de yield custo zero — **o SOL fecha exato contra a OKX (25,12 + 0,76735037 = 25,88735037)**. `cgMirror` conferido nos 11 tokens. Líquido **US$ 9.006,51** (−3,1% vs 29/10, só preço). Regra 0 conferida. 🔸 BABY US$ 0,36 na OKX fora do site (dust).
 - 30/10/2026 (2) — **print do portfólio**: `cgMirror` acertado em 3 (ETH **2,404903374** — ele corrigiu para 0,04332; BTC **0,00735063**; USDT **100,20676194**, saída dos que viraram a pool). 7 tokens batem na casa decimal. Sobra 1,3 centavo de USDT (o aporte de hoje não lançado lá). ⚠️ O GP do CoinGecko virou −US$ 398,28 por **artefato** da saída do USDT (custo ficou, qty saiu) — não é perda; o canônico é o site. Yield pendente ~US$ 11,83.
 - 30/10/2026 — **aporte semanal (sexta)**: R$ 100,00 → 18,20684 USDT @ **5,4924** (taxa zero) → 0,00023548 BTC líquido @ 77.244. `contributions` +US$ 18,21 (outubro fecha com **5 aportes, US$ 146,27**); BTC 0,00711206 → **0,00734754**; `TOTAL_INVESTED` → **9.685,79**; Fiscal → **R$ 38.332,97**. ⚠️ Câmbio +8,1% na semana (5,0822 → 5,4924): os mesmos R$ 100 renderam US$ 18,21 contra 19,68. Topo do dashboard conferido (regra 0): cards fecham, HF "—", pool US$ 743.

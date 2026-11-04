@@ -65,12 +65,17 @@ test('AAVE: APYs reais entre 0% e 50%', async () => {
   assert.ok(r.usdcBorrowApy > 0 && r.usdcBorrowApy < 50);
 });
 
-test('Kamino: resposta real → SOL depositado bate com o data.js e LTV abaixo da liquidação', async () => {
+test('Kamino: resposta real → parser lê o SOL depositado e o LTV fica abaixo da liquidação', async () => {
   const { ctx } = await chain();
   const r = await ctx.BaroloChain.fetchKamino({ withApys: true });
   assert.ok(!r.failed && r.position);
-  const sol = D.defi.kamino.supply.SOL.qty;
-  assert.ok(Math.abs(r.position.solQty - sol) / sol < 0.01, `SOL ${r.position.solQty} vs data.js ${sol}`);
+  // ⚠️ NAO comparar com `D.defi.kamino.supply.SOL.qty`: a fixture e um retrato de 14/09/2026
+  // (tem ate o USDS, encerrado em 02/10) e o data.js muda a cada deposito ou saque. A versao
+  // antiga exigia os dois a 1% de distancia e quebrou no deposito de 0,7623 SOL de 04/11/2026,
+  // com o dado CERTO dos dois lados. O que este teste prova e o PARSER: que ele le o campo
+  // certo da resposta. Que o data.js esta em dia e papel do /prints (MCP + print), nao daqui.
+  const SOL_NA_FIXTURE = 24.963406995080818346;
+  assert.ok(Math.abs(r.position.solQty - SOL_NA_FIXTURE) < 1e-9, `SOL ${r.position.solQty}`);
   assert.ok(r.position.ltv > 0.05 && r.position.ltv < D.defi.kamino.liqLtv);
   for (const k of ['sol', 'usds', 'borrow']) assert.ok(r.apys[k] > 0 && r.apys[k] < 50, 'APY ' + k);
 });
