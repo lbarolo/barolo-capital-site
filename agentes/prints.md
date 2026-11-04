@@ -155,6 +155,57 @@ em BRL), mas vale acompanhar: se o real continuar caindo, o DCA em dólar encolh
 18,20684 entregues = **~1,2%**, contra os 2,9% de 16/10. Continua valendo medir o aporte pelo USDT
 recebido, que é o que entra no site.
 
+## Estado atual — 04/11/2026 (`asOf` 2026-11-04) — ele está consolidando: SOL da OKX → Kamino, ETH da carteira → AAVE
+**Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,02230989757338056**
+(o USDT foi todo sacado em 29/10 — não há mais delta de USDT).
+
+| | Qtd | APY | Principal |
+|---|---|---|---|
+| AAVE WETH supply | 2,377269240295902472 | 1,71% | **2,354959342722521912** (+0,065219 hoje) |
+| AAVE USDT supply | 0 — sacado em 29/10 | — | 0 |
+| Kamino SOL supply | **25,13** (antes do depósito) | 3,78% | 23,645990 (**pendente**) |
+| Kamino USDC borrow | 457,82 | 5,65% (do print anterior) | 378,599493 |
+
+**Palavras dele:** *"tirei os SOL da OKX e to colocando na KAMINO"* e *"dos $200 em ETH que eu
+tinha na carteira, coloquei 75% na AAVE também"*.
+
+### 1. ETH: depósito de 0,0652 na AAVE ✅ CONFIRMADO on-chain
+Print de sucesso: **0,0652 ETH (US$ 151,15)**, 04/11 09:44, block **26341531**, taxa de rede
+US$ 0,08, APY 1,71%. O MCP confirma: principal **2,289740094733585726 → 2,354959342722521912**,
+delta **0,065219247988936186** — e o juro passou a **0,02230989757338056 @1,7123%** (o print diz
+1,71% ✓).
+
+⚡ **Depósito não muda o holding** — o ETH só sai da carteira e entra no supply, e holdings já
+incluem o colateral. Mudam `defi.aave.supply.WETH` e `principals.aave.WETH`. O holding subiu só
+**+0,000428** (juro desde 31/10). Mesmo tratamento do depósito de 0,08 ETH em 18/09/2026.
+⚠️ **O principal TEM de subir junto**: sem isso o depósito apareceria como juro ganho (bug de
+14/08/2026). Conferido: o juro exibido ficou **0,022310**, não 0,087.
+
+🔸 **Sobrou 0,031390 ETH fora da AAVE** (~US$ 73) = carteira ~0,0296 + Yearn 0,0018. Ele falou em
+"75% dos US$ 200"; pelo on-chain foram **69% de US$ 220** — estimativa de cabeça, sem impacto.
+
+### 2. SOL: saque da OKX feito, depósito na Kamino ⏳ PENDENTE DE CONFIRMAÇÃO
+O print é a tela de **confirmação** (botão carregando, setas de simulação: Net Value 1,87K → 1,94K ·
+LTV 19,64% → 19,06% · Collateral 2,33K → 2,40K). **O depósito em si não foi lançado.**
+
+**O que JÁ foi lançado, porque independe do depósito:**
+- `holdings.SOL` **25,88735038 → 25,892311673** = **+0,01** de yield da Kamino (supply 25,12 → 25,13)
+  **−0,005038707** de taxa de saque da OKX (os 0,76735038 de lá chegaram como **0,762311673** na
+  carteira, campo "Available" do print). Yield a custo zero; a taxa reduz a qty e não o `invested`.
+- Conferência fecha na casa decimal: 25,13 + 0,762311673 = **25,892311673** = o holding.
+- ⚠️ **A composição do SOL mudou**: era Kamino + **OKX**, agora é Kamino + **carteira Solana**.
+
+**O que FALTA quando ele confirmar:** supply → **25,892311673** e `principals.kamino.SOL` →
+**24,408301673** (23,645990 + 0,762311673). Está escrito no comentário do `data.js`.
+
+🔸 **A tela da Kamino agora se chama "SOL/BTC Market"** (antes era só o market principal). Os
+números batem com a nossa posição (dívida 457,82, supply 25,13), então é a MESMA, só renomeada ou
+reorganizada por eles. Conferir no próximo print.
+
+- **Patrimônio US$ 9.088** — SPOT $8.684 + pool $762 + stables $100 − dívida $458. Cards fecham ✓
+  (regra 0 conferida). Sem HF na AAVE (sem dívida) · Kamino LTV 19,6%, liq. LTV 80%.
+- Rewards parados: PYUSD US$ 0,07 (Kamino) + US$ 1,47 (Merkl/AAVE), não lançados.
+
 ## Estado atual — 31/10/2026 (`asOf` 2026-10-31) — review semanal: a POOL ENTROU NO RANGE e já comprou 62% em ETH
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,021881502** · USDT **0** (sem supply
 desde o saque de 29/10 — não há delta de USDT para aplicar).
@@ -798,6 +849,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 04/11/2026 — **consolidação**: ETH da carteira → AAVE (**+0,0652**, confirmado on-chain, principal 2,289740 → **2,354959342722521912**) e SOL da OKX → carteira Solana (chegaram **0,762311673** dos 0,76735038: **0,005038707 de taxa de saque**). Depósito na Kamino **PENDENTE** — quando confirmar, supply → 25,892311673 e principal → 24,408301673. Holding do SOL já ajustado (+0,01 de yield − a taxa). Patrimônio US$ 9.088, cards fecham. 🔸 A Kamino renomeou a tela para "SOL/BTC Market".
 - 31/10/2026 — **review semanal (5 prints)**: a **pool v4 entrou no range em 2 dias** e já está **62% comprada em ETH** (0,203 ETH + 276,28 USDC), fees **US$ 28,50** não coletadas, **PnL +18,67 (+2,5%)** — o oposto do ciclo de 26/08 que fechou 0 a 0. AAVE: WETH 2,3116215 @**2,43%** (CF subiu p/ 84%), sem dívida, juro derivado do print por falta do MCP. Kamino: SOL 25,12 @3,72%, borrow **457,56 @5,65%** (3ª semana cedendo), LTV 18,99%, liq. US$ 22,77. Holdings: ETH +0,000389422 e SOL +0,03 de yield custo zero — **o SOL fecha exato contra a OKX (25,12 + 0,76735037 = 25,88735037)**. `cgMirror` conferido nos 11 tokens. Líquido **US$ 9.006,51** (−3,1% vs 29/10, só preço). Regra 0 conferida. 🔸 BABY US$ 0,36 na OKX fora do site (dust).
 - 30/10/2026 (2) — **print do portfólio**: `cgMirror` acertado em 3 (ETH **2,404903374** — ele corrigiu para 0,04332; BTC **0,00735063**; USDT **100,20676194**, saída dos que viraram a pool). 7 tokens batem na casa decimal. Sobra 1,3 centavo de USDT (o aporte de hoje não lançado lá). ⚠️ O GP do CoinGecko virou −US$ 398,28 por **artefato** da saída do USDT (custo ficou, qty saiu) — não é perda; o canônico é o site. Yield pendente ~US$ 11,83.
 - 30/10/2026 — **aporte semanal (sexta)**: R$ 100,00 → 18,20684 USDT @ **5,4924** (taxa zero) → 0,00023548 BTC líquido @ 77.244. `contributions` +US$ 18,21 (outubro fecha com **5 aportes, US$ 146,27**); BTC 0,00711206 → **0,00734754**; `TOTAL_INVESTED` → **9.685,79**; Fiscal → **R$ 38.332,97**. ⚠️ Câmbio +8,1% na semana (5,0822 → 5,4924): os mesmos R$ 100 renderam US$ 18,21 contra 19,68. Topo do dashboard conferido (regra 0): cards fecham, HF "—", pool US$ 743.
