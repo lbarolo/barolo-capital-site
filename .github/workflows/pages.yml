@@ -1,0 +1,57 @@
+name: Publicar site no GitHub Pages (só os arquivos do site)
+
+# Publica SÓ o que scripts/build-pages.js lista (páginas, data.js, lib/, JSONs de dados).
+# CLAUDE.md, QUANT.md, agentes/, tests/, scripts/, .claude/ ... NÃO vão ao ar.
+#
+# PRÉ-REQUISITO MANUAL: Settings -> Pages -> Source = "GitHub Actions".
+#
+# Gatilhos: push na main; fim de cada Action que commita dados (commits feitos com
+# GITHUB_TOKEN NAO disparam workflows de push, por isso o workflow_run); manual; e um cron de seguranca.
+
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows:
+      - "Atualizar benchmark de aporte equivalente (benchmark-data.js)"
+      - "Briefing diário de mercado"
+      - "Fechamento mensal da curva de patrimônio (data.js)"
+      - "Snapshot diário do patrimônio (networth-history.json)"
+      - "Atualizar dados on-chain (aba Ciclo · ferramentas.html)"
+      - "Sincroniza data.js embutido no emprestimos.html"
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '30 11 * * *'   # ~08:30 BRT, depois de todos os robos de dados
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Montar _site (falha se faltar arquivo ou houver referencia quebrada)
+        run: node scripts/build-pages.js _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
