@@ -155,6 +155,30 @@ em BRL), mas vale acompanhar: se o real continuar caindo, o DCA em dólar encolh
 18,20684 entregues = **~1,2%**, contra os 2,9% de 16/10. Continua valendo medir o aporte pelo USDT
 recebido, que é o que entra no site.
 
+
+### ✅ 06/11/2026 (sexta) — APORTE feito, mas a compra de BTC ficou PENDENTE
+
+**R$ 100,00 → 17,88726373 USDT** @ **5,5906** (par USDT/BRL, 14:49:14, taxa ZERO).
+`contributions` +**US$ 17,89** · `stables.USDT` 100,219828 → **118,10709173** (invested 824,47 →
+**842,36**) · `TOTAL_INVESTED` → **9.703,68** · Fiscal → **R$ 38.432,97** (USDT 3.143,94 un).
+
+⏳ **Diferente das semanas anteriores, o USDT não virou BTC no mesmo minuto.** Ele deixou uma
+**ordem de compra em aberto** e avisa quando bater. Até lá os 17,89 ficam como caixa em USDT na
+OKX. **Quando executar é ROTAÇÃO** (o custo migra para o BTC), não aporte novo — o aporte já está
+contado. Mesmo tratamento das ordens limite de 24/10.
+
+⚠️ **O CÂMBIO JÁ SUBIU 10% EM TRÊS SEMANAS** e isso está corroendo o DCA em dólar:
+
+| Sexta | Câmbio | R$ 100 viraram |
+|---|---|---|
+| 23/10 | 5,0822 | US$ 19,68 |
+| 30/10 | 5,4924 | US$ 18,21 |
+| **06/11** | **5,5906** | **US$ 17,89** |
+
+São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não há o que fazer do lado
+da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
+do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
+
 ## Estado atual — 06/11/2026 (`asOf` 2026-11-06) — review semanal: dia vermelho, posição intacta
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,022523655** — ⚠️ **derivado do
 print, sem MCP da Aave nesta sessão** (mesma conta de 31/10): `(5.312,58 − 50,33) / 2,354959342722521912`
@@ -962,6 +986,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 06/11/2026 — **aporte semanal (sexta)**: R$ 100,00 → **17,88726373 USDT** @ **5,5906** (taxa zero). `contributions` +US$ 17,89 → `TOTAL_INVESTED` **9.703,68**; USDT 100,219828 → **118,10709173**; Fiscal **R$ 38.432,97**. ⏳ **A compra de BTC ficou em ordem aberta** — quando bater é rotação, não aporte; ele avisa. ⚠️ Câmbio +10% em 3 semanas (5,0822 → 5,5906): os mesmos R$ 100 renderam US$ 17,89 contra 19,68.
 - **06/11/2026** — review semanal (4 prints: AAVE, Kamino, CoinGecko, OKX). Sem movimentação: principals batem na casa decimal. AAVE WETH 2,377484 @1,71% (juro derivado do print, sem MCP) · Kamino SOL 25,90 @4,44%, borrow 457,95 @5,41% (4ª queda seguida), LTV 19,63%, SOL liquida em US$ 22,10. Pool ETH/USDC v4 em 8 dias: 74,39% em ETH, pooled 730,48 + 45,13 de fees, **PnL +32,49 (+4,37%)**. Patrimônio **US$ 8.824** (−US$ 264, −2,9%, tudo preço). Yield pendente US$ 6,15, segurando até o fechamento. **Faltou o print do aporte (7 dias sem).**
 - 04/11/2026 — **consolidação**: ETH da carteira → AAVE (**+0,0652**, confirmado on-chain, principal 2,289740 → **2,354959342722521912**) e SOL da OKX → carteira Solana (chegaram **0,762311673** dos 0,76735038: **0,005038707 de taxa de saque**). Depósito na Kamino **confirmado no mesmo dia**: supply **25,892311673**, principal **24,408301673**, LTV 19,06%, juro retido intacto em 1,484010. Holding do SOL já ajustado (+0,01 de yield − a taxa). Patrimônio US$ 9.088, cards fecham. 🔸 A Kamino renomeou a tela para "SOL/BTC Market".
 - 31/10/2026 — **review semanal (5 prints)**: a **pool v4 entrou no range em 2 dias** e já está **62% comprada em ETH** (0,203 ETH + 276,28 USDC), fees **US$ 28,50** não coletadas, **PnL +18,67 (+2,5%)** — o oposto do ciclo de 26/08 que fechou 0 a 0. AAVE: WETH 2,3116215 @**2,43%** (CF subiu p/ 84%), sem dívida, juro derivado do print por falta do MCP. Kamino: SOL 25,12 @3,72%, borrow **457,56 @5,65%** (3ª semana cedendo), LTV 18,99%, liq. US$ 22,77. Holdings: ETH +0,000389422 e SOL +0,03 de yield custo zero — **o SOL fecha exato contra a OKX (25,12 + 0,76735037 = 25,88735037)**. `cgMirror` conferido nos 11 tokens. Líquido **US$ 9.006,51** (−3,1% vs 29/10, só preço). Regra 0 conferida. 🔸 BABY US$ 0,36 na OKX fora do site (dust).
