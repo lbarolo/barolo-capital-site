@@ -53,7 +53,10 @@ for (const h of all) {
     } catch (e) { /* segue sem USD */ }
   }
   const usdOf = p => (prices[p.cgId] && prices[p.cgId].usd) ? p.delta * prices[p.cgId].usd : null;
-  const totalUsd = pend.reduce((s, p) => s + (usdOf(p) || 0), 0);
+  // Total = SO os deltas POSITIVOS (decisao do Lucas, 31/10/2026). Delta negativo nao e
+  // yield — e a qty bruta vs liquida das compras (taxa) ou lancamento faltando — e nunca
+  // se lanca, entao somar no total daria um numero que ele nao pode usar como lista.
+  const totalUsd = pend.reduce((s, p) => s + (p.delta > 0 ? (usdOf(p) || 0) : 0), 0);
 
   if (JSON_OUT) {
     console.log(JSON.stringify({ asOf: B.asOf, pendencias: pend.map(p => ({ ...p, usd: usdOf(p) })), totalUsd }, null, 2));

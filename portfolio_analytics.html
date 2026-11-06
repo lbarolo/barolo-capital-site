@@ -2316,7 +2316,10 @@ function buildCgMirrorCard(){
   var delta = h.qty - cg;
   if (Math.abs(delta) <= EPS) return;
   var usd = delta * getPrice(h.cgId);
-  totalUsd += usd;
+  // Total = SO os positivos (decisao do Lucas, 31/10/2026). Delta negativo nao e yield
+  // (e a qty bruta vs liquida das compras, ou um lancamento faltando) e nunca se lanca —
+  // somar no total daria um numero que ele nao pode usar como lista no fechamento.
+  if (delta > 0) totalUsd += usd;
   rows.push({ t:h.ticker, delta:delta, usd:usd, cg:cg, site:h.qty });
  });
 
@@ -2329,7 +2332,8 @@ function buildCgMirrorCard(){
   return '<div><span style="display:inline-block;min-width:52px;color:var(--text);">' + r.t + '</span>' +
    '<span class="' + cls + '">' + sign + Math.abs(r.delta).toFixed(dec(r.delta)) + '</span>' +
    '<span style="color:var(--muted);"> &nbsp;·&nbsp; ' + fmtCurrency(Math.abs(r.usd), 2) + ' &nbsp;·&nbsp; ' +
-   r.cg + ' → ' + r.site + '</span></div>';
+   r.cg + ' → ' + r.site +
+   (r.delta < 0 ? ' &nbsp;·&nbsp; <span style="color:var(--red);">não lançar</span>' : '') + '</span></div>';
  }).join('');
  document.getElementById('cgMirrorTotal').textContent = fmtCurrency(totalUsd, 2) + ' a lançar';
  card.style.display = '';

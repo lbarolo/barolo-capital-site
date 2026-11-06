@@ -283,10 +283,14 @@ espelho tinha sido acertado sem print.
   pendente"*. ⚠ **NÃO igualar o `cgMirror` ao holding até ele CONFIRMAR que lançou** — ele quer a
   pendência visível no card para usar como lista no fechamento. Registrado também no comentário do
   `cgMirror` no `data.js`, para nenhuma sessão futura zerar por hábito.
-  O card renderiza **"$3,47 a lançar"** e não $3,71: o total soma as 3 linhas, e a do BTC entra
-  **negativa** (−US$ 0,24). O que ele deve lançar são as duas linhas verdes (ETH + SOL = US$ 3,71);
-  a do BTC é a taxa das compras e **não se lança**. Se o total misturado virar confusão no
-  fechamento, a saída é somar só os deltas positivos no card — **mudança de UI, pedir antes**.
+  ✅ **RESOLVIDO em 31/10/2026, a pedido dele ("pode somar só os positivos no card"):** o total do
+  card e o do `yield-to-mirror` passaram a somar **só os deltas positivos**. Antes o card dizia
+  "$3,47 a lançar" em vez de $3,71 porque a linha do BTC entrava **negativa** no total (−US$ 0,24).
+  Delta negativo nunca é yield — é a qty bruta vs líquida das compras (taxa) ou um lançamento
+  faltando — e **não se lança**, então somá-lo dava um número que ele não podia usar como lista.
+  As linhas negativas continuam visíveis (são informação) e agora levam um **"não lançar"** em
+  vermelho, para o total fechar com o que está listado. Os dois lugares (card e script) têm que
+  seguir concordando — se mexer em um, mexer no outro.
 - 🔸 **BABY (Babylon) 29,20272757 — US$ 0,36 — aparece na OKX e não está em lugar nenhum do site.** Dust,
   mesmo critério dos 0,74 USDC e do gas. Só vale lançar se um dia crescer.
 - ✅ **Topo do dashboard conferido (regra 0)** com preços injetados: `ev-net` $9.007 · `ev-debt` $458 ·
