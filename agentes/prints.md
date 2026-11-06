@@ -155,7 +155,83 @@ em BRL), mas vale acompanhar: se o real continuar caindo, o DCA em dólar encolh
 18,20684 entregues = **~1,2%**, contra os 2,9% de 16/10. Continua valendo medir o aporte pelo USDT
 recebido, que é o que entra no site.
 
-## Estado atual — 04/11/2026 (`asOf` 2026-11-04) — ele está consolidando: SOL da OKX → Kamino, ETH da carteira → AAVE
+## Estado atual — 06/11/2026 (`asOf` 2026-11-06) — review semanal: dia vermelho, posição intacta
+**Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,022523655** — ⚠️ **derivado do
+print, sem MCP da Aave nesta sessão** (mesma conta de 31/10): `(5.312,58 − 50,33) / 2,354959342722521912`
+dá o preço do oráculo **US$ 2.234,54**; `50,33 / 2.234,54 = 0,022523655`; principal + isso = **2,377483**
+e o card mostra **2,3775** ✓. **Conferir contra o MCP no próximo review.**
+
+| | Qtd | APY | Principal |
+|---|---|---|---|
+| AAVE WETH supply | **2,377484** | 1,71% (estável) | 2,354959342722521912 (inalterado) |
+| AAVE USDT supply | 0 — sacado em 29/10 | — | 0 |
+| AAVE USDC borrow | 0 — quitada em 23/10 | — | 0 |
+| Kamino SOL supply | **25,90** | **4,44%** (era 3,78%) | 24,408301673 (inalterado) |
+| Kamino USDC borrow | **457,95** | **5,41%** (era 5,65%) | 378,599493 |
+
+**Prints recebidos (4):** AAVE colateral, Kamino SOL/BTC, portfólio CoinGecko, portfólio OKX.
+**Faltaram:** print da **pool** e print de **aporte** — ele avisou (*"esses são os dados da semana por
+enquanto"*). Nada foi inventado no lugar dos dois.
+
+### Semana sem movimentação — só preço e juro
+Os dois principals batem com o `data.js` na casa decimal, então **não houve depósito, saque nem
+reempréstimo**. Tudo que mudou foi preço de mercado e juro corrido.
+
+✅ **O 25,90 da Kamino tem 2 casas no card, mas DOIS cruzamentos independentes caem exatos nele:**
+liq. price `457,86 / (25,90 × 0,80)` = **US$ 22,10** ✓ (o card mostra 22,10) e LTV
+`457,86 / (25,90 × 90,07)` = **19,63%** ✓ (o card mostra 19,63%). Não é arredondamento solto.
+
+✅ **A OKX confirma o saque total de SOL de 04/11:** o print do portfólio **não lista SOL** — só BRL,
+BTC, BABY, USDT e ETH. Então holding = supply da Kamino. ⚠️ **Mesmo assim o yield segue entrando por
+DELTA** (regra 4): se ele comprar SOL fora de novo, igualar ao supply apagaria a compra.
+
+✅ **Conciliação site × CoinGecko × OKX fecha nos 11 tokens.** 8 batem na casa decimal; os 3 que
+divergem são exatamente as pendências conhecidas:
+- ETH **+0,001031** e SOL **+0,04265** = o yield que ele está segurando para lançar no fechamento;
+- BTC **−0,00000309** = a taxa das compras (CoinGecko conta bruto, site líquido), **nunca se lança**.
+- **OKX BTC 0,00733256** vs site 0,00734754 = **0,00001498**, idêntico ao 0,00001497 documentado em
+  02/10 (taxas das compras antigas) — confirma que não houve compra de BTC não registrada.
+
+### Números
+- **Patrimônio líquido US$ 8.810** (ETH 2.237,26 · SOL 90,07 · BTC 75.880,01) contra US$ 9.088 em
+  04/11 = **−US$ 278 (−3,1%)**, **tudo preço**. Dia vermelho: o CoinGecko marca −5,9% em 24h
+  (ETH −7,6% · SOL −6,5% · BTC −5,4%).
+- Dívida **US$ 457,95**, só Kamino. **Sem HF na AAVE** (sem dívida). Kamino LTV **19,63%**
+  (era 19,06%) · liq. LTV 80% · **SOL liquida em US$ 22,10** (−75,5%), era 22,77.
+  O LTV subiu e o preço de liquidação caiu **sem dívida nova** — foi o SOL encolhendo o colateral.
+  Dívida/patrimônio **5,2%**.
+- **Carry +US$ 14,15/mês** — supply US$ 194,53/ano (AAVE WETH 90,96 + Kamino SOL 103,58) − borrow
+  US$ 24,78/ano. Colateral: AAVE US$ 5.319 · Kamino US$ 2.333.
+- **Borrow da Kamino cedeu pela 4ª semana seguida:** 8,88% → 6,06% → 5,65% → **5,41%**.
+- **Yield pendente no CoinGecko: US$ 6,15** (ETH +0,001031 = US$ 2,31 · SOL +0,04265 = US$ 3,84).
+  ⏸ **Segurando por decisão dele** (31/10) — lançar no fechamento; **não igualar o `cgMirror`** antes
+  de ele confirmar. O card já soma só os positivos e marca o BTC como "não lançar".
+- Rewards parados: Kamino **KMNO US$ 5,54** (era 5,18) + PYUSD US$ 0,07 · Uniswap 2,35 USDC ·
+  Merkl/AAVE 1,47 USDC. Nenhum lançado (regra: só entra quando resgatado).
+- Kamino **Interest Earned lifetime +US$ 183,10** (era 181,63 em 31/10).
+
+### Para o próximo review
+- ⚠️ **Pool sem print há 8 dias.** O bloco `defi.uniswapV3` está congelado no print de **31/10**
+  (pooled 733,29 · fees 28,50 · PnL +18,67 · `daysOpen` 2). É a maior peça móvel da carteira
+  (**US$ 762** no card) e não dá para atualizar sem print. **Pedir, com o APR do painel** — o
+  armazenado (72,09/50,25) é o da abertura de propósito.
+- ⚠️ **Aporte de sexta ainda não apareceu** — último foi **30/10** (US$ 18,21), há **7 dias**;
+  `contributions` de novembro está **vazia**.
+- 🔸 **A ordem limite (b) está a 2,1% de executar:** 100 USDT reservados na carteira EVM para comprar
+  0,04564 ETH @ **US$ 2.191,11**, e o ETH fechou em **2.237,26** depois de cair 7,6% em 24h.
+  **Vence 23/11/2026.** Quando executar é **ROTAÇÃO** (o custo migra do USDT para o ETH), nunca aporte.
+  É aqui que vivem os ~100,22 USDT do site — a OKX tem só 0,00027.
+- 🔸 **BABY (Babylon) subiu 29,20272757 → 31,69777122** na OKX (+2,49, provável recompensa de stake).
+  Segue **US$ 0,36** — dust, fora do site pelo mesmo critério dos 0,74 USDC e do gas.
+- 🔸 **CF do WETH na AAVE está em 84%** (subiu de 83% em 31/10), mas a regra 13 deste caderno e o
+  `lendingSnapshot` do `data.js` usam **83%**. **Sem efeito hoje** (sem dívida na AAVE → HF null),
+  mas subestimaria o HF se ele voltar a tomar emprestado lá. Anotado em `agentes/bugs.md`.
+- ✅ **Topo do dashboard conferido (regra 0)**, com os preços do print: `ev-net` $8.810 ·
+  `ev-debt` $458 · `ev-lev` 5,2% · `ev-hf-aave` "—" com "sem dívida na AAVE" · `ev-hf-kamino` 19,6% ·
+  `ev-yield` +$14 líq. · `s-spot` $8.406 · `s-pool` $762 · `s-debt` −$458 "Kamino USDC" ·
+  `s-stables` $100. Os 4 cards somam **8.406 + 762 + 100 − 458 = 8.810** ✓
+
+## Estado atual (ANTERIOR) — 04/11/2026 (`asOf` 2026-11-04) — ele está consolidando: SOL da OKX → Kamino, ETH da carteira → AAVE
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,02230989757338056**
 (o USDT foi todo sacado em 29/10 — não há mais delta de USDT).
 
@@ -865,6 +941,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- **06/11/2026** — review semanal (4 prints: AAVE, Kamino, CoinGecko, OKX). Sem movimentação: principals batem na casa decimal. AAVE WETH 2,377484 @1,71% (juro derivado do print, sem MCP) · Kamino SOL 25,90 @4,44%, borrow 457,95 @5,41% (4ª queda seguida), LTV 19,63%, SOL liquida em US$ 22,10. Patrimônio **US$ 8.810** (−US$ 278, −3,1%, tudo preço). Yield pendente US$ 6,15, segurando até o fechamento. **Faltaram print da pool (congelada em 31/10) e do aporte (7 dias sem).**
 - 04/11/2026 — **consolidação**: ETH da carteira → AAVE (**+0,0652**, confirmado on-chain, principal 2,289740 → **2,354959342722521912**) e SOL da OKX → carteira Solana (chegaram **0,762311673** dos 0,76735038: **0,005038707 de taxa de saque**). Depósito na Kamino **confirmado no mesmo dia**: supply **25,892311673**, principal **24,408301673**, LTV 19,06%, juro retido intacto em 1,484010. Holding do SOL já ajustado (+0,01 de yield − a taxa). Patrimônio US$ 9.088, cards fecham. 🔸 A Kamino renomeou a tela para "SOL/BTC Market".
 - 31/10/2026 — **review semanal (5 prints)**: a **pool v4 entrou no range em 2 dias** e já está **62% comprada em ETH** (0,203 ETH + 276,28 USDC), fees **US$ 28,50** não coletadas, **PnL +18,67 (+2,5%)** — o oposto do ciclo de 26/08 que fechou 0 a 0. AAVE: WETH 2,3116215 @**2,43%** (CF subiu p/ 84%), sem dívida, juro derivado do print por falta do MCP. Kamino: SOL 25,12 @3,72%, borrow **457,56 @5,65%** (3ª semana cedendo), LTV 18,99%, liq. US$ 22,77. Holdings: ETH +0,000389422 e SOL +0,03 de yield custo zero — **o SOL fecha exato contra a OKX (25,12 + 0,76735037 = 25,88735037)**. `cgMirror` conferido nos 11 tokens. Líquido **US$ 9.006,51** (−3,1% vs 29/10, só preço). Regra 0 conferida. 🔸 BABY US$ 0,36 na OKX fora do site (dust).
 - 30/10/2026 (2) — **print do portfólio**: `cgMirror` acertado em 3 (ETH **2,404903374** — ele corrigiu para 0,04332; BTC **0,00735063**; USDT **100,20676194**, saída dos que viraram a pool). 7 tokens batem na casa decimal. Sobra 1,3 centavo de USDT (o aporte de hoje não lançado lá). ⚠️ O GP do CoinGecko virou −US$ 398,28 por **artefato** da saída do USDT (custo ficou, qty saiu) — não é perda; o canônico é o site. Yield pendente ~US$ 11,83.

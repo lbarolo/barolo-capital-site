@@ -35,6 +35,14 @@
 `[ALTA|MÉDIA|BAIXA] arquivo:linha — o que está errado · evidência (valor visto × esperado) · correção sugerida`
 
 ## Achados em aberto
+
+### 🔸 BAIXA — CF do WETH na AAVE está em 84%, o site usa 83% (achado em 06/11/2026 pelo `/prints`)
+A AAVE subiu o collateral factor do WETH de **83% para 84%** (visível no print de 31/10 e confirmado no de 06/11). A regra 13 de `agentes/prints.md` e o `lendingSnapshot` do `data.js` ainda usam **0,83**.
+
+**Sem efeito hoje:** não há dívida na AAVE desde a quitação de 23/10, então o HF é `null` e a fórmula não roda. Passa a importar **no dia em que ele voltar a tomar emprestado lá** — aí o HF de fallback sairia ~1,2% mais baixo que o real.
+
+⚠ Mexer no `lendingSnapshot` muda também o `defi.hf` já gravado em `networth-history.json` (66+ pontos com backfill), então não é troca de constante e pronto: ou só passa a valer daí para a frente, ou o histórico fica inconsistente. **Decidir antes de corrigir.**
+
 _(varredura 22/10/2026, nova)_
 - [MÉDIA] `CLAUDE.md` duplicado: a partir da ~linha 7765 (comando bash truncado) repete "Estrutura de arquivos", sessões e KB inteira (≈7,6k linhas de cópia, lidas a cada sessão). Truncar no fim do 1º bloco (KB-END) e restaurar "Rotinas combinadas" do trecho íntegro — decisão do Lucas (é o arquivo de instruções dele).
 - [MÉDIA] `scripts/eth-sweep.js` lê carteiras/key do `CLAUDE.md` (que o `.gitignore` manda tirar do git): ler de `lib/barolo-chain.js` CONFIG ou aposentar o workflow.
