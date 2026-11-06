@@ -239,6 +239,33 @@ traz APR nenhum** — então o pedido de 31/10 ("pedir o APR do painel") não te
 esta tela. O realizado em 8 dias anualiza para **~277%/ano** (45,13 / 743,12 / 8 × 365), alto demais
 para publicar como se fosse taxa. **Decisão do Lucas se quer o realizado no site.**
 
+### 🔗 Link do par registrado — e 4 coisas erradas no card da pool
+Ele mandou a página do par (`app.uniswap.org/explore/pools/ethereum/0x9831…`) e **fez questão de
+frisar: é o link do PAR, não da posição dele.** Guardado em `data.js → defi.uniswapV3.pairUrl`.
+✅ **Pode ir em link público:** o `0x98…` é o *poolKey* da v4 (32 bytes) e identifica o **mercado**
+ETH/USDC, como qualquer par. A política de privacidade proíbe **endereço de carteira e ID de
+posição** em URL — não o id de um par. A posição dele segue só atrás de `/positions`.
+
+Ao procurar onde encaixar o link, o card da LP em `pools.html` estava **se contradizendo**: o
+cabeçalho dizia *WETH/USDG 0.01% · Robinhood Chain* (pool fechada em agosto) enquanto o badge ao
+lado, esse sim vindo do `data.js`, dizia *ETH/USDC v4 · Ethereum*. Quatro trechos eram HTML fixo que
+o script de sincronia nunca tocava:
+
+| O que mostrava | Agora |
+|---|---|
+| `⬡ WETH/USDG` / `0.01% · Robinhood Chain` | **ETH/USDC v4** / Dynamic · VolatilePairHook · Ethereum |
+| sub do APR: *"ciclo 26/08-28/08 fechado 0 a 0"* | **fee APR do painel na abertura (29/10/2026)** |
+| CUSTO BORROW AAVE **−3,79%** · APR LÍQUIDO **−3,79%** | **0,00%** · **+50,25%** |
+| sub do link: *WETH/USDG · Robinhood Chain* | **ETH/USDC v4 · … · página do par** |
+
+⚠ **A causa do custo de borrow travado era um `||` comendo o zero legítimo:**
+`(... apy * 100) || null`. Com a dívida da AAVE **quitada em 23/10** o APY é `0`, que é falsy, virava
+`null`, o bloco inteiro era pulado e o card ficava nos **−3,79% de agosto** — mostrando a pool como
+se estivesse perdendo 3,79% a.a. quando não há dívida nenhuma por trás dela. Trocado por teste de
+existência. O badge também parou de repetir o nome do par (agora: *POSIÇÃO ABERTA — desde 29/10/2026
+(8 dias)*), e o link de baixo aponta para o par; `/positions` continua no botão do cabeçalho.
+**Os dois caminhos foram testados no navegador** — pool aberta e pool fechada (simulada).
+
 ### Números
 - **Patrimônio líquido US$ 8.824** (ETH 2.237,26 · SOL 90,07 · BTC 75.880,01) contra US$ 9.088 em
   04/11 = **−US$ 264 (−2,9%)**, **tudo preço**. Dia vermelho: o CoinGecko marca −5,9% em 24h

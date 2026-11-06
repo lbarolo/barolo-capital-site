@@ -363,6 +363,12 @@ window.BAROLO_DATA = {
       capital:743.12, pooled:730.48, totalFees:45.13, uncollectedFees:45.13,
       il:12.64, pnl:32.49, apr:72.09, daysOpen:8, openDate:'2026-10-29', closeDate:null,
       rangeMin:2190.79, rangeMax:2347.75, poolApr:72.09, feeApr:50.25,
+      // ⚡ PAGINA DO PAR na Uniswap, NAO da posicao dele (ele fez questao de frisar isso em
+      // 06/11/2026: "e o link do par da pool, nao da minha pool"). O 0x98... e o poolKey da v4
+      // (32 bytes) e identifica o MERCADO ETH/USDC — e publico, igual a qualquer par. Por isso
+      // pode ir em link publico no site: a politica de privacidade proibe endereco de carteira e
+      // ID de posicao em URL, nao o id de um par. A posicao dele continua so em app.uniswap.org/positions.
+      pairUrl:'https://app.uniswap.org/explore/pools/ethereum/0x98316e8405502774a5d0a0761276b5d26505a8195c1905169864008d5e7a3eea',
       // ── PRINT 06/11/2026 (8 dias de pool) — SEGUIU COMPRANDO A QUEDA ──────────
       // Position US$ 730,48 · IN RANGE · market 2.229,80 (range 2.190,79-2.347,75).
       // Composicao 74,39% ETH / 25,61% USDC = 0,243 ETH (US$ 543,38) + 187,10 USDC.
