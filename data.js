@@ -360,9 +360,32 @@ window.BAROLO_DATA = {
       // ⚡ POOL NOVA — 29/10/2026. O ciclo WETH/USDG (Robinhood) ja esta fechado e
       // registrado em `poolHistory` (3 linhas, 14/07 a 28/08); nada se perde aqui.
       pool:'ETH/USDC v4 (Dynamic · VolatilePairHook)', network:'Ethereum', status:'active',
-      capital:743.12, pooled:733.29, totalFees:28.50, uncollectedFees:28.50,
-      il:9.83, pnl:18.67, apr:72.09, daysOpen:2, openDate:'2026-10-29', closeDate:null,
+      capital:743.12, pooled:730.48, totalFees:45.13, uncollectedFees:45.13,
+      il:12.64, pnl:32.49, apr:72.09, daysOpen:8, openDate:'2026-10-29', closeDate:null,
       rangeMin:2190.79, rangeMax:2347.75, poolApr:72.09, feeApr:50.25,
+      // ── PRINT 06/11/2026 (8 dias de pool) — SEGUIU COMPRANDO A QUEDA ──────────
+      // Position US$ 730,48 · IN RANGE · market 2.229,80 (range 2.190,79-2.347,75).
+      // Composicao 74,39% ETH / 25,61% USDC = 0,243 ETH (US$ 543,38) + 187,10 USDC.
+      // Em 31/10 estava 62,32% ETH; o ETH caiu de 2.248,51 para 2.229,80 e a pool
+      // comprou mais 0,040 ETH. E o desenho funcionando: quanto mais cai, mais ETH.
+      //
+      // Earnings do painel US$ 47,47 — de novo TRES coisas, so duas entram aqui:
+      //   fees ETH   US$ 22,54 (0,010 ETH)  47,48%  -> uncollectedFees
+      //   fees USDC  US$ 22,59 (22,59 USDC) 47,58%  -> uncollectedFees
+      //   rewards    US$  2,35 (2,35 USDC)   4,94%  -> NAO lancado (nao resgatado)
+      // Fees = 22,54 + 22,59 = 45,13. Com os rewards daria 47,48 contra os 47,47 do
+      // painel: 1 centavo de arredondamento. Os percentuais recalculados batem com os
+      // do print (47,47 / 47,58 / 4,95 contra 47,48 / 47,58 / 4,94).
+      //
+      // il  = capital - pooled = 743,12 - 730,48 = 12,64 (era 9,83)
+      // pnl = pooled + fees - capital = 32,49, e confere pelo outro lado: 45,13 - 12,64.
+      //       +4,37% sobre o capital em 8 dias.
+      // ⚠ `apr`/`poolApr`/`feeApr` SEGUEM OS DA ABERTURA (72,09 / 50,25) de proposito.
+      // O print da posicao v4 nao traz APR nenhum, e o realizado em 8 dias anualiza para
+      // ~277%/ano (45,13 / 743,12 / 8 x 365) — numero alto demais para publicar como se
+      // fosse taxa. Se o Lucas quiser o realizado no site, e decisao dele; ate la fica o
+      // do painel, que e o unico que a Uniswap chancelou.
+      //
       // ── PRINT 31/10/2026 (2 dias de pool) — ELA ENTROU NO RANGE E COMPROU ──────
       // Position US$ 733,29 · IN RANGE · market 2.248,51 (range 2.190,79-2.347,75).
       // Composicao 62,32% ETH / 37,68% USDC = 0,203 ETH (US$ 457,01) + 276,28 USDC.
@@ -648,7 +671,7 @@ window.BAROLO_DATA = {
       //       posicao aberta) estava errada. Derivar o estado de uma posicao so
       //       vale depois de confirmar que a posicao existe — checar o Diario
       //       DeFi do Notion ANTES, nao depois.
-      note:'POOL DE COMPRA ATIVA (inverso da saida gradual): entra em USDC e vira ETH conforme o preco CAI dentro do range. Print de 31/10, 2 dias depois de aberta: IN RANGE, 62,32% ja convertida em ETH (0,203 ETH + 276,28 USDC), +US$ 18,67 de resultado. O ciclo ANTERIOR (WETH/USDG 0.01% na Robinhood, aberto 26/08) fechou 0 a 0 em ~28/08 sem gerar taxa nenhuma (fonte: Diario DeFi do Notion, secao "FECHADA 0 A 0") — o ETH nunca voltou para dentro do range; os ~$410 viraram USDT e foram para a AAVE. Esta esta tendo o destino oposto: entrou no range em 2 dias.'
+      note:'POOL DE COMPRA ATIVA (inverso da saida gradual): entra em USDC e vira ETH conforme o preco CAI dentro do range. Print de 06/11, 8 dias depois de aberta: IN RANGE, 74,39% ja convertida em ETH (0,243 ETH + 187,10 USDC), +US$ 32,49 de resultado (+4,37% sobre o capital). Em 31/10 estava em 62,32% \u2014 seguiu comprando a queda. O ciclo ANTERIOR (WETH/USDG 0.01% na Robinhood, aberto 26/08) fechou 0 a 0 em ~28/08 sem gerar taxa nenhuma (fonte: Diario DeFi do Notion, secao "FECHADA 0 A 0") — o ETH nunca voltou para dentro do range; os ~$410 viraram USDT e foram para a AAVE. Esta esta tendo o destino oposto: entrou no range em 2 dias.'
     }
   },
 
