@@ -47,7 +47,8 @@
 `[CRÍTICO|ALTO|MÉDIO|INFO] onde — o risco · evidência · o que fazer · quem faz (Claude via /corrigir | Lucas)`
 
 ## Achados em aberto
-- [MÉDIO · Lucas] Dado pessoal em `.md` público: idade ("31 anos"), renda necessária, saúde. Decidir se tira. (22/10/2026)
+- [VERIFICAR · Claude] Gatilho `workflow_run` do `pages.yml` ainda não foi visto em produção (só dispara quando uma Action de dados termina). Na próxima atualização automática de `data.js`/`btc-onchain.json`, conferir em Actions se "Publicar site no GitHub Pages" rodou logo depois; se não, o cron diário (11:30 UTC) cobre. (07/11/2026)
+- [MÉDIO · Lucas] Dado pessoal em `.md` público (os `.md` saíram do site em 07/11, mas o repo segue público no GitHub): idade ("31 anos"), renda necessária, saúde. Decidir se tira. (22/10/2026)
 - [INFO · Lucas] Login ADM/102030 do index é só client-side e não protege nada; assumir como atalho ou usar StatiCrypt/Cloudflare Access. (22/10/2026)
 - [BAIXA] SRI/versão fixa nas libs lazy (zoom/annotation em `ferramentas.html`, Chart.js em `pools.html` lazy) e `sync-emprestimos.yml` ainda em checkout/setup-node v4. (22/10/2026)
 - [MÉDIO · Lucas] Restringir por domínio as chaves Alchemy, Helius e Blockfrost nos painéis de
