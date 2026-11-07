@@ -1012,6 +1012,15 @@ git push https://lbarolo:TOKEN@github.com/lbarolo/barolo-capital-site.git main
 
 Claude pode rodar esse comando diretamente quando solicitado. Após o push, o site atualiza em ~1-2 minutos.
 
+⚡ **Desde 07/11/2026 o Pages NÃO serve mais o repositório inteiro** (Settings → Pages → Source = *GitHub Actions*).
+A Action `pages.yml` roda `scripts/build-pages.js`, que monta `_site/` só com os 6 `.html`, `lib/`, `data.js`,
+`diario.js`, `benchmark-data.js`, `ui-polish.css`, os JSONs de dados, `robots.txt`, `CNAME` e `.nojekyll`.
+`CLAUDE.md`, `QUANT.md`, `agentes/`, `tests/`, `scripts/`, `.claude/` e `package.json` dão **404** no domínio.
+**Criou um arquivo que uma página passa a carregar?** Acrescente em `FILES`/`DIRS` de `scripts/build-pages.js` —
+senão ele não vai ao ar e `tests/pages-build.test.js` falha apontando a referência quebrada. A Action também
+republica ao fim de cada robô de dados (`workflow_run`), porque commits feitos com `GITHUB_TOKEN` não disparam
+`push`. Reverter: Source = "Deploy from a branch".
+
 ---
 
 ## Como testar localmente

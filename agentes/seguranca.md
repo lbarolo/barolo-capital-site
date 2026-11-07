@@ -47,7 +47,6 @@
 `[CRÍTICO|ALTO|MÉDIO|INFO] onde — o risco · evidência · o que fazer · quem faz (Claude via /corrigir | Lucas)`
 
 ## Achados em aberto
-- [MÉDIO · Lucas] GitHub Pages serve o repo INTEIRO (`*.md`, `agentes/`, `tests/`, `scripts/`, `.claude/`, JSONs). Reduzir: publicar por Action de Pages só com os 6 `.html`, `lib/`, `data.js`, `diario.js`, `benchmark-data.js`, `btc-onchain.json`, `briefing.json`, `ui-polish.css`, `robots.txt`, `CNAME`. Muda a config de Pages (do Lucas). (22/10/2026)
 - [MÉDIO · Lucas] Dado pessoal em `.md` público: idade ("31 anos"), renda necessária, saúde. Decidir se tira. (22/10/2026)
 - [INFO · Lucas] Login ADM/102030 do index é só client-side e não protege nada; assumir como atalho ou usar StatiCrypt/Cloudflare Access. (22/10/2026)
 - [BAIXA] SRI/versão fixa nas libs lazy (zoom/annotation em `ferramentas.html`, Chart.js em `pools.html` lazy) e `sync-emprestimos.yml` ainda em checkout/setup-node v4. (22/10/2026)
@@ -57,6 +56,7 @@
   fora do OneDrive (14/09/2026).
 
 ## Resolvidos
+- 07/11/2026 · `edca504` — Pages não serve mais o repo inteiro: `scripts/build-pages.js` monta `_site/` só com 6 `.html`, `lib/`, `data.js`, JSONs de dados, `ui-polish.css`, `robots.txt`, `CNAME`, `.nojekyll`; `pages.yml` publica (Source do Pages = GitHub Actions, trocado pelo Lucas). Verificado ao vivo: `CLAUDE.md`, `QUANT.md`, `agentes/`, `tests/`, `scripts/`, `.claude/`, `package.json`, `.github/` dão 404; site e dados 200. `tests/pages-build.test.js` barra arquivo privado e referência quebrada. **Arquivo novo que o site passa a usar → acrescentar em `FILES`/`DIRS` do `build-pages.js`** (o teste avisa). Reverter: Source = "Deploy from a branch".
 - 22/10/2026 · `31ad424` — XSS via nome de pool do GeckoTerminal (`pools.html`, `escHtml` + id [0-9A-Za-z]); Chart.js com SRI e 3 libs de CDN sem uso removidas; CSP mínima (object-src/base-uri/form-action); iframes de dApps com sandbox/referrerpolicy e sem `allow=*`; blocos mortos com NFT ID (pools) e chaves/carteiras (portfolio) removidos; escapes de dado local em `ferramentas.html`; `eth-sweep.yml` com `permissions: contents: read`.
 - 16/06/2026 — endereço da carteira no `src` do iframe do Revert (movido para o JS).
 - 08/07/2026 — e-mail de contato ofuscado por proxy Cloudflare restaurado.
@@ -65,5 +65,6 @@
 - 22/10/2026 — 1ª varredura completa, método "redução de superfície de ataque" (Anthropic): 3 passes (config padrão · alcance precoce · interação entre configs). Corrigido em `31ad424`. Abertos abaixo.
 
 ## Histórico (mais recente no topo)
+- 07/11/2026 — Pages passa a publicar só os arquivos do site (`edca504`); achado MÉDIO de 22/10 resolvido.
 - 22/10/2026 — varredura de superfície de ataque; 7 correções em `31ad424`, 3 decisões para o Lucas.
 - 15/09/2026 — caderno criado.
