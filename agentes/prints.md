@@ -179,6 +179,41 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
+## Estado atual — 08/11/2026 (`asOf` 2026-11-08) — a ordem de sexta pegou no alvo
+
+**Único evento:** a **ordem limite de BTC** deixada na sexta 06/11 (com os 17,89 USDT do aporte daquele
+dia) **executou no domingo 08/11, 18:54:39**: 0,00023879 BTC @ **US$ 74.906**, taxa 0,00000023 BTC
+→ **líquido 0,00023856**, custo **US$ 17,86**.
+
+| | Antes | Depois |
+|---|---:|---:|
+| `holdings.BTC` qty / invested | 0,00734754 / 516,23 | **0,00758610 / 534,09** |
+| `stables.USDT` qty / invested | 118,10709173 / 842,36 | **100,24709173 / 824,50** |
+| `contributions` | 1 linha em nov (US$ 17,89) | **inalterada** |
+| `TOTAL_INVESTED` | 9.703,68 | **9.703,68** (rotação pura) |
+
+⚡ **ROTAÇÃO, não aporte** — o dinheiro novo foi contado quando o fiat virou USDT em 06/11. Esta perna
+só move o custo de bolso. Nenhum protocolo tocado: AAVE, Kamino, pool e principals seguem como no
+review de 06/11.
+
+✅ **A ordem fez o que devia:** comprou a **US$ 74.906** contra 77.244 da semana anterior — ~3% mais
+barato. Era exatamente o motivo de deixar ordem em aberto em vez de comprar a mercado.
+
+**Caixa da OKX:** 17,887 → **0,027**. Os outros ~100,22 USDT **não são caixa livre**: 100 seguem
+reservados na ordem limite (b) da Uniswap (0,04564 ETH @ 2.191,11, vence 23/11) e 0,22 são sobras.
+
+**Topo do dashboard conferido (regra 0):** HF AAVE "—" + *"sem dívida na AAVE"* · LTV Kamino 20,4% ·
+Lifetime Return −19,2% · Yield +$13 líq. · Patrimônio **US$ 8.463** (ROI +1,9%) · Dívida US$ 458
+(só Kamino). Os 4 cards fecham aditivos: SPOT 8.045 + POOLS LP 776 + STABLES 100 − DÍVIDAS 458 =
+**8.463** ✓. Zero erro de console. **A pool já acumulou US$ 45,13 de taxas** (pooled 730,48).
+
+⏳ **Ele vai lançar no CoinGecko** ("agora vou por no coingecko tambem"). São **três** lançamentos,
+não dois: entrada do aporte (+17,89 USDT), compra do BTC (+0,00023879 **bruto**) e saída dos 17,86
+USDT. Se lançar só a compra e a saída, o USDT fica negativo. **Pedir print do portfólio** antes de
+acertar o `cgMirror` — lição de 24/10 (ele disse 0,04332 e tinha lançado 0,0433).
+
+---
+
 ## Estado atual — 06/11/2026 (`asOf` 2026-11-06) — review semanal: dia vermelho, posição intacta
 **Juros da AAVE neste review (base da regra 4 no próximo):** WETH **0,022523655** — ⚠️ **derivado do
 print, sem MCP da Aave nesta sessão** (mesma conta de 31/10): `(5.312,58 − 50,33) / 2,354959342722521912`
@@ -1023,6 +1058,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
 - 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Ele lançou os dois lados no mesmo dia e o espelho fechou (BTC 0,00711492 · USDT 851,32676194); sobra só o yield normal, **~US$ 14,86**, mais o −0,000003 de BTC que é taxa e não se lança.
 - 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.
+- 08/11/2026 — a **ordem limite de BTC de sexta executou no domingo** (0,00023879 @ US$ 74.906, líquido 0,00023856, US$ 17,86): rotação dos 17,89 USDT do aporte de 06/11, `contributions` intocada e `TOTAL_INVESTED` em 9.703,68. ~3% mais barato que a semana anterior. Nenhum protocolo tocado. Topo do dashboard conferido: patrimônio US$ 8.463, os 4 cards fecham aditivos, 0 erro de console; pool já com US$ 45,13 de taxas. Pendente: ele lançar os 3 movimentos no CoinGecko (entrada do aporte + compra bruta + saída do USDT) e mandar o print para acertar o `cgMirror`.
 - 24/10/2026 — **saque de 200 USDT da AAVE** (tx `0xf25c...ec00`, 14:41 UTC) para duas ordens limite de compra de ETH na Uniswap (100 @ 2.308,60 venc. 31/10 · 100 @ 2.191,11 venc. 23/11; mercado 2.341,12). Saque não mexe em `stables.USDT` — só `defi.aave` e `principals` (925,900978 → 725,900978, MCP confere). Ordens **pendentes**: quando executarem é rotação, não aporte. Juros da semana: WETH +0,00008 · USDT +0,063402. Líquido US$ 9.348,80 (−2,0% vs 23/10, só preço); dívida só Kamino 456,71; yield pendente ~US$ 14,87. Kamino sem print.
 - 23/10/2026 (2) — **dívida da AAVE QUITADA** (768,40 USDC, com 770 USDT sacados do supply via swap no 1inch); dívida total 1.225,11 → **456,71** (só Kamino); HF deixa de existir (null) e 3 telas que mostrariam HF inventado foram corrigidas; custo da operação US$ 0,91 (slippage); pendente: dar saída de 770 USDT no CoinGecko.
 - 23/10/2026 — review semanal + aporte de sexta (R$ 100 → 19,68 USDT → 0,00024074 BTC); AAVE e Kamino pelo MCP/print, principals intocados; borrow CEDEU nas duas (AAVE 6,12%, Kamino 6,06%); HF 7,74; LTV 17,52%; líquido US$ 9.540,96; Fiscal +R$ 150 (o de 09/10 faltava lá); achado e lançado o aporte de 16/10 que faltava (R$ 100 → 0,00023791 BTC) — outubro fecha com 4 aportes, US$ 128,06.
