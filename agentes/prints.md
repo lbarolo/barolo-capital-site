@@ -179,6 +179,32 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
+## Estado atual — 09/11/2026 — print do CoinGecko: compra lançada, espelho acertado
+
+**Ele lançou a compra de BTC** (print do portfólio, 11 tokens). Conferência token a token:
+
+| | Site | CoinGecko | Leitura |
+|---|---:|---:|---|
+| BTC | 0,00758610 | **0,00758942** | ✅ lançou a qty **bruta** (0,00735063 + 0,00023879, exato) e **com custo** — o GP do print dá custo implícito 534,03 contra 534,09 do site, 6 centavos. A diferença de 0,00000332 é a soma das taxas: estrutural, **nunca se lança**. |
+| USDT | 100,24709173 | 100,21982794 | ✅ inalterado de propósito: ele **não** lançou nem a entrada do aporte (+17,89) nem a saída (−17,86), e como quase se cancelam o saldo segue certo. Os 0,027 de diferença são **exatamente** a sobra do aporte no caixa da OKX. |
+| ETH | 2,408872553 | 2,407841374 | +0,001031 — yield segurado para o fechamento |
+| SOL | 25,90 | 25,85735038 | +0,04265 — idem |
+| POL | 190,13 → **190,113** | 190,113 | 🔸 corrigido no site: o print de 01/09 foi lido com uma casa a menos. Sem transação de POL no meio — é leitura, não movimento. US$ 0,0015. |
+| ADA · EIGEN · ZK · XAI · ZETA · SCR | | | ✅ batem na casa decimal |
+
+`cgMirror` acertado (BTC 0,00758942 · USDT 100,21982794). **Pendente volta a ser só o yield real:
+ETH US$ 2,19 + SOL US$ 3,69 = ~US$ 5,88**, acumulando por decisão dele.
+
+⚠️ **O total em USD do print não fecha com preço × qty** (~0,35% em todos os tokens): as colunas de
+valor foram calculadas com preços mais antigos que a coluna de preço, com o mercado caindo ao vivo.
+**Conferir sempre por quantidade, nunca pelo total em dólar do print.**
+
+**Topo do dashboard (regra 0):** HF AAVE "—" + *"sem dívida na AAVE"* · Lifetime −19,3% · Yield
++$13 líq. · Patrimônio **US$ 8.451** (ROI +1,7%) · Dívida US$ 458 (Kamino). Aditivo: 8.033 + 776 +
+100 − 458 = **8.451** ✓. Zero erro de console.
+
+---
+
 ## Estado atual — 08/11/2026 (`asOf` 2026-11-08) — a ordem de sexta pegou no alvo
 
 **Único evento:** a **ordem limite de BTC** deixada na sexta 06/11 (com os 17,89 USDT do aporte daquele
@@ -1058,6 +1084,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
 - 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Ele lançou os dois lados no mesmo dia e o espelho fechou (BTC 0,00711492 · USDT 851,32676194); sobra só o yield normal, **~US$ 14,86**, mais o −0,000003 de BTC que é taxa e não se lança.
 - 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.
+- 09/11/2026 — print do CoinGecko confirma a compra lançada (BTC bruto 0,00758942, com custo); `cgMirror` acertado e pendente de volta ao yield real (~US$ 5,88, ETH+SOL). USDT inalterado de propósito (entrada e saída não lançadas se cancelam; sobram 3 centavos). **POL corrigido 190,13 → 190,113** — erro de leitura do print de 01/09, sem transação no meio. Os outros 8 tokens batem na casa decimal. Nota: o total em USD do print não fecha com preço × qty (colunas de valor defasadas ~0,35%) — conferir sempre por quantidade.
 - 08/11/2026 — a **ordem limite de BTC de sexta executou no domingo** (0,00023879 @ US$ 74.906, líquido 0,00023856, US$ 17,86): rotação dos 17,89 USDT do aporte de 06/11, `contributions` intocada e `TOTAL_INVESTED` em 9.703,68. ~3% mais barato que a semana anterior. Nenhum protocolo tocado. Topo do dashboard conferido: patrimônio US$ 8.463, os 4 cards fecham aditivos, 0 erro de console; pool já com US$ 45,13 de taxas. Pendente: ele lançar os 3 movimentos no CoinGecko (entrada do aporte + compra bruta + saída do USDT) e mandar o print para acertar o `cgMirror`.
 - 24/10/2026 — **saque de 200 USDT da AAVE** (tx `0xf25c...ec00`, 14:41 UTC) para duas ordens limite de compra de ETH na Uniswap (100 @ 2.308,60 venc. 31/10 · 100 @ 2.191,11 venc. 23/11; mercado 2.341,12). Saque não mexe em `stables.USDT` — só `defi.aave` e `principals` (925,900978 → 725,900978, MCP confere). Ordens **pendentes**: quando executarem é rotação, não aporte. Juros da semana: WETH +0,00008 · USDT +0,063402. Líquido US$ 9.348,80 (−2,0% vs 23/10, só preço); dívida só Kamino 456,71; yield pendente ~US$ 14,87. Kamino sem print.
 - 23/10/2026 (2) — **dívida da AAVE QUITADA** (768,40 USDC, com 770 USDT sacados do supply via swap no 1inch); dívida total 1.225,11 → **456,71** (só Kamino); HF deixa de existir (null) e 3 telas que mostrariam HF inventado foram corrigidas; custo da operação US$ 0,91 (slippage); pendente: dar saída de 770 USDT no CoinGecko.
