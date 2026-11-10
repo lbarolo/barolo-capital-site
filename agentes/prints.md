@@ -179,6 +179,68 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
+## Estado atual — 10/11/2026, à noite — 3 SWAPS NA QUEDA, CAIXA ZERADO
+
+Poucas horas depois de fechar a pool, ele comprou a queda em três pernas. Palavras dele:
+*"fiz mais 3 swaps agora nessa queda, com os 100$ que faltava também pra comprar, zerando o caixa
+por enquanto"*.
+
+| Ordem | Paga com | Recebe | Preço | tx |
+|---|---|---|---:|---|
+| 1 | 50,00 USDT | 0,0238 ETH | 2.100,84 | `0x4086...2e35` |
+| 2 | **24,00 USDC** | 0,0114 ETH | 2.105,26 | `0x934c...2769` |
+| 3 | 50,00 USDT | 0,0243 ETH | 2.057,61 | `0xba7c...2c10` (Uniswap V4) |
+| | **124,00** | **0,0595 bruto** | **2.084,03** | gas 0,0001 ETH (US$ 0,23) |
+
+Líquido no holding: **+0,0594**. Os 100 USDT eram os que estavam **reservados na ordem limite (b)**
+criada em 24/10 (0,04564 ETH @ 2.191,11, venceria em 23/11) — ele não esperou a ordem, comprou a
+mercado. A perna 2 é a que ele já tinha anunciado de manhã ("vou pegar as taxas em USDC e vou
+comprar ETH").
+
+### ⚠ O `invested` sobe 81,93, NÃO 124 — a parte que mais erra no automático
+| | Antes | Depois |
+|---|---:|---:|
+| `holdings.ETH` | 2,747172553 / 5.618,17 | **2,806572553 / 5.700,10** |
+| `stables.USDT` | 100,24709173 / 82,13 | **0,24709173 / 0,20** |
+| `stables.USDC` | 24,00 / 0 | **0 / 0** |
+| `TOTAL_INVESTED` | 9.703,68 | **9.703,68** ✓ |
+
+Duas regras agindo juntas:
+1. **Rotação migra o custo REAL, não o valor de mercado.** O USDT tinha 82,13 de custo para 100,25
+   de qty (porque ~18 dos 100 sacados da AAVE em 24/10 eram **juro do aUSDT**, custo zero). Migra
+   proporcional: `82,13 × (100 / 100,24709173) = 81,93`. Migrar 100 inventaria 18 dólares de custo.
+2. **Os 24 USDC migram ZERO** — eram taxa da pool, entraram a custo zero. Mesma lógica do RDNT em
+   08/10: rotação não cria custo do nada.
+
+### ☀ Caixa em zero — observação, não alerta
+Stables somam **US$ 0,25**. Não há mais pó seco na carteira nem na corretora; a próxima munição é
+o aporte de sexta. A dívida restante (US$ 458, só Kamino, LTV 21,5%) está coberta pelo colateral
+em SOL, então não há risco imediato — mas vale lembrar que **a AAVE está sem dívida desde 23/10**,
+e por isso o card de HF da AAVE mostra "—" de propósito (não é bug).
+
+### ⏳ Pendente no CoinGecko — a pendência do ETH agora tem QUATRO partes
+`holding 2,806572553 − espelho 2,407841374 = 0,398931` (mais a saída de 100 USDT):
+
+| O que | Qtd | Como lançar |
+|---|---:|---|
+| Fechamento da pool | 0,3384 | **Compra de US$ 742,37** (médio 2.194,36) |
+| Compras com 100 USDT | 0,0481 | **Compra de US$ 100** + saída de 100 USDT |
+| Perna paga com os 24 USDC | 0,0114 | **Entrada a custo ZERO** (taxa de pool) |
+| Juro do aWETH | 0,001031 | **Entrada a custo ZERO** |
+
+⚠ **Só as duas últimas são custo zero.** O `yield-to-mirror` chama a pendência inteira de
+"transferência de entrada custo zero" — seguir isso inflaria o lucro em **US$ 842**. Nota gravada
+no `cgMirror.ETH`. Depois de lançado, o espelho fica **0,0002 acima** do holding (o gas das duas
+txs): diferença estrutural, igual à das taxas do BTC, não se persegue.
+O `cgMirror.USDT` vai de 100,21982794 para **0,21982794**.
+
+### Conferido no site
+Patrimônio **US$ 8.014** · `8.472 SPOT + 0 LP + 0 STABLES − 458 DÍVIDA` ✓ · STABLES "USDT $0 ·
+USDC $0 · USDS $0" · HF AAVE "—" (sem dívida lá) · Kamino LTV 21,5% · pools.html com 0 ativas,
+fees 2026 YTD $170 e P&L +$106 · Meta 5% $401 · 152 testes · 0 NaN · 0 erro próprio de console.
+
+---
+
 ## Estado atual — 10/11/2026 (`asOf` 2026-11-10) — POOL ETH/USDC v4 FECHADA
 
 **Ele desmontou seguindo a regra das 24h** — nas palavras dele: *"esperei 24h depois que a pool saiu
@@ -1145,6 +1207,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
 - 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Ele lançou os dois lados no mesmo dia e o espelho fechou (BTC 0,00711492 · USDT 851,32676194); sobra só o yield normal, **~US$ 14,86**, mais o −0,000003 de BTC que é taxa e não se lança.
 - 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.
+- 10/11/2026 (noite) — **3 swaps comprando a queda, caixa zerado**: 50 USDT → 0,0238 ETH, **24 USDC** → 0,0114 ETH e 50 USDT → 0,0243 ETH; bruto +0,0595, líquido **+0,0594** (gas 0,0001), médio **US$ 2.084,03/ETH**. Gastou os 100 USDT que estavam presos na ordem limite (b) de 24/10 — não esperou, comprou a mercado. ⚠ **`invested` sobe só 81,93, não 124**: a rotação migra o custo REAL do USDT (82,13 para 100,25 de qty) e os 24 USDC de taxa migram ZERO. `TOTAL_INVESTED` intacto. Stables em **US$ 0,25** — sem pó seco até sexta. Pendência do CoinGecko virou 0,398931 ETH em QUATRO partes, **só duas a custo zero** (tabela no Estado atual).
 - 10/11/2026 — **pool ETH/USDC v4 FECHADA** pela regra das 24h (ETH perdeu o piso do range e não voltou): voltaram 0,3384 ETH + 24,00 USDC; IL 57,61 contra 46,46 de taxa = **−US$ 11,15 em 12 dias**, com fee APR real de **190,2% a.a.** Funcionou como pool de COMPRA (entrou 100% USDC, saiu 100% ETH). Custo migrou US$ 742,37 do USDT para o ETH (`TOTAL_INVESTED` intacto); USDC criado em `stables` a custo zero. ⚠ **Bug de código achado e corrigido**: ticker novo no `data.js` não aparecia no dashboard — o `PORTFOLIO_DATA` casa por ticker e ignorava o USDC, deixando o patrimônio US$ 24 abaixo. Pendente: ele lançar a **compra** de 0,3384 ETH por US$ 742,37 no CoinGecko (não é custo zero) e os 2,35 USDC de reward sem claim.
 - 09/11/2026 — print do CoinGecko confirma a compra lançada (BTC bruto 0,00758942, com custo); `cgMirror` acertado e pendente de volta ao yield real (~US$ 5,88, ETH+SOL). USDT inalterado de propósito (entrada e saída não lançadas se cancelam; sobram 3 centavos). **POL corrigido 190,13 → 190,113** — erro de leitura do print de 01/09, sem transação no meio. Os outros 8 tokens batem na casa decimal. Nota: o total em USD do print não fecha com preço × qty (colunas de valor defasadas ~0,35%) — conferir sempre por quantidade.
 - 08/11/2026 — a **ordem limite de BTC de sexta executou no domingo** (0,00023879 @ US$ 74.906, líquido 0,00023856, US$ 17,86): rotação dos 17,89 USDT do aporte de 06/11, `contributions` intocada e `TOTAL_INVESTED` em 9.703,68. ~3% mais barato que a semana anterior. Nenhum protocolo tocado. Topo do dashboard conferido: patrimônio US$ 8.463, os 4 cards fecham aditivos, 0 erro de console; pool já com US$ 45,13 de taxas. Pendente: ele lançar os 3 movimentos no CoinGecko (entrada do aporte + compra bruta + saída do USDT) e mandar o print para acertar o `cgMirror`.
