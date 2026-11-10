@@ -1,511 +1,511 @@
 {
- "updated": "2026-11-09T20:09:20.162Z",
- "date": "2026-11-09",
- "source": "preço: coinbase/coinpaprika · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
+ "updated": "2026-11-10T17:18:32.670Z",
+ "date": "2026-11-10",
+ "source": "preço: coinbase/coinpaprika/coingecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 74793,
-   "d24": -1.34,
-   "d7": -2.74,
-   "d30": -9.81,
+   "price": 72963,
+   "d24": -2.52,
+   "d7": -6.22,
+   "d30": -13.11,
    "ath": 126080,
-   "athPct": -40.7,
+   "athPct": -42.1,
    "athDate": "2025-10-06",
-   "mcap": 1504072646211,
-   "vol": 35824892857,
+   "mcap": 1467316183253,
+   "vol": 28655713497,
    "spark": [
-    76947.06,
-    76709.41,
-    76829.44,
-    76722.12,
-    76970.93,
-    77623.44,
-    77535.82,
-    77384.59,
-    76410.47,
-    78036.68,
-    78404.98,
-    80261.27,
-    79960.05,
-    80442.71,
-    80488.88,
-    80297.23,
-    80332.03,
-    75959.97,
-    76269.04,
-    76005.51,
-    75810.56,
-    75538.15,
-    76055.06,
-    75757.33,
-    75805.88,
-    75775.28,
-    75815.45,
-    76028.04,
-    75922.23,
-    75688.96,
-    75735,
-    75776.38,
-    75825.42,
-    75884.88,
-    75895.99,
-    75986.18,
-    75849.18,
-    74740.42,
-    74780.55,
-    73828.47,
-    74315.68,
-    75464.77,
-    74609.16
+    77672.03,
+    77789.97,
+    77148.12,
+    77324.39,
+    78396.7,
+    78213.87,
+    80490.64,
+    80087.15,
+    80494.09,
+    80477.41,
+    80448.63,
+    79605.51,
+    76339.2,
+    76107.78,
+    76209.5,
+    75707.97,
+    75597.06,
+    75965.72,
+    75914.1,
+    75800.57,
+    75835.83,
+    75837.58,
+    76124.97,
+    75830.59,
+    75696.4,
+    75625.3,
+    75711.09,
+    75776.95,
+    75853.49,
+    75892.6,
+    75696.01,
+    75687.23,
+    75190.61,
+    74737.85,
+    74482.07,
+    74846.7,
+    75007.01,
+    74804.46,
+    75003.04,
+    74676.9,
+    74634.63,
+    74312.17,
+    73209.71
    ]
   },
   "eth": {
-   "price": 2125,
-   "d24": -4.56,
-   "d7": -5.5,
-   "d30": -15.24,
+   "price": 2021.68,
+   "d24": -4.98,
+   "d7": -12.26,
+   "d30": -20.39,
    "ath": 4946.05,
-   "athPct": -57,
+   "athPct": -59.1,
    "athDate": "2025-08-24",
-   "mcap": 259682752754,
-   "vol": 17773478365,
+   "mcap": 247062654053,
+   "vol": 13039428246,
    "spark": [
-    2248.91,
-    2250.22,
-    2250.33,
-    2255.2,
-    2262.76,
-    2297.83,
-    2284.76,
-    2273.63,
-    2246.95,
-    2300.66,
-    2325.67,
-    2424.55,
-    2405.61,
-    2423.08,
-    2422.74,
-    2413.86,
-    2419.17,
-    2250.42,
-    2259.03,
-    2235.77,
-    2232.73,
-    2226.72,
-    2240.66,
-    2227.52,
-    2233.04,
-    2236.28,
-    2242.19,
-    2243.95,
-    2243.28,
-    2235.12,
-    2233.24,
-    2237.05,
-    2235.51,
-    2238.59,
-    2238.07,
-    2239.07,
-    2230.23,
-    2124.38,
-    2138.72,
-    2091.9,
-    2111.94,
-    2145.87,
-    2123.79
+    2295.79,
+    2288.58,
+    2271.93,
+    2277.8,
+    2320.08,
+    2312.03,
+    2433.56,
+    2419.25,
+    2419.58,
+    2423.7,
+    2418.35,
+    2391.56,
+    2264.45,
+    2246.26,
+    2242.39,
+    2231.09,
+    2224.42,
+    2236.51,
+    2232.85,
+    2227.13,
+    2237.88,
+    2242.12,
+    2248.18,
+    2239.61,
+    2232.2,
+    2226.62,
+    2234.04,
+    2232.67,
+    2236.59,
+    2237,
+    2227.79,
+    2225.2,
+    2143.17,
+    2136.44,
+    2120.64,
+    2120.97,
+    2131.86,
+    2128.39,
+    2123.95,
+    2118.9,
+    2115.69,
+    2096.78,
+    2024.9
    ]
   },
   "sol": {
-   "price": 86.4,
-   "d24": -3.26,
-   "d7": -6.07,
-   "d30": -21.51,
+   "price": 82.16,
+   "d24": -5.23,
+   "d7": -12.65,
+   "d30": -26.83,
    "ath": 293.31,
-   "athPct": -70.5,
+   "athPct": -72,
    "athDate": "2025-01-19",
-   "mcap": 51078083196,
-   "vol": 3240125518,
+   "mcap": 48569914579,
+   "vol": 2870126180,
    "spark": [
-    91.48,
-    91.84,
-    92.04,
-    91.97,
-    92.36,
-    93.67,
-    93.19,
-    92.78,
-    90.94,
-    92.92,
-    93.52,
-    96.63,
-    94.49,
-    95.51,
-    96.24,
-    95.8,
-    96.43,
-    90.04,
-    89.97,
-    89.23,
-    89.63,
-    89.59,
-    90.32,
-    90.6,
-    90.07,
-    90.06,
-    89.93,
+    93.47,
+    93.46,
+    92.37,
+    92.21,
+    93.17,
+    92.55,
+    96.67,
+    94.78,
+    95.73,
+    96,
+    96.68,
+    95.23,
+    90.25,
+    89.89,
+    90.15,
+    89.43,
+    89.48,
     90.14,
-    89.92,
+    90.57,
+    89.83,
+    90.16,
+    89.9,
+    90.22,
+    89.68,
+    89.48,
+    88.97,
+    89.35,
+    88.98,
+    89.2,
     89.46,
-    89.57,
-    89.7,
-    89.21,
-    89.25,
-    89.59,
-    89.61,
-    89.5,
-    86.41,
-    87.4,
-    85.52,
-    86.05,
-    87.85,
-    86.46
+    88.94,
+    89.08,
+    87.55,
+    87.3,
+    86.85,
+    86.57,
+    86.98,
+    86.58,
+    86.42,
+    85.94,
+    85.8,
+    84.86,
+    82.3
    ]
   },
-  "stableMcap": 247017392651
+  "stableMcap": 246819869502
  },
  "fng": {
-  "value": 29,
+  "value": 32,
   "label": "Fear",
-  "prev": 28
+  "prev": 29
  },
  "broad": {
-  "btcDom": 59.6,
-  "ethDom": 10.3,
-  "altDom": 30.1,
-  "totalMcap": 2515406082164.6997,
-  "totalVol": 92287461450.98064,
-  "mcapChange24h": -3.23,
-  "ethBtc": 0.02841,
-  "stableMcap": 247017392651
+  "btcDom": 59.7,
+  "ethDom": 10,
+  "altDom": 30.3,
+  "totalMcap": 2447240045732.336,
+  "totalVol": 74766064552.30023,
+  "mcapChange24h": -5.55,
+  "ethBtc": 0.02771,
+  "stableMcap": 246819869502
  },
  "onchain": {
-  "t": "2026-11-08",
-  "price": 75664.96,
-  "mvrv": 1.377999,
-  "mvrv_sth": 0.981677,
-  "mvrv_lth": 1.523141,
-  "realized": 53978.78,
-  "realized_sth": 75771.08,
-  "realized_lth": 48835.07,
-  "sopr_lth": 0.935367,
-  "aviv": 0.958378,
-  "cvdd": 49564.32,
-  "sma200": 73179.5,
-  "mayer": 1.034
+  "t": "2026-11-09",
+  "price": 74643.89,
+  "mvrv": 1.393488,
+  "mvrv_sth": 0.992683,
+  "mvrv_lth": 1.540899,
+  "realized": 53956.92,
+  "realized_sth": 75742.53,
+  "realized_lth": 48795.09,
+  "sopr_lth": 0.819993,
+  "aviv": 0.969228,
+  "cvdd": 49577.55,
+  "sma200": 73163.03,
+  "mayer": 1.02
  },
  "risk": {
-  "score": 0.168,
+  "score": 0.165,
   "label": "fundo / capitulação",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.377999,
-    "s": 0.199
+    "v": 1.393488,
+    "s": 0.205
    },
    {
     "key": "Mayer",
-    "v": 1.034,
-    "s": 0.241
+    "v": 1.02,
+    "s": 0.233
    },
    {
     "key": "STH MVRV",
-    "v": 0.981677,
-    "s": 0.136
+    "v": 0.992683,
+    "s": 0.154
    },
    {
     "key": "AVIV",
-    "v": 0.958378,
-    "s": 0.229
+    "v": 0.969228,
+    "s": 0.235
    },
    {
     "key": "SOPR LTH",
-    "v": 0.935367,
-    "s": 0.032
+    "v": 0.819993,
+    "s": 0
    }
   ]
  },
  "portfolio": {
-  "netWorth": 8464.63,
-  "gross": 8046.85,
-  "stables": 100.13,
-  "lp": 775.61,
+  "netWorth": 8021.84,
+  "gross": 8355.66,
+  "stables": 124.13,
+  "lp": 0,
   "debt": 457.95,
   "invested": 9703.68,
-  "roi": -12.8,
-  "move24": -314.71,
-  "move24Pct": -3.58,
+  "roi": -17.3,
+  "move24": -386.46,
+  "move24Pct": -4.6,
   "aave": {
    "hf": null,
-   "collateral": 5053.98,
+   "collateral": 4809.13,
    "debt": 0,
    "ltv": 0,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 20.5,
+   "ltv": 21.5,
    "liqLtv": 80,
-   "collateral": 2238.54,
+   "collateral": 2128.2,
    "debt": 457.95,
    "liqSol": 21.56,
-   "dropToLiq": 75.1
+   "dropToLiq": 73.8
   },
   "carry": {
    "monthlyInterest": 2.06,
-   "monthlySupply": 15.48
+   "monthlySupply": 14.73
   },
-  "dataAsOf": "2026-11-08"
+  "dataAsOf": "2026-11-10"
  },
  "news": [
   {
-   "source": "The Block",
-   "title": "Elizabeth Warren vows scrutiny of prediction markets, Trump family crypto ventures as Senate Banking chair",
-   "url": "https://www.theblock.co/news/regulation/2026-11-09-senate-banking-elizabeth-warren-scrutiny-prediction-markets-trump-crypto-ventures-436898",
-   "ts": 1794254689000
+   "source": "CoinDesk",
+   "title": "Crypto teams up with U.S. government to defend stock perps in legal fight",
+   "url": "https://www.coindesk.com/policy/2026/11/10/crypto-teams-up-with-u-s-government-to-defend-stock-perps-in-legal-fight",
+   "ts": 1794330442000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin Falls as Hot US Inflation Fuels Fears of Bigger Fed Rate Hike",
+   "url": "https://decrypt.co/382950/bitcoin-falls-hot-us-inflation-fears-bigger-fed-rate-hike",
+   "ts": 1794328077000
   },
   {
    "source": "Cointelegraph",
-   "title": "Formation Securities plans Solana stock trading venue under SEC exemption",
-   "url": "<![CDATA[https://cointelegraph.com/news/formation-securities-solana-stock-trading-venue-sec-exemption?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794253954000
+   "title": "Bitcoin nears 11-week low after ‘discouraging’ US CPI inflation beat",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-11-week-low-discouraging-us-cpi-inflation?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794327903000
+  },
+  {
+   "source": "The Block",
+   "title": "Alta raises $47.5 million Series A to build a blockchain for financial institutions",
+   "url": "https://www.theblock.co/news/business/2026-11-10-alta-raises-80-million-build-blockchain-banks-payment-firms-437244",
+   "ts": 1794327556000
+  },
+  {
+   "source": "The Block",
+   "title": "Canaan’s Q3 revenue plunges 90% to $14.5 million as bitcoin mining hardware sales slump",
+   "url": "https://www.theblock.co/news/business/2026-11-10-canaans-q3-revenue-plunges-90-to-14-5-million-as-bitcoin-mining-hardware-sales-slump-437252",
+   "ts": 1794326522000
+  },
+  {
+   "source": "The Block",
+   "title": "MEGA commits $30 million to new products, starting with AI inference",
+   "url": "https://www.theblock.co/news/ecosystems/2026-11-10-megaeth-rebrand-30-million-new-products-ai-inference-437249",
+   "ts": 1794326162000
   },
   {
    "source": "CoinDesk",
-   "title": "Robinhood backs tokenization of its stock on OKX–ICE platform even as most companies opt out",
-   "url": "https://www.coindesk.com/business/2026/11/09/robinhood-backs-tokenization-of-its-stock-on-okx-ice-platform-even-as-most-companies-opt-out",
-   "ts": 1794252975000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Binance Hack Launderers Mint Elon Musk and Animal Meme Coins to Move Stolen Crypto",
-   "url": "https://decrypt.co/382873/binance-hack-elon-musk-animal-meme-coins-launder-stolen-crypto",
-   "ts": 1794252962000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Bitcoin in Limbo as Stocks Rebound Ahead of US Inflation Report",
-   "url": "https://decrypt.co/382861/bitcoin-limbo-stocks-rebound-us-inflation",
-   "ts": 1794251163000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Nvidia's $350 Billion Scare: What Happens If Jensen Huang Leaves?",
-   "url": "https://decrypt.co/382838/nvidias-350-billion-scare-what-happens-if-jensen-huang-leaves",
-   "ts": 1794249063000
+   "title": "Plume affiliate lands broker-dealer license to bring real U.S. assets onchain",
+   "url": "https://www.coindesk.com/markets/2026/11/10/emb-10-am-et-plume-affiliate-gets-the-legal-green-light-to-trade-regulated-security-entitlements-onchain",
+   "ts": 1794325916000
   },
   {
    "source": "The Block",
-   "title": "Ethereum Foundation, Vitalik Buterin sued over firing after ‘suicide pledge’ dispute",
-   "url": "https://www.theblock.co/news/regulation/2026-11-09-ethereum-foundation-vitalik-buterin-sued-over-firing-suicide-pledge-dispute-436739",
-   "ts": 1794249022000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Mercado Bitcoin begins post-hack reopening without a timeline for withdrawals",
-   "url": "<![CDATA[https://cointelegraph.com/news/mercado-bitcoin-reopening-withdrawals-hack-suspended?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794248729000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "PNC Bank tests turning USDC payments into dollar deposits",
-   "url": "<![CDATA[https://cointelegraph.com/news/pnc-bank-launches-usdc-payment-pilot-coinbase?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794246515000
+   "title": "Moody’s and Chainlink test cross-chain credit ratings distribution",
+   "url": "https://www.theblock.co/news/ecosystems/2026-11-10-moodys-chainlink-ccip-cross-chain-credit-ratings-pilot-437245",
+   "ts": 1794325799000
   },
   {
    "source": "Decrypt",
-   "title": "Solana Set for Another Tokenized Stock Venue as Formation Notifies the SEC",
-   "url": "https://decrypt.co/382859/solana-tokenized-stock-venue-formation-sec",
-   "ts": 1794246362000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Avalanche’s AVAX leads crypto gains following NYSE tokenization deal",
-   "url": "<![CDATA[https://cointelegraph.com/news/avalanche-avax-crypto-nyse-tokenization-deal?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794246062000
+   "title": "Solana's Jupiter Expands Beyond Trading With Token Baskets, Yield Vaults and New Portfolio",
+   "url": "https://decrypt.co/382836/solanas-jupiter-expands-beyond-trading-with-token-baskets-yield-vaults-and-new-portfolio",
+   "ts": 1794322862000
   },
   {
    "source": "Decrypt",
-   "title": "Vitalik Buterin Moves On From ‘Ultrasound Money,’ Says ETH’s Value Is Stability",
-   "url": "https://decrypt.co/382837/vitalik-buterin-moves-on-from-ultrasound-money-says-eths-value-is-stability",
-   "ts": 1794244450000
+   "title": "Decrypt Money Account Gets Confidential Transfers With Solana Privacy Firm Helius",
+   "url": "https://decrypt.co/382806/decrypt-money-account-gets-confidential-transfers-with-solana-privacy-firm-helius",
+   "ts": 1794321168000
   },
   {
-   "source": "Cointelegraph",
-   "title": "Bitcoin, tech stocks brush off Nvidia nerves as analyst mulls $68K target",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-stocks-nvidia-analyst-68k-target?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794244405000
+   "source": "The Block",
+   "title": "Bitdeer reports record Q3 revenue as net loss widens to $125.5 million",
+   "url": "https://www.theblock.co/news/business/2026-11-10-bitdeer-reports-record-q3-revenue-as-net-loss-widens-to-125-5-million-437217",
+   "ts": 1794320762000
   },
   {
    "source": "Decrypt",
-   "title": "Tom Lee’s Bitmine Adds $20M in Ethereum, Seizing on Vitalik’s 'ETH Is Money' Declaration",
-   "url": "https://decrypt.co/382854/tom-lee-bitmine-adds-20m-ethereum-vitalik-eth-money",
-   "ts": 1794244101000
+   "title": "Anthropic Sets IPO Price Range at $70 to $78, Valuing Company at Up to $1.4 Trillion",
+   "url": "https://decrypt.co/382939/anthropic-sets-ipo-price-range-at-70-to-78-valuing-company-at-up-to-1-4-trillion",
+   "ts": 1794319562000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Moody’s Taps Chainlink to Send Credit Ratings Across Multiple Blockchains",
+   "url": "https://decrypt.co/382888/moodys-chainlink-credit-ratings-across-multiple-blockchains",
+   "ts": 1794319262000
+  },
+  {
+   "source": "The Block",
+   "title": "Visa adds Monad to stablecoin settlement network options",
+   "url": "https://www.theblock.co/news/ecosystems/2026-11-10-visa-monad-stablecoin-settlement-network-437201",
+   "ts": 1794319202000
   },
   {
    "source": "CoinDesk",
-   "title": "A Bitcoin block just neared a 2015 transaction record, but paid only $180 in fees",
-   "url": "https://www.coindesk.com/tech/2026/11/09/a-bitcoin-block-just-neared-a-2015-transaction-record-but-paid-only-usd180-in-fees",
-   "ts": 1794241185000
+   "title": "Will stablecoins survive once the banks catch up?",
+   "url": "https://www.coindesk.com/opinion/2026/11/10/will-stablecoins-survive-once-the-banks-catch-up",
+   "ts": 1794319200000
   },
   {
    "source": "The Block",
-   "title": "StoneX sees 97% upside for Bullish as $4.2 billion Equiniti deal opens tokenization market",
-   "url": "https://www.theblock.co/news/markets/2026-11-09-stonex-sees-upside-bullish-equiniti-deal-opens-tokenization-market-436464",
-   "ts": 1794240425000
-  },
-  {
-   "source": "The Block",
-   "title": "Coinbase and PNC Bank expand partnership with USDC payments for corporate clients",
-   "url": "https://www.theblock.co/news/business/2026-11-09-coinbase-pnc-bank-expand-partnership-with-usdc-payments-corporate-clients-436466",
-   "ts": 1794240088000
-  },
-  {
-   "source": "The Block",
-   "title": "Binance hack launderers mint homemade Elon Musk, animal memecoins to move stolen funds: Elliptic",
-   "url": "https://www.theblock.co/news/ecosystems/2026-11-09-binance-hack-launderers-mint-homemade-elon-musk-animal-memecoins-move-stolen-funds-elliptic-436440",
-   "ts": 1794239656000
-  },
-  {
-   "source": "Decrypt",
-   "title": "NYSE Taps Avalanche to Settle Its Planned Tokenized Stock Platform",
-   "url": "https://decrypt.co/382833/nyse-avalanche-settle-tokenized-stock-platform",
-   "ts": 1794239362000
-  },
-  {
-   "source": "The Block",
-   "title": "Ethereum treasury Sharplink’s Q3 net income hits $751 million on unrealized ether gains",
-   "url": "https://www.theblock.co/news/markets/2026-11-09-sharplink-q3-2026-earnings-net-income-eth-holdings-436459",
-   "ts": 1794238830000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Google’s AI chip push adds more pressure on Nvidia",
-   "url": "https://www.coindesk.com/markets/2026/11/09/google-s-ai-chip-push-adds-more-pressure-on-nvidia",
-   "ts": 1794237605000
-  },
-  {
-   "source": "The Block",
-   "title": "Prediction market broker River Markets registers affiliate as CFTC futures commission merchant",
-   "url": "https://www.theblock.co/news/regulation/2026-11-09-river-markets-prediction-market-prime-brokerage-cftc-fcm-registration-436266",
-   "ts": 1794236702000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "North Korean hackers are creating memecoins to wash loot from $6.3 billion Binance hack",
-   "url": "https://www.coindesk.com/business/2026/11/09/north-korean-hackers-are-creating-memecoins-to-wash-loot-from-usd6-3-billion-binance-hack",
-   "ts": 1794236444000
-  },
-  {
-   "source": "The Block",
-   "title": "Tom Lee’s Bitmine nears 5% Ethereum supply target with $20 million ETH buy as he predicts tokenization and AI ‘supercycle’",
-   "url": "https://www.theblock.co/news/business/2026-11-09-tom-lee-bitmine-nears-ethereum-supply-target-20-million-eth-tokenization-ai-supercycle-436219",
-   "ts": 1794234760000
-  },
-  {
-   "source": "The Block",
-   "title": "NYSE to settle tokenized stocks on Avalanche in planned 24/7 market",
-   "url": "https://www.theblock.co/news/business/2026-11-09-nyse-settle-tokenized-stocks-avalanche-planned-24-7-market-436208",
-   "ts": 1794233247000
+   "title": "eToro’s Q3 profit plunges 74% as weaker crypto trading weighs on earnings",
+   "url": "https://www.theblock.co/news/business/2026-11-10-etoros-q3-profit-plunges-74-as-weaker-crypto-trading-weighs-on-earnings-437192",
+   "ts": 1794318275000
   },
   {
    "source": "Cointelegraph",
-   "title": "Analysts see no broader ‘contagion’ from $6.3B Binance hack",
-   "url": "<![CDATA[https://cointelegraph.com/markets/analysts-no-contagion-effect-63b-binance-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794232366000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "NYSE picks Avalanche to settle tokenized stocks amid Wall Street's blockchain race",
-   "url": "https://www.coindesk.com/business/2026/11/09/nyse-picks-avalanche-to-settle-tokenized-stocks-amid-wall-street-s-blockchain-race",
-   "ts": 1794231606000
+   "title": "Poland’s lower house backs sanctions bill covering crypto freezes",
+   "url": "<![CDATA[https://cointelegraph.com/news/poland-bill-freeze-sanctions-crypto-assets?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794318039000
   },
   {
    "source": "Cointelegraph",
    "title": "Here’s what happened in crypto today",
    "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794231416000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "The $2.85B Binance hackers lost shows why the UK needs stablecoin freeze rules",
-   "url": "<![CDATA[https://cointelegraph.com/opinion/285b-binance-hackers-lost-shows-why-uk-needs-stablecoin-freeze-rules?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794231000000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Strategy buys 1,036 Bitcoin as BTC holdings climb to 850,364",
-   "url": "<![CDATA[https://cointelegraph.com/news/strategy-buy-1036-bitcoin-holdings-850364-btc?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794230987000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Strategy Buys $82M in Bitcoin, Buys Back $188M of STRC",
-   "url": "https://decrypt.co/382820/strategy-buys-82m-in-bitcoin-buys-back-188m-of-strc",
-   "ts": 1794230669000
-  },
-  {
-   "source": "The Block",
-   "title": "‘Connecting the dots’: Michael Saylor’s Strategy buys another 1,036 bitcoin for $82 million as holdings top 850,000 BTC",
-   "url": "https://www.theblock.co/news/business/2026-11-09-connecting-the-dots-michael-saylor-strategy-bitcoin-436094",
-   "ts": 1794229842000
-  },
-  {
-   "source": "The Block",
-   "title": "Bitcoin loses 50-week moving average as 24-hour crypto long liquidations top $1 billion",
-   "url": "https://www.theblock.co/news/markets/2026-11-09-bitcoin-loses-50-week-moving-average-as-24-hour-crypto-long-liquidations-top-1-billion-436102",
-   "ts": 1794229461000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Microsoft-Backed Space and Time Launches Platform to Let AI Agents Verify Private Data",
-   "url": "https://decrypt.co/382697/microsoft-backed-space-and-time-launches-platform-to-let-ai-agents-verify-private-data",
-   "ts": 1794229262000
+   "ts": 1794317677000
   },
   {
    "source": "CoinDesk",
-   "title": "Solana set for its first tokenized stock venue under SEC framework, listing Galaxy",
-   "url": "https://www.coindesk.com/business/2026/11/06/solana-lset-for-its-first-tokenized-stock-venue-under-sec-framework-listing-galaxy",
-   "ts": 1794228095000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Trump says he knows ‘nothing’ about World Liberty’s UAE ties as Justin Sun challenges filings",
-   "url": "https://www.coindesk.com/business/2026/11/09/trump-says-he-knows-nothing-about-world-liberty-s-uae-ties-as-justin-sun-challenges-filings",
-   "ts": 1794227833000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin bulls can't rely on ETF flows",
-   "url": "https://www.coindesk.com/daybook-us/2026/11/09/bitcoin-bulls-can-t-rely-on-etf-flows",
-   "ts": 1794227400000
-  },
-  {
-   "source": "The Block",
-   "title": "Formation notifies SEC to operate first tokenized securities venue on Solana",
-   "url": "https://www.theblock.co/news/defi/2026-11-09-formation-tokenized-securities-solana-436060",
-   "ts": 1794227400000
+   "title": "U.S. CPI rose stronger than expected 0.4% in October; core rate rose 0.3%",
+   "url": "https://www.coindesk.com/markets/2026/11/10/u-s-cpi-rose-stronger-than-expected-0-4-in-october-core-rate-rose-0-3",
+   "ts": 1794317529000
   },
   {
    "source": "Cointelegraph",
-   "title": "EU taps industry to set standards for tokenized securities",
-   "url": "<![CDATA[https://cointelegraph.com/news/eu-nominations-tokenization-standards-group?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794227226000
+   "title": "Bitcoin’s ‘best buying opportunity ever’ has arrived: Mark Moss",
+   "url": "<![CDATA[https://cointelegraph.com/magazine/bitcoins-best-buying-opportunity-ever-has-arrived-mark-moss?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794317400000
   },
   {
    "source": "Decrypt",
-   "title": "Coinbase Joins Circle, Ripple With Final OCC Approval for Federal Trust Bank Charter",
-   "url": "https://decrypt.co/382816/coinbase-joins-circle-ripple-with-final-occ-approval-for-federal-trust-bank-charter",
-   "ts": 1794225036000
+   "title": "Morning Minute: Vitalik Recasts ETH as a Store of Value",
+   "url": "https://decrypt.co/382931/morning-minute-vitalik-recasts-eth-as-a-store-of-value",
+   "ts": 1794317091000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin may benefit as global tightening slows, Binance Research says",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-price-global-tightening-binance-research?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794316559000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Binance Warns of Apple iOS Flaw That Could Expose iPhone Users' Private Keys",
+   "url": "https://decrypt.co/382928/binance-warns-of-apple-ios-flaw-that-could-expose-iphone-users-private-keys",
+   "ts": 1794314734000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Ripple Prime head Marc Asch to step down, Noel Kimmel named successor",
+   "url": "https://www.coindesk.com/business/2026/11/09/ripple-prime-head-marc-asch-to-step-down-noel-kimmel-named-successor",
+   "ts": 1794314300000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin breaks with stocks, declines as ETF outflows mount, MARA reduces holdings",
+   "url": "https://www.coindesk.com/daybook-us/2026/11/10/bitcoin-breaks-with-stocks-declines-as-etf-outflows-mount-mara-sells-holdings",
+   "ts": 1794312900000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Binance Halts MEXC Transfers as FinCEN Cuts Exchange Off From US Financial System",
+   "url": "https://decrypt.co/382926/binance-halts-mexc-transfers-as-fincen-cuts-exchange-off-from-us-financial-system",
+   "ts": 1794312807000
+  },
+  {
+   "source": "The Block",
+   "title": "HIVE reports $79 million quarterly net loss as bitcoin mining revenue falls and AI business grows",
+   "url": "https://www.theblock.co/news/business/2026-11-10-hive-reports-79-million-quarterly-net-loss-as-bitcoin-mining-revenue-falls-and-ai-business-grows-437177",
+   "ts": 1794311536000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Coinbase, Kalshi join lawsuit backing CFTC over US stock perp futures",
+   "url": "<![CDATA[https://cointelegraph.com/news/coinbase-kalshi-cftc-stock-perpetual-futures-lawsuit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794311095000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Nvidia, Jensen Huang Sued by Shareholders Over Alleged Ties to Suspected Chinese Spy",
+   "url": "https://decrypt.co/382913/nvidia-jensen-huang-sued-by-shareholders-over-alleged-ties-to-suspected-chinese-spy",
+   "ts": 1794310016000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Binance warns iOS flaw could expose crypto wallet keys",
+   "url": "<![CDATA[https://cointelegraph.com/news/binance-warns-ios-flaw-could-expose-crypto-wallet-keys?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794309957000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin lags stock rebound in advance of U.S. inflation report",
+   "url": "https://www.coindesk.com/markets/2026/11/10/bitcoin-lags-stock-rebound-in-advance-of-u-s-inflation-report",
+   "ts": 1794309850000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Ex-employee sues Ethereum Foundation and Vitalik Buterin over firing",
+   "url": "<![CDATA[https://cointelegraph.com/news/ex-employee-sues-ethereum-foundation-vitalik-buterin-over-firing?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794308211000
+  },
+  {
+   "source": "The Block",
+   "title": "Exodus shares rise 10% ahead of Q3 earnings showing 7% revenue growth, $8.3 million loss",
+   "url": "https://www.theblock.co/news/business/2026-11-10-exodus-shares-rise-10-ahead-of-q3-earnings-showing-7-revenue-growth-8-3-million-loss-437012",
+   "ts": 1794308037000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin slips before U.S. inflation report as traders price in Fed rate increase",
+   "url": "https://www.coindesk.com/markets/2026/11/10/bitcoin-slips-before-u-s-inflation-report-as-traders-price-in-fed-rate-increase",
+   "ts": 1794307717000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Live news: Bitcoin falls to nearly three-month low after disappointing inflation data",
+   "url": "https://www.coindesk.com/markets/2026/11/10/live-news-traders-price-in-fed-rate-hike-for-december-as-bitcoin-and-gold-retreat",
+   "ts": 1794307305000
+  },
+  {
+   "source": "Decrypt",
+   "title": "'Tough Questions' Ahead: Warren Targets Prediction Markets, Trump Crypto as Banking Chair",
+   "url": "https://decrypt.co/382910/tough-questions-ahead-warren-targets-prediction-markets-trump-crypto-as-banking-chair",
+   "ts": 1794307266000
+  },
+  {
+   "source": "The Block",
+   "title": "Ark Invest trims Block, Bullish and its own bitcoin ETF holdings while buying Nvidia, SoFi",
+   "url": "https://www.theblock.co/news/business/2026-11-10-ark-invest-trims-block-bullish-holdings-437003",
+   "ts": 1794307013000
+  },
+  {
+   "source": "The Block",
+   "title": "NEAR AI says SGLang vulnerability exposed user account details in security breach",
+   "url": "https://www.theblock.co/news/defi/2026-11-10-near-ai-security-breach-437002",
+   "ts": 1794305833000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin price eyes $74K as Fed rate-hike bets hit 96% after Waller speech",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-price-eyes-74k-fed-rate-hike-expected-after-waller-speech?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794305302000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "The crypto wallet that grew up inside Telegram is striking out on its own",
+   "url": "https://www.coindesk.com/business/2026/11/10/the-crypto-wallet-that-grew-up-inside-telegram-is-striking-out-on-its-own",
+   "ts": 1794304757000
   }
  ],
  "narrative": null
