@@ -182,12 +182,12 @@ do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,9
 ## Follow-up aberto — taxa da extensao Pocket Universe (10/11/2026)
 
 Ele decidiu **desligar o coverage** da extensao depois de a investigacao mostrar que os 1,600% dos
-swaps vao para um coletor rotulado *Pocket Universe: Fee 4*. Detalhe completo em .
+swaps vao para um coletor rotulado *Pocket Universe: Fee 4*. Detalhe completo em `agentes/seguranca.md`.
 
 ⚡ **NA PROXIMA RODADA DE PRINTS COM SWAP, CONFERIR SE PAROU.** O codigo tem delay de 24h
-(), entao swap feito no mesmo dia do desligamento ainda paga.
+(`INSURANCE_DISABLE_DELAY_MS`), entao swap feito no mesmo dia do desligamento ainda paga.
 Como conferir, sem precisar de print: pegar o hash da tx, puxar os internals pelo Alchemy e ver se
-aparece transferencia para o endereco terminado em . Se aparecer, a taxa continua ativa.
+aparece transferencia para o endereco terminado em `a40ad9`. Se aparecer, a taxa continua ativa.
 Se o swap vier ~1,6% menor que o esperado e nao houver o transfer, pode ser coletor novo (o label
 "Fee 4" indica que eles rotacionam endereco) — nesse caso procurar qualquer saida de 1,600% exatos.
 
