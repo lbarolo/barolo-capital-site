@@ -179,6 +179,20 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
+## Follow-up aberto — taxa da extensao Pocket Universe (10/11/2026)
+
+Ele decidiu **desligar o coverage** da extensao depois de a investigacao mostrar que os 1,600% dos
+swaps vao para um coletor rotulado *Pocket Universe: Fee 4*. Detalhe completo em .
+
+⚡ **NA PROXIMA RODADA DE PRINTS COM SWAP, CONFERIR SE PAROU.** O codigo tem delay de 24h
+(), entao swap feito no mesmo dia do desligamento ainda paga.
+Como conferir, sem precisar de print: pegar o hash da tx, puxar os internals pelo Alchemy e ver se
+aparece transferencia para o endereco terminado em . Se aparecer, a taxa continua ativa.
+Se o swap vier ~1,6% menor que o esperado e nao houver o transfer, pode ser coletor novo (o label
+"Fee 4" indica que eles rotacionam endereco) — nesse caso procurar qualquer saida de 1,600% exatos.
+
+---
+
 ## Estado atual — 10/11/2026, à noite — 3 SWAPS NA QUEDA, CAIXA ZERADO
 
 Poucas horas depois de fechar a pool, ele comprou a queda em três pernas. Palavras dele:
