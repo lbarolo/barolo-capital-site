@@ -82,7 +82,7 @@ L.push('1) PORTFÓLIO',`  Patrimônio líquido ${us(out.netWorth.netWorth)} · e
  `  Beta ao BTC ${out.portBetaBTC.toFixed(2)} · vol anual ${pc(out.port.volAnn)} · N efetivo ${out.effN.toFixed(2)}`,
  `  Risco (contribuição): ETH ${pc(out.riskContrib.ETH.rc)} · SOL ${pc(out.riskContrib.SOL.rc)} · BTC ${pc(out.riskContrib.BTC.rc)}`,
  `  VaR95 1 dia ${pc(out.port.VaR95_1d)} (${us(out.port.VaR95_1d*out.netWorth.netWorth)}) · CVaR95 ${pc(out.port.CVaR95_1d)} · VaR95 30d ${pc(out.port.VaR95_30d_param)}`,
- `  Liquidação SOL ${us(out.liq.SOL.liqPrice)} (${pc(out.liq.SOL.drop)}, ${out.liq.SOL.sigmas1y.toFixed(2)}σ de 1 ano) · P(tocar em 1 ano) ${pc(out.liq.SOL.pTouch365d)} · AAVE: ${out.liq.ETH_AAVE.note||us(out.liq.ETH_AAVE.liqPrice)} · HF ${out.lending.hf.toFixed(2)}`,
+ `  Liquidação SOL ${us(out.liq.SOL.liqPrice)} (${pc(out.liq.SOL.drop)}, ${out.liq.SOL.sigmas1y.toFixed(2)}σ de 1 ano) · P(tocar em 1 ano) ${pc(out.liq.SOL.pTouch365d)} · AAVE: ${out.liq.ETH_AAVE.note||us(out.liq.ETH_AAVE.liqPrice)} · HF ${(out.lending.hf==null?"sem divida":out.lending.hf.toFixed(2))}`,
  `  Track: TWR ${out.perf.twr.toFixed(2)}% a.a. · TIR ${out.perf.irr.toFixed(2)}% · Sharpe ${out.perf.sharpe.toFixed(2)} · MaxDD ${out.perf.maxDD.toFixed(1)}%`,'');
 L.push('2) ATIVOS (vol 30d/1a · preço vs MM200d · vs MM200s · queda do topo 4a)');
 for(const k of['BTC','ETH','SOL'])L.push(`  ${k}: vol ${pc(out.vol[k].d30)}/${pc(out.vol[k].d365)} · ${pc(t[k].vsMa200)} · ${t[k].ma200w?pc(t[k].price/t[k].ma200w-1):'—'} · ${pc(t[k].ddFromHigh1500d)}`);
