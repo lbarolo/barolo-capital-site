@@ -699,5 +699,19 @@ window.BAROLO_DIARY = [
       "macro",
       "risco"
     ]
+  },
+  {
+    "id": 1794484800000,
+    "date": "2026-11-12",
+    "type": "risk",
+    "title": "Tese do looping em ETH — alavancagem direcional paga com renda externa",
+    "body": "TESE DECLARADA POR ELE (palavras dele): \"Como quero manter ETH, vou manter ate subir bem mais, vou\ndeixar o borrow e qualquer coisa pago com dinheiro de fora, mas a ideia e surfar a alta do ETH com isso.\"\n\nO QUE MUDA EM RELACAO AO PLAYBOOK ANTIGO\nO loop documentado (CONHECIMENTO-BAROLO secao 2.2) era: colateral -> borrow -> POOL -> a pool paga a\ndivida com as taxas. Ali a divida se auto-financiava e o comportamento era anticiclico por desenho.\nEsta versao NAO tem pool: o borrow vira ETH e fica parado como colateral. A divida passa a ser\nsustentada por RENDA EXTERNA, nao por fluxo de caixa da operacao. E alavancagem direcional pura -\nlegitima, mas de natureza diferente: o risco deixa de ser \"o spread comprime\" e vira \"preciso de\nrenda para o juro, e o preco pode cair antes de subir\".\n\nA MATEMATICA (colateral 2,8281 ETH, preco US$ 2.001, CF 84%)\nNo looping, o preco de liquidacao NAO depende do tamanho - so do LTV: liq = preco x LTV / 0,84.\n  LTV  divida   ETH    exposicao  liquida em  queda   juro/ano a 4%  a 9%\n   2%    $102   2,88     1,02x       $42       -98%        $4          $9\n  15%    $999   3,33     1,18x      $357       -82%       $41         $90\n  25%  $1.886   3,77     1,33x      $596       -70%       $77        $170\n  30%  $2.425   4,04     1,43x      $715       -64%       $98        $218\n  50%  $5.659   5,66     2,00x    $1.191       -40%      $230        $509\n  60%  $8.489   7,07     2,50x    $1.429       -29%      $345        $764\nSe o ETH DOBRAR, o ganho extra sobre nao ter alavancado: LTV 25% -> +US$ 1.886; 30% -> +US$ 2.425;\n50% -> +US$ 5.659.\n\nO RISCO QUE A TESE NAO MENCIONA: A TAXA E VARIAVEL\nHistorico do GHO na AAVE V4, 6 meses (MCP, 42 pontos): media 5,05% - mediana 4,02% - minimo 1,72% -\nMAXIMO 13,36% (em 24/10, ha 19 dias). Passou de 6% em 10 dos 42 pontos (24% do tempo) e de 7% em 8\n(19%). Ou seja: 4,06% e o piso tipico, nao o custo esperado. Planejar com 4% subestima em ~30%.\nAporte atual R$ 100/semana = ~US$ 930/ano no cambio de hoje; a 9% a.a., uma divida de US$ 2.400\nconsome 23% do aporte anual so em juro.\n\nCONTEXTO DO MOMENTO (12/11): patrimonio US$ 7.941, stables ZERO, exposicao cripto >100% do liquido,\nETH -56,7% do topo de 4 anos e -18% da media de 200 semanas, VIX 19,5, hack da Binance de US$ 6,3 bi\nha 2 semanas. HF 47,54 com so 2,1% do borrowing power usado - ha MUITO espaco, e o espaco e\njustamente o que precisa ser gasto com criterio.\n\nLEITURA PARA CONFERIR DEPOIS: a estrutura atual (LTV 1,8%) e inofensiva. A pergunta nao e se a tese\ne valida - e ate onde ele leva o LTV, e com que taxa ele planeja. Ate ~25-30% a posicao sobrevive a\num bear tipico de ETH (liquidacao em -70%/-64%); acima de 50% ela nao sobrevive a uma repeticao de\n2022 (-40% liquida, e o ETH ja fez -80% naquele ciclo a partir do topo).",
+    "pnl": null,
+    "tags": [
+      "estratégia",
+      "alavancagem",
+      "risco",
+      "aave"
+    ]
   }
 ];
