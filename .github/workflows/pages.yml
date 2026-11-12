@@ -32,7 +32,14 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # NAO cancelar deploy em andamento. Era 'true' e em 12/11/2026 as 17:30 o deploy falhou com
+  # 'No artifacts named github-pages were found for this workflow run' — o upload tinha marcado
+  # sucesso e o deploy nao achou o artefato. Com varios robos commitando em sequencia (4
+  # publicacoes em 15 minutos naquele dia), um run novo cancelava o anterior no meio do deploy.
+  # cancel-in-progress: false e o que o proprio template oficial do GitHub Pages usa: os runs
+  # enfileirados entre o em andamento e o ultimo sao descartados, mas um deploy ja iniciado
+  # termina. Mais lento, nao perde publicacao.
+  cancel-in-progress: false
 
 jobs:
   deploy:
