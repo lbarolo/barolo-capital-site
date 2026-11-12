@@ -179,6 +179,44 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
+## ✅ RESOLVIDO em 12/11/2026 — a taxa da Pocket Universe PAROU
+
+Ele desligou o coverage (*“Eu desativei no pocket universe os 1.6%”*) e o primeiro swap depois disso confirma: na tx de 12/11 (`0x08975e59`) **nenhuma transferência para o coletor terminado em `a40ad9`**. Verificado varrendo as 25 transferências internas da transação, não por confiança na palavra da extensão. O delay de 24h do código já tinha passado.
+
+🔹 **O que restou não é tarifa:** 0,000455 ETH (0,904%) foi para o filler da ordem. Amostrei 10 ordens do mesmo reactor do UniswapX e a proporção varia de **0,06% a 68%** — é spread de execução, que faz parte do preço aceito na ordem, não uma alíquota cobrada. O caso da Pocket Universe era diferente justamente porque 1,600% se repetia **exato** em todo mundo.
+
+---
+
+## Estado atual — 12/11/2026 (`asOf` 2026-11-12) — CICLO DE EMPRÉSTIMO REABERTO
+
+Primeira operação alavancada desde a quitação de 23/10. Nas palavras dele: *“nessa queda de hoje, aproveitei pra começar os empréstimos”*.
+
+| Hora | O quê | Detalhe |
+|---|---|---|
+| 10:43 | **Borrow 100,00 GHO** @ 4,06% | block 26399237, gas US$ 0,25 |
+| 11:15 | **100 GHO → 0,049882029001411664 ETH** @ **US$ 2.004,73** | UniswapX; gas pago pelo filler |
+| 14:16 | **Depósito de 0,45 ETH** (US$ 900,50) na AAVE | block 26400300, gas US$ 0,19 |
+
+⚠️ **ELE DISSE “borrow de USDC” NO CHAT, MAS O PRINT E O ON-CHAIN DIZEM GHO.** Conferido antes de lançar. Já houve GHO ali (a dívida de 01/04 a 10/04/2026, refinanciada para USDC). **Regra que isso reforça: o token vem do print/on-chain, nunca da fala.**
+
+O depósito de **0,45** foi muito além dos 0,0499 comprados — foi junto o ETH que estava parado na carteira. Sobram ~0,0288 ETH fora da AAVE.
+
+### 💰 Por que o `invested` sobe 100 sendo dinheiro emprestado
+O custo de aquisição daquele ETH **é** US$ 100; a contrapartida entra como **passivo** em `debt.aave`, não como custo negativo. Patrimônio líquido não muda (ativo +100, dívida +100). **Dívida nunca entra em `contributions`** — não é dinheiro dele.
+⚠️ **Efeito esperado, NÃO corrigir:** o `TOTAL_INVESTED` sobe 100 sem o patrimônio subir, então o ROI secundário (“base IR”) piora. Comprar alavancado aumenta o custo-base sem aumentar o patrimônio. O ROI em destaque usa `wealthCurve.invested`.
+
+### ⚠️ ARMADILHA NOVA DO MCP (não repetir)
+O campo `principal` do item de **GHO** veio **99,425324871915749659** — isso é o **scaled balance** (dividido pelo índice do mercado), não o nominal. O nominal é **100** e o juro real de ~3h é 0,0016 (bate com 4% a.a.). Gravar 99,42 criaria **0,58 GHO de juro fantasma**. Para WETH/USDT o campo bate com o nominal porque aquelas posições nasceram junto com o mercado V4 (índice ~1); o GHO não. **Sempre conferir `balance - principal` contra o APY e o tempo decorrido antes de gravar em `principals`.**
+
+### 🔧 Dois bugs achados e corrigidos no caminho
+1. **Card DIVÍDAS do dashboard** dizia “Aave USDC” fixo no código. Agora lê o token de `defi.*.borrow` → “Aave GHO + Kamino USDC”.
+2. **Bundle do `emprestimos.html`** — o grave: **11 leituras usavam `|| fallback`**, que dispara quando o valor certo é **zero**. Com o USDC quitado em 23/10 e o USDT sacado em 29/10, o card “Juros em Tempo Real” mostrava **“755.28 USDC atual · principal 748.00”** e **“+12,67 USDT” de juro** — ficção havia três semanas. Trocado por `?? fallback`; a dívida e o principal da AAVE agora **somam todos os tokens** de borrow e o rótulo é dinâmico. Depois: “100.00 GHO atual · principal 100.00”, “+0.00 USDT”, “+0.00 USDS”.
+
+### Conferido no site
+Patrimônio **US$ 7.941** · `8.499 SPOT + 0 LP + 0 STABLES − 558 DÍVIDA` ✓ · HF AAVE **47,54** ao vivo · Kamino LTV 21,8% · D/Patrimônio 7,0% · 152 testes · 0 NaN · 0 erro de console nas duas páginas.
+
+---
+
 ## Follow-up aberto — taxa da extensao Pocket Universe (10/11/2026)
 
 Ele decidiu **desligar o coverage** da extensao depois de a investigacao mostrar que os 1,600% dos
@@ -1221,6 +1259,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
 - 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Ele lançou os dois lados no mesmo dia e o espelho fechou (BTC 0,00711492 · USDT 851,32676194); sobra só o yield normal, **~US$ 14,86**, mais o −0,000003 de BTC que é taxa e não se lança.
 - 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.
+- 12/11/2026 — **ciclo de empréstimo reaberto**: borrow de **100 GHO** @4,06% → **0,049882029 ETH @ US$ 2.004,73** (melhor preço das compras recentes) → **depósito de 0,45 ETH** na AAVE para o looping. HF **47,54**, só 2,1% do borrowing power usado. ⚠️ Ele disse “USDC” mas era **GHO** — conferido no print antes de lançar. ⚠️ Armadilha nova: o `principal` do GHO no MCP é **scaled**, não nominal (99,42 vs 100) — gravar o scaled criaria juro fantasma. ✅ **Pocket Universe confirmado PARADO** (zero para o coletor `a40ad9` na tx). 🔧 2 bugs: card de dívida com token fixo, e **11 leituras do bundle com `|| fallback`** que inventavam “755,28 USDC” e “+12,67 USDT” de juro desde 23/10.
 - 10/11/2026 (noite) — **3 swaps comprando a queda, caixa zerado**: 50 USDT → 0,0238 ETH, **24 USDC** → 0,0114 ETH e 50 USDT → 0,0243 ETH; bruto +0,0595, líquido **+0,0594** (gas 0,0001), médio **US$ 2.084,03/ETH**. Gastou os 100 USDT que estavam presos na ordem limite (b) de 24/10 — não esperou, comprou a mercado. ⚠ **`invested` sobe só 81,93, não 124**: a rotação migra o custo REAL do USDT (82,13 para 100,25 de qty) e os 24 USDC de taxa migram ZERO. `TOTAL_INVESTED` intacto. Stables em **US$ 0,25** — sem pó seco até sexta. Pendência do CoinGecko virou 0,398931 ETH em QUATRO partes, **só duas a custo zero** (tabela no Estado atual).
 - 10/11/2026 — **pool ETH/USDC v4 FECHADA** pela regra das 24h (ETH perdeu o piso do range e não voltou): voltaram 0,3384 ETH + 24,00 USDC; IL 57,61 contra 46,46 de taxa = **−US$ 11,15 em 12 dias**, com fee APR real de **190,2% a.a.** Funcionou como pool de COMPRA (entrou 100% USDC, saiu 100% ETH). Custo migrou US$ 742,37 do USDT para o ETH (`TOTAL_INVESTED` intacto); USDC criado em `stables` a custo zero. ⚠ **Bug de código achado e corrigido**: ticker novo no `data.js` não aparecia no dashboard — o `PORTFOLIO_DATA` casa por ticker e ignorava o USDC, deixando o patrimônio US$ 24 abaixo. Pendente: ele lançar a **compra** de 0,3384 ETH por US$ 742,37 no CoinGecko (não é custo zero) e os 2,35 USDC de reward sem claim.
 - 09/11/2026 — print do CoinGecko confirma a compra lançada (BTC bruto 0,00758942, com custo); `cgMirror` acertado e pendente de volta ao yield real (~US$ 5,88, ETH+SOL). USDT inalterado de propósito (entrada e saída não lançadas se cancelam; sobram 3 centavos). **POL corrigido 190,13 → 190,113** — erro de leitura do print de 01/09, sem transação no meio. Os outros 8 tokens batem na casa decimal. Nota: o total em USD do print não fecha com preço × qty (colunas de valor defasadas ~0,35%) — conferir sempre por quantidade.
