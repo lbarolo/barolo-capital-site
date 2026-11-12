@@ -1984,8 +1984,12 @@ function renderUI(enriched){
  var _debtNow = aaveDebtLive + kaminoDebtLive;
  set('s-debt', (_debtNow > 0 ? '-' : '') + fmtCurrency(_debtNow, 0));
  var _debtParts = [];
- if (aaveDebtLive > 0) _debtParts.push('Aave USDC');
- if (kaminoDebtLive > 0) _debtParts.push('Kamino USDC');
+ // Token da divida LIDO DO data.js, nao fixo: ja foi GHO, USDC e USDG na AAVE (e voltou a ser
+ // GHO em 12/11/2026). Pega os tokens com qty > 0 em defi.*.borrow; sem data.js, cai em USDC.
+ function _debtTok(b){ try { var k = Object.keys(b||{}).filter(function(t){ return (b[t]||{}).qty > 0; }); return k.length ? k.join('/') : 'USDC'; } catch(e){ return 'USDC'; } }
+ var _dfi = (window.BAROLO_DATA && window.BAROLO_DATA.defi) || {};
+ if (aaveDebtLive > 0) _debtParts.push('Aave ' + _debtTok(_dfi.aave && _dfi.aave.borrow));
+ if (kaminoDebtLive > 0) _debtParts.push('Kamino ' + _debtTok(_dfi.kamino && _dfi.kamino.borrow));
  set('s-debt-sub', _debtParts.length ? _debtParts.join(' + ') : 'sem dívida');
  set('s-invested', fmtCurrency(TOTAL_INVESTED, 0));
 

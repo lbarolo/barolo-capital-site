@@ -19,14 +19,12 @@ test('AAVE: resposta real → HF, colateral e dívida críveis e coerentes com o
   assert.ok(r, 'fetchAave devolveu null');
   assert.ok(r.hf > 1 && r.hf < 100, 'HF ' + r.hf);
   assert.ok(r.collateral > r.debt);
-  // A divida da AAVE foi QUITADA em 23/10/2026, entao D.debt.aave pode ser 0 — e dividir por 0
-  // daria NaN aqui. A comparacao cruzada so faz sentido quando ha divida registrada; sem ela, a
-  // fixture (gravada em 14/09) e historica e o que o teste ainda garante e a coerencia do parser.
-  if (D.debt.aave > 0) {
-    assert.ok(Math.abs(r.debt - D.debt.aave) / D.debt.aave < 0.02, `dívida ${r.debt} vs data.js ${D.debt.aave}`);
-  } else {
-    assert.ok(r.debt >= 0 && isFinite(r.debt), `dívida impossivel na fixture: ${r.debt}`);
-  }
+  // NAO comparar com D.debt.aave: a fixture foi gravada em 14/09/2026 e a divida real muda toda
+  // semana (quitada em 23/10, reaberta com 100 GHO em 12/11). Comparar os dois fazia o teste quebrar
+  // a cada movimentacao do Lucas, sinalizando erro onde nao havia. O que importa aqui e que o PARSER
+  // le a fixture em escala crivel; o teste seguinte cobre as escalas com valores sinteticos exatos.
+  assert.ok(r.debt > 1 && r.debt < 1e6, `dívida fora de escala: ${r.debt}`);
+  assert.ok(isFinite(r.collateral) && r.collateral > 100, `colateral fora de escala: ${r.collateral}`);
 });
 
 test('AAVE: decodifica o struct V4 nas escalas certas', async () => {
