@@ -2040,8 +2040,8 @@ body, input, button, select, textarea {
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin:18px 0 1px;">
     <div style="background:var(--surface);padding:20px 18px;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Capital Fiat Aportado</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);line-height:1;">R$ 35.498</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;">Binance R$ 29.664 + OKX R$ 5.066 · até 08/05/26</div>
+      <div id="fx-aportado" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);line-height:1;">R$ 35.498</div>
+      <div id="fx-aportado-sub" style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:6px;">Binance R$ 29.664 + OKX R$ 5.066 · até 08/05/26</div>
     </div>
     <div style="background:var(--surface);padding:20px 18px;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Câmbio Médio de Entrada</div>
@@ -2290,7 +2290,7 @@ window.Fiscal = (function(){
   // Conferido que NÃO duplica: a planilha termina em 08/05/2026, todas as cinco são posteriores.
   // As compras BTC/USDT do mesmo print (24/06 e 01/07) são cripto↔cripto e NÃO entram aqui —
   // já estão em data.js → holdings.BTC (invested $38,84 e $95,89).
-  var APORTADO_BRL = 38432.97;   // Binance 29.664,20 + OKX 8.000,28 (fiat→cripto) — +R$ 100 do aporte de 06/11/2026
+  var APORTADO_BRL = 38632.97;   // Binance 29.664,20 + OKX 8.000,28 (fiat→cripto) — +R$ 100 do aporte de 06/11/2026
   // +R$ 250,00 / +48,93787291 USDT em 23/10/2026: os tres aportes semanais que faltavam aqui —
   // 16/10 R$ 100,00 @ 5,1555 (19,39657 USDT, lancado com atraso — feito depois do review daquele dia),
   // 09/10 R$ 50,00 @ 5,0686 (9,86463 USDT) e 23/10 R$ 100,00 @ 5,0822 (19,67667291 USDT), ambos taxa ZERO na OKX.
@@ -2301,7 +2301,7 @@ window.Fiscal = (function(){
     { t:'SOL',  qty:'1,012',      brl:914.48,   avg:'903,63'     },
     { t:'ADA',  qty:'307,99',     brl:3713.84,  avg:'12,06'      },
     { t:'XAI',  qty:'79',         brl:101.52,   avg:'1,29'       },
-    { t:'USDT', qty:'3.143,94',   brl:16866.57, avg:'5,37'       },  // +18,20684 un e +R$ 100,00 (30/10/2026, @ 5,4924)
+    { t:'USDT', qty:'3.179,30',   brl:17066.57, avg:'5,37'       },  // +17,88726373 un e +R$ 100,00 (06/11/2026, @ 5,5906) e +17,4703 un e +R$ 100,00 (13/11/2026, @ 5,724). Cambio medio do USDT sobe de 5,3662 para 5,3680 — segue arredondando em 5,37.   // +18,20684 un e +R$ 100,00 (30/10/2026, @ 5,4924)
     { t:'USDC', qty:'531,13',     brl:2900.35,  avg:'5,46'       },
     { t:'BUSD', qty:'1.231,66',   brl:6433.55,  avg:'5,22'       },
     { t:'DOT',  qty:'2,97',       brl:352.77,   avg:'118,78'     },
@@ -2360,7 +2360,12 @@ window.Fiscal = (function(){
     var pct = res/APORTADO_BRL*100;
     var el = document.getElementById('fx-result');
     if(el){ el.textContent = (res>=0?'+':'−')+fmtBrl0(Math.abs(res)); el.style.color = res>=0?'var(--green)':'var(--red)'; }
-    s('fx-result-sub', (pct>=0?'+':'')+pct.toFixed(1)+'% sobre R$ 35.498 aportados');
+    s('fx-result-sub', (pct>=0?'+':'')+pct.toFixed(1)+'% sobre '+fmtBrl0(APORTADO_BRL)+' aportados');
+    // O KPI de capital aportado tambem vem do APORTADO_BRL: era R$ 35.498 fixo no HTML (o valor
+    // da planilha de 11/05/2026) e ficava contradizendo o TOTAL da tabela logo abaixo, que ja
+    // somava os aportes semanais. Agora os dois batem sozinhos.
+    s('fx-aportado', fmtBrl0(APORTADO_BRL));
+    s('fx-aportado-sub', 'Binance R$ 29.664 + OKX '+fmtBrl0(APORTADO_BRL-29664.20)+' · inclui os aportes semanais');
   }
   function open(){
     if(_opened){ return; }
