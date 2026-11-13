@@ -1,25 +1,19 @@
 {
- "updated": "2026-11-12T17:44:47.129Z",
- "date": "2026-11-12",
+ "updated": "2026-11-13T17:23:24.571Z",
+ "date": "2026-11-13",
  "source": "preço: coinbase/coinpaprika/coingecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 71753,
-   "d24": -3.77,
-   "d7": -5.56,
-   "d30": -13.94,
+   "price": 68530,
+   "d24": -4.55,
+   "d7": -9.38,
+   "d30": -15.85,
    "ath": 126080,
-   "athPct": -43.1,
+   "athPct": -45.6,
    "athDate": "2025-10-06",
-   "mcap": 1443026134623,
-   "vol": 29388272197,
+   "mcap": 1378287142406,
+   "vol": 43323278752,
    "spark": [
-    76339.2,
-    76107.78,
-    76209.5,
-    75707.97,
-    75597.06,
-    75965.72,
     75914.1,
     75800.57,
     75835.83,
@@ -56,26 +50,26 @@
     73653.4,
     73514.62,
     72825.92,
-    71616.69
+    71695.05,
+    71387.66,
+    71052.34,
+    68532.52,
+    68653.22,
+    69142.02,
+    68807
    ]
   },
   "eth": {
-   "price": 2009.63,
-   "d24": -4.02,
-   "d7": -10.81,
-   "d30": -20.15,
+   "price": 1925.28,
+   "d24": -4.19,
+   "d7": -13.5,
+   "d30": -20.65,
    "ath": 4946.05,
-   "athPct": -59.4,
+   "athPct": -61.1,
    "athDate": "2025-08-24",
-   "mcap": 245599815018,
-   "vol": 10585898746,
+   "mcap": 235325962815,
+   "vol": 14753234206,
    "spark": [
-    2264.45,
-    2246.26,
-    2242.39,
-    2231.09,
-    2224.42,
-    2236.51,
     2232.85,
     2227.13,
     2237.88,
@@ -112,26 +106,26 @@
     2048.28,
     2047.98,
     2020.38,
-    2006.54
+    2005.75,
+    2014.61,
+    2009.56,
+    1924.22,
+    1930.55,
+    1957.67,
+    1932.62
    ]
   },
   "sol": {
-   "price": 81.36,
-   "d24": -4.95,
-   "d7": -9.58,
-   "d30": -24.07,
+   "price": 79.55,
+   "d24": -2.14,
+   "d7": -12.2,
+   "d30": -23.39,
    "ath": 293.31,
-   "athPct": -72.3,
+   "athPct": -72.9,
    "athDate": "2025-01-19",
-   "mcap": 48118329578,
-   "vol": 2191966432,
+   "mcap": 47056128826,
+   "vol": 3392189357,
    "spark": [
-    90.25,
-    89.89,
-    90.15,
-    89.43,
-    89.48,
-    90.14,
     90.57,
     89.83,
     90.16,
@@ -168,344 +162,350 @@
     83.02,
     82.89,
     82.11,
-    81.58
+    81.35,
+    81.29,
+    81.51,
+    78.33,
+    79.71,
+    80.62,
+    79.92
    ]
   },
-  "stableMcap": 245218137249
+  "stableMcap": 244784691271
  },
  "fng": {
-  "value": 28,
-  "label": "Fear",
-  "prev": 29
+  "value": 20,
+  "label": "Extreme Fear",
+  "prev": 28
  },
  "broad": {
-  "btcDom": 59.6,
+  "btcDom": 59,
   "ethDom": 10.1,
-  "altDom": 30.3,
-  "totalMcap": 2417726508891.8555,
-  "totalVol": 71329249070.30884,
-  "mcapChange24h": -5.48,
-  "ethBtc": 0.02801,
-  "stableMcap": 245218137249
+  "altDom": 30.9,
+  "totalMcap": 2333060578829.5547,
+  "totalVol": 96192475399.22644,
+  "mcapChange24h": -5.95,
+  "ethBtc": 0.02809,
+  "stableMcap": 244784691271
  },
  "onchain": {
-  "t": "2026-11-11",
-  "price": 73860.75,
-  "mvrv": 1.36971,
-  "mvrv_sth": 0.977627,
-  "mvrv_lth": 1.514622,
-  "realized": 53918.04,
-  "realized_sth": 75542.24,
-  "realized_lth": 48759.44,
-  "sopr_lth": 1.154811,
-  "aviv": 0.953055,
-  "cvdd": 49637.16,
-  "sma200": 73125.99,
-  "mayer": 1.01
+  "t": "2026-11-12",
+  "price": 72669.18,
+  "mvrv": 1.323921,
+  "mvrv_sth": 0.946546,
+  "mvrv_lth": 1.463386,
+  "realized": 53874.65,
+  "realized_sth": 75353.7,
+  "realized_lth": 48740.22,
+  "sopr_lth": 0.951896,
+  "aviv": 0.921332,
+  "cvdd": 49654.32,
+  "sma200": 73099.49,
+  "mayer": 0.994
  },
  "risk": {
-  "score": 0.202,
-  "label": "de-risking",
+  "score": 0.147,
+  "label": "fundo / capitulação",
   "components": [
    {
     "key": "MVRV",
-    "v": 1.36971,
-    "s": 0.196
+    "v": 1.323921,
+    "s": 0.181
    },
    {
     "key": "Mayer",
-    "v": 1.01,
-    "s": 0.228
+    "v": 0.994,
+    "s": 0.219
    },
    {
     "key": "STH MVRV",
-    "v": 0.977627,
-    "s": 0.129
+    "v": 0.946546,
+    "s": 0.078
    },
    {
     "key": "AVIV",
-    "v": 0.953055,
-    "s": 0.227
+    "v": 0.921332,
+    "s": 0.211
    },
    {
     "key": "SOPR LTH",
-    "v": 1.154811,
-    "s": 0.232
+    "v": 0.951896,
+    "s": 0.047
    }
   ]
  },
  "portfolio": {
-  "netWorth": 7941.91,
-  "gross": 8499.61,
+  "netWorth": 7639.49,
+  "gross": 8197.19,
   "stables": 0.25,
   "lp": 0,
   "debt": 557.95,
   "invested": 9803.68,
-  "roi": -19,
-  "move24": -347.33,
-  "move24Pct": -4.19,
+  "roi": -22.1,
+  "move24": -318.63,
+  "move24Pct": -4,
   "aave": {
    "hf": null,
-   "collateral": 5679.18,
+   "collateral": 5447.02,
    "debt": 0,
    "ltv": 0,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 21.8,
+   "ltv": 22.2,
    "liqLtv": 80,
-   "collateral": 2103.86,
+   "collateral": 2060.09,
    "debt": 457.95,
    "liqSol": 21.56,
-   "dropToLiq": 73.5
+   "dropToLiq": 72.9
   },
   "carry": {
    "monthlyInterest": 2.06,
-   "monthlySupply": 15.18
+   "monthlySupply": 14.72
   },
   "dataAsOf": "2026-11-12"
  },
  "news": [
   {
-   "source": "The Block",
-   "title": "Bitcoin falls to 12-week low as Jensen Huang’s exit from Nvidia rattles markets",
-   "url": "https://www.theblock.co/news/markets/2026-11-12-bitcoin-12-week-low-jensen-huang-exit-nvidia-438992",
-   "ts": 1794505200000
-  },
-  {
-   "source": "Decrypt",
-   "title": "'A Massive Mistake': Tech, AI and Crypto Founders React to Jensen Huang’s Nvidia Exit",
-   "url": "https://decrypt.co/383141/massive-mistake-tech-ai-crypto-founders-react-jensen-huang-nvidia-exit",
-   "ts": 1794503682000
-  },
-  {
-   "source": "The Block",
-   "title": "Exodus’ ‘cost reset is real’ as payments offset crypto wallet slowdown, StoneX says",
-   "url": "https://www.theblock.co/news/markets/2026-11-12-exodus-cost-reset-real-payments-offset-crypto-wallet-slowdown-stonex-438988",
-   "ts": 1794502552000
-  },
-  {
    "source": "CoinDesk",
-   "title": "Illinois crypto tax is impossible to enforce as written, crypto industry tells court",
-   "url": "https://www.coindesk.com/policy/2026/11/12/illinois-crypto-tax-is-impossible-to-enforce-as-written-crypto-industry-tells-court",
-   "ts": 1794501952000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Tron, Tether and Chainalysis Form a New Crypto-Crime Task Force—Replacing One That Just Collapsed",
-   "url": "https://decrypt.co/383139/tron-tether-chainalysis-new-crypto-crime-task-force-replacing-trm",
-   "ts": 1794501362000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Anchorage Digital’s Stablecoins Can Now Settle Payments on Visa’s Network",
-   "url": "https://decrypt.co/383098/anchorage-digital-stablecoins-settle-payments-visa-network",
-   "ts": 1794499263000
-  },
-  {
-   "source": "The Block",
-   "title": "Visa adds Western Union’s USDPT stablecoin to its settlement network in Anchorage tie-up",
-   "url": "https://www.theblock.co/news/business/2026-11-12-visa-adds-western-unions-usdpt-stablecoin-to-its-settlement-network-in-anchorage-tie-up-438520",
-   "ts": 1794499200000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Tether Gold Gets Clean KPMG Audit Confirming $2.2B in Physical Gold Backing",
-   "url": "https://decrypt.co/383137/tether-gold-gets-clean-kpmg-audit-confirming-2-2b-in-physical-gold-backing",
-   "ts": 1794498938000
+   "title": "U.S. Senate Banking Committee races toward hearing on new SEC nominations",
+   "url": "https://www.coindesk.com/policy/2026/11/13/u-s-senate-banking-committee-races-toward-hearing-on-new-sec-nominations",
+   "ts": 1794589543000
   },
   {
    "source": "Cointelegraph",
-   "title": "Bitcoin slides toward $71K as Nvidia stock tumbles after Huang steps down",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-price-drops-71k-stocks-nvidia-huang-resignation?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794498366000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "DTCC adds Solana to Wall Street tokenization plans, targeting 2027 rollout",
-   "url": "https://www.coindesk.com/business/2026/11/12/dtcc-adds-solana-to-wall-street-tokenization-plans-targeting-2027-rollout",
-   "ts": 1794498348000
+   "title": "Bitcoin holds below $70K as stocks slip despite a cooler US PPI print",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-below-70k-stocks-slip-cooler-us-ppi-print?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794587951000
   },
   {
    "source": "The Block",
-   "title": "Unocoin ‘login suspension’ continues as exchange flags outgoing BitGo ETH transactions",
-   "url": "https://www.theblock.co/news/ecosystems/2026-11-12-unocoin-login-suspension-continues-as-exchange-flags-outgoing-bitgo-eth-transactions-438654",
-   "ts": 1794497777000
+   "title": "Hyperliquid leapfrogs Bybit, Kraken and OKX in open interest as Q3 positions grow 80%",
+   "url": "https://www.theblock.co/news/markets/2026-11-13-hyperliquid-leapfrogs-bybit-kraken-okx-open-interest-q3-positions-grow-440053",
+   "ts": 1794587846000
   },
   {
    "source": "CoinDesk",
-   "title": "Crypto for Advisors: The blockchain built to run financial markets",
-   "url": "https://www.coindesk.com/coindesk-indices/2026/11/12/crypto-for-advisors-the-blockchain-built-to-run-financial-markets",
-   "ts": 1794497669000
+   "title": "Bitcoin heads for sixth weekly loss as Anthropic’s blockbuster IPO looms",
+   "url": "https://www.coindesk.com/markets/2026/11/13/bitcoin-heads-for-sixth-weekly-loss-as-anthropic-s-blockbuster-ipo-looms",
+   "ts": 1794585687000
   },
   {
    "source": "The Block",
-   "title": "Tether Gold issuer follows USDT to complete Big Four audit",
-   "url": "https://www.theblock.co/news/business/2026-11-12-tether-gold-issuer-follows-usdt-to-complete-big-four-audit-438849",
-   "ts": 1794497006000
+   "title": "Kraken parent Payward posts 66% drop in Q3 adjusted EBITDA, plans US prediction markets and personal finance AI agent",
+   "url": "https://www.theblock.co/news/business/2026-11-13-kraken-parent-payward-posts-66-drop-in-q3-adjusted-ebitda-plans-us-prediction-markets-and-personal-finance-ai-agent-439721",
+   "ts": 1794583882000
   },
   {
    "source": "The Block",
-   "title": "Andreessen Horowitz, DeFi Education Fund push back against Illinois crypto tax",
-   "url": "https://www.theblock.co/news/regulation/2026-11-12-andreessen-horowitz-defi-education-fund-push-back-against-illinois-crypto-tax-438573",
-   "ts": 1794495662000
+   "title": "Tether-backed Twenty One Capital reports $1.09 billion Q3 net income on bitcoin gains",
+   "url": "https://www.theblock.co/news/business/2026-11-13-tether-backed-twenty-one-capital-reports-1-09-billion-q3-net-income-on-bitcoin-gains-439711",
+   "ts": 1794581449000
+  },
+  {
+   "source": "The Block",
+   "title": "Ethereum and Layer 1s Explained",
+   "url": "https://www.theblock.co/learn/campus/ethereum-and-layer-1s-explained-435883",
+   "ts": 1794579143000
   },
   {
    "source": "CoinDesk",
-   "title": "Jupiter adds Anchorage-backed USDGO to its $1 billion Solana lending platform",
-   "url": "https://www.coindesk.com/business/2026/11/12/jupiter-adds-anchorage-backed-usdgo-to-its-usd1-billion-solana-lending-platform",
-   "ts": 1794494700000
+   "title": "Kraken parent Payward says expansion outside crypto trading helps cushion revenue decline",
+   "url": "https://www.coindesk.com/business/2026/11/13/kraken-parent-payward-says-expansion-outside-crypto-trading-helps-cushion-revenue-decline",
+   "ts": 1794578520000
   },
   {
    "source": "Decrypt",
-   "title": "Jensen Huang Resigns as Nvidia CEO, With CFO Colette Kress Named Interim Chief",
-   "url": "https://decrypt.co/383134/jensen-huang-resigns-as-nvidia-ceo-with-cfo-colette-kress-named-interim-chief",
-   "ts": 1794494679000
+   "title": "Crypto Laundering a 'Material Risk' for UK Ahead of FATF Review: RUSI",
+   "url": "https://decrypt.co/383227/crypto-laundering-a-material-risk-for-uk-ahead-of-fatf-review-rusi",
+   "ts": 1794578125000
   },
   {
-   "source": "CoinDesk",
-   "title": "The next Congress will write rules for AI and emerging tech. They should use the stuff first.",
-   "url": "https://www.coindesk.com/opinion/2026/11/12/the-next-congress-will-write-rules-for-ai-and-emerging-tech-they-should-use-the-stuff-first",
-   "ts": 1794493491000
+   "source": "Cointelegraph",
+   "title": "Here’s what happened in crypto today",
+   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794577784000
   },
   {
-   "source": "The Block",
-   "title": "DTCC plans to bring tokenized securities to Solana in second half of 2027",
-   "url": "https://www.theblock.co/news/business/2026-11-12-dtcc-plans-bring-tokenized-securities-solana-second-half-of-2027-438559",
-   "ts": 1794493391000
+   "source": "Cointelegraph",
+   "title": "Arthur Hayes ‘flattered’ as Coinbase backs US stock perps",
+   "url": "<![CDATA[https://cointelegraph.com/news/arthur-hayes-coinbase-us-stock-perps-cftc?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794577286000
   },
   {
    "source": "Decrypt",
-   "title": "SoFi Brings Its Bank-Issued Stablecoin to Polygon’s Payments Stack",
-   "url": "https://decrypt.co/383096/sofi-brings-bank-issued-stablecoin-polygon-payments-stack",
-   "ts": 1794492062000
+   "title": "‘Roadmap is Complete,' Cardano Founder Charles Hoskinson Says",
+   "url": "https://decrypt.co/383221/roadmap-is-complete-cardano-founder-charles-hoskinson-says",
+   "ts": 1794576989000
   },
   {
    "source": "The Block",
-   "title": "Securitize and Ethena’s $100 million BlackRock BUIDL liquidity facility goes live",
-   "url": "https://www.theblock.co/news/ecosystems/2026-11-12-securitize-ethena-buidl-liquidity-facility-live-usdc-438442",
-   "ts": 1794492000000
+   "title": "From $6 to $6.9 million: Two dormant Bitcoin addresses wake up to move 100 BTC after more than 16 years",
+   "url": "https://www.theblock.co/news/markets/2026-11-13-from-6-to-6-9-million-two-dormant-bitcoin-addresses-wake-up-to-move-100-btc-after-more-than-16-years-439698",
+   "ts": 1794576886000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Nakamoto shares fall 6% premarket after Q3 revenue turns negative",
+   "url": "<![CDATA[https://cointelegraph.com/markets/nakamoto-shares-fall-after-negative-q3-revenue?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794575059000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Morning Minute: Crypto Plummets as Jensen Huang Exits Nvidia",
+   "url": "https://decrypt.co/383222/morning-minute-crypto-plummets-as-jensen-huang-exits-nvidia",
+   "ts": 1794575020000
   },
   {
    "source": "The Block",
-   "title": "SoFiUSD goes live on Polygon as bank-issued stablecoin expands reach",
-   "url": "https://www.theblock.co/news/ecosystems/2026-11-12-sofiusd-goes-live-on-polygon-as-bank-issued-stablecoin-expands-reach-438542",
-   "ts": 1794492000000
+   "title": "UK, Singapore, and Thailand central banks complete foreign exchange settlement trial linking traditional and tokenized systems",
+   "url": "https://www.theblock.co/news/regulation/2026-11-13-uk-singapore-and-thailand-central-banks-complete-foreign-exchange-settlement-trial-linking-traditional-and-tokenized-systems-439692",
+   "ts": 1794572861000
   },
   {
    "source": "Cointelegraph",
-   "title": "Jensen Huang resigns as Nvidia CEO, exits board; shares plunge",
-   "url": "<![CDATA[https://cointelegraph.com/news/jensen-huang-resigns-nvidia-ceo-board-member?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794491942000
+   "title": "Israeli police arrest five in $5M WhatsApp crypto trading probe",
+   "url": "<![CDATA[https://cointelegraph.com/news/israel-police-arrest-five-5m-whatsapp-crypto-scheme?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794572341000
   },
   {
    "source": "CoinDesk",
-   "title": "Nvidia CEO Huang quits company he co-founded, led for 3 decades. Shares slump",
-   "url": "https://www.coindesk.com/markets/2026/11/12/nvidia-shares-plunge-10-as-jensen-huang-resigns",
-   "ts": 1794491873000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bit Digital stock falls 5% in pre-market after Q3 revenue miss",
-   "url": "<![CDATA[https://cointelegraph.com/news/bit-digital-stock-falls-q3-revenue-miss?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794491559000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Thailand proposes $148K daily cap on stablecoin deposits and withdrawals",
-   "url": "<![CDATA[https://cointelegraph.com/news/thailand-tighter-stablecoin-rules-crypto-exchange?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794491043000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Crypto hack losses equal 57 cents per $1 earned onchain: Ark’s Valente",
-   "url": "<![CDATA[https://cointelegraph.com/news/crypto-hackers-stole-57-cents-every-1-earned-ark?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794490319000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Are Alt-L1s over? Security, costs drive smaller chains to Ethereum",
-   "url": "<![CDATA[https://cointelegraph.com/magazine/are-alt-l1s-over-security-costs-drive-smaller-chains-to-ethereum?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794490200000
+   "title": "Bitcoin's momentum gauge is turning red, could send prices back below $60,000",
+   "url": "https://www.coindesk.com/daybook-us/2026/11/13/bitcoin-s-momentum-gauge-is-turning-red-could-send-prices-back-below-usd60-000",
+   "ts": 1794572062000
   },
   {
    "source": "Decrypt",
-   "title": "DTCC to Bring Tokenized Stocks and Treasuries to Solana in 2027",
-   "url": "https://decrypt.co/383132/dtcc-to-bring-tokenized-stocks-and-treasuries-to-solana-in-2027",
-   "ts": 1794489947000
+   "title": "Nvidia Employees Push Board to Bring Back Jensen Huang: Report",
+   "url": "https://decrypt.co/383217/nvidia-employees-push-board-to-bring-back-jensen-huang-report",
+   "ts": 1794571127000
   },
   {
-   "source": "Cointelegraph",
-   "title": "Uber’s UK banking partner Griffin raises $20M for stablecoin services",
-   "url": "<![CDATA[https://cointelegraph.com/news/digital-bank-griffin-100m-valuation-card-stablecoin?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794489716000
+   "source": "CoinDesk",
+   "title": "Bitcoin hits 12-week low as dollar rallies on interest-rate outlook, liquidations top $1.6 billion",
+   "url": "https://www.coindesk.com/markets/2026/11/13/bitcoin-hits-12-week-low-as-dollar-rallies-on-interest-rate-outlook-liquidations-top-usd1-6-billion",
+   "ts": 1794570745000
   },
   {
    "source": "Decrypt",
-   "title": "Morning Minute: Tokenized Stock Venues Are Launching Without Big Tech’s Approval",
-   "url": "https://decrypt.co/383129/morning-minute-tokenized-stock-venues-are-launching-without-big-techs-approval",
-   "ts": 1794488784000
+   "title": "Bitcoin Drops to $69K On 'Concentrated Liquidation' and 'Weakening' Demand",
+   "url": "https://decrypt.co/383214/bitcoin-drops-to-69k-on-concentrated-liquidation-and-weakening-demand",
+   "ts": 1794568844000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Congress Summons Ex-Nvidia CEO Jensen Huang, Lutnick Over Chip Exports to China",
+   "url": "https://decrypt.co/383211/congress-summons-ex-nvidia-ceo-jensen-huang-lutnick-over-chip-exports-to-china",
+   "ts": 1794567354000
   },
   {
    "source": "The Block",
-   "title": "BNY taps Figment to support staking on its digital asset custody platform",
-   "url": "https://www.theblock.co/news/business/2026-11-12-bny-taps-figment-to-support-staking-on-its-digital-asset-custody-platform-438538",
-   "ts": 1794488702000
+   "title": "Thailand seeks $148,000 daily cap on certain stablecoin transfers to curb money laundering",
+   "url": "https://www.theblock.co/news/regulation/2026-11-13-thailand-seeks-daily-stablecoin-cap-439676",
+   "ts": 1794564964000
   },
   {
    "source": "The Block",
-   "title": "BitGo expands institutional stablecoin minting and redemption platform with USDC",
-   "url": "https://www.theblock.co/news/business/2026-11-12-bitgo-expands-institutional-stablecoin-minting-and-redemption-platform-with-usdc-438525",
-   "ts": 1794486902000
+   "title": "JPMorgan reports 36% rise in Strategy share holdings and $540 million in BlackRock’s bitcoin ETF",
+   "url": "https://www.theblock.co/news/business/2026-11-13-jpmorgan-reports-36-rise-in-strategy-share-holdings-and-540-million-in-blackrocks-bitcoin-etf-439671",
+   "ts": 1794563956000
   },
   {
    "source": "Cointelegraph",
-   "title": "EU DeFi proposals could push users to riskier platforms, says Coinbase exec",
-   "url": "<![CDATA[https://cointelegraph.com/news/eu-defi-riskier-platforms-coinbase-exec?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794486103000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin weakness erases September's bullish signal",
-   "url": "https://www.coindesk.com/daybook-us/2026/11/12/bitcoin-weakness-erases-september-s-bullish-signal",
-   "ts": 1794485700000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "UK bank Griffin raises $20 million to expand into stablecoin payments",
-   "url": "https://www.coindesk.com/business/2026/11/12/uk-bank-griffin-raises-usd20-million-to-expand-into-stablecoin-payments",
-   "ts": 1794485082000
-  },
-  {
-   "source": "Decrypt",
-   "title": "India's Financial Crimes Agency Searches CoinDCX, Delta Exchange Over Offshore Trades",
-   "url": "https://decrypt.co/383126/indias-financial-crimes-agency-searches-coindcx-delta-exchange-over-offshore-trades",
-   "ts": 1794484990000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Ethereum researchers drop faster blocks to race toward quantum defenses in 2027",
-   "url": "https://www.coindesk.com/tech/2026/11/12/ethereum-researchers-drop-faster-blocks-to-race-toward-quantum-defenses-in-2027",
-   "ts": 1794483821000
+   "title": "Unocoin keeps deposits and withdrawals halted over suspect transfers",
+   "url": "<![CDATA[https://cointelegraph.com/news/unocoin-withdrawals-halted-bitgo-wallet-transfer-probe?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794563901000
   },
   {
    "source": "Cointelegraph",
-   "title": "Stablecoin supply falls $14.2B in biggest 30-day drop since June 2022",
-   "url": "<![CDATA[https://cointelegraph.com/markets/stablecoin-supply-drops-worst-slump-since-mid-2022?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794483530000
+   "title": "Bitcoin returns to 200-week trend line as analyst sees risk of $57.7K next",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-returns-200-week-trend-line-analyst-sees-risk-57k-next?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794562745000
+  },
+  {
+   "source": "The Block",
+   "title": "DOJ, CFTC sue Arkansas to block state enforcement action against Kalshi",
+   "url": "https://www.theblock.co/news/regulation/2026-11-13-doj-cftc-sue-arkansas-to-block-state-enforcement-action-against-kalshi-439669",
+   "ts": 1794562359000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "DOJ moves to seize $1.2B from Binance hack, disrupts FaceStealer scam",
+   "url": "<![CDATA[https://cointelegraph.com/news/doj-12b-north-korean-crypto-seizure-400m-facestealer-scheme?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794562034000
   },
   {
    "source": "CoinDesk",
-   "title": "Bitcoin dips with Nvidia as ETF outflows reach day five",
-   "url": "https://www.coindesk.com/markets/2026/11/12/bitcoin-dips-with-nvidia-as-etf-outflows-reach-day-five",
-   "ts": 1794483000000
+   "title": "Live updates: Bitcoin plunges back towards bear market lows, wiping out late summer rally",
+   "url": "https://www.coindesk.com/tech/2026/11/13/live-news-bitcoin-drops-below-200-week-moving-average-as-dollar-strength-pressures-risk-assets",
+   "ts": 1794561418000
   },
   {
-   "source": "Decrypt",
-   "title": "Bitcoin ETFs Bleed $1.4B in Five Days as Investors Cut Risk",
-   "url": "https://decrypt.co/383122/bitcoin-etfs-bleed-1-4b-in-five-days-as-investors-cut-risk",
-   "ts": 1794482659000
+   "source": "Cointelegraph",
+   "title": "Jane Street boosts Fidelity Bitcoin ETF holdings nearly 8x, trims IBIT",
+   "url": "<![CDATA[https://cointelegraph.com/news/jane-street-add-fidelity-bitcoin-etf-ibit-cut-q3-2026?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794560710000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Microsoft 365 outage hits Outlook email and Teams calendars worldwide",
+   "url": "<![CDATA[https://cointelegraph.com/news/microsoft-365-global-outage-outlook-teams-ai-services?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794558361000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Ethereum treasury firm BTCS sold ether at a loss to keep $64 million Aave loan healthy",
+   "url": "https://www.coindesk.com/markets/2026/11/13/ethereum-treasury-firm-btcs-sold-ether-at-a-loss-to-keep-usd64-million-aave-loan-healthy",
+   "ts": 1794553529000
+  },
+  {
+   "source": "The Block",
+   "title": "Bitcoin tumbles below $69,000 as Nvidia turmoil adds to Fed-driven market jitters",
+   "url": "https://www.theblock.co/news/markets/2026-11-13-bitcoin-tumbles-below-69000-439643",
+   "ts": 1794551023000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin firm Nakamoto owes Kraken $165 million, more than its entire market value",
+   "url": "https://www.coindesk.com/markets/2026/11/13/bitcoin-firm-nakamoto-owes-kraken-usd165-million-more-than-its-entire-market-value",
+   "ts": 1794549821000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin slides below $70K amid thin liquidity, ETF outflows",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-falls-below-70k-crypto-extreme-fear?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794549615000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin ETFs are now down over $1.5 billion in net outflows for the year",
+   "url": "https://www.coindesk.com/markets/2026/11/13/bitcoin-etfs-are-now-down-over-usd1-5-billion-in-net-outflows-for-the-year",
+   "ts": 1794548726000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "SpaceX-Tesla merger talks put 30,000 bitcoin back in focus",
+   "url": "https://www.coindesk.com/markets/2026/11/13/spacex-tesla-merger-talks-put-30-000-bitcoin-back-in-focus",
+   "ts": 1794546539000
+  },
+  {
+   "source": "The Block",
+   "title": "TRM Labs launches new service to help police seize stolen crypto in minutes",
+   "url": "https://www.theblock.co/news/defi/2026-11-13-trm-labs-beacon-concierge-439609",
+   "ts": 1794546505000
+  },
+  {
+   "source": "The Block",
+   "title": "White House sends crypto-relevant picks to fill SEC and CFTC seats",
+   "url": "https://www.theblock.co/news/regulation/2026-11-12-white-house-crypto-picks-sec-cftc-439175",
+   "ts": 1794545807000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin dips below $70,000 as Dollar Index hits 19-month high",
+   "url": "https://www.coindesk.com/markets/2026/11/13/bitcoin-dips-below-usd70-000-as-selloff-gathers-pace",
+   "ts": 1794541020000
   }
  ],
  "narrative": null
