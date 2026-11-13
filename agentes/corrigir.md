@@ -36,6 +36,11 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
 8. **Chart.js:** canvas não entende `var(--x)` como cor (usar a cor resolvida); gráfico com
    `maintainAspectRatio:false` precisa de wrapper com altura fixa; gráfico criado em aba oculta
    mede 0×0.
+9. **Ao endurecer/trocar um helper compartilhado (ex.: `escHtml`), olhe CADA chamada e rode o
+   fluxo de verdade no navegador** (clicar, salvar, abrir a aba). Em 22/10 `escHtml` passou a ser
+   chamado com número (`entry.week`) e só aceitava texto: o SALVAR SEMANA gravava mas estourava
+   logo depois, sem aviso e sem histórico, por 3 semanas. Helper novo/alterado aceita qualquer
+   valor (`String(t)`), e a tela afetada é testada clicando.
 
 ## Passo a passo
 1. Ler este caderno + o item a corrigir (em `bugs.md`/`seguranca.md` ou o pedido do Lucas).
@@ -111,6 +116,7 @@ Se precisar de contexto histórico, **buscar no CLAUDE.md por palavra-chave** (G
   `benchmark.yml` ganhou). Mesma armadilha já registrada para o `onchain.yml`.
 
 ## Histórico (mais recente no topo)
+- 13/11/2026 — **botão SALVAR SEMANA (ferramentas → Semanal) "não salvava"**: o texto era gravado no `localStorage`, mas `swRenderHistory` chamava `escHtml(entry.week)` com número e `escHtml` só aceitava texto → `t.replace is not a function`, sem "✓ SALVO" e sem a lista de semanas (também ao abrir a aba). Causa: minha varredura de 22/10 (`31ad424`). `escHtml` agora aceita qualquer valor; teste em `tests/ferramentas-semanal.test.js` (a versão antiga estoura nele) — `23a36f5`. Nenhum texto do Lucas se perdeu: já estava no `localStorage`.
 - 29/10/2026 — **o patrimônio não somava o LP** no dashboard (`_livePortfolioGross`) nem no relatório (`netTotal`): com a pool ETH/USDC v4 aberta, os dois mostravam US$ 743 a menos, e no dashboard os 4 cards (SPOT+POOLS+STABLES−DÍVIDAS) não fechavam com o Patrimônio Líquido. O comentário do código já dizia "já inclui LP" — deixou de ser verdade quando o token da pool passou a sair dos holdings (regra 11 do /prints). `pools.html` e `scripts/fetch-networth.js` estavam certos (usam `BaroloCore.netWorth`); as outras duas páginas eram as divergentes. Ficou invisível de 28/08 a 29/10 por não haver pool aberta.
 - 25/10/2026 (2) — sparklines: `Canvas is already in use` resolvido **cancelando o rAF pendente** (`cancelAnimationFrame`), não com mais `destroy()` — a causa era a fila de dois `requestAnimationFrame` do segundo `renderUI`. ⚠️ No Browser pane o rAF **não dispara**, então a verificação foi com fila de rAF manual (substituir `requestAnimationFrame`/`cancelAnimationFrame`, chamar `renderTable` 2x e drenar): HEAD 1 erro, corrigido 0 erros e 13 sparklines desenhadas.
 - 25/10/2026 — **dívida da AAVE quitada aparecia como US$ 754,65 em todo o site**: a raiz era `valor || fallback`, e `0` é falsy em JS. Corrigido em 4 arquivos (portfolio, empréstimos, relatório, pools) trocando por `typeof === 'number'`; de quebra, 3 legendas fixas viraram dinâmicas (card DÍVIDAS, card POOLS LP e o sub do HF com a liq. LTV da Kamino, que dizia 77,2% quando hoje é 80%). Card DÍVIDAS **−$1.211 → −$457**, HF **5,00 → "—"**, patrimônio **$8.613 → $9.347**.
