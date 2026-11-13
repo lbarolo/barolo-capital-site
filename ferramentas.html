@@ -3457,6 +3457,8 @@ function filterDiary(f, btn){
 }
 
 function escHtml(t) {
+  // aceita qualquer valor (numero, null, undefined): o historico semanal passa entry.week/year como numero
+  t = (t === null || t === undefined) ? '' : String(t);
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
 
