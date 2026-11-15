@@ -179,6 +179,44 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
+## Estado atual — 15/11/2026 (`asOf` 2026-11-15) — 2o BORROW, e veio WBTC
+
+Queda mais forte e ele dobrou a divida da AAVE. *“aproveitei pra fazer mais um emprestimos e comprar BTC e ETH”*.
+
+| Hora | O quê | Preço |
+|---|---|---:|
+| 08:31 | Borrow **100,00 GHO** @4,03% (block 26420119) | — |
+| 08:32 | 50 GHO → **0,02724868877267307 ETH** (Velora) | **US$ 1.834,95** |
+| 08:33 | 50 GHO → **0,00076323 WBTC** (Velora) | **US$ 65.511,05** |
+
+✅ **Execução ótima:** o ETH saiu no **spot exato** (1.834,95 contra 1.835,04 do CoinGecko no mesmo minuto) e o WBTC a **+0,10%** do spot do BTC. ✅ **Pocket Universe: ZERO** nas três txs.
+
+### ⚠️ VEIO WBTC, NÃO BTC — e foi lançado separado
+Ele falou “BTC” no chat; o on-chain é **Wrapped BTC**, token ERC-20 na Ethereum. Criado como `holdings.WBTC` próprio em vez de somar no BTC, por três motivos: (1) tem risco de **custódia da BitGo** em cima do risco do bitcoin, e a KB dele (§12) já chama a ponte de “elo mais fraco da cascata”; (2) o CoinGecko tem `wrapped-bitcoin` como ativo próprio; (3) separado dá para acompanhar o **prêmio/desconto** contra o BTC, que é o indicador de estresse da ponte citado na própria KB. **Se ele preferir somar no BTC, é decisão dele — mas aí o CoinGecko fica com lançamento incorreto.**
+
+### Números
+| | Antes | Depois |
+|---|---:|---:|
+| `holdings.WBTC` | — | **0,00076323 / US$ 50,00** |
+| `holdings.ETH` | 2,856878040 / 5.800,10 | **2,884173059 / 5.850,10** |
+| borrow GHO | 100,0016 | **200,034164 @4,03%** |
+| `principals.aave.GHO` | 100 | **200** (nominal) |
+| **HF** | 47,54 | **21,81** |
+| TOTAL_INVESTED | 9.821,15 | **9.921,15** |
+
+O HF caiu por **dois** motivos somados: a dívida dobrou **e** o colateral encolheu com a queda do ETH (5.659 → 5.195). Ainda sobram US$ 4.163 de borrowing power — 4,6% usado.
+
+O ETH do dia ficou **na carteira**, não virou colateral: o principal do WETH não mudou.
+
+🔧 **Linha do WBTC adicionada ao `PORTFOLIO_DATA`** de `portfolio_analytics.html`. Sem ela o ticker novo seria ignorado em silêncio e o patrimônio sairia US$ 50 abaixo — **mesmo bug do USDC em 10/11. Todo ticker novo precisa das duas pontas.**
+
+### Conferido
+Patrimônio **US$ 7.183** · `7.841 + 0 + 0 − 658` ✓ · **12 ativos** · HF 21,81 · D/Patrimônio 9,2% · 155 testes · 0 NaN · 0 erro de console.
+
+⏳ **Pendente:** ele lançar no CoinGecko — 0,02724868877267307 ETH por US$ 50 e **0,00076323 WBTC por US$ 50 no ativo `wrapped-bitcoin`** (não em `bitcoin`).
+
+---
+
 ## ✅ RESOLVIDO em 12/11/2026 — a taxa da Pocket Universe PAROU
 
 Ele desligou o coverage (*“Eu desativei no pocket universe os 1.6%”*) e o primeiro swap depois disso confirma: na tx de 12/11 (`0x08975e59`) **nenhuma transferência para o coletor terminado em `a40ad9`**. Verificado varrendo as 25 transferências internas da transação, não por confiança na palavra da extensão. O delay de 24h do código já tinha passado.
@@ -1259,6 +1297,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 - 24/10/2026 (4) — **print do portfólio conferido**: 7 tokens batem na casa decimal (ADA, EIGEN, POL 190,13, ZK, XAI, ZETA, SCR). `cgMirror` corrigido em 2 pontos — ETH **2,404883374** (ele lançou 0,0433, não 0,04332: o print é o árbitro, não a confirmação verbal) e USDT **854,89676194** (o saldo de lá já absorveu o yield de 3,57). Total: site 9.821,74 vs CoinGecko 9.810,40 = **US$ 11,35 = o yield pendente**, fecha. Sobram ETH +0,002428 e SOL +0,058135 a lançar.
 - 24/10/2026 (3) — compra de **0,00061885 BTC @ US$ 79.705 (US$ 49,26)** na OKX, paga com o caixa que já estava lá (49,32 parados desde 16/10) → **ROTAÇÃO**; BTC 0,00649382 → **0,00711206**, USDT 904,155114 → **854,895114**. `cgMirror` da ordem (a) aplicado pelo DELTA da transação (ETH →2,404903374, USDT →900,58676194), **não igualado ao holding** — igualar apagaria o yield pendente. Ele lançou os dois lados no mesmo dia e o espelho fechou (BTC 0,00711492 · USDT 851,32676194); sobra só o yield normal, **~US$ 14,86**, mais o −0,000003 de BTC que é taxa e não se lança.
 - 24/10/2026 (2) — **a ordem limite (a) executou**: 100 USDT → **0,04332 ETH @ 2.308,60** (ETH fez mínima de 2.286,76 às 15:30 UTC). ROTAÇÃO — custo migra 1:1, `contributions` intocada, `TOTAL_INVESTED` segue 9.667,58. ETH 2,363991 → **2,407311**; USDT 1.004,155114 → **904,155114**. A ordem (b) @ 2.191,11 (venc. 23/11) segue pendente com os outros 100. Líquido US$ 9.356,56. Ele precisa lançar DOIS movimentos no CoinGecko (compra do ETH + saída de 100 USDT) e corrigir 0,0433 → **0,04332**; `cgMirror` só depois da confirmação.
+- 15/11/2026 — **2º borrow de 100 GHO** @4,03% na queda, dividido em **0,027248689 ETH @ US$ 1.834,95** (spot exato) e **0,00076323 WBTC @ US$ 65.511** (+0,10% do spot do BTC). ⚠️ Ele disse “BTC” mas veio **WBTC** — lançado como holding **separado** (risco de custódia da BitGo; a KB §12 chama a ponte de elo mais fraco). Dívida 100 → 200, **HF 47,54 → 21,81** (dívida dobrou + colateral caiu com o ETH). 🔧 Linha do WBTC no `PORTFOLIO_DATA` — mesmo bug do USDC em 10/11. ✅ Pocket Universe zero nas 3 txs.
 - 12/11/2026 — **ciclo de empréstimo reaberto**: borrow de **100 GHO** @4,06% → **0,049882029 ETH @ US$ 2.004,73** (melhor preço das compras recentes) → **depósito de 0,45 ETH** na AAVE para o looping. HF **47,54**, só 2,1% do borrowing power usado. ⚠️ Ele disse “USDC” mas era **GHO** — conferido no print antes de lançar. ⚠️ Armadilha nova: o `principal` do GHO no MCP é **scaled**, não nominal (99,42 vs 100) — gravar o scaled criaria juro fantasma. ✅ **Pocket Universe confirmado PARADO** (zero para o coletor `a40ad9` na tx). 🔧 2 bugs: card de dívida com token fixo, e **11 leituras do bundle com `|| fallback`** que inventavam “755,28 USDC” e “+12,67 USDT” de juro desde 23/10.
 - 10/11/2026 (noite) — **3 swaps comprando a queda, caixa zerado**: 50 USDT → 0,0238 ETH, **24 USDC** → 0,0114 ETH e 50 USDT → 0,0243 ETH; bruto +0,0595, líquido **+0,0594** (gas 0,0001), médio **US$ 2.084,03/ETH**. Gastou os 100 USDT que estavam presos na ordem limite (b) de 24/10 — não esperou, comprou a mercado. ⚠ **`invested` sobe só 81,93, não 124**: a rotação migra o custo REAL do USDT (82,13 para 100,25 de qty) e os 24 USDC de taxa migram ZERO. `TOTAL_INVESTED` intacto. Stables em **US$ 0,25** — sem pó seco até sexta. Pendência do CoinGecko virou 0,398931 ETH em QUATRO partes, **só duas a custo zero** (tabela no Estado atual).
 - 10/11/2026 — **pool ETH/USDC v4 FECHADA** pela regra das 24h (ETH perdeu o piso do range e não voltou): voltaram 0,3384 ETH + 24,00 USDC; IL 57,61 contra 46,46 de taxa = **−US$ 11,15 em 12 dias**, com fee APR real de **190,2% a.a.** Funcionou como pool de COMPRA (entrou 100% USDC, saiu 100% ETH). Custo migrou US$ 742,37 do USDT para o ETH (`TOTAL_INVESTED` intacto); USDC criado em `stables` a custo zero. ⚠ **Bug de código achado e corrigido**: ticker novo no `data.js` não aparecia no dashboard — o `PORTFOLIO_DATA` casa por ticker e ignorava o USDC, deixando o patrimônio US$ 24 abaixo. Pendente: ele lançar a **compra** de 0,3384 ETH por US$ 742,37 no CoinGecko (não é custo zero) e os 2,35 USDC de reward sem claim.
