@@ -1,25 +1,19 @@
 {
- "updated": "2026-11-14T16:07:45.855Z",
- "date": "2026-11-14",
+ "updated": "2026-11-15T16:37:22.168Z",
+ "date": "2026-11-15",
  "source": "preço: coinbase/coinpaprika/coingecko · alternative.me · Bitcoin Lab (via btc-onchain.json) · RSS · narrativa por Claude Haiku",
  "market": {
   "btc": {
-   "price": 65479,
-   "d24": -4.63,
-   "d7": -13.58,
-   "d30": -19.82,
+   "price": 64543,
+   "d24": -1.26,
+   "d7": -14.81,
+   "d30": -20.99,
    "ath": 126080,
-   "athPct": -48.1,
+   "athPct": -48.8,
    "athDate": "2025-10-06",
-   "mcap": 1317244616862,
-   "vol": 33274500664,
+   "mcap": 1298444919502,
+   "vol": 50404284312,
    "spark": [
-    75688.96,
-    75735,
-    75776.38,
-    75825.42,
-    75884.88,
-    75895.99,
     75986.18,
     75849.18,
     74740.42,
@@ -56,26 +50,26 @@
     66690.7,
     67133.39,
     67218.4,
-    65874.67
+    65673.07,
+    65721.85,
+    64120.24,
+    64793.55,
+    63980.1,
+    65345.32,
+    64764
    ]
   },
   "eth": {
-   "price": 1831.51,
-   "d24": -5.1,
-   "d7": -18.16,
-   "d30": -23.3,
+   "price": 1812.82,
+   "d24": -0.71,
+   "d7": -19.18,
+   "d30": -26.37,
    "ath": 4946.05,
-   "athPct": -63,
+   "athPct": -63.3,
    "athDate": "2025-08-24",
-   "mcap": 223953657659,
-   "vol": 12105780780,
+   "mcap": 221652920067,
+   "vol": 20020690506,
    "spark": [
-    2235.12,
-    2233.24,
-    2237.05,
-    2235.51,
-    2238.59,
-    2238.07,
     2239.07,
     2230.23,
     2124.38,
@@ -112,26 +106,26 @@
     1882.26,
     1897.46,
     1908.71,
-    1852.24
+    1839.6,
+    1834.99,
+    1768.45,
+    1817.95,
+    1781.67,
+    1824.34,
+    1807.28
    ]
   },
   "sol": {
-   "price": 73.39,
-   "d24": -8.19,
-   "d7": -17.97,
-   "d30": -29.59,
+   "price": 71.36,
+   "d24": -1.79,
+   "d7": -20.47,
+   "d30": -32.58,
    "ath": 293.31,
-   "athPct": -75,
+   "athPct": -75.7,
    "athDate": "2025-01-19",
-   "mcap": 43446164909,
-   "vol": 3305348859,
+   "mcap": 42237727557,
+   "vol": 5153337714,
    "spark": [
-    89.46,
-    89.57,
-    89.7,
-    89.21,
-    89.25,
-    89.59,
     89.61,
     89.5,
     86.41,
@@ -168,40 +162,46 @@
     75.05,
     75.22,
     75.89,
-    74.03
+    73.83,
+    72.28,
+    70.24,
+    71.35,
+    69.93,
+    72.33,
+    71.34
    ]
   },
-  "stableMcap": 244321570770
+  "stableMcap": 244380762993
  },
  "fng": {
-  "value": 13,
+  "value": 10,
   "label": "Extreme Fear",
-  "prev": 20
+  "prev": 13
  },
  "broad": {
-  "btcDom": 58.7,
-  "ethDom": 10,
-  "altDom": 31.3,
-  "totalMcap": 2244366031848.1367,
-  "totalVol": 76782420134.13985,
-  "mcapChange24h": -6.75,
-  "ethBtc": 0.02797,
-  "stableMcap": 244321570770
+  "btcDom": 59.3,
+  "ethDom": 10.1,
+  "altDom": 30.6,
+  "totalMcap": 2177012303859.1675,
+  "totalVol": 112707122312.17384,
+  "mcapChange24h": -5.49,
+  "ethBtc": 0.02809,
+  "stableMcap": 244380762993
  },
  "onchain": {
-  "t": "2026-11-13",
-  "price": 69155.6,
-  "mvrv": 1.267602,
-  "mvrv_sth": 0.908831,
-  "mvrv_lth": 1.400173,
-  "realized": 53812.36,
-  "realized_sth": 75055.35,
-  "realized_lth": 48717.29,
-  "sopr_lth": 0.944802,
-  "aviv": 0.882386,
-  "cvdd": 49680.26,
-  "sma200": 73056.45,
-  "mayer": 0.947
+  "t": "2026-11-14",
+  "price": 66472.59,
+  "mvrv": 1.180679,
+  "mvrv_sth": 0.847847,
+  "mvrv_lth": 1.303451,
+  "realized": 53782.56,
+  "realized_sth": 74895.48,
+  "realized_lth": 48716.77,
+  "sopr_lth": 1.05038,
+  "aviv": 0.821937,
+  "cvdd": 49692.16,
+  "sma200": 73005.85,
+  "mayer": 0.911
  },
  "risk": {
   "score": 0.12,
@@ -209,64 +209,160 @@
   "components": [
    {
     "key": "MVRV",
-    "v": 1.267602,
-    "s": 0.161
+    "v": 1.180679,
+    "s": 0.131
    },
    {
     "key": "Mayer",
-    "v": 0.947,
-    "s": 0.193
+    "v": 0.911,
+    "s": 0.173
    },
    {
     "key": "STH MVRV",
-    "v": 0.908831,
-    "s": 0.015
+    "v": 0.847847,
+    "s": 0
    },
    {
     "key": "AVIV",
-    "v": 0.882386,
-    "s": 0.191
+    "v": 0.821937,
+    "s": 0.161
    },
    {
     "key": "SOPR LTH",
-    "v": 0.944802,
-    "s": 0.041
+    "v": 1.05038,
+    "s": 0.137
    }
   ]
  },
  "portfolio": {
-  "netWorth": 7182.53,
-  "gross": 7740.23,
+  "netWorth": 7076.27,
+  "gross": 7734.01,
   "stables": 0.25,
   "lp": 0,
-  "debt": 557.95,
-  "invested": 9821.15,
-  "roi": -26.9,
-  "move24": -446.72,
-  "move24Pct": -5.86,
+  "debt": 657.98,
+  "invested": 9921.15,
+  "roi": -28.7,
+  "move24": -67.46,
+  "move24Pct": -0.94,
   "aave": {
    "hf": null,
-   "collateral": 5173.54,
+   "collateral": 5124.89,
    "debt": 0,
    "ltv": 0,
    "liqEth": null,
    "dropToLiq": null
   },
   "kamino": {
-   "ltv": 24.2,
+   "ltv": 24.8,
    "liqLtv": 80,
-   "collateral": 1895.88,
+   "collateral": 1850.04,
    "debt": 457.95,
    "liqSol": 21.56,
-   "dropToLiq": 70.5
+   "dropToLiq": 69.8
   },
   "carry": {
    "monthlyInterest": 2.06,
-   "monthlySupply": 13.75
+   "monthlySupply": 13.89
   },
-  "dataAsOf": "2026-11-13"
+  "dataAsOf": "2026-11-15"
  },
  "news": [
+  {
+   "source": "Decrypt",
+   "title": "How Wall Street Is Racing to Claim the Onchain Dollar",
+   "url": "https://decrypt.co/383284/how-wall-street-racing-onchain-dollar-stablecoins",
+   "ts": 1794758462000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Enterprise blockchain is going to come back from the dead",
+   "url": "<![CDATA[https://cointelegraph.com/opinion/enterprise-blockchain-come-back-from-dead?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794753000000
+  },
+  {
+   "source": "Decrypt",
+   "title": "Bitcoin ETFs Lose $2.1 Billion in November as Outflow Streak Hits Seven Days",
+   "url": "https://decrypt.co/383282/bitcoin-etfs-lose-2-1-billion-november-outflow-streak-seven-days",
+   "ts": 1794751262000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Crypto insiders aren't counting on silver linings in Congress' 'lame duck' session",
+   "url": "https://www.coindesk.com/news-analysis/2026/11/13/crypto-insiders-aren-t-counting-on-silver-linings-in-congress-lame-duck-session",
+   "ts": 1794751200000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Here’s what happened in crypto today",
+   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794741528000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Bitcoin falls to four-month low near $62K as crypto selloff deepens",
+   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-four-month-low-62k-crypto-market-selloff?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794738197000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "Coinone warns of phishing, identity theft after customer data breach",
+   "url": "<![CDATA[https://cointelegraph.com/news/coinone-data-breach-phishing-identity-theft-customer-information?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794730078000
+  },
+  {
+   "source": "Cointelegraph",
+   "title": "RWA protocol stUSDT winds down three years after $2.3B TVL peak",
+   "url": "<![CDATA[https://cointelegraph.com/news/rwa-protocol-stusdt-winds-down-three-years-after-23b-tvl-peak?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
+   "ts": 1794724046000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "XRP crashes to its lowest since November 2024 as money leaves crypto",
+   "url": "https://www.coindesk.com/markets/2026/11/15/xrp-crashes-to-its-lowest-since-november-2024-as-money-leaves-crypto",
+   "ts": 1794711057000
+  },
+  {
+   "source": "The Block",
+   "title": "Kava Lend loses roughly $3.8 million to hack, sending KAVA token down nearly 40%",
+   "url": "https://www.theblock.co/news/defi/2026-11-14-kava-lend-loses-roughly-3-8-million-to-hack-sending-kava-token-down-nearly-40-440350",
+   "ts": 1794697655000
+  },
+  {
+   "source": "The Block",
+   "title": "Louisiana AG calls CFTC chair an ‘obsequious standard bearer’ for prediction markets following agency lawsuit",
+   "url": "https://www.theblock.co/news/regulation/2026-11-14-louisiana-ag-calls-cftc-chair-an-obsequious-standard-bearer-for-prediction-markets-following-agency-lawsuit-440342",
+   "ts": 1794683219000
+  },
+  {
+   "source": "Decrypt",
+   "title": "The Week Jensen Huang Fell: How a Spy Scandal Toppled Nvidia’s CEO",
+   "url": "https://decrypt.co/383280/the-week-jensen-huang-fell-how-spy-scandal-toppled-nvidia-ceo",
+   "ts": 1794679262000
+  },
+  {
+   "source": "The Block",
+   "title": "Bitcoin ETFs lose $1 billion for the second week in a row as crypto funds, except one, continue bleeding",
+   "url": "https://www.theblock.co/news/markets/2026-11-14-bitcoin-etfs-lose-1-billion-for-the-second-week-in-a-row-as-crypto-funds-except-one-continue-bleeding-440337",
+   "ts": 1794678641000
+  },
+  {
+   "source": "Decrypt",
+   "title": "OpenAI, Anthropic, Google and Other AI Giants Face Lawsuit Demanding Development Freeze",
+   "url": "https://decrypt.co/383270/openai-anthropic-google-ai-giants-lawsuit-development-freeze",
+   "ts": 1794675662000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Bitcoin crashes to 3-month low below $63,000 as analyst flags fourth capitulation wave",
+   "url": "https://www.coindesk.com/markets/2026/11/14/bitcoin-drifts-back-to-usd65-000-deep-value-zone-says-analyst",
+   "ts": 1794674009000
+  },
+  {
+   "source": "CoinDesk",
+   "title": "Ethereum scaling project MegaETH slashes staff by 20% as it pursues AI business",
+   "url": "https://www.coindesk.com/business/2026/11/14/ethereum-scaling-project-megaeth-slashes-staff-by-20-as-it-pursues-ai-business",
+   "ts": 1794674003000
+  },
   {
    "source": "Decrypt",
    "title": "What Is Canton Network? The Privacy Blockchain Built for Wall Street",
@@ -302,12 +398,6 @@
    "title": "A behind the scenes force may amplify bitcoin and ether price volatility",
    "url": "https://www.coindesk.com/markets/2026/11/14/a-behind-the-scenes-force-may-amplify-bitcoin-and-ether-price-volatility",
    "ts": 1794661020000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Here’s what happened in crypto today",
-   "url": "<![CDATA[https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794655692000
   },
   {
    "source": "Cointelegraph",
@@ -416,96 +506,6 @@
    "title": "House Oversight Chair calls for possible ban on government officials’ prediction market bets over insider trading concerns",
    "url": "https://www.theblock.co/news/regulation/2026-11-13-house-oversight-chair-possible-ban-government-officials-prediction-market-bets-insider-trading-concerns-440207",
    "ts": 1794596952000
-  },
-  {
-   "source": "The Block",
-   "title": "CFTC’s Selig accuses states of trying to ‘lock up’ prediction market founders",
-   "url": "https://www.theblock.co/news/regulation/2026-11-13-cftcs-selig-accuses-states-trying-lock-up-prediction-market-founders-440199",
-   "ts": 1794595863000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin plunges to $68,000 as Anthropic IPO frenzy adds to market jitters",
-   "url": "https://www.coindesk.com/markets/2026/11/13/bitcoin-slides-to-usd68k-as-nvidia-turmoil-anthropic-ipo-fuel-broader-market-sell-off",
-   "ts": 1794595198000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Fed Chair Warsh Wants Answers on AI Inflation—and Bitcoin May Feel the Impact",
-   "url": "https://decrypt.co/383259/fed-chair-warsh-wants-answers-ai-inflation-bitcoin",
-   "ts": 1794594962000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Metaplanet swings to $170M loss as Bitcoin sale hits earnings",
-   "url": "<![CDATA[https://cointelegraph.com/news/metaplanet-swings-170m-loss-bitcoin-sale-earnings?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794594509000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Trump’s First Democratic Picks for SEC and CFTC Could Reshape Crypto’s Regulators",
-   "url": "https://decrypt.co/383260/trump-first-democratic-picks-sec-cftc-could-reshape-crypto",
-   "ts": 1794592563000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Bitcoin Hits 12-Week Low as Fed Rate Fears Undo Most of Summer Rally",
-   "url": "https://decrypt.co/383231/bitcoin-hits-12-week-low-fed-rate-fears-undo-summer-rally",
-   "ts": 1794590574000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "U.S. Senate Banking Committee races toward hearing on new SEC nominations",
-   "url": "https://www.coindesk.com/policy/2026/11/13/u-s-senate-banking-committee-races-toward-hearing-on-new-sec-nominations",
-   "ts": 1794589543000
-  },
-  {
-   "source": "Cointelegraph",
-   "title": "Bitcoin holds below $70K as stocks slip despite a cooler US PPI print",
-   "url": "<![CDATA[https://cointelegraph.com/markets/bitcoin-below-70k-stocks-slip-cooler-us-ppi-print?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound]]>",
-   "ts": 1794587951000
-  },
-  {
-   "source": "The Block",
-   "title": "Hyperliquid leapfrogs Bybit, Kraken and OKX in open interest as Q3 positions grow 80%",
-   "url": "https://www.theblock.co/news/markets/2026-11-13-hyperliquid-leapfrogs-bybit-kraken-okx-open-interest-q3-positions-grow-440053",
-   "ts": 1794587846000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Bitcoin heads for sixth weekly loss as Anthropic’s blockbuster IPO looms",
-   "url": "https://www.coindesk.com/markets/2026/11/13/bitcoin-heads-for-sixth-weekly-loss-as-anthropic-s-blockbuster-ipo-looms",
-   "ts": 1794585687000
-  },
-  {
-   "source": "The Block",
-   "title": "Kraken parent Payward posts 66% drop in Q3 adjusted EBITDA, plans US prediction markets and personal finance AI agent",
-   "url": "https://www.theblock.co/news/business/2026-11-13-kraken-parent-payward-posts-66-drop-in-q3-adjusted-ebitda-plans-us-prediction-markets-and-personal-finance-ai-agent-439721",
-   "ts": 1794583882000
-  },
-  {
-   "source": "The Block",
-   "title": "Tether-backed Twenty One Capital reports $1.09 billion Q3 net income on bitcoin gains",
-   "url": "https://www.theblock.co/news/business/2026-11-13-tether-backed-twenty-one-capital-reports-1-09-billion-q3-net-income-on-bitcoin-gains-439711",
-   "ts": 1794581449000
-  },
-  {
-   "source": "The Block",
-   "title": "Ethereum and Layer 1s Explained",
-   "url": "https://www.theblock.co/learn/campus/ethereum-and-layer-1s-explained-435883",
-   "ts": 1794579143000
-  },
-  {
-   "source": "CoinDesk",
-   "title": "Kraken parent Payward says expansion outside crypto trading helps cushion revenue decline",
-   "url": "https://www.coindesk.com/business/2026/11/13/kraken-parent-payward-says-expansion-outside-crypto-trading-helps-cushion-revenue-decline",
-   "ts": 1794578520000
-  },
-  {
-   "source": "Decrypt",
-   "title": "Crypto Laundering a 'Material Risk' for UK Ahead of FATF Review: RUSI",
-   "url": "https://decrypt.co/383227/crypto-laundering-a-material-risk-for-uk-ahead-of-fatf-review-rusi",
-   "ts": 1794578125000
   }
  ],
  "narrative": null
