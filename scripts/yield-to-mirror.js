@@ -73,11 +73,19 @@ for (const h of all) {
   // bruto da ordem, o site desconta gas e taxa) ou arredondamento de um lancamento antigo. Isso
   // nunca se lanca e aparecia como "⚠ NEGATIVO" todo mes, mascarando o que importa. Acima do
   // limiar continua alertando, porque ai pode ser lancamento duplicado - como o BTC em 21/11/2026.
-  const RUIDO_USD = 5;
+  // Negativo: ate US$ 5 e estrutural (gas/taxa). Positivo: so ate US$ 0,50, porque ai pode ser
+  // yield de verdade, mesmo que pequeno - acima disso vale lancar. Sem o lado positivo o relatorio
+  // chegava a pedir "lancar +0.000001 (~US$ 0.00)", que e arredondamento de lancamento antigo.
+  const RUIDO_NEG = 5, RUIDO_POS = 0.50;
   const real = [], ruido = [];
   for (const p of pend) {
     const usd = usdOf(p);
-    (p.delta < 0 && usd !== null && Math.abs(usd) < RUIDO_USD ? ruido : real).push(p);
+    // Sem preco (CoinGecko fora do ar ou rate limit) cai no relativo: diferenca abaixo de 0,5% da
+    // posicao e ruido de arredondamento, nao yield. Sem isso o relatorio voltava a alertar tudo
+    // sempre que a API falhasse.
+    const lim = p.delta < 0 ? RUIDO_NEG : RUIDO_POS;
+    const eRuido = usd !== null ? Math.abs(usd) < lim : Math.abs(p.delta) / p.site < 0.005;
+    (eRuido ? ruido : real).push(p);
   }
   for (const p of real) {
     const usd = usdOf(p);
