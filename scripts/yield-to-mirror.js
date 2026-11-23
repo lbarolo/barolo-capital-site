@@ -69,13 +69,31 @@ for (const h of all) {
     console.log('Nada pendente — o CoinGecko esta em dia com o site.\n');
     return;
   }
+  // Diferenca NEGATIVA e pequena nao e pendencia: e a qty bruta vs liquida (o CoinGecko conta o
+  // bruto da ordem, o site desconta gas e taxa) ou arredondamento de um lancamento antigo. Isso
+  // nunca se lanca e aparecia como "⚠ NEGATIVO" todo mes, mascarando o que importa. Acima do
+  // limiar continua alertando, porque ai pode ser lancamento duplicado - como o BTC em 21/11/2026.
+  const RUIDO_USD = 5;
+  const real = [], ruido = [];
   for (const p of pend) {
+    const usd = usdOf(p);
+    (p.delta < 0 && usd !== null && Math.abs(usd) < RUIDO_USD ? ruido : real).push(p);
+  }
+  for (const p of real) {
     const usd = usdOf(p);
     console.log(`  ${p.ticker.padEnd(5)} lancar +${p.delta.toFixed(6)}` +
       (usd !== null ? `  (~US$ ${usd.toFixed(2)})` : '') +
       `\n        CoinGecko ${p.cg}  ->  ${p.site}` +
       (p.aviso ? `\n        ⚠ ${p.aviso}` : ''));
   }
+  if (ruido.length) {
+    console.log('\n  — diferencas estruturais, NAO lancar (gas/taxa/arredondamento):');
+    for (const p of ruido) {
+      const usd = usdOf(p);
+      console.log(`     ${p.ticker.padEnd(5)} ${p.delta.toFixed(8)}` + (usd !== null ? `  (US$ ${usd.toFixed(2)})` : ''));
+    }
+  }
+  if (!real.length) console.log('  Nada a lancar.');
   if (totalUsd > 0) console.log(`\n  TOTAL: ~US$ ${totalUsd.toFixed(2)} a lancar como transferencia de entrada (custo ZERO).`);
   console.log('\nDepois de lancar: atualizar `cgMirror` no data.js igualando as qty do holding.\n');
 })();
