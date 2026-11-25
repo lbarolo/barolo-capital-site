@@ -24,6 +24,12 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 > Só o `CONHECIMENTO-POOLIANA.md` fica neste repo, por pedido do Lucas — para reusar em outros
 > agentes.
 
+> 🧭 **`mesa.html` — Mesa DeFi (desde 25/11/2026)** — painel de operação ao vivo pedido pelo Lucas: regime
+> do mercado + playbook, alertas pelas regras dele (framework de alavancagem, 3σ, aporte de sexta, borrow > 5%,
+> concentração, VaR, CoinGecko), colateral com teste de estresse, radar de APY, laboratório de pools e TradingView.
+> Dados: `quant.json` + `yields.json` gerados por `scripts/fetch-mesa.js` (Action `mesa.yml`, ~07:20 BRT, sem secrets);
+> preços/AAVE/Kamino ao vivo no navegador. Alerta ou regra nova → `buildAlerts()` na própria página.
+
 > 🔎 **`FONTES-PESQUISA.md`** (raiz, desde 07/10/2026) — catálogo de 40 ferramentas gratuitas de
 > pesquisa on-chain (whale tracking, rug check, unlocks/vesting, funding e open interest, TVL e
 > receita, fluxo de ETF). **Consulta manual**; a lista canônica para automação continua sendo
@@ -7132,6 +7138,40 @@ e depois: 1 `KB-START` / 1 `KB-END`, 0 títulos repetidos, log desta sessão pre
 quotado, `echo`, interpolação de string ou qualquer comando que expanda shell. Para edição
 programática, usar script Python em arquivo lendo/escrevendo com `encoding='utf-8'` — foi assim que
 este reparo foi feito. (Nesta mesma sessão um `<<'PY'` com texto longo já falhou por causa disso.)
+
+---
+
+## Sessão 25/11/2026 — Mesa DeFi (`mesa.html`): painel de operação ao vivo + Action diária de quant/APYs
+
+### Pedido
+Dashboard ao vivo com tudo que aprendemos (estratégia, quant, alertas, colateral, melhores APYs, ideias de pool/empréstimo,
+TradingView). Decisão: página nova no site (abre no PC e no celular) + robô diário; o chat (`/quant`) fica para a leitura comentada.
+
+### Implementado
+- **`mesa.html`** (nova, link "Mesa" no nav de portfolio/pools/ferramentas/relatorio). Seções: 01 regime (score on-chain do
+  `briefing.json` + preço × MM200 + macro FRED + Fear & Greed → Zona de fundo / Correção / Recuperação / Expansão / Euforia,
+  cada uma com playbook Aporte·Dívida·Pools·Lending tirado do framework de 20/06 e da KB) · 02 KPIs ao vivo · 03 quadro de
+  alertas · 04 colateral (liquidação em preço, σ e P(toque); estresse com sliders e presets) · 05 radar de APY (supply,
+  borrow, pools chatas) · 06 laboratório de pools (compra escalonada / neutra / saída gradual, ranges por vol de 30d,
+  P(toque), LVR, taxa mínima, ¼ Kelly; checklist do diário; histórico chatas × narrativa) · 07 quant · 08 TradingView ·
+  09 agenda · 10 regras de ouro.
+- **`scripts/fetch-mesa.js`** → `quant.json` (saída do `quant-report.js --json` + `generatedAt`) e `yields.json` (recorte do
+  DefiLlama: 10 MB → ~28 KB; só protocolos grandes, TVL ≥ 20M lending / 1M pools, só pares chatos — ETH/BTC/SOL/stable e LSTs).
+- **Action `mesa.yml`** (cron 10:20 UTC) + entrada no `workflow_run` do `pages.yml`; `quant.json`/`yields.json`/`mesa.html`
+  em `FILES` do `scripts/build-pages.js`; `mesa.html` em `tests/pages.test.js` (156/156 verdes).
+
+### Leitura de 25/11 que a página mostrou
+Regime **zona de fundo, tendência de baixa** (F&G 11, MVRV 1,15, STH 0,84, preço −20% vs MM200, juro real 2,8% subindo, VIX 26).
+Alertas: Kamino liquida SOL a US$ 25,50 = **1,6σ** (abaixo do piso proposto de 3σ; para chegar a 3σ, dívida ≤ ~US$ 235 ou
++~38 SOL); dívida de US$ 1.010 tomada em novembro em regime de acumulação (contra o framework — pergunta "tomaria de novo
+hoje?"); borrow Kamino 5,80% > 5%; ETH = 70% do risco; VaR95 30d −42%; último aporte de sexta há 12 dias; JupSOL/JitoSOL ~5%
+contra 3,42% do SOL na Kamino.
+
+### Gotchas
+- O servidor local de `.claude/launch.json` não ignora query string → `fetch('x.json?v=…')` dá 404 local; a página usa `cache:'no-store'`.
+- TradingView: `studies` precisa ser tudo em formato objeto (`{id:'RSI@tv-basicstudies'}`); misturar com string `STD;RSI` some com o RSI.
+- Histórico de pools: "narrativa" = par com GRIFT/PEANUT/PENG/XAI (critério da KB §3.4), não "token fora de família".
+- Achado não corrigido: `briefing.json → portfolio.aave` mostra dívida 0 / HF null — o `fetch-briefing.js` só olha borrow em USDC e a dívida hoje é GHO.
 
 ---
 

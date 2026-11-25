@@ -8,7 +8,7 @@ const path = require('path');
 const vm = require('vm');
 const H = require('./helpers/extract');
 
-const PAGES = ['index.html', 'portfolio_analytics.html', 'pools.html', 'ferramentas.html', 'relatorio.html'];
+const PAGES = ['index.html', 'portfolio_analytics.html', 'pools.html', 'ferramentas.html', 'relatorio.html', 'mesa.html'];
 
 for (const page of PAGES) {
   test(`${page}: todos os <script> inline compilam`, () => {
@@ -30,7 +30,7 @@ test('páginas que usam BaroloCore carregam lib/barolo-core.js antes do primeiro
 });
 
 test('páginas que usam BaroloChain carregam lib/barolo-chain.js antes do primeiro uso', () => {
-  for (const page of ['portfolio_analytics.html', 'pools.html']) {
+  for (const page of ['portfolio_analytics.html', 'pools.html', 'mesa.html']) {
     const html = H.read(page);
     const tag = html.indexOf('<script src="lib/barolo-chain.js">');
     const use = html.indexOf('BaroloChain');

@@ -1,0 +1,105 @@
+#!/usr/bin/env node
+/* Dados diários da Mesa DeFi (mesa.html) — Barolo Capital.
+ * Grava dois arquivos estáticos que a página lê (mesmo padrão do btc-onchain.json):
+ *   quant.json  — saída do scripts/quant-report.js --json (vol, correlação, beta, VaR/CVaR,
+ *                 contribuição de risco, tendência, macro FRED, on-chain) + generatedAt.
+ *   yields.json — recorte do DefiLlama Yields (10 MB → ~50 KB): onde o colateral rende,
+ *                 onde a dívida custa menos e as pools "chatas" (par com stable ou blue-chip).
+ * Sem chave: Coinbase, FRED, yields.llama.fi. Uso: node scripts/fetch-mesa.js
+ * O recorte segue a regra da casa (KB §3.4 e §12): só protocolos grandes, só pares chatos —
+ * 22 vitórias e zero derrotas nas chatas; narrativa foi 1 de 7. Memecoin nem entra na lista. */
+const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
+const ROOT = path.join(__dirname, '..');
+const UA = { 'User-Agent': 'Mozilla/5.0 (barolo-mesa)' };
+
+// família de cada token (para agrupar "WETH-USDC" e "ETH-USDC" no mesmo par)
+const FAM = {
+  ETH:  ['ETH', 'WETH'],
+  LST:  ['WSTETH', 'STETH', 'WEETH', 'CBETH', 'RETH', 'EZETH', 'RSETH'],
+  SOL:  ['SOL', 'WSOL'],
+  LSOL: ['JITOSOL', 'MSOL', 'JUPSOL', 'BSOL', 'INF', 'DSOL', 'HSOL', 'BNSOL'],
+  BTC:  ['WBTC', 'CBBTC', 'TBTC', 'LBTC', 'BTC'],
+  USD:  ['USDC', 'USDT', 'GHO', 'USDS', 'SUSDS', 'DAI', 'SDAI', 'PYUSD', 'USDC.E', 'USDE', 'USDG', 'RLUSD', 'FDUSD'],
+};
+const famOf = s => { s = String(s || '').toUpperCase(); for (const f in FAM) if (FAM[f].includes(s)) return f; return null; };
+const LEND = new Set(['aave-v3', 'aave-v4', 'kamino-lend', 'morpho-blue', 'sparklend', 'spark-savings', 'sky-lending',
+  'compound-v3', 'fluid-lending', 'euler-v2', 'jupiter-lend']);
+const STAKE = new Set(['lido', 'jito-liquid-staking', 'jupiter-staked-sol', 'rocket-pool', 'marinade-liquid-staking', 'binance-staked-sol']);
+const DEX = new Set(['uniswap-v3', 'uniswap-v4', 'orca-dex', 'raydium-amm', 'aerodrome-slipstream', 'fluid-dex', 'meteora-dlmm']);
+const CHAINS = new Set(['Ethereum', 'Arbitrum', 'Base', 'Solana', 'Optimism']);
+
+async function getJSON(url, tries = 3) {
+  for (let i = 0; i < tries; i++) {
+    try {
+      const r = await fetch(url, { headers: UA });
+      if (r.ok) return await r.json();
+      if (r.status >= 400 && r.status < 500) throw new Error('HTTP ' + r.status);
+    } catch (e) { if (i === tries - 1) throw e; }
+    await new Promise(res => setTimeout(res, 5000 * (i + 1)));
+  }
+}
+const r2 = x => (x == null || !isFinite(x)) ? null : Math.round(x * 100) / 100;
+
+async function yields() {
+  const [pools, lb] = await Promise.all([getJSON('https://yields.llama.fi/pools'), getJSON('https://yields.llama.fi/lendBorrow')]);
+  const P = pools.data || [];
+  if (P.length < 1000) throw new Error('DefiLlama devolveu só ' + P.length + ' pools');
+  const byId = new Map(P.map(p => [p.pool, p]));
+  const row = p => ({ id: p.pool, project: p.project, chain: p.chain, symbol: p.symbol, meta: p.poolMeta || null,
+    apy: r2(p.apy), base: r2(p.apyBase), reward: r2(p.apyReward), mean30: r2(p.apyMean30d), tvl: Math.round(p.tvlUsd) });
+
+  // 1) onde o colateral rende (supply / staking, um token só)
+  const supply = P.filter(p => CHAINS.has(p.chain) && (LEND.has(p.project) || STAKE.has(p.project)) &&
+      p.exposure === 'single' && !p.outlier && p.tvlUsd >= 20e6 && famOf(p.symbol) && p.apy > 0 && p.apy < 40)
+    .map(p => Object.assign(row(p), { fam: famOf(p.symbol), kind: STAKE.has(p.project) ? 'stake' : 'lend' }))
+    .sort((a, b) => (b.mean30 ?? b.apy) - (a.mean30 ?? a.apy));
+  const topSupply = {};
+  for (const r of supply) { (topSupply[r.fam] = topSupply[r.fam] || []); if (topSupply[r.fam].length < 8) topSupply[r.fam].push(r); }
+
+  // 2) onde a dívida custa menos (stables), juntando lendBorrow ao pool pelo id
+  const borrow = (Array.isArray(lb) ? lb : []).map(b => {
+    const p = byId.get(b.pool); if (!p) return null;
+    if (!CHAINS.has(p.chain) || !LEND.has(p.project) || famOf(p.symbol) !== 'USD' || !b.borrowable) return null;
+    if (!(b.totalSupplyUsd >= 20e6) || b.apyBaseBorrow == null) return null;
+    const net = b.apyBaseBorrow - (b.apyRewardBorrow || 0);
+    if (!(net > 0 && net < 40)) return null;
+    return Object.assign(row(p), { borrowBase: r2(b.apyBaseBorrow), borrowReward: r2(b.apyRewardBorrow), borrowNet: r2(net),
+      totalBorrow: Math.round(b.totalBorrowUsd || 0), util: b.totalSupplyUsd ? r2(b.totalBorrowUsd / b.totalSupplyUsd * 100) : null });
+  }).filter(Boolean).sort((a, b) => a.borrowNet - b.borrowNet).slice(0, 25);
+
+  // 3) pools chatas: os dois lados ETH/BTC/SOL/stable (ou LST desses), TVL >= 1M
+  const lp = P.filter(p => CHAINS.has(p.chain) && DEX.has(p.project) && p.exposure === 'multi' && !p.outlier && p.tvlUsd >= 1e6)
+    .map(p => {
+      const parts = String(p.symbol).split('-'); if (parts.length !== 2) return null;
+      const f = parts.map(famOf); if (f.some(x => !x)) return null;
+      const norm = x => ({ LST: 'ETH', LSOL: 'SOL' })[x] || x;
+      const RANK = { SOL: 0, ETH: 1, BTC: 2, USD: 3 };   // ETH/BTC, SOL/USD… (ordem fixa: sem par duplicado)
+      const key = f.map(norm).sort((a, b) => RANK[a] - RANK[b]).join('/');
+      if (key === 'USD/USD') return null;   // stable/stable não é a estratégia
+      const v1 = p.volumeUsd1d || null;
+      return Object.assign(row(p), { pair: key, base7: r2(p.apyBase7d), vol1d: v1 && Math.round(v1),
+        volTvl: v1 ? r2(v1 / p.tvlUsd) : null, il7: r2(p.il7d) });
+    }).filter(r => r && r.base != null && r.base > 0 && r.base < 400)
+    .sort((a, b) => (b.mean30 ?? b.base) - (a.mean30 ?? a.base));
+  const perPair = {}, lpTop = [];
+  for (const r of lp) { perPair[r.pair] = (perPair[r.pair] || 0) + 1; if (perPair[r.pair] <= 12) lpTop.push(r); }
+
+  return { generatedAt: new Date().toISOString(), source: 'DefiLlama yields.llama.fi (pools + lendBorrow)',
+    filters: { chains: [...CHAINS], lend: [...LEND], stake: [...STAKE], dex: [...DEX], minTvlLend: 20e6, minTvlLp: 1e6 },
+    supply: topSupply, borrow, lp: lpTop };
+}
+
+(async () => {
+  // quant: reaproveita o relatório existente (fonte única das contas)
+  const raw = execFileSync(process.execPath, [path.join(__dirname, 'quant-report.js'), '--json'],
+    { cwd: ROOT, encoding: 'utf8', maxBuffer: 20e6, timeout: 240000 });
+  const q = JSON.parse(raw);
+  if (!q.vol || !q.vol.ETH || !q.port || !q.macro) throw new Error('quant-report sem os campos esperados');
+  q.generatedAt = new Date().toISOString();
+  fs.writeFileSync(path.join(ROOT, 'quant.json'), JSON.stringify(q) + '\n');
+  console.log('quant.json OK · ETH vol30 ' + (q.vol.ETH.d30 * 100).toFixed(1) + '% · VaR95 1d ' + (q.port.VaR95_1d * 100).toFixed(1) + '%');
+
+  const y = await yields();
+  fs.writeFileSync(path.join(ROOT, 'yields.json'), JSON.stringify(y) + '\n');
+  console.log('yields.json OK · supply ' + Object.values(y.supply).flat().length + ' · borrow ' + y.borrow.length + ' · lp ' + y.lp.length);
+})().catch(e => { console.error('ERRO', e.message); process.exit(1); });

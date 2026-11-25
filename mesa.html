@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<script src="data.js"></script><!-- fonte única de posições (window.BAROLO_DATA) -->
+<script src="lib/barolo-core.js"></script><!-- patrimônio + LVR de pool -->
+<script src="lib/barolo-chain.js"></script><!-- AAVE V4 / Kamino ao vivo -->
+<script src="lib/barolo-prices.js"></script><!-- preço compartilhado entre as páginas + polling que pausa com a aba oculta -->
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
+<script src="lib/barolo-ui.js"></script><!-- tema (no <head>: aplica antes de pintar) -->
+<script>BaroloUI.bootTheme('dark');</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316110c'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>B</text></svg>" type="image/svg+xml">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'">
+<title>Barolo Capital · Mesa DeFi</title>
+<link rel="stylesheet" href="ui-polish.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+ --bg:#0e0e12;--surface:#141418;--surface2:#1a1a20;--border:#2a2620;--border2:#3a3228;
+ --accent:#c9a050;--green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#5882d2;
+ --text:#e8dfc8;--muted:#8a7a62;--card-shadow:0 4px 18px rgba(0,0,0,0.28);
+ --font:'Satoshi',sans-serif;--mono:'JetBrains Mono',monospace;--serif:'Cormorant Garamond',serif;
+}
+[data-theme="light"]{
+ --bg:#f5f0e8;--surface:#faf6ee;--surface2:#f0ebe0;--border:#ddd4c0;--border2:#ccc2a8;
+ --accent:#8a6820;--green:#4a7c3f;--red:#9c2a2a;--yellow:#8a6820;--blue:#3d5f9e;
+ --text:#2a1e0e;--muted:#7a6a52;--card-shadow:0 1px 4px rgba(120,96,40,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh;}
+.mono{font-family:var(--mono);}
+a{color:var(--accent);}
+/* nav — mesma variante dos dashboards */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(242,236,224,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+[data-theme="dark"] nav{background:rgba(14,14,18,0.96);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-links{display:flex;gap:2px;}
+.nav-links a{padding:5px 12px;border-radius:4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a.active{color:var(--accent);background:rgba(138,104,32,0.1);border:1px solid rgba(138,104,32,0.25);}
+[data-theme="dark"] .nav-links a.active{background:rgba(201,160,80,0.1);border-color:rgba(201,160,80,0.25);}
+.nav-right{display:flex;gap:6px;align-items:center;}
+.btn-sm{background:none;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:9px;color:var(--muted);cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:all .2s;}
+.btn-sm:hover,.btn-sm.on{color:var(--accent);border-color:var(--accent);}
+.nav-hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:6px;}
+.nav-hamburger span{width:18px;height:1.5px;background:var(--muted);display:block;}
+
+.container{max-width:1400px;margin:0 auto;padding:72px 24px 60px;}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+.head h1{font-family:var(--serif);font-weight:500;font-size:40px;letter-spacing:.01em;line-height:1;}
+.head h1 em{color:var(--accent);font-style:italic;}
+.head .sub{font-size:12px;color:var(--muted);margin-top:6px;max-width:720px;line-height:1.5;}
+.status{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;line-height:1.7;}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle;animation:pulse 2s infinite;}
+.dot.stale{background:var(--yellow);animation:none;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.sec{margin-top:26px;}
+.sec-t{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.sec-t::after{content:'';flex:1;height:1px;background:var(--border);}
+.sec-t b{color:var(--accent);font-weight:500;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--card-shadow);}
+.lbl{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.big{font-family:var(--mono);font-size:24px;font-weight:500;margin-top:4px;}
+.small{font-size:11px;color:var(--muted);line-height:1.5;}
+.pos{color:var(--green);} .neg{color:var(--red);} .warnc{color:var(--yellow);} .gold{color:var(--accent);}
+
+/* faixa de mercado */
+.strip{display:grid;grid-template-columns:repeat(8,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.strip>div{background:var(--surface);padding:10px 12px;}
+.strip .v{font-family:var(--mono);font-size:15px;margin-top:3px;}
+.strip .c{font-family:var(--mono);font-size:10px;margin-top:1px;}
+
+/* regime */
+.regime{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;}
+.reg-name{font-family:var(--serif);font-size:30px;font-weight:600;line-height:1.05;margin-top:6px;}
+.reg-name small{display:block;font-family:var(--font);font-size:13px;color:var(--muted);font-weight:400;margin-top:6px;line-height:1.5;}
+.gauge{position:relative;height:10px;border-radius:5px;margin:18px 0 6px;background:linear-gradient(90deg,#3fb950 0%,#c9a050 50%,#f85149 100%);}
+.gauge i{position:absolute;top:-5px;width:4px;height:20px;border-radius:2px;background:var(--text);box-shadow:0 0 0 3px var(--bg);transform:translateX(-2px);}
+.gauge-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em;}
+.sig{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
+.sig div{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 9px;}
+.sig .v{font-family:var(--mono);font-size:14px;margin-top:2px;}
+.sig .n{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.35;}
+.play{display:flex;flex-direction:column;gap:9px;}
+.play div{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;font-size:12.5px;line-height:1.5;}
+.play b{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:500;padding-top:2px;}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.kpis>div{background:var(--surface);padding:13px 14px;}
+.kpis .big{font-size:20px;}
+.spark{width:100%;height:34px;margin-top:6px;display:block;}
+
+.two{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+
+/* alertas */
+.filters{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.alerts{display:flex;flex-direction:column;gap:8px;}
+.al{display:grid;grid-template-columns:4px 1fr;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 14px 11px 0;overflow:hidden;}
+.al::before{content:'';border-radius:0 3px 3px 0;}
+.al.crit::before{background:var(--red);} .al.warn::before{background:var(--yellow);} .al.info::before{background:var(--blue);} .al.ok::before{background:var(--green);}
+.al h4{font-size:13px;font-weight:600;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;}
+.al h4 .tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;border:1px solid var(--border2);color:var(--muted);font-weight:400;}
+.al.crit h4 .tag{color:var(--red);border-color:var(--red);} .al.warn h4 .tag{color:var(--yellow);border-color:var(--yellow);}
+.al.info h4 .tag{color:var(--blue);border-color:var(--blue);} .al.ok h4 .tag{color:var(--green);border-color:var(--green);}
+.al p{font-size:12px;color:var(--muted);line-height:1.55;margin-top:3px;}
+.al p strong{color:var(--text);font-weight:500;}
+.al .src{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:5px;opacity:.8;}
+
+/* colateral */
+.coll{display:flex;flex-direction:column;gap:12px;}
+.prot{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.prot .lbl{margin-bottom:2px;}
+.prot .v{font-family:var(--mono);font-size:15px;}
+.bar{height:8px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;position:relative;overflow:hidden;margin-top:8px;}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;}
+.bar u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--red);}
+.stress{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px;}
+.sl{display:grid;grid-template-columns:44px 1fr 58px;gap:10px;align-items:center;font-family:var(--mono);font-size:11px;}
+.sl input{width:100%;accent-color:var(--accent);}
+.presets{display:flex;gap:6px;flex-wrap:wrap;}
+.sres{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;}
+.sres div{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;}
+.sres .v{font-family:var(--mono);font-size:14px;margin-top:2px;}
+
+/* tabelas */
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right;font-weight:400;padding:7px 8px;border-bottom:1px solid var(--border);}
+.tbl th:first-child,.tbl td:first-child{text-align:left;}
+.tbl td{padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11.5px;}
+.tbl td.t{font-family:var(--font);font-size:12px;text-align:left;}
+.tbl tr.me td{background:rgba(201,160,80,0.07);}
+.tbl tr.me td:first-child{box-shadow:inset 3px 0 0 var(--accent);}
+.tbl tr:hover td{background:var(--surface2);}
+.tw{overflow-x:auto;}
+.chip{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:3px;border:1px solid var(--border2);color:var(--muted);}
+.chip.g{color:var(--green);border-color:rgba(63,185,80,.5);} .chip.y{color:var(--yellow);border-color:rgba(210,153,34,.5);} .chip.r{color:var(--red);border-color:rgba(248,81,73,.5);}
+.fam{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.fam .card{padding:12px 14px;}
+.fam h5{font-size:12.5px;font-weight:600;display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:6px;}
+.fam h5 span{font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:400;}
+.frow{display:grid;grid-template-columns:1fr auto auto;gap:10px;font-size:11.5px;padding:5px 0;border-top:1px solid var(--border);align-items:baseline;}
+.frow .p{color:var(--text);} .frow .p small{color:var(--muted);font-family:var(--mono);font-size:9.5px;margin-left:4px;}
+.frow .a{font-family:var(--mono);} .frow .t{font-family:var(--mono);font-size:10px;color:var(--muted);}
+.frow.me{background:rgba(201,160,80,0.07);margin:0 -14px;padding:5px 14px;box-shadow:inset 3px 0 0 var(--accent);}
+
+/* laboratório */
+.lab-ctl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:12px;}
+.lab-ctl label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.06em;display:flex;gap:6px;align-items:center;}
+.lab-ctl input[type=number]{width:96px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:5px 8px;border-radius:5px;}
+.strat{display:flex;flex-direction:column;gap:8px;}
+.strat h5{font-size:14px;font-weight:600;display:flex;justify-content:space-between;gap:8px;align-items:center;}
+.strat .rng{font-family:var(--mono);font-size:17px;}
+.strat .kv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:11.5px;}
+.strat .kv span:nth-child(even){font-family:var(--mono);text-align:right;}
+.strat .kv span:nth-child(odd){color:var(--muted);}
+.rbar{position:relative;height:26px;margin:6px 0 2px;}
+.rbar .ln{position:absolute;left:0;right:0;top:12px;height:2px;background:var(--border2);}
+.rbar .rg{position:absolute;top:7px;height:12px;border-radius:3px;background:rgba(201,160,80,.35);border:1px solid var(--accent);}
+.rbar .px{position:absolute;top:2px;width:2px;height:22px;background:var(--text);}
+.check{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 18px;font-size:12px;line-height:1.5;}
+.check div::before{content:'□ ';color:var(--accent);font-family:var(--mono);}
+
+/* quant */
+.rc{display:flex;flex-direction:column;gap:9px;}
+.rc-row{display:grid;grid-template-columns:42px 1fr 120px;gap:10px;align-items:center;font-family:var(--mono);font-size:11px;}
+.rc-bars{position:relative;height:18px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.rc-bars i{position:absolute;left:0;height:9px;}
+.rc-bars i.w{top:0;background:rgba(138,122,98,.55);} .rc-bars i.r{top:9px;background:var(--accent);}
+.rules{display:flex;flex-direction:column;gap:7px;}
+.rule{display:grid;grid-template-columns:22px 1fr auto;gap:8px;font-size:12px;align-items:baseline;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;}
+.rule .ic{font-family:var(--mono);font-weight:600;}
+.rule .vv{font-family:var(--mono);font-size:11px;}
+
+/* tradingview */
+.tvwrap{height:560px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
+.tvwrap .tradingview-widget-container{height:100%;width:100%;}
+
+.gold-rules{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 22px;font-size:12.5px;line-height:1.55;}
+.gold-rules div{padding-left:22px;position:relative;}
+.gold-rules div::before{content:attr(data-n);position:absolute;left:0;font-family:var(--mono);font-size:10px;color:var(--accent);top:2px;}
+.agenda{display:flex;flex-direction:column;gap:8px;}
+.ag{display:grid;grid-template-columns:70px 1fr;gap:12px;font-size:12.5px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;line-height:1.5;}
+.ag b{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500;}
+.foot{margin-top:34px;font-size:10.5px;color:var(--muted);line-height:1.6;font-family:var(--mono);border-top:1px solid var(--border);padding-top:14px;}
+.empty{font-size:12px;color:var(--muted);padding:14px;text-align:center;}
+
+@media(max-width:1100px){
+ .strip{grid-template-columns:repeat(4,1fr);} .kpis{grid-template-columns:repeat(4,1fr);}
+ .regime,.two{grid-template-columns:1fr;} .three,.fam{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+ .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);}
+ [data-theme="dark"] .nav-links{background:rgba(20,20,24,.98);}
+ .nav-links.open{display:flex;}
+ .nav-links a{padding:12px 20px;font-size:11px;border-radius:0;border-bottom:1px solid var(--border);}
+ .nav-hamburger{display:flex;}
+ nav{padding:0 14px;}
+ .container{padding:66px 12px 40px;}
+ .head h1{font-size:30px;} .status{text-align:left;}
+ .strip{grid-template-columns:repeat(2,1fr);} .kpis{grid-template-columns:repeat(2,1fr);}
+ .sig,.sres,.prot{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+ .three,.fam,.check,.gold-rules{grid-template-columns:minmax(0,1fr);}
+ .nav-right .btn-sm:not(#themeBtn){display:none;}
+ .sl{grid-template-columns:34px 1fr 50px;}
+ .tvwrap{height:440px;}
+}
+@media(min-width:769px){.nav-hamburger{display:none!important;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-44 0 254 30" width="148" height="21" style="display:block;">
+      <defs><linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="transparent"/><stop offset="18%" stop-color="#c9a050"/><stop offset="82%" stop-color="#c9a050"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
+      <polygon points="-34,25 -22,7 -10,25" fill="#9a7228"/><polygon points="-25,25 -16,13 -7,25" fill="#c9a050"/><line x1="0" y1="1.5" x2="210" y2="1.5" stroke="url(#nlg)" stroke-width="0.75"/>
+      <text x="105" y="20" font-family="Satoshi, Palatino Linotype, Times New Roman, serif" font-weight="600" font-size="14" letter-spacing="3" fill="var(--accent)" text-anchor="middle">BAROLO CAPITAL</text>
+      <line x1="0" y1="28.5" x2="210" y2="28.5" stroke="url(#nlg)" stroke-width="0.75"/>
+    </svg>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Início</a>
+    <a href="portfolio_analytics.html">Portfolio</a>
+    <a href="pools.html">Pools &amp; DeFi</a>
+    <a href="mesa.html" class="active">Mesa</a>
+    <a href="emprestimos.html">Empréstimos</a>
+    <a href="ferramentas.html">Ferramentas</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-sm" onclick="refreshAll()" title="Atualizar tudo agora">↻ Atualizar</button>
+    <button class="btn-sm" id="themeBtn" onclick="toggleTheme()" title="Alternar tema">☾</button>
+  </div>
+  <div class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu" title="Menu"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="container">
+
+  <div class="head">
+    <div>
+      <h1>Mesa <em>DeFi</em></h1>
+      <div class="sub">O que operamos, medido ao vivo: regime do mercado, colateral, alertas pelas suas próprias regras, onde o capital rende mais, ideias de pool com conta de risco e o quant do dia. Instrumento de decisão — não é recomendação.</div>
+    </div>
+    <div class="status" id="status"><span class="dot stale"></span>carregando…</div>
+  </div>
+
+  <!-- faixa de mercado -->
+  <div class="strip" id="strip"></div>
+
+  <!-- regime -->
+  <div class="sec">
+    <div class="sec-t"><b>01</b> Regime do mercado</div>
+    <div class="regime">
+      <div class="card">
+        <div class="lbl">Leitura combinada · on-chain + tendência + macro + sentimento</div>
+        <div class="reg-name" id="regName">—<small id="regWhy"></small></div>
+        <div class="gauge"><i id="regDot" style="left:50%"></i></div>
+        <div class="gauge-l"><span>FUNDO / CAPITULAÇÃO</span><span>MEIO DE CICLO</span><span>EUFORIA</span></div>
+        <div class="sig" id="sigs"></div>
+      </div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:10px;">Playbook do regime · o que o seu método manda fazer agora</div>
+        <div class="play" id="play"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="sec">
+    <div class="sec-t"><b>02</b> Posição ao vivo</div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+
+  <!-- alertas + colateral -->
+  <div class="sec two">
+    <div>
+      <div class="sec-t"><b>03</b> Quadro de alertas</div>
+      <div class="filters" id="alFilters"></div>
+      <div class="alerts" id="alerts"></div>
+    </div>
+    <div>
+      <div class="sec-t"><b>04</b> Colateral &amp; liquidação</div>
+      <div class="coll">
+        <div class="card" id="aaveCard"></div>
+        <div class="card" id="kamCard"></div>
+        <div class="card">
+          <div class="lbl">Teste de estresse · arraste o preço e veja o que acontece</div>
+          <div class="stress" style="margin-top:10px;">
+            <div class="sl"><span>ETH</span><input type="range" id="sE" min="-80" max="80" value="0" oninput="renderStress()"><span id="sEv">0%</span></div>
+            <div class="sl"><span>SOL</span><input type="range" id="sS" min="-80" max="80" value="0" oninput="renderStress()"><span id="sSv">0%</span></div>
+            <div class="sl"><span>BTC</span><input type="range" id="sB" min="-80" max="80" value="0" oninput="renderStress()"><span id="sBv">0%</span></div>
+          </div>
+          <div class="presets" style="margin-top:10px;" id="presets"></div>
+          <div class="sres" id="sres"></div>
+          <div class="small" id="snote" style="margin-top:8px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- radar de APY -->
+  <div class="sec">
+    <div class="sec-t"><b>05</b> Radar de APY · só protocolos grandes, só pares chatos</div>
+    <div class="tabs" id="radarTabs"></div>
+    <div id="radar"></div>
+  </div>
+
+  <!-- laboratório de pools -->
+  <div class="sec">
+    <div class="sec-t"><b>06</b> Laboratório de pools</div>
+    <div class="card">
+      <div class="lab-ctl">
+        <div class="tabs" id="labPairs" style="margin:0;"></div>
+        <label>horizonte <select id="labH" onchange="renderLab()" class="btn-sm" style="padding:4px 6px;"><option value="7">7 dias</option><option value="14">14 dias</option><option value="30" selected>30 dias</option><option value="60">60 dias</option></select></label>
+        <label>largura <select id="labK" onchange="renderLab()" class="btn-sm" style="padding:4px 6px;"><option value="1">1,0σ</option><option value="1.5" selected>1,5σ</option><option value="2">2,0σ</option></select></label>
+        <label>capital US$ <input type="number" id="labCap" min="0" step="10" oninput="renderLab()" title="padrão: 5% do patrimônio"></label>
+        <span class="small" id="labSize"></span>
+      </div>
+      <div class="three" id="labStrats"></div>
+      <div class="small" id="labRef" style="margin-top:10px;"></div>
+    </div>
+    <div class="two" style="margin-top:14px;">
+      <div class="card">
+        <div class="lbl" style="margin-bottom:10px;">Antes de abrir · checklist do seu diário</div>
+        <div class="check">
+          <div>Par chato: os dois lados ETH/BTC/SOL ou stable (22 vitórias, 0 derrotas)</div>
+          <div>Saiu do range? Esperar 24h antes de remontar</div>
+          <div>Referência sempre em USD — nunca em HOLD nem em ETH</div>
+          <div>Vou conseguir acompanhar? Viagem/doença → range mais largo</div>
+          <div>Regra de SAÍDA por tempo escrita antes de entrar (GRIFT: 38 dias preso)</div>
+          <div>Sem ampliar posição perdedora dentro da queda</div>
+          <div>Tamanho ≤ ¼ Kelly (teto 12–15% do patrimônio)</div>
+          <div>Vol/TVL ≥ 0,2 e TVL ≥ US$ 1M — APR alto sozinho é sinal inverso</div>
+        </div>
+      </div>
+      <div class="card" id="poolHist"></div>
+    </div>
+  </div>
+
+  <!-- quant -->
+  <div class="sec">
+    <div class="sec-t"><b>07</b> Quant do dia</div>
+    <div class="three">
+      <div class="card">
+        <div class="lbl" style="margin-bottom:10px;">Quem gera o risco · peso <span style="color:var(--muted)">▬</span> × risco <span class="gold">▬</span></div>
+        <div class="rc" id="rc"></div>
+        <div class="small" id="rcNote" style="margin-top:10px;"></div>
+      </div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:10px;">Regras quant propostas (QUANT.md §4 · ainda não valendo)</div>
+        <div class="rules" id="rules"></div>
+      </div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:8px;">Risco da carteira</div>
+        <div id="riskBox"></div>
+      </div>
+    </div>
+    <div class="two" style="margin-top:14px;">
+      <div class="card tw"><div class="lbl" style="margin-bottom:6px;">Ativos · vol, tendência e correlação</div><table class="tbl" id="assetsTbl"></table></div>
+      <div class="card tw"><div class="lbl" style="margin-bottom:6px;">Macro (FRED) e ciclo on-chain (BTC)</div><table class="tbl" id="macroTbl"></table></div>
+    </div>
+  </div>
+
+  <!-- tradingview -->
+  <div class="sec">
+    <div class="sec-t"><b>08</b> Gráficos · TradingView (MM200 + RSI)</div>
+    <div class="tabs" id="tvTabs"></div>
+    <div class="tvwrap" id="tvwrap"><div class="empty">O gráfico carrega quando você chegar aqui.</div></div>
+  </div>
+
+  <!-- agenda + regras -->
+  <div class="sec two">
+    <div>
+      <div class="sec-t"><b>09</b> Agenda</div>
+      <div class="agenda" id="agenda"></div>
+    </div>
+    <div>
+      <div class="sec-t"><b>10</b> Regras de ouro · do seu diário</div>
+      <div class="card gold-rules">
+        <div data-n="01">Antes de ganhar dinheiro, evitar perder. Sobreviver para o próximo ciclo é a estratégia.</div>
+        <div data-n="02">Alavancagem só com o vento a favor. Em acumulação: fiat → spot, sem dívida nova.</div>
+        <div data-n="03">Desalavancar na euforia do ciclo (MVRV &gt; 3,2 / Mayer &gt; 2,4), não no preço de entrada.</div>
+        <div data-n="04">Medir em tokens acumulados — mas só vale para token que sobrevive uma década.</div>
+        <div data-n="05">Pool não é anestésico para não realizar prejuízo. Hold disfarçado de operação.</div>
+        <div data-n="06">Não operar cansado, em tilt ou mais de um trade por dia. Na dúvida, não entre.</div>
+        <div data-n="07">Risco nº 1 hoje: contrato inteligente. Ficar nos protocolos grandes.</div>
+        <div data-n="08">Conferir o endereço inteiro, nunca só as pontas (address poisoning 28/08 e 04/02).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+'use strict';
+var D = window.BAROLO_DATA;
+var S = { px: {}, aave: null, kam: null, q: null, y: null, b: null, nw: null, pxAt: 0, chainAt: 0,
+          alFilter: 'all', radar: 'supply', lpPair: 'all', labPair: 'ETH/USD', tv: 'ETH', tvLoaded: false };
+
+/* ─── formatação ─────────────────────────────────────────────────────────── */
+var nf = function (d) { return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }); };
+function usd(x, d) { if (x == null || !isFinite(x)) return '—'; d = d == null ? (Math.abs(x) < 100 ? 2 : 0) : d; return (x < 0 ? '−' : '') + 'US$ ' + nf(d).format(Math.abs(x)); }
+function px$(x) { if (x == null || !isFinite(x)) return '—'; var d = x >= 1000 ? 0 : x >= 10 ? 2 : 4; return '$' + nf(d).format(x); }
+function pct(x, d, sign) { if (x == null || !isFinite(x)) return '—'; d = d == null ? 1 : d; var s = (sign && x > 0) ? '+' : (x < 0 ? '−' : ''); return s + nf(d).format(Math.abs(x * 100)) + '%'; }
+function num(x, d) { return (x == null || !isFinite(x)) ? '—' : nf(d == null ? 2 : d).format(x); }
+function cls(x) { return x > 0 ? 'pos' : x < 0 ? 'neg' : ''; }
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function ago(iso) { if (!iso) return '—'; var m = (Date.now() - new Date(iso).getTime()) / 6e4; return m < 60 ? Math.round(m) + ' min' : m < 2880 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' dias'; }
+function Ncdf(z) { var t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2); var p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
+var num0 = function (v, fb) { return typeof v === 'number' && isFinite(v) ? v : fb; };   // nunca `||` (0 é falsy)
+var FAMS = { ETH: ['ETH', 'WETH'], SOL: ['SOL', 'WSOL'], BTC: ['BTC', 'WBTC', 'CBBTC'], USD: ['USDC', 'USDT', 'GHO', 'USDS', 'DAI', 'USDG', 'PYUSD'] };
+function famOf(t) { t = String(t || '').toUpperCase(); for (var f in FAMS) if (FAMS[f].indexOf(t) >= 0) return f; return null; }
+
+/* ─── preços e posição ───────────────────────────────────────────────────── */
+var IDS = (function () { var s = {}; D.holdings.concat(D.stables).forEach(function (h) { s[h.cgId] = 1; }); return Object.keys(s); })();
+function lastNw() { var h = S.nw && S.nw.history; return h && h.length ? h[h.length - 1] : null; }
+function priceOf(id) {
+  var p = S.px[id]; if (p && p.usd > 0) return p.usd;
+  var h = D.holdings.concat(D.stables).filter(function (x) { return x.cgId === id; })[0], L = lastNw();
+  if (h && L && L.prices && L.prices[h.ticker] > 0) return L.prices[h.ticker];
+  return /usd|tether|gho|dai/.test(id) ? 1 : 0;
+}
+function chg(id) { var p = S.px[id]; return p && typeof p.usd_24h_change === 'number' ? p.usd_24h_change / 100 : null; }
+function vol(k) { var q = S.q; return (q && q.vol && q.vol[k]) ? q.vol[k].d365 : ({ BTC: 0.45, ETH: 0.6, SOL: 0.62 })[k]; }
+function vol30(k) { var q = S.q; return (q && q.vol && q.vol[k]) ? q.vol[k].d30 : vol(k); }
+
+function live() {
+  var A = D.defi.aave, K = D.defi.kamino;
+  var P = { ETH: priceOf('ethereum'), SOL: priceOf('solana'), BTC: priceOf('bitcoin') };
+  var nw = BaroloCore.netWorth(D, priceOf);
+  var aW = num0(A.supply.WETH && A.supply.WETH.qty, 0), aU = num0(A.supply.USDT && A.supply.USDT.qty, 0);
+  var aDebt = S.aave ? S.aave.debt : D.debt.aave;
+  var kS = (S.kam && S.kam.position && S.kam.position.solQty > 0) ? S.kam.position.solQty : num0(K.supply.SOL.qty, 0);
+  var kDebt = (S.kam && S.kam.position) ? S.kam.position.totalBorrowUsd : D.debt.kamino;
+  var kCol = (S.kam && S.kam.position) ? S.kam.position.totalDepositUsd : kS * P.SOL;
+  var liqLtv = num0(K.liqLtv, 0.8);
+  var hf = S.aave ? S.aave.hf : (aDebt > 0 ? (aW * P.ETH * 0.83 + aU * 0.78) / aDebt : null);
+  var liqEth = (aDebt > 0 && aW > 0) ? Math.max(0, (aDebt - aU * 0.78) / (aW * 0.83)) : null;
+  var liqSol = (kDebt > 0 && kS > 0) ? kDebt / (kS * liqLtv) : null;
+  var kApy = (S.kam && S.kam.apys) || {};
+  var kSolApy = kApy.sol != null ? kApy.sol / 100 : num0(K.supply.SOL.apy, 0);
+  var kBorApy = kApy.borrow != null ? kApy.borrow / 100 : num0(K.borrow.USDC && K.borrow.USDC.apy, 0);
+  var bor = []; Object.keys(A.borrow || {}).forEach(function (t) { var b = A.borrow[t]; if (b && b.qty > 0) bor.push({ prot: 'AAVE V4', chain: 'Ethereum', tok: t, qty: b.qty, apy: b.apy }); });
+  Object.keys(K.borrow || {}).forEach(function (t) { var b = K.borrow[t]; if (b && b.qty > 0) bor.push({ prot: 'Kamino', chain: 'Solana', tok: t, qty: b.qty, apy: t === 'USDC' ? kBorApy : b.apy }); });
+  var supplyY = aW * P.ETH * num0(A.supply.WETH && A.supply.WETH.apy, 0) + aU * num0(A.supply.USDT && A.supply.USDT.apy, 0) + kS * P.SOL * kSolApy;
+  var borrowY = bor.reduce(function (s, b) { return s + b.qty * b.apy; }, 0);
+  return { P: P, nw: nw, aW: aW, aU: aU, aDebt: aDebt, aCol: S.aave ? S.aave.collateral : aW * P.ETH + aU, hf: hf, liqEth: liqEth,
+    kS: kS, kDebt: kDebt, kCol: kCol, kLtv: kCol > 0 ? kDebt / kCol : null, liqLtv: liqLtv, liqSol: liqSol,
+    kSolApy: kSolApy, bor: bor, supplyY: supplyY, borrowY: borrowY, carryMo: (supplyY - borrowY) / 12 };
+}
+function sig(liq, P, v) { return (liq > 0 && P > 0) ? Math.log(P / liq) / v : null; }
+function pTouch(liq, P, v, days) { if (!(liq > 0 && P > 0)) return null; var z = Math.log(liq / P) / (v * Math.sqrt(days / 365)); return Math.min(1, 2 * Ncdf(-Math.abs(z))); }
+
+/* ─── regime ─────────────────────────────────────────────────────────────── */
+function regime() {
+  var q = S.q || {}, b = S.b || {}, oc = q.onchain || (b.onchain || {}), m = q.macro || {}, t = q.trend || {};
+  var score = (b.risk && typeof b.risk.score === 'number') ? b.risk.score : (oc.mvrv ? Math.max(0, Math.min(1, (oc.mvrv - 1) / 2.4)) : 0.5);
+  var tr = ['BTC', 'ETH', 'SOL'].map(function (k) { return t[k] ? t[k].vsMa200 : null; }).filter(function (x) { return x != null; });
+  var trend = tr.length ? tr.reduce(function (a, x) { return a + x; }, 0) / tr.length : 0;
+  var fng = b.fng ? b.fng.value : null;
+  var tight = 0, tightWhy = [];
+  if (m.us10y_3m > 0) { tight++; tightWhy.push('juro longo subindo'); }
+  if (m.dxy3m > 0.02) { tight++; tightWhy.push('dólar forte'); }
+  if (m.vix && m.vix[1] > 25) { tight++; tightWhy.push('VIX em estresse'); }
+  if (m.real10y > 2) { tight++; tightWhy.push('juro real alto'); }
+  var euph = (oc.mvrv > 3.2) || (oc.mayer > 2.4) || score >= 0.75;
+  var key, name, why;
+  if (euph) { key = 'euf'; name = 'Euforia'; why = 'Ciclo esticado: hora de desfazer a alavancagem, não de aumentar.'; }
+  else if (score < 0.3 && trend < 0) { key = 'fundo'; name = 'Zona de fundo, tendência de baixa'; why = 'On-chain barato, preço abaixo da média de 200 dias' + (fng != null && fng <= 25 ? ', medo extremo' : '') + '. Acumular devagar, sem alavancar.'; }
+  else if (score < 0.5 && trend >= 0) { key = 'rec'; name = 'Recuperação'; why = 'Barato e virando para cima. A janela de alavancar abre quando o macro afrouxar.'; }
+  else if (trend >= 0) { key = 'exp'; name = 'Expansão'; why = 'Tendência a favor: é a janela do framework para alavancar e para pools de saída.'; }
+  else { key = 'cor'; name = 'Correção no meio do ciclo'; why = 'Nem barato nem caro, com o preço caindo. Cautela e tamanho pequeno.'; }
+  return { key: key, name: name, why: why, score: score, trend: trend, fng: fng, tight: tight, tightWhy: tightWhy, oc: oc, m: m };
+}
+var PLAY = {
+  fundo: [['Aporte', 'DCA de sexta em fiat → spot. Medo extremo é quando o retorno é plantado (Ehrsam).'],
+          ['Dívida', 'Não aumentar. O framework de 20/06 manda recolher a alavancagem na acumulação e usar capital próprio.'],
+          ['Pools', 'Só compra escalonada abaixo do preço, larga e pequena — ou nenhuma. Nunca ampliar dentro da queda.'],
+          ['Lending', 'Folga acima de 3σ até a liquidação. Juro do supply é renda, não justificativa para mais borrow.']],
+  cor:   [['Aporte', 'DCA normal. Sem pressa de acertar o fundo.'],
+          ['Dívida', 'Manter, sem aumentar. Reavaliar borrow acima de 5% por duas semanas.'],
+          ['Pools', 'Neutras largas ou compra escalonada, tamanho até ¼ Kelly.'],
+          ['Lending', 'Manter HF > 3 e liquidação a ≥ 3σ.']],
+  rec:   [['Aporte', 'DCA + direcionar para BTC (menor vol, reduz a concentração em ETH).'],
+          ['Dívida', 'A janela abre quando o juro real cair. Antes disso, só se o teste "tomaria de novo hoje?" passar.'],
+          ['Pools', 'Neutras dos dois lados e saída gradual acima do preço.'],
+          ['Lending', 'Pode subir o LTV aos poucos, sempre com folga ≥ 3σ.']],
+  exp:   [['Aporte', 'DCA segue — tempo no mercado vence o timing.'],
+          ['Dívida', 'Janela do framework: alavancagem produtiva, a pool paga a dívida com taxas.'],
+          ['Pools', 'Saída gradual (entra no ativo, sai em stable) — a ordem de venda que paga para existir.'],
+          ['Lending', 'Monitorar o spread borrow × pool: ele comprime em bull.']],
+  euf:   [['Aporte', 'Reduzir o ritmo, realizar em BTC/ETH/stable. Lucro só existe realizado.'],
+          ['Dívida', 'Repagar. O gatilho é a euforia do ciclo, não o preço de entrada.'],
+          ['Pools', 'Saída gradual em tudo que for alt. Nada de narrativa.'],
+          ['Lending', 'Baixar o LTV e guardar pó seco para o próximo bear.']]
+};
+
+/* ─── render: faixa, regime, KPIs ───────────────────────────────────────── */
+function renderStrip(L) {
+  var b = S.b || {}, br = b.broad || {}, fng = b.fng || {};
+  var ethbtc = L.P.ETH && L.P.BTC ? L.P.ETH / L.P.BTC : null;
+  var cells = [
+    ['BTC', px$(L.P.BTC), chg('bitcoin')], ['ETH', px$(L.P.ETH), chg('ethereum')], ['SOL', px$(L.P.SOL), chg('solana')],
+    ['ETH/BTC', ethbtc ? num(ethbtc, 5) : '—', null],
+    ['Fear & Greed', fng.value != null ? fng.value + '' : '—', null, fng.label ? fng.label : ''],
+    ['Dominância BTC', br.btcDom != null ? num(br.btcDom, 1) + '%' : '—', null],
+    ['Stablecoins', br.stableMcap ? 'US$ ' + num(br.stableMcap / 1e9, 0) + ' bi' : '—', null, 'entrada de capital'],
+    ['Gás / rede', S.gwei != null ? num(S.gwei, S.gwei < 10 ? 2 : 1) + ' gwei' : '—', null, 'Ethereum']
+  ];
+  $('strip').innerHTML = cells.map(function (c) {
+    var ch = c[2] != null ? '<div class="c ' + cls(c[2]) + '">' + pct(c[2], 2, true) + ' 24h</div>' : '<div class="c" style="color:var(--muted)">' + (c[3] ? esc(c[3]) : '&nbsp;') + '</div>';
+    return '<div><div class="lbl">' + c[0] + '</div><div class="v">' + c[1] + '</div>' + ch + '</div>';
+  }).join('');
+}
+function renderRegime() {
+  var R = regime(), oc = R.oc, m = R.m;
+  $('regName').innerHTML = esc(R.name) + '<small>' + esc(R.why) + (R.tight >= 2 ? ' Macro apertado (' + esc(R.tightWhy.join(', ')) + ').' : '') + '</small>';
+  $('regDot').style.left = (Math.max(0.01, Math.min(0.99, R.score)) * 100) + '%';
+  var s = [
+    ['Fear & Greed', R.fng != null ? R.fng : '—', R.fng != null ? (R.fng <= 25 ? 'medo extremo → comprar o medo' : R.fng >= 75 ? 'ganância → cuidado' : 'neutro') : ''],
+    ['MVRV BTC', num(oc.mvrv, 2), oc.mvrv < 1 ? 'abaixo do custo médio' : oc.mvrv > 3.2 ? 'euforia' : 'meio de ciclo'],
+    ['STH-MVRV', num(oc.mvrv_sth, 2), oc.mvrv_sth < 1 ? 'novos holders no prejuízo' : 'novos holders no lucro'],
+    ['Mayer', num(oc.mayer, 2), oc.mayer < 0.8 ? 'muito barato' : oc.mayer > 2.4 ? 'topo' : oc.mayer < 1 ? 'abaixo da MM200' : 'acima da MM200'],
+    ['Preço × MM200d', pct(R.trend, 1, true), 'média BTC/ETH/SOL'],
+    ['Juro real 10a', m.real10y != null ? num(m.real10y, 2) + '%' : '—', m.us10y_3m != null ? (m.us10y_3m > 0 ? '↑ ' : '↓ ') + num(Math.abs(m.us10y_3m), 2) + ' p.p. em 3m' : ''],
+    ['VIX', m.vix ? num(m.vix[1], 1) : '—', m.vix && m.vix[1] > 25 ? 'estresse' : 'calmo'],
+    ['Dólar 3m · M2 a.a.', pct(m.dxy3m, 1, true), 'M2 ' + pct(m.m2yoy, 1, true)]
+  ];
+  $('sigs').innerHTML = s.map(function (x) { return '<div><div class="lbl">' + x[0] + '</div><div class="v">' + x[1] + '</div><div class="n">' + esc(x[2]) + '</div></div>'; }).join('');
+  $('play').innerHTML = (PLAY[R.key] || PLAY.cor).map(function (p) { return '<div><b>' + p[0] + '</b><span>' + esc(p[1]) + '</span></div>'; }).join('');
+}
+function sparkSvg(vals, color) {
+  if (!vals || vals.length < 2) return '';
+  var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals), w = 200, h = 34, r = (mx - mn) || 1;
+  var pts = vals.map(function (v, i) { return (i / (vals.length - 1) * w).toFixed(1) + ',' + (h - 2 - (v - mn) / r * (h - 4)).toFixed(1); });
+  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none"><polyline fill="none" stroke="' + color + '" stroke-width="1.5" points="' + pts.join(' ') + '"/></svg>';
+}
+function renderKpis(L) {
+  var h = (S.nw && S.nw.history) || [], last90 = h.slice(-90).map(function (p) { return p.netWorth; });
+  var nwNow = L.nw.netWorth, d30 = h.length > 30 ? nwNow / h[h.length - 31].netWorth - 1 : null;
+  var q = S.q || {}, var1 = q.port ? q.port.VaR95_1d : null;
+  var wc = D.wealthCurve, lastLbl = wc.labels[wc.labels.length - 1], lastYM = '20' + lastLbl.slice(3) + '-' + lastLbl.slice(0, 2);
+  var inv = wc.invested[wc.invested.length - 1] + (D.contributions || []).filter(function (c) { return c.date.slice(0, 7) > lastYM; }).reduce(function (s, c) { return s + c.usd; }, 0);
+  var k = [
+    ['Patrimônio líquido', usd(nwNow, 0), d30 != null ? '<span class="' + cls(d30) + '">' + pct(d30, 1, true) + '</span> em 30 dias' : '', sparkSvg(last90, 'var(--accent)')],
+    ['Dívida total', usd(L.aDebt + L.kDebt, 0), (L.aDebt + L.kDebt > 0 ? pct((L.aDebt + L.kDebt) / nwNow, 1) + ' do patrimônio' : 'sem dívida')],
+    ['Health factor AAVE', L.hf ? num(L.hf, 2) : '—', L.liqEth ? 'ETH liquida em ' + px$(L.liqEth) : 'sem dívida'],
+    ['LTV Kamino', L.kLtv != null ? pct(L.kLtv, 1) : '—', 'liquida a ' + pct(L.liqLtv, 0)],
+    ['Carry líquido', usd(L.carryMo, 2) + '/mês', 'supply ' + usd(L.supplyY / 12, 2) + ' − juros ' + usd(L.borrowY / 12, 2)],
+    ['VaR 95% · 1 dia', var1 != null ? usd(var1 * nwNow, 0) : '—', var1 != null ? pct(var1, 1) + ' num dia ruim (1 em 20)' : ''],
+    ['ROI sobre aporte', pct(nwNow / inv - 1, 1, true), 'aportado ' + usd(inv, 0) + ' · beta ' + (q.portBetaBTC ? num(q.portBetaBTC, 2) : '—')]
+  ];
+  $('kpis').innerHTML = k.map(function (x) { return '<div><div class="lbl">' + x[0] + '</div><div class="big">' + x[1] + '</div><div class="small">' + x[2] + '</div>' + (x[3] || '') + '</div>'; }).join('');
+}
+
+/* ─── alertas ────────────────────────────────────────────────────────────── */
+function lastDca() {
+  var c = (D.contributions || []).filter(function (x) { return x.note && /DCA/i.test(x.note); }).sort(function (a, b) { return b.date.localeCompare(a.date); });
+  return c[0] || null;
+}
+function nextFriday() { var d = new Date(); d.setHours(0, 0, 0, 0); var add = (5 - d.getDay() + 7) % 7; d.setDate(d.getDate() + add); return d; }
+function buildAlerts(L) {
+  var A = [], q = S.q || {}, R = regime(), y = S.y;
+  var add = function (lvl, tag, title, html, src) { A.push({ lvl: lvl, tag: tag, title: title, html: html, src: src }); };
+  // AAVE
+  if (L.aDebt > 0 && L.hf) {
+    var sE = sig(L.liqEth, L.P.ETH, vol('ETH')), pE = pTouch(L.liqEth, L.P.ETH, vol('ETH'), 365);
+    var lvl = L.hf < 1.5 ? 'crit' : L.hf < 3 ? 'warn' : 'ok';
+    add(lvl, 'AAVE', 'Health factor ' + num(L.hf, 2), 'WETH liquida em <strong>' + px$(L.liqEth) + '</strong> (' + pct(L.liqEth / L.P.ETH - 1, 0) + '), a <strong>' + num(sE, 1) + 'σ</strong> de 1 ano. P(tocar em 12 meses) ' + pct(pE, 1) + '.', 'HF = Σ(colateral × CF) ÷ dívida · CF WETH 83%');
+  }
+  // Kamino
+  if (L.kDebt > 0 && L.liqSol) {
+    var sS = sig(L.liqSol, L.P.SOL, vol('SOL')), p90 = pTouch(L.liqSol, L.P.SOL, vol('SOL'), 90), p365 = pTouch(L.liqSol, L.P.SOL, vol('SOL'), 365);
+    var liq3 = L.P.SOL * Math.exp(-3 * vol('SOL')), debt3 = liq3 * L.kS * L.liqLtv, sol3 = L.kDebt / (liq3 * L.liqLtv) - L.kS;
+    var lv = L.kLtv > L.liqLtv * 0.85 ? 'crit' : sS < 3 ? 'warn' : 'ok';
+    add(lv, 'Kamino', 'SOL liquida em ' + px$(L.liqSol) + ' (' + pct(L.liqSol / L.P.SOL - 1, 0) + ')',
+      'Distância de <strong>' + num(sS, 2) + 'σ</strong> — ' + (sS < 3 ? 'abaixo' : 'acima') + ' do piso proposto de 3σ. P(tocar) em 90 dias ' + pct(p90, 1) + ' · em 1 ano ' + pct(p365, 1) + '.' +
+      (sS < 3 ? ' Para chegar a 3σ: dívida até <strong>' + usd(debt3, 0) + '</strong> (repagar ' + usd(L.kDebt - debt3, 0) + ') ou depositar <strong>' + num(sol3, 2) + ' SOL</strong>.' : ''),
+      'QUANT §4 regra 3 · gaussiano subestima cauda: trate o P(toque) como piso');
+  }
+  // dívida em regime de acumulação
+  var debtTot = L.aDebt + L.kDebt;
+  if (debtTot > 0 && (R.key === 'fundo' || R.key === 'cor')) {
+    add('warn', 'Framework', 'Dívida de ' + usd(debtTot, 0) + ' em regime de ' + (R.key === 'fundo' ? 'acumulação' : 'correção'),
+      'Em novembro a dívida subiu para comprar ETH/BTC/SOL na queda (dólar a R$ 6 travou o fiat). O seu framework de 20/06 diz: <strong>em acumulação, fiat → spot, sem dívida nova</strong>; o gatilho de repagar é a euforia do ciclo, não o preço. Teste de hoje: <strong>tomaria de novo agora?</strong> Se sim, manter e não somar mais.',
+      'memória: framework de alavancagem (20/06/2026)');
+  }
+  // custo do borrow
+  L.bor.forEach(function (b) {
+    var alt = null;
+    if (y && y.borrow) alt = y.borrow.filter(function (r) { return r.chain === b.chain; })[0] || null;
+    var custo = b.qty * b.apy;
+    var lvl = b.apy > 0.05 ? 'warn' : 'info';
+    var txt = usd(b.qty, 0) + ' ' + b.tok + ' a <strong>' + pct(b.apy, 2) + '</strong> custam ' + usd(custo, 0) + '/ano (' + usd(custo / 12, 2) + '/mês).';
+    if (alt && alt.borrowNet / 100 < b.apy - 0.004) txt += ' Mais barato hoje em ' + b.chain + ': <strong>' + esc(alt.project) + ' ' + esc(alt.symbol) + ' ' + num(alt.borrowNet, 2) + '%</strong> (economia ≈ ' + usd(b.qty * (b.apy - alt.borrowNet / 100), 0) + '/ano, sem contar gás e o custo de mover o colateral).';
+    if (b.apy > 0.05) txt += ' Regra de 11/09: acima de 5% por duas semanas → reavaliar quitar.';
+    add(lvl, b.prot, 'Juro do borrow ' + b.tok, txt, 'data.js + DefiLlama lendBorrow');
+  });
+  // concentração e VaR
+  if (q.riskContrib) {
+    var top = Object.keys(q.riskContrib).sort(function (a, b) { return q.riskContrib[b].rc - q.riskContrib[a].rc; })[0], rc = q.riskContrib[top].rc;
+    if (rc > 0.6) add('warn', 'Quant', top + ' gera ' + pct(rc, 0) + ' do risco da carteira', 'Com peso de ' + pct(q.riskContrib[top].weight, 0) + ' do líquido. N efetivo ' + num(q.effN, 2) + ' (quase uma aposta só — correlação BTC-ETH ' + num(q.corr365.BTC_ETH, 2) + '). Ajuste pelo <strong>aporte</strong> (BTC tem a menor vol), nunca vendendo.', 'QUANT §4 regra 1 · teto proposto 60%');
+  }
+  if (q.port && q.port.VaR95_30d_param < -0.3) add('warn', 'Quant', 'VaR 95% de 30 dias: ' + pct(q.port.VaR95_30d_param, 0), 'Em um mês ruim (1 em 20) o patrimônio pode cair ' + usd(-q.port.VaR95_30d_param * L.nw.netWorth, 0) + '. Orçamento proposto: 30%. Pior dia do último ano: ' + pct(q.port.worstDay, 1) + '.', 'QUANT §4 regra 4');
+  // aporte semanal
+  var dca = lastDca();
+  if (dca) {
+    var dd = Math.floor((Date.now() - new Date(dca.date + 'T12:00:00').getTime()) / 864e5);
+    var fri = nextFriday(), dfri = Math.round((fri - new Date().setHours(0, 0, 0, 0)) / 864e5);
+    if (dd > 7) add('warn', 'Aporte', 'Último aporte de sexta foi há ' + dd + ' dias', 'Último DCA em ' + dca.date.split('-').reverse().join('/') + ' (' + usd(dca.usd, 2) + '). Régua: R$ 50 toda sexta — o valor varia, a sexta não passa em branco. Próxima: ' + (dfri === 0 ? '<strong>hoje</strong>' : 'em ' + dfri + ' dia' + (dfri > 1 ? 's' : '')) + '.', 'rotina combinada em 09/10/2026');
+    else add('ok', 'Aporte', 'Aporte de sexta em dia', 'Último DCA em ' + dca.date.split('-').reverse().join('/') + '. Próxima sexta ' + (dfri === 0 ? 'é hoje' : 'em ' + dfri + ' dia(s)') + '.', 'rotina combinada em 09/10/2026');
+  }
+  // yield pendente no CoinGecko
+  var mir = D.cgMirror || {}, pend = 0, parts = [];
+  D.holdings.concat(D.stables).forEach(function (h) { if (typeof mir[h.ticker] === 'number') { var d = h.qty - mir[h.ticker]; if (Math.abs(d) * priceOf(h.cgId) >= 0.5) { pend += d * priceOf(h.cgId); parts.push(h.ticker + ' ' + (d > 0 ? '+' : '') + num(d, h.ticker === 'BTC' ? 6 : 4)); } } });
+  if (parts.length) add(pend < 0 ? 'warn' : 'info', 'CoinGecko', 'Site × CoinGecko: ' + usd(pend, 2) + ' a lançar', parts.join(' · ') + '. Inclui o yield acumulado (entra como transferência de entrada, custo zero) e qualquer movimento da semana que ainda não foi lançado lá. Diferença negativa não é yield — é taxa lançada bruta ou erro de contagem.', 'rotina 1 · data.js → cgMirror · node scripts/yield-to-mirror.js');
+  // pool
+  var U = D.defi.uniswapV3 || {};
+  if (U.status === 'closed' || !(U.pooled > 0)) add('info', 'Pools', 'Nenhuma pool aberta' + (U.closeDate ? ' desde ' + U.closeDate.split('-').reverse().join('/') : ''),
+    'A última (' + esc(U.pool || '—') + ', ' + (U.daysOpen || '?') + ' dias) fechou com <strong class="' + cls(U.pnl) + '">' + usd(U.pnl, 2) + '</strong>: taxas ' + usd(U.totalFees, 2) + ' contra IL ' + usd(U.il, 2) + '. Lição: range apertado numa queda forte vira o ativo inteiro e o IL passa as taxas. Stable livre hoje: ' + usd(L.nw.stables, 2) + ' — pool de compra exigiria USDC.', 'data.js → defi.uniswapV3');
+  // oportunidade de yield no colateral
+  if (y && y.supply && y.supply.LSOL && y.supply.LSOL[0]) {
+    var best = y.supply.LSOL[0], g = (best.mean30 || best.apy) / 100 - L.kSolApy;
+    if (g > 0.005) add('info', 'Yield', 'Seu SOL renderia mais em staking líquido', 'Seu SOL na Kamino: <strong>' + pct(L.kSolApy, 2) + '</strong>. ' + esc(best.symbol) + ' (' + esc(best.project) + '): <strong>' + num(best.mean30 || best.apy, 2) + '%</strong> na média de 30 dias. Em ' + num(L.kS, 1) + ' SOL ≈ ' + usd(g * L.kS * L.P.SOL, 0) + '/ano a mais — se a Kamino aceitar o LST como colateral no mesmo LTV. Risco extra: contrato do LST e depeg.', 'DefiLlama yields');
+  }
+  // fechamento e dados velhos
+  var now = new Date(), fim = new Date(now.getFullYear(), now.getMonth() + 1, 1), dfim = Math.ceil((fim - now) / 864e5);
+  if (dfim <= 7) add('info', 'Fechamento', 'Fechamento do mês em ' + dfim + ' dia' + (dfim > 1 ? 's' : ''), 'Antes do dia 1: conferir se todo aporte de fora do mês está em <strong>contributions</strong> (o close-month só aplica aporte a mês novo). Depois: yield a lançar, RENDA_2026, nota no Diário.', '/fecharmes');
+  var age = Math.floor((Date.now() - new Date(D.asOf + 'T12:00:00').getTime()) / 864e5);
+  if (age > 8) add('warn', 'Dados', 'Posições do data.js com ' + age + ' dias', 'Review semanal pendente — mande os prints de CoinGecko, AAVE e Kamino.', '/prints');
+  if (S.q && S.q.generatedAt && (Date.now() - new Date(S.q.generatedAt)) > 2 * 864e5) add('warn', 'Dados', 'Quant com ' + ago(S.q.generatedAt), 'A Action "Dados da Mesa DeFi" não rodou. Rodar manual em Actions.', 'mesa.yml');
+  if (R.fng != null && R.fng <= 20) add('info', 'Sentimento', 'Medo extremo (' + R.fng + ')', 'Compre o medo, venda a ganância — com capital próprio. O bear é quando o retorno é plantado; o varejo leva vantagem sobre o institucional aqui.', 'mandamentos do operador · KB §7.8 / §12');
+  var ord = { crit: 0, warn: 1, info: 2, ok: 3 };
+  return A.sort(function (a, b) { return ord[a.lvl] - ord[b.lvl]; });
+}
+function renderAlerts(L) {
+  var all = buildAlerts(L), c = { all: all.length, crit: 0, warn: 0, info: 0, ok: 0 };
+  all.forEach(function (a) { c[a.lvl]++; });
+  var names = { all: 'Todos', crit: 'Crítico', warn: 'Atenção', info: 'Info', ok: 'OK' };
+  $('alFilters').innerHTML = Object.keys(names).map(function (k) { return '<button class="btn-sm' + (S.alFilter === k ? ' on' : '') + '" onclick="setAlFilter(\'' + k + '\')">' + names[k] + ' · ' + c[k] + '</button>'; }).join('');
+  var list = all.filter(function (a) { return S.alFilter === 'all' || a.lvl === S.alFilter; });
+  $('alerts').innerHTML = list.length ? list.map(function (a) {
+    return '<div class="al ' + a.lvl + '"><div><h4><span class="tag">' + esc(a.tag) + '</span>' + esc(a.title) + '</h4><p>' + a.html + '</p><div class="src">' + esc(a.src || '') + '</div></div></div>';
+  }).join('') : '<div class="empty">Nada nesta categoria.</div>';
+}
+function setAlFilter(k) { S.alFilter = k; renderAll(); }
+
+/* ─── colateral + estresse ──────────────────────────────────────────────── */
+function protCard(title, rows, barPct, barMark, foot) {
+  var color = barPct > barMark * 0.85 ? 'var(--red)' : barPct > barMark * 0.6 ? 'var(--yellow)' : 'var(--green)';
+  return '<div style="display:flex;justify-content:space-between;align-items:baseline;"><div class="lbl">' + title + '</div><div class="lbl">' + (S.chainAt ? 'on-chain · ' + ago(new Date(S.chainAt).toISOString()) : 'data.js') + '</div></div>' +
+    '<div class="prot" style="margin-top:8px;">' + rows.map(function (r) { return '<div><div class="lbl">' + r[0] + '</div><div class="v ' + (r[2] || '') + '">' + r[1] + '</div></div>'; }).join('') + '</div>' +
+    '<div class="bar"><i style="width:' + Math.min(100, barPct * 100) + '%;background:' + color + '"></i><u style="left:' + Math.min(99, barMark * 100) + '%"></u></div><div class="small" style="margin-top:6px;">' + foot + '</div>';
+}
+function renderColl(L) {
+  if (L.aDebt > 0) {
+    var used = L.hf ? 1 / L.hf : 0;
+    $('aaveCard').innerHTML = protCard('AAVE V4 · Ethereum', [
+      ['Colateral', usd(L.aCol, 0)], ['Dívida', usd(L.aDebt, 0)], ['Health factor', num(L.hf, 2), L.hf < 3 ? 'warnc' : 'pos'],
+      ['WETH', num(L.aW, 4)], ['Liquida em', px$(L.liqEth)], ['Distância', num(sig(L.liqEth, L.P.ETH, vol('ETH')), 1) + 'σ']
+    ], used, 1, 'Barra = dívida ÷ poder de empréstimo (' + pct(used, 1) + ' usado). Linha vermelha = liquidação.');
+  } else $('aaveCard').innerHTML = '<div class="lbl">AAVE V4</div><div class="small" style="margin-top:6px;">Sem dívida — HF não existe.</div>';
+  $('kamCard').innerHTML = protCard('Kamino · Solana', [
+    ['Colateral', usd(L.kCol, 0)], ['Dívida', usd(L.kDebt, 0)], ['LTV', pct(L.kLtv, 1), L.kLtv > 0.5 ? 'warnc' : 'pos'],
+    ['SOL', num(L.kS, 2)], ['Liquida em', px$(L.liqSol)], ['Distância', num(sig(L.liqSol, L.P.SOL, vol('SOL')), 2) + 'σ']
+  ], L.kLtv || 0, L.liqLtv, 'Barra = LTV. Linha vermelha = LTV de liquidação (' + pct(L.liqLtv, 0) + ').');
+  if (!$('presets').innerHTML) {
+    var wd = (S.q && S.q.port && S.q.port.worstDay) || -0.2164;
+    var pr = [['Hoje', 0, 0, 0], ['−20% tudo (10/10/2025)', -20, -20, -15], ['Pior dia do ano', wd * 100 * 1.25, wd * 100 * 1.25, wd * 100], ['−50% tudo', -50, -50, -45], ['SOL na liquidação', 0, (L.liqSol / L.P.SOL - 1) * 100, 0], ['+30% alta', 30, 30, 25]];
+    $('presets').innerHTML = pr.map(function (p, i) { return '<button class="btn-sm" onclick="preset(' + Math.round(p[1]) + ',' + Math.round(p[2]) + ',' + Math.round(p[3]) + ')">' + p[0] + '</button>'; }).join('');
+  }
+  renderStress();
+}
+function preset(e, s, b) { $('sE').value = e; $('sS').value = s; $('sB').value = b; renderStress(); }
+function renderStress() {
+  var L = S.L; if (!L) return;
+  var dE = +$('sE').value / 100, dS = +$('sS').value / 100, dB = +$('sB').value / 100;
+  $('sEv').textContent = pct(dE, 0, true); $('sSv').textContent = pct(dS, 0, true); $('sBv').textContent = pct(dB, 0, true);
+  var E = L.P.ETH * (1 + dE), So = L.P.SOL * (1 + dS), B = L.P.BTC * (1 + dB);
+  // ancora no HF ao vivo (contrato) e aplica só a variação de preço — 0% = o número do card
+  var f = function (e) { return L.aW * e * 0.83 + L.aU * 0.78; };
+  var hf = L.aDebt > 0 ? (L.hf != null ? L.hf * f(E) / f(L.P.ETH) : f(E) / L.aDebt) : null;
+  var ltv = L.kS > 0 ? L.kDebt / (L.kS * So) : null;
+  var delta = 0; D.holdings.forEach(function (h) { if (h.ticker === 'ETH') delta += h.qty * L.P.ETH * dE; if (h.ticker === 'SOL') delta += h.qty * L.P.SOL * dS; if (h.ticker === 'BTC') delta += h.qty * L.P.BTC * dB; });
+  var nw = L.nw.netWorth + delta;
+  var kliq = ltv != null && ltv >= L.liqLtv, aliq = hf != null && hf <= 1;
+  $('sres').innerHTML = [
+    ['Patrimônio', usd(nw, 0), cls(delta)], ['Variação', usd(delta, 0), cls(delta)],
+    ['HF AAVE', hf == null ? '—' : aliq ? 'LIQUIDADO' : num(hf, 2), aliq ? 'neg' : hf < 1.5 ? 'warnc' : ''],
+    ['LTV Kamino', ltv == null ? '—' : kliq ? 'LIQUIDADO' : pct(ltv, 1), kliq ? 'neg' : ltv > L.liqLtv * 0.85 ? 'warnc' : '']
+  ].map(function (r) { return '<div><div class="lbl">' + r[0] + '</div><div class="v ' + r[2] + '">' + r[1] + '</div></div>'; }).join('');
+  $('snote').innerHTML = 'ETH ' + px$(E) + ' · SOL ' + px$(So) + ' · BTC ' + px$(B) + '. Alts e stables parados. ' + (kliq || aliq ? '<span class="neg">Neste cenário uma posição é liquidada — a penalidade da Kamino/AAVE cai sobre o colateral.</span>' : 'Nenhuma liquidação neste cenário.');
+}
+
+/* ─── radar de APY ──────────────────────────────────────────────────────── */
+var FAM_NAME = { ETH: 'ETH / WETH', LST: 'ETH em staking líquido', SOL: 'SOL', LSOL: 'SOL em staking líquido', USD: 'Stablecoins', BTC: 'BTC (WBTC/cbBTC)' };
+function llama(id) { return 'https://defillama.com/yields/pool/' + encodeURIComponent(id); }
+function renderRadar(L) {
+  var tabs = [['supply', 'Onde o colateral rende'], ['borrow', 'Dívida mais barata'], ['lp', 'Pools chatas']];
+  $('radarTabs').innerHTML = tabs.map(function (t) { return '<button class="btn-sm' + (S.radar === t[0] ? ' on' : '') + '" onclick="setRadar(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') +
+    (S.y ? '<span class="small" style="margin-left:auto;align-self:center;">DefiLlama · ' + ago(S.y.generatedAt) + ' atrás · TVL mín. US$ 20M (lending) / 1M (pools)</span>' : '');
+  var y = S.y;
+  if (!y) { $('radar').innerHTML = '<div class="card empty">yields.json ainda não chegou (a Action roda todo dia ~07:20).</div>'; return; }
+  var A = D.defi.aave, K = D.defi.kamino;
+  if (S.radar === 'supply') {
+    var mine = { ETH: ['AAVE V4 · WETH', A.supply.WETH ? A.supply.WETH.apy : null, L.aW * L.P.ETH], SOL: ['Kamino · SOL', L.kSolApy, L.kS * L.P.SOL] };
+    $('radar').innerHTML = '<div class="fam">' + ['ETH', 'LST', 'SOL', 'LSOL', 'USD', 'BTC'].map(function (f) {
+      var rows = (y.supply[f] || []).slice(0, 6), m = mine[f] || (f === 'LST' ? mine.ETH : f === 'LSOL' ? mine.SOL : null);
+      var head = m && m[1] != null ? 'você: ' + pct(m[1], 2) : f === 'BTC' ? 'seu BTC está parado' : f === 'USD' ? 'stable livre: ' + usd(L.nw.stables, 2) : '';
+      var me = (f === 'ETH' || f === 'SOL') && m ? '<div class="frow me"><span class="p">' + m[0] + '<small>sua posição</small></span><span class="a">' + pct(m[1], 2) + '</span><span class="t">' + usd(m[2], 0) + '</span></div>' : '';
+      return '<div class="card"><h5>' + FAM_NAME[f] + '<span>' + head + '</span></h5>' + me + (rows.length ? rows.map(function (r) {
+        var dif = m && m[1] != null ? (r.mean30 != null ? r.mean30 : r.apy) / 100 - m[1] : null;
+        return '<div class="frow"><span class="p"><a href="' + llama(r.id) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">' + esc(r.project) + '</a><small>' + esc(r.chain) + ' · ' + esc(r.symbol) + '</small></span><span class="a ' + (dif != null ? cls(dif) : '') + '" title="média 30d (hoje ' + num(r.apy, 2) + '%)">' + num(r.mean30 != null ? r.mean30 : r.apy, 2) + '%</span><span class="t">' + (r.tvl >= 1e9 ? num(r.tvl / 1e9, 1) + ' bi' : num(r.tvl / 1e6, 0) + ' mi') + '</span></div>';
+      }).join('') : '<div class="small">sem pool nos filtros</div>') + '</div>';
+    }).join('') + '</div><div class="small" style="margin-top:8px;">APY = média de 30 dias (passe o mouse para ver o de hoje). Verde = acima do que você ganha hoje no mesmo ativo. Staking líquido soma risco de contrato e de depeg — e só faz sentido como colateral se o protocolo aceitar no mesmo LTV.</div>';
+  } else if (S.radar === 'borrow') {
+    var myRows = L.bor.map(function (b) { return '<tr class="me"><td class="t">' + b.prot + ' <span class="chip">sua dívida</span></td><td class="t">' + b.chain + '</td><td class="t">' + b.tok + '</td><td>' + pct(b.apy, 2) + '</td><td>—</td><td>' + usd(b.qty, 0) + '</td><td>' + usd(b.qty * b.apy, 0) + '/ano</td></tr>'; }).join('');
+    var biggest = L.bor.slice().sort(function (a, b) { return b.qty - a.qty; })[0];
+    $('radar').innerHTML = '<div class="card tw"><table class="tbl"><tr><th>Protocolo</th><th>Rede</th><th>Token</th><th>Borrow líq.</th><th>Utilização</th><th>Tomado</th><th>' + (biggest ? 'Custo p/ seus ' + usd(biggest.qty, 0) : 'Custo') + '</th></tr>' + myRows +
+      y.borrow.slice(0, 14).map(function (r) { return '<tr><td class="t"><a href="' + llama(r.id) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(r.project) + '</a></td><td class="t">' + esc(r.chain) + '</td><td class="t">' + esc(r.symbol) + '</td><td>' + num(r.borrowNet, 2) + '%</td><td class="' + (r.util > 90 ? 'warnc' : '') + '">' + (r.util != null ? num(r.util, 0) + '%' : '—') + '</td><td>' + num(r.totalBorrow / 1e6, 0) + ' mi</td><td>' + (biggest ? usd(biggest.qty * r.borrowNet / 100, 0) + '/ano' : '—') + '</td></tr>'; }).join('') +
+      '</table><div class="small" style="margin-top:8px;">Borrow líquido = taxa base − incentivo. Utilização acima de 90% = a taxa pode saltar (foi o que fez o borrow da AAVE triplicar em setembro). Trocar de protocolo exige mover o colateral: conte gás, ponte e o risco do contrato novo antes da economia.</div></div>';
+  } else {
+    var pairs = ['all'].concat(Object.keys(y.lp.reduce(function (o, r) { o[r.pair] = 1; return o; }, {})));
+    var chips = pairs.map(function (p) { return '<button class="btn-sm' + (S.lpPair === p ? ' on' : '') + '" onclick="setLpPair(\'' + p + '\')">' + (p === 'all' ? 'Todos' : p) + '</button>'; }).join('');
+    var rows = y.lp.filter(function (r) { return S.lpPair === 'all' || r.pair === S.lpPair; }).slice(0, 24);
+    $('radar').innerHTML = '<div class="card tw"><div class="tabs">' + chips + '</div><table class="tbl"><tr><th>Par</th><th>Protocolo</th><th>Rede</th><th>Fee</th><th>APR 30d</th><th>APR hoje</th><th>TVL</th><th>Vol/TVL</th><th>Leitura</th></tr>' +
+      rows.map(function (r) {
+        var ref = r.mean30 != null ? r.mean30 : r.base, inst = r.base != null && ref ? Math.abs(r.base - ref) / ref : 0;
+        var badge = r.volTvl != null && r.volTvl < 0.1 ? '<span class="chip y">pouca atividade</span>' : inst > 0.5 ? '<span class="chip y">APR instável</span>' : '<span class="chip g">consistente</span>';
+        return '<tr><td class="t"><b>' + esc(r.pair) + '</b> <small style="color:var(--muted)">' + esc(r.symbol) + '</small></td><td class="t"><a href="' + llama(r.id) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(r.project) + '</a></td><td class="t">' + esc(r.chain) + '</td><td>' + esc(r.meta || '—') + '</td><td class="gold">' + num(ref, 1) + '%</td><td>' + num(r.base, 1) + '%</td><td>' + num(r.tvl / 1e6, 1) + ' mi</td><td>' + (r.volTvl != null ? num(r.volTvl, 2) : '—') + '</td><td class="t">' + badge + '</td></tr>';
+      }).join('') + '</table><div class="small" style="margin-top:8px;">APR da pool = taxas ÷ TVL de todas as posições (média). Um range mais apertado que a média ganha mais enquanto estiver dentro — e paga mais LVR. O laboratório abaixo faz essa conta. Memecoin e par de narrativa não entram: no seu histórico o APR alto foi indicador inverso.</div></div>';
+  }
+}
+function setRadar(k) { S.radar = k; renderAll(); }
+function setLpPair(k) { S.lpPair = k; renderAll(); }
+
+/* ─── laboratório de pools ──────────────────────────────────────────────── */
+var LAB = { 'ETH/USD': { a: 'ETH', label: 'ETH/USDC' }, 'SOL/USD': { a: 'SOL', label: 'SOL/USDC' }, 'BTC/USD': { a: 'BTC', label: 'cbBTC/USDC' }, 'ETH/BTC': { a: 'ETHBTC', label: 'ETH/BTC' } };
+function labPrice(L, k) { return k === 'ETHBTC' ? L.P.ETH / L.P.BTC : L.P[k]; }
+function labVol(k) {
+  if (k !== 'ETHBTC') return vol30(k);
+  var q = S.q || {}, r = q.corr365 ? q.corr365.BTC_ETH : 0.9, a = vol30('ETH'), b = vol30('BTC');
+  return Math.sqrt(Math.max(0.0001, a * a + b * b - 2 * r * a * b));
+}
+function refPool(pair) {
+  var y = S.y; if (!y) return null;
+  var c = y.lp.filter(function (r) { return r.pair === pair && r.tvl >= 2e6 && (r.volTvl == null || r.volTvl >= 0.1); });
+  return c.sort(function (a, b) { return (b.mean30 || b.base) - (a.mean30 || a.base); })[0] || null;
+}
+function renderLab() {
+  var L = S.L; if (!L) return;
+  $('labPairs').innerHTML = Object.keys(LAB).map(function (p) { return '<button class="btn-sm' + (S.labPair === p ? ' on' : '') + '" onclick="setLabPair(\'' + p + '\')">' + LAB[p].label + '</button>'; }).join('');
+  var cfg = LAB[S.labPair], P = labPrice(L, cfg.a), v = labVol(cfg.a), H = +$('labH').value, k = +$('labK').value;
+  var sT = v * Math.sqrt(H / 365), nw = L.nw.netWorth;
+  var capEl = $('labCap'), capDef = nw > 500 ? Math.round(nw * 0.05 / 10) * 10 : 0;
+  capEl.placeholder = capDef;
+  var cap = capEl.value !== '' ? Math.max(0, +capEl.value) : capDef;
+  $('labSize').innerHTML = 'tamanho ' + pct(cap / nw, 1) + ' do patrimônio · teto ¼ Kelly 12–15% = ' + usd(nw * 0.12, 0) + '–' + usd(nw * 0.15, 0) + (regime().key === 'fundo' ? ' · <span class="warnc">regime pede ≤ 5%</span>' : '');
+  var ref = refPool(S.labPair), feeRef = ref ? (ref.mean30 != null ? ref.mean30 : ref.base) / 100 : null;
+  var R = regime().key, fmtP = function (x) { return cfg.a === 'ETHBTC' ? num(x, 5) : px$(x); };
+  var strats = [
+    { n: 'Compra escalonada', d: 'Entra 100% em stable abaixo do preço; vira o ativo conforme cai. É o DCA que paga para existir.', pa: P * Math.exp(-k * sT), pb: P * 0.995, side: 'down', fit: R === 'fundo' || R === 'cor' },
+    { n: 'Neutra (2 lados)', d: 'Range em volta do preço, para gerar taxa em lateralização. Sai do range nos dois sentidos.', pa: P * Math.exp(-k * sT / 1.5), pb: P * Math.exp(k * sT / 1.5), side: 'both', fit: R === 'cor' || R === 'rec' },
+    { n: 'Saída gradual', d: 'Entra 100% no ativo acima do preço; vira stable conforme sobe. A sua estratégia clássica de saída.', pa: P * 1.005, pb: P * Math.exp(k * sT), side: 'up', fit: R === 'exp' || R === 'euf' || R === 'rec' }
+  ];
+  $('labStrats').innerHTML = strats.map(function (s) {
+    var mid = Math.sqrt(s.pa * s.pb), lvr = BaroloCore.lvrRate(v, s.pa, s.pb, mid);
+    var be = feeRef != null ? BaroloCore.lvrBreakEvenVol(feeRef, s.pa, s.pb, mid) : null;
+    var z = function (x) { return Math.log(x / P) / sT; };
+    var probs;
+    if (s.side === 'down') probs = [['P(começar a comprar)', pct(Math.min(1, 2 * Ncdf(z(s.pb))), 0)], ['P(comprar tudo)', pct(Math.min(1, 2 * Ncdf(z(s.pa))), 0)], ['Preço médio de compra', fmtP(mid) + ' (' + pct(mid / P - 1, 1) + ')']];
+    else if (s.side === 'up') probs = [['P(começar a vender)', pct(Math.min(1, 2 * Ncdf(-z(s.pa))), 0)], ['P(vender tudo)', pct(Math.min(1, 2 * Ncdf(-z(s.pb))), 0)], ['Preço médio de venda', fmtP(mid) + ' (' + pct(mid / P - 1, 1, true) + ')']];
+    else probs = [['P(terminar dentro)', pct(Ncdf(z(s.pb)) - Ncdf(z(s.pa)), 0)], ['Largura', pct(s.pb / s.pa - 1, 1)], ['Centro', fmtP(mid)]];
+    var lo = Math.min(s.pa, P) * 0.97, hi = Math.max(s.pb, P) * 1.03, x = function (p) { return ((p - lo) / (hi - lo) * 100).toFixed(1) + '%'; };
+    var kv = probs.concat([
+      ['APR médio da pool (referência)', feeRef != null ? pct(feeRef, 1) + ' a.a.' : '—'],
+      ['LVR (custo de ser LP)', lvr != null ? '−' + pct(lvr, 1) + ' a.a.' : '—'],
+      ['Taxa mínima para pagar o LVR', lvr != null ? pct(lvr, 1) + ' a.a. ≈ ' + usd(cap * lvr * H / 365, 2) + ' em ' + H + 'd' : '—'],
+      ['Empata se a vol ficar abaixo de', be != null ? pct(be, 0) + ' (hoje ' + pct(v, 0) + ')' : '—']
+    ]);
+    return '<div class="card strat"><h5>' + s.n + (s.fit ? '<span class="chip g">combina com o regime</span>' : '<span class="chip">contra o regime</span>') + '</h5>' +
+      '<div class="small">' + s.d + '</div><div class="rng">' + fmtP(s.pa) + ' – ' + fmtP(s.pb) + '</div>' +
+      '<div class="rbar"><div class="ln"></div><div class="rg" style="left:' + x(s.pa) + ';width:calc(' + x(s.pb) + ' - ' + x(s.pa) + ')"></div><div class="px" style="left:' + x(P) + '" title="preço agora"></div></div>' +
+      '<div class="kv">' + kv.map(function (r) { return '<span>' + r[0] + '</span><span>' + r[1] + '</span>'; }).join('') + '</div></div>';
+  }).join('');
+  $('labRef').innerHTML = 'Preço ' + fmtP(P) + ' · vol de 30 dias ' + pct(v, 0) + ' → 1σ em ' + H + ' dias = ' + pct(sT, 1) + '. ' +
+    (ref ? 'Taxa de referência: <a href="' + llama(ref.id) + '" target="_blank" rel="noopener">' + esc(ref.project) + ' ' + esc(ref.symbol) + ' ' + esc(ref.meta || '') + ' (' + esc(ref.chain) + ')</a>, média de 30 dias, TVL ' + usd(ref.tvl, 0) + '. ' : 'Sem pool de referência nos filtros para este par. ') +
+    '<br>Como ler: <b>LVR</b> (Milionis et al.) é o que a pool perde para quem arbitra contra ela — o custo real de ser LP. A pool só paga se o APR <b>do seu range</b> (o que a interface da Uniswap/Orca mostra ao simular) ficar acima da "taxa mínima". O APR médio acima é de todas as posições: um range mais estreito que a média ganha mais por dólar e também paga mais LVR. Na compra escalonada o objetivo é comprar o ativo — ali o LVR é o preço de comprar em escada em vez de usar ordem limite. Probabilidades gaussianas: em cripto a cauda é mais gorda, leia como piso.';
+}
+function setLabPair(p) { S.labPair = p; renderLab(); }
+var NARRATIVA = ['GRIFT', 'PEANUT', 'PENG', 'XAI', 'POPCAT', 'WEN'];   // KB §3.4: pools de narrativa/meme
+function renderPoolHist() {
+  var h = D.poolHistory || [], ch = { n: 0, w: 0, pnl: 0 }, nar = { n: 0, w: 0, pnl: 0 };
+  h.forEach(function (p) {
+    var toks = String(p.pair || '').split(' ')[0].toUpperCase().split('/'), chata = !toks.some(function (t) { return NARRATIVA.indexOf(t) >= 0; });
+    var g = chata ? ch : nar; g.n++; if ((p.result || 0) >= 0) g.w++; g.pnl += p.result || 0;
+  });
+  $('poolHist').innerHTML = '<div class="lbl" style="margin-bottom:10px;">Seu histórico de pools · ' + h.length + ' registros</div>' +
+    '<div class="prot"><div><div class="lbl">Chatas</div><div class="v pos">' + ch.w + ' / ' + ch.n + '</div><div class="small">' + usd(ch.pnl, 0) + '</div></div>' +
+    '<div><div class="lbl">Narrativa</div><div class="v neg">' + nar.w + ' / ' + nar.n + '</div><div class="small">' + usd(nar.pnl, 0) + '</div></div>' +
+    '<div><div class="lbl">Total</div><div class="v ' + cls(ch.pnl + nar.pnl) + '">' + usd(ch.pnl + nar.pnl, 0) + '</div><div class="small">vitórias / pools</div></div></div>' +
+    '<div class="small" style="margin-top:10px;">Narrativa = token de narrativa/meme no par (GRIFT, PEANUT, PENG, XAI). A separação é quase perfeita: o par chato ganha, a narrativa perde. O GRIFT sozinho custou US$ 1.510 — o erro não foi entrar, foi ampliar dentro da queda e não ter regra de saída por tempo.</div>';
+}
+
+/* ─── quant ─────────────────────────────────────────────────────────────── */
+function renderQuant(L) {
+  var q = S.q;
+  if (!q) { ['rc', 'rules', 'riskBox'].forEach(function (i) { $(i).innerHTML = '<div class="empty">quant.json ainda não chegou.</div>'; }); return; }
+  var rc = q.riskContrib, ks = Object.keys(rc).sort(function (a, b) { return rc[b].rc - rc[a].rc; });
+  $('rc').innerHTML = ks.map(function (k) { return '<div class="rc-row"><span>' + k + '</span><div class="rc-bars"><i class="w" style="width:' + (rc[k].weight * 100).toFixed(1) + '%"></i><i class="r" style="width:' + (rc[k].rc * 100).toFixed(1) + '%"></i></div><span>' + pct(rc[k].weight, 0) + ' → <b class="gold">' + pct(rc[k].rc, 0) + '</b></span></div>'; }).join('');
+  $('rcNote').innerHTML = 'Peso sobre o patrimônio líquido × contribuição de risco (Euler). N efetivo <b>' + num(q.effN, 2) + '</b> — com correlação de ~0,9 entre os três, diversificar dentro de cripto quase não reduz risco. O BTC é o ativo de menor vol: cada dólar de aporte nele é o que mais baixa o risco.';
+  var oc = q.onchain || {}, m = q.macro || {}, sS = sig(L.liqSol, L.P.SOL, vol('SOL'));
+  var top = rc[ks[0]].rc, debtGrew = (L.aDebt + L.kDebt) > 0;
+  var rules = [
+    [top <= 0.6, 'Nenhum ativo acima de 60% do risco', ks[0] + ' ' + pct(top, 0)],
+    [!(m.us10y_3m > 0) && oc.mvrv < 2, 'Só aumentar dívida com juro em queda e MVRV < 2', 'juro ' + (m.us10y_3m > 0 ? '↑' : '↓') + ' · MVRV ' + num(oc.mvrv, 2)],
+    [sS == null || sS >= 3, 'Liquidação a ≥ 3σ de 1 ano', 'Kamino ' + num(sS, 2) + 'σ'],
+    [!(q.port.VaR95_30d_param < -0.3), 'VaR 95% de 30 dias ≤ 30%', pct(q.port.VaR95_30d_param, 0)],
+    [true, 'Regra nova só com backtest', 'DCA-Mayer: ' + pct(q.dca.gain, 1, true) + ' → não adotado']
+  ];
+  $('rules').innerHTML = rules.map(function (r) { return '<div class="rule"><span class="ic ' + (r[0] ? 'pos' : 'neg') + '">' + (r[0] ? '✓' : '✗') + '</span><span>' + r[1] + '</span><span class="vv">' + r[2] + '</span></div>'; }).join('') +
+    '<div class="small">Propostas em 28/09; nenhuma está valendo até você decidir.' + (debtGrew && !(rules[1][0]) ? ' A 2 não proíbe manter a dívida — só aumentá-la.' : '') + '</div>';
+  var p = q.port, pf = q.perf || {};
+  $('riskBox').innerHTML = '<div class="kv strat" style="display:grid;grid-template-columns:1fr auto;gap:6px 10px;font-size:12px;">' + [
+    ['Vol anual da carteira', pct(p.volAnn, 0)], ['Beta ao BTC', num(q.portBetaBTC, 2)], ['VaR 95% · 1 dia', pct(p.VaR95_1d, 1) + ' · ' + usd(p.VaR95_1d * L.nw.netWorth, 0)],
+    ['CVaR 95% · 1 dia', pct(p.CVaR95_1d, 1)], ['VaR 99% · 1 dia', pct(p.VaR99_1d, 1)], ['Pior dia (1 ano)', pct(p.worstDay, 1)],
+    ['TWR (gestão) a.a.', num(pf.twr, 2) + '%'], ['TIR (com o timing do aporte)', num(pf.irr, 2) + '%'], ['Sharpe · Max drawdown', num(pf.sharpe, 2) + ' · ' + num(pf.maxDD, 1) + '%']
+  ].map(function (r) { return '<span style="color:var(--muted)">' + r[0] + '</span><span class="mono" style="text-align:right">' + r[1] + '</span>'; }).join('') + '</div>' +
+    '<div class="small" style="margin-top:10px;">VaR histórico com as quantidades de hoje sobre 365 dias. A diferença TIR − TWR é o valor do seu DCA.</div>';
+  var t = q.trend, v = q.vol;
+  $('assetsTbl').innerHTML = '<tr><th>Ativo</th><th>Preço</th><th>× MM200d</th><th>× MM200s</th><th>Do topo</th><th>90d</th><th>Vol 30d</th><th>Vol 1a</th></tr>' + ['BTC', 'ETH', 'SOL'].map(function (k) {
+    var x = t[k], pr = L.P[k] || x.price;
+    return '<tr><td class="t"><b>' + k + '</b></td><td>' + px$(pr) + '</td><td class="' + cls(pr / x.ma200d - 1) + '">' + pct(pr / x.ma200d - 1, 1, true) + '</td><td class="' + cls(x.ma200w ? pr / x.ma200w - 1 : 0) + '">' + (x.ma200w ? pct(pr / x.ma200w - 1, 1, true) : '—') + '</td><td class="neg">' + pct(x.ddFromHigh1500d, 0) + '</td><td class="' + cls(x.ret90) + '">' + pct(x.ret90, 0, true) + '</td><td>' + pct(v[k].d30, 0) + '</td><td>' + pct(v[k].d365, 0) + '</td></tr>';
+  }).join('') + '<tr><td class="t" colspan="8" style="font-family:var(--font);font-size:11px;color:var(--muted);">Correlação 1 ano: BTC-ETH ' + num(q.corr365.BTC_ETH, 2) + ' · BTC-SOL ' + num(q.corr365.BTC_SOL, 2) + ' · ETH-SOL ' + num(q.corr365.ETH_SOL, 2) + ' · beta ETH ' + num(q.beta365.ETH, 2) + ' · SOL ' + num(q.beta365.SOL, 2) + '. MM200 semanas é o "piso" histórico de bear.</td></tr>';
+  var Z = function (x, lo, hi) { return x < lo ? '<span class="chip g">barato</span>' : x > hi ? '<span class="chip r">caro</span>' : '<span class="chip">neutro</span>'; };
+  $('macroTbl').innerHTML = '<tr><th>Indicador</th><th>Valor</th><th>Leitura</th></tr>' + [
+    ['Juro 10 anos EUA', m.us10y ? num(m.us10y[1], 2) + '%' : '—', m.us10y_3m > 0 ? '<span class="chip r">subindo ' + num(m.us10y_3m, 2) + ' p.p. 3m</span>' : '<span class="chip g">caindo</span>'],
+    ['Juro real 10a', num(m.real10y, 2) + '%', m.real10y > 2 ? '<span class="chip r">aperta ativo de risco</span>' : '<span class="chip g">folgado</span>'],
+    ['Fed funds', m.fedFunds ? num(m.fedFunds[1], 2) + '%' : '—', '<span class="chip">política</span>'],
+    ['Dólar (índice amplo) 3m', pct(m.dxy3m, 1, true), m.dxy3m > 0.02 ? '<span class="chip r">dólar forte</span>' : '<span class="chip g">dólar fraco</span>'],
+    ['M2 EUA a.a.', pct(m.m2yoy, 1, true), m.m2yoy > 0.05 ? '<span class="chip g">liquidez crescendo</span>' : '<span class="chip">neutro</span>'],
+    ['VIX', m.vix ? num(m.vix[1], 1) : '—', m.vix && m.vix[1] > 25 ? '<span class="chip r">estresse</span>' : '<span class="chip g">calmo</span>'],
+    ['MVRV · STH · LTH', num(oc.mvrv, 2) + ' · ' + num(oc.mvrv_sth, 2) + ' · ' + num(oc.mvrv_lth, 2), Z(oc.mvrv, 1.2, 3.2)],
+    ['Mayer · AVIV', num(oc.mayer, 2) + ' · ' + num(oc.aviv, 2), Z(oc.mayer, 0.8, 2.4)],
+    ['LTH SOPR', num(oc.sopr_lth, 2), oc.sopr_lth < 1 ? '<span class="chip g">holder antigo vendendo no prejuízo</span>' : '<span class="chip">realizando lucro</span>'],
+    ['Preço realizado · STH', px$(oc.realized) + ' · ' + px$(oc.realized_sth), '<span class="chip">custo médio da rede</span>']
+  ].map(function (r) { return '<tr><td class="t">' + r[0] + '</td><td>' + r[1] + '</td><td class="t">' + r[2] + '</td></tr>'; }).join('');
+}
+
+/* ─── TradingView (lazy) ─────────────────────────────────────────────────── */
+var TV = { BTC: 'BITSTAMP:BTCUSD', ETH: 'COINBASE:ETHUSD', SOL: 'COINBASE:SOLUSD', 'ETH/BTC': 'BINANCE:ETHBTC', 'SOL/ETH': 'BINANCE:SOLETH', 'BTC.D': 'CRYPTOCAP:BTC.D', 'USDT.D': 'CRYPTOCAP:USDT.D', TOTAL3: 'CRYPTOCAP:TOTAL3' };
+function renderTvTabs() { $('tvTabs').innerHTML = Object.keys(TV).map(function (k) { return '<button class="btn-sm' + (S.tv === k ? ' on' : '') + '" onclick="setTv(\'' + k + '\')">' + k + '</button>'; }).join('') + '<span class="small" style="margin-left:auto;align-self:center;">USDT.D subindo = dinheiro fugindo para stable · TOTAL3 = altcoins sem BTC/ETH</span>'; }
+function loadTv() {
+  var dark = BaroloUI.currentTheme() !== 'light', w = $('tvwrap');
+  w.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div></div>';
+  var s = document.createElement('script');
+  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js'; s.async = true;
+  s.innerHTML = JSON.stringify({ autosize: true, symbol: TV[S.tv], interval: 'D', timezone: 'America/Sao_Paulo', theme: dark ? 'dark' : 'light', style: '1', locale: 'br',
+    backgroundColor: dark ? 'rgba(20,20,24,1)' : 'rgba(250,246,238,1)', gridColor: dark ? 'rgba(42,38,32,0.5)' : 'rgba(221,212,192,0.6)',
+    allow_symbol_change: true, hide_side_toolbar: false, calendar: false, details: false, withdateranges: true, save_image: false,
+    studies: [{ id: 'MASimple@tv-basicstudies', inputs: { length: 200 } }, { id: 'RSI@tv-basicstudies' }], support_host: 'https://www.tradingview.com' });
+  w.firstChild.appendChild(s); S.tvLoaded = true;
+}
+function setTv(k) { S.tv = k; renderTvTabs(); loadTv(); }
+function toggleTheme() { BaroloUI.toggleTheme(function () { if (S.tvLoaded) loadTv(); renderAll(); }); }
+
+/* ─── agenda ─────────────────────────────────────────────────────────────── */
+function renderAgenda(L) {
+  var fri = nextFriday(), now = new Date(), fim = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  var dfmt = function (d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2); };
+  var items = [
+    [dfmt(fri), '<b style="color:var(--text);font-family:var(--font);">Aporte de sexta</b> — R$ 50 (o valor varia; a sexta não passa em branco). Fiat → USDT → ativo: a 1ª perna é aporte, a 2ª é rotação.'],
+    [dfmt(fri), '<b style="color:var(--text);font-family:var(--font);">Review semanal</b> — prints de CoinGecko, AAVE e Kamino → <span class="mono">/prints</span>. data.js de ' + D.asOf.split('-').reverse().join('/') + '.'],
+    [dfmt(fim), '<b style="color:var(--text);font-family:var(--font);">Fechamento do mês</b> — a Action fecha a curva sozinha; antes dela, conferir <span class="mono">contributions</span>. Depois: <span class="mono">/fecharmes</span>.'],
+    ['diário', '<b style="color:var(--text);font-family:var(--font);">Esta mesa</b> — preços e posições ao vivo; quant e APYs atualizados toda manhã (~07:20) pelo robô. Para uma leitura comentada, peça <span class="mono">/quant</span> no chat.']
+  ];
+  $('agenda').innerHTML = items.map(function (i) { return '<div class="ag"><b>' + i[0] + '</b><span>' + i[1] + '</span></div>'; }).join('');
+}
+
+/* ─── ciclo de render e dados ────────────────────────────────────────────── */
+function renderAll() {
+  var L = live(); S.L = L;
+  [renderStrip, renderRegime, renderKpis, renderAlerts, renderColl, renderRadar, renderLab, renderPoolHist, renderQuant, renderAgenda]
+    .forEach(function (f) { try { f(L); } catch (e) { console.error('[mesa] ' + f.name, e); } });
+  var stale = !S.pxAt || (Date.now() - S.pxAt) > 5 * 60e3;
+  $('status').innerHTML = '<span class="dot' + (stale ? ' stale' : '') + '"></span>' + (S.pxAt ? 'preços ' + new Date(S.pxAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'preços: último salvo') +
+    ' · AAVE/Kamino ' + (S.chainAt ? 'on-chain ' + new Date(S.chainAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'data.js') +
+    '<br>quant ' + (S.q ? ago(S.q.generatedAt) + ' atrás' : '—') + ' · APYs ' + (S.y ? ago(S.y.generatedAt) + ' atrás' : '—') + ' · posições de ' + D.asOf.split('-').reverse().join('/');
+  $('foot').innerHTML = 'Fontes: data.js (posições) · AAVE V4 e Kamino on-chain · Coinbase/CoinPaprika (preço) · DefiLlama Yields · FRED · Bitcoin Lab (on-chain) · alternative.me · TradingView. ' +
+    'Regime, alertas e ideias aplicam as regras do seu diário e do QUANT.md — são instrumento de medição, não recomendação de investimento.';
+}
+async function loadJSON(u) { try { var r = await fetch(u, { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch (e) { return null; } }
+async function loadFiles() {
+  var r = await Promise.all([loadJSON('quant.json'), loadJSON('yields.json'), loadJSON('briefing.json'), loadJSON('networth-history.json')]);
+  S.q = r[0]; S.y = r[1]; S.b = r[2]; S.nw = r[3]; renderAll();
+}
+async function loadPrices() {
+  var p = await BaroloPrices.get(IDS, { maxAge: 60000 });
+  if (p && Object.keys(p).length) { S.px = p; if (!p._stale) S.pxAt = Date.now(); }
+  renderAll();
+}
+async function loadChain() {
+  var r = await Promise.all([BaroloChain.fetchAave(), BaroloChain.fetchKamino({ withApys: true })]);
+  if (r[0]) S.aave = r[0];
+  if (r[1] && r[1].position) S.kam = r[1];
+  if (r[0] || (r[1] && r[1].position)) S.chainAt = Date.now();
+  try { var g = await BaroloChain.rpc(BaroloChain.CONFIG.ethRpc, 'eth_gasPrice', []); if (g) S.gwei = parseInt(g, 16) / 1e9; } catch (e) {}
+  renderAll();
+}
+function refreshAll() { loadPrices(); loadChain(); loadFiles(); }
+
+document.addEventListener('DOMContentLoaded', function () {
+  renderTvTabs(); renderAll(); refreshAll();
+  BaroloPrices.poll(loadPrices, 60e3);
+  BaroloPrices.poll(loadChain, 5 * 60e3);
+  BaroloPrices.poll(loadFiles, 30 * 60e3);
+  var tvSec = $('tvwrap');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting && !S.tvLoaded) { loadTv(); io.disconnect(); } }, { rootMargin: '300px 0px' });
+    io.observe(tvSec);
+  } else loadTv();
+});
+</script>
+</body>
+</html>

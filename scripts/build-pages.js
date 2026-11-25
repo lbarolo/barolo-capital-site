@@ -19,10 +19,10 @@ const ROOT = path.resolve(__dirname, '..');
 
 const FILES = [
   'index.html', 'portfolio_analytics.html', 'pools.html', 'ferramentas.html',
-  'relatorio.html', 'emprestimos.html',
+  'relatorio.html', 'emprestimos.html', 'mesa.html',
   'ui-polish.css',
   'data.js', 'diario.js', 'benchmark-data.js',
-  'btc-onchain.json', 'networth-history.json', 'briefing.json',
+  'btc-onchain.json', 'networth-history.json', 'briefing.json', 'quant.json', 'yields.json',
   'robots.txt', 'CNAME', '.nojekyll',
 ];
 const DIRS = ['lib'];

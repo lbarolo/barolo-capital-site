@@ -1,0 +1,45 @@
+name: Dados da Mesa DeFi (quant.json + yields.json)
+
+# Gera os dois arquivos que a mesa.html lê: quant.json (vol, VaR, contribuição de risco,
+# tendência, macro FRED, on-chain) e yields.json (recorte do DefiLlama: supply, borrow e pools
+# chatas). Sem secrets — Coinbase, FRED e yields.llama.fi são públicos e respondem no runner.
+# Preços, AAVE e Kamino a página busca sozinha, ao vivo, no navegador.
+
+on:
+  schedule:
+    - cron: '20 10 * * *'   # ~07:20 BRT (depois do onchain 09:20 e do networth 09:40 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mesa-update
+  cancel-in-progress: false
+
+jobs:
+  mesa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Gerar quant.json e yields.json
+        run: node scripts/fetch-mesa.js
+
+      - name: Commit se houver mudança
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- quant.json yields.json; then
+            echo "Sem mudanças."
+          else
+            git add quant.json yields.json
+            git commit -m "data: dados da Mesa DeFi (automático)"
+            git pull --rebase origin main
+            git push
+          fi
