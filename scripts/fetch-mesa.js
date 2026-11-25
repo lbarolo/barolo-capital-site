@@ -5,6 +5,7 @@
  *                 contribuição de risco, tendência, macro FRED, on-chain) + generatedAt.
  *   yields.json — recorte do DefiLlama Yields (10 MB → ~50 KB): onde o colateral rende,
  *                 onde a dívida custa menos e as pools "chatas" (par com stable ou blue-chip).
+ *   quant.json.ta — RSI 14 diário/semanal, retornos 7/30d, MM50/MM200, vol de BTC/ETH/SOL/HYPE (motor de sugestões).
  * Sem chave: Coinbase, FRED, yields.llama.fi. Uso: node scripts/fetch-mesa.js
  * O recorte segue a regra da casa (KB §3.4 e §12): só protocolos grandes, só pares chatos —
  * 22 vitórias e zero derrotas nas chatas; narrativa foi 1 de 7. Memecoin nem entra na lista. */
@@ -89,12 +90,51 @@ async function yields() {
     supply: topSupply, borrow, lp: lpTop };
 }
 
+// Análise técnica curta para o motor de sugestões da Mesa (RSI, retornos, médias, vol).
+// Coinbase Exchange: 300 candles diários por chamada, responde no runner (a Binance dá 451).
+async function candles(prod) {
+  const end = Date.now(), start = end - 299 * 864e5;
+  const u = 'https://api.exchange.coinbase.com/products/' + prod + '/candles?granularity=86400&start=' +
+    new Date(start).toISOString() + '&end=' + new Date(end).toISOString();
+  const j = await getJSON(u);
+  if (!Array.isArray(j) || j.length < 60) throw new Error(prod + ': poucos candles');
+  return j.map(c => [c[0], c[4]]).sort((a, b) => a[0] - b[0]).map(c => c[1]);
+}
+function rsi(cl, n = 14) {
+  if (cl.length < n + 1) return null;
+  let g = 0, l = 0;
+  for (let i = 1; i <= n; i++) { const d = cl[i] - cl[i - 1]; if (d > 0) g += d; else l -= d; }
+  g /= n; l /= n;
+  for (let i = n + 1; i < cl.length; i++) { const d = cl[i] - cl[i - 1]; g = (g * (n - 1) + Math.max(d, 0)) / n; l = (l * (n - 1) + Math.max(-d, 0)) / n; }
+  return l === 0 ? 100 : 100 - 100 / (1 + g / l);
+}
+async function technicals() {
+  const out = {};
+  for (const k of ['BTC', 'ETH', 'SOL', 'HYPE']) {
+    try {
+      const cl = await candles(k + '-USD'), p = cl[cl.length - 1];
+      const ma = n => cl.length >= n ? cl.slice(-n).reduce((a, x) => a + x, 0) / n : null;
+      const lr = cl.slice(1).map((v, i) => Math.log(v / cl[i]));
+      const sd = a => { const m = a.reduce((s, x) => s + x, 0) / a.length; return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+      const wk = []; for (let i = cl.length - 1; i >= 0; i -= 7) wk.unshift(cl[i]);
+      const hi = Math.max(...cl.slice(-90)), lo = Math.min(...cl.slice(-90));
+      out[k] = { price: p, days: cl.length, rsi14d: rsi(cl), rsi14w: rsi(wk),
+        ret7: p / cl[cl.length - 8] - 1, ret30: p / cl[cl.length - 31] - 1,
+        ma50: ma(50), ma200: ma(200), vsMa50: ma(50) ? p / ma(50) - 1 : null, vsMa200: ma(200) ? p / ma(200) - 1 : null,
+        vol30: sd(lr.slice(-30)) * Math.sqrt(365), vol90: sd(lr.slice(-90)) * Math.sqrt(365),
+        hi90: hi, lo90: lo, pos90: (p - lo) / (hi - lo || 1), ddHi: p / Math.max(...cl) - 1 };
+    } catch (e) { console.warn('TA ' + k + ': ' + e.message); }
+  }
+  return out;
+}
+
 (async () => {
   // quant: reaproveita o relatório existente (fonte única das contas)
   const raw = execFileSync(process.execPath, [path.join(__dirname, 'quant-report.js'), '--json'],
     { cwd: ROOT, encoding: 'utf8', maxBuffer: 20e6, timeout: 240000 });
   const q = JSON.parse(raw);
   if (!q.vol || !q.vol.ETH || !q.port || !q.macro) throw new Error('quant-report sem os campos esperados');
+  q.ta = await technicals();
   q.generatedAt = new Date().toISOString();
   fs.writeFileSync(path.join(ROOT, 'quant.json'), JSON.stringify(q) + '\n');
   console.log('quant.json OK · ETH vol30 ' + (q.vol.ETH.d30 * 100).toFixed(1) + '% · VaR95 1d ' + (q.port.VaR95_1d * 100).toFixed(1) + '%');

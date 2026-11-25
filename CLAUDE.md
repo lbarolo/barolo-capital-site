@@ -7167,6 +7167,18 @@ Alertas: Kamino liquida SOL a US$ 25,50 = **1,6σ** (abaixo do piso proposto de 
 hoje?"); borrow Kamino 5,80% > 5%; ETH = 70% do risco; VaR95 30d −42%; último aporte de sexta há 12 dias; JupSOL/JitoSOL ~5%
 contra 3,42% do SOL na Kamino.
 
+### Complemento (mesma data) — Sugestões de ação + HYPE
+- Seção **02 Sugestões de ação** na Mesa: Compra (BTC/ETH/SOL/HYPE), Venda fracionada, Pools (compra escalonada/neutra/saída
+  por par) e Empréstimos (alavancar, repagar, trocar SOL por LST). Nota 0–100 = pesos dos critérios cumpridos (regras do
+  diário/KB/QUANT); Excelente ≥ 75 · Bom ≥ 55 · Neutro ≥ 35. Vetos: euforia veta compra; acumulação veta alavancar
+  (framework 20/06); ativo com > 60% do risco fica limitado a "Bom". Motor em `buildActions()`.
+- `scripts/fetch-mesa.js` agora grava `quant.json → ta` (RSI 14 diário/semanal, retornos 7/30d, MM50/MM200, vol 30/90d,
+  posição na faixa de 90d) para BTC/ETH/SOL/HYPE via Coinbase. HYPE ao vivo: Coinbase `/products/HYPE-USD/stats`
+  direto na página (não entrou no mapa do `lib/barolo-prices.js`). TradingView ganhou a aba HYPE (`COINBASE:HYPEUSD`).
+- Leitura de 25/11: Compra BTC/SOL/HYPE Excelente, ETH Bom (concentração); Venda Evitar; Pool compra escalonada SOL/USDC
+  Bom (falta stable); Alavancar Evitar (veto); Repagar Neutro; trocar SOL por mSOL Excelente (5,14% × 3,42%).
+- TradingView com as marcações do Lucas: **descartado por ele** (o embed é anônimo; ele acessa o gráfico dele por fora).
+
 ### Gotchas
 - O servidor local de `.claude/launch.json` não ignora query string → `fetch('x.json?v=…')` dá 404 local; a página usa `cache:'no-store'`.
 - TradingView: `studies` precisa ser tudo em formato objeto (`{id:'RSI@tv-basicstudies'}`); misturar com string `STD;RSI` some com o RSI.

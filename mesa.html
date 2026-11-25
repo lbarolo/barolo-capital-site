@@ -177,6 +177,28 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 .rule .ic{font-family:var(--mono);font-weight:600;}
 .rule .vv{font-family:var(--mono);font-size:11px;}
 
+/* sugestões */
+.act-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;}
+.act-sum .as{background:var(--surface);padding:12px 14px;border-top:3px solid var(--border2);}
+.as.ex{border-top-color:var(--green);} .as.bom{border-top-color:rgba(63,185,80,.55);} .as.neu{border-top-color:var(--accent);} .as.ev{border-top-color:var(--red);}
+.asv{font-family:var(--serif);font-size:22px;font-weight:600;margin:3px 0 1px;}
+.as.ex .asv,.as.bom .asv{color:var(--green);} .as.neu .asv{color:var(--accent);} .as.ev .asv{color:var(--red);}
+.acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.ar{display:grid;grid-template-columns:minmax(0,1fr) 80px 128px;gap:10px;align-items:center;padding:7px 8px;border-radius:6px;cursor:pointer;border:1px solid transparent;}
+.ar:hover{background:var(--surface2);} .ar.on{background:var(--surface2);border-color:var(--border2);}
+.an{font-size:12.5px;font-weight:500;} .an small{display:block;font-family:var(--mono);font-size:9.5px;color:var(--muted);font-weight:400;margin-top:1px;}
+.ab{height:6px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;overflow:hidden;position:relative;}
+.ab i{position:absolute;left:0;top:0;bottom:0;}
+.ab i.ex{background:var(--green);} .ab i.bom{background:rgba(63,185,80,.6);} .ab i.neu{background:var(--accent);} .ab i.ev{background:var(--red);}
+.pill{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:3px 6px;border-radius:4px;border:1px solid var(--border2);}
+.pill.ex{color:#fff;background:var(--green);border-color:var(--green);} .pill.bom{color:var(--green);border-color:var(--green);}
+.pill.neu{color:var(--accent);border-color:var(--accent);} .pill.ev{color:var(--red);border-color:rgba(248,81,73,.5);}
+.adet{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.cr{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:8px;font-size:11.5px;padding:3px 0;align-items:baseline;}
+.cr .mono{font-size:10.5px;color:var(--muted);text-align:right;}
+.how{margin-top:8px;font-size:12px;line-height:1.55;background:var(--surface2);border-left:3px solid var(--accent);padding:8px 10px;border-radius:0 6px 6px 0;}
+.veto{font-size:11.5px;color:var(--red);margin-bottom:6px;}
+
 /* tradingview */
 .tvwrap{height:560px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
 .tvwrap .tradingview-widget-container{height:100%;width:100%;}
@@ -192,7 +214,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
 @media(max-width:1100px){
  .strip{grid-template-columns:repeat(4,1fr);} .kpis{grid-template-columns:repeat(4,1fr);}
- .regime,.two{grid-template-columns:1fr;} .three,.fam{grid-template-columns:1fr 1fr;}
+ .regime,.two,.acts{grid-template-columns:1fr;} .act-sum{grid-template-columns:repeat(2,1fr);} .three,.fam{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:768px){
  .nav-links{display:none;flex-direction:column;position:absolute;top:50px;left:0;right:0;background:rgba(242,236,224,.98);border-bottom:1px solid var(--border);}
@@ -205,6 +227,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
  .head h1{font-size:30px;} .status{text-align:left;}
  .strip{grid-template-columns:repeat(2,1fr);} .kpis{grid-template-columns:repeat(2,1fr);}
  .sig,.sres,.prot{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+ .ar{grid-template-columns:minmax(0,1fr) 104px;} .ar .ab{display:none;}
  .three,.fam,.check,.gold-rules{grid-template-columns:minmax(0,1fr);}
  .nav-right .btn-sm:not(#themeBtn){display:none;}
  .sl{grid-template-columns:34px 1fr 50px;}
@@ -270,21 +293,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
     </div>
   </div>
 
+  <!-- sugestões de ação -->
+  <div class="sec">
+    <div class="sec-t"><b>02</b> Sugestões de ação · o que as suas regras dizem hoje</div>
+    <div class="act-sum" id="actSum"></div>
+    <div class="acts" id="acts"></div>
+    <div class="small" style="margin-top:8px;">Nota = soma dos pesos dos critérios cumpridos (as suas regras do diário, da KB e do QUANT.md). Clique numa linha para ver o porquê. Excelente ≥ 75 · Bom ≥ 55 · Neutro ≥ 35. Indicador de leitura, não ordem de compra ou venda — e não substitui a regra de saída escrita antes de entrar.</div>
+  </div>
+
   <!-- KPIs -->
   <div class="sec">
-    <div class="sec-t"><b>02</b> Posição ao vivo</div>
+    <div class="sec-t"><b>03</b> Posição ao vivo</div>
     <div class="kpis" id="kpis"></div>
   </div>
 
   <!-- alertas + colateral -->
   <div class="sec two">
     <div>
-      <div class="sec-t"><b>03</b> Quadro de alertas</div>
+      <div class="sec-t"><b>04</b> Quadro de alertas</div>
       <div class="filters" id="alFilters"></div>
       <div class="alerts" id="alerts"></div>
     </div>
     <div>
-      <div class="sec-t"><b>04</b> Colateral &amp; liquidação</div>
+      <div class="sec-t"><b>05</b> Colateral &amp; liquidação</div>
       <div class="coll">
         <div class="card" id="aaveCard"></div>
         <div class="card" id="kamCard"></div>
@@ -305,14 +336,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
   <!-- radar de APY -->
   <div class="sec">
-    <div class="sec-t"><b>05</b> Radar de APY · só protocolos grandes, só pares chatos</div>
+    <div class="sec-t"><b>06</b> Radar de APY · só protocolos grandes, só pares chatos</div>
     <div class="tabs" id="radarTabs"></div>
     <div id="radar"></div>
   </div>
 
   <!-- laboratório de pools -->
   <div class="sec">
-    <div class="sec-t"><b>06</b> Laboratório de pools</div>
+    <div class="sec-t"><b>07</b> Laboratório de pools</div>
     <div class="card">
       <div class="lab-ctl">
         <div class="tabs" id="labPairs" style="margin:0;"></div>
@@ -344,7 +375,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
   <!-- quant -->
   <div class="sec">
-    <div class="sec-t"><b>07</b> Quant do dia</div>
+    <div class="sec-t"><b>08</b> Quant do dia</div>
     <div class="three">
       <div class="card">
         <div class="lbl" style="margin-bottom:10px;">Quem gera o risco · peso <span style="color:var(--muted)">▬</span> × risco <span class="gold">▬</span></div>
@@ -368,7 +399,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
 
   <!-- tradingview -->
   <div class="sec">
-    <div class="sec-t"><b>08</b> Gráficos · TradingView (MM200 + RSI)</div>
+    <div class="sec-t"><b>09</b> Gráficos · TradingView (MM200 + RSI)</div>
     <div class="tabs" id="tvTabs"></div>
     <div class="tvwrap" id="tvwrap"><div class="empty">O gráfico carrega quando você chegar aqui.</div></div>
   </div>
@@ -376,11 +407,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
   <!-- agenda + regras -->
   <div class="sec two">
     <div>
-      <div class="sec-t"><b>09</b> Agenda</div>
+      <div class="sec-t"><b>10</b> Agenda</div>
       <div class="agenda" id="agenda"></div>
     </div>
     <div>
-      <div class="sec-t"><b>10</b> Regras de ouro · do seu diário</div>
+      <div class="sec-t"><b>11</b> Regras de ouro · do seu diário</div>
       <div class="card gold-rules">
         <div data-n="01">Antes de ganhar dinheiro, evitar perder. Sobreviver para o próximo ciclo é a estratégia.</div>
         <div data-n="02">Alavancagem só com o vento a favor. Em acumulação: fiat → spot, sem dívida nova.</div>
@@ -512,7 +543,7 @@ function renderStrip(L) {
     ['Fear & Greed', fng.value != null ? fng.value + '' : '—', null, fng.label ? fng.label : ''],
     ['Dominância BTC', br.btcDom != null ? num(br.btcDom, 1) + '%' : '—', null],
     ['Stablecoins', br.stableMcap ? 'US$ ' + num(br.stableMcap / 1e9, 0) + ' bi' : '—', null, 'entrada de capital'],
-    ['Gás / rede', S.gwei != null ? num(S.gwei, S.gwei < 10 ? 2 : 1) + ' gwei' : '—', null, 'Ethereum']
+    ['HYPE · de olho', S.hype ? px$(S.hype.usd) : (S.q && S.q.ta && S.q.ta.HYPE ? px$(S.q.ta.HYPE.price) : '—'), S.hype ? S.hype.chg : null, 'sem posição']
   ];
   $('strip').innerHTML = cells.map(function (c) {
     var ch = c[2] != null ? '<div class="c ' + cls(c[2]) + '">' + pct(c[2], 2, true) + ' 24h</div>' : '<div class="c" style="color:var(--muted)">' + (c[3] ? esc(c[3]) : '&nbsp;') + '</div>';
@@ -809,6 +840,152 @@ function renderPoolHist() {
     '<div class="small" style="margin-top:10px;">Narrativa = token de narrativa/meme no par (GRIFT, PEANUT, PENG, XAI). A separação é quase perfeita: o par chato ganha, a narrativa perde. O GRIFT sozinho custou US$ 1.510 — o erro não foi entrar, foi ampliar dentro da queda e não ter regra de saída por tempo.</div>';
 }
 
+/* ─── sugestões de ação ────────────────────────────────────────────────────
+   Cada sugestão é uma nota de 0 a 1 = soma dos pesos dos critérios cumpridos ÷ soma de todos os pesos.
+   Os critérios são as regras do diário/KB/QUANT.md, escritas uma a uma — o card mostra quais passaram.
+   Veto (ex.: framework de alavancagem) derruba para "Evitar" mesmo com nota alta. */
+var VERD = [[0.75, 'Excelente momento', 'ex'], [0.55, 'Bom momento', 'bom'], [0.35, 'Neutro · aguardar', 'neu'], [0, 'Evitar agora', 'ev']];
+function C(ok, w, txt, val) { return { ok: !!ok, w: w, txt: txt, val: val == null ? '' : val }; }
+function grade(crit, veto) {
+  var tot = 0, got = 0; crit.forEach(function (c) { tot += c.w; if (c.ok) got += c.w; });
+  var sc = tot ? got / tot : 0, v = VERD.filter(function (x) { return sc >= x[0]; })[0];
+  if (veto) v = VERD[3];
+  return { score: sc, label: v[1], k: v[2], crit: crit, veto: veto || null };
+}
+function taOf(k) { return (S.q && S.q.ta && S.q.ta[k]) || null; }
+function poolEdge(pairKey, a, side) {
+  var L = S.L, P = labPrice(L, a), v = labVol(a), sT = v * Math.sqrt(30 / 365), k = 1.5;
+  var r = side === 'down' ? [P * Math.exp(-k * sT), P * 0.995] : side === 'up' ? [P * 1.005, P * Math.exp(k * sT)] : [P * Math.exp(-sT), P * Math.exp(sT)];
+  var ref = refPool(pairKey), fee = ref ? (ref.mean30 != null ? ref.mean30 : ref.base) / 100 : null;
+  var be = fee != null ? BaroloCore.lvrBreakEvenVol(fee, r[0], r[1], Math.sqrt(r[0] * r[1])) : null;
+  return { fee: fee, be: be, v: v, ok: be != null && be >= v };
+}
+function buildActions(L) {
+  var R = regime(), q = S.q || {}, oc = R.oc || {}, m = R.m || {}, fng = R.fng, rc = q.riskContrib || {};
+  var acc = R.key === 'fundo' || R.key === 'cor', euf = R.key === 'euf';
+  var assets = ['BTC', 'ETH', 'SOL', 'HYPE'];
+  var buy = [], sell = [];
+  assets.forEach(function (k) {
+    var t = taOf(k); if (!t) return;
+    if (k === 'HYPE' && S.hype) t = Object.assign({}, t, { price: S.hype.usd });
+    var own = k === 'HYPE' ? null : rc[k], conc = own ? own.rc : 0;
+    var slowing = t.ret30 < 0 ? t.ret7 > t.ret30 / 4 : true;
+    var cb = [
+      C(oc.mvrv < 1.3, 2, 'On-chain do BTC barato (MVRV < 1,3)', 'MVRV ' + num(oc.mvrv, 2)),
+      C(fng != null && fng <= 25, 1.5, 'Medo extremo (F&G ≤ 25) — comprar o medo', 'F&G ' + (fng == null ? '—' : fng)),
+      C(t.rsi14d < 35, 1.5, 'RSI diário sobrevendido (< 35)', 'RSI ' + num(t.rsi14d, 0)),
+      C(t.rsi14w != null && t.rsi14w < 40, 1, 'RSI semanal baixo (< 40)', 'RSI sem. ' + num(t.rsi14w, 0)),
+      C(t.vsMa200 != null && t.vsMa200 < 0, 1, 'Abaixo da média de 200 dias', pct(t.vsMa200, 0, true)),
+      C(t.pos90 < 0.25, 1, 'Perto da mínima de 90 dias', 'posição ' + pct(t.pos90, 0)),
+      C(slowing, 1, 'Queda perdendo força (7d melhor que o ritmo de 30d)', '7d ' + pct(t.ret7, 1, true) + ' · 30d ' + pct(t.ret30, 0, true)),
+      C(k === 'HYPE' || conc <= 0.6, 2, k === 'HYPE' ? 'Fora da carteira: diversifica (posição nova)' : 'Não piora a concentração (≤ 60% do risco)', own ? pct(conc, 0) + ' do risco' : 'sem posição')
+    ];
+    var hb = { BTC: 'Aporte em BTC reforçado, 2–3 parcelas. É a compra que mais reduz o risco da carteira (menor vol e ETH em 70% do risco).',
+      ETH: 'Só com aporte e em parcelas: o ETH já concentra a maior parte do risco. Se comprar, prefira compra escalonada (pool abaixo do preço).',
+      SOL: 'Aporte em parcelas. Comprado na Solana pode ir direto como colateral na Kamino (melhora o LTV e a distância de liquidação).',
+      HYPE: 'Posição nova: comece pequena (≤ 2% do patrimônio) e em parcelas. Passa no seu filtro "a receita vai ao holder?" (recompra), mas é risco de protocolo único e vol de ' + pct(t.vol30, 0) + '.' };
+    var gb = grade(cb, euf ? 'Regime de euforia: não é hora de comprar' : null);
+    if (conc > 0.6 && gb.k === 'ex') { gb.label = VERD[1][1]; gb.k = VERD[1][2]; gb.veto = null; gb.cap = 'Limitado a "Bom": ' + k + ' já gera ' + pct(conc, 0) + ' do risco (QUANT §4 regra 1)'; }
+    buy.push({ name: 'Comprar ' + k, sub: px$(t.price) + ' · RSI ' + num(t.rsi14d, 0), g: gb,
+      how: hb[k] + (acc ? ' Regime de acumulação: <strong>com capital próprio (aporte), nunca com dívida nova</strong>.' : '') });
+    var cs = [
+      C(oc.mvrv > 2.4, 2, 'On-chain do BTC caro (MVRV > 2,4)', 'MVRV ' + num(oc.mvrv, 2)),
+      C(oc.mayer > 2, 1, 'Mayer > 2 (muito acima da MM200)', 'Mayer ' + num(oc.mayer, 2)),
+      C(fng != null && fng >= 75, 1.5, 'Ganância (F&G ≥ 75) — vender a ganância', 'F&G ' + (fng == null ? '—' : fng)),
+      C(t.rsi14d > 70, 1.5, 'RSI diário sobrecomprado (> 70)', 'RSI ' + num(t.rsi14d, 0)),
+      C(t.rsi14w != null && t.rsi14w > 70, 1, 'RSI semanal > 70', 'RSI sem. ' + num(t.rsi14w, 0)),
+      C(t.vsMa200 != null && t.vsMa200 > 0.3, 1, 'Mais de 30% acima da média de 200 dias', pct(t.vsMa200, 0, true)),
+      C(t.pos90 > 0.85, 1, 'Perto da máxima de 90 dias', 'posição ' + pct(t.pos90, 0)),
+      C(conc > 0.6, 1, 'Venda reduz a concentração (> 60% do risco)', own ? pct(conc, 0) + ' do risco' : '—')
+    ];
+    if (k !== 'HYPE') sell.push({ name: 'Vender fracionado ' + k, sub: px$(t.price) + ' · ' + pct(t.ddHi, 0) + ' do topo', g: grade(cs),
+      how: 'Em escada (10–20% da posição por degrau) ou via pool de saída gradual acima do preço. Realizar em BTC, ETH ou stable — nunca em outra aposta. Lucro só existe realizado.' });
+  });
+  // pools
+  var pools = [], st = L.nw.stables, hasStable = st >= 100;
+  [['ETH/USD', 'ETH', 'ETH/USDC'], ['SOL/USD', 'SOL', 'SOL/USDC'], ['BTC/USD', 'BTC', 'cbBTC/USDC']].forEach(function (pp) {
+    var t = taOf(pp[1]); if (!t) return;
+    var calm = t.vol30 <= t.vol90 * 1.15, slowing = t.ret30 < 0 ? t.ret7 > t.ret30 / 4 : true;
+    var eD = poolEdge(pp[0], pp[1], 'down'), eN = poolEdge(pp[0], pp[1], 'both'), eU = poolEdge(pp[0], pp[1], 'up');
+    var beTxt = function (e) { return e.be != null ? 'empata até ' + pct(e.be, 0) + ' · hoje ' + pct(e.v, 0) : 'sem pool de referência'; };
+    pools.push({ name: 'Compra escalonada ' + pp[2], sub: 'stable abaixo do preço', g: grade([
+      C(acc, 1.5, 'Regime de acumulação/correção', R.name), C(t.rsi14d < 40, 1, 'RSI diário < 40', 'RSI ' + num(t.rsi14d, 0)),
+      C(calm, 1.5, 'Vol de 30d não está explodindo (≤ 1,15× a de 90d)', pct(t.vol30, 0) + ' × ' + pct(t.vol90, 0)),
+      C(slowing, 1, 'Queda perdendo força', '7d ' + pct(t.ret7, 1, true)),
+      C(eD.ok, 1.5, 'Taxa da pool paga o LVR do range (30d, 1,5σ)', beTxt(eD)),
+      C(hasStable, 1.5, 'Stable livre para entrar (≥ US$ 100)', usd(st, 2))
+    ]), how: 'Range abaixo do preço; vira o ativo conforme cai (DCA que paga taxa). ' + (hasStable ? '' : '<strong>Falta stable:</strong> entraria só com o próximo aporte — no regime atual, não com borrow. ') + 'Monte no Laboratório (seção 07).' });
+    pools.push({ name: 'Neutra ' + pp[2], sub: 'dois lados, lateralização', g: grade([
+      C(t.vol30 < t.vol90 * 0.85, 2, 'Lateralização: vol de 30d bem abaixo da de 90d', pct(t.vol30, 0) + ' × ' + pct(t.vol90, 0)),
+      C(Math.abs(t.ret30) < 0.1, 1.5, 'Preço andou menos de 10% em 30 dias', pct(t.ret30, 0, true)),
+      C(eN.ok, 1.5, 'Taxa da pool paga o LVR do range (±1σ)', beTxt(eN)), C(!euf, 1, 'Fora de euforia', R.name)
+    ]), how: 'Range em volta do preço para colher taxa em lateralização. Sai do range nos dois sentidos — espere 24h antes de remontar.' });
+    if (pp[1] !== 'BTC') pools.push({ name: 'Saída gradual ' + pp[2], sub: 'ativo acima do preço', g: grade([
+      C(t.vsMa200 > 0, 1.5, 'Tendência de alta (acima da MM200)', pct(t.vsMa200, 0, true)), C(t.rsi14d > 60, 1, 'RSI diário > 60', 'RSI ' + num(t.rsi14d, 0)),
+      C(R.key === 'exp' || R.key === 'euf' || R.key === 'rec', 1.5, 'Regime de recuperação/expansão/euforia', R.name), C(eU.ok, 1, 'Taxa da pool paga o LVR do range', beTxt(eU))
+    ]), how: 'Sua estratégia clássica: entra 100% no ativo acima do preço e sai em stable conforme sobe. Venda fracionada que paga para existir.' });
+  });
+  // empréstimos
+  var bestB = (S.y && S.y.borrow || []).filter(function (r) { return r.chain === 'Ethereum' || r.chain === 'Solana'; })[0];
+  var refFee = (function () { var r = refPool('ETH/USD'); return r ? (r.mean30 != null ? r.mean30 : r.base) / 100 : null; })();
+  var sS = sig(L.liqSol, L.P.SOL, vol('SOL')), myMaxB = L.bor.reduce(function (a, b) { return Math.max(a, b.apy); }, 0);
+  var bt = taOf('BTC') || {};
+  var lend = [
+    { name: 'Alavancagem produtiva', sub: 'borrow → pool que paga a dívida', g: grade([
+      C(bt.vsMa200 > 0, 2, 'Mercado em alta: BTC acima da MM200 (o framework só alavanca em alta)', pct(bt.vsMa200, 0, true)),
+      C(oc.mvrv < 2, 1, 'On-chain longe da euforia (MVRV < 2)', 'MVRV ' + num(oc.mvrv, 2)),
+      C(m.us10y_3m < 0, 1, 'Juro longo caindo (regra 2)', (m.us10y_3m > 0 ? '+' : '') + num(m.us10y_3m, 2) + ' p.p. 3m'),
+      C(bestB && bestB.borrowNet <= 5, 1, 'Há borrow de stable a ≤ 5%', bestB ? esc(bestB.project) + ' ' + esc(bestB.symbol) + ' ' + num(bestB.borrowNet, 2) + '%' : '—'),
+      C(refFee != null && bestB && refFee * 100 - bestB.borrowNet > 10, 1, 'Spread: APR da pool − juro > 10 p.p.', refFee != null && bestB ? num(refFee * 100 - bestB.borrowNet, 1) + ' p.p.' : '—'),
+      C((sS == null || sS >= 3) && (L.hf == null || L.hf >= 3), 1.5, 'Folga: liquidação ≥ 3σ e HF ≥ 3', 'Kamino ' + num(sS, 1) + 'σ · HF ' + num(L.hf, 1))
+    ], acc ? 'Framework de 20/06: em acumulação não se toma dívida nova' : null),
+      how: 'O loop da KB §2.2: colateral → borrow de stable → pool → as taxas pagam a dívida; pool fora do range por baixo compra mais, por cima vende e repaga. Só com o vento a favor.' },
+    { name: 'Repagar parte da dívida', sub: 'reduzir risco de liquidação e juro', g: grade([
+      C(sS != null && sS < 3, 1.5, 'Liquidação da Kamino abaixo de 3σ', num(sS, 2) + 'σ'),
+      C(myMaxB > 0.05, 1, 'Algum borrow acima de 5%', pct(myMaxB, 2)),
+      C(acc && (L.aDebt + L.kDebt) > 0, 1, 'Dívida aberta em regime de acumulação', usd(L.aDebt + L.kDebt, 0)),
+      C(euf, 2, 'Euforia do ciclo (gatilho do framework)', R.name),
+      C(st >= 100, 1, 'Há stable livre para repagar sem vender', usd(st, 2))
+    ]), how: 'Comece pela Kamino (juro mais caro e liquidação mais perto). ' + (st >= 100 ? '' : 'Sem stable livre: o caminho é o próximo aporte — <strong>vender SOL/ETH no fundo para repagar contraria a regra de não realizar prejuízo à toa</strong>. ') + 'Para a Kamino ficar a 3σ, ver o alerta da seção 04.' }
+  ];
+  var lst = S.y && S.y.supply && S.y.supply.LSOL ? S.y.supply.LSOL[0] : null;
+  if (lst) {
+    var gap = (lst.mean30 || lst.apy) / 100 - L.kSolApy;
+    lend.push({ name: 'Trocar o SOL do colateral por LST', sub: esc(lst.symbol) + ' ' + num(lst.mean30 || lst.apy, 2) + '%', g: grade([
+      C(gap > 0.01, 2, 'Ganha mais de 1 p.p. sobre o SOL na Kamino', pct(gap, 2, true)),
+      C(L.kS * L.P.SOL * gap > 30, 1, 'Ganho anual relevante (> US$ 30)', usd(L.kS * L.P.SOL * gap, 0) + '/ano'),
+      C(lst.tvl > 1e9, 1, 'LST grande (TVL > US$ 1 bi)', num(lst.tvl / 1e9, 1) + ' bi')
+    ]), how: 'Só vale se a Kamino aceitar o LST como colateral com LTV de liquidação igual ou melhor — confira na tela da Kamino antes. Risco extra: contrato do LST e depeg; numa queda forte o LST pode descolar do SOL e aproximar a liquidação.' });
+  }
+  var by = function (a, b) { return b.g.score - a.g.score; };
+  return [
+    { id: 'buy', t: 'Compra', rows: buy.sort(by) },
+    { id: 'sell', t: 'Venda fracionada', rows: sell.sort(by) },
+    { id: 'pool', t: 'Pools', rows: pools.sort(by).slice(0, 6) },
+    { id: 'lend', t: 'Empréstimos', rows: lend }
+  ];
+}
+function renderActions(L) {
+  var cards = buildActions(L); S.actSel = S.actSel || {};
+  $('actSum').innerHTML = cards.map(function (c) {
+    var top = c.rows[0]; if (!top) return '';
+    return '<div class="as ' + top.g.k + '"><div class="lbl">' + c.t + '</div><div class="asv">' + top.g.label + '</div><div class="small">' + top.name + '</div></div>';
+  }).join('');
+  $('acts').innerHTML = cards.map(function (c) {
+    if (!c.rows.length) return '<div class="card"><div class="lbl">' + c.t + '</div><div class="empty">sem dados ainda (quant.json)</div></div>';
+    var sel = Math.min(S.actSel[c.id] || 0, c.rows.length - 1), r = c.rows[sel];
+    var rows = c.rows.map(function (x, i) {
+      return '<div class="ar' + (i === sel ? ' on' : '') + '" onclick="selAct(\'' + c.id + '\',' + i + ')"><span class="an">' + x.name + '<small>' + x.sub + '</small></span>' +
+        '<span class="ab"><i class="' + x.g.k + '" style="width:' + Math.round(x.g.score * 100) + '%"></i></span><span class="pill ' + x.g.k + '">' + x.g.label + '</span></div>';
+    }).join('');
+    var crit = r.g.crit.map(function (k) { return '<div class="cr"><span class="' + (k.ok ? 'pos' : 'neg') + '">' + (k.ok ? '✓' : '✗') + '</span><span>' + k.txt + '</span><span class="mono">' + k.val + '</span></div>'; }).join('');
+    return '<div class="card act"><div class="lbl" style="margin-bottom:8px;">' + c.t + '</div>' + rows +
+      '<div class="adet"><div class="lbl" style="margin-bottom:6px;">Por quê — ' + r.name + ' · nota ' + Math.round(r.g.score * 100) + '/100</div>' +
+      (r.g.veto ? '<div class="veto">⛔ ' + r.g.veto + '</div>' : '') + (r.g.cap ? '<div class="veto" style="color:var(--accent)">◐ ' + r.g.cap + '</div>' : '') + crit + '<div class="how">' + r.how + '</div></div></div>';
+  }).join('');
+}
+function selAct(id, i) { S.actSel = S.actSel || {}; S.actSel[id] = i; renderActions(S.L); }
+
 /* ─── quant ─────────────────────────────────────────────────────────────── */
 function renderQuant(L) {
   var q = S.q;
@@ -855,7 +1032,7 @@ function renderQuant(L) {
 }
 
 /* ─── TradingView (lazy) ─────────────────────────────────────────────────── */
-var TV = { BTC: 'BITSTAMP:BTCUSD', ETH: 'COINBASE:ETHUSD', SOL: 'COINBASE:SOLUSD', 'ETH/BTC': 'BINANCE:ETHBTC', 'SOL/ETH': 'BINANCE:SOLETH', 'BTC.D': 'CRYPTOCAP:BTC.D', 'USDT.D': 'CRYPTOCAP:USDT.D', TOTAL3: 'CRYPTOCAP:TOTAL3' };
+var TV = { BTC: 'BITSTAMP:BTCUSD', ETH: 'COINBASE:ETHUSD', SOL: 'COINBASE:SOLUSD', HYPE: 'COINBASE:HYPEUSD', 'ETH/BTC': 'BINANCE:ETHBTC', 'SOL/ETH': 'BINANCE:SOLETH', 'BTC.D': 'CRYPTOCAP:BTC.D', 'USDT.D': 'CRYPTOCAP:USDT.D', TOTAL3: 'CRYPTOCAP:TOTAL3' };
 function renderTvTabs() { $('tvTabs').innerHTML = Object.keys(TV).map(function (k) { return '<button class="btn-sm' + (S.tv === k ? ' on' : '') + '" onclick="setTv(\'' + k + '\')">' + k + '</button>'; }).join('') + '<span class="small" style="margin-left:auto;align-self:center;">USDT.D subindo = dinheiro fugindo para stable · TOTAL3 = altcoins sem BTC/ETH</span>'; }
 function loadTv() {
   var dark = BaroloUI.currentTheme() !== 'light', w = $('tvwrap');
@@ -887,7 +1064,7 @@ function renderAgenda(L) {
 /* ─── ciclo de render e dados ────────────────────────────────────────────── */
 function renderAll() {
   var L = live(); S.L = L;
-  [renderStrip, renderRegime, renderKpis, renderAlerts, renderColl, renderRadar, renderLab, renderPoolHist, renderQuant, renderAgenda]
+  [renderStrip, renderRegime, renderActions, renderKpis, renderAlerts, renderColl, renderRadar, renderLab, renderPoolHist, renderQuant, renderAgenda]
     .forEach(function (f) { try { f(L); } catch (e) { console.error('[mesa] ' + f.name, e); } });
   var stale = !S.pxAt || (Date.now() - S.pxAt) > 5 * 60e3;
   $('status').innerHTML = '<span class="dot' + (stale ? ' stale' : '') + '"></span>' + (S.pxAt ? 'preços ' + new Date(S.pxAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'preços: último salvo') +
@@ -904,6 +1081,10 @@ async function loadFiles() {
 async function loadPrices() {
   var p = await BaroloPrices.get(IDS, { maxAge: 60000 });
   if (p && Object.keys(p).length) { S.px = p; if (!p._stale) S.pxAt = Date.now(); }
+  try {   // HYPE fora da carteira: preço direto da Coinbase (CORS aberto), sem mexer no mapa compartilhado
+    var r = await fetch('https://api.exchange.coinbase.com/products/HYPE-USD/stats'); var h = await r.json();
+    if (+h.last > 0) S.hype = { usd: +h.last, chg: +h.open > 0 ? h.last / h.open - 1 : null };
+  } catch (e) {}
   renderAll();
 }
 async function loadChain() {
@@ -911,7 +1092,6 @@ async function loadChain() {
   if (r[0]) S.aave = r[0];
   if (r[1] && r[1].position) S.kam = r[1];
   if (r[0] || (r[1] && r[1].position)) S.chainAt = Date.now();
-  try { var g = await BaroloChain.rpc(BaroloChain.CONFIG.ethRpc, 'eth_gasPrice', []); if (g) S.gwei = parseInt(g, 16) / 1e9; } catch (e) {}
   renderAll();
 }
 function refreshAll() { loadPrices(); loadChain(); loadFiles(); }
