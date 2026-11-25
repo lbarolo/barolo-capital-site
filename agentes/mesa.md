@@ -46,7 +46,9 @@ ETH na AAVE Bom (~US$ 1.200 até HF 3); Kamino abaixo do piso (1,6σ). Trocar SO
 ## ⚡ Regra do Lucas (26/11/2026) — a LIQUIDEZ AMERICANA calibra o piso do HF
 Palavras dele: *"a liquidez do mercado americano pode nos dizer melhor se o HF dos empréstimos pode ser mais
 apertada ou mais leve"*. A ideia é dele e está aceita; **os números abaixo são a minha proposta, ainda sem o OK
-dele** — não implementar com esses valores sem ele confirmar.
+dele**.
+  ✅ **APROVADO E LIGADO em 26/11/2026** (*"Sim, ligue"*): `fetch-mesa.js` grava `quant.json → liquidity` e a Mesa
+  usa `loopFloor()` em `loopCapacity()`, no playbook, no alerta "Liquidez" e na tabela macro.
 - **Leitura (FRED, sem chave, semanal):** liquidez líquida do Fed = balanço (`WALCL`) − reverse repo (`RRPONTSYD`)
   − conta do Tesouro (`WTREGEN`), tendência de 4 e 13 semanas · condições financeiras (`NFCI`: negativo = frouxo)
   · juro real 10a (`DFII10`) subindo ou caindo · dólar 3m (`DTWEXBGS`) · M2 a.a. (`WM2NS`).
@@ -63,7 +65,7 @@ dele** — não implementar com esses valores sem ele confirmar.
   em janelas curtas. Ela ajusta a folga, não substitui o piso absoluto.
 
 ## Backlog de melhorias (prioridade de cima para baixo)
-- [ ] **Piso do HF calibrado pela liquidez americana** (regra acima) — `fetch-mesa.js` gravar `quant.json → liquidity`
+- [x] **Piso do HF calibrado pela liquidez americana** — ✅ ligado em 26/11/2026 (regra acima) — `fetch-mesa.js` gravar `quant.json → liquidity`
   (WALCL/RRP/TGA/NFCI/DFII10) e a Mesa trocar o piso fixo de `loopCapacity()` pelo piso da faixa. *(esperando o OK
   do Lucas nos números)*
 - [ ] **Backtest das sugestões de compra** — "Excelente" de compra contra DCA fixo de sexta, em BTC/ETH/SOL desde 2022
@@ -78,4 +80,5 @@ dele** — não implementar com esses valores sem ele confirmar.
 - [ ] [auto] Testes do motor de sugestões (`tests/mesa.test.js`) com quant/yields fixos — trava regressão no `buildActions`.
 
 ## Histórico da rotina
+- 26/11/2026 — regra de liquidez × piso do HF aprovada e ligada (hoje: neutra 2/5 → HF 3 / 2σ; AAVE com ~US$ 1.206 de espaço).
 - 25/11/2026 — caderno criado; tarefa agendada "Mesa diária" (08:10).

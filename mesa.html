@@ -414,7 +414,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
       <div class="sec-t"><b>11</b> Regras de ouro · do seu diário</div>
       <div class="card gold-rules">
         <div data-n="01">Antes de ganhar dinheiro, evitar perder. Sobreviver para o próximo ciclo é a estratégia.</div>
-        <div data-n="02">Looping na queda (USD → token → colateral), sempre dentro do piso: HF ≥ 3 na AAVE, ≥ 2σ na Kamino. Pool alavancada, só em alta.</div>
+        <div data-n="02">Looping na queda (USD → token → colateral), sempre dentro do piso — que a liquidez americana afrouxa (HF 2,5) ou aperta (HF 4); nunca abaixo de HF 2. Pool alavancada, só em alta.</div>
         <div data-n="03">Desalavancar na euforia do ciclo (MVRV &gt; 3,2 / Mayer &gt; 2,4), não no preço de entrada.</div>
         <div data-n="04">Medir em tokens acumulados — mas só vale para token que sobrevive uma década.</div>
         <div data-n="05">Pool não é anestésico para não realizar prejuízo. Hold disfarçado de operação.</div>
@@ -512,17 +512,17 @@ function regime() {
 }
 var PLAY = {
   fundo: [['Aporte', 'DCA de sexta em fiat → spot. Medo extremo é quando o retorno é plantado (Ehrsam).'],
-          ['Dívida', 'Looping de acumulação liberado dentro do piso (HF ≥ 3 na AAVE, liquidação ≥ 2σ na Kamino), em parcelas nas quedas. Alavancagem com pool, só em alta.'],
+          ['Dívida', 'Looping de acumulação liberado dentro do piso de hoje ({PISO}), em parcelas nas quedas. Alavancagem com pool, só em alta.'],
           ['Pools', 'Só compra escalonada abaixo do preço, larga e pequena — ou nenhuma. Nunca ampliar dentro da queda.'],
-          ['Lending', 'Folga acima de 3σ até a liquidação. Juro do supply é renda, não justificativa para mais borrow.']],
+          ['Lending', 'Piso de hoje: {PISO}. Juro do supply é renda, não justificativa para mais borrow.']],
   cor:   [['Aporte', 'DCA normal. Sem pressa de acertar o fundo.'],
-          ['Dívida', 'Looping só com espaço no piso e borrow ≤ 5%. Reavaliar borrow acima de 5% por duas semanas.'],
+          ['Dívida', 'Looping só com espaço no piso ({PISO}) e borrow ≤ 5%. Reavaliar borrow acima de 5% por duas semanas.'],
           ['Pools', 'Neutras largas ou compra escalonada, tamanho até ¼ Kelly.'],
-          ['Lending', 'Manter HF > 3 e liquidação a ≥ 3σ.']],
+          ['Lending', 'Manter o piso do looping ({PISO}).']],
   rec:   [['Aporte', 'DCA + direcionar para BTC (menor vol, reduz a concentração em ETH).'],
           ['Dívida', 'Looping segue dentro do piso; a alavancagem com pool começa a fazer sentido com a tendência virando para cima.'],
           ['Pools', 'Neutras dos dois lados e saída gradual acima do preço.'],
-          ['Lending', 'Pode subir o LTV aos poucos, sempre com folga ≥ 3σ.']],
+          ['Lending', 'Pode subir o LTV aos poucos, sempre dentro do piso ({PISO}).']],
   exp:   [['Aporte', 'DCA segue — tempo no mercado vence o timing.'],
           ['Dívida', 'Janela da alavancagem produtiva: a pool paga a dívida com taxas. Começar a vender parte do que o looping comprou.'],
           ['Pools', 'Saída gradual (entra no ativo, sai em stable) — a ordem de venda que paga para existir.'],
@@ -565,7 +565,8 @@ function renderRegime() {
     ['Dólar 3m · M2 a.a.', pct(m.dxy3m, 1, true), 'M2 ' + pct(m.m2yoy, 1, true)]
   ];
   $('sigs').innerHTML = s.map(function (x) { return '<div><div class="lbl">' + x[0] + '</div><div class="v">' + x[1] + '</div><div class="n">' + esc(x[2]) + '</div></div>'; }).join('');
-  $('play').innerHTML = (PLAY[R.key] || PLAY.cor).map(function (p) { return '<div><b>' + p[0] + '</b><span>' + esc(p[1]) + '</span></div>'; }).join('');
+  var FL = loopFloor(), PISO = fmtFloor(FL) + (FL.band ? ' — liquidez americana ' + ({ expansao: 'em expansão', neutra: 'neutra', aperto: 'em aperto' })[FL.band] : '');
+  $('play').innerHTML = (PLAY[R.key] || PLAY.cor).map(function (p) { return '<div><b>' + p[0] + '</b><span>' + esc(p[1].replace('{PISO}', PISO)) + '</span></div>'; }).join('');
 }
 function sparkSvg(vals, color) {
   if (!vals || vals.length < 2) return '';
@@ -625,6 +626,16 @@ function buildAlerts(L) {
       'AAVE: ' + capL.aave.now + ' (piso ' + capL.aave.floor + '). Kamino: ' + capL.kam.now + ' (piso ' + capL.kam.floor + ')' + (kOk ? '.' : ' — <strong>abaixo do piso</strong>: ' + capL.kam.fix + '.') +
       ' Looping na queda é a sua estratégia; o que protege é não passar do piso e entrar em parcelas.', 'estratégia confirmada em 25/11/2026');
   }
+  // liquidez americana → faixa do piso (regra de 26/11/2026)
+  var LQ = capL.F.liq;
+  if (LQ) {
+    var bt = { expansao: 'Liquidez americana em expansão: piso afrouxa', neutra: 'Liquidez americana neutra: piso no padrão', aperto: 'Liquidez americana apertando: piso sobe' }[LQ.band];
+    add(LQ.band === 'aperto' ? 'warn' : LQ.band === 'expansao' ? 'ok' : 'info', 'Liquidez', bt + ' (' + capL.F.hf + ' / ' + capL.F.sigma + 'σ)',
+      LQ.favor + ' de 5 sinais a favor: ' + LQ.signals.map(function (x) { return (x.ok ? '✓ ' : '✗ ') + esc(x.k) + ' (' + esc(x.val) + ')'; }).join(' · ') + '.' +
+      (LQ.rrp != null && LQ.rrp < 50 ? ' Reverse repo em <strong>US$ ' + num(LQ.rrp, 1) + ' bi</strong>: o colchão acabou, aperto novo sai direto das reservas.' : '') +
+      ' Faixas: expansão HF 2,5 / 1,5σ · neutra HF 3 / 2σ · aperto HF 4 / 2,5σ · nunca abaixo de HF 2. Dados semanais do FRED de ' + LQ.date.split('-').reverse().join('/') + '.',
+      'regra do Lucas (26/11/2026) · FRED: WALCL, RRPONTSYD, WTREGEN, NFCI, DFII10');
+  } else add('info', 'Liquidez', 'Sem leitura de liquidez americana', 'O quant.json não trouxe o bloco de liquidez (FRED fora do ar). A Mesa usa o piso neutro: HF 3 / 2σ.', 'robô diário da Mesa (scripts/fetch-mesa.js)');
   // custo do borrow
   L.bor.forEach(function (b) {
     var alt = null;
@@ -862,19 +873,30 @@ function poolEdge(pairKey, a, side) {
   var be = fee != null ? BaroloCore.lvrBreakEvenVol(fee, r[0], r[1], Math.sqrt(r[0] * r[1])) : null;
   return { fee: fee, be: be, v: v, ok: be != null && be >= v };
 }
+// Piso do looping calibrado pela liquidez americana (regra do Lucas, 26/11/2026): expansão HF 2,5 / 1,5σ ·
+// neutra HF 3 / 2σ · aperto HF 4 / 2,5σ · piso absoluto HF 2,0. Sem leitura (quant.json sem liquidity) → neutra.
+var BAND_NAME = { expansao: 'expansão', neutra: 'neutra', aperto: 'aperto' };
+function loopFloor() {
+  var l = S.q && S.q.liquidity;
+  if (!l || !l.floor) return { hf: 3, sigma: 2, band: null, liq: null };
+  return { hf: Math.max(l.hfMin || 2, l.floor.hf), sigma: l.floor.sigma, band: l.band, liq: l };
+}
+function fmtFloor(F) { return 'HF ≥ ' + num(F.hf, F.hf % 1 ? 1 : 0) + ' na AAVE, liquidação ≥ ' + num(F.sigma, F.sigma % 1 ? 1 : 0) + 'σ na Kamino'; }
 function loopCapacity(L) {
-  var P = L.P.ETH, S0 = L.P.SOL;
-  // AAVE: (aW·P + B)·0,83 + aU·0,78 = 3·(aD + B)  →  B máximo com HF 3
-  var aRoom = ((L.aW * P) * 0.83 + L.aU * 0.78 - 3 * L.aDebt) / (3 - 0.83);
+  var P = L.P.ETH, S0 = L.P.SOL, F = loopFloor(), H = F.hf, Z = F.sigma;
+  // AAVE: (aW·P + B)·0,83 + aU·0,78 = H·(aD + B)  →  B máximo com HF H
+  var aRoom = ((L.aW * P) * 0.83 + L.aU * 0.78 - H * L.aDebt) / (H - 0.83);
   var aDebt2 = L.aDebt + Math.max(0, aRoom), aLiq = Math.max(0, (aDebt2 - L.aU * 0.78) / ((L.aW + Math.max(0, aRoom) / P) * 0.83));
-  // Kamino: liquidação no piso de 2σ (1 ano) → (kD + B) / ((kS + B/S)·LT) = liq2
-  var liq2 = S0 * Math.exp(-2 * vol('SOL')), lt = L.liqLtv, k = liq2 * lt;
+  // Kamino: liquidação no piso de Zσ (1 ano) → (kD + B) / ((kS + B/S)·LT) = liqZ
+  var liq2 = S0 * Math.exp(-Z * vol('SOL')), lt = L.liqLtv, k = liq2 * lt;
   var kRoom = (k * L.kS - L.kDebt) / (1 - k / S0);
   var sNow = sig(L.liqSol, S0, vol('SOL'));
+  var hfTxt = 'HF ≥ ' + num(H, H % 1 ? 1 : 0), zTxt = 'liquidação ≥ ' + num(Z, Z % 1 ? 1 : 0) + 'σ';
   return {
-    aave: { room: aRoom, ok: L.hf == null || L.hf >= 3, floor: 'HF ≥ 3', now: 'HF ' + num(L.hf, 2), P: P, liqAt: aLiq,
-      fix: 'repagar ' + usd(-aRoom * (3 - 0.83) / 3, 0) + ' ou depositar ETH' },
-    kam: { room: kRoom, ok: sNow == null || sNow >= 2, floor: 'liquidação ≥ 2σ', now: num(sNow, 2) + 'σ', P: S0, liqAt: liq2,
+    F: F,
+    aave: { room: aRoom, ok: L.hf == null || L.hf >= H, floor: hfTxt, now: 'HF ' + num(L.hf, 2), P: P, liqAt: aLiq,
+      fix: 'repagar ' + usd(-aRoom * (H - 0.83) / H, 0) + ' ou depositar ETH' },
+    kam: { room: kRoom, ok: sNow == null || sNow >= Z, floor: zTxt, now: num(sNow, 2) + 'σ', P: S0, liqAt: liq2,
       fix: 'repagar ' + usd(L.kDebt - k * L.kS, 0) + ' ou depositar ' + num(L.kDebt / k - L.kS, 2) + ' SOL' }
   };
 }
@@ -949,7 +971,7 @@ function buildActions(L) {
   var sS = sig(L.liqSol, L.P.SOL, vol('SOL')), myMaxB = L.bor.reduce(function (a, b) { return Math.max(a, b.apy); }, 0);
   var bt = taOf('BTC') || {};
   // Looping de acumulação (estratégia do Lucas, confirmada em 25/11/2026): borrow em USD → compra o token →
-  // volta como colateral → vende na valorização. Pisos: HF ≥ 3 na AAVE; liquidação ≥ 2σ (1 ano) na Kamino.
+  // volta como colateral → vende na valorização. Piso pela liquidez americana (loopFloor): neutra = HF 3 / 2σ.
   var cap = loopCapacity(L), fngOk = fng != null && fng <= 40;
   var loopCard = function (prot, tok, c) {
     var t = taOf(tok) || {}, conc = rc[tok] ? rc[tok].rc : 0, bApy = (L.bor.filter(function (b) { return b.prot === prot; })[0] || {}).apy;
@@ -1062,6 +1084,9 @@ function renderQuant(L) {
     ['Dólar (índice amplo) 3m', pct(m.dxy3m, 1, true), m.dxy3m > 0.02 ? '<span class="chip r">dólar forte</span>' : '<span class="chip g">dólar fraco</span>'],
     ['M2 EUA a.a.', pct(m.m2yoy, 1, true), m.m2yoy > 0.05 ? '<span class="chip g">liquidez crescendo</span>' : '<span class="chip">neutro</span>'],
     ['VIX', m.vix ? num(m.vix[1], 1) : '—', m.vix && m.vix[1] > 25 ? '<span class="chip r">estresse</span>' : '<span class="chip g">calmo</span>'],
+    ['Liquidez líquida do Fed', q.liquidity ? 'US$ ' + num(q.liquidity.netLiq / 1000, 2) + ' tri' : '—', q.liquidity ? (q.liquidity.d13w > 0 ? '<span class="chip g">+' : '<span class="chip r">') + num(q.liquidity.d13w, 0) + ' bi em 13 sem</span>' : ''],
+    ['NFCI · reverse repo', q.liquidity ? num(q.liquidity.nfci, 3) + ' · US$ ' + num(q.liquidity.rrp, 1) + ' bi' : '—', q.liquidity ? (q.liquidity.nfci < 0 ? '<span class="chip g">crédito frouxo</span>' : '<span class="chip r">crédito apertado</span>') : ''],
+    ['Faixa de liquidez → piso', q.liquidity ? BAND_NAME[q.liquidity.band] + ' (' + q.liquidity.favor + '/5)' : '—', q.liquidity ? '<span class="chip ' + ({ expansao: 'g', neutra: '', aperto: 'r' })[q.liquidity.band] + '">HF ' + q.liquidity.floor.hf + ' / ' + q.liquidity.floor.sigma + 'σ</span>' : ''],
     ['MVRV · STH · LTH', num(oc.mvrv, 2) + ' · ' + num(oc.mvrv_sth, 2) + ' · ' + num(oc.mvrv_lth, 2), Z(oc.mvrv, 1.2, 3.2)],
     ['Mayer · AVIV', num(oc.mayer, 2) + ' · ' + num(oc.aviv, 2), Z(oc.mayer, 0.8, 2.4)],
     ['LTH SOPR', num(oc.sopr_lth, 2), oc.sopr_lth < 1 ? '<span class="chip g">holder antigo vendendo no prejuízo</span>' : '<span class="chip">realizando lucro</span>'],

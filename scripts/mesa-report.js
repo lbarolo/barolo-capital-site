@@ -78,6 +78,7 @@ async function main() {
       quant: S.q && S.q.generatedAt, yields: S.y && S.y.generatedAt },
     precos: { BTC: L.P.BTC, ETH: L.P.ETH, SOL: L.P.SOL, HYPE: hype && hype.usd },
     regime: { nome: R.name, score: R.score, fng: R.fng, trend: R.trend },
+    liquidez: S.q && S.q.liquidity ? { faixa: S.q.liquidity.band, aFavor: S.q.liquidity.favor, piso: S.q.liquidity.floor, data: S.q.liquidity.date } : null,
     posicao: { patrimonio: L.nw.netWorth, divida: L.aDebt + L.kDebt, hf: L.hf, kLtv: L.kLtv, liqSol: L.liqSol, liqEth: L.liqEth, carryMes: L.carryMo },
     sugestoes: cards, alertas
   };
@@ -89,6 +90,7 @@ main().then(o => {
   const L = [];
   L.push('MESA DeFi · ' + o.data.slice(0, 10) + ' · posições ' + o.posicoes + ' · fontes: preços ' + o.fontes.precos + ', AAVE ' + (o.fontes.aave ? 'on-chain' : 'data.js') + ', Kamino ' + (o.fontes.kamino ? 'on-chain' : 'data.js'));
   L.push('Regime: ' + o.regime.nome + ' (score ' + o.regime.score.toFixed(2) + ', F&G ' + o.regime.fng + ')');
+  L.push('Liquidez americana: ' + (o.liquidez ? o.liquidez.faixa + ' (' + o.liquidez.aFavor + '/5 a favor, FRED ' + o.liquidez.data + ') -> piso do looping HF ' + o.liquidez.piso.hf + ' / ' + o.liquidez.piso.sigma + ' sigma' : 'sem leitura -> piso neutro HF 3 / 2 sigma'));
   L.push('Posição: patrimônio ' + us(o.posicao.patrimonio) + ' · dívida ' + us(o.posicao.divida) + ' · HF ' + (o.posicao.hf ? o.posicao.hf.toFixed(2) : '—') + ' · LTV Kamino ' + (o.posicao.kLtv * 100).toFixed(1) + '% · SOL liquida ' + us(o.posicao.liqSol) + ' · carry ' + us(o.posicao.carryMes) + '/mês', '');
   for (const c of o.sugestoes) {
     L.push(c.titulo.toUpperCase());

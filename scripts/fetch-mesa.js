@@ -128,6 +128,43 @@ async function technicals() {
   return out;
 }
 
+// Liquidez americana → piso do HF do looping (regra do Lucas, 26/11/2026; números aprovados por ele no mesmo dia).
+// Liquidez líquida do Fed = balanço (WALCL) − reverse repo (RRPONTSYD) − conta do Tesouro (WTREGEN), em US$ bi.
+// 5 sinais; a favor ≥ 3 → EXPANSÃO (HF 2,5 / 1,5σ) · 2 → NEUTRA (HF 3 / 2σ) · ≤ 1 → APERTO (HF 4 / 2,5σ).
+// Piso absoluto HF 2,0. Dados semanais: a faixa só muda com dado novo. ⚠️ No PC do Lucas o curl trava no FRED; o fetch funciona.
+async function fredSeries(id) {
+  const c = new AbortController(); const t = setTimeout(() => c.abort(), 30000);
+  try {
+    const r = await fetch('https://fred.stlouisfed.org/graph/fredgraph.csv?id=' + id, { headers: UA, signal: c.signal });
+    const txt = await r.text();
+    return txt.trim().split(String.fromCharCode(10)).slice(1).map(l => l.trim().split(',')).filter(a => a[1] && a[1] !== '.').map(a => [a[0], +a[1]]);
+  } finally { clearTimeout(t); }
+}
+async function liquidity(q) {
+  const S = {};
+  for (const id of ['WALCL', 'RRPONTSYD', 'WTREGEN', 'NFCI', 'DFII10']) S[id] = await fredSeries(id);
+  const at = (s, d) => { let v = null; for (const x of s) { if (x[0] <= d) v = x[1]; else break; } return v; };
+  const ago = (d, n) => { const x = new Date(d); x.setDate(x.getDate() - n); return x.toISOString().slice(0, 10); };
+  const net = d => at(S.WALCL, d) / 1e3 - at(S.RRPONTSYD, d) - at(S.WTREGEN, d) / 1e3;
+  const L = S.WALCL.at(-1)[0], N = S.NFCI.at(-1), R = S.DFII10.at(-1);
+  const netNow = net(L), d4 = netNow - net(ago(L, 28)), d13 = netNow - net(ago(L, 91));
+  const nfci13 = at(S.NFCI, ago(N[0], 91)), real3m = at(S.DFII10, ago(R[0], 91));
+  const m = (q && q.macro) || {};
+  const sig = [
+    { k: 'Liquidez líquida do Fed (13 sem)', ok: d13 > 0, val: (d13 >= 0 ? '+' : '') + Math.round(d13) + ' bi' },
+    { k: 'Condições financeiras (NFCI) frouxas e não apertando', ok: N[1] < 0 && N[1] - nfci13 <= 0.05, val: N[1].toFixed(3) + ' (era ' + nfci13.toFixed(3) + ')' },
+    { k: 'Juro real 10a caindo (3m)', ok: R[1] < real3m, val: R[1].toFixed(2) + '% (era ' + real3m.toFixed(2) + '%)' },
+    { k: 'Dólar caindo (3m)', ok: m.dxy3m != null && m.dxy3m < 0, val: m.dxy3m != null ? (m.dxy3m * 100).toFixed(1) + '%' : '—' },
+    { k: 'M2 crescendo acima de 4% a.a.', ok: m.m2yoy != null && m.m2yoy > 0.04, val: m.m2yoy != null ? (m.m2yoy * 100).toFixed(1) + '%' : '—' }
+  ];
+  const favor = sig.filter(x => x.ok).length;
+  const band = favor >= 3 ? 'expansao' : favor === 2 ? 'neutra' : 'aperto';
+  const floor = { expansao: { hf: 2.5, sigma: 1.5 }, neutra: { hf: 3, sigma: 2 }, aperto: { hf: 4, sigma: 2.5 } }[band];
+  if (!(netNow > 1000 && netNow < 20000)) throw new Error('liquidez líquida fora da faixa plausível: ' + netNow);
+  return { date: L, netLiq: Math.round(netNow), d4w: Math.round(d4), d13w: Math.round(d13), rrp: S.RRPONTSYD.at(-1)[1],
+    nfci: N[1], nfci13, real10: R[1], real10_3m: real3m, signals: sig, favor, band, floor, hfMin: 2.0 };
+}
+
 (async () => {
   // quant: reaproveita o relatório existente (fonte única das contas)
   const raw = execFileSync(process.execPath, [path.join(__dirname, 'quant-report.js'), '--json'],
@@ -135,9 +172,11 @@ async function technicals() {
   const q = JSON.parse(raw);
   if (!q.vol || !q.vol.ETH || !q.port || !q.macro) throw new Error('quant-report sem os campos esperados');
   q.ta = await technicals();
+  try { q.liquidity = await liquidity(q); } catch (e) { console.warn('Liquidez: ' + e.message + ' (a Mesa usa o piso neutro HF 3 / 2σ)'); }
   q.generatedAt = new Date().toISOString();
   fs.writeFileSync(path.join(ROOT, 'quant.json'), JSON.stringify(q) + '\n');
-  console.log('quant.json OK · ETH vol30 ' + (q.vol.ETH.d30 * 100).toFixed(1) + '% · VaR95 1d ' + (q.port.VaR95_1d * 100).toFixed(1) + '%');
+  console.log('quant.json OK · ETH vol30 ' + (q.vol.ETH.d30 * 100).toFixed(1) + '% · VaR95 1d ' + (q.port.VaR95_1d * 100).toFixed(1) + '%' +
+    (q.liquidity ? ' · liquidez ' + q.liquidity.band + ' (' + q.liquidity.favor + '/5) → piso HF ' + q.liquidity.floor.hf : ''));
 
   const y = await yields();
   fs.writeFileSync(path.join(ROOT, 'yields.json'), JSON.stringify(y) + '\n');

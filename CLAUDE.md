@@ -7192,6 +7192,15 @@ vende na valorização) é uma das melhores estratégias dele e vale justamente 
 - `ferramentas.html`: texto do alerta "Regime do Ciclo" e a ação de ACUMULAÇÃO da aba Ciclo também diziam "não alavancar" — corrigidos.
 - **Não reintroduzir** "não tome dívida em acumulação" em lugar nenhum.
 
+### Liquidez americana calibra o piso do HF (26/11/2026, ideia do Lucas, aprovada e ligada)
+- `fetch-mesa.js` grava `quant.json → liquidity`: liquidez líquida do Fed (WALCL − RRPONTSYD − WTREGEN, tendência 13 sem),
+  NFCI, juro real 10a (DFII10), dólar 3m e M2. 5 sinais → **expansão** (≥3) HF 2,5 / 1,5σ · **neutra** (2) HF 3 / 2σ ·
+  **aperto** (≤1) HF 4 / 2,5σ · piso absoluto HF 2. Sem leitura → neutra.
+- `mesa.html`: `loopFloor()` alimenta `loopCapacity()`, o playbook (`{PISO}`), o alerta "Liquidez" e a tabela macro.
+  26/11: neutra (2/5) → espaço de looping na AAVE ~US$ 1.206 (seria 1.702 em expansão, 683 em aperto). RRP zerado (US$ 0,3 bi).
+- ⚠️ Nesta máquina o `curl` trava no FRED e o shell come barras invertidas em heredoc com `node -e`/Python inline —
+  usar `fetch` do Node, Edit direto no arquivo ou `String.fromCharCode` em vez de `\n`.
+
 ### Gotchas
 - O servidor local de `.claude/launch.json` não ignora query string → `fetch('x.json?v=…')` dá 404 local; a página usa `cache:'no-store'`.
 - TradingView: `studies` precisa ser tudo em formato objeto (`{id:'RSI@tv-basicstudies'}`); misturar com string `STD;RSI` some com o RSI.
