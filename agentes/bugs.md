@@ -36,6 +36,8 @@
 
 ## Achados em aberto
 
+- [ALTA] `scripts/fetch-briefing.js:222-250` — a AAVE só soma `borrow.USDC`; a dívida hoje é **GHO** (450). Evidência: `briefing.json → portfolio.aave` com `debt: 0` e `hf: null` em 24/11/2026 (o card "E daí, pra mim?" do pools.html mostra a AAVE sem dívida, e os juros/mês saem sem os ~US$ 1,50 do GHO). Correção: usar `D.debt.aave` (derivado, soma qualquer token) e somar todos os `borrow.*` no juro mensal, como o `lendingSnapshot` já faz. (achado pela Mesa diária em 25/11/2026)
+
 ### 🔸 BAIXA — CF do WETH na AAVE está em 84%, o site usa 83% (achado em 06/11/2026 pelo `/prints`)
 A AAVE subiu o collateral factor do WETH de **83% para 84%** (visível no print de 31/10 e confirmado no de 06/11). A regra 13 de `agentes/prints.md` e o `lendingSnapshot` do `data.js` ainda usam **0,83**.
 
