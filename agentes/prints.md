@@ -179,47 +179,78 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
-## Estado atual — 15/11/2026 (`asOf` 2026-11-15) — 2o BORROW, e veio WBTC
+## Estado atual — 25/11/2026 (`asOf` 2026-11-25) — caixa ZERO em todas as redes
 
-Queda mais forte e ele dobrou a divida da AAVE. *“aproveitei pra fazer mais um emprestimos e comprar BTC e ETH”*.
+O ciclo que comecou no 3o borrow (20/11) fechou hoje: **nao sobrou stable parada em lugar nenhum**.
+GHO 0 · USDC 0 · USDS 0 · USDT 0,2464 (poeira). Tudo virou ETH e SOL, e o SOL ja esta de colateral.
 
-| Hora | O quê | Preço |
+### O que aconteceu hoje (duas operacoes)
+
+| Hora UTC | O que | Preco |
 |---|---|---:|
-| 08:31 | Borrow **100,00 GHO** @4,03% (block 26420119) | — |
-| 08:32 | 50 GHO → **0,02724868877267307 ETH** (Velora) | **US$ 1.834,95** |
-| 08:33 | 50 GHO → **0,00076323 WBTC** (Velora) | **US$ 65.511,05** |
+| 14:51 | 50,0001 USDC -> **0,74695 SOL** (swap pela **Phantom**) | **US$ 66,94** |
+| 17:31 | **0,740000000 SOL** depositados de colateral na Kamino | — |
 
-✅ **Execução ótima:** o ETH saiu no **spot exato** (1.834,95 contra 1.835,04 do CoinGecko no mesmo minuto) e o WBTC a **+0,10%** do spot do BTC. ✅ **Pocket Universe: ZERO** nas três txs.
+Sao os 50 USDC que sobraram do borrow de 100 USDC de 20/11.
 
-### ⚠️ VEIO WBTC, NÃO BTC — e ele escolheu SOMAR no BTC
-Ele falou “BTC” no chat; o on-chain é **Wrapped BTC**, token ERC-20 na Ethereum. Criado como `holdings.WBTC` próprio em vez de somar no BTC, por três motivos: (1) tem risco de **custódia da BitGo** em cima do risco do bitcoin, e a KB dele (§12) já chama a ponte de “elo mais fraco da cascata”; (2) o CoinGecko tem `wrapped-bitcoin` como ativo próprio; (3) separado daria para acompanhar o prêmio/desconto contra o BTC.
+### 3o caso de taxa de interface — a **Phantom cobra 0,85%**
+O SOL saiu a US$ 66,94 com o mercado em US$ 66,37: **0,86% acima**, que e a taxa de swap da
+Phantom, nao slippage. No mesmo par, em 20/11, pelo **Jupiter direto** a diferenca foi de **0,18%**.
+Custou US$ 0,43.
 
-🔹 **DECISÃO DELE, no mesmo dia: SOMAR no `holdings.BTC`.** Quer ver um número só de bitcoin. Feito — `holdings.WBTC` removido, qty e custo somados, linha tirada do `PORTFOLIO_DATA`. **No CoinGecko ele lança as duas compras como BITCOIN.**
+🔹 **MAS NAO SUGERIR JUPITER DE NOVO.** Decisao e motivo dele, 25/11: *"tem um erro chato que da na
+carteira da phantom ligada na ledger, que nao vai pra ledger autorizar a transacao, por isso optei
+por fazer o swap na phantom mesmo, sabia que iria pagar uma taxa maior"*. **A Phantom e a via
+obrigatoria na Solana** enquanto isso nao for resolvido — os 0,85% sao o preco de conseguir assinar
+com a Ledger. Ficou sugerido a ele, para quando sobrar tempo: (1) **blind signing** no app Solana da
+Ledger, que e a causa mais comum de a transacao nao chegar ao dispositivo, e (2) limitar a
+complexidade da rota, porque a Ledger tem teto de tamanho de transacao. Enquanto nao testar, a
+Phantom fica.
 
-⚠️ **O que isso custa, e ficou escrito no `data.js`:** a qty de BTC virou a soma de dois ativos em lugares diferentes — **0,00783816 BTC nativo na OKX** + **0,00076323 WBTC na carteira EVM**. Numa auditoria, ninguém vai achar 0,00860139 em lugar nenhum. E o risco de custódia da BitGo deixa de ter indicador próprio: se o WBTC desancorar, o holding fica superavaliado e **o site não avisa**, porque o preço usado é o do `bitcoin`. Conferir à mão de vez em quando (em 15/11: −0,009%, paridade).
+Os outros dois casos: **Pocket Universe 1,6%** (extensao, desligada em 12/11) e o **roteador da
+Velora ~1,6%** (29/10 e 15/11).
 
-### Números
+### Numeros
 | | Antes | Depois |
 |---|---:|---:|
-| `holdings.BTC` | 0,00783816 / 551,56 | **0,00860139 / 601,56** (inclui o WBTC) |
-| `holdings.ETH` | 2,856878040 / 5.800,10 | **2,884173059 / 5.850,10** |
-| borrow GHO | 100,0016 | **200,034164 @4,03%** |
-| `principals.aave.GHO` | 100 | **200** (nominal) |
-| **HF** | 47,54 | **21,81** |
-| TOTAL_INVESTED | 9.821,15 | **9.921,15** |
+| `holdings.SOL` | 26,718091317 / 2.634,07 | **27,477727344 / 2.684,07** |
+| `stables.USDC` | 50,0001 | **0** |
+| supply Kamino SOL | 26,671822981 @3,58% | **27,412095255 @3,42%** |
+| `principals.kamino.SOL` | 25,128306937 | **25,868306937** (+0,74) |
+| borrow Kamino | 559,305296 @5,36% | **559,314841854 @5,79%** |
+| LTV Kamino | 31,58% | **29,64%** |
+| SOL liquida em | ~US$ 26,21 | **~US$ 25,50** |
+| TOTAL_INVESTED | 10.271,15 | **10.271,15** (deposito nao e aporte) |
 
-O HF caiu por **dois** motivos somados: a dívida dobrou **e** o colateral encolheu com a queda do ETH (5.659 → 5.195). Ainda sobram US$ 4.163 de borrowing power — 4,6% usado.
+⚠️ **O `principals` e o campo que importa no deposito.** Sem subir os 0,74 ali, o site mostraria o
+deposito como rendimento — o bug de 14/08/2026. Conferido na tela de emprestimos: **juro retido
+1,5438 SOL antes e depois**.
 
-O ETH do dia ficou **na carteira**, não virou colateral: o principal do WETH não mudou.
+O `holdings.SOL` mudou +0,000240730, e **nao e o deposito** (SOL so trocou de bolso): e
++0,000270288 de juro acumulado no dia (custo zero) menos **0,000031544 de gas**. Confere com a
+conta direta: supply 27,412095255 + carteira 0,065632089 = **27,477727344**, os dois on-chain no
+mesmo slot.
 
-🔧 **Linha do WBTC adicionada ao `PORTFOLIO_DATA`** de `portfolio_analytics.html`. Sem ela o ticker novo seria ignorado em silêncio e o patrimônio sairia US$ 50 abaixo — **mesmo bug do USDC em 10/11. Todo ticker novo precisa das duas pontas.**
+### Conferido (regra 0)
+Patrimonio **US$ 6.531** · `7.541 SPOT + 0 LP + 0 stables − 1.010 dividas` ✓ · HF AAVE **8,74** ·
+LTV Kamino **29,7%** · D/Patrimonio 15,5% · 11 ativos · 155 testes · 0 NaN · 0 erro de console.
 
-### Conferido
-Patrimônio **US$ 7.183** · `7.841 + 0 + 0 − 658` ✓ · **11 ativos** (o WBTC foi somado ao BTC, não conta separado) · HF 21,81 · D/Patrimônio 9,2% · 155 testes · 0 NaN · 0 erro de console.
+### ⏳ Pendente no CoinGecko — **SOL +0,759636, e NAO e tudo custo zero**
+O card do dashboard e o `yield-to-mirror` tratam a pendencia inteira como transferencia de entrada,
+porque nao sabem separar compra de yield. Aqui tem as duas coisas:
 
-⏳ **Pendente:** ele lançar no CoinGecko — **0,02724868877267307 ETH por US$ 50** e **0,00076323 por US$ 50 como BITCOIN** (decisão dele). Com a compra de 13/11, a pendência total do BTC é **0,00101197**, e são duas COMPRAS, não yield — lançar a custo zero inflaria o lucro em US$ 67,47.
+| O que | Qty | Custo |
+|---|---:|---|
+| Compra de hoje | 0,74695 | **US$ 50,00** |
+| Juro da Kamino − gas | 0,012686 | **zero** |
 
----
+Lancar tudo a custo zero inflaria o lucro em US$ 50. Mesmo cuidado de 15/11 com o BTC.
+
+🔸 **Bug corrigido de passagem:** o card **Colateral Total** de `emprestimos.html` estava congelado
+desde junho (US$ 6.422 · "2.16 WETH + 1.300 USDT + 23.36 SOL + 302 USDS") — texto estatico, sem id,
+contradizendo os dados ao vivo logo acima. Agora le dos globais (`em-kpi-coll`): **US$ 6.616 ·
+2,83 WETH + 27,41 SOL**. Cada fetch usa a propria variavel local, porque os globais so sao setados
+depois desse ponto e quem terminasse por ultimo via zero no outro lado.
 
 ## ✅ RESOLVIDO em 12/11/2026 — a taxa da Pocket Universe PAROU
 
@@ -1291,6 +1322,12 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 25/11/2026 (2) — **depósito de 0,740000000 SOL de colateral na Kamino** (17:31 UTC, valor exato no log do contrato). `principals.kamino.SOL` 25,128306937 → **25,868306937** — o campo crítico: sem ele o site mostraria o depósito como rendimento (bug de 14/08). Juro retido intacto em **1,5438 SOL** antes e depois. Supply 27,412095255 @3,42%, borrow 559,314842 @**5,79%** (subiu de 5,36%), LTV 31,58% → **29,64%**, liquidação do SOL US$ 26,21 → **US$ 25,50**. Holding +0,000240730 = juro do dia − gas, confere com supply + carteira no mesmo slot. 🔸 Corrigido de passagem o card **Colateral Total** do empréstimos, congelado em junho.
+- 25/11/2026 — **os 50 USDC que sobravam viraram 0,74695 SOL** (14:51 UTC) — rotação, não aporte; o custo migra. ⚠️ **3º caso de taxa de interface: a Phantom cobra 0,85%** (pagou US$ 66,94 com o mercado em US$ 66,37; pelo Jupiter direto em 20/11 a diferença foi 0,18%). 🔹 **Não sugerir Jupiter de novo:** a Phantom ligada na Ledger é a única via que consegue assinar — a transação do Jupiter não chega ao dispositivo. Decisão consciente dele. **Caixa zerado em todas as redes.**
+- 23/11/2026 — **espelho do CoinGecko fechado**: ele apagou a linha duplicada do BTC (identificada pela **data**, 19/11, que não tem compra nenhuma), **excluiu o USDT da lista** em vez de lançar a saída de 99,97 (mesmo tratamento do USDS em 02/10 e do RDNT em 08/10) e lançou o SOL. `cgMirror` passou a bater exato no SOL. POL 190,113 → **190,13** (poeira de US$ 0,0013, alinhado ao print). O `yield-to-mirror` passou a separar ruído estrutural (gas/taxa/arredondamento) do que é pendência de verdade — a diferença negativa aparecia todo mês e mascarava o que importa.
+- 21/11/2026 — **prints do CoinGecko**: ele lançou as 9 operações de ETH pendentes desde 10/11 (bate na casa decimal) e a compra de SOL. ⚠️ **BTC lançado em duplicidade** — as duas compras entraram individualmente **e** no agrupado que eu havia sugerido. Lição: **não sugerir lançamento agrupado**; ele lança por operação.
+- 20/11/2026 — **3º borrow**: 250 GHO na AAVE viraram ETH em **três ordens em escada**, cada uma mais barata (100 @ US$ 1.665,46 · 50 @ 1.651,97 · 100 @ 1.590,68 = **0,153176053 ETH, média US$ 1.632,10**), duas delas UniswapX **sem gas para ele** (o filler pagou). Na Kamino, borrow de **100 USDC**, dos quais 50 viraram **0,728792194 SOL @ US$ 68,61** (Jupiter direto, **0,18%** do spot) e 50 ficaram em caixa esperando queda. Dívida nunca entra em `contributions`; o token comprado entra com o custo pago.
+- 13/11/2026 — **aporte semanal (sexta)**: R$ 100,00 → 17,4703 USDT @ **5,724** (taxa zero) → **0,00025206 BTC líquido** @ 69.036,20 no mesmo dia (taxa 0,4%). `contributions` +US$ 17,47.
 - 06/11/2026 — **aporte semanal (sexta)**: R$ 100,00 → **17,88726373 USDT** @ **5,5906** (taxa zero). `contributions` +US$ 17,89 → `TOTAL_INVESTED` **9.703,68**; USDT 100,219828 → **118,10709173**; Fiscal **R$ 38.432,97**. ⏳ **A compra de BTC ficou em ordem aberta** — quando bater é rotação, não aporte; ele avisa. ⚠️ Câmbio +10% em 3 semanas (5,0822 → 5,5906): os mesmos R$ 100 renderam US$ 17,89 contra 19,68.
 - **06/11/2026** — review semanal (4 prints: AAVE, Kamino, CoinGecko, OKX). Sem movimentação: principals batem na casa decimal. AAVE WETH 2,377484 @1,71% (juro derivado do print, sem MCP) · Kamino SOL 25,90 @4,44%, borrow 457,95 @5,41% (4ª queda seguida), LTV 19,63%, SOL liquida em US$ 22,10. Pool ETH/USDC v4 em 8 dias: 74,39% em ETH, pooled 730,48 + 45,13 de fees, **PnL +32,49 (+4,37%)**. Patrimônio **US$ 8.824** (−US$ 264, −2,9%, tudo preço). Yield pendente US$ 6,15, segurando até o fechamento. **Faltou o print do aporte (7 dias sem).**
 - 04/11/2026 — **consolidação**: ETH da carteira → AAVE (**+0,0652**, confirmado on-chain, principal 2,289740 → **2,354959342722521912**) e SOL da OKX → carteira Solana (chegaram **0,762311673** dos 0,76735038: **0,005038707 de taxa de saque**). Depósito na Kamino **confirmado no mesmo dia**: supply **25,892311673**, principal **24,408301673**, LTV 19,06%, juro retido intacto em 1,484010. Holding do SOL já ajustado (+0,01 de yield − a taxa). Patrimônio US$ 9.088, cards fecham. 🔸 A Kamino renomeou a tela para "SOL/BTC Market".
