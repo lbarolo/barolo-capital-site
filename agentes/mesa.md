@@ -54,6 +54,11 @@ dele** — não implementar com esses valores sem ele confirmar.
   **neutra** → HF ≥ 3 / 2σ (o atual) · **apertando** (≤ 1 a favor) → HF ≥ 4 / 2,5σ. **Piso absoluto: HF 2,0.**
 - Reavaliar **semanal**, não diário (liquidez anda devagar; evita mudar o piso por ruído). Mudança de faixa entra
   como alerta na Mesa e no relatório da rotina.
+- **Leitura de 26/11/2026 (FRED via Node; o `curl` trava no FRED, usar `fetch`):** liquidez líquida do Fed
+  US$ 5,83 tri, +23 bi em 4 sem e +33 bi em 13 sem (quase parada, levemente a favor) · reverse repo **US$ 0,3 bi
+  (zerado — o colchão acabou, novo aperto sai direto das reservas)** · NFCI −0,444 (frouxo, mas apertando desde
+  −0,542) · juro real 10a 2,79% (era 2,38% há 3 meses, contra) · dólar +4,7% em 3m (contra) · M2 +6,5% a.a.
+  (a favor). **2 de 5 a favor → faixa neutra → piso continua HF 3 / 2σ**, com viés de aperto.
 - Limitação honesta: a relação liquidez → cripto é forte em médio prazo, mas com defasagem de semanas e já falhou
   em janelas curtas. Ela ajusta a folga, não substitui o piso absoluto.
 
