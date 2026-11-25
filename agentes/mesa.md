@@ -43,7 +43,24 @@ ETH na AAVE Bom (~US$ 1.200 até HF 3); Kamino abaixo do piso (1,6σ). Trocar SO
 ## Diário (1 linha por dia, mais recente em cima, manter ~30)
 - 25/11/2026 — criação. Regime fundo (0,08) · Compra Excelente (BTC) · Venda Evitar · Pools Bom (compra escalonada SOL) · Empréstimos Bom (looping ETH AAVE) · 6 alertas de atenção.
 
+## ⚡ Regra do Lucas (26/11/2026) — a LIQUIDEZ AMERICANA calibra o piso do HF
+Palavras dele: *"a liquidez do mercado americano pode nos dizer melhor se o HF dos empréstimos pode ser mais
+apertada ou mais leve"*. A ideia é dele e está aceita; **os números abaixo são a minha proposta, ainda sem o OK
+dele** — não implementar com esses valores sem ele confirmar.
+- **Leitura (FRED, sem chave, semanal):** liquidez líquida do Fed = balanço (`WALCL`) − reverse repo (`RRPONTSYD`)
+  − conta do Tesouro (`WTREGEN`), tendência de 4 e 13 semanas · condições financeiras (`NFCI`: negativo = frouxo)
+  · juro real 10a (`DFII10`) subindo ou caindo · dólar 3m (`DTWEXBGS`) · M2 a.a. (`WM2NS`).
+- **Proposta de piso** (looping): liquidez **expandindo** (≥ 3 sinais a favor) → HF ≥ 2,5 na AAVE / 1,5σ na Kamino ·
+  **neutra** → HF ≥ 3 / 2σ (o atual) · **apertando** (≤ 1 a favor) → HF ≥ 4 / 2,5σ. **Piso absoluto: HF 2,0.**
+- Reavaliar **semanal**, não diário (liquidez anda devagar; evita mudar o piso por ruído). Mudança de faixa entra
+  como alerta na Mesa e no relatório da rotina.
+- Limitação honesta: a relação liquidez → cripto é forte em médio prazo, mas com defasagem de semanas e já falhou
+  em janelas curtas. Ela ajusta a folga, não substitui o piso absoluto.
+
 ## Backlog de melhorias (prioridade de cima para baixo)
+- [ ] **Piso do HF calibrado pela liquidez americana** (regra acima) — `fetch-mesa.js` gravar `quant.json → liquidity`
+  (WALCL/RRP/TGA/NFCI/DFII10) e a Mesa trocar o piso fixo de `loopCapacity()` pelo piso da faixa. *(esperando o OK
+  do Lucas nos números)*
 - [ ] **Backtest das sugestões de compra** — "Excelente" de compra contra DCA fixo de sexta, em BTC/ETH/SOL desde 2022
   (QUANT.md §4 regra 5: regra nova só com backtest). Resultado vai para QUANT.md §5. *(propor ao Lucas antes de mudar pesos)*
 - [ ] [auto] **Histórico dos vereditos** — `mesa.yml` grava 1 ponto/dia (`mesa-history.json`) com regime e vereditos;
