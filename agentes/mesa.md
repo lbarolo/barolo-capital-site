@@ -48,7 +48,7 @@ ETH na AAVE Bom (~US$ 1.200 até HF 3); Kamino abaixo do piso (1,6σ). Trocar SO
   (QUANT.md §4 regra 5: regra nova só com backtest). Resultado vai para QUANT.md §5. *(propor ao Lucas antes de mudar pesos)*
 - [ ] [auto] **Histórico dos vereditos** — `mesa.yml` grava 1 ponto/dia (`mesa-history.json`) com regime e vereditos;
   a Mesa mostra "Excelente desde dd/mm" em cada sugestão.
-- [ ] **Bug no `fetch-briefing.js`**: AAVE aparece com dívida 0 e HF vazio (só lê borrow em USDC; hoje é GHO) — afeta o
+- [x] (registrado em agentes/bugs.md em 25/11 — fica com o /corrigir) **Bug no `fetch-briefing.js`**: AAVE aparece com dívida 0 e HF vazio (só lê borrow em USDC; hoje é GHO) — afeta o
   card "E daí, pra mim?" do pools.html. *(é fora da Mesa: registrar em bugs.md para o /corrigir)*
 - [ ] [auto] **CAGR da tendência** (QUANT §4 regra 6) de BTC/ETH/SOL/HYPE no `fetch-mesa.js` e no quant da Mesa.
 - [ ] [auto] **Notificação** quando um veredito mudar de faixa ou surgir alerta crítico (via PushNotification na rotina).
