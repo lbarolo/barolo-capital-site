@@ -7179,6 +7179,19 @@ contra 3,42% do SOL na Kamino.
   Bom (falta stable); Alavancar Evitar (veto); Repagar Neutro; trocar SOL por mSOL Excelente (5,14% × 3,42%).
 - TradingView com as marcações do Lucas: **descartado por ele** (o embed é anônimo; ele acessa o gráfico dele por fora).
 
+### ⚡ Correção de regra (mesma data) — LOOPING NA QUEDA É ESTRATÉGIA DELE
+A Mesa vetava empréstimos em acumulação por causa da regra gravada em 20/06 ("alavancar só em alta; na acumulação
+fiat → spot"). O Lucas corrigiu: o **looping de acumulação** (borrow em USD → compra ETH/SOL → volta como colateral →
+vende na valorização) é uma das melhores estratégias dele e vale justamente na queda. Agora:
+- **Pisos combinados:** HF ≥ 3 na AAVE (ETH liquida só abaixo de −67%) · liquidação ≥ 2σ de 1 ano na Kamino. Entrar em
+  2–3 parcelas. Desfazer na euforia (MVRV > 3,2 / Mayer > 2,4).
+- **Pool alavancada** (KB §2.2, a pool paga a dívida) continua sendo coisa de mercado em alta — são estratégias diferentes.
+- `mesa.html`: cards "Looping de ETH (AAVE)" e "Looping de SOL (Kamino)" com `loopCapacity()` (quanto dá para pegar até o
+  piso); veto removido; playbook, alerta e regra de ouro reescritos. Em 25/11: AAVE com espaço de ~US$ 1.193 (Bom, limitado
+  pela concentração em ETH); Kamino abaixo do piso (1,6σ; voltar a 2σ = repagar ~US$ 118 ou depositar ~7,4 SOL).
+- `ferramentas.html`: texto do alerta "Regime do Ciclo" e a ação de ACUMULAÇÃO da aba Ciclo também diziam "não alavancar" — corrigidos.
+- **Não reintroduzir** "não tome dívida em acumulação" em lugar nenhum.
+
 ### Gotchas
 - O servidor local de `.claude/launch.json` não ignora query string → `fetch('x.json?v=…')` dá 404 local; a página usa `cache:'no-store'`.
 - TradingView: `studies` precisa ser tudo em formato objeto (`{id:'RSI@tv-basicstudies'}`); misturar com string `STD;RSI` some com o RSI.

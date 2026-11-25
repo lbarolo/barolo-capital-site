@@ -414,7 +414,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:50px;background:rgba(
       <div class="sec-t"><b>11</b> Regras de ouro · do seu diário</div>
       <div class="card gold-rules">
         <div data-n="01">Antes de ganhar dinheiro, evitar perder. Sobreviver para o próximo ciclo é a estratégia.</div>
-        <div data-n="02">Alavancagem só com o vento a favor. Em acumulação: fiat → spot, sem dívida nova.</div>
+        <div data-n="02">Looping na queda (USD → token → colateral), sempre dentro do piso: HF ≥ 3 na AAVE, ≥ 2σ na Kamino. Pool alavancada, só em alta.</div>
         <div data-n="03">Desalavancar na euforia do ciclo (MVRV &gt; 3,2 / Mayer &gt; 2,4), não no preço de entrada.</div>
         <div data-n="04">Medir em tokens acumulados — mas só vale para token que sobrevive uma década.</div>
         <div data-n="05">Pool não é anestésico para não realizar prejuízo. Hold disfarçado de operação.</div>
@@ -504,7 +504,7 @@ function regime() {
   var euph = (oc.mvrv > 3.2) || (oc.mayer > 2.4) || score >= 0.75;
   var key, name, why;
   if (euph) { key = 'euf'; name = 'Euforia'; why = 'Ciclo esticado: hora de desfazer a alavancagem, não de aumentar.'; }
-  else if (score < 0.3 && trend < 0) { key = 'fundo'; name = 'Zona de fundo, tendência de baixa'; why = 'On-chain barato, preço abaixo da média de 200 dias' + (fng != null && fng <= 25 ? ', medo extremo' : '') + '. Acumular devagar, sem alavancar.'; }
+  else if (score < 0.3 && trend < 0) { key = 'fundo'; name = 'Zona de fundo, tendência de baixa'; why = 'On-chain barato, preço abaixo da média de 200 dias' + (fng != null && fng <= 25 ? ', medo extremo' : '') + '. Acumular devagar: aporte e looping dentro do piso.'; }
   else if (score < 0.5 && trend >= 0) { key = 'rec'; name = 'Recuperação'; why = 'Barato e virando para cima. A janela de alavancar abre quando o macro afrouxar.'; }
   else if (trend >= 0) { key = 'exp'; name = 'Expansão'; why = 'Tendência a favor: é a janela do framework para alavancar e para pools de saída.'; }
   else { key = 'cor'; name = 'Correção no meio do ciclo'; why = 'Nem barato nem caro, com o preço caindo. Cautela e tamanho pequeno.'; }
@@ -512,19 +512,19 @@ function regime() {
 }
 var PLAY = {
   fundo: [['Aporte', 'DCA de sexta em fiat → spot. Medo extremo é quando o retorno é plantado (Ehrsam).'],
-          ['Dívida', 'Não aumentar. O framework de 20/06 manda recolher a alavancagem na acumulação e usar capital próprio.'],
+          ['Dívida', 'Looping de acumulação liberado dentro do piso (HF ≥ 3 na AAVE, liquidação ≥ 2σ na Kamino), em parcelas nas quedas. Alavancagem com pool, só em alta.'],
           ['Pools', 'Só compra escalonada abaixo do preço, larga e pequena — ou nenhuma. Nunca ampliar dentro da queda.'],
           ['Lending', 'Folga acima de 3σ até a liquidação. Juro do supply é renda, não justificativa para mais borrow.']],
   cor:   [['Aporte', 'DCA normal. Sem pressa de acertar o fundo.'],
-          ['Dívida', 'Manter, sem aumentar. Reavaliar borrow acima de 5% por duas semanas.'],
+          ['Dívida', 'Looping só com espaço no piso e borrow ≤ 5%. Reavaliar borrow acima de 5% por duas semanas.'],
           ['Pools', 'Neutras largas ou compra escalonada, tamanho até ¼ Kelly.'],
           ['Lending', 'Manter HF > 3 e liquidação a ≥ 3σ.']],
   rec:   [['Aporte', 'DCA + direcionar para BTC (menor vol, reduz a concentração em ETH).'],
-          ['Dívida', 'A janela abre quando o juro real cair. Antes disso, só se o teste "tomaria de novo hoje?" passar.'],
+          ['Dívida', 'Looping segue dentro do piso; a alavancagem com pool começa a fazer sentido com a tendência virando para cima.'],
           ['Pools', 'Neutras dos dois lados e saída gradual acima do preço.'],
           ['Lending', 'Pode subir o LTV aos poucos, sempre com folga ≥ 3σ.']],
   exp:   [['Aporte', 'DCA segue — tempo no mercado vence o timing.'],
-          ['Dívida', 'Janela do framework: alavancagem produtiva, a pool paga a dívida com taxas.'],
+          ['Dívida', 'Janela da alavancagem produtiva: a pool paga a dívida com taxas. Começar a vender parte do que o looping comprou.'],
           ['Pools', 'Saída gradual (entra no ativo, sai em stable) — a ordem de venda que paga para existir.'],
           ['Lending', 'Monitorar o spread borrow × pool: ele comprime em bull.']],
   euf:   [['Aporte', 'Reduzir o ritmo, realizar em BTC/ETH/stable. Lucro só existe realizado.'],
@@ -618,10 +618,12 @@ function buildAlerts(L) {
   }
   // dívida em regime de acumulação
   var debtTot = L.aDebt + L.kDebt;
-  if (debtTot > 0 && (R.key === 'fundo' || R.key === 'cor')) {
-    add('warn', 'Framework', 'Dívida de ' + usd(debtTot, 0) + ' em regime de ' + (R.key === 'fundo' ? 'acumulação' : 'correção'),
-      'Em novembro a dívida subiu para comprar ETH/BTC/SOL na queda (dólar a R$ 6 travou o fiat). O seu framework de 20/06 diz: <strong>em acumulação, fiat → spot, sem dívida nova</strong>; o gatilho de repagar é a euforia do ciclo, não o preço. Teste de hoje: <strong>tomaria de novo agora?</strong> Se sim, manter e não somar mais.',
-      'memória: framework de alavancagem (20/06/2026)');
+  var capL = loopCapacity(L);
+  if (debtTot > 0 || capL.aave.room > 0) {
+    var aOk = capL.aave.ok, kOk = capL.kam.ok;
+    add(aOk && kOk ? 'info' : 'warn', 'Looping', 'Espaço até o piso: AAVE ' + usd(Math.max(0, capL.aave.room), 0) + ' · Kamino ' + usd(Math.max(0, capL.kam.room), 0),
+      'AAVE: ' + capL.aave.now + ' (piso ' + capL.aave.floor + '). Kamino: ' + capL.kam.now + ' (piso ' + capL.kam.floor + ')' + (kOk ? '.' : ' — <strong>abaixo do piso</strong>: ' + capL.kam.fix + '.') +
+      ' Looping na queda é a sua estratégia; o que protege é não passar do piso e entrar em parcelas.', 'estratégia confirmada em 25/11/2026');
   }
   // custo do borrow
   L.bor.forEach(function (b) {
@@ -860,6 +862,22 @@ function poolEdge(pairKey, a, side) {
   var be = fee != null ? BaroloCore.lvrBreakEvenVol(fee, r[0], r[1], Math.sqrt(r[0] * r[1])) : null;
   return { fee: fee, be: be, v: v, ok: be != null && be >= v };
 }
+function loopCapacity(L) {
+  var P = L.P.ETH, S0 = L.P.SOL;
+  // AAVE: (aW·P + B)·0,83 + aU·0,78 = 3·(aD + B)  →  B máximo com HF 3
+  var aRoom = ((L.aW * P) * 0.83 + L.aU * 0.78 - 3 * L.aDebt) / (3 - 0.83);
+  var aDebt2 = L.aDebt + Math.max(0, aRoom), aLiq = Math.max(0, (aDebt2 - L.aU * 0.78) / ((L.aW + Math.max(0, aRoom) / P) * 0.83));
+  // Kamino: liquidação no piso de 2σ (1 ano) → (kD + B) / ((kS + B/S)·LT) = liq2
+  var liq2 = S0 * Math.exp(-2 * vol('SOL')), lt = L.liqLtv, k = liq2 * lt;
+  var kRoom = (k * L.kS - L.kDebt) / (1 - k / S0);
+  var sNow = sig(L.liqSol, S0, vol('SOL'));
+  return {
+    aave: { room: aRoom, ok: L.hf == null || L.hf >= 3, floor: 'HF ≥ 3', now: 'HF ' + num(L.hf, 2), P: P, liqAt: aLiq,
+      fix: 'repagar ' + usd(-aRoom * (3 - 0.83) / 3, 0) + ' ou depositar ETH' },
+    kam: { room: kRoom, ok: sNow == null || sNow >= 2, floor: 'liquidação ≥ 2σ', now: num(sNow, 2) + 'σ', P: S0, liqAt: liq2,
+      fix: 'repagar ' + usd(L.kDebt - k * L.kS, 0) + ' ou depositar ' + num(L.kDebt / k - L.kS, 2) + ' SOL' }
+  };
+}
 function buildActions(L) {
   var R = regime(), q = S.q || {}, oc = R.oc || {}, m = R.m || {}, fng = R.fng, rc = q.riskContrib || {};
   var acc = R.key === 'fundo' || R.key === 'cor', euf = R.key === 'euf';
@@ -887,7 +905,7 @@ function buildActions(L) {
     var gb = grade(cb, euf ? 'Regime de euforia: não é hora de comprar' : null);
     if (conc > 0.6 && gb.k === 'ex') { gb.label = VERD[1][1]; gb.k = VERD[1][2]; gb.veto = null; gb.cap = 'Limitado a "Bom": ' + k + ' já gera ' + pct(conc, 0) + ' do risco (QUANT §4 regra 1)'; }
     buy.push({ name: 'Comprar ' + k, sub: px$(t.price) + ' · RSI ' + num(t.rsi14d, 0), g: gb,
-      how: hb[k] + (acc ? ' Regime de acumulação: <strong>com capital próprio (aporte), nunca com dívida nova</strong>.' : '') });
+      how: hb[k] + (acc ? ' Com aporte ou pelo looping (card de Empréstimos), sempre dentro do piso.' : '') });
     var cs = [
       C(oc.mvrv > 2.4, 2, 'On-chain do BTC caro (MVRV > 2,4)', 'MVRV ' + num(oc.mvrv, 2)),
       C(oc.mayer > 2, 1, 'Mayer > 2 (muito acima da MM200)', 'Mayer ' + num(oc.mayer, 2)),
@@ -914,7 +932,7 @@ function buildActions(L) {
       C(slowing, 1, 'Queda perdendo força', '7d ' + pct(t.ret7, 1, true)),
       C(eD.ok, 1.5, 'Taxa da pool paga o LVR do range (30d, 1,5σ)', beTxt(eD)),
       C(hasStable, 1.5, 'Stable livre para entrar (≥ US$ 100)', usd(st, 2))
-    ]), how: 'Range abaixo do preço; vira o ativo conforme cai (DCA que paga taxa). ' + (hasStable ? '' : '<strong>Falta stable:</strong> entraria só com o próximo aporte — no regime atual, não com borrow. ') + 'Monte no Laboratório (seção 07).' });
+    ]), how: 'Range abaixo do preço; vira o ativo conforme cai (DCA que paga taxa). ' + (hasStable ? '' : '<strong>Falta stable:</strong> entraria com o próximo aporte. ') + 'Monte no Laboratório (seção 07).' });
     pools.push({ name: 'Neutra ' + pp[2], sub: 'dois lados, lateralização', g: grade([
       C(t.vol30 < t.vol90 * 0.85, 2, 'Lateralização: vol de 30d bem abaixo da de 90d', pct(t.vol30, 0) + ' × ' + pct(t.vol90, 0)),
       C(Math.abs(t.ret30) < 0.1, 1.5, 'Preço andou menos de 10% em 30 dias', pct(t.ret30, 0, true)),
@@ -930,7 +948,28 @@ function buildActions(L) {
   var refFee = (function () { var r = refPool('ETH/USD'); return r ? (r.mean30 != null ? r.mean30 : r.base) / 100 : null; })();
   var sS = sig(L.liqSol, L.P.SOL, vol('SOL')), myMaxB = L.bor.reduce(function (a, b) { return Math.max(a, b.apy); }, 0);
   var bt = taOf('BTC') || {};
+  // Looping de acumulação (estratégia do Lucas, confirmada em 25/11/2026): borrow em USD → compra o token →
+  // volta como colateral → vende na valorização. Pisos: HF ≥ 3 na AAVE; liquidação ≥ 2σ (1 ano) na Kamino.
+  var cap = loopCapacity(L), fngOk = fng != null && fng <= 40;
+  var loopCard = function (prot, tok, c) {
+    var t = taOf(tok) || {}, conc = rc[tok] ? rc[tok].rc : 0, bApy = (L.bor.filter(function (b) { return b.prot === prot; })[0] || {}).apy;
+    var gL = grade([
+      C(oc.mvrv < 1.5 || t.rsi14d < 40, 1.5, 'Preço descontado (MVRV < 1,5 ou RSI diário < 40)', 'MVRV ' + num(oc.mvrv, 2) + ' · RSI ' + num(t.rsi14d, 0)),
+      C(fngOk, 1, 'Sentimento de medo (F&G ≤ 40)', 'F&G ' + (fng == null ? '—' : fng)),
+      C(bApy != null && bApy <= 0.05, 1.5, 'Juro do borrow ≤ 5%', bApy != null ? pct(bApy, 2) : '—'),
+      C(c.ok, 1.5, 'Posição atual acima do piso (' + c.floor + ')', c.now),
+      C(c.room >= 100, 2, 'Espaço de pelo menos US$ 100 até o piso', usd(Math.max(0, c.room), 0)),
+      C(conc <= 0.6, 1, 'Não piora a concentração (≤ 60% do risco)', pct(conc, 0) + ' do risco')
+    ], euf ? 'Euforia do ciclo: hora de desfazer o loop e repagar, não de aumentar' : (c.room <= 0 ? 'Sem espaço até o piso (' + c.floor + ')' : null));
+    if (conc > 0.6 && gL.k === 'ex') { gL.label = VERD[1][1]; gL.k = VERD[1][2]; gL.cap = 'Limitado a "Bom": ' + tok + ' já gera ' + pct(conc, 0) + ' do risco — o loop aumenta a concentração'; }
+    return { name: 'Looping de ' + tok + ' (' + prot + ')', sub: c.room > 0 ? 'até ' + usd(c.room, 0) + ' de borrow no piso' : 'sem espaço no piso', g: gL,
+      how: (c.room > 0 ? 'Até <strong>' + usd(c.room, 0) + '</strong> de borrow mantém ' + c.floor + ' — ' + tok + ' liquidaria em <strong>' + px$(c.liqAt) + '</strong> (' + pct(c.liqAt / c.P - 1, 0) + '). ' :
+        '<strong>Sem espaço no piso.</strong> Para voltar a ter: ' + c.fix + '. ') +
+        'Em 2–3 parcelas nas quedas, nunca tudo de uma vez. Registrar a dívida e o motivo no diário. Saída: vender na valorização e repagar; na euforia (MVRV > 3,2 / Mayer > 2,4), desfazer o loop.' };
+  };
   var lend = [
+    loopCard('AAVE V4', 'ETH', cap.aave),
+    loopCard('Kamino', 'SOL', cap.kam),
     { name: 'Alavancagem produtiva', sub: 'borrow → pool que paga a dívida', g: grade([
       C(bt.vsMa200 > 0, 2, 'Mercado em alta: BTC acima da MM200 (o framework só alavanca em alta)', pct(bt.vsMa200, 0, true)),
       C(oc.mvrv < 2, 1, 'On-chain longe da euforia (MVRV < 2)', 'MVRV ' + num(oc.mvrv, 2)),
@@ -938,12 +977,11 @@ function buildActions(L) {
       C(bestB && bestB.borrowNet <= 5, 1, 'Há borrow de stable a ≤ 5%', bestB ? esc(bestB.project) + ' ' + esc(bestB.symbol) + ' ' + num(bestB.borrowNet, 2) + '%' : '—'),
       C(refFee != null && bestB && refFee * 100 - bestB.borrowNet > 10, 1, 'Spread: APR da pool − juro > 10 p.p.', refFee != null && bestB ? num(refFee * 100 - bestB.borrowNet, 1) + ' p.p.' : '—'),
       C((sS == null || sS >= 3) && (L.hf == null || L.hf >= 3), 1.5, 'Folga: liquidação ≥ 3σ e HF ≥ 3', 'Kamino ' + num(sS, 1) + 'σ · HF ' + num(L.hf, 1))
-    ], acc ? 'Framework de 20/06: em acumulação não se toma dívida nova' : null),
-      how: 'O loop da KB §2.2: colateral → borrow de stable → pool → as taxas pagam a dívida; pool fora do range por baixo compra mais, por cima vende e repaga. Só com o vento a favor.' },
+    ]),
+      how: 'O loop com pool da KB §2.2: colateral → borrow de stable → pool → as taxas pagam a dívida; pool fora do range por baixo compra mais, por cima vende e repaga. Diferente do looping: aqui é a pool que paga a dívida, então depende de mercado em alta.' },
     { name: 'Repagar parte da dívida', sub: 'reduzir risco de liquidação e juro', g: grade([
       C(sS != null && sS < 3, 1.5, 'Liquidação da Kamino abaixo de 3σ', num(sS, 2) + 'σ'),
       C(myMaxB > 0.05, 1, 'Algum borrow acima de 5%', pct(myMaxB, 2)),
-      C(acc && (L.aDebt + L.kDebt) > 0, 1, 'Dívida aberta em regime de acumulação', usd(L.aDebt + L.kDebt, 0)),
       C(euf, 2, 'Euforia do ciclo (gatilho do framework)', R.name),
       C(st >= 100, 1, 'Há stable livre para repagar sem vender', usd(st, 2))
     ]), how: 'Comece pela Kamino (juro mais caro e liquidação mais perto). ' + (st >= 100 ? '' : 'Sem stable livre: o caminho é o próximo aporte — <strong>vender SOL/ETH no fundo para repagar contraria a regra de não realizar prejuízo à toa</strong>. ') + 'Para a Kamino ficar a 3σ, ver o alerta da seção 04.' }
