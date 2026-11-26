@@ -1354,20 +1354,41 @@ function renderAll() {
   $('foot').innerHTML = 'Fontes: data.js (posições) · AAVE V4 e Kamino on-chain · Coinbase/CoinPaprika (preço) · DefiLlama Yields · FRED · Bitcoin Lab (on-chain) · alternative.me · TradingView. ' +
     'Regime, alertas e ideias aplicam as regras do seu diário e do QUANT.md — são instrumento de medição, não recomendação de investimento.';
 }
-async function loadJSON(u) { try { var r = await fetch(u, { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch (e) { return null; } }
-// Arquivo que falhou NAO apaga o que ja tinha chegado; se faltar algum, tenta de novo em 15s, 30s, 45s...
-// (antes uma falha passageira - rede, deploy do Pages - deixava a secao vazia por 30 minutos).
+// Cada arquivo: 1) do próprio site; 2) se falhar, da cópia no GitHub (mesmo conteúdo, CORS aberto);
+// 3) se os dois falharem, a última cópia boa salva neste navegador. O motivo da falha fica em S.fileErr.
+var RAW = 'https://raw.githubusercontent.com/lbarolo/barolo-capital-site/main/';
+var FILE_CACHE = 'bc-mesa-files';
+async function fetchJSON(url) {
+  var r = await fetch(url, { cache: 'no-store' });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  var t = await r.text();
+  try { return JSON.parse(t); } catch (e) { throw new Error('arquivo inválido (' + t.length + ' bytes)'); }
+}
+async function loadJSON(u) {
+  S.fileErr = S.fileErr || {};
+  try { var j = await fetchJSON(u); delete S.fileErr[u]; return j; } catch (e) { S.fileErr[u] = e.message || 'erro de rede'; }
+  if (location.protocol === 'file:') return null;
+  try { var j2 = await fetchJSON(RAW + u); S.fileErr[u] += ' no site · veio do GitHub'; return j2; } catch (e) { S.fileErr[u] += ' · GitHub: ' + (e.message || 'erro de rede'); }
+  return null;
+}
+function cacheGet() { try { return JSON.parse(localStorage.getItem(FILE_CACHE) || 'null') || {}; } catch (e) { return {}; } }
 async function loadFiles() {
-  var r = await Promise.all([loadJSON('quant.json'), loadJSON('yields.json'), loadJSON('briefing.json'), loadJSON('networth-history.json')]);
-  var miss = false;
-  ['q', 'y', 'b', 'nw'].forEach(function (k, i) { if (r[i]) S[k] = r[i]; else if (!S[k]) miss = true; });
+  var F = ['quant.json', 'yields.json', 'briefing.json', 'networth-history.json'], K = ['q', 'y', 'b', 'nw'];
+  var r = await Promise.all(F.map(loadJSON)), C = cacheGet(), miss = false, saved = false;
+  K.forEach(function (k, i) {
+    if (r[i]) { S[k] = r[i]; C[k] = r[i]; saved = true; }
+    else if (!S[k]) { if (C[k]) { S[k] = C[k]; S.fileErr[F[i]] = (S.fileErr[F[i]] || 'falhou') + ' · usando a última cópia salva'; } miss = true; }
+  });
+  if (saved) { C.at = Date.now(); try { localStorage.setItem(FILE_CACHE, JSON.stringify(C)); } catch (e) {} }
   S.filesTry = miss ? (S.filesTry || 0) + 1 : 0;
   renderAll();
-  if (miss && S.filesTry < 8 && location.protocol !== 'file:') setTimeout(loadFiles, 15000 * S.filesTry);
+  if (miss && location.protocol !== 'file:') setTimeout(loadFiles, Math.min(120000, 15000 * S.filesTry));   // tenta de novo sem parar (até a cada 2 min)
+  if (Object.keys(S.fileErr).length) console.warn('[mesa] arquivos:', S.fileErr);
 }
 function filesMsg(f) {
   if (location.protocol === 'file:') return f + ' não abre direto do arquivo (file://) — abra pelo site ou pelo servidor local.';
-  return S.filesTry ? f + ' não carregou — tentando de novo sozinho…' : 'carregando ' + f + '…';
+  var why = S.fileErr && S.fileErr[f];
+  return S.filesTry ? f + ' não carregou' + (why ? ' (' + esc(why) + ')' : '') + ' — tentando de novo sozinho…' : 'carregando ' + f + '…';
 }
 async function loadPrices() {
   var p = await BaroloPrices.get(IDS, { maxAge: 60000 });
