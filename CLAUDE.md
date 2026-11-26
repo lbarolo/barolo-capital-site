@@ -27,7 +27,7 @@ Todas as páginas são **HTML estático puro** (sem framework, sem build step). 
 > 🧭 **`mesa.html` — Mesa DeFi (desde 25/11/2026)** — painel de operação ao vivo pedido pelo Lucas: regime
 > do mercado + playbook, alertas pelas regras dele (framework de alavancagem, 3σ, aporte de sexta, borrow > 5%,
 > concentração, VaR, CoinGecko), colateral com teste de estresse, radar de APY, laboratório de pools e TradingView.
-> Dados: `quant.json` + `yields.json` gerados por `scripts/fetch-mesa.js` (Action `mesa.yml`, ~07:20 BRT, sem secrets);
+> Dados: `mesa-dados.json` + `yields.json` gerados por `scripts/fetch-mesa.js` (Action `mesa.yml`, ~07:20 BRT, sem secrets);
 > preços/AAVE/Kamino ao vivo no navegador. Alerta ou regra nova → `buildAlerts()` na própria página.
 
 > 🔎 **`FONTES-PESQUISA.md`** (raiz, desde 07/10/2026) — catálogo de 40 ferramentas gratuitas de
@@ -7155,9 +7155,9 @@ TradingView). Decisão: página nova no site (abre no PC e no celular) + robô d
   borrow, pools chatas) · 06 laboratório de pools (compra escalonada / neutra / saída gradual, ranges por vol de 30d,
   P(toque), LVR, taxa mínima, ¼ Kelly; checklist do diário; histórico chatas × narrativa) · 07 quant · 08 TradingView ·
   09 agenda · 10 regras de ouro.
-- **`scripts/fetch-mesa.js`** → `quant.json` (saída do `quant-report.js --json` + `generatedAt`) e `yields.json` (recorte do
+- **`scripts/fetch-mesa.js`** → `mesa-dados.json` (saída do `quant-report.js --json` + `generatedAt`) e `yields.json` (recorte do
   DefiLlama: 10 MB → ~28 KB; só protocolos grandes, TVL ≥ 20M lending / 1M pools, só pares chatos — ETH/BTC/SOL/stable e LSTs).
-- **Action `mesa.yml`** (cron 10:20 UTC) + entrada no `workflow_run` do `pages.yml`; `quant.json`/`yields.json`/`mesa.html`
+- **Action `mesa.yml`** (cron 10:20 UTC) + entrada no `workflow_run` do `pages.yml`; `mesa-dados.json`/`yields.json`/`mesa.html`
   em `FILES` do `scripts/build-pages.js`; `mesa.html` em `tests/pages.test.js` (156/156 verdes).
 
 ### Leitura de 25/11 que a página mostrou
@@ -7172,7 +7172,7 @@ contra 3,42% do SOL na Kamino.
   por par) e Empréstimos (alavancar, repagar, trocar SOL por LST). Nota 0–100 = pesos dos critérios cumpridos (regras do
   diário/KB/QUANT); Excelente ≥ 75 · Bom ≥ 55 · Neutro ≥ 35. Vetos: euforia veta compra; acumulação veta alavancar
   (framework 20/06); ativo com > 60% do risco fica limitado a "Bom". Motor em `buildActions()`.
-- `scripts/fetch-mesa.js` agora grava `quant.json → ta` (RSI 14 diário/semanal, retornos 7/30d, MM50/MM200, vol 30/90d,
+- `scripts/fetch-mesa.js` agora grava `mesa-dados.json → ta` (RSI 14 diário/semanal, retornos 7/30d, MM50/MM200, vol 30/90d,
   posição na faixa de 90d) para BTC/ETH/SOL/HYPE via Coinbase. HYPE ao vivo: Coinbase `/products/HYPE-USD/stats`
   direto na página (não entrou no mapa do `lib/barolo-prices.js`). TradingView ganhou a aba HYPE (`COINBASE:HYPEUSD`).
 - Leitura de 25/11: Compra BTC/SOL/HYPE Excelente, ETH Bom (concentração); Venda Evitar; Pool compra escalonada SOL/USDC
@@ -7193,7 +7193,7 @@ vende na valorização) é uma das melhores estratégias dele e vale justamente 
 - **Não reintroduzir** "não tome dívida em acumulação" em lugar nenhum.
 
 ### Liquidez americana calibra o piso do HF (26/11/2026, ideia do Lucas, aprovada e ligada)
-- `fetch-mesa.js` grava `quant.json → liquidity`: liquidez líquida do Fed (WALCL − RRPONTSYD − WTREGEN, tendência 13 sem),
+- `fetch-mesa.js` grava `mesa-dados.json → liquidity`: liquidez líquida do Fed (WALCL − RRPONTSYD − WTREGEN, tendência 13 sem),
   NFCI, juro real 10a (DFII10), dólar 3m e M2. 5 sinais → **expansão** (≥3) HF 2,5 / 1,5σ · **neutra** (2) HF 3 / 2σ ·
   **aperto** (≤1) HF 4 / 2,5σ · piso absoluto HF 2. Sem leitura → neutra.
 - `mesa.html`: `loopFloor()` alimenta `loopCapacity()`, o playbook (`{PISO}`), o alerta "Liquidez" e a tabela macro.
@@ -7202,6 +7202,7 @@ vende na valorização) é uma das melhores estratégias dele e vale justamente 
   usar `fetch` do Node, Edit direto no arquivo ou `String.fromCharCode` em vez de `\n`.
 
 ### Gotchas
+- **O arquivo de dados se chama `mesa-dados.json` (era `quant.json`, renomeado em 26/11/2026):** bloqueador de anúncio (Brave/uBlock, regra do Quantcast `quant.js`) bloqueava "quant.json" no navegador do Lucas. Não usar "quant" em nome de arquivo servido pelo site.
 - O servidor local de `.claude/launch.json` não ignora query string → `fetch('x.json?v=…')` dá 404 local; a página usa `cache:'no-store'`.
 - TradingView: `studies` precisa ser tudo em formato objeto (`{id:'RSI@tv-basicstudies'}`); misturar com string `STD;RSI` some com o RSI.
 - Histórico de pools: "narrativa" = par com GRIFT/PEANUT/PENG/XAI (critério da KB §3.4), não "token fora de família".

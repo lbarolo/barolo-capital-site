@@ -5,11 +5,11 @@
  * Usado pela rotina diária (agentes/mesa.md) e por quem quiser a leitura no terminal.
  *   node scripts/mesa-report.js           → texto
  *   node scripts/mesa-report.js --json    → objeto
- *   node scripts/mesa-report.js --history → ÚNICA escrita: 1 ponto/dia em quant.json → verdictHistory
+ *   node scripts/mesa-report.js --history → ÚNICA escrita: 1 ponto/dia em mesa-dados.json → verdictHistory
  *     ({d, r, v:{nome: veredito}}, últimos 400 dias), só se preços, AAVE e Kamino vieram completos.
  *     A Mesa usa isso para mostrar "Excelente desde dd/mm".
  * Fontes ao vivo: preços em cascata (scripts/lib/spot-prices.js), AAVE V4 e Kamino on-chain
- * (lib/barolo-chain.js). Arquivos: data.js, quant.json, yields.json, briefing.json, networth-history.json. */
+ * (lib/barolo-chain.js). Arquivos: data.js, mesa-dados.json, yields.json, briefing.json, networth-history.json. */
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const ROOT = path.join(__dirname, '..');
@@ -67,7 +67,7 @@ async function main() {
   S.px = px; S.pxAt = Date.now(); S.hype = hype;
   if (aave) { S.aave = aave; S.chainAt = Date.now(); }
   if (kam && kam.position) { S.kam = kam; S.chainAt = Date.now(); }
-  S.q = readJSON('quant.json'); S.y = readJSON('yields.json'); S.b = readJSON('briefing.json'); S.nw = nwHist;
+  S.q = readJSON('mesa-dados.json'); S.y = readJSON('yields.json'); S.b = readJSON('briefing.json'); S.nw = nwHist;
 
   const L = ctx.live(); S.L = L;
   const R = ctx.regime();
@@ -88,7 +88,7 @@ async function main() {
 }
 
 function saveHistory(o) {
-  const f = path.join(ROOT, 'quant.json'), q = readJSON('quant.json');
+  const f = path.join(ROOT, 'mesa-dados.json'), q = readJSON('mesa-dados.json');
   const [a, b] = o.fontes.precos.split('/');
   if (!q || a !== b || !o.fontes.aave || !o.fontes.kamino) { console.log('histórico: fontes incompletas (' + o.fontes.precos + ', AAVE ' + o.fontes.aave + ', Kamino ' + o.fontes.kamino + ') — não gravado'); return; }
   const d = o.data.slice(0, 10), v = {};

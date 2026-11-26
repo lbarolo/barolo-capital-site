@@ -710,7 +710,7 @@ function renderTrend(L) {
     var ma = k === 'HYPE' ? (ta.HYPE && ta.HYPE.ma200) : (t[k] && t[k].ma200d);
     return { k: k, d: p > 0 && ma > 0 ? p / ma - 1 : null, rsi: ta[k] ? ta[k].rsi14d : null };
   });
-  if (!rows.some(function (r) { return r.d != null; })) { $('trend').innerHTML = '<div class="empty">' + filesMsg('quant.json') + '</div>'; return; }
+  if (!rows.some(function (r) { return r.d != null; })) { $('trend').innerHTML = '<div class="empty">' + filesMsg('mesa-dados.json') + '</div>'; return; }
   var M = 0.4;
   $('trend').innerHTML = '<div class="tr">' + rows.map(function (r) {
     var w = r.d == null ? 0 : Math.min(1, Math.abs(r.d) / M) * 50, left = r.d < 0 ? 50 - w : 50;
@@ -727,7 +727,7 @@ function shortSig(k) {
 }
 function renderLiq(L) {
   var F = loopFloor(), l = F.liq;
-  if (!l) { $('liqBox').innerHTML = '<div class="lbl">Liquidez americana</div><div class="empty">' + (S.q ? 'Sem leitura do FRED hoje — piso neutro: HF 3 / 2σ.' : filesMsg('quant.json')) + '</div>'; return; }
+  if (!l) { $('liqBox').innerHTML = '<div class="lbl">Liquidez americana</div><div class="empty">' + (S.q ? 'Sem leitura do FRED hoje — piso neutro: HF 3 / 2σ.' : filesMsg('mesa-dados.json')) + '</div>'; return; }
   var col = { expansao: 'var(--green)', neutra: 'var(--accent)', aperto: 'var(--red)' }[l.band] || 'var(--text)';
   var nm = BAND_NAME[l.band] || l.band;
   $('liqBox').innerHTML = '<div class="lbl">Liquidez americana → piso do looping</div>' +
@@ -835,7 +835,7 @@ function buildAlerts(L) {
       (LQ.rrp != null && LQ.rrp < 50 ? ' Reverse repo em <strong>US$ ' + num(LQ.rrp, 1) + ' bi</strong>: o colchão acabou, aperto novo sai direto das reservas.' : '') +
       ' Faixas: expansão HF 2,5 / 1,5σ · neutra HF 3 / 2σ · aperto HF 4 / 2,5σ · nunca abaixo de HF 2. Dados semanais do FRED de ' + LQ.date.split('-').reverse().join('/') + '.',
       'regra do Lucas (26/11/2026) · FRED: WALCL, RRPONTSYD, WTREGEN, NFCI, DFII10');
-  } else add('info', 'Liquidez', 'Sem leitura de liquidez americana', 'O quant.json não trouxe o bloco de liquidez (FRED fora do ar). A Mesa usa o piso neutro: HF 3 / 2σ.', 'robô diário da Mesa (scripts/fetch-mesa.js)');
+  } else add('info', 'Liquidez', 'Sem leitura de liquidez americana', 'O mesa-dados.json não trouxe o bloco de liquidez (FRED fora do ar). A Mesa usa o piso neutro: HF 3 / 2σ.', 'robô diário da Mesa (scripts/fetch-mesa.js)');
   // custo do borrow
   L.bor.forEach(function (b) {
     var alt = null;
@@ -1085,7 +1085,7 @@ function poolEdge(pairKey, a, side) {
   return { fee: fee, be: be, v: v, ok: be != null && be >= v };
 }
 // Piso do looping calibrado pela liquidez americana (regra do Lucas, 26/11/2026): expansão HF 2,5 / 1,5σ ·
-// neutra HF 3 / 2σ · aperto HF 4 / 2,5σ · piso absoluto HF 2,0. Sem leitura (quant.json sem liquidity) → neutra.
+// neutra HF 3 / 2σ · aperto HF 4 / 2,5σ · piso absoluto HF 2,0. Sem leitura (mesa-dados.json sem liquidity) → neutra.
 var BAND_NAME = { expansao: 'expansão', neutra: 'neutra', aperto: 'aperto' };
 function loopFloor() {
   var l = S.q && S.q.liquidity;
@@ -1250,7 +1250,7 @@ function renderActions(L) {
     return '<div class="as ' + top.g.k + '"><div class="lbl">' + c.t + '</div><div class="asv">' + top.g.label + '</div><div class="small">' + top.name + '</div></div>';
   }).join('');
   $('acts').innerHTML = cards.map(function (c) {
-    if (!c.rows.length) return '<div class="card"><div class="lbl">' + c.t + '</div><div class="empty">' + (S.q ? 'sem dados nesta frente hoje' : filesMsg('quant.json')) + '</div></div>';
+    if (!c.rows.length) return '<div class="card"><div class="lbl">' + c.t + '</div><div class="empty">' + (S.q ? 'sem dados nesta frente hoje' : filesMsg('mesa-dados.json')) + '</div></div>';
     var sel = Math.min(S.actSel[c.id] || 0, c.rows.length - 1), r = c.rows[sel];
     var rows = c.rows.map(function (x, i) {
       return '<div class="ar' + (i === sel ? ' on' : '') + '" onclick="selAct(\'' + c.id + '\',' + i + ')"><span class="an">' + x.name + '<small>' + x.sub + '</small></span>' +
@@ -1267,7 +1267,7 @@ function selAct(id, i) { S.actSel = S.actSel || {}; S.actSel[id] = i; renderActi
 /* ─── quant ─────────────────────────────────────────────────────────────── */
 function renderQuant(L) {
   var q = S.q;
-  if (!q) { ['rc', 'rules', 'riskBox'].forEach(function (i) { $(i).innerHTML = '<div class="empty">' + filesMsg('quant.json') + '</div>'; }); return; }
+  if (!q) { ['rc', 'rules', 'riskBox'].forEach(function (i) { $(i).innerHTML = '<div class="empty">' + filesMsg('mesa-dados.json') + '</div>'; }); return; }
   var rc = q.riskContrib, ks = Object.keys(rc).sort(function (a, b) { return rc[b].rc - rc[a].rc; });
   $('rc').innerHTML = ks.map(function (k) { return '<div class="rc-row"><span>' + k + '</span><div class="rc-bars"><i class="w" style="width:' + (rc[k].weight * 100).toFixed(1) + '%"></i><i class="r" style="width:' + (rc[k].rc * 100).toFixed(1) + '%"></i></div><span>' + pct(rc[k].weight, 0) + ' → <b class="gold">' + pct(rc[k].rc, 0) + '</b></span></div>'; }).join('');
   $('rcNote').innerHTML = 'N efetivo <b>' + num(q.effN, 2) + '</b>: com correlação ~0,9, diversificar dentro de cripto quase não reduz risco. Aporte em BTC é o que mais baixa o risco.';
@@ -1373,7 +1373,7 @@ async function loadJSON(u) {
 }
 function cacheGet() { try { return JSON.parse(localStorage.getItem(FILE_CACHE) || 'null') || {}; } catch (e) { return {}; } }
 async function loadFiles() {
-  var F = ['quant.json', 'yields.json', 'briefing.json', 'networth-history.json'], K = ['q', 'y', 'b', 'nw'];
+  var F = ['mesa-dados.json', 'yields.json', 'briefing.json', 'networth-history.json'], K = ['q', 'y', 'b', 'nw'];
   var r = await Promise.all(F.map(loadJSON)), C = cacheGet(), miss = false, saved = false;
   K.forEach(function (k, i) {
     if (r[i]) { S[k] = r[i]; C[k] = r[i]; saved = true; }

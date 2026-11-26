@@ -22,7 +22,7 @@ const FILES = [
   'relatorio.html', 'emprestimos.html', 'mesa.html',
   'ui-polish.css',
   'data.js', 'diario.js', 'benchmark-data.js',
-  'btc-onchain.json', 'networth-history.json', 'briefing.json', 'quant.json', 'yields.json',
+  'btc-onchain.json', 'networth-history.json', 'briefing.json', 'mesa-dados.json', 'yields.json',
   'robots.txt', 'CNAME', '.nojekyll',
 ];
 const DIRS = ['lib'];

@@ -19,7 +19,7 @@ on:
       - "Snapshot diário do patrimônio (networth-history.json)"
       - "Atualizar dados on-chain (aba Ciclo · ferramentas.html)"
       - "Sincroniza data.js embutido no emprestimos.html"
-      - "Dados da Mesa DeFi (quant.json + yields.json)"
+      - "Dados da Mesa DeFi (mesa-dados.json + yields.json)"
     types: [completed]
     branches: [main]
   workflow_dispatch:

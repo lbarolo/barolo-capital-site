@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /* Dados diários da Mesa DeFi (mesa.html) — Barolo Capital.
  * Grava dois arquivos estáticos que a página lê (mesmo padrão do btc-onchain.json):
- *   quant.json  — saída do scripts/quant-report.js --json (vol, correlação, beta, VaR/CVaR,
+ *   mesa-dados.json  — saída do scripts/quant-report.js --json (vol, correlação, beta, VaR/CVaR,
  *                 contribuição de risco, tendência, macro FRED, on-chain) + generatedAt.
  *   yields.json — recorte do DefiLlama Yields (10 MB → ~50 KB): onde o colateral rende,
  *                 onde a dívida custa menos e as pools "chatas" (par com stable ou blue-chip).
- *   quant.json.ta — RSI 14 diário/semanal, retornos 7/30d, MM50/MM200, vol de BTC/ETH/SOL/HYPE (motor de sugestões).
+ *   mesa-dados.json.ta — RSI 14 diário/semanal, retornos 7/30d, MM50/MM200, vol de BTC/ETH/SOL/HYPE (motor de sugestões).
  * Sem chave: Coinbase, FRED, yields.llama.fi. Uso: node scripts/fetch-mesa.js
  * O recorte segue a regra da casa (KB §3.4 e §12): só protocolos grandes, só pares chatos —
  * 22 vitórias e zero derrotas nas chatas; narrativa foi 1 de 7. Memecoin nem entra na lista. */
@@ -174,10 +174,10 @@ async function liquidity(q) {
   q.ta = await technicals();
   try { q.liquidity = await liquidity(q); } catch (e) { console.warn('Liquidez: ' + e.message + ' (a Mesa usa o piso neutro HF 3 / 2σ)'); }
   // historico dos vereditos (gravado pelo mesa-report.js --history): preservar entre execucoes
-  try { const old = JSON.parse(fs.readFileSync(path.join(ROOT, 'quant.json'), 'utf8')); if (Array.isArray(old.verdictHistory)) q.verdictHistory = old.verdictHistory; } catch (e) {}
+  try { const old = JSON.parse(fs.readFileSync(path.join(ROOT, 'mesa-dados.json'), 'utf8')); if (Array.isArray(old.verdictHistory)) q.verdictHistory = old.verdictHistory; } catch (e) {}
   q.generatedAt = new Date().toISOString();
-  fs.writeFileSync(path.join(ROOT, 'quant.json'), JSON.stringify(q) + '\n');
-  console.log('quant.json OK · ETH vol30 ' + (q.vol.ETH.d30 * 100).toFixed(1) + '% · VaR95 1d ' + (q.port.VaR95_1d * 100).toFixed(1) + '%' +
+  fs.writeFileSync(path.join(ROOT, 'mesa-dados.json'), JSON.stringify(q) + '\n');
+  console.log('mesa-dados.json OK · ETH vol30 ' + (q.vol.ETH.d30 * 100).toFixed(1) + '% · VaR95 1d ' + (q.port.VaR95_1d * 100).toFixed(1) + '%' +
     (q.liquidity ? ' · liquidez ' + q.liquidity.band + ' (' + q.liquidity.favor + '/5) → piso HF ' + q.liquidity.floor.hf : ''));
 
   const y = await yields();

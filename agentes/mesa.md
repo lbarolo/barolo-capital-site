@@ -10,7 +10,7 @@ registra o que mudou desde ontem, **(3) melhora** o projeto em um passo pequeno 
 
 ## Passo a passo da rotina
 1. `git pull --rebase --autostash origin main` e `git status` (outra sessão pode estar mexendo na pasta).
-2. **Saúde dos dados** — `quant.json` e `yields.json` com `generatedAt` de hoje? Se não (a Action `mesa.yml`
+2. **Saúde dos dados** — `mesa-dados.json` e `yields.json` com `generatedAt` de hoje? Se não (a Action `mesa.yml`
    falhou), rodar `node scripts/fetch-mesa.js`, e commitar **só** esses dois arquivos.
    Conferir também `networth-history.json` (último ponto de hoje ou ontem) e `briefing.json`.
 3. `npm test` — se falhar, registrar em `agentes/bugs.md` → "Achados em aberto" e **não** fazer a melhoria do dia.
@@ -23,7 +23,7 @@ registra o que mudou desde ontem, **(3) melhora** o projeto em um passo pequeno 
    estão "Excelente"/"Evitar", alertas novos, a melhoria feita (ou proposta) e qualquer falha de dado.
 
 ## O que a rotina PODE fazer sozinha
-- Rodar `scripts/fetch-mesa.js` e commitar `quant.json`/`yields.json`.
+- Rodar `scripts/fetch-mesa.js` e commitar `mesa-dados.json`/`yields.json`.
 - Atualizar este caderno.
 - Uma melhoria `[auto]` por dia, só em `mesa.html`, `scripts/fetch-mesa.js`, `scripts/mesa-report.js`,
   `.github/workflows/mesa.yml` e `tests/` — com `npm test` verde e conferida rodando o `mesa-report.js`.
@@ -40,7 +40,7 @@ Regime: zona de fundo, tendência de baixa (score 0,08, F&G 13). Liquidez americ
 Compra: BTC/SOL/HYPE Excelente, ETH Bom (70% do risco). Venda: Evitar. Pools: compra escalonada SOL/USDC Bom
 (falta stable: US$ 0,25 livre). Empréstimos: looping ETH na AAVE Bom (~US$ 1.212 até HF 3, HF 8,94); Kamino Evitar
 (1,64σ, abaixo do piso; repagar US$ 112 ou +6,88 SOL). Trocar SOL por LST: Excelente.
-Histórico dos vereditos ligado: `quant.json → verdictHistory` (1º ponto 26/11).
+Histórico dos vereditos ligado: `mesa-dados.json → verdictHistory` (1º ponto 26/11).
 
 ## Diário (1 linha por dia, mais recente em cima, manter ~30)
 - 26/11/2026 — sem mudança de faixa. Regime fundo (0,08, F&G 13) · Compra Excelente (BTC 100, SOL 100, HYPE 82) · Venda Evitar · Pools Bom (compra escalonada SOL 63) · Empréstimos Bom (looping ETH AAVE 88; Kamino Evitar 41) · LST Excelente · 6 alertas de atenção (mesmos de ontem). Dados da Action não tinham chegado às 11h UTC → regerados à mão.
@@ -50,7 +50,7 @@ Histórico dos vereditos ligado: `quant.json → verdictHistory` (1º ponto 26/1
 Palavras dele: *"a liquidez do mercado americano pode nos dizer melhor se o HF dos empréstimos pode ser mais
 apertada ou mais leve"*. A ideia é dele e está aceita; **os números abaixo são a minha proposta, ainda sem o OK
 dele**.
-  ✅ **APROVADO E LIGADO em 26/11/2026** (*"Sim, ligue"*): `fetch-mesa.js` grava `quant.json → liquidity` e a Mesa
+  ✅ **APROVADO E LIGADO em 26/11/2026** (*"Sim, ligue"*): `fetch-mesa.js` grava `mesa-dados.json → liquidity` e a Mesa
   usa `loopFloor()` em `loopCapacity()`, no playbook, no alerta "Liquidez" e na tabela macro.
 - **Leitura (FRED, sem chave, semanal):** liquidez líquida do Fed = balanço (`WALCL`) − reverse repo (`RRPONTSYD`)
   − conta do Tesouro (`WTREGEN`), tendência de 4 e 13 semanas · condições financeiras (`NFCI`: negativo = frouxo)
@@ -68,12 +68,12 @@ dele**.
   em janelas curtas. Ela ajusta a folga, não substitui o piso absoluto.
 
 ## Backlog de melhorias (prioridade de cima para baixo)
-- [x] **Piso do HF calibrado pela liquidez americana** — ✅ ligado em 26/11/2026 (regra acima) — `fetch-mesa.js` gravar `quant.json → liquidity`
+- [x] **Piso do HF calibrado pela liquidez americana** — ✅ ligado em 26/11/2026 (regra acima) — `fetch-mesa.js` gravar `mesa-dados.json → liquidity`
   (WALCL/RRP/TGA/NFCI/DFII10) e a Mesa trocar o piso fixo de `loopCapacity()` pelo piso da faixa. *(esperando o OK
   do Lucas nos números)*
 - [ ] **Backtest das sugestões de compra** — "Excelente" de compra contra DCA fixo de sexta, em BTC/ETH/SOL desde 2022
   (QUANT.md §4 regra 5: regra nova só com backtest). Resultado vai para QUANT.md §5. *(propor ao Lucas antes de mudar pesos)*
-- [x] **Histórico dos vereditos** — ✅ 26/11/2026: guardado dentro do `quant.json → verdictHistory` (já publicado,
+- [x] **Histórico dos vereditos** — ✅ 26/11/2026: guardado dentro do `mesa-dados.json → verdictHistory` (já publicado,
   dispensa mexer no build-pages.js). `mesa.yml` roda `mesa-report.js --history` depois do fetch (só grava se preços,
   AAVE e Kamino vierem completos); `fetch-mesa.js` preserva o campo; a Mesa mostra "X desde dd/mm" no "Por quê" e no
   tooltip do veredito.
@@ -85,6 +85,7 @@ dele**.
 - [ ] [auto] Testes do motor de sugestões (`tests/mesa.test.js`) com quant/yields fixos — trava regressão no `buildActions`.
 
 ## Histórico da rotina
+- 26/11/2026 — `quant.json` renomeado para **`mesa-dados.json`**: bloqueadores de anúncio (Brave Shields/uBlock, regra do Quantcast "quant.js") bloqueavam o arquivo no navegador do Lucas e a Mesa ficava sem Compra/Venda/Pools/Quant. Não voltar ao nome com "quant".
 - 26/11/2026 — 1ª rotina diária: dados regerados (Action ainda não tinha rodado), sem mudança de veredito; melhoria: histórico dos vereditos.
 - 26/11/2026 — regra de liquidez × piso do HF aprovada e ligada (hoje: neutra 2/5 → HF 3 / 2σ; AAVE com ~US$ 1.206 de espaço).
 - 25/11/2026 — caderno criado; tarefa agendada "Mesa diária" (08:10).
