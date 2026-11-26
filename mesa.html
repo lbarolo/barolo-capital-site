@@ -638,7 +638,7 @@ function renderStrip(L) {
     ['Fear & Greed', fng.value != null ? fng.value + '' : '—', null, fng.value != null ? bandOf(FNG_BANDS, fng.value)[2].toLowerCase() : ''],
     ['Dominância BTC', br.btcDom != null ? num(br.btcDom, 1) + '%' : '—', null],
     ['Stablecoins', br.stableMcap ? 'US$ ' + num(br.stableMcap / 1e9, 0) + ' bi' : '—', null, 'entrada de capital'],
-    ['HYPE', S.hype ? px$(S.hype.usd) : (S.q && S.q.ta && S.q.ta.HYPE ? px$(S.q.ta.HYPE.price) : '—'), S.hype ? S.hype.chg : null, 'sem posição']
+    ['USDT / BRL', S.brl ? 'R$ ' + num(S.brl.rate, 3) : (D.brlRate ? 'R$ ' + num(D.brlRate, 2) : '—'), S.brl ? S.brl.chg : null, S.brl ? '' : 'valor do data.js']
   ];
   $('strip').innerHTML = cells.map(function (c) {
     var ch = c[2] != null ? '<div class="c ' + cls(c[2]) + '">' + pct(c[2], 2, true) + ' 24h</div>' : '<div class="c" style="color:var(--muted)">' + (c[3] ? esc(c[3]) : '&nbsp;') + '</div>';
@@ -1397,7 +1397,19 @@ async function loadPrices() {
     var r = await fetch('https://api.exchange.coinbase.com/products/HYPE-USD/stats'); var h = await r.json();
     if (+h.last > 0) S.hype = { usd: +h.last, chg: +h.open > 0 ? h.last / h.open - 1 : null };
   } catch (e) {}
+  await loadBrl();
   renderAll();
+}
+// USDT/BRL: Binance (par USDTBRL); se falhar, dólar comercial da AwesomeAPI; sem os dois, fica o brlRate do data.js.
+async function loadBrl() {
+  try {
+    var r = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=USDTBRL'), j = await r.json();
+    if (+j.lastPrice > 0) { S.brl = { rate: +j.lastPrice, chg: +j.priceChangePercent / 100, src: 'Binance' }; return; }
+  } catch (e) {}
+  try {
+    var r2 = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL'), u = (await r2.json()).USDBRL;
+    if (u && +u.bid > 0) S.brl = { rate: +u.bid, chg: +u.pctChange / 100, src: 'AwesomeAPI (dólar)' };
+  } catch (e) {}
 }
 async function loadChain() {
   var r = await Promise.all([BaroloChain.fetchAave(), BaroloChain.fetchKamino({ withApys: true })]);
