@@ -751,7 +751,7 @@ function renderRadar(L) {
   $('radarTabs').innerHTML = tabs.map(function (t) { return '<button class="btn-sm' + (S.radar === t[0] ? ' on' : '') + '" onclick="setRadar(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') +
     (S.y ? '<span class="small" style="margin-left:auto;align-self:center;">DefiLlama · ' + ago(S.y.generatedAt) + ' atrás · TVL mín. US$ 20M (lending) / 1M (pools)</span>' : '');
   var y = S.y;
-  if (!y) { $('radar').innerHTML = '<div class="card empty">yields.json ainda não chegou (a Action roda todo dia ~07:20).</div>'; return; }
+  if (!y) { $('radar').innerHTML = '<div class="card empty">' + filesMsg('yields.json') + '</div>'; return; }
   var A = D.defi.aave, K = D.defi.kamino;
   if (S.radar === 'supply') {
     var mine = { ETH: ['AAVE V4 · WETH', A.supply.WETH ? A.supply.WETH.apy : null, L.aW * L.P.ETH], SOL: ['Kamino · SOL', L.kSolApy, L.kS * L.P.SOL] };
@@ -1039,7 +1039,7 @@ function renderActions(L) {
     return '<div class="as ' + top.g.k + '"><div class="lbl">' + c.t + '</div><div class="asv">' + top.g.label + '</div><div class="small">' + top.name + '</div></div>';
   }).join('');
   $('acts').innerHTML = cards.map(function (c) {
-    if (!c.rows.length) return '<div class="card"><div class="lbl">' + c.t + '</div><div class="empty">sem dados ainda (quant.json)</div></div>';
+    if (!c.rows.length) return '<div class="card"><div class="lbl">' + c.t + '</div><div class="empty">' + (S.q ? 'sem dados nesta frente hoje' : filesMsg('quant.json')) + '</div></div>';
     var sel = Math.min(S.actSel[c.id] || 0, c.rows.length - 1), r = c.rows[sel];
     var rows = c.rows.map(function (x, i) {
       return '<div class="ar' + (i === sel ? ' on' : '') + '" onclick="selAct(\'' + c.id + '\',' + i + ')"><span class="an">' + x.name + '<small>' + x.sub + '</small></span>' +
@@ -1056,7 +1056,7 @@ function selAct(id, i) { S.actSel = S.actSel || {}; S.actSel[id] = i; renderActi
 /* ─── quant ─────────────────────────────────────────────────────────────── */
 function renderQuant(L) {
   var q = S.q;
-  if (!q) { ['rc', 'rules', 'riskBox'].forEach(function (i) { $(i).innerHTML = '<div class="empty">quant.json ainda não chegou.</div>'; }); return; }
+  if (!q) { ['rc', 'rules', 'riskBox'].forEach(function (i) { $(i).innerHTML = '<div class="empty">' + filesMsg('quant.json') + '</div>'; }); return; }
   var rc = q.riskContrib, ks = Object.keys(rc).sort(function (a, b) { return rc[b].rc - rc[a].rc; });
   $('rc').innerHTML = ks.map(function (k) { return '<div class="rc-row"><span>' + k + '</span><div class="rc-bars"><i class="w" style="width:' + (rc[k].weight * 100).toFixed(1) + '%"></i><i class="r" style="width:' + (rc[k].rc * 100).toFixed(1) + '%"></i></div><span>' + pct(rc[k].weight, 0) + ' → <b class="gold">' + pct(rc[k].rc, 0) + '</b></span></div>'; }).join('');
   $('rcNote').innerHTML = 'Peso sobre o patrimônio líquido × contribuição de risco (Euler). N efetivo <b>' + num(q.effN, 2) + '</b> — com correlação de ~0,9 entre os três, diversificar dentro de cripto quase não reduz risco. O BTC é o ativo de menor vol: cada dólar de aporte nele é o que mais baixa o risco.';
@@ -1144,9 +1144,19 @@ function renderAll() {
     'Regime, alertas e ideias aplicam as regras do seu diário e do QUANT.md — são instrumento de medição, não recomendação de investimento.';
 }
 async function loadJSON(u) { try { var r = await fetch(u, { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch (e) { return null; } }
+// Arquivo que falhou NAO apaga o que ja tinha chegado; se faltar algum, tenta de novo em 15s, 30s, 45s...
+// (antes uma falha passageira - rede, deploy do Pages - deixava a secao vazia por 30 minutos).
 async function loadFiles() {
   var r = await Promise.all([loadJSON('quant.json'), loadJSON('yields.json'), loadJSON('briefing.json'), loadJSON('networth-history.json')]);
-  S.q = r[0]; S.y = r[1]; S.b = r[2]; S.nw = r[3]; renderAll();
+  var miss = false;
+  ['q', 'y', 'b', 'nw'].forEach(function (k, i) { if (r[i]) S[k] = r[i]; else if (!S[k]) miss = true; });
+  S.filesTry = miss ? (S.filesTry || 0) + 1 : 0;
+  renderAll();
+  if (miss && S.filesTry < 8 && location.protocol !== 'file:') setTimeout(loadFiles, 15000 * S.filesTry);
+}
+function filesMsg(f) {
+  if (location.protocol === 'file:') return f + ' não abre direto do arquivo (file://) — abra pelo site ou pelo servidor local.';
+  return S.filesTry ? f + ' não carregou — tentando de novo sozinho…' : 'carregando ' + f + '…';
 }
 async function loadPrices() {
   var p = await BaroloPrices.get(IDS, { maxAge: 60000 });
