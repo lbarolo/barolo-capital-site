@@ -1025,6 +1025,13 @@ function buildActions(L) {
     { id: 'lend', t: 'Empréstimos', rows: lend }
   ];
 }
+function verdictSince(name, label) {
+  var h = S.q && S.q.verdictHistory; if (!h || !h.length) return '';
+  var i = h.length - 1; if (h[i].v[name] !== label) return '';
+  while (i > 0 && h[i - 1].v[name] === label) i--;
+  var p = h[i].d.split('-'), dm = p[2] + '/' + p[1];
+  return label + ' desde ' + dm + (i === 0 ? ' (ou antes — início do registro)' : '');
+}
 function renderActions(L) {
   var cards = buildActions(L); S.actSel = S.actSel || {};
   $('actSum').innerHTML = cards.map(function (c) {
@@ -1036,11 +1043,11 @@ function renderActions(L) {
     var sel = Math.min(S.actSel[c.id] || 0, c.rows.length - 1), r = c.rows[sel];
     var rows = c.rows.map(function (x, i) {
       return '<div class="ar' + (i === sel ? ' on' : '') + '" onclick="selAct(\'' + c.id + '\',' + i + ')"><span class="an">' + x.name + '<small>' + x.sub + '</small></span>' +
-        '<span class="ab"><i class="' + x.g.k + '" style="width:' + Math.round(x.g.score * 100) + '%"></i></span><span class="pill ' + x.g.k + '">' + x.g.label + '</span></div>';
+        '<span class="ab"><i class="' + x.g.k + '" style="width:' + Math.round(x.g.score * 100) + '%"></i></span><span class="pill ' + x.g.k + '" title="' + verdictSince(x.name, x.g.label) + '">' + x.g.label + '</span></div>';
     }).join('');
     var crit = r.g.crit.map(function (k) { return '<div class="cr"><span class="' + (k.ok ? 'pos' : 'neg') + '">' + (k.ok ? '✓' : '✗') + '</span><span>' + k.txt + '</span><span class="mono">' + k.val + '</span></div>'; }).join('');
     return '<div class="card act"><div class="lbl" style="margin-bottom:8px;">' + c.t + '</div>' + rows +
-      '<div class="adet"><div class="lbl" style="margin-bottom:6px;">Por quê — ' + r.name + ' · nota ' + Math.round(r.g.score * 100) + '/100</div>' +
+      '<div class="adet"><div class="lbl" style="margin-bottom:6px;">Por quê — ' + r.name + ' · nota ' + Math.round(r.g.score * 100) + '/100' + (verdictSince(r.name, r.g.label) ? ' · ' + verdictSince(r.name, r.g.label) : '') + '</div>' +
       (r.g.veto ? '<div class="veto">⛔ ' + r.g.veto + '</div>' : '') + (r.g.cap ? '<div class="veto" style="color:var(--accent)">◐ ' + r.g.cap + '</div>' : '') + crit + '<div class="how">' + r.how + '</div></div></div>';
   }).join('');
 }

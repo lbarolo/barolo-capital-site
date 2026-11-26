@@ -173,6 +173,8 @@ async function liquidity(q) {
   if (!q.vol || !q.vol.ETH || !q.port || !q.macro) throw new Error('quant-report sem os campos esperados');
   q.ta = await technicals();
   try { q.liquidity = await liquidity(q); } catch (e) { console.warn('Liquidez: ' + e.message + ' (a Mesa usa o piso neutro HF 3 / 2σ)'); }
+  // historico dos vereditos (gravado pelo mesa-report.js --history): preservar entre execucoes
+  try { const old = JSON.parse(fs.readFileSync(path.join(ROOT, 'quant.json'), 'utf8')); if (Array.isArray(old.verdictHistory)) q.verdictHistory = old.verdictHistory; } catch (e) {}
   q.generatedAt = new Date().toISOString();
   fs.writeFileSync(path.join(ROOT, 'quant.json'), JSON.stringify(q) + '\n');
   console.log('quant.json OK · ETH vol30 ' + (q.vol.ETH.d30 * 100).toFixed(1) + '% · VaR95 1d ' + (q.port.VaR95_1d * 100).toFixed(1) + '%' +

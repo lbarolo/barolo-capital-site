@@ -30,6 +30,10 @@ jobs:
       - name: Gerar quant.json e yields.json
         run: node scripts/fetch-mesa.js
 
+      - name: Gravar o ponto do dia no histórico dos vereditos
+        continue-on-error: true
+        run: node scripts/mesa-report.js --history
+
       - name: Commit se houver mudança
         if: github.ref == 'refs/heads/main'
         run: |
