@@ -771,13 +771,15 @@ body, input, button, select, textarea {
      "transferência de entrada" com custo ZERO. Fonte: data.js -> cgMirror. -->
 <div class="card" id="cgMirrorCard" style="display:none;margin-bottom:14px;padding:14px 18px;border-left:3px solid var(--gold);">
   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-    <div class="chart-title" style="margin:0;">Yield a lançar no CoinGecko</div>
+    <div class="chart-title" style="margin:0;">A lançar no CoinGecko</div>
     <div id="cgMirrorTotal" style="font-family:var(--mono,'JetBrains Mono',monospace);font-size:13px;color:var(--gold);"></div>
   </div>
   <div id="cgMirrorList" style="margin-top:8px;font-family:var(--mono,'JetBrains Mono',monospace);font-size:11px;line-height:1.9;"></div>
   <div style="margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5;">
-    Juros de AAVE/Kamino que já entraram no supply e ainda não estão no CoinGecko.
-    Lançar como <strong>transferência de entrada, custo zero</strong> — é renda, não aporte.
+    <strong style="color:var(--text);">Compra</strong> entra com o <strong>custo pago</strong>;
+    <strong style="color:var(--text);">yield</strong> (juro de AAVE/Kamino, fee de pool) entra como
+    <strong>transferência de entrada, custo zero</strong> — é renda, não aporte.
+    Lançar uma compra como custo zero infla o lucro no valor inteiro dela.
   </div>
 </div>
 
@@ -2309,42 +2311,100 @@ function genSpark(price, change24h){
 // diferença é o que falta lançar. Combinado em 05/09/2026: reportar isso todo
 // fechamento de mês. Mesmo cálculo de `scripts/yield-to-mirror.js`.
 function buildCgMirrorCard(){
- var card = document.getElementById('cgMirrorCard');
- if (!card) return;
- var B = window.BAROLO_DATA;
- var mirror = (B && B.cgMirror) || null;
- if (!mirror) { card.style.display = 'none'; return; }
+  var card = document.getElementById('cgMirrorCard');
+  if (!card) return;
+  var B = window.BAROLO_DATA;
+  var mirror = (B && B.cgMirror) || null;
+  if (!mirror) { card.style.display = 'none'; return; }
 
- var all = (B.holdings || []).concat(B.stables || []);
- var EPS = 1e-8, rows = [], totalUsd = 0;
- all.forEach(function(h){
-  var cg = mirror[h.ticker];
-  if (!(cg > 0)) return;                       // sem espelho: assume igual
-  var delta = h.qty - cg;
-  if (Math.abs(delta) <= EPS) return;
-  var usd = delta * getPrice(h.cgId);
-  // Total = SO os positivos (decisao do Lucas, 31/10/2026). Delta negativo nao e yield
-  // (e a qty bruta vs liquida das compras, ou um lancamento faltando) e nunca se lanca —
-  // somar no total daria um numero que ele nao pode usar como lista no fechamento.
-  if (delta > 0) totalUsd += usd;
-  rows.push({ t:h.ticker, delta:delta, usd:usd, cg:cg, site:h.qty });
- });
+  // Compras pendentes por ticker (qty BRUTA da ordem + custo pago). O resto do
+  // delta e yield. Sem esta separacao o card mandava lancar uma compra de US$ 50
+  // como transferencia de entrada a custo zero - US$ 50 de lucro fantasma.
+  var buys = {};
+  (B.cgPendingBuys || []).forEach(function(b){
+   if (!buys[b.ticker]) buys[b.ticker] = { qty:0, usd:0 };
+   buys[b.ticker].qty += b.qty;
+   buys[b.ticker].usd += (b.usd || 0);
+  });
 
- if (!rows.length) { card.style.display = 'none'; return; }
+  var all = (B.holdings || []).concat(B.stables || []);
+  var EPS = 1e-8, compras = [], rendas = [], estrutural = [], totalCompra = 0, totalYield = 0;
+  all.forEach(function(h){
+   var cg = mirror[h.ticker];
+   if (!(cg > 0)) return;                       // sem espelho: assume igual
+   var delta = h.qty - cg;
+   var buy = buys[h.ticker];
+   if (Math.abs(delta) <= EPS && !buy) return;
 
- var dec = function(v){ var a = Math.abs(v); return a >= 100 ? 2 : a >= 1 ? 3 : 6; };
- document.getElementById('cgMirrorList').innerHTML = rows.map(function(r){
-  var sign = r.delta >= 0 ? '+' : '−';
-  var cls  = r.delta >= 0 ? 'pos' : 'neg';
-  return '<div><span style="display:inline-block;min-width:52px;color:var(--text);">' + r.t + '</span>' +
-   '<span class="' + cls + '">' + sign + Math.abs(r.delta).toFixed(dec(r.delta)) + '</span>' +
-   '<span style="color:var(--muted);"> &nbsp;·&nbsp; ' + fmtCurrency(Math.abs(r.usd), 2) + ' &nbsp;·&nbsp; ' +
-   r.cg + ' → ' + r.site +
-   (r.delta < 0 ? ' &nbsp;·&nbsp; <span style="color:var(--red);">não lançar</span>' : '') + '</span></div>';
- }).join('');
- document.getElementById('cgMirrorTotal').textContent = fmtCurrency(totalUsd, 2) + ' a lançar';
- card.style.display = '';
-}
+   if (buy && buy.qty > EPS) {
+    // erro: ou a compra ja foi lancada e ficou esquecida, ou o cgMirror esta errado
+    compras.push({ t:h.ticker, qty:buy.qty, usd:buy.usd, erro: buy.qty > delta + EPS });
+    totalCompra += buy.usd;
+   }
+   var y = delta - (buy ? buy.qty : 0);
+   if (Math.abs(y) <= EPS) return;
+   var usd = y * getPrice(h.cgId);
+   // Mesmo limiar de scripts/yield-to-mirror.js (os dois tem que classificar igual): negativo
+   // ate US$ 5 e estrutural - o CoinGecko conta a qty BRUTA da ordem e o site desconta gas e
+   // taxa; positivo so ate US$ 0,50, porque acima disso ja e yield que vale lancar. Sem preco,
+   // cai no relativo: menos de 0,5% da posicao e arredondamento.
+   if (usd ? Math.abs(usd) < (y < 0 ? 5 : 0.50) : Math.abs(y) / h.qty < 0.005) {
+    estrutural.push({ t:h.ticker, delta:y, usd:usd });
+    return;
+   }
+   // Total do yield = SO os positivos (decisao do Lucas, 31/10/2026). Delta negativo nao e
+   // yield - e a qty bruta vs liquida das compras, ou um lancamento faltando - e nunca se
+   // lanca; somar daria um numero que ele nao pode usar como lista no fechamento.
+   if (y > 0) totalYield += usd;
+   rendas.push({ t:h.ticker, delta:y, usd:usd, cg:cg, site:h.qty });
+  });
+
+  if (!compras.length && !rendas.length && !estrutural.length) { card.style.display = 'none'; return; }
+
+  var dec = function(v){ var a = Math.abs(v); return a >= 100 ? 2 : a >= 1 ? 3 : 6; };
+  var linha = function(tk, sign, qty, resto){
+   return '<div><span style="display:inline-block;min-width:52px;color:var(--text);">' + tk + '</span>' +
+    '<span class="' + (sign === '+' ? 'pos' : 'neg') + '">' + sign + qty + '</span>' +
+    '<span style="color:var(--muted);">' + resto + '</span></div>';
+  };
+  var titulo = function(txt, top){
+   return '<div style="color:var(--text);font-size:10px;letter-spacing:.06em;' +
+    'text-transform:uppercase;margin:' + (top ? '8px' : '0') + ' 0 2px;">' + txt + '</div>';
+  };
+
+  var html = '';
+  if (compras.length) {
+   html += titulo('Compras \u2014 com o custo pago', false);
+   html += compras.map(function(c){
+    return linha(c.t, '+', c.qty.toFixed(dec(c.qty)),
+     ' &nbsp;\u00b7&nbsp; por ' + fmtCurrency(c.usd, 2) +
+     (c.erro ? ' &nbsp;\u00b7&nbsp; <span style="color:var(--red);">confere o cgMirror</span>' : ''));
+   }).join('');
+  }
+  if (rendas.length) {
+   html += titulo('Yield \u2014 custo zero', compras.length > 0);
+   html += rendas.map(function(r){
+    return linha(r.t, r.delta >= 0 ? '+' : '\u2212', Math.abs(r.delta).toFixed(dec(r.delta)),
+     ' &nbsp;\u00b7&nbsp; ' + fmtCurrency(Math.abs(r.usd), 2) +
+     ' &nbsp;\u00b7&nbsp; ' + r.cg + ' \u2192 ' + r.site +
+     (r.delta < 0 ? ' &nbsp;\u00b7&nbsp; <span style="color:var(--red);">n\u00e3o lan\u00e7ar</span>' : ''));
+   }).join('');
+  }
+  if (estrutural.length) {
+   html += titulo('Não lançar — gas, taxa, arredondamento', compras.length > 0 || rendas.length > 0);
+   html += '<div style="color:var(--muted);opacity:.75;">' + estrutural.map(function(e){
+    return e.t + ' ' + (e.delta >= 0 ? '+' : '−') + Math.abs(e.delta).toFixed(8) +
+     (e.usd ? ' (' + fmtCurrency(Math.abs(e.usd), 2) + ')' : '');
+   }).join(' &nbsp;·&nbsp; ') + '</div>';
+  }
+  document.getElementById('cgMirrorList').innerHTML = html;
+
+  var partes = [];
+  if (totalCompra > 0) partes.push(fmtCurrency(totalCompra, 2) + ' em compras');
+  if (totalYield  > 0) partes.push(fmtCurrency(totalYield, 2) + ' de yield');
+  document.getElementById('cgMirrorTotal').textContent = partes.join('  +  ');
+  card.style.display = '';
+ }
 
 function buildAllocationChart(enriched, totalVal){
   const canvas = document.getElementById('allocChart');

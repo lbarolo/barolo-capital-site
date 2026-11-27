@@ -65,3 +65,29 @@ test('poolHistory: resultado = fees − IL e datas DD/MM/AAAA', () => {
     if (p.status === 'closed') assert.ok(dmy.test(p.close), `pool fechada sem data de fechamento em ${tag}`);
   });
 });
+
+// Compras pendentes de lançar no CoinGecko (desde 27/11/2026). O delta holding − cgMirror
+// mistura compra (lança COM custo) e yield (lança a custo zero); `cgPendingBuys` é a parte
+// que o site sabe ser compra. Se a compra passar do delta, ou ela já foi lançada e ficou
+// esquecida aqui, ou o cgMirror está errado — e o card passaria a mostrar yield negativo.
+test('cgPendingBuys: cada compra cabe no delta holding − cgMirror', () => {
+  const list = D.cgPendingBuys;
+  if (!list) return;                     // bloco opcional: sem compras pendentes, nada a checar
+  assert.ok(Array.isArray(list), 'cgPendingBuys deve ser array');
+  const all = (D.holdings || []).concat(D.stables || []);
+  const porTicker = {};
+  list.forEach(b => {
+    assert.ok(b.ticker && b.qty > 0 && b.usd > 0, `entrada incompleta: ${JSON.stringify(b)}`);
+    assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(b.date || ''), `data inválida em ${b.ticker} (use AAAA-MM-DD)`);
+    porTicker[b.ticker] = (porTicker[b.ticker] || 0) + b.qty;
+  });
+  Object.keys(porTicker).forEach(tk => {
+    const h = all.find(x => x.ticker === tk);
+    assert.ok(h, `cgPendingBuys cita ${tk}, que não existe em holdings/stables`);
+    const cg = (D.cgMirror || {})[tk];
+    assert.ok(cg > 0, `cgPendingBuys cita ${tk}, mas não há cgMirror para ele`);
+    const delta = h.qty - cg;
+    assert.ok(porTicker[tk] <= delta + 1e-8,
+      `${tk}: compra pendente ${porTicker[tk]} passa do delta ${delta.toFixed(9)} — já foi lançada (limpar cgPendingBuys) ou o cgMirror está errado`);
+  });
+});

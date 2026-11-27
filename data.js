@@ -885,6 +885,38 @@ window.BAROLO_DATA = {
     // (o BTC ja inclui a compra de 08/10, que ele confirmou ter lancado).
   },
 
+  // ── O QUE DA DIFERENCA NAO E TUDO YIELD: as COMPRAS pendentes moram aqui ──
+  //
+  // A diferenca holding - cgMirror tem DUAS naturezas misturadas, e elas se lancam
+  // de um jeito diferente no CoinGecko:
+  //
+  //   YIELD  -> transferencia de entrada, CUSTO ZERO (juro de aToken, juro da
+  //             Kamino, fee de pool recebida em token). Renda, nao aporte.
+  //   COMPRA -> lancamento de compra, COM o custo pago. Se entrar a custo zero,
+  //             o lucro do CoinGecko infla no valor inteiro da compra.
+  //
+  // O card do dashboard e o `yield-to-mirror` nao tinham como distinguir as duas e
+  // tratavam tudo como custo zero — numa compra de US$ 50 isso vira US$ 50 de lucro
+  // fantasma. Esta lista e a parte que o site SABE ser compra; o resto do delta e
+  // yield por definicao.
+  //
+  // ⚡ COMO USAR (duas linhas de disciplina):
+  //   1. Comprou e o Lucas ainda nao lancou no CoinGecko? Acrescente uma entrada
+  //      aqui, com a qty BRUTA da ordem (e assim que ele lanca la) e o custo pago.
+  //   2. Ele confirmou que lancou? APAGUE a entrada e atualize o `cgMirror` do
+  //      token. As duas coisas juntas, sempre — senao o pendente conta em dobro.
+  //
+  // ⚠️ Invariante conferido por `tests/data.test.js`: a soma das compras pendentes
+  // de um token NAO pode passar do delta (holding - cgMirror) dele. Se passar, ou
+  // a compra ja foi lancada e ficou esquecida aqui, ou o cgMirror esta errado.
+  cgPendingBuys: [
+    { ticker:'SOL', qty:0.74695, usd:50.00, date:'2026-11-25',
+      note:'os 50 USDC que sobraram do borrow de 20/11 viraram SOL (swap pela Phantom, '
+         + '14:51 UTC). Qty BRUTA da ordem: a taxa de rede de 0,00003 SOL nao se lanca. '
+         + 'Pendente total do SOL hoje: 0,759636 — destes, 0,74695 e esta compra (custo '
+         + 'US$ 50,00) e 0,012686 e yield da Kamino menos gas (custo zero).' },
+  ],
+
   // ── APORTES EXTERNOS (dinheiro que entrou DE FORA: fiat -> cripto/stable) ──
   // SO isto conta como aporte na curva de patrimonio. Yield, juros, airdrop e
   // rotacao interna (vender X para comprar Y, fechar pool) NAO entram — mexem em
