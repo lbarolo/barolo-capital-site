@@ -108,6 +108,19 @@ function rsi(cl, n = 14) {
   for (let i = n + 1; i < cl.length; i++) { const d = cl[i] - cl[i - 1]; g = (g * (n - 1) + Math.max(d, 0)) / n; l = (l * (n - 1) + Math.max(-d, 0)) / n; }
   return l === 0 ? 100 : 100 - 100 / (1 + g / l);
 }
+// CAGR da TENDÊNCIA (QUANT.md §4 regra 6): regressão linear de ln(preço) no tempo, inclinação anualizada.
+// Não depende do dia de partida/chegada como o retorno entre duas datas. O intervalo de 95% assume
+// resíduos independentes — com preço (autocorrelacionado) ele sai estreito demais: ler como otimista.
+function trendCagr(cl) {
+  const n = cl.length; if (n < 60) return null;
+  const y = cl.map(v => Math.log(v)), mx = (n - 1) / 2, my = y.reduce((a, v) => a + v, 0) / n;
+  let sxx = 0, sxy = 0; for (let i = 0; i < n; i++) { sxx += (i - mx) ** 2; sxy += (i - mx) * (y[i] - my); }
+  const b = sxy / sxx, a = my - b * mx;
+  let ssr = 0, sst = 0; for (let i = 0; i < n; i++) { ssr += (y[i] - a - b * i) ** 2; sst += (y[i] - my) ** 2; }
+  const se = Math.sqrt(ssr / (n - 2) / sxx), an = v => Math.exp(v * 365) - 1;
+  return { days: n, cagr: an(b), lo: an(b - 1.96 * se), hi: an(b + 1.96 * se), r2: sst ? 1 - ssr / sst : null,
+    vsLine: cl[n - 1] / Math.exp(a + b * (n - 1)) - 1 };
+}
 async function technicals() {
   const out = {};
   for (const k of ['BTC', 'ETH', 'SOL', 'HYPE']) {
@@ -122,7 +135,8 @@ async function technicals() {
         ret7: p / cl[cl.length - 8] - 1, ret30: p / cl[cl.length - 31] - 1,
         ma50: ma(50), ma200: ma(200), vsMa50: ma(50) ? p / ma(50) - 1 : null, vsMa200: ma(200) ? p / ma(200) - 1 : null,
         vol30: sd(lr.slice(-30)) * Math.sqrt(365), vol90: sd(lr.slice(-90)) * Math.sqrt(365),
-        hi90: hi, lo90: lo, pos90: (p - lo) / (hi - lo || 1), ddHi: p / Math.max(...cl) - 1 };
+        hi90: hi, lo90: lo, pos90: (p - lo) / (hi - lo || 1), ddHi: p / Math.max(...cl) - 1,
+        trend: trendCagr(cl) };
     } catch (e) { console.warn('TA ' + k + ': ' + e.message); }
   }
   return out;

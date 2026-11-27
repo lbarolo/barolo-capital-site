@@ -35,14 +35,16 @@ registra o que mudou desde ontem, **(3) melhora** o projeto em um passo pequeno 
 - Reintroduzir "não tomar dívida em acumulação": o looping na queda é estratégia dele (corrigido em 25/11/2026).
 - Colocar endereço de carteira ou identificador único em URL. Commitar arquivo que não é da rotina.
 
-## Estado atual (26/11/2026)
-Regime: zona de fundo, tendência de baixa (score 0,08, F&G 13). Liquidez americana neutra (2/5) → piso HF 3 / 2σ.
-Compra: BTC/SOL/HYPE Excelente, ETH Bom (70% do risco). Venda: Evitar. Pools: compra escalonada SOL/USDC Bom
-(falta stable: US$ 0,25 livre). Empréstimos: looping ETH na AAVE Bom (~US$ 1.212 até HF 3, HF 8,94); Kamino Evitar
-(1,64σ, abaixo do piso; repagar US$ 112 ou +6,88 SOL). Trocar SOL por LST: Excelente.
-Histórico dos vereditos ligado: `mesa-dados.json → verdictHistory` (1º ponto 26/11).
+## Estado atual (27/11/2026)
+Regime: zona de fundo, tendência de baixa (score 0,08, F&G 11). Liquidez americana neutra (2/5) → piso HF 3 / 2σ.
+Compra: BTC (100) / SOL (86) / HYPE (77) Excelente, ETH Bom (82, limitado: 69% do risco). Venda: Evitar. Pools: compra
+escalonada SOL/USDC Bom (63). Empréstimos: looping ETH na AAVE Bom (~US$ 1.244 até HF 3, HF 9,07); Kamino Evitar
+(1,70σ; repagar US$ 96 ou +5,65 SOL). Trocar SOL por LST: Excelente (75).
+CAGR da tendência (299 dias) agora na Mesa: BTC +10% · ETH +12% · SOL +17% · HYPE +274% ao ano — R² 0,03–0,06 nos três
+grandes (linha fraca: janela curta, um ciclo de alta e queda dentro dela).
 
 ## Diário (1 linha por dia, mais recente em cima, manter ~30)
+- 27/11/2026 — **HYPE Bom → Excelente** (77, cutoff 75; oscila na fronteira — ontem às 19h estava Bom, de manhã Excelente). Resto igual: regime fundo (0,08, F&G 11) · Compra BTC 100 / SOL 86 Excelente, ETH Bom 82 · Venda Evitar · Pools Bom (SOL 63) · Empréstimos Bom (looping ETH 88; Kamino Evitar 41, 1,70σ) · LST Excelente 75 · os mesmos 6 alertas de atenção. Action não rodou até 13:50 UTC → dados regerados à mão. Sexta: aporte de R$ 50 pendente (último DCA 13/11).
 - 26/11/2026 — sem mudança de faixa. Regime fundo (0,08, F&G 13) · Compra Excelente (BTC 100, SOL 100, HYPE 82) · Venda Evitar · Pools Bom (compra escalonada SOL 63) · Empréstimos Bom (looping ETH AAVE 88; Kamino Evitar 41) · LST Excelente · 6 alertas de atenção (mesmos de ontem). Dados da Action não tinham chegado às 11h UTC → regerados à mão.
 - 25/11/2026 — criação. Regime fundo (0,08) · Compra Excelente (BTC) · Venda Evitar · Pools Bom (compra escalonada SOL) · Empréstimos Bom (looping ETH AAVE) · 6 alertas de atenção.
 
@@ -79,12 +81,16 @@ dele**.
   tooltip do veredito.
 - [x] (registrado em agentes/bugs.md em 25/11 — fica com o /corrigir) **Bug no `fetch-briefing.js`**: AAVE aparece com dívida 0 e HF vazio (só lê borrow em USDC; hoje é GHO) — afeta o
   card "E daí, pra mim?" do pools.html. *(é fora da Mesa: registrar em bugs.md para o /corrigir)*
-- [ ] [auto] **CAGR da tendência** (QUANT §4 regra 6) de BTC/ETH/SOL/HYPE no `fetch-mesa.js` e no quant da Mesa.
+- [x] **CAGR da tendência** — ✅ 27/11/2026: `fetch-mesa.js → ta[k].trend` (cagr, IC 95%, R², distância da linha) e bloco
+  na seção de tendência da Mesa (`trendCagrHtml`). Marca "linha fraca" quando R² < 0,3.
+- [ ] [auto] **CAGR da tendência com janela longa** — hoje são só 299 dias (1 chamada da Coinbase), R² ~0,05 nos grandes.
+  Buscar ~4 anos (5 chamadas, como o `quant-report.js`) e mostrar as duas janelas; incluir o portfólio (`wealthCurve`).
 - [ ] [auto] **Notificação** quando um veredito mudar de faixa ou surgir alerta crítico (via PushNotification na rotina).
 - [ ] **Funding e open interest** (velo/coinglass) como critério da venda fracionada e do looping — testar fonte no runner antes.
 - [ ] [auto] Testes do motor de sugestões (`tests/mesa.test.js`) com quant/yields fixos — trava regressão no `buildActions`.
 
 ## Histórico da rotina
+- 27/11/2026 — Action da Mesa sem rodar até 13:50 UTC (2º dia seguido) → regerado à mão; melhoria: CAGR da tendência.
 - 26/11/2026 — `quant.json` renomeado para **`mesa-dados.json`**: bloqueadores de anúncio (Brave Shields/uBlock, regra do Quantcast "quant.js") bloqueavam o arquivo no navegador do Lucas e a Mesa ficava sem Compra/Venda/Pools/Quant. Não voltar ao nome com "quant".
 - 26/11/2026 — 1ª rotina diária: dados regerados (Action ainda não tinha rodado), sem mudança de veredito; melhoria: histórico dos vereditos.
 - 26/11/2026 — regra de liquidez × piso do HF aprovada e ligada (hoje: neutra 2/5 → HF 3 / 2σ; AAVE com ~US$ 1.206 de espaço).
