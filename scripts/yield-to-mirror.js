@@ -44,12 +44,16 @@ const mirror = B.cgMirror || {};
 // Tolerancia: diferencas abaixo disto sao ruido de arredondamento, nao yield.
 const EPS = 1e-8;
 
-// Compras pendentes agrupadas por ticker (qty bruta da ordem + custo pago).
+// Compras pendentes agrupadas por ticker. Duas quantidades, porque elas diferem:
+//   qty   = a que entrou no HOLDING (liquida) -> e esta que fecha o delta
+//   qtyCg = a que ele lanca NO COINGECKO (bruta da ordem) -> e esta que se reporta
+// Quando `qtyCg` nao vem, as duas sao iguais (nao houve taxa).
 const buys = {};
 for (const b of (B.cgPendingBuys || [])) {
   const k = b.ticker;
-  if (!buys[k]) buys[k] = { qty: 0, usd: 0, dates: [] };
+  if (!buys[k]) buys[k] = { qty: 0, qtyCg: 0, usd: 0, dates: [] };
   buys[k].qty += b.qty;
+  buys[k].qtyCg += (b.qtyCg || b.qty);
   buys[k].usd += (b.usd || 0);
   if (b.date) buys[k].dates.push(b.date);
 }
@@ -62,14 +66,16 @@ for (const h of all) {
   if (Math.abs(delta) <= EPS && !buy) continue;
   const p = {
     ticker: h.ticker, cgId: h.cgId, cg: mirror[h.ticker], site: h.qty, delta: delta,
-    buyQty: buy ? buy.qty : 0, buyUsd: buy ? buy.usd : 0,
+    buyQty: buy ? buy.qty : 0, buyQtyCg: buy ? buy.qtyCg : 0, buyUsd: buy ? buy.usd : 0,
     buyDates: buy ? buy.dates : [],
     yieldQty: delta - (buy ? buy.qty : 0)
   };
   if (delta < -EPS) p.aviso = 'NEGATIVO — o CoinGecko tem MAIS que o site. Investigar antes de lancar.';
-  // A compra pendente nao pode passar do delta: ou ela ja foi lancada e ficou
-  // esquecida em `cgPendingBuys`, ou o `cgMirror` do token esta errado.
-  if (p.buyQty > EPS && p.buyQty > delta + EPS) p.aviso = 'COMPRA PENDENTE MAIOR QUE O DELTA — a compra ja foi lancada (limpar cgPendingBuys) ou o cgMirror esta errado.';
+  // A compra pendente passar UM POUCO do delta e normal: a divergencia estrutural
+  // acumulada (CoinGecko conta bruto, site conta liquido) deixa o delta menor que a
+  // compra. Passar MUITO - mais de 2% da posicao - ja e outra coisa: ou a compra ja
+  // foi lancada e ficou esquecida aqui, ou o `cgMirror` do token esta errado.
+  if (p.buyQty > EPS && (p.buyQty - delta) > 0.02 * h.qty) p.aviso = 'COMPRA PENDENTE MUITO MAIOR QUE O DELTA — a compra ja foi lancada (limpar cgPendingBuys) ou o cgMirror esta errado.';
   pend.push(p);
 }
 
@@ -115,7 +121,7 @@ for (const h of all) {
   if (JSON_OUT) {
     console.log(JSON.stringify({
       asOf: B.asOf,
-      compras: compras.map(p => ({ ticker: p.ticker, qty: p.buyQty, usd: p.buyUsd, dates: p.buyDates })),
+      compras: compras.map(p => ({ ticker: p.ticker, qty: p.buyQty, qtyCg: p.buyQtyCg, usd: p.buyUsd, dates: p.buyDates })),
       yield: pend.filter(p => Math.abs(p.yieldQty) > EPS)
                  .map(p => ({ ticker: p.ticker, qty: p.yieldQty, usd: usdOf(p, p.yieldQty), cg: p.cg, site: p.site, aviso: p.aviso })),
       totalCompraUsd, totalYieldUsd
@@ -123,7 +129,8 @@ for (const h of all) {
     return;
   }
 
-  const dec = v => { const a = Math.abs(v); return a >= 100 ? 2 : a >= 1 ? 3 : 6; };
+  // BTC precisa de 8 casas: com 6, uma compra de 0,00058635 sai como "0.000586".
+  const dec = v => { const a = Math.abs(v); return a >= 100 ? 2 : a >= 1 ? 3 : a >= 0.01 ? 6 : 8; };
 
   console.log('\n═══ A LANCAR NO COINGECKO ═══');
   console.log(`base do data.js: ${B.asOf}\n`);
@@ -135,8 +142,9 @@ for (const h of all) {
   if (compras.length) {
     console.log('  COMPRAS — lancar COM o custo pago (nao e transferencia de entrada):');
     for (const p of compras) {
-      console.log(`     ${p.ticker.padEnd(5)} +${p.buyQty.toFixed(dec(p.buyQty))}  por US$ ${p.buyUsd.toFixed(2)}` +
-        (p.buyDates.length ? `   (${p.buyDates.join(', ')})` : ''));
+      console.log(`     ${p.ticker.padEnd(5)} +${p.buyQtyCg.toFixed(dec(p.buyQtyCg))}  por US$ ${p.buyUsd.toFixed(2)}` +
+        (p.buyDates.length ? `   (${p.buyDates.join(', ')})` : '') +
+        (p.buyQtyCg !== p.buyQty ? `\n           (qty BRUTA da ordem — o site guarda ${p.buyQty.toFixed(dec(p.buyQty))} liquido)` : ''));
     }
     console.log('');
   }

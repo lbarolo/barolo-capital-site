@@ -2322,8 +2322,11 @@ function buildCgMirrorCard(){
   // como transferencia de entrada a custo zero - US$ 50 de lucro fantasma.
   var buys = {};
   (B.cgPendingBuys || []).forEach(function(b){
-   if (!buys[b.ticker]) buys[b.ticker] = { qty:0, usd:0 };
+   // qty = a que entrou no holding (liquida, fecha o delta); qtyCg = a que ele lanca
+   // no CoinGecko (bruta da ordem). Iguais quando nao houve taxa.
+   if (!buys[b.ticker]) buys[b.ticker] = { qty:0, qtyCg:0, usd:0 };
    buys[b.ticker].qty += b.qty;
+   buys[b.ticker].qtyCg += (b.qtyCg || b.qty);
    buys[b.ticker].usd += (b.usd || 0);
   });
 
@@ -2337,8 +2340,12 @@ function buildCgMirrorCard(){
    if (Math.abs(delta) <= EPS && !buy) return;
 
    if (buy && buy.qty > EPS) {
-    // erro: ou a compra ja foi lancada e ficou esquecida, ou o cgMirror esta errado
-    compras.push({ t:h.ticker, qty:buy.qty, usd:buy.usd, erro: buy.qty > delta + EPS });
+    // A compra mostrada e a BRUTA (qtyCg), que e o que ele lanca no CoinGecko; o delta
+    // fecha com a liquida (qty). Passar um pouco do delta e normal (divergencia bruto x
+    // liquido acumulada); passar de 2% da posicao ja e compra lancada e nao limpa, ou
+    // cgMirror errado.
+    compras.push({ t:h.ticker, qty:buy.qtyCg, liq:buy.qty, usd:buy.usd,
+                   erro: (buy.qty - delta) > 0.02 * h.qty });
     totalCompra += buy.usd;
    }
    var y = delta - (buy ? buy.qty : 0);
@@ -2361,7 +2368,8 @@ function buildCgMirrorCard(){
 
   if (!compras.length && !rendas.length && !estrutural.length) { card.style.display = 'none'; return; }
 
-  var dec = function(v){ var a = Math.abs(v); return a >= 100 ? 2 : a >= 1 ? 3 : 6; };
+  // BTC precisa de 8 casas: com 6, uma compra de 0,00058635 sai como "0.000586".
+  var dec = function(v){ var a = Math.abs(v); return a >= 100 ? 2 : a >= 1 ? 3 : a >= 0.01 ? 6 : 8; };
   var linha = function(tk, sign, qty, resto){
    return '<div><span style="display:inline-block;min-width:52px;color:var(--text);">' + tk + '</span>' +
     '<span class="' + (sign === '+' ? 'pos' : 'neg') + '">' + sign + qty + '</span>' +

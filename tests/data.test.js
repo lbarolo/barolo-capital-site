@@ -87,7 +87,10 @@ test('cgPendingBuys: cada compra cabe no delta holding − cgMirror', () => {
     const cg = (D.cgMirror || {})[tk];
     assert.ok(cg > 0, `cgPendingBuys cita ${tk}, mas não há cgMirror para ele`);
     const delta = h.qty - cg;
-    assert.ok(porTicker[tk] <= delta + 1e-8,
-      `${tk}: compra pendente ${porTicker[tk]} passa do delta ${delta.toFixed(9)} — já foi lançada (limpar cgPendingBuys) ou o cgMirror está errado`);
+    // Passar um pouco do delta é normal: o CoinGecko conta a qty BRUTA das ordens e o site
+    // conta a líquida, então a divergência estrutural acumulada come parte do delta. Passar
+    // de 2% da posição já é outra coisa — compra lançada e não limpa, ou cgMirror errado.
+    assert.ok((porTicker[tk] - delta) <= 0.02 * h.qty,
+      `${tk}: compra pendente ${porTicker[tk]} passa do delta ${delta.toFixed(9)} em mais de 2% da posição — já foi lançada (limpar cgPendingBuys) ou o cgMirror está errado`);
   });
 });
