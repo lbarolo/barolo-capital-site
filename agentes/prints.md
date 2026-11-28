@@ -179,6 +179,73 @@ São **US$ 1,79 a menos** pelo mesmo dinheiro em três semanas (−9,1%). Não h
 da operação — ele aporta em reais —, mas se o real seguir nesse caminho a conversa vira o **tamanho
 do aporte em BRL**, não o ritmo. A régua combinada (R$ 50) hoje compra US$ 8,94.
 
+## Estado atual — 28/11/2026 (`asOf` 2026-11-28) — **depósito de 0,19 ETH de colateral na AAVE**
+
+Sem aporte novo (o de 27/11 cobriu as duas sextas e já está lançado). O que ele fez hoje foi
+**reforçar o colateral**: 0,19 ETH para a AAVE às 9:39 UTC (block 26513785, US$ 312,75, taxa de
+rede US$ 0,05). Depósito **não é aporte e não muda o holding** — o ETH só troca de bolso.
+
+### AAVE — derivada do print, com três conferências fechando
+
+Sem MCP nem API nesta sessão (proxy bloqueou `api.aave.com` e `api.kamino.finance`), então tudo
+veio do print pelo método da regra 13:
+
+| | |
+|---|---:|
+| oráculo = (deposits 4.970,96 − earnings 41,14) / principal 2,994959 | **US$ 1.646,039** |
+| conferência pelo próprio print do depósito (312,75 / 0,19) | US$ 1.646,053 |
+| juro = 41,14 / 1.646,039 | **0,024993332 ETH** (print: earnings 0,025) |
+| supply = principal + juro | **3,019952675** (print: 3,0199) |
+| colateral = supply × oráculo | US$ 4.970,96 — **exato** |
+| borrowing power = colateral × 0,84 − 450,61 | US$ 3.725 (print: **US$ 3,73K**) |
+| HF = colateral × CF / dívida | **9,27** (era 8,75) |
+
+`principals.aave.WETH` 2,804959342722521912 → **2,994959342722521912**. O holding sobe só
+**+0,000830283** (delta do juro do aWETH), e fecha por fora: supply 3,019953 + **0,014568873** na
+carteira = 3,034522 — a carteira caiu de 0,204569 para 0,014569, exatamente os 0,19 depositados.
+
+### ⚠️ A TAXA DO BORROW DA AAVE DISPAROU: 4,01% → **6,07%** em oito dias
+Dívida 450,61 GHO (principal 450 + 0,61 de juro; o campo *Fees Paid* confirma por fora: 1,18
+lifetime − 0,574675 do ciclo anterior = 0,605325). A 6,07% os 450 custam **US$ 27/ano**, e o
+colateral é ETH, que não rende nada perto disso. A regra de 11/09 manda reavaliar se passar de
+**duas semanas acima de 5%** — **já passou**. O ponto está levantado; a decisão é dele.
+
+### Kamino — ⚠️ só 2 casas no print, precisão limitada
+SOL 27,42 @3,51% · borrow **559,55 USDC** @5,74% · LTV 29,64% → **28,8%** · auto-repay em
+**US$ 25,51** (SOL a 70,86 = −64%). Net value US$ 1.383,49, net interest lifetime +US$ 106,97.
+Três caminhos independentes para o supply: colateral/preço **27,41998** · dívida/(liqPx×liqLtv)
+**27,41523** · dívida/(ltv×preço) **27,41566** — banda **[27,415; 27,421]**. Adotado o 27,42 do
+print; erro máximo ±0,005 SOL (±US$ 0,35). **Ajustar no próximo review com a API respondendo.**
+O LTV caiu sem repay: foi o preço do SOL (68,84 → 70,86, +2,9%) contra uma dívida que cresceu 0,24.
+
+### ✅ CoinGecko: ele lançou as DUAS compras pendentes — `cgPendingBuys` zerada
+| | espelho antes | + compra bruta | = print de hoje |
+|---|---:|---:|---:|
+| BTC | 0,00864249 | +0,00058635 (US$ 35,96) | **0,00922884** |
+| SOL | 26,718091317 | +0,74695 (US$ 50,00) | **27,46504132** |
+
+Os dois fecham **na casa decimal** com o print, então as entradas foram apagadas da lista.
+`cgMirror.USDT` reajustado 0,2464006 → **0,38969725**, mantendo a convenção de 23/11 (o USDT foi
+**removido** da lista do CoinGecko, e o espelho acompanha o holding só para dizer “nada a lançar”);
+o print confirma — 10 de 10 resultados, sem USDT.
+
+**Pendente agora: US$ 2,83**, 100% yield a custo zero — ETH +0,00083113 (US$ 1,37) e SOL
++0,020591 (US$ 1,46). BTC fica −0,00004168 (−US$ 2,47), a diferença estrutural bruto-vs-líquido:
+**não lançar**, o card já marca. Segue segurando por decisão dele — lembrar no fechamento (01/12).
+
+### Posição
+Patrimônio líquido **US$ 6.578** aos preços do print (ETH 1.648,20 · SOL 70,85 · BTC 59.228,31):
+bruto 7.588 + stables 0,39 − dívida **1.010,16**. 🔹 O bruto do site **bate com o total do
+CoinGecko** (US$ 7.587,99) — a diferença é só o yield pendente. Sem pool aberta.
+
+### 🔸 Pontos levantados, sem ação
+- **BABY (Babylon) 40,9103747 na OKX (US$ 0,39)** — fora da contabilidade. Poeira; sinalizado só.
+- **Rewards da Kamino**: PYUSD US$ 0,07 claimável, não resgatado nem lançado.
+- **Bug no `emprestimos.html`** registrado em `agentes/bugs.md` (MÉDIA): as quantidades do
+  colateral não saem do `data.js`, só do fetch ao vivo — com a API fora, a página mostra junho.
+
+---
+
 ## Estado atual — 25/11/2026 (`asOf` 2026-11-25) — caixa ZERO em todas as redes
 
 O ciclo que comecou no 3o borrow (20/11) fechou hoje: **nao sobrou stable parada em lugar nenhum**.
@@ -1322,6 +1389,7 @@ de set/28-09, que eram rotação de USDT que já era dele). Lançado nos dois lu
 `contributions` do mês ao `invested` da curva, então o retorno de outubro já sai descontado disso.
 
 ## Histórico (mais recente no topo, 1 linha por execução)
+- 28/11/2026 — **depósito de 0,19 ETH de colateral na AAVE** (9:39 UTC, block 26513785, US$ 312,75). `principals.aave.WETH` 2,804959 → **2,994959** — o campo crítico. Supply derivado do print sem MCP (rede bloqueada) e **fechando em três conferências**: colateral US$ 4.970,96 exato, borrowing power US$ 3.725 contra os 3,73K do print, HF **9,27**. Holding ETH +0,000830283 (só o juro; o depósito não muda o holding) e a carteira cai exatamente 0,19. Kamino SOL 27,42 @3,51%, borrow 559,55 @5,74%, LTV **28,8%**, auto-repay US$ 25,51. ✅ **Ele lançou as duas compras pendentes no CoinGecko** (BTC 27/11 e SOL 25/11): os dois espelhos fecham na casa decimal e `cgPendingBuys` ficou **vazia**. Pendente US$ 2,83, tudo yield. ⚠️ **Borrow da AAVE 4,01% → 6,07% em oito dias** — passou das duas semanas acima de 5% que a regra de 11/09 manda reavaliar. ⚠️ Kamino com **só 2 casas no print** e API fora: banda [27,415; 27,421], ±US$ 0,35 — ajustar no próximo review. 🔸 Achado novo em `bugs.md`: o `emprestimos.html` não tira as quantidades do colateral do `data.js`.
 - 25/11/2026 (2) — **depósito de 0,740000000 SOL de colateral na Kamino** (17:31 UTC, valor exato no log do contrato). `principals.kamino.SOL` 25,128306937 → **25,868306937** — o campo crítico: sem ele o site mostraria o depósito como rendimento (bug de 14/08). Juro retido intacto em **1,5438 SOL** antes e depois. Supply 27,412095255 @3,42%, borrow 559,314842 @**5,79%** (subiu de 5,36%), LTV 31,58% → **29,64%**, liquidação do SOL US$ 26,21 → **US$ 25,50**. Holding +0,000240730 = juro do dia − gas, confere com supply + carteira no mesmo slot. 🔸 Corrigido de passagem o card **Colateral Total** do empréstimos, congelado em junho.
 - 25/11/2026 — **os 50 USDC que sobravam viraram 0,74695 SOL** (14:51 UTC) — rotação, não aporte; o custo migra. ⚠️ **3º caso de taxa de interface: a Phantom cobra 0,85%** (pagou US$ 66,94 com o mercado em US$ 66,37; pelo Jupiter direto em 20/11 a diferença foi 0,18%). 🔹 **Não sugerir Jupiter de novo:** a Phantom ligada na Ledger é a única via que consegue assinar — a transação do Jupiter não chega ao dispositivo. Decisão consciente dele. **Caixa zerado em todas as redes.**
 - 23/11/2026 — **espelho do CoinGecko fechado**: ele apagou a linha duplicada do BTC (identificada pela **data**, 19/11, que não tem compra nenhuma), **excluiu o USDT da lista** em vez de lançar a saída de 99,97 (mesmo tratamento do USDS em 02/10 e do RDNT em 08/10) e lançou o SOL. `cgMirror` passou a bater exato no SOL. POL 190,113 → **190,13** (poeira de US$ 0,0013, alinhado ao print). O `yield-to-mirror` passou a separar ruído estrutural (gas/taxa/arredondamento) do que é pendência de verdade — a diferença negativa aparecia todo mês e mascarava o que importa.
