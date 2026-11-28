@@ -35,15 +35,17 @@ registra o que mudou desde ontem, **(3) melhora** o projeto em um passo pequeno 
 - Reintroduzir "não tomar dívida em acumulação": o looping na queda é estratégia dele (corrigido em 25/11/2026).
 - Colocar endereço de carteira ou identificador único em URL. Commitar arquivo que não é da rotina.
 
-## Estado atual (27/11/2026)
-Regime: zona de fundo, tendência de baixa (score 0,08, F&G 11). Liquidez americana neutra (2/5) → piso HF 3 / 2σ.
-Compra: BTC (100) / SOL (86) / HYPE (77) Excelente, ETH Bom (82, limitado: 69% do risco). Venda: Evitar. Pools: compra
-escalonada SOL/USDC Bom (63). Empréstimos: looping ETH na AAVE Bom (~US$ 1.244 até HF 3, HF 9,07); Kamino Evitar
-(1,70σ; repagar US$ 96 ou +5,65 SOL). Trocar SOL por LST: Excelente (75).
-CAGR da tendência (299 dias) agora na Mesa: BTC +10% · ETH +12% · SOL +17% · HYPE +274% ao ano — R² 0,03–0,06 nos três
-grandes (linha fraca: janela curta, um ciclo de alta e queda dentro dela).
+## Estado atual (28/11/2026)
+Regime: zona de fundo, tendência de baixa (score 0,08, F&G 12). Liquidez americana neutra (2/5) → piso HF 3 / 2σ.
+Compra: BTC (100) / SOL (100) / HYPE (77) Excelente, ETH Bom (82, limitado: 69% do risco). Venda: Evitar. Pools: compra
+escalonada SOL/USDC e cbBTC/USDC Bom (63). Empréstimos: looping ETH na AAVE Bom (~US$ 1.161 até HF 3, HF 8,68); Kamino
+Evitar (SOL liquida US$ 25,51; sem espaço até 2σ). Trocar SOL por LST: Excelente (75). Aporte de sexta em dia.
+CAGR da tendência agora em duas janelas: 299 dias (BTC +9% · ETH +11% · SOL +17% · HYPE +270%, R² ≤ 0,06 nos grandes) e
+~4,1 anos (BTC +46% R² 0,65 · ETH +11% R² 0,15 · SOL +59% R² 0,40; HYPE só tem a curta). Preço hoje 44–66% abaixo da
+linha longa nos três grandes.
 
 ## Diário (1 linha por dia, mais recente em cima, manter ~30)
+- 28/11/2026 — sem mudança de faixa. SOL 86 → 100 (segue Excelente) · BTC 100 / HYPE 77 Excelente, ETH Bom 82 · Venda Evitar · Pools Bom (SOL e cbBTC 63) · Empréstimos Bom (looping ETH 88; Kamino Evitar 41) · LST Excelente 75. Alertas: **resolvido** o do aporte de sexta (aportes de 20 e 27/11 lançados); **novo** info "Fechamento do mês em 3 dias"; CoinGecko com US$ 86,07 a lançar. Actions de 27/11 rodaram tarde (19h UTC) e as de 28/11 não tinham rodado às 12:36 UTC → regerado à mão.
 - 27/11/2026 — **HYPE Bom → Excelente** (77, cutoff 75; oscila na fronteira — ontem às 19h estava Bom, de manhã Excelente). Resto igual: regime fundo (0,08, F&G 11) · Compra BTC 100 / SOL 86 Excelente, ETH Bom 82 · Venda Evitar · Pools Bom (SOL 63) · Empréstimos Bom (looping ETH 88; Kamino Evitar 41, 1,70σ) · LST Excelente 75 · os mesmos 6 alertas de atenção. Action não rodou até 13:50 UTC → dados regerados à mão. Sexta: aporte de R$ 50 pendente (último DCA 13/11).
 - 26/11/2026 — sem mudança de faixa. Regime fundo (0,08, F&G 13) · Compra Excelente (BTC 100, SOL 100, HYPE 82) · Venda Evitar · Pools Bom (compra escalonada SOL 63) · Empréstimos Bom (looping ETH AAVE 88; Kamino Evitar 41) · LST Excelente · 6 alertas de atenção (mesmos de ontem). Dados da Action não tinham chegado às 11h UTC → regerados à mão.
 - 25/11/2026 — criação. Regime fundo (0,08) · Compra Excelente (BTC) · Venda Evitar · Pools Bom (compra escalonada SOL) · Empréstimos Bom (looping ETH AAVE) · 6 alertas de atenção.
@@ -83,13 +85,16 @@ dele**.
   card "E daí, pra mim?" do pools.html. *(é fora da Mesa: registrar em bugs.md para o /corrigir)*
 - [x] **CAGR da tendência** — ✅ 27/11/2026: `fetch-mesa.js → ta[k].trend` (cagr, IC 95%, R², distância da linha) e bloco
   na seção de tendência da Mesa (`trendCagrHtml`). Marca "linha fraca" quando R² < 0,3.
-- [ ] [auto] **CAGR da tendência com janela longa** — hoje são só 299 dias (1 chamada da Coinbase), R² ~0,05 nos grandes.
-  Buscar ~4 anos (5 chamadas, como o `quant-report.js`) e mostrar as duas janelas; incluir o portfólio (`wealthCurve`).
+- [x] **CAGR da tendência com janela longa** — ✅ 28/11/2026: `fetch-mesa.js → ta[k].trendLong` (5 janelas da Coinbase,
+  ~1.495 dias) e segunda tabela na Mesa. TA do motor de sugestões continua nos 299 dias (nada mudou nos vereditos).
+- [ ] [auto] **CAGR da tendência do portfólio** — sobre o índice TWR (Dietz mensal da `wealthCurve`, `lib/barolo-core.js`),
+  não sobre o patrimônio cru (que sobe com aporte). Mostrar junto das linhas de BTC/ETH/SOL.
 - [ ] [auto] **Notificação** quando um veredito mudar de faixa ou surgir alerta crítico (via PushNotification na rotina).
 - [ ] **Funding e open interest** (velo/coinglass) como critério da venda fracionada e do looping — testar fonte no runner antes.
 - [ ] [auto] Testes do motor de sugestões (`tests/mesa.test.js`) com quant/yields fixos — trava regressão no `buildActions`.
 
 ## Histórico da rotina
+- 28/11/2026 — Actions da manhã sem rodar até 12:36 UTC → regerado à mão; melhoria: CAGR da tendência em janela longa (~4 anos).
 - 27/11/2026 — Action da Mesa sem rodar até 13:50 UTC (2º dia seguido) → regerado à mão; melhoria: CAGR da tendência.
 - 26/11/2026 — `quant.json` renomeado para **`mesa-dados.json`**: bloqueadores de anúncio (Brave Shields/uBlock, regra do Quantcast "quant.js") bloqueavam o arquivo no navegador do Lucas e a Mesa ficava sem Compra/Venda/Pools/Quant. Não voltar ao nome com "quant".
 - 26/11/2026 — 1ª rotina diária: dados regerados (Action ainda não tinha rodado), sem mudança de veredito; melhoria: histórico dos vereditos.

@@ -100,6 +100,20 @@ async function candles(prod) {
   if (!Array.isArray(j) || j.length < 60) throw new Error(prod + ': poucos candles');
   return j.map(c => [c[0], c[4]]).sort((a, b) => a[0] - b[0]).map(c => c[1]);
 }
+// Série longa (~4 anos) só para o CAGR da tendência: 5 janelas de 300 dias, como o quant-report.js.
+// Os campos de TA continuam nos últimos 299 dias (não mudam o motor de sugestões).
+async function candlesLong(prod, chunks = 5) {
+  const seen = new Map(), now = Date.now();
+  for (let c = 0; c < chunks; c++) {
+    const end = now - c * 300 * 864e5, start = end - 299 * 864e5;
+    const u = 'https://api.exchange.coinbase.com/products/' + prod + '/candles?granularity=86400&start=' +
+      new Date(start).toISOString() + '&end=' + new Date(end).toISOString();
+    let j; try { j = await getJSON(u); } catch (e) { break; }
+    if (!Array.isArray(j) || !j.length) break;          // ativo listado depois: para de voltar no tempo
+    j.forEach(x => seen.set(x[0], x[4]));
+  }
+  return [...seen.entries()].sort((a, b) => a[0] - b[0]).map(x => x[1]);
+}
 function rsi(cl, n = 14) {
   if (cl.length < n + 1) return null;
   let g = 0, l = 0;
@@ -137,6 +151,8 @@ async function technicals() {
         vol30: sd(lr.slice(-30)) * Math.sqrt(365), vol90: sd(lr.slice(-90)) * Math.sqrt(365),
         hi90: hi, lo90: lo, pos90: (p - lo) / (hi - lo || 1), ddHi: p / Math.max(...cl) - 1,
         trend: trendCagr(cl) };
+      try { const t = trendCagr(await candlesLong(k + '-USD')); if (t && t.days > cl.length + 30) out[k].trendLong = t; }
+      catch (e) { console.warn('trend longo ' + k + ': ' + e.message); }
     } catch (e) { console.warn('TA ' + k + ': ' + e.message); }
   }
   return out;

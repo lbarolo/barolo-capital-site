@@ -726,12 +726,18 @@ function trendCagrHtml(ta) {
   var ks = ['BTC', 'ETH', 'SOL', 'HYPE'].filter(function (k) { return ta[k] && ta[k].trend; });
   if (!ks.length) return '';
   var d = ta[ks[0]].trend.days;
-  return '<div class="lbl" style="margin-top:14px;">CAGR da tendência · últimos ' + d + ' dias</div><div class="liq">' + ks.map(function (k) {
-    var t = ta[k].trend;
+  var longKs = ks.filter(function (k) { return ta[k].trendLong; });
+  return trendRows(ta, ks, 'trend', 'CAGR da tendência · últimos ' + d + ' dias') +
+    (longKs.length ? trendRows(ta, longKs, 'trendLong', 'CAGR da tendência · janela longa (' + longKs.map(function (k) { return k + ' ' + num(ta[k].trendLong.days / 365, 1) + 'a'; }).join(' · ') + ')') : '') +
+    '<div class="small" style="margin-top:6px;">Inclinação da linha de tendência do preço, anualizada. Compara ativos sem depender do dia escolhido (um topo ou fundo muda o retorno entre duas datas, não muda a linha). A janela longa pega mais de um ciclo e costuma ter linha mais firme (R² maior); a curta mostra o momento.</div>';
+}
+function trendRows(ta, ks, field, title) {
+  return '<div class="lbl" style="margin-top:14px;">' + title + '</div><div class="liq">' + ks.map(function (k) {
+    var t = ta[k][field];
     return '<div title="' + k + ': linha de tendência de ln(preço); intervalo de 95% ' + pct(t.lo, 0, true) + ' a ' + pct(t.hi, 0, true) + ' (otimista: preço tem memória) · R² ' + num(t.r2, 2) + ' · preço ' + pct(t.vsLine, 0, true) + ' contra a linha">' +
       '<span class="' + cls(t.cagr) + '">' + (t.cagr < 0 ? '▼' : '▲') + '</span><span><b>' + k + '</b> ' + pct(t.cagr, 0, true) + ' ao ano' + (t.r2 != null && t.r2 < 0.3 ? ' <span class="small">(linha fraca, R² ' + num(t.r2, 2) + ')</span>' : '') + '</span>' +
       '<span class="mono">hoje ' + pct(t.vsLine, 0, true) + ' da linha</span></div>';
-  }).join('') + '</div><div class="small" style="margin-top:6px;">Inclinação da linha de tendência do preço, anualizada. Compara ativos sem depender do dia escolhido (um topo ou fundo muda o retorno entre duas datas, não muda a linha).</div>';
+  }).join('') + '</div>';
 }
 function shortSig(k) {
   return String(k).replace('Condições financeiras (NFCI) frouxas e não apertando', 'Crédito frouxo (NFCI)')
